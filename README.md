@@ -1,29 +1,6 @@
-# test-production
+# 1.状态管理 - 使用pinia
+   pinia中的状态可以在组件中直接修改或使用$patch修改，但推荐使用actions方法进行修改（pinia相比vuex取消了mutations对象，统一使用actions）
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# 2.数据请求
+  1.配置代理
+  2.配置axios(拦截器、重复请求取消、ts验证提示，后续看情况是否添加全部loading及全局提示等)

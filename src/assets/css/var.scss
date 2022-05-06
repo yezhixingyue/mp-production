@@ -1,0 +1,17 @@
+$blue: #428dfa;
+$pink: #ff3769;
+$origin: #f4a307;
+$green: #80c269;
+$gray: #989898;
+
+$primary: $blue !default;
+$danger: $pink !default;
+$warning: $origin !default;
+$success: $green !default;
+
+$theme-colors: (
+  'primary': $primary,
+  'danger': $danger,
+  'warning': $warning,
+  'success': $success,
+)
