@@ -50,6 +50,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.path === '/login' && userStore.token) {
     next({ path: '/' });
   } else {
+    // console.log(to.path); // 此处判断是否需要权限，如果需要权限时需获取用户详情数据
     next();
   }
 });

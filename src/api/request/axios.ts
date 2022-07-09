@@ -175,6 +175,7 @@ class AxiosClass {
     const {
       method, url, params, data,
     } = config;
+    // qs.stringify 作用：  {name:'hehe',age:10}   =>  name=hehe&age=10   和 JSON.stringify完全不同
     return [method, url, qs.stringify(params), qs.stringify(data)].join('&');
   }
 }

@@ -29,7 +29,8 @@ button {
 
 /* 改变a链接的默认样式,颜色和下划线 */
 a {
-  text-decoration: none
+  text-decoration: none;
+  color: inherit;
 }
 
 
@@ -70,24 +71,24 @@ body {
 // }
 
 /* Remove default margin */
-body,
-h1,
-h2,
-h3,
-h4,
-p,
-figure,
-blockquote,
-dl,
-dd {
-  margin: 0;
-}
+// body,
+// h1,
+// h2,
+// h3,
+// h4,
+// p,
+// figure,
+// blockquote,
+// dl,
+// dd {
+//   margin: 0;
+// }
 
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
-ul[role='list'],
-ol[role='list'] {
-  list-style: none;
-}
+// ul[role='list'],
+// ol[role='list'] {
+//   list-style: none;
+// }
 
 /* Set core root defaults */
 html:focus-within {
@@ -107,11 +108,11 @@ a:not([class]) {
 }
 
 /* Make images easier to work with */
-img,
-picture {
-  max-width: 100%;
-  display: block;
-}
+// img,
+// picture {
+//   max-width: 100%;
+//   display: block;
+// }
 
 /* Inherit fonts for inputs and buttons */
 input,
