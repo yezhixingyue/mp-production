@@ -1,11 +1,12 @@
+<!--  -->
 <template>
-  <div class="mp-erp-layout-header-comp-wrap">头部</div>
+  <div>物料分类 - 设置属性</div>
 </template>
 
 <script lang='ts'>
 export default {
   setup() {
-    // console.log('setup');
+    console.log('setup');
   },
 };
 </script>

@@ -22,7 +22,7 @@ export default {
     LayoutHeader,
   },
   setup() {
-    console.log('setup');
+    // console.log('setup');
     const route = useRoute();
 
     const displaySider = computed(() => route.meta.requiresAuth);

@@ -12,7 +12,7 @@
 <script lang='ts'>
 export default {
   setup() {
-    console.log('setup');
+    // console.log('setup');
   },
 };
 </script>

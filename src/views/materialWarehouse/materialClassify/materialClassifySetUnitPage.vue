@@ -1,12 +1,15 @@
 <!--  -->
 <template>
-  <div>首页</div>
+  <div>
+    materialClassifySetUnitPage
+  </div>
 </template>
 
 <script lang='ts'>
 export default {
+  name: 'materialClassifySetUnitPage',
   setup() {
-    // console.log('setup');
+    console.log('setup');
   },
 };
 </script>
