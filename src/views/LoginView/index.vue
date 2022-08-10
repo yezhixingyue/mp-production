@@ -1,8 +1,8 @@
 <template>
   <div class="mp-erp-login-page-wrap">
     <div class="box">
-      <input v-model="loginForm.Mobile">
-      <input type="password" v-model="loginForm.Password">
+      <input placeholder="请输入账号" v-model="loginForm.Mobile">
+      <input placeholder="请输入密码" type="password" v-model="loginForm.Password">
       <button class="is-font-16" @click="submitForm">登录</button>
     </div>
   </div>
@@ -20,12 +20,15 @@ export default {
   setup() {
     const router = useRouter();
     const loginForm: ILoginSubmitForm = reactive({ Mobile: '', Password: '', Terminal: 1 });
+    const userStore = useUserStore();
+    console.log(userStore);
 
     const submitForm = async () => {
       // 省略校验
-      const userStore = useUserStore();
       const temp = { ...loginForm, Password: Base64.encode(loginForm.Password) };
       const res = await userStore.getLogin(temp);
+      console.log();
+
       if (res) {
         // 登录成功
         router.replace('/');

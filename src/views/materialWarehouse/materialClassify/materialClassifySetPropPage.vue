@@ -5,6 +5,7 @@
 
 <script lang='ts'>
 export default {
+  name: 'materialClassifySetPropPage',
   setup() {
     console.log('setup');
   },

@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import { useUserStore } from '@/store/modules/user/index';
+// import { useUserStore } from '@/store/modules/user/index';
+import aboutView from '@/views/aboutView.vue';
 import LoginView from '../views/LoginView/index.vue';
 import HomeView from '../views/HomeView.vue';
-import moduleRoutes from './modules/index';
+import { moduleRoutes } from './modules/index';
+import { goBackLastPage, handleRouterEach } from './modules/handleRouterEach';
 
-console.log(import.meta, moduleRoutes);
+console.log(moduleRoutes);
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -25,6 +27,15 @@ const routes: Array<RouteRecordRaw> = [
     },
     component: LoginView,
   },
+  {
+    path: '/about',
+    name: 'about',
+    meta: {
+      title: '关于',
+      requiresAuth: false,
+    },
+    component: aboutView,
+  },
   // {
   //   path: '/about',
   //   name: 'about',
@@ -37,6 +48,7 @@ const routes: Array<RouteRecordRaw> = [
   //   // which is lazy-loaded when the route is visited.
   //   component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
   // },
+  ...moduleRoutes,
 ];
 
 const router = createRouter({
@@ -44,20 +56,28 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore();
-  if (to.matched.some(record => record.meta.requiresAuth) && !userStore.token) {
-    next({ path: '/login' });
-  } else if (to.path === '/login' && userStore.token) {
-    next({ path: '/' });
-  } else {
-    // console.log(to.path); // 此处判断是否需要权限，如果需要权限时需获取用户详情数据
-    next();
-  }
-});
+handleRouterEach(router);
 
-router.afterEach(to => {
-  document.title = to.meta.title;
-});
+// router.beforeEach((to, from, next) => {
+//   console.log('router.beforeEach');
 
-export default router;
+//   const userStore = useUserStore();
+//   if (to.matched.some(record => record.meta.requiresAuth) && !userStore.token) {
+//     next({ path: '/login' });
+//   } else if (to.path === '/login' && userStore.token) {
+//     next({ path: '/' });
+//   } else {
+//     // console.log(to.path); // 此处判断是否需要权限，如果需要权限时需获取用户详情数据
+//     next();
+//   }
+// });
+
+// router.afterEach(to => {
+//   document.title = String(to.meta.title);
+// });
+const getGoBackFun = () => {
+  console.log('getGoBackFun');
+
+  goBackLastPage(router);
+};
+export default { router, getGoBackFun };

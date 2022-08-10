@@ -5,8 +5,9 @@
 
 <script lang='ts'>
 export default {
+  name: 'materialClassifySetSizePage',
   setup() {
-    console.log('setup');
+    // console.log('setup');
   },
 };
 </script>

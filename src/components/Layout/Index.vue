@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <SideBar v-if="displaySider" />
+  <LeftMenu v-if="displaySider" />
   <div class="mp-erp-layout-content-right-wrap">
     <LayoutHeader v-if="displaySider" />
     <div class="mp-erp-layout-page-content-comp-wrap">
@@ -8,27 +8,23 @@
     </div>
   </div>
 </template>
+container
 
 <script lang='ts'>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import SideBar from './SideBar.vue';
+import LeftMenu from './LeftMenu.vue';
 import LayoutHeader from './LayoutHeader.vue';
 
 export default {
   name: 'LayoutComp',
   components: {
-    SideBar,
+    LeftMenu,
     LayoutHeader,
   },
   setup() {
-    // console.log('setup');
     const route = useRoute();
-
     const displaySider = computed(() => route.meta.requiresAuth);
-
-    console.log(route, displaySider);
-
     return {
       displaySider,
     };
@@ -36,4 +32,11 @@ export default {
 };
 </script>
 <style lang='scss'>
+.mp-erp-layout-page-content-comp-wrap{
+  padding: 20px 30px;
+  height: calc(100vh - 51px);
+  max-height: calc(100vh - 51px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 </style>

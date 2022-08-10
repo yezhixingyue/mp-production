@@ -1,0 +1,30 @@
+{
+  "id": "3547397",
+  "name": "生产系统",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "6529907",
+      "name": "搜索",
+      "font_class": "sousuo",
+      "unicode": "e70a",
+      "unicode_decimal": 59146
+    },
+    {
+      "icon_id": "30940637",
+      "name": "上移-copy",
+      "font_class": "shangyi-copy",
+      "unicode": "e76b",
+      "unicode_decimal": 59243
+    },
+    {
+      "icon_id": "30940561",
+      "name": "仓库收货-copy",
+      "font_class": "wuliaocangchu",
+      "unicode": "e76a",
+      "unicode_decimal": 59242
+    }
+  ]
+}

@@ -9,6 +9,14 @@ export default {
   components: {
     LayoutComp,
   },
+  // mounted() {
+  //   window.addEventListener('popstate', () => {
+  //     console.log(document.URL, window.location.href, '11111111111111');
+  //     // eslint-disable-next-line no-restricted-globals
+  //     history.pushState(null, '', document.URL);
+  //   // goBackLastPage();
+  //   });
+  // },
 };
 </script>
 
@@ -25,24 +33,29 @@ html, body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  // text-align: center;
   color: #2c3e50;
   display: flex;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   > .mp-erp-layout-side-bar-comp-wrap {
     flex: none;
-    width: 186px;
+    width: 240px;
+    height: 100vh;
   }
   > .mp-erp-layout-content-right-wrap {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    height: 100vh;
+    background-color: #f5f9fc;
     > .mp-erp-layout-header-comp-wrap {
       flex: none;
-      height: 40px;
+      height: 50px;
       width: 100%;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
+      // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
       border-bottom: 1px solid #d8dce5;
     }
     > .mp-erp-layout-page-content-comp-wrap {
