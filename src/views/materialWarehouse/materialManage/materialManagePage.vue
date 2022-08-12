@@ -42,18 +42,23 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.MaterialManageList" style="width: 100%">
-          <el-table-column prop="操作" label="操作" min-width="238">
-            <template #default="scope">
-              <el-button type="primary" link @click="editMaterial(scope.row)">编辑</el-button>
-              <el-button type="danger" link @click="delMaterial(scope.row.ID)">删除</el-button>
-            </template>
-          </el-table-column>
+
           <el-table-column prop="CategoryName" label="分类" min-width="208"/>
           <el-table-column prop="TypeName" label="类型" min-width="157"/>
-          <el-table-column prop="物料" label="物料" min-width="192">
-            <template #default>
-                物料
+          <el-table-column prop="物料" label="物料"
+          show-overflow-tooltip min-width="192">
+            <template #default="scope">
+              <template v-for="(item, index) in scope.row.MaterialAttributes"
+              :key="item.AttributeID">
+                {{index === 0 ? '' : ' - ' }}
+                <template v-if="item.NumericValue">
+                  <span>{{item.NumericValue}}</span>
+                </template>
+                <template v-else>
+                  <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
               </template>
+            </template>
           </el-table-column>
           <el-table-column prop="可选尺寸" label="可选尺寸" min-width="608">
             <template #default="scope">
@@ -64,9 +69,21 @@
               </template>
             </template>
           </el-table-column>
+          <el-table-column prop="操作" label="操作" min-width="238">
+            <template #default="scope">
+              <el-button type="primary" link @click="editMaterial(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <el-button type="danger" link @click="delMaterial(scope.row.ID)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div>
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getMaterialManageData.Page"
+          :pageSize="Data.getMaterialManageData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange"/>
         </div>
       </MpCardContainer>
     </main>
@@ -78,10 +95,11 @@
     :primaryClick="addMaterialManagePrimaryClick"
     :closeClick="addMaterialManageCloseClick"
     :closed="addMaterialManageClosed"
+    :top="'10vh'"
     >
     <template #default>
       <div class="add-material-manage-dialog">
-        <el-form :model="Data.addMaterialManageForm" label-width="100px">
+        <el-form :model="Data.addMaterialManageForm" label-width="120px">
           <el-form-item :label="`类型：`">
             <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
           </el-form-item>
@@ -117,12 +135,12 @@
           </el-form-item>
         </el-form>
         <div class="material-type">
-          <p>供应物料类型：
+          <p>可选尺寸：
             <el-checkbox
               v-model="Data.checkAll"
               :indeterminate="Data.isIndeterminate"
               @change="handleCheckAllChange"
-            >全部分类</el-checkbox>
+            >所有尺寸</el-checkbox>
           </p>
           <el-checkbox-group
             v-model="Data.addMaterialManageForm.SizeIDS"
@@ -130,9 +148,9 @@
           >
             <el-checkbox
             v-for="city in MaterialWarehouseStore.MaterialTypeSizeAllList"
-            :key="city.SizeID" :label="city.SizeID">{{
-              city.SizeName
-            }}</el-checkbox>
+            :key="city.SizeID" :label="city.SizeID">
+            {{city.SizeName}}{{city.SizeLength}}x{{city.SizeWidth}}mm
+            </el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -149,7 +167,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, getCurrentInstance,
+  ref, reactive, onMounted, watch, computed, ComputedRef,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
@@ -217,6 +235,7 @@ interface DataType {
   addMaterialManageShow:boolean,
   addMaterialManageForm:addMaterialManageFormType,
   editTypeID: null|number,
+  DataTotal: number,
   dialogTypeData:dialogTypeDataType,
   getMaterialManageData: getMaterialManageDataType,
   MaterialManageList:MaterialManageListType[]
@@ -254,6 +273,7 @@ export default {
         CategoryName: '',
         TypeName: '',
       },
+      DataTotal: 0,
       getMaterialManageData: {
         TypeID: '',
         CategoryID: '',
@@ -270,8 +290,6 @@ export default {
       ...MaterialWarehouseStore.MaterialTypeList]);
       // 跳转
     function ToMaterialManageSetuepPage(ID) {
-      console.log(ID);
-
       router.push({
         name: 'materialManageSetuep',
         params: { TypeID: ID },
@@ -283,8 +301,14 @@ export default {
         if (res.data.Status === 1000) {
           // 成功
           Data.MaterialManageList = res.data.Data as MaterialManageListType[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getMaterialManageData.Page === newVal) return;
+      Data.getMaterialManageData.Page = newVal;
+      getMaterialManageList();
     }
     function addMaterialManageCloseClick() {
       // 关闭得时候清空弹框
@@ -526,6 +550,7 @@ export default {
       MaterialWarehouseStore,
       UpdateData,
       twoSelecValue,
+      PaginationChange,
       addMaterialManagePrimaryClick,
       addMaterialManageCloseClick,
       addMaterialManageClosed,
@@ -563,6 +588,23 @@ export default {
       .el-table{
         flex: 1;
         max-height: calc(100% - 21px);
+      }
+    }
+  }
+  .add-material-manage-dialog{
+    .el-form{
+      .el-form-item{
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 370px;
+        .el-input, .el-select{
+          width: 100%;
+        }
+      }
+      >p{
+        margin-bottom:10px;
+        line-height: 30px;
+        color: #F4A307;
       }
     }
   }

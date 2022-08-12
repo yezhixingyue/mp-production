@@ -1,11 +1,9 @@
 <template>
   <div class="material-manage-setuep-page">
     <header>
-      <el-breadcrumb>
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+      <el-breadcrumb >
+        <el-breadcrumb-item :to="{ path: '/materialManage' }">物料管理</el-breadcrumb-item>
+        <el-breadcrumb-item>批量生成</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="Data.dialogShow = true">生成规则</el-button>
@@ -17,9 +15,11 @@
         :data="Data.dimensisnsList" style="width: 100%">
           <el-table-column prop="name" label="操作" min-width="287">
             <template #default="scope">
-              <el-button type="primary" link @click="editDimensions(scope.row)">编辑</el-button>
+              <el-button type="primary" link @click="editDimensions(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
               <el-button type="danger" link
-                @click="delDimensions(scope.row.SizeID)">删除</el-button>
+                @click="delDimensions(scope.row.SizeID)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="SizeName" label="尺寸名称" min-width="315" />
@@ -102,7 +102,7 @@ import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance, computed, watch,
+  ref, reactive, onMounted, computed, watch,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';

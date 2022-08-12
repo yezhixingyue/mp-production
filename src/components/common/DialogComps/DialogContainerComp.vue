@@ -4,7 +4,8 @@
     :width="width"
     custom-class='mp-common-dialog'
     @close="Close"
-    @closed="closed">
+    @closed="closed"
+    :top="top">
     <template #header>
       <slot name="header">
         <p>
@@ -41,6 +42,9 @@ export default {
     },
     width: {
       type: Number,
+    },
+    top: {
+      type: String,
     },
     showClose: {
       type: Boolean,

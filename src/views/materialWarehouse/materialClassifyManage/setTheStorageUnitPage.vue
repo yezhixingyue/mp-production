@@ -2,10 +2,8 @@
   <div class="set-the-storage-unit-page">
     <header>
       <el-breadcrumb >
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
+        <el-breadcrumb-item>出入库单位</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="addStorageUnit">+ 添加单位</el-button>
@@ -17,12 +15,6 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.unitList" style="width: 600px">
-          <el-table-column prop="name" label="操作" min-width="167">
-            <template #default="scope">
-              <el-button type="primary" link @click="editStorageUnit(scope.row)">编辑</el-button>
-              <el-button type="danger" link @click="delStorageUnit(scope.row.UnitID)">删除</el-button>
-            </template>
-          </el-table-column>
           <el-table-column prop="date" label="单位换算" min-width="195">
             <template #default="scope">
               <span>
@@ -37,9 +29,21 @@
                 <span>{{scope.row.UnitPurpose === 1 ? '入库' : '出库'}}</span>
             </template>
           </el-table-column>
+          <el-table-column prop="name" label="操作" min-width="167">
+            <template #default="scope">
+              <el-button type="primary" link @click="editStorageUnit(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <el-button type="danger" link @click="delStorageUnit(scope.row.UnitID)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="bottom-count-box">
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getUnitListData.Page"
+          :pageSize="Data.getUnitListData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange"/>
         </div>
       </MpCardContainer>
     </main>
@@ -101,7 +105,7 @@
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance,
+  ref, reactive, onMounted,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -134,6 +138,7 @@ export default {
         ProportionUp: 0,
         ProportionDown: 0,
       },
+      DataTotal: 0,
       getUnitListData: {
         TypeID: 0,
         Page: 1,
@@ -150,9 +155,14 @@ export default {
       api.getMaterialTypeUnitList(Data.getUnitListData).then(res => {
         if (res.data.Status === 1000) {
           Data.unitList = res.data.Data as never[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
-        console.log(res);
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getUnitListData.Page === newVal) return;
+      Data.getUnitListData.Page = newVal;
+      getUnitList();
     }
     function addUnitCloseClick() {
       Data.addUnitDialogShow = false;
@@ -248,6 +258,7 @@ export default {
       editStorageUnit,
       delStorageUnit,
       setStoreUnit,
+      PaginationChange,
       setStoreUnitCloseClick,
       setStoreUnitPrimaryClick,
       addUnitPrimaryClick,

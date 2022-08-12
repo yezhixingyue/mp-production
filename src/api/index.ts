@@ -16,6 +16,9 @@ const api = {
   getDistrictList(ID:number) {
     return request({ method: 'get', url: `/Api/District/List?parentID=${ID}` });
   },
+  getUploadImage() {
+    return request({ method: 'POST', url: '/Api/Upload/Image' });
+  },
   // 物料仓储 api
   ...MaterialStorage,
 };

@@ -43,6 +43,10 @@ html, body {
     flex: none;
     width: 240px;
     height: 100vh;
+    &.collapse{
+      width: 64px;
+      transition:width 300ms;
+    }
   }
   > .mp-erp-layout-content-right-wrap {
     flex: 1;
@@ -61,6 +65,18 @@ html, body {
     > .mp-erp-layout-page-content-comp-wrap {
       flex: 1;
     }
+  }
+  .el-button{
+    .iconfont{
+      font-size: 12px;
+      // background-color: red;
+      margin-right: 5px;
+    }
+  }
+  .required::before{
+    content: '*';
+    color: #f56c6c;
+    margin-right: 4px;
   }
 }
 

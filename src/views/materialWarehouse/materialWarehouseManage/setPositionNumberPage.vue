@@ -1,6 +1,10 @@
 <template>
   <div class="set-position-number-page">
     <header>
+      <el-breadcrumb>
+        <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
+        <el-breadcrumb-item>设置货位编号</el-breadcrumb-item>
+      </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary"
         :disabled="Data.LockStatus"
@@ -20,10 +24,13 @@
           <el-table-column prop="name" label="操作" min-width="371">
             <template #default="scope">
               <el-button type="primary"
-              :disabled="Data.LockStatus" link @click="editStorehouse(scope.row)">编辑</el-button>
+              :disabled="Data.LockStatus" link @click="editStorehouse(scope.row)">
+              <i class="iconfont icon-bianji"></i>
+              编辑</el-button>
               <el-button type="danger"
               :disabled="Data.LockStatus" link
-                @click="delStorehouse(scope.row.DimensionID)">删除</el-button>
+                @click="delStorehouse(scope.row.DimensionID)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="DimensionUnit" label="维度单位" min-width="399" />
@@ -37,7 +44,7 @@
           <el-table-column prop="Sort" label="显示顺序" min-width="399" />
         </el-table>
         <div>
-          <MpPagination />
+          <!-- <MpPagination /> -->
         </div>
       </MpCardContainer>
     </main>
@@ -84,7 +91,6 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import MpPagination from '@/components/common/MpPagination.vue';
 import {
   ref, reactive, onMounted,
 } from 'vue';
@@ -95,6 +101,7 @@ import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
+import messageBox from '@/assets/js/utils/message';
 
 interface addPalletDimensionsFormType {
   DimensionID: number,
@@ -121,7 +128,7 @@ export default {
   name: 'materialManagePage',
   components: {
     MpCardContainer,
-    MpPagination,
+    // MpPagination,
     DialogContainerComp,
   },
   setup() {
@@ -216,22 +223,26 @@ export default {
       });
     }
     function PalletDimensionsLockCode() {
-      api.getGoodsPositionDimensionLockCode(
-        Data.getPalletDimensionsListData.StorehouseID,
-      ).then((res) => {
-        if (res.data.Status) {
-          getLockStatus();
-        }
-      });
+      messageBox.warnCancelMsgSM('确定要锁定货位编号吗？', () => {
+        api.getGoodsPositionDimensionLockCode(
+          Data.getPalletDimensionsListData.StorehouseID,
+        ).then((res) => {
+          if (res.data.Status) {
+            getLockStatus();
+          }
+        });
+      }, () => undefined);
     }
     function PalletDimensionsUnlockCode() {
-      api.getGoodsPositionDimensionUnlockCode(
-        Data.getPalletDimensionsListData.StorehouseID,
-      ).then((res) => {
-        if (res.data.Status) {
-          getLockStatus();
-        }
-      });
+      messageBox.warnCancelMsgSM('确定要解锁吗？', () => {
+        api.getGoodsPositionDimensionUnlockCode(
+          Data.getPalletDimensionsListData.StorehouseID,
+        ).then((res) => {
+          if (res.data.Status) {
+            getLockStatus();
+          }
+        });
+      }, () => undefined);
     }
 
     onMounted(() => {
@@ -261,6 +272,9 @@ export default {
 @import '@/assets/css/var.scss';
 .set-position-number-page{
   >header{
+    >.el-breadcrumb{
+      margin-bottom: 20px;
+    }
     >.header-top{
       margin-bottom: 20px;
       display: flex;
@@ -289,6 +303,9 @@ export default {
       .el-table{
         flex: 1;
         max-height: calc(100% - 21px);
+        .el-table__inner-wrapper{
+          height: 100%;
+        }
       }
     }
   }

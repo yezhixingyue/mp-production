@@ -1,5 +1,5 @@
 <template>
-<span>
+<!-- <span> -->
   <el-input placeholder="请输入" v-if="!InputContent" v-model.number="inpVal" />
 
   <el-select
@@ -18,7 +18,7 @@
       :value="item">
     </el-option>
   </el-select>
-</span>
+<!-- </span> -->
 </template>
 <script lang='ts'>
 import { computed } from 'vue';

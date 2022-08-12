@@ -1,16 +1,16 @@
 <!-- 侧边栏 -->
 <template>
-  <div class="mp-erp-layout-side-bar-comp-wrap">
+  <div class="mp-erp-layout-side-bar-comp-wrap" :class="{'collapse': isCollapse}">
     <div class="logo">
       <img src="@/assets/images/logo.png" alt="">
     </div>
 
     <el-scrollbar wrap-class="scrollbar-wrapper">
-        <!-- :collapse="isCollapse" -->
       <el-menu
         :default-active="defaultActive"
         :default-openeds='defaultOpeneds'
         :collapse-transition='true'
+        :collapse="isCollapse"
         class="el-menu-vertical-demo">
         <el-sub-menu
           v-for="(routeWrap, index) in menuList"
@@ -18,7 +18,7 @@
           v-show="routeWrap.children.length > 0">
           <template #title>
             <i class="title-icon" :class="routeWrap.meta.icon"></i>
-            <span>{{routeWrap.meta.title}}1</span>
+            <span>{{routeWrap.meta.title}}</span>
           </template>
           <el-menu-item
            :index="`${index + 1}-${i + 1}`"
@@ -26,7 +26,7 @@
             v-for="(route, i) in routeWrap.children"
            :key="route.path"
            :class="{hidden: route.meta.hiddenItem}">
-            <span v-if="route.meta" slot:title>{{route.meta.title}}2</span>
+            <span v-if="route.meta" slot:title>{{route.meta.title}}</span>
           </el-menu-item>
         </el-sub-menu>
       </el-menu>
@@ -93,6 +93,7 @@ export default {
         LayoutStore.setLeftMenuDefaultActive(val);
       },
     });
+    const isCollapse = computed(() => LayoutStore.isCollapse);
     // 导航的点击事件处理函数
     function onMenuItemClick(route:RouteRecordRaw, index:string) {
       if (index) defaultActive.value = index;
@@ -124,9 +125,11 @@ export default {
     // 除去首页或matched.length = 1的除外  获取到该路径的activeName值和对应的路由信息(筛选处理过后)
     function getNormalActiveResult(route) {
       const { matched } = route;
+      console.log(matched, 'matched');
+
       if (matched.length >= 2) {
         const m1 = matched[0];
-        const index1 = moduleRoutes.findIndex(it => it.path === m1.path);
+        const index1 = menuList.findIndex(it => it.path === m1.path);
         if (!index1 && index1 !== 0) return null;
         const m2 = matched[1];
         const index2 = menuList[index1]?.children?.findIndex(it => it.path === m2.path);
@@ -145,9 +148,13 @@ export default {
       const { matched } = route;
       if (matched.length >= 2) {
         const result = getNormalActiveResult(route);
+        console.log(result, 'result');
+
         if (result) {
           const { activeName, targetRoute } = result;
           defaultActive.value = activeName;
+          console.log(targetRoute, 'targetRoute');
+
           if (bool) onMenuItemClick(targetRoute as RouteRecordRaw, activeName);
         }
       } else if (route.path === '/') {
@@ -159,6 +166,9 @@ export default {
     // 动态改变活动菜单索引 ----- 只刷新初始化时执行一次
     watch(curRoute.value, (newRoute) => {
       // 由于监听不到 oldRoute 值所以手动保存 oldRoute 到 LayoutStore 中
+      console.log(newRoute, '1112222');
+      console.log(newRoute.path);
+
       const { oldRoute } = LayoutStore;
       // 借用展开操作符实现去除响应式
       const { ...newRouteData } = newRoute;
@@ -182,6 +192,8 @@ export default {
         // this.$store.commit('layout/filterOtherTabPageNames', names);
         LayoutStore.filterOtherTabPageNames(names);
       }
+      console.log(defaultActive.value || !menuList || menuList.length === 0);
+
       if (defaultActive.value || !menuList || menuList.length === 0) return;
 
       setInitMenuDefaultActive(newRoute, true);
@@ -191,6 +203,7 @@ export default {
     return {
       defaultOpeneds,
       menuList,
+      isCollapse,
       onMenuItemClick,
       defaultActive,
     };
@@ -221,9 +234,7 @@ export default {
     text-align: center;
     line-height: 84px;
     padding: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
   }
   .scrollbar-wrapper{
     font-size: 14px;

@@ -36,7 +36,7 @@ const routes: RouteRecordRaw = {
         pageName: 'materialClassifyRecordPage',
         prevPage: 'materialClassifyManage',
       },
-      component: () => import('@/views/materialWarehouse/materialClassify/materialClassifySetUnitPage.vue'),
+      component: () => import('@/views/materialWarehouse/materialClassifyRecordPage.vue'),
     },
     // 物料管理
     {
@@ -55,7 +55,7 @@ const routes: RouteRecordRaw = {
       path: '/materialManageSetuep',
       name: 'materialManageSetuep',
       meta: {
-        title: '物料管理',
+        title: '批量生成物料',
         requiresAuth: true,
         hideMenu: true,
         pageName: 'materialManageSetuepPage',

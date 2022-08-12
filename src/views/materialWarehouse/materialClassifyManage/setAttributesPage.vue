@@ -2,10 +2,8 @@
   <div class="set-attributes-page">
     <header>
       <el-breadcrumb>
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
+        <el-breadcrumb-item>设置属性</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="Data.dialogShow = true">+ 添加属性</el-button>
@@ -15,20 +13,28 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.AttributesList" style="width: 100%">
-          <el-table-column prop="name" label="操作" min-width="295">
-            <template #default="scope">
-              <el-button type="primary" link @click="editAttributes(scope.row)">编辑</el-button>
-              <el-button type="danger" link
-                @click="delAttributes(scope.row.AttributeID)">删除</el-button>
-            </template>
-          </el-table-column>
           <el-table-column prop="AttributeName" label="名称" min-width="209" />
           <el-table-column prop="AttributeType" label="类型" min-width="218" />
-          <el-table-column prop="RegularQuantity" label="描述" min-width="658" />
+          <el-table-column prop="RegularQuantity" label="描述" min-width="658">
+            {{'==='}}
+          </el-table-column>
           <el-table-column prop="Sort" label="显示顺序" min-width="176" />
+          <el-table-column prop="name" label="操作" min-width="295">
+            <template #default="scope">
+              <el-button type="primary" link @click="editAttributes(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <el-button type="danger" link
+                @click="delAttributes(scope.row.AttributeID)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="bottom-count-box">
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getAttributesData.Page"
+          :pageSize="Data.getAttributesData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange" />
         </div>
       </MpCardContainer>
     </main>
@@ -113,7 +119,7 @@ import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance, nextTick,
+  ref, reactive, onMounted, nextTick,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
@@ -177,6 +183,7 @@ export default {
         ],
 
       },
+      DataTotal: 0,
       getAttributesData: {
         TypeID: 0,
         Page: 1,
@@ -204,8 +211,14 @@ export default {
       api.getMaterialTypeAttributeList(Data.getAttributesData).then(res => {
         if (res.data.Status === 1000) {
           Data.AttributesList = res.data.Data as AttributeType[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getAttributesData.Page === newVal) return;
+      Data.getAttributesData.Page = newVal;
+      getAttributesList();
     }
     function editAttributes(AttributesItem:AttributeType) {
       Data.addAttributesForm = AttributesItem;
@@ -280,6 +293,7 @@ export default {
       closeClick,
       editAttributes,
       delAttributes,
+      PaginationChange,
     };
   },
 

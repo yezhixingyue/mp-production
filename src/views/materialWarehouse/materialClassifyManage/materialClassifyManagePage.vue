@@ -10,6 +10,27 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.tableData" style="width: 100%">
+
+          <el-table-column prop="CategoryName" label="分类"
+          show-overflow-tooltip min-width="123" />
+          <el-table-column prop="TypeName" label="类型"
+          show-overflow-tooltip min-width="98" />
+          <el-table-column prop="TypeCode" label="编码"
+          show-overflow-tooltip min-width="81" />
+          <el-table-column prop="AttributeDescribe"
+          show-overflow-tooltip label="属性" min-width="150" />
+          <el-table-column prop="BrandDescribe" label="品牌属性"
+          show-overflow-tooltip min-width="83" />
+          <el-table-column prop="SizeDescribe" label="尺寸规格"
+          show-overflow-tooltip min-width="83" />
+          <el-table-column prop="OutInUnitDescribe" label="出入库单位"
+          show-overflow-tooltip min-width="378" />
+          <el-table-column prop="name" label=""
+          show-overflow-tooltip min-width="98">
+            <template #default="scope">
+              {{scope.IsStock?'非库存物料':''}}
+            </template>
+          </el-table-column>
           <el-table-column prop="name" label="操作" min-width="428">
             <template #default="scope">
               <el-button type="primary" link
@@ -26,19 +47,14 @@
               @click="delMaterialClassify(scope.row.TypeID)">删除</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="CategoryName" label="分类" min-width="123" />
-          <el-table-column prop="TypeName" label="类型" min-width="98" />
-          <el-table-column prop="TypeCode" label="编码" min-width="81" />
-          <el-table-column prop="date" label="属性" min-width="150" />
-          <el-table-column prop="name" label="品牌属性" min-width="83" />
-          <el-table-column prop="name" label="尺寸规格" min-width="83" />
-          <el-table-column prop="date" label="出入库单位" min-width="378" />
-          <el-table-column prop="name" label="" min-width="98" />
-
           <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
         <div>
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getMaterialTypeData.Page"
+          :pageSize="Data.getMaterialTypeData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange"/>
         </div>
       </MpCardContainer>
     </main>
@@ -55,7 +71,7 @@
         <el-form :model="Data.materialClassifyDialogForm">
           <el-form-item label="分类：">
             <el-select v-model="Data.materialClassifyDialogForm.CategoryID"
-             placeholder="Select">
+             placeholder="请选择分类">
               <el-option
                 v-for="item in MaterialCategoryStore.CategoryList"
                 :key="item.CategoryID"
@@ -111,7 +127,7 @@
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance,
+  ref, reactive, onMounted,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -140,6 +156,11 @@ interface tableItemType {
   TypeID: number|null,
   TypeName: string
 }
+interface getMaterialTypeDataType {
+  Page: number,
+  KeyWords: string,
+  PageSize: number|string,
+}
 interface dataType {
   // materialClassifyTitle:string,
   materialClassifyDialogShow:boolean,
@@ -149,6 +170,8 @@ interface dataType {
     TypeID: number
     AttributeID: number
   }
+  DataTotal: number
+  getMaterialTypeData: getMaterialTypeDataType,
   brandTitle:string,
   brandShow:boolean,
 }
@@ -183,15 +206,27 @@ export default {
       },
       brandTitle: '品牌属性',
       brandShow: false,
+      DataTotal: 0,
+      getMaterialTypeData: {
+        Page: 1,
+        KeyWords: '',
+        PageSize: 20,
+      },
     });
     // 获取物料类型列表
     function getMaterialClassifyManage() {
-      api.getMaterialTypeList({}).then(res => {
+      api.getMaterialTypeList(Data.getMaterialTypeData).then(res => {
         console.log(res);
         if (res.data.Status === 1000) {
           Data.tableData = res.data.Data as tableItemType[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getMaterialTypeData.Page === newVal) return;
+      Data.getMaterialTypeData.Page = newVal;
+      getMaterialClassifyManage();
     }
     function materialClassifyCloseClick() {
       Data.materialClassifyDialogForm = {
@@ -291,6 +326,7 @@ export default {
               // 设置成功
               const cback = () => {
                 brandCloseClick();
+                getMaterialClassifyManage();
               };
               // 成功
               messageBox.successSingle('保存成功', cback, cback);
@@ -325,6 +361,7 @@ export default {
       h,
       Data,
       MaterialCategoryStore,
+      PaginationChange,
       ToMaterialClassifyManageList,
       ToSetTheStorageUnitPage,
       ToSetAttributesPage,

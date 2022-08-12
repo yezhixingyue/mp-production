@@ -9,10 +9,11 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
   id: 'layout',
   state: () => ({
     editableTabs: [],
-    editableTabsValue: '1',
+    editableTabsValue: '',
     leftMenuDefaultActive: '',
     otherTabPageNames: [],
     oldRoute: undefined,
+    isCollapse: false,
   }),
   // 也可以定义为
   // state: () => ({ count: 0 })

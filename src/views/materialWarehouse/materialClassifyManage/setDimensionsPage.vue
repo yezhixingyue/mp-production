@@ -2,10 +2,8 @@
   <div class="set-dimensions-page">
     <header>
       <el-breadcrumb>
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
+        <el-breadcrumb-item>尺寸规格</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="Data.dialogShow = true">+ 添加尺寸</el-button>
@@ -15,21 +13,43 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.dimensisnsList" style="width: 100%">
-          <el-table-column prop="name" label="操作" min-width="287">
+
+          <el-table-column prop="SizeName" label="尺寸名称" min-width="315">
             <template #default="scope">
-              <el-button type="primary" link @click="editDimensions(scope.row)">编辑</el-button>
-              <el-button type="danger" link
-                @click="delDimensions(scope.row.SizeID)">删除</el-button>
+              {{scope.row.SizeName}}
             </template>
           </el-table-column>
-          <el-table-column prop="SizeName" label="尺寸名称" min-width="315" />
-          <el-table-column prop="SizeCode" label="尺寸编码" min-width="315" />
-          <el-table-column prop="SizeLength" label="长度" min-width="287" />
-          <el-table-column prop="SizeWidth" label="宽度" min-width="287" />
-
+          <el-table-column prop="SizeCode" label="尺寸编码" min-width="315">
+            <template #default="scope">
+              {{scope.row.SizeCode}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="SizeLength" label="长度" min-width="287">
+            <template #default="scope">
+              {{scope.row.SizeLength}}mm{{scope.row.SizeLengthIsChange?'（长度可加工）':''}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="SizeWidth" label="宽度" min-width="287">
+            <template #default="scope">
+              {{scope.row.SizeWidth}}mm{{scope.row.SizeWidthIsChange?'（宽度可加工）':''}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="操作" min-width="287">
+            <template #default="scope">
+              <el-button type="primary" link @click="editDimensions(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <el-button type="danger" link
+                @click="delDimensions(scope.row.SizeID)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="bottom-count-box">
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getDimensisnsData.Page"
+          :pageSize="Data.getDimensisnsData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange" />
         </div>
       </MpCardContainer>
     </main>
@@ -81,7 +101,7 @@ import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance,
+  ref, reactive, onMounted,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
@@ -112,6 +132,7 @@ export default {
         SizeWidthIsChange: false,
       },
       dimensisnsList: [],
+      DataTotal: 0,
       getDimensisnsData: {
         TypeID: 0,
         Page: 0,
@@ -135,8 +156,14 @@ export default {
       api.getMaterialTypeSizeList(Data.getDimensisnsData).then(res => {
         if (res.data.Status === 1000) {
           Data.dimensisnsList = res.data.Data as never[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getDimensisnsData.Page === newVal) return;
+      Data.getDimensisnsData.Page = newVal;
+      getDimensisnsList();
     }
     function editDimensions(item) {
       Data.dialogShow = true;
@@ -186,6 +213,7 @@ export default {
       delDimensions,
       primaryClick,
       closeClick,
+      PaginationChange,
     };
   },
 

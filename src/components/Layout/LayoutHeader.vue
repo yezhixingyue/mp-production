@@ -1,7 +1,9 @@
 <template>
   <div class="mp-erp-layout-header-comp-wrap">
     <div class="open-close-left-menu">
-      <i>q</i>
+      <i :class="LayoutStore.isCollapse?'iconfont icon-zhankai':'iconfont icon-shouqi'"
+      @click="LayoutStore.isCollapse = !LayoutStore.isCollapse"
+      @keyup="() => {}"></i>
     </div>
 
     <div class="centre">
@@ -30,7 +32,7 @@
         v-if="LayoutStore.editableTabs.length > 1"
       >
         <div class="clear-box">
-          <i class="el-icon-close">x</i>
+          <i class="iconfont icon-guanbi"></i>
         </div>
       </el-tooltip>
     </div>
@@ -137,12 +139,14 @@ export default {
   overflow: hidden;
   >.open-close-left-menu{
     i{
+      cursor: pointer;
       display: inline-block;
-      background-color:red;
+      color: #428DFA;
       width:18px;
       height:18px;
       margin-right: 20px;
       margin-left: 13px;
+      font-size: 18px;
     }
   }
   .centre{

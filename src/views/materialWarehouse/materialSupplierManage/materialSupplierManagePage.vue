@@ -19,21 +19,43 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.MaterialSupplierList" style="width: 100%">
-          <el-table-column prop="name" label="操作" min-width="241">
-            <template #default="scope">
-              <el-button type="primary" link @click="editMaterialSupplier(scope.row)">编辑</el-button>
-              <el-button type="danger" link
-                @click="delMaterialSupplier(scope.row.SupplierID)">删除</el-button>
-            </template>
-          </el-table-column>
           <el-table-column prop="SupplierName" label="供应商名称" min-width="233" />
           <el-table-column prop="Linkman" label="联系人" min-width="162" />
           <el-table-column prop="Linkman" label="电话" min-width="209" />
-          <el-table-column prop="MaterialTypeIDS" label="供应物料类型" min-width="178"/>
-          <el-table-column prop="Address" label="地址" min-width="551" />
+          <el-table-column prop="MaterialTypeIDS" label="供应物料类型"
+          show-overflow-tooltip min-width="178">
+            <template #default="scope">
+              <span v-if="scope.row.MaterialTypeIDS.length
+              === MaterialWarehouseStore.CategoryList.length">
+              全部分类
+              </span>
+              <template v-else>
+                <template v-if="MaterialWarehouseStore.CategoryList.length">
+                  <span v-for="(item, index) in scope.row.MaterialTypeIDS" :key="item">
+                    {{index === 0 ? '' : '、' + index}}{{useIdGetMaterialTypeName(item)}}
+                  </span>
+                </template>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="Address" label="地址"
+          show-overflow-tooltip min-width="551" />
+          <el-table-column prop="name" label="操作" min-width="241">
+            <template #default="scope">
+              <el-button type="primary" link @click="editMaterialSupplier(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <el-button type="danger" link
+                @click="delMaterialSupplier(scope.row.SupplierID)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div>
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getMaterialSupplierData.Page"
+          :pageSize="Data.getMaterialSupplierData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange"/>
         </div>
       </MpCardContainer>
     </main>
@@ -47,10 +69,10 @@
     <template #default>
       <div class="add-material-supplier-dialog">
         <el-form :model="Data.MaterialSupplierForm" label-width="112px">
-          <el-form-item label="供应商名称：">
+          <el-form-item label="供应商名称：" required>
             <el-input v-model="Data.MaterialSupplierForm.SupplierName" />
           </el-form-item>
-          <el-form-item label="所在城市：">
+          <el-form-item label="所在城市：" required>
             <TowLevelSelect
             :level1Options='Data.ProvinceList'
             :level2Options='Data.CityList'
@@ -62,18 +84,18 @@
             @change="twoSelectChange"
             ></TowLevelSelect>
           </el-form-item>
-          <el-form-item label="详细地址：">
+          <el-form-item label="详细地址：" required>
             <el-input v-model="Data.MaterialSupplierForm.Address" />
           </el-form-item>
-          <el-form-item label="联系人：">
+          <el-form-item label="联系人：" required>
             <el-input v-model="Data.MaterialSupplierForm.Linkman" />
           </el-form-item>
-          <el-form-item label="联系电话：">
+          <el-form-item label="联系电话：" required>
             <el-input v-model="Data.MaterialSupplierForm.ContactWay" />
           </el-form-item>
         </el-form>
         <div class="material-type">
-          <p>供应物料类型：
+          <p class="required">供应物料类型：
             <el-checkbox
               v-model="Data.checkAll"
               :indeterminate="Data.isIndeterminate"
@@ -140,7 +162,7 @@ interface DataType {
   isIndeterminate:boolean,
   ProvinceList:DistrictType[],
   CityList:DistrictType[],
-  // addMaterialSupplierTitle: string,
+  DataTotal: number,
   addMaterialSupplierShow: boolean,
   MaterialSupplierForm:MaterialSupplierFormType,
   getMaterialSupplierData:getMaterialSupplierDataType,
@@ -162,7 +184,7 @@ export default {
     const Data:DataType = reactive({
       checkAll: false,
       isIndeterminate: false,
-      // addMaterialSupplierTitle: '添加供应商',
+      DataTotal: 0,
       addMaterialSupplierShow: false,
       // 省级列表
       ProvinceList: [],
@@ -188,50 +210,25 @@ export default {
       level1Val: Data.MaterialSupplierForm.ProvinceID,
       level2Val: Data.MaterialSupplierForm.CityID,
     }));
-    const tableData = [
-      {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-08',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-06',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-      {
-        date: '2016-05-07',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ];
-
+    const useIdGetMaterialTypeName = (ID) => {
+      // MaterialWarehouseStore.MaterialTypeList.find;
+      // console.log(IDS, 'useIdGetMaterialTypeName');
+      console.log(MaterialWarehouseStore.CategoryList, 'useIdGetMaterialTypeName');
+      const temp = MaterialWarehouseStore.CategoryList.find(res => res.CategoryID === ID);
+      return temp?.CategoryName || '';
+    };
     function getMaterialSupplierList() {
       api.getMaterialSupplierList(Data.getMaterialSupplierData).then(res => {
         if (res.data.Status === 1000) {
           Data.MaterialSupplierList = res.data.Data as MaterialSupplierFormType[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getMaterialSupplierData.Page === newVal) return;
+      Data.getMaterialSupplierData.Page = newVal;
+      getMaterialSupplierList();
     }
     function clearCondition() {
       Data.getMaterialSupplierData = {
@@ -282,6 +279,22 @@ export default {
     function addMaterialSupplierPrimaryClick() {
       if (!Data.MaterialSupplierForm.SupplierName) {
         // 报错
+        messageBox.failSingleError('保存失败', '请输入供应商名称', () => null, () => null);
+      } else if (!Data.MaterialSupplierForm.ProvinceID || !Data.MaterialSupplierForm.CityID) {
+        // 报错
+        messageBox.failSingleError('保存失败', '请选择省市', () => null, () => null);
+      } else if (!Data.MaterialSupplierForm.Address) {
+        // 报错
+        messageBox.failSingleError('保存失败', '请输入详细地址', () => null, () => null);
+      } else if (!Data.MaterialSupplierForm.Linkman) {
+        // 报错
+        messageBox.failSingleError('保存失败', '请输入联系人', () => null, () => null);
+      } else if (!Data.MaterialSupplierForm.ContactWay) {
+        // 报错
+        messageBox.failSingleError('保存失败', '请输入联系电话', () => null, () => null);
+      } else if (!Data.MaterialSupplierForm.MaterialTypeIDS.length) {
+        // 报错
+        messageBox.failSingleError('保存失败', '请选择供应物料类型', () => null, () => null);
       } else {
         api.getMaterialSupplierSave(Data.MaterialSupplierForm).then(res => {
           if (res.data.Status === 1000) {
@@ -332,12 +345,13 @@ export default {
     });
     return {
       h,
-      tableData,
       Data,
       twoSelecValue,
       MaterialWarehouseStore,
+      useIdGetMaterialTypeName,
       clearCondition,
       getMaterialSupplierList,
+      PaginationChange,
       twoSelectChange,
       addMaterialSupplier,
       handleCheckAllChange,

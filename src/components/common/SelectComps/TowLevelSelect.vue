@@ -80,6 +80,7 @@ export default {
           level1Val: newVal,
           level2Val: props.isAssociated ? '' : level2.value,
         });
+        context.emit('requestFunc');
       },
     });
 
@@ -92,6 +93,7 @@ export default {
           level1Val: level1.value,
           level2Val: newVal,
         });
+        context.emit('requestFunc');
       },
     });
 

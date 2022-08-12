@@ -2,9 +2,8 @@
   <div class="material-classify-manage-list-page">
     <header>
       <el-breadcrumb >
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
+        <el-breadcrumb-item>管理物料分类</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="dialog = true">+ 添加物料分类</el-button>
@@ -17,16 +16,19 @@
           <el-table-column prop="CategoryName" label="分类" min-width="288" />
           <el-table-column prop="name" label="操作" min-width="288">
             <template #default="scope">
-              <el-button type="primary" link @click="editCategory(scope.row)">编辑</el-button>
+              <el-button type="primary" link @click="editCategory(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
               <el-button type="danger" link
-              @click="delCategory(scope.row.CategoryID)">删除</el-button>
+              @click="delCategory(scope.row.CategoryID)">
+              <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
 
           <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
         <div class="bottom-count-box">
-          <MpPagination />
+          <MpPagination
+          :total="Data.DataTotal"/>
         </div>
       </MpCardContainer>
     </main>
@@ -51,7 +53,7 @@ import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance,
+  ref, reactive, onMounted,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
@@ -63,6 +65,7 @@ interface tableItem {
 }
 interface dataType {
   tableData:tableItem[]
+  DataTotal:number,
   classifyInfo:tableItem
 }
 export default {
@@ -78,6 +81,7 @@ export default {
 
     const Data:dataType = reactive({
       tableData: [],
+      DataTotal: 0,
       classifyInfo: {
         CategoryID: undefined,
         CategoryName: '',
@@ -85,11 +89,10 @@ export default {
     });
 
     function getMaterialCategoryList() {
-      api.getMaterialCategoryList({
-        PageSize: 99999,
-      }).then(res => {
+      api.getMaterialCategoryList({}).then(res => {
         if (res.data.Status === 1000) {
           Data.tableData = res.data.Data as tableItem[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
     }
@@ -197,6 +200,9 @@ export default {
       .el-table{
         flex: 1;
         max-height: calc(100% - 21px);
+      }
+      .bottom-count-box{
+        width: 600px;
       }
     }
   }

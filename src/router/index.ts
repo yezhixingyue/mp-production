@@ -77,6 +77,7 @@ handleRouterEach(router);
 // });
 const getGoBackFun = () => {
   console.log('getGoBackFun');
+  console.log(router, 'getGoBackFungetGoBackFungetGoBackFun');
 
   goBackLastPage(router);
 };

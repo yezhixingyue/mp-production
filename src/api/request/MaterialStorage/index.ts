@@ -95,6 +95,9 @@ const api = {
   getMaterialSupplierList(data) { // POST /Api/MaterialSupplier/List  物料供应商列表
     return request({ method: 'POST', url: '/Api/MaterialSupplier/List', data });
   },
+  getMaterialSupplierSelect() { // POST /Api/MaterialSupplier/Select  物料供应商选择项
+    return request({ method: 'POST', url: '/Api/MaterialSupplier/Select' });
+  },
   getMaterialSupplierRemove(ID) { // POST /Api/MaterialSupplier/Remove  物料供应商列表
     return request({ method: 'DELETE', url: `/Api/MaterialSupplier/Remove?id=${ID}` });
   },
@@ -129,6 +132,11 @@ const api = {
   getGoodsPositionDimensionUnlockCode(storehouseID) {
     // GET /Api/GoodsPositionDimension/UnlockCode  锁定货位编号
     return request({ method: 'GET', url: `/Api/GoodsPositionDimension/UnlockCode?storehouseID=${storehouseID}` });
+  },
+  // 出入库记录  --------------------
+  getStockLogList(data) {
+    // POST /Api/StockLog/List  锁定货位编号
+    return request({ method: 'POST', url: '/Api/StockLog/List', data });
   },
 };
 export default api;
