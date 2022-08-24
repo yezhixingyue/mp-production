@@ -196,12 +196,18 @@ export const handleRouterEach = (router:Router) => {
    * @return {*}
    */
 
-  window.addEventListener('popstate', () => {
-    return false;
+  window.addEventListener('popstate', (e) => {
+    // eslint-disable-next-line no-restricted-globals
+    // history.pushState(null, '', '/');
     let url = '/';
+    console.log(router.currentRoute.value.fullPath, 'router.currentRoute.value.fullPath----', window.location.pathname, 'e:', e.state.forward);
     if (router && router.currentRoute.value && router.currentRoute.value.fullPath) {
       url = `${router.currentRoute.value.fullPath}`;
     }
+    if (e.state.forward) {
+      url = e.state.forward;
+    }
+    console.log(url, router, router.currentRoute.value.fullPath, 'urlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurl');
     // eslint-disable-next-line no-restricted-globals
     history.pushState(null, '', url);
     goBackLastPage(router);
