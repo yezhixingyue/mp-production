@@ -3,7 +3,7 @@
     <header>
       <el-breadcrumb>
         <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
-        <el-breadcrumb-item>设置货位编号</el-breadcrumb-item>
+        <el-breadcrumb-item>设置货位编号：{{Data.StorehouseName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary"
@@ -21,18 +21,6 @@
         </p>
         <el-table border fit
         :data="Data.PalletDimensionsList" style="width: 100%">
-          <el-table-column prop="name" label="操作" min-width="371">
-            <template #default="scope">
-              <el-button type="primary"
-              :disabled="Data.LockStatus" link @click="editStorehouse(scope.row)">
-              <i class="iconfont icon-bianji"></i>
-              编辑</el-button>
-              <el-button type="danger"
-              :disabled="Data.LockStatus" link
-                @click="delStorehouse(scope.row.DimensionID)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
-            </template>
-          </el-table-column>
           <el-table-column prop="DimensionUnit" label="维度单位" min-width="399" />
           <el-table-column prop="StorehouseName" label="起止编号" min-width="399">
             <template #default="scope">
@@ -42,6 +30,18 @@
             </template>
           </el-table-column>
           <el-table-column prop="Sort" label="显示顺序" min-width="399" />
+          <el-table-column prop="name" label="操作" min-width="371">
+            <template #default="scope">
+              <el-button type="primary"
+              :disabled="Data.LockStatus" link @click="editStorehouse(scope.row)">
+              <i class="iconfont icon-bianji"></i>
+              编辑</el-button>
+              <el-button type="danger"
+              :disabled="Data.LockStatus" link
+                @click="delStorehouse(scope.row)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div>
           <!-- <MpPagination /> -->
@@ -62,16 +62,18 @@
       <div class="add-pallet-dimensions-dialog">
         <el-form :model="Data.addPalletDimensionsForm" label-width="112px">
           <el-form-item label="维度单位：">
-            <el-input v-model="Data.addPalletDimensionsForm.DimensionUnit" />
+            <el-input v-model="Data.addPalletDimensionsForm.DimensionUnit" style="width:435px"/>
           </el-form-item>
           <el-form-item label="起止编号：">
             <el-input v-model="Data.addPalletDimensionsForm.StartCode" />
-            <span>至</span>
+            <span class="to">至</span>
             <el-input v-model="Data.addPalletDimensionsForm.EndCode" />
           </el-form-item>
           <el-form-item label="显示顺序：">
             <el-input v-model.number="Data.addPalletDimensionsForm.Sort" />
+            <span class="span">数字越小显示越靠前</span>
           </el-form-item>
+          <p>起止编号为 1 到 4位的字母或数字组成，开始和结束编号组成形式必须一致。 例如：001 至 179，A001 至 E135，</p>
         </el-form>
       </div>
     </template>
@@ -92,9 +94,10 @@
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import {
-  ref, reactive, onMounted,
+  ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
+import { useCommonStore } from '@/store/modules/common';
 
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 // import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
@@ -117,6 +120,7 @@ interface getPalletDimensionsListDataType {
 interface DataType {
   LookImgShow: boolean,
   SeeimgUrl: string,
+  StorehouseName: string,
   LockStatus: boolean,
   addPalletDimensionsTitle: string,
   addPalletDimensionsShow: boolean,
@@ -125,7 +129,7 @@ interface DataType {
   PalletDimensionsList:addPalletDimensionsFormType[]
 }
 export default {
-  name: 'materialManagePage',
+  name: 'setPositionNumberPage',
   components: {
     MpCardContainer,
     // MpPagination,
@@ -134,6 +138,7 @@ export default {
   setup() {
     const h = ref(0);
     // const { getDistrictByParentID } = getDistrictMixins();
+    const CommonStore = useCommonStore();
     const route = useRoute();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -141,6 +146,7 @@ export default {
       SeeimgUrl: '',
       LockStatus: false,
       addPalletDimensionsTitle: '添加货位维度',
+      StorehouseName: '',
       addPalletDimensionsShow: false,
       addPalletDimensionsForm: {
         DimensionID: 0,
@@ -177,41 +183,42 @@ export default {
         EndCode: '',
         Sort: 0,
       };
-      console.log('aaa');
     }
     function editStorehouse(item) {
       Data.addPalletDimensionsForm = item;
       Data.addPalletDimensionsShow = true;
-      console.log('aaa');
     }
-    function delStorehouse(dimensionID) {
-      api.getGoodsPositionDimensionRemove(dimensionID).then(res => {
-        if (res.data.Status === 1000) {
+    function delStorehouse(item) {
+      messageBox.warnCancelBox('确定要删除此仓库吗？', `${item.StartCode}-${item.EndCode}${item.DimensionUnit}`, () => {
+        api.getGoodsPositionDimensionRemove(item.DimensionID).then(res => {
+          if (res.data.Status === 1000) {
           // 删除成功
-          getPalletDimensionsList();
-        }
-      });
+            getPalletDimensionsList();
+          }
+        });
+      }, () => undefined);
     }
     function addPalletDimensionsPrimaryClick() {
       if (!Data.addPalletDimensionsForm.DimensionUnit) {
+        messageBox.failSingleError('保存失败', '请输入维度单位', () => null, () => null);
         // 报错
-      }
-      api.getGoodsPositionDimensionSave(Data.addPalletDimensionsForm).then(res => {
-        if (res.data.Status === 1000) {
+      } else if (!Data.addPalletDimensionsForm.StartCode || !Data.addPalletDimensionsForm.EndCode) {
+        messageBox.failSingleError('保存失败', '请输入起止编号', () => null, () => null);
+      } else {
+        // messageBox.failSingleError('保存失败', '请输入起止编号', () => null, () => null);
+        api.getGoodsPositionDimensionSave(Data.addPalletDimensionsForm).then(res => {
+          if (res.data.Status === 1000) {
           // 保存成功
-          getPalletDimensionsList();
-          addPalletDimensionsCloseClick();
-        }
-      });
-      console.log('aaa');
+            getPalletDimensionsList();
+            addPalletDimensionsCloseClick();
+          }
+        });
+      }
     }
     // 添加供应商
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.set-position-number-page > header', 20 + 32 + 20);
-      window.onresize = () => {
-        h.value = getHeight('.set-position-number-page > header', 20 + 32 + 20);
-      };
     }
     function getLockStatus() {
       api.getGoodsPositionDimensionLockStatus(
@@ -244,8 +251,14 @@ export default {
         });
       }, () => undefined);
     }
-
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
+    onActivated(() => {
+      setHeight();
+    });
     onMounted(() => {
+      Data.StorehouseName = route.params.StorehouseName as string;
       Data.getPalletDimensionsListData.StorehouseID = Number(route.params.StorehouseID);
       Data.addPalletDimensionsForm.StorehouseID = Number(route.params.StorehouseID);
       getLockStatus();
@@ -312,6 +325,24 @@ export default {
   >footer{
     padding-top: 20px;
     text-align: center;
+  }
+  .add-pallet-dimensions-dialog{
+    .el-form{
+      .el-input{
+        width: 200px;
+      }
+      .to{
+        margin: 0 10px;
+      }
+      .span{
+        margin-left: 10px;
+        color: #F4A307;
+      }
+      p{
+        color: #F4A307;
+        padding: 0 30px;
+      }
+    }
   }
 }
 </style>

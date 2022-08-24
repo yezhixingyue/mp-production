@@ -3,7 +3,7 @@
     <header>
       <el-breadcrumb>
         <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
-        <el-breadcrumb-item>尺寸规格</el-breadcrumb-item>
+        <el-breadcrumb-item>尺寸规格：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="Data.dialogShow = true">+ 添加尺寸</el-button>
@@ -39,7 +39,7 @@
               <el-button type="primary" link @click="editDimensions(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
               <el-button type="danger" link
-                @click="delDimensions(scope.row.SizeID)">
+                @click="delDimensions(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
@@ -101,15 +101,16 @@ import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted,
+  ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { useCommonStore } from '@/store/modules/common';
 
 export default {
-  name: 'setTheStorageUnitPage',
+  name: 'setDimensionsPage',
   components: {
     MpCardContainer,
     MpPagination,
@@ -117,8 +118,11 @@ export default {
   },
   setup() {
     const h = ref(0);
+    const CommonStore = useCommonStore();
     const route = useRoute();
     const Data = reactive({
+      CategoryName: '',
+      TypeName: '',
       dialogTitle: '添加属性',
       dialogShow: false,
       addDimensionsForm: {
@@ -169,9 +173,9 @@ export default {
       Data.dialogShow = true;
       Data.addDimensionsForm = item;
     }
-    function delDimensions(ID) {
-      messageBox.warnCancelMsgSM('确定要删除此尺寸吗？', () => {
-        api.getMaterialTypeSizeRemove(ID).then(res => {
+    function delDimensions(item) {
+      messageBox.warnCancelBox('确定要删除此尺寸吗？', `${item.SizeName}`, () => {
+        api.getMaterialTypeSizeRemove(item.SizeID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getDimensisnsList();
@@ -180,27 +184,41 @@ export default {
       }, () => undefined);
     }
     function primaryClick() {
-      api.getMaterialTypeSizeSave(Data.addDimensionsForm).then(res => {
-        if (res.data.Status === 1000) {
-          // 成功
-          const cb = () => {
-            closeClick();
-            getDimensisnsList();
-          };
+      if (!Data.addDimensionsForm.SizeName) {
+        messageBox.failSingleError('保存失败', '请输入尺寸名称', () => null, () => null);
+      } else if (!Data.addDimensionsForm.SizeCode) {
+        messageBox.failSingleError('保存失败', '请输入尺寸编码', () => null, () => null);
+      } else if (!Data.addDimensionsForm.SizeLength) {
+        messageBox.failSingleError('保存失败', '请输入尺寸长度', () => null, () => null);
+      } else if (!Data.addDimensionsForm.SizeWidth) {
+        messageBox.failSingleError('保存失败', '请输入尺寸宽度', () => null, () => null);
+      } else {
+        api.getMaterialTypeSizeSave(Data.addDimensionsForm).then(res => {
+          if (res.data.Status === 1000) {
             // 成功
-          messageBox.successSingle(`${Data.addDimensionsForm.SizeID ? '修改' : '添加'}成功`, cb, cb);
-        }
-        console.log(res);
-      });
+            const cb = () => {
+              closeClick();
+              getDimensisnsList();
+            };
+              // 成功
+            messageBox.successSingle(`${Data.addDimensionsForm.SizeID ? '修改' : '添加'}成功`, cb, cb);
+          }
+        });
+      }
     }
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.set-dimensions-page header', 72);
-      window.onresize = () => {
-        h.value = getHeight('.set-dimensions-page header', 72);
-      };
     }
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
+    onActivated(() => {
+      setHeight();
+    });
     onMounted(() => {
+      Data.CategoryName = route.params.CategoryName as string;
+      Data.TypeName = route.params.TypeName as string;
       Data.getDimensisnsData.TypeID = Number(route.params.TypeID);
       Data.addDimensionsForm.TypeID = Number(route.params.TypeID);
       setHeight();

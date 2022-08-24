@@ -73,7 +73,6 @@ export default {
       set(value) {
         if (value === props.visible) return;
         context.emit('update:visible', props.visible);
-        console.log(props.visible);
       },
     });
     function PrimaryClick() {

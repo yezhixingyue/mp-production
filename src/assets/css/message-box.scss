@@ -373,6 +373,7 @@
             padding: 1px 50px;
             > span {
               font-size: 14px;
+              position: relative;
               &::before {
                 vertical-align: -35%;
                 margin-right: 58px;
@@ -383,8 +384,8 @@
                 color: $--color-text-table-pending;
                 vertical-align: -27%;
                 position: absolute;
-                left: 103px;
-                top: 10px;
+                left: 50px;
+                top: -3px;
               }
             }
         }

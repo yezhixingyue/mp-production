@@ -5,7 +5,7 @@
    default-first-option
    :allow-create='Allow'
    :filterable='Allow'
-   v-if="options.length"
+   v-if="options && options.length"
    class="mp-erp-option-type-element-display-select-comp">
     <el-option
       v-for="item in options"
@@ -14,7 +14,7 @@
       :value="item.SelectID">
     </el-option>
   </el-select>
-  <el-input placeholder="请输入" v-else v-model.number="checkVal" />
+  <el-input placeholder="请输入" v-else v-model="checkVal" />
 </template>
 
 <script lang='ts'>
@@ -30,7 +30,7 @@ export default {
       type: String,
       default: '请选择',
     },
-    PropValue: { },
+    PropValue: {},
     options: {
       type: Array,
       default: () => [],

@@ -11,6 +11,7 @@
         @change="lv1SelectChange"
         :defaultProps="defaultProps"
         :showLine="showLine"
+        :width="width"
       ></OneLevelSelect>
     </li>
     <li class="select-box first-select-box ">
@@ -20,6 +21,7 @@
         @change="lv2SelectChange"
         :defaultProps="lv2DefaultProps || defaultProps"
         :showLine="showLine"
+        :width="width"
       ></OneLevelSelect>
     </li>
   </ul>
@@ -63,6 +65,10 @@ export default {
     showLine: {
       type: Boolean,
       default: false,
+    },
+    width: {
+      type: Number,
+      default: 100,
     },
   },
   components: {

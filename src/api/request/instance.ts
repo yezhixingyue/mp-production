@@ -17,26 +17,32 @@ const instance = new Axios({
 
       if (!token && !apiListByNotNeedToken.includes(curConfig.url || '')) {
         router.replace('/login');
+
         throw new Error('请重新登录');
       }
       curConfig.headers = {
         Authorization: `Bearer ${token}`,
       };
-      console.log(config);
 
       return config;
     },
     // 响应拦截器
     responseInterceptors: (result:AxiosResponse) => {
-      console.log(result, 'result');
-
+      const router = useRouter();
+      const userStore = useUserStore();
       if (result.data.Status !== 1000) {
-        alert(result.data.Message);
+        if (result.data.Status === 8037) {
+          messageBox.failSingle('请重新登录', () => {
+            userStore.token = '';
+            return router.replace('/login');
+          });
+        } else {
+          messageBox.failSingleError('操作失败', result.data.Message, () => null);
+        }
       }
       return result;
     },
     responseInterceptorsCatch: (error:any) => {
-      console.log(error.response, 'error');
       const router = useRouter();
       const userStore = useUserStore();
       if (error.response) {
@@ -44,7 +50,6 @@ const instance = new Axios({
         switch (error.response.status) {
           case 401:
             userStore.token = '';
-            console.log(error.response.status);
             router.replace('/login');
             break;
           case 403:

@@ -4,7 +4,6 @@ import request from './request/request';
 
 const api = {
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login
-    console.log(15639757696);
     return request<ILoginSubmitForm, null|string>({ method: 'POST', url: '/Api/Staff/Login', data });
   },
   getUser() {
@@ -15,6 +14,10 @@ const api = {
   },
   getDistrictList(ID:number) {
     return request({ method: 'get', url: `/Api/District/List?parentID=${ID}` });
+  },
+
+  getStaffSelect() {
+    return request({ method: 'POST', url: '/Api/Staff/Select' });
   },
   getUploadImage() {
     return request({ method: 'POST', url: '/Api/Upload/Image' });

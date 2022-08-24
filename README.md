@@ -8,10 +8,12 @@
 
 
 遗留问题：
+  从其他页面跳转过来之后 onresize 时间不执行的问题
   无法阻止浏览器回退问题；
-  深层路由页面刷新不能回到浅层页面；
+  深层路由页面刷新不能回到浅层页面；---已解决
   element plus不能分别导入的问题
   
+  表单项添加 required 字段 输入框会一直出 is required
     select选择器添加 filterable 后获取焦点下拉选项会隐藏
 
 
@@ -20,11 +22,9 @@
 
     左侧导航栏开关
     头部tab栏关闭所有
-    分页的样式
+    
+    表单验证
 
     请求拦截不能 headers 不能设置 common 对象字段
 
-
-    上传图片的
-
-    物料类型管理 /Api/MaterialType/List CategoryName 字段没有值
+    盘库没有上一个货位的数据

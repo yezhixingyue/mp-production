@@ -3,7 +3,7 @@
     <header>
       <el-breadcrumb >
         <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
-        <el-breadcrumb-item>出入库单位</el-breadcrumb-item>
+        <el-breadcrumb-item>出入库单位：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="addStorageUnit">+ 添加单位</el-button>
@@ -33,7 +33,7 @@
             <template #default="scope">
               <el-button type="primary" link @click="editStorageUnit(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="danger" link @click="delStorageUnit(scope.row.UnitID)">
+              <el-button type="danger" link @click="delStorageUnit(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
@@ -61,20 +61,21 @@
     <template #default>
       <div class="add-unit-dialog">
         <el-form :model="Data.addUnitForm" label-width="100px">
-          <el-form-item label="单位：">
+          <el-form-item label="单位：" required>
             <el-input v-model="Data.addUnitForm.Unit" />
           </el-form-item>
-          <el-form-item label="单位用途：">
+          <el-form-item label="单位用途：" required>
             <el-radio-group v-model="Data.addUnitForm.UnitPurpose">
               <el-radio :label="1" size="large">入库</el-radio>
               <el-radio :label="2" size="large">出库</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="单位换算：">
+          <el-form-item label="单位换算：" required>
             <el-input-number v-model="Data.addUnitForm.ProportionUp" :controls="false"/>
+            <span class="unit">{{Data.addUnitForm.Unit}}</span>
             <span>=</span>
             <el-input-number v-model="Data.addUnitForm.ProportionDown" :controls="false"/>
-            <span>{{Data.currentStoreUnit}}</span>
+            <span class="unit">{{Data.currentStoreUnit}}</span>
           </el-form-item>
         </el-form>
       </div>
@@ -105,13 +106,14 @@
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted,
+  ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { useCommonStore } from '@/store/modules/common';
 
 export default {
   name: 'setTheStorageUnitPage',
@@ -122,8 +124,11 @@ export default {
   },
   setup() {
     const h = ref(0);
+    const CommonStore = useCommonStore();
     const route = useRoute();
     const Data = reactive({
+      CategoryName: '',
+      TypeName: '',
       addUnitTitle: '添加单位',
       addUnitDialogShow: false,
       setStoreUnitTitle: '设置库存单位',
@@ -135,8 +140,8 @@ export default {
         UnitID: 0,
         Unit: '',
         UnitPurpose: 1,
-        ProportionUp: 0,
-        ProportionDown: 0,
+        ProportionUp: 1,
+        ProportionDown: 1,
       },
       DataTotal: 0,
       getUnitListData: {
@@ -171,8 +176,8 @@ export default {
         UnitID: 0,
         Unit: '',
         UnitPurpose: 1,
-        ProportionUp: 0,
-        ProportionDown: 0,
+        ProportionUp: 1,
+        ProportionDown: 1,
       };
     }
     function setStoreUnitCloseClick() {
@@ -187,9 +192,9 @@ export default {
       Data.addUnitDialogShow = true;
       Data.addUnitForm = Object.assign(Data.addUnitForm, item);
     }
-    function delStorageUnit(ID) {
-      messageBox.warnCancelMsgSM('确定要删除此单位吗？', () => {
-        api.getMaterialTypeUnitRemove(ID).then(res => {
+    function delStorageUnit(item) {
+      messageBox.warnCancelBox('确定要删除此单位吗？', `${item.UnitName}`, () => {
+        api.getMaterialTypeUnitRemove(item.UnitID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getUnitList();
@@ -205,6 +210,13 @@ export default {
     function addUnitPrimaryClick() {
       if (!Data.addUnitForm.Unit) {
         // 报错
+        messageBox.failSingle('请输入单位', () => null, () => null);
+      } else if (!Data.addUnitForm.ProportionUp) {
+        // 报错
+        messageBox.failSingle('请输入单位换算', () => null, () => null);
+      } else if (!Data.addUnitForm.ProportionDown) {
+        // 报错
+        messageBox.failSingle('请输入单位换算', () => null, () => null);
       } else {
         api.getMaterialTypeUnitSave(Data.addUnitForm).then(res => {
           if (res.data.Status === 1000) {
@@ -222,6 +234,7 @@ export default {
     function setStoreUnitPrimaryClick() {
       if (!Data.setStoreUnitForm.StockUnit) {
         // 报错
+        messageBox.failSingle('请输入库存单位', () => null, () => null);
       } else {
         api.getMaterialTypeSetStockUnit(Data.setStoreUnitForm).then(res => {
           if (res.data.Status === 1000) {
@@ -239,11 +252,16 @@ export default {
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.set-the-storage-unit-page header', 72);
-      window.onresize = () => {
-        h.value = getHeight('.set-the-storage-unit-page header', 72);
-      };
     }
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
+    onActivated(() => {
+      setHeight();
+    });
     onMounted(() => {
+      Data.CategoryName = route.params.CategoryName as string;
+      Data.TypeName = route.params.TypeName as string;
       Data.setStoreUnitForm.TypeID = Number(route.params.TypeID);
       Data.getUnitListData.TypeID = Number(route.params.TypeID);
       Data.addUnitForm.TypeID = Number(route.params.TypeID);
@@ -327,6 +345,10 @@ export default {
           >span{
             padding: 0 10px;
             line-height: 32px;
+          }
+          .unit{
+            min-width: 1em;
+            text-align: center;
           }
         }
       }

@@ -9,8 +9,10 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.StorehouseList" style="width: 100%">
-          <el-table-column prop="StorehouseName" label="名称" min-width="302" />
-          <el-table-column prop="goodsPositionDimensions" label="货柜编号" min-width="702">
+          <el-table-column
+          show-overflow-tooltip prop="StorehouseName" label="名称" min-width="302" />
+          <el-table-column
+          show-overflow-tooltip prop="goodsPositionDimensions" label="货柜编号" min-width="702">
             <template #default="scope">
               <span
               v-for="item in scope.row.goodsPositionDimensions" :key="item.DimensionID">
@@ -22,13 +24,14 @@
             <template #default="scope">
               <el-button type="primary" link
               @click="ToSetPositionNumberPage(scope.row)">设置货位编号</el-button>
-              <el-button type="primary" link @click="ToGoodsAllocationPage">规划货位图</el-button>
+              <el-button type="primary" link
+              @click="ToGoodsAllocationPage(scope.row)">规划货位图</el-button>
               <el-button type="primary" link
               @click="seeImg(scope.row.StorehouseImg)">查看平面布局图</el-button>
               <el-button type="primary" link @click="editStorehouse(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
               <el-button type="danger" link
-                @click="delStorehouse(scope.row.StorehouseID)">
+                @click="delStorehouse(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
@@ -61,7 +64,7 @@
               <el-upload
                 ref="upload"
                 class="upload-demo"
-                action="/Api/Upload/Image?type=3"
+                action="/Api/Upload/Image?type=1"
                 :limit="1"
                 :on-success='handllePictureUploaded'
               >
@@ -82,23 +85,36 @@
       </div>
     </template>
     </DialogContainerComp>
+
+    <SeeImageDialogComp
+    title="仓库货位平面图"
+    :visible='Data.LookImgShow'
+    :imgUrl="Data.SeeimgUrl"
+    :closeClick="() => Data.LookImgShow = false"
+    >
+    </SeeImageDialogComp>
+<!--
     <DialogContainerComp
     title="查看图片"
     :visible='Data.LookImgShow'
     :showPrimary="false"
     :closeClick="() => Data.LookImgShow = false"
+    closeBtnText="关闭"
     >
     <template #default>
-      <!-- {{Data.SeeimgUrl}} -->
+      <div class="see-img">
         <el-image
+          v-if="Data.SeeimgUrl"
           style="width: 100px; height: 100px"
           :src="Data.SeeimgUrl"
           :preview-src-list="[Data.SeeimgUrl]"
           :initial-index="4"
           fit="cover"
         />
+        <span v-else>暂无图片</span>
+      </div>
     </template>
-    </DialogContainerComp>
+    </DialogContainerComp> -->
   </div>
 </template>
 
@@ -106,18 +122,20 @@
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted,
+  ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 // import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
+import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api/request/MaterialStorage';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 import { genFileId } from 'element-plus';
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
+import { useCommonStore } from '@/store/modules/common';
 
 interface SaveStorehouseFormType {
   StorehouseID: number,
@@ -140,13 +158,15 @@ interface DataType {
   StorehouseList:SaveStorehouseFormType[],
 }
 export default {
-  name: 'materialManagePage',
+  name: 'materialWarehouseManagePage',
   components: {
     MpCardContainer,
     MpPagination,
     DialogContainerComp,
+    SeeImageDialogComp,
   },
   setup() {
+    const CommonStore = useCommonStore();
     const h = ref(0);
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
@@ -185,7 +205,6 @@ export default {
     }
     function handllePictureUploaded(e) {
       Data.SaveStorehouseForm.StorehouseImg = e.Data.Url;
-      console.log(e.Data);
     }
 
     function submitUpload(e) {
@@ -201,13 +220,17 @@ export default {
         params: item,
       });
     }
-    function ToGoodsAllocationPage() {
+    function ToGoodsAllocationPage(item) {
+      router.push({
+        name: 'goodsAllocation',
+        params: item,
+      });
       // messageBox.failSingle('消息', () => null, () => null); // 错误提示框
       // messageBox.failSingleError('标题', '提示内容', () => null, () => null); // 错误提示框，有内容
       // messageBox.warnSingleError('提示内容', () => null, () => null, '标题'); // 警告提示框，有内容
       // messageBox.warnCancelBox('标题', '提示内容', () => null, () => null); // 警告提示框，有内容 用于操作确认
       // messageBox.successSingle('标题', () => null, () => null, true, 'msgmsgmsg'); // 成功提示框
-      messageBox.handleLoadingError('error', () => null, () => null);
+      // messageBox.handleLoadingError('error', () => null, () => null);
     }
 
     function SaveStorehouseCloseClick() {
@@ -222,9 +245,9 @@ export default {
       Data.SaveStorehouseForm = item;
       Data.SaveStorehouseShow = true;
     }
-    function delStorehouse(storehouseID) {
-      messageBox.warnCancelMsgSM('确定要删除此仓库吗？', () => {
-        api.getStorehouseRemove(storehouseID).then(res => {
+    function delStorehouse(item) {
+      messageBox.warnCancelBox('确定要删除此仓库吗？', `${item.StorehouseName}`, () => {
+        api.getStorehouseRemove(item.StorehouseID).then(res => {
           if (res.data.Status === 1000) {
             // messageBox.successSingle(
             //   '删除成功',
@@ -259,10 +282,13 @@ export default {
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-warehouse-manage-page > header', 20);
-      window.onresize = () => {
-        h.value = getHeight('.material-warehouse-manage-page > header', 20);
-      };
     }
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
+    onActivated(() => {
+      setHeight();
+    });
     onMounted(() => {
       setHeight();
       getStorehouseList();
@@ -336,6 +362,9 @@ export default {
         margin-top: 0;
       }
     }
+  }
+  .see-img{
+    text-align: center;
   }
 }
 </style>

@@ -19,18 +19,21 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.MaterialSupplierList" style="width: 100%">
-          <el-table-column prop="SupplierName" label="供应商名称" min-width="233" />
-          <el-table-column prop="Linkman" label="联系人" min-width="162" />
-          <el-table-column prop="Linkman" label="电话" min-width="209" />
-          <el-table-column prop="MaterialTypeIDS" label="供应物料类型"
-          show-overflow-tooltip min-width="178">
+          <el-table-column
+          show-overflow-tooltip prop="SupplierName" label="供应商名称" min-width="233" />
+          <el-table-column
+          show-overflow-tooltip prop="Linkman" label="联系人" min-width="162" />
+          <el-table-column
+          show-overflow-tooltip prop="Linkman" label="电话" min-width="209" />
+          <el-table-column
+          show-overflow-tooltip prop="MaterialTypeIDS" label="供应物料类型" min-width="178">
             <template #default="scope">
               <span v-if="scope.row.MaterialTypeIDS.length
-              === MaterialWarehouseStore.CategoryList.length">
+              === Data.MaterialTypeList.length">
               全部分类
               </span>
               <template v-else>
-                <template v-if="MaterialWarehouseStore.CategoryList.length">
+                <template v-if="Data.MaterialTypeList.length">
                   <span v-for="(item, index) in scope.row.MaterialTypeIDS" :key="item">
                     {{index === 0 ? '' : '、' + index}}{{useIdGetMaterialTypeName(item)}}
                   </span>
@@ -45,7 +48,7 @@
               <el-button type="primary" link @click="editMaterialSupplier(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
               <el-button type="danger" link
-                @click="delMaterialSupplier(scope.row.SupplierID)">
+                @click="delMaterialSupplier(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
@@ -107,9 +110,9 @@
             @change="handleCheckedCitiesChange"
           >
             <el-checkbox
-            v-for="city in MaterialWarehouseStore.CategoryList"
-            :key="city.CategoryID" :label="city.CategoryID">{{
-              city.CategoryName
+            v-for="Material in Data.MaterialTypeList"
+            :key="Material.TypeID" :label="Material.TypeID">{{
+              Material.TypeName
             }}</el-checkbox>
           </el-checkbox-group>
         </div>
@@ -123,7 +126,7 @@
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, computed, watch,
+  ref, reactive, onMounted, computed, watch, onActivated,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
@@ -134,6 +137,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
+import { useCommonStore } from '@/store/modules/common';
 
 interface DistrictType {
   ID: number|string,
@@ -157,6 +161,19 @@ interface getMaterialSupplierDataType {
   KeyWords: string,
   PageSize: number|string,
 }
+interface MaterialTypeListType {
+  AttributeDescribe: null
+  BrandDescribe: null
+  CategoryID: number
+  CategoryName: null | string
+  IsStock: boolean
+  OutInUnitDescribe: null
+  SizeDescribe: string,
+  StockUnit: null | string,
+  TypeCode: string | number,
+  TypeID: number|null,
+  TypeName: string
+}
 interface DataType {
   checkAll:boolean,
   isIndeterminate:boolean,
@@ -167,9 +184,10 @@ interface DataType {
   MaterialSupplierForm:MaterialSupplierFormType,
   getMaterialSupplierData:getMaterialSupplierDataType,
   MaterialSupplierList:MaterialSupplierFormType[],
+  MaterialTypeList:MaterialTypeListType[],
 }
 export default {
-  name: 'materialManagePage',
+  name: 'materialSupplierManagePage',
   components: {
     MpCardContainer,
     MpPagination,
@@ -179,6 +197,7 @@ export default {
   },
   setup() {
     const h = ref(0);
+    const CommonStore = useCommonStore();
     const { getDistrictByParentID } = getDistrictMixins();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -205,6 +224,8 @@ export default {
         PageSize: 20,
       },
       MaterialSupplierList: [],
+      // 物料类型列表
+      MaterialTypeList: [],
     });
     const twoSelecValue = computed(() => ({
       level1Val: Data.MaterialSupplierForm.ProvinceID,
@@ -213,9 +234,8 @@ export default {
     const useIdGetMaterialTypeName = (ID) => {
       // MaterialWarehouseStore.MaterialTypeList.find;
       // console.log(IDS, 'useIdGetMaterialTypeName');
-      console.log(MaterialWarehouseStore.CategoryList, 'useIdGetMaterialTypeName');
-      const temp = MaterialWarehouseStore.CategoryList.find(res => res.CategoryID === ID);
-      return temp?.CategoryName || '';
+      const temp = Data.MaterialTypeList.find(res => res.TypeID === ID);
+      return temp?.TypeName || '';
     };
     function getMaterialSupplierList() {
       api.getMaterialSupplierList(Data.getMaterialSupplierData).then(res => {
@@ -239,9 +259,9 @@ export default {
     }
     const handleCheckedCitiesChange = (value:number[]) => {
       const checkedCount = value.length;
-      Data.checkAll = checkedCount === MaterialWarehouseStore.CategoryList.length;
+      Data.checkAll = checkedCount === Data.MaterialTypeList.length;
       Data.isIndeterminate = checkedCount > 0
-       && checkedCount < MaterialWarehouseStore.CategoryList.length;
+       && checkedCount < Data.MaterialTypeList.length;
     };
     function addMaterialSupplierCloseClick() {
       Data.addMaterialSupplierShow = false;
@@ -265,9 +285,9 @@ export default {
       Data.MaterialSupplierForm = item;
       handleCheckedCitiesChange(Data.MaterialSupplierForm.MaterialTypeIDS);
     }
-    function delMaterialSupplier(ID) {
-      messageBox.warnCancelMsgSM('确定要删除此供应商吗？', () => {
-        api.getMaterialSupplierRemove(ID).then(res => {
+    function delMaterialSupplier(item) {
+      messageBox.warnCancelBox('确定要删除此供应商吗？', `${item.SupplierName}`, () => {
+        api.getMaterialSupplierRemove(item.SupplierID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getMaterialSupplierList();
@@ -323,7 +343,7 @@ export default {
     }
     const handleCheckAllChange = (val: boolean) => {
       if (val) {
-        const a = MaterialWarehouseStore.CategoryList.map(it => it.CategoryID as number);
+        const a = Data.MaterialTypeList.map(it => it.TypeID as number);
         Data.MaterialSupplierForm.MaterialTypeIDS = a;
       } else {
         Data.MaterialSupplierForm.MaterialTypeIDS = [];
@@ -333,15 +353,23 @@ export default {
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-supplier-manage-page > header', 20);
-      window.onresize = () => {
-        h.value = getHeight('.material-supplier-manage-page > header', 20);
-      };
     }
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
+    onActivated(() => {
+      setHeight();
+    });
     onMounted(() => {
       setHeight();
       getMaterialSupplierList();
       // 获取物料分类
       MaterialWarehouseStore.getMaterialCategoryList();
+      api.getMaterialTypeList({}).then(res => {
+        if (res.data.Status === 1000) {
+          Data.MaterialTypeList = res.data.Data as MaterialTypeListType[];
+        }
+      });
     });
     return {
       h,

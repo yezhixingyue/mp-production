@@ -22,6 +22,7 @@
         @change="lv1SelectChange"
         :defaultProps="defaultProps"
         :showLine="showLine"
+        :width="width"
       ></OneLevelSelect>
     </li>
     <li class="select-box">
@@ -31,6 +32,7 @@
         @change="lv2SelectChange"
         :defaultProps="lv2DefaultProps || defaultProps"
         :showLine="showLine"
+        :width="width"
       ></OneLevelSelect>
     </li>
     <li class="select-box">
@@ -40,6 +42,7 @@
         @change="lv3SelectChange"
         :defaultProps="lv3DefaultProps || defaultProps"
         :showLine="showLine"
+        :width="width"
       ></OneLevelSelect>
     </li>
   </ul>
@@ -92,14 +95,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    width: {
+      type: Number,
+      default: 100,
+    },
   },
   components: {
     OneLevelSelect,
   },
   setup(props, context) {
-    console.log(props.level1Options);
-    console.log(props.level2Options);
-
     let level2;
     let level3;
     const level1 = computed({

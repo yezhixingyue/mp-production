@@ -4,19 +4,32 @@
 
 <script lang='ts'>
 import LayoutComp from '@/components/Layout/Index.vue';
+import { useCommonStore } from '@/store/modules/common';
+import { onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default {
   components: {
     LayoutComp,
   },
-  // mounted() {
-  //   window.addEventListener('popstate', () => {
-  //     console.log(document.URL, window.location.href, '11111111111111');
-  //     // eslint-disable-next-line no-restricted-globals
-  //     history.pushState(null, '', document.URL);
-  //   // goBackLastPage();
-  //   });
-  // },
+  setup() {
+    const CommonStore = useCommonStore();
+    const Route = useRoute();
+    watch(() => Route.path, () => {
+      console.log(Route.path);
+
+      CommonStore.size = (document
+        .documentElement.clientWidth + document
+        .documentElement.clientHeight) + Route.path;
+    });
+    onMounted(() => {
+      window.onresize = () => {
+        CommonStore.size = (document
+          .documentElement.clientWidth + document
+          .documentElement.clientHeight) + Route.path;
+      };
+    });
+  },
 };
 </script>
 

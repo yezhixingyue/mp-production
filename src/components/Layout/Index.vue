@@ -1,14 +1,13 @@
 <!--  -->
 <template>
-  <LeftMenu v-if="displaySider" />
+  <LeftMenu v-if="displaySider && !fullAcreen" />
   <div class="mp-erp-layout-content-right-wrap">
-    <LayoutHeader v-if="displaySider" />
-    <div class="mp-erp-layout-page-content-comp-wrap">
+    <LayoutHeader v-if="displaySider && !fullAcreen" />
+    <div class="mp-erp-layout-page-content-comp-wrap" :class="{'no-padding height100': isLogin}">
       <router-view/>
     </div>
   </div>
 </template>
-container
 
 <script lang='ts'>
 import { computed } from 'vue';
@@ -24,8 +23,16 @@ export default {
   },
   setup() {
     const route = useRoute();
+    console.log(route);
+
     const displaySider = computed(() => route.meta.requiresAuth);
+    const fullAcreen = computed(() => route.meta.fullAcreen);
+    console.log(route.name === 'login');
+
+    const isLogin = computed(() => route.name === 'login');
     return {
+      isLogin,
+      fullAcreen,
       displaySider,
     };
   },
@@ -38,5 +45,12 @@ export default {
   max-height: calc(100vh - 51px);
   overflow-y: auto;
   overflow-x: hidden;
+  &.no-padding{
+    padding: 0;
+  }
+  &.height100{
+    height: 100vh;
+    max-height: 100vh;
+  }
 }
 </style>

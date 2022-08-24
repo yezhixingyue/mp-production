@@ -125,7 +125,6 @@ export default {
     // 除去首页或matched.length = 1的除外  获取到该路径的activeName值和对应的路由信息(筛选处理过后)
     function getNormalActiveResult(route) {
       const { matched } = route;
-      console.log(matched, 'matched');
 
       if (matched.length >= 2) {
         const m1 = matched[0];
@@ -148,13 +147,9 @@ export default {
       const { matched } = route;
       if (matched.length >= 2) {
         const result = getNormalActiveResult(route);
-        console.log(result, 'result');
-
         if (result) {
           const { activeName, targetRoute } = result;
           defaultActive.value = activeName;
-          console.log(targetRoute, 'targetRoute');
-
           if (bool) onMenuItemClick(targetRoute as RouteRecordRaw, activeName);
         }
       } else if (route.path === '/') {
@@ -166,8 +161,6 @@ export default {
     // 动态改变活动菜单索引 ----- 只刷新初始化时执行一次
     watch(curRoute.value, (newRoute) => {
       // 由于监听不到 oldRoute 值所以手动保存 oldRoute 到 LayoutStore 中
-      console.log(newRoute, '1112222');
-      console.log(newRoute.path);
 
       const { oldRoute } = LayoutStore;
       // 借用展开操作符实现去除响应式
@@ -192,8 +185,6 @@ export default {
         // this.$store.commit('layout/filterOtherTabPageNames', names);
         LayoutStore.filterOtherTabPageNames(names);
       }
-      console.log(defaultActive.value || !menuList || menuList.length === 0);
-
       if (defaultActive.value || !menuList || menuList.length === 0) return;
 
       setInitMenuDefaultActive(newRoute, true);
