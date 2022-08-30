@@ -59,7 +59,7 @@
     <template #default>
       <div class="name-dialog">
         <el-form :model="Data.GoodsPositionSaveData" label-width="120px">
-          <el-form-item :label="`货位名：`" class="form-item-required">
+          <el-form-item :label="`货位名：`" required>
             <el-input
             v-model="Data.GoodsPositionSaveData.PositionName" />
           </el-form-item>
@@ -72,15 +72,17 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
+import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 
 import {
-  ref, reactive, onMounted, watch, onActivated, nextTick,
+  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated, nextTick,
 } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api/request/MaterialStorage';
+import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
 import LocationMap from '../../../components/LocationMap/Index.vue';
 import Draw from './aaa';
@@ -109,7 +111,6 @@ export interface DimensionDataType {
   RightTopY: number,
   RightDownX: number,
   RightDownY: number,
-  GridID: number,
   DimensionX: string,
   DimensionY: string
 }
@@ -151,13 +152,13 @@ export default {
       GoodsPositionSaveData: {
         PositionID: 0,
         StorehouseID: 0,
-        PositionName: '', // Math.random().toString(16).slice(-10),
-        // DetailSets: [
-        //   {
-        //     DimensionX: '4架',
-        //     DimensionY: '1柜',
-        //   },
-        // ],
+        PositionName: Math.random().toString(16).slice(-10),
+        DetailSets: [
+          {
+            DimensionX: '4架',
+            DimensionY: '1柜',
+          },
+        ],
       },
       actionCells: [],
       // 货位编号选择
@@ -178,23 +179,17 @@ export default {
     }
     // 判断是否被占用
     function disCheck(col) {
-      let temp = false;
-      Data.allDimensionData?.UsePositionDetails.forEach(item => {
-        item.PositionDetails.forEach(it => {
-          const x = it.DimensionX === col.DimensionX;
-          const y = it.DimensionY === col.DimensionY;
-          if (x && y) {
-            temp = true;
-          }
-        });
+      const temp = Data.allDimensionData?.UsePositionDetails.find(res => {
+        const x = res.DimensionX === col.DimensionX;
+        const y = res.DimensionY === col.DimensionY;
+        return x && y;
       });
       return !!temp;
     }
     // 获取货位详情
     function getGoodsPosition() {
       // 最后一个没有值则不请求
-      if (Data.GoodsPositionDimensionSelect.length !== 0 && !Data
-        .selectData[Data.selectData.length - 1].inputValue) return;
+      if (!Data.selectData[Data.selectData.length - 1].inputValue) return;
 
       const temp = {
         StorehouseID: Data.GoodsPositionSaveData.StorehouseID as number|string,
@@ -271,18 +266,14 @@ export default {
 
     // 设置货位
     function setNewPosition() {
-      if (Data.selectData.length && !Data.selectData[Data.selectData.length - 1].inputValue) return;
+      if (!Data.selectData[Data.selectData.length - 1].inputValue) return;
       Data.GoodsPositionSaveData.DimensionIDS = Data.selectData.map(res => res.inputValue);
-      console.log(Data.actionCells);
+      const temp = Data.actionCells.map(res => ({
+        DimensionX: res.DimensionX,
+        DimensionY: res.DimensionY,
+      }));
 
-      const temp = Data.actionCells.map(res => res.GridID);
-      // ({
-      //   PlaneID: res.PlaneID,
-      //   DimensionX: res.DimensionX,
-      //   DimensionY: res.DimensionY,
-      // })
-
-      Data.GoodsPositionSaveData.GridIDS = temp;
+      Data.GoodsPositionSaveData.DetailSets = temp;
       api.getGoodsPositionSave(Data.GoodsPositionSaveData).then(res => {
         if (res.data.Status === 1000) {
           getGoodsPosition();
@@ -320,9 +311,6 @@ export default {
       api.getGoodsPositionDimensionSelect(route.params.StorehouseID).then(res => {
         if (res.data.Status === 1000) {
           Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType[];
-          if (Data.GoodsPositionDimensionSelect.length === 0) {
-            getGoodsPosition();
-          }
         }
       });
     });
@@ -390,7 +378,6 @@ export default {
       }
       >p{
         margin-bottom:10px;
-        font-size: 12px;
         line-height: 30px;
         color: #F4A307;
       }
