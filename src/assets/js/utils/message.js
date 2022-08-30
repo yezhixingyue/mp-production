@@ -150,7 +150,7 @@ function handleLoadingError(error, trueFunc, failFunc) {
   failSingleError(undefined, msg, trueFunc, failFunc);
 }
 
-const obj = {
+export const message = {
   // 失败/错误提示框 --- 不含内容，只有标题 单按钮
   failSingle,
   // 失败/错误提示框 --- 有标题和内容 单按钮
@@ -168,4 +168,4 @@ const obj = {
   handleLoadingError,
 };
 
-export default obj;
+export default message;

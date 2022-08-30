@@ -182,6 +182,10 @@ const api = {
     // GET /Api/GoodsPosition/Save  货位编辑
     return request({ method: 'POST', url: '/Api/GoodsPosition/Save', data });
   },
+  getGoodsPositionRemove(detailID) {
+    // DELETE /Api/GoodsPosition/Remove  货位删除
+    return request({ method: 'delete', url: '/Api/GoodsPosition/Remove', params: { detailID } });
+  },
   getGoodsPositionDetail(data) {
     // GET /Api/GoodsPosition/Detail  货位详情
     return request({ method: 'POST', url: '/Api/GoodsPosition/Detail', data });

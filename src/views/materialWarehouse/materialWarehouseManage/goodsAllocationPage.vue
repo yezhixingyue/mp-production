@@ -22,7 +22,13 @@
     </header>
     <main :style="`height:${h}px`">
       <MpCardContainer>
-        <el-button @click="Data.PositionNameShow = true"
+        <LocationMap
+          v-if="Data.allDimensionData"
+          :allDimensionData="Data.allDimensionData"
+          :add="handleAdd"
+          :remove="handleRemove"
+        />
+        <!-- <el-button @click="Data.PositionNameShow = true"
         :disabled="Data.actionCells.length === 0">设置新货位</el-button>
         <div>
           <el-checkbox-group v-model="Data.actionCells">
@@ -35,13 +41,13 @@
             </p>
           </el-checkbox-group>
           <canvas id="setposition" width="1000" height="600"></canvas>
-        </div>
+        </div> -->
       </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" @click="$goback">返回</el-button>
     </footer>
-    <DialogContainerComp
+    <!-- <DialogContainerComp
     title="货位名"
     :visible='Data.PositionNameShow'
     :width="440"
@@ -60,7 +66,7 @@
         </el-form>
       </div>
     </template>
-    </DialogContainerComp>
+    </DialogContainerComp> -->
   </div>
 </template>
 
@@ -78,13 +84,14 @@ import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/mat
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
+import LocationMap from '../../../components/LocationMap/Index.vue';
 import Draw from './aaa';
 
-  interface DimensionsType {
-    CodeID: number
-    Dimension: string
-    DimensionID: number
-  }
+interface DimensionsType {
+  CodeID: number
+  Dimension: string
+  DimensionID: number
+}
 interface GoodsPositionDimensionSelectType {
   Dimensions: DimensionsType[]
 }
@@ -93,7 +100,7 @@ interface DimensionsFromType {
   inputValue: string,
   list: DimensionsType[],
 }
-interface DimensionDataType {
+export interface DimensionDataType {
   PositionID: number,
   DetailID: number,
   LeftTopX: number,
@@ -107,7 +114,7 @@ interface DimensionDataType {
   DimensionX: string,
   DimensionY: string
 }
-interface allDimensionDataType {
+export interface allDimensionDataType {
   AllPositionDetails:DimensionDataType[]
   UsePositionDetails:DimensionDataType[]
 }
@@ -127,7 +134,8 @@ export default {
   name: 'goodsAllocationPage',
   components: {
     MpCardContainer,
-    DialogContainerComp,
+    // DialogContainerComp,
+    LocationMap,
     // OneLevelSelect,
   },
   setup() {
@@ -188,6 +196,7 @@ export default {
         DimensionIDS: [] as Array<string|number>,
       };
       temp.DimensionIDS = Data.selectData.map(res => res.inputValue);
+      Data.allDimensionData = null;
       api.getGoodsPositionDetail(temp).then(res => {
         if (res.data.Status === 1000) {
           Data.allDimensionData = res.data.Data as allDimensionDataType;
@@ -219,6 +228,42 @@ export default {
         setHeight();
       });
     });
+
+    async function handleAdd(e) {
+      const DimensionIDS = Data.selectData.map(res => res.inputValue);
+      const StorehouseID = Number(route.params.StorehouseID);
+      const temp = {
+        StorehouseID,
+        DimensionIDS,
+        PositionID: e.PositionID,
+        PositionName: e.PositionName,
+        DetailSets: e.DetailSets,
+      };
+
+      // 此处是否需要调用接口验证空格是否连续 ??? 如需要 加至此处
+      const resp = await api.getGoodsPositionSave(temp).catch(() => null);
+      if (resp?.data.Status === 1000) {
+        return {
+          ...temp,
+          PositionID: Number(resp.data.Data),
+        };
+      }
+      return false;
+    }
+
+    async function handleRemove(id) {
+      const resp = await api.getGoodsPositionRemove(id).catch(() => null);
+      if (resp?.data.Status === 1000) {
+        return new Promise((resolve) => {
+          const cb = () => {
+            resolve(true);
+          };
+          messageBox.successSingle('删除成功', cb, cb);
+        });
+      }
+      return false;
+    }
+
     // 设置货位
     function setNewPosition() {
       if (!Data.selectData[Data.selectData.length - 1].inputValue) return;
@@ -280,6 +325,8 @@ export default {
       setPositionNamePrimaryClick,
       setPositionNameCloseClick,
       setPositionNameClosed,
+      handleAdd,
+      handleRemove,
     };
   },
 

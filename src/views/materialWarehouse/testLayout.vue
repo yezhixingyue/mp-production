@@ -37,6 +37,7 @@ export default {
     console.log(userStore);
 
     function goback() {
+      // eslint-disable-next-line import/no-named-as-default-member
       ccc.getGoBackFun();
     }
     return {

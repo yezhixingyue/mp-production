@@ -21,6 +21,8 @@ module.exports = {
     'vuejs-accessibility/form-control-has-label': 'off',
     'import/no-cycle': 'off',
     'no-plusplus': 'off',
+    'no-shadow': 'off',
+    'max-len': ['error', { code: 160 }],
   },
   overrides: [
     {

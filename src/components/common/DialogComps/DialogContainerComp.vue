@@ -5,6 +5,7 @@
     custom-class='mp-common-dialog'
     @close="Close"
     @closed="closedC"
+    @open="onOpen"
     :append-To-Body="appendToBody"
     :top="top">
     <template #header>
@@ -83,6 +84,10 @@ export default {
       type: Function,
       default: () => null,
     },
+    open: {
+      type: Function,
+      default: () => null,
+    },
     appendToBody: {
       type: Boolean,
       default: false,
@@ -110,9 +115,13 @@ export default {
     function closedC() {
       props.closed();
     }
+    function onOpen() {
+      props.open();
+    }
     return {
       Primary,
       Del,
+      onOpen,
       Close,
       closedC,
       dialogVisible,
