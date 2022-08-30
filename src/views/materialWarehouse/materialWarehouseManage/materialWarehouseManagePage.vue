@@ -12,7 +12,7 @@
           <el-table-column
           show-overflow-tooltip prop="StorehouseName" label="名称" min-width="302" />
           <el-table-column
-          show-overflow-tooltip prop="goodsPositionDimensions" label="货柜编号" min-width="702">
+          show-overflow-tooltip prop="goodsPositionDimensions" label="货位编号" min-width="702">
             <template #default="scope">
               <span
               v-for="item in scope.row.goodsPositionDimensions" :key="item.DimensionID">
@@ -55,9 +55,10 @@
     >
     <template #default>
       <div class="add-storehouse-dialog">
-        <el-form :model="Data.SaveStorehouseForm" label-width="112px">
-          <el-form-item label="仓库名称：" required>
-            <el-input v-model="Data.SaveStorehouseForm.StorehouseName" />
+        <el-form :show-message="false" :model="Data.SaveStorehouseForm" label-width="112px">
+          <el-form-item label="仓库名称："
+           class="form-item-required" prop="StorehouseName">
+            <el-input :maxlength="30" v-model="Data.SaveStorehouseForm.StorehouseName" />
           </el-form-item>
           <el-form-item label="平面布局图：">
             <!-- <el-input v-model="Data.SaveStorehouseForm.StorehouseName" /> -->
@@ -67,6 +68,7 @@
                 action="/Api/Upload/Image?type=1"
                 :limit="1"
                 :on-success='handllePictureUploaded'
+                :before-upload='beforeUpload'
               >
                 <template #trigger>
                   <el-button type="primary">上传平面布局图</el-button>
@@ -131,10 +133,8 @@ import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api/request/MaterialStorage';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { genFileId } from 'element-plus';
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { useCommonStore } from '@/store/modules/common';
 
 interface SaveStorehouseFormType {
@@ -204,7 +204,20 @@ export default {
       getStorehouseList();
     }
     function handllePictureUploaded(e) {
-      Data.SaveStorehouseForm.StorehouseImg = e.Data.Url;
+      if (e.Status === 1000) {
+        Data.SaveStorehouseForm.StorehouseImg = e.Data.Url;
+      } else {
+        messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
+      }
+    }
+    function beforeUpload(file) {
+      const isLt15M = file.size / 1024 / 1024 < 15;
+      if (!isLt15M) {
+        // 文件过大上传失败
+        messageBox.failSingleError('上传失败', '上传文件过大，请上传小于20M的图片', () => null, () => null);
+      }
+      return isLt15M;
+      // Data.SaveStorehouseForm.StorehouseImg = e.Data.Url;
     }
 
     function submitUpload(e) {
@@ -242,7 +255,7 @@ export default {
       Data.SaveStorehouseShow = false;
     }
     function editStorehouse(item) {
-      Data.SaveStorehouseForm = item;
+      Data.SaveStorehouseForm = { ...item };
       Data.SaveStorehouseShow = true;
     }
     function delStorehouse(item) {
@@ -263,7 +276,7 @@ export default {
     function SaveStorehousePrimaryClick() {
       if (!Data.SaveStorehouseForm.StorehouseName) {
         // 提示为空
-        messageBox.failSingleError('保存失败', '请输入仓库名', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入仓库名称', () => null, () => null);
       } else {
         // Data.SaveStorehouseForm.StorehouseImg = Data.SaveStorehouseForm.StorehouseName;
         api.getStorehouseSave(Data.SaveStorehouseForm).then(res => {
@@ -288,8 +301,13 @@ export default {
     });
     onActivated(() => {
       setHeight();
+      const bool = sessionStorage.getItem('updataMaterialWarehouseManagePage') === 'true';
+      if (!bool) return;
+      getStorehouseList();
+      sessionStorage.removeItem('updataMaterialWarehouseManagePage');
     });
     onMounted(() => {
+      sessionStorage.removeItem('updataMaterialWarehouseManagePage');
       setHeight();
       getStorehouseList();
     });
@@ -304,6 +322,7 @@ export default {
       PaginationChange,
       getStorehouseList,
       handllePictureUploaded,
+      beforeUpload,
       ToSetPositionNumberPage,
       ToGoodsAllocationPage,
       SaveStorehouseCloseClick,

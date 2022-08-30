@@ -29,7 +29,10 @@
         </el-table>
         <div class="bottom-count-box">
           <MpPagination
-          :total="Data.DataTotal"/>
+          :nowPage="Data.getMaterialCategoryData.Page"
+          :pageSize="Data.getMaterialCategoryData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange" />
         </div>
       </MpCardContainer>
     </main>
@@ -43,8 +46,8 @@
     :closeClick="closeClick"
     >
     <div class="add-material-classify ">
-      <span class="required">分类名称:</span>
-      <el-input v-model="Data.classifyInfo.CategoryName"></el-input>
+      <span class="required">分类名称：</span>
+      <el-input :maxlength="30" v-model="Data.classifyInfo.CategoryName"></el-input>
     </div>
     </DialogContainerComp>
   </div>
@@ -67,10 +70,15 @@ interface tableItem {
   CategoryID: number | undefined
   CategoryName: string
 }
+interface getMaterialCategoryDataType {
+  Page: number,
+  PageSize: number,
+}
 interface dataType {
   tableData:tableItem[]
   DataTotal:number,
   classifyInfo:tableItem
+  getMaterialCategoryData:getMaterialCategoryDataType
 }
 export default {
   name: 'materialClassifyManageListPage',
@@ -87,6 +95,10 @@ export default {
     const Data:dataType = reactive({
       tableData: [],
       DataTotal: 0,
+      getMaterialCategoryData: {
+        Page: 1,
+        PageSize: 20,
+      },
       classifyInfo: {
         CategoryID: undefined,
         CategoryName: '',
@@ -94,14 +106,18 @@ export default {
     });
 
     function getMaterialCategoryList() {
-      api.getMaterialCategoryList({}).then(res => {
+      api.getMaterialCategoryList(Data.getMaterialCategoryData).then(res => {
         if (res.data.Status === 1000) {
           Data.tableData = res.data.Data as tableItem[];
           Data.DataTotal = res.data.DataNumber as number;
         }
       });
     }
-
+    function PaginationChange(newVal) {
+      if (Data.getMaterialCategoryData.Page === newVal) return;
+      Data.getMaterialCategoryData.Page = newVal;
+      getMaterialCategoryList();
+    }
     function editCategory(CategoryItem:tableItem) {
       Data.classifyInfo = JSON.parse(JSON.stringify(CategoryItem));
       dialog.value = true;
@@ -111,6 +127,7 @@ export default {
         api.getMaterialCategoryRemove(item.CategoryID).then(res => {
           if (res.data.Status === 1000) {
             getMaterialCategoryList();
+            MaterialCategoryStore.getMaterialCategoryList();
           }
         });
       }, () => undefined);
@@ -160,6 +177,7 @@ export default {
       h,
       Data,
       dialog,
+      PaginationChange,
       editCategory,
       delCategory,
       primaryClick,
@@ -180,8 +198,9 @@ export default {
       height: 30px;
     }
     span{
-      width: 5em;
+      width: 6em;
       line-height: 30px;
+      text-align: right;
     }
   }
   >header{

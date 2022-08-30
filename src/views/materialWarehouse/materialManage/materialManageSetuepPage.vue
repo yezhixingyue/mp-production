@@ -17,7 +17,7 @@
           v-for="(item, index) in Data.BatchAddList" :key="item.ID || item.key">
             <div class="material-title">
               <span>
-                名称：{{getMaterialName(item.MaterialRelationAttributes).join('-')}}
+                名称：{{getMaterialName(item.MaterialRelationAttributes).join(' ')}}
               </span>
               <span>
                 编码：<el-input v-model="item.MaterialCode" style="width:120px"></el-input>
@@ -85,19 +85,22 @@
       </MpCardContainer>
     </main>
     <footer>
-      <el-button type="primary" @click="saveGenerativeRule">保存</el-button>
+      <el-button :disabled="!Data.BatchAddList.length"
+      type="primary" @click="saveGenerativeRule">保存</el-button>
       <el-button @click="$goback">返回</el-button>
     </footer>
     <DialogContainerComp
     :title="'批量生成'"
     :visible='Data.dialogShow'
     :width="660"
+    :closeClick="closeClick"
     :closed="closed"
     >
     <template #default>
       <div class="add-Generative-Rule-dialog">
         <el-form :model="Data.generativeRule" label-width="180px">
-          <el-form-item :label="`${item.AttributeName}：`" :required="item.IsRequired"
+          <el-form-item :label="`${item.AttributeName}：`"
+          :class="item.IsRequired?'form-item-required':''"
           v-for="(item) in Data.generativeRule.Attributes" :key="item.AttributeID">
 
             <el-checkbox-group
@@ -121,12 +124,14 @@
             <template v-if="item.IsCustom">
               <p class="custom">
                 <el-checkbox :label="item.selfDefiningValueID">
-                    自定义：
+                    自定义
                 </el-checkbox>
-                <el-input v-model="item.selfDefiningValue" style="width:100px"/>
-                <span class="unit">
-                  {{item.AttributeUnit}}
-                </span>
+                <template v-if="getCustominp(item)">
+                  <el-input v-model="item.selfDefiningValue" style="width:100px;margin:0 10px"/>
+                  <span class="unit">
+                    {{item.AttributeUnit}}
+                  </span>
+                </template>
               </p>
             </template>
 
@@ -138,7 +143,8 @@
 
           <el-divider />
 
-          <el-form-item label="可选尺寸：" required>
+          <el-form-item label="可选尺寸：" class="form-item-required"
+          v-if="MaterialWarehouseStore.MaterialTypeSizeAllList.length">
             <el-checkbox-group v-model="Data.generativeRule.SizeIDS">
               <el-checkbox
               v-for="size in MaterialWarehouseStore.MaterialTypeSizeAllList"
@@ -161,14 +167,13 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, getCurrentInstance, onActivated,
+  ref, reactive, onMounted, watch, computed, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import messageBox from '@/assets/js/utils/message';
 import { getGoBackFun } from '@/router';
@@ -194,7 +199,6 @@ export default {
     const h = ref(0);
     const CommonStore = useCommonStore();
     const route = useRoute();
-    const router = useRouter();
 
     const MaterialWarehouseStore = useMaterialWarehouseStore();
 
@@ -281,6 +285,12 @@ export default {
           IsRequired: res.IsRequired,
         };
       });
+    }
+    function getCustominp(it) {
+      if (it.actionsValue.find(t => t === it.selfDefiningValueID)) {
+        return true;
+      }
+      return false;
     }
     function closed() {
       Data.generativeRule.SizeIDS = [];
@@ -379,16 +389,31 @@ export default {
     function primaryClick(isAgain) {
       console.log(Data.generativeRule.Attributes, 'Data.generativeRule.Attributes');
       const msg:string[] = [];
+      const CustomMsg:string[] = [];
       // 表单验证
       Data.generativeRule.Attributes.forEach(res => {
         if (res.IsRequired && !res.actionsValue.length) {
           msg.push(res.AttributeName);
         }
       });
+      Data.generativeRule.Attributes.forEach(res => {
+        if (res.IsCustom) {
+          const _IsActionCustom = res.actionsValue.find(it => it === res.selfDefiningValueID);
+
+          if (_IsActionCustom && !res.selfDefiningValue) {
+            CustomMsg.push(res.AttributeName);
+          }
+        }
+        console.log(res);
+      });
 
       if (msg.length) {
         messageBox.failSingleError('保存失败', `请选择属性 ${msg.join('、')} 的值`, () => null, () => null);
-      } else if (!Data.generativeRule.SizeIDS.length) {
+      } else if (CustomMsg.length) {
+        messageBox.failSingleError('保存失败', `请输入属性 ${CustomMsg.join('、')} 的自定义值`, () => null, () => null);
+      } else if (MaterialWarehouseStore
+        .MaterialTypeSizeAllList.length && !Data
+        .generativeRule.SizeIDS.length) {
         messageBox.failSingleError('保存失败', '请选择可选尺寸', () => null, () => null);
       } else {
         const temp = getCartesianProduct(Data.generativeRule.Attributes);
@@ -424,8 +449,11 @@ export default {
         if (temp && temp.AttributeType === 2) {
           const SelectTemp = temp.AttributeSelects
             .find(res => res.SelectID === AttributesItem.SelectID);
-
-          returndata.push(SelectTemp?.SelectItemValue as string);
+          if (SelectTemp) {
+            returndata.push(SelectTemp?.SelectItemValue as string);
+          } else {
+            returndata.push(AttributesItem.InputSelectValue as string);
+          }
         }
       });
 
@@ -445,16 +473,17 @@ export default {
       const nullSizeIDS:number[] = [];
       Data.BatchAddList.forEach((res, i) => {
         if (res.SizeIDS.length === 0) {
-          nullSizeIDS.push(i as number);
+          nullSizeIDS.push(i + 1 as number);
         }
       });
       const nullMaterialCode:number[] = [];
       Data.BatchAddList.forEach((res, i) => {
         if (res.MaterialCode === '') {
-          nullMaterialCode.push(i as number);
+          nullMaterialCode.push(i + 1 as number);
         }
       });
-      if (nullSizeIDS.length) {
+      if (MaterialWarehouseStore
+        .MaterialTypeSizeAllList.length && nullSizeIDS.length) {
         messageBox.failSingleError('保存失败', `第 ${nullSizeIDS.join('、')} 个物料没有尺寸`, () => null, () => null);
       } else if (nullMaterialCode.length) {
         messageBox.failSingleError('保存失败', `请输入第 ${nullMaterialCode.join('、')} 个物料的编码`, () => null, () => null);
@@ -494,6 +523,7 @@ export default {
       h,
       Data,
       BatchAddData,
+      getCustominp,
       materialManageName,
       generativeRuleClick,
       delMaterial,
@@ -605,6 +635,7 @@ export default {
       width: 100%;
       font-size: 14px;
       line-height: 30px;
+      min-height: 34px;
     }
     .unit{
       margin-left: 5px;

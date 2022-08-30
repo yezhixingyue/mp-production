@@ -3,6 +3,7 @@
     :visible='visible'
     :closeClick="SeeImgCloseClick"
     :showPrimary="false"
+    :closeBtnText="'关闭'"
     >
     <template #header>
       <slot name="header">

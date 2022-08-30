@@ -79,18 +79,7 @@ html, body {
       flex: 1;
     }
   }
-  .el-button{
-    .iconfont{
-      font-size: 12px;
-      // background-color: red;
-      margin-right: 5px;
-    }
-  }
-  .required::before{
-    content: '*';
-    color: #f56c6c;
-    margin-right: 4px;
-  }
+
 }
 
 nav {

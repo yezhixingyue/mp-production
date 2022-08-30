@@ -117,13 +117,14 @@
             <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
             </template>
@@ -133,8 +134,10 @@
           </el-table-column>
           <el-table-column prop="Stock" label="数量" min-width="158">
             <template #default="scope">
-              {{scope.row.Stock}} {{scope.row.StockUnit}}
-              <el-button link type="primary" @click="SeeGoodsAllocation(scope.row)">入库货位</el-button>
+              {{Math.abs(scope.row.Stock)}} {{scope.row.StockUnit}}
+              <el-button link type="primary" @click="SeeGoodsAllocation(scope.row)">
+                {{Data.getRecordData.LogType === 1 ? '入库货位' : '出库货位'}}
+              </el-button>
             </template>
           </el-table-column>
           <template v-if="Data.getRecordData.LogType === 1">
@@ -231,13 +234,14 @@
           <p>
               <template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === Data.materialManageInfo.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
           </p>
@@ -269,7 +273,7 @@
                   </span>
                   <span class="PCS">
                     {{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}
-                    {{GoodsPosition.Number}}{{Data.materialManageInfo.StockUnit}}
+                    {{Math.abs(GoodsPosition.Number)}}{{Data.materialManageInfo.StockUnit}}
                   </span>
                 </li>
               </ul>
@@ -298,7 +302,6 @@ import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/mat
 import { useCommonStore } from '@/store/modules/common';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
-import messageBox from '@/assets/js/utils/message';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 
 interface twoSelecValueType {
@@ -614,7 +617,7 @@ export default {
       Data.getRecordData.TypeID = level2Val;
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
+      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
     watch(() => CommonStore.size, () => {
       setHeight();

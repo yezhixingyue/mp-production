@@ -16,23 +16,28 @@
                   <span>或者</span>
                 </el-form-item>
                 <el-form-item :label="`选择物料：`" class="select-material">
-                  <el-cascader v-model="value" :options="cascaderOptions" @change="handleChange" />
-                  <!-- <TowLevelSelect
-                    :level1Options='MaterialManageList'
-                    :level2Options='SizeS'
+                  <ThreeCascaderComp
+                  ref="ThreeCascaderComp"
+                  :change="ThreeCascaderCompChange"
+                  ></ThreeCascaderComp>
+                  <OneLevelSelect
+                  v-if="Data.itemSelectTempMaterial"
+                    :options='Data.itemSelectTempMaterial.SizeSelects'
                     :defaultProps="{
-                      value:'ID',
-                      label:'name',
-                    }"
-                    :lv2DefaultProps="{
                       value:'SizeID',
-                      label:'SizeName',
+                      label:'SizeDescribe',
                     }"
-                    :value='twoSelecValue'
-                    @change="twoSelectChange"
-                    @requestFunc='getMaterial(true)'
-                    :width="300"
-                    ></TowLevelSelect> -->
+                    :value='Data.SizeSelects'
+                    @change="SizeSelectChange"
+                    :width="250"
+                    :placeholder="'请选择物料尺寸'"
+                    ></OneLevelSelect>
+                  <OneLevelSelect
+                    v-else
+                    :options='[]'
+                    :width="250"
+                    :placeholder="'请选择物料尺寸'"
+                    ></OneLevelSelect>
                 </el-form-item>
                 <p class="material-info">
                   <template v-if="Data.checkedMaterial">
@@ -40,14 +45,15 @@
                     <span>
                       <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
                       :key="item.AttributeID">
-                        {{index === 0 ? '' : ' - ' }}
                         <template v-if="item.NumericValue">
-                          <span>{{item.NumericValue}}</span>
-                          {{item.AttributeUnit}}
+                          <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                         </template>
                         <template v-else>
                           <span>{{item.InputSelectValue || item.SelectValue}}</span>
                         </template>
+                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                        {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
+                      </template>
                       </template>
                     </span>
                     <span>{{Data.checkedMaterial.SizeDescribe}}</span>
@@ -136,7 +142,7 @@
               <el-scrollbar>
                 <div class="warehouse">
                   <div class="warehouse-item"
-                  v-for="item in inStorehouseGoodsPosition" :key="item.StorehouseID">
+                  v-for="(item, index) in inStorehouseGoodsPosition" :key="item.StorehouseID">
                     <p class="title">
                       <span>
                         {{item.StorehouseName}}：
@@ -145,9 +151,10 @@
                       </span>
                     </p>
                     <ul>
-                      <li v-for="GoodsPosition in item.GoodsPositionList" :key="GoodsPosition">
+                      <li v-for="(GoodsPosition, i) in item.GoodsPositionList" :key="GoodsPosition">
                         <span class="ranks">
-                          A区 001柜 3行 2列
+                          {{GoodsPosition.UpperDimension}}
+                          {{GoodsPosition.PositionName}}
                         </span>
                         <span class="number">
                           <span>
@@ -156,7 +163,8 @@
                             {{Data.checkedMaterial?.StockUnit}}
                           </span>
                         </span>
-                        <el-button type="primary">删除</el-button>
+                        <el-button type="primary"
+                        @click="delGoodsPosition(index, i, item.StorehouseID)">删除</el-button>
                       </li>
                       <!-- <li>
                         <span class="ranks">
@@ -193,7 +201,9 @@
                 </div>
               </el-scrollbar>
               <p class="total" v-if="inStorehouseGoodsPosition.length">
-                合计：{{getStorehouseAllInNumber()}}{{Data.checkedMaterial?.StockUnit}}</p>
+                合计：{{getStorehouseAllInNumber()}}{{Data.checkedMaterial?.StockUnit}}
+                （{{getInUnitNum}} {{inUnitName}}）
+              </p>
             </div>
           </div>
           <div class="btn">
@@ -222,7 +232,7 @@
         </el-scrollbar>
         <el-checkbox-group v-model="selectStorehouseGoodsPosition[Data.StorehouseID]">
           <el-checkbox v-for="item in Data.GoodsPositionList"
-          :key="item.PositionID" :label="item.PositionID">
+          :key="item.PositionID" :label="item">
           {{item.PositionName}}
           </el-checkbox>
         </el-checkbox-group>
@@ -236,12 +246,10 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
-import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
-import MpPagination from '@/components/common/MpPagination.vue';
+import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  ref, reactive, onMounted, computed, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -252,10 +260,44 @@ import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { MaterialInfoType } from '@/assets/Types/common';
 
-interface twoSelecValueType {
-  level1Val:null|string|number,
-  level2Val:null|string|number,
+interface UnitSelectsType {
+  UnitID: number,
+  Unit: string,
+  UnitName: string,
+  ProportionUp: number,
+  ProportionDown: number,
+  UnitPurpose: number
 }
+interface MaterialAttributesType {
+  MaterialID: number,
+  CodeID: number,
+  AttributeID: number,
+  SelectID: number,
+  NumericValue: string,
+  InputSelectValue: string,
+  SelectValue: string,
+  AttributeUnit: string,
+  IsBrand: true
+}
+interface SizeSelectsType {
+  MaterialID: number,
+  SizeID: number,
+  Code: string,
+  SizeDescribe: string
+}
+interface MaterialSelectsType {
+  CodeID: number,
+  Code: string,
+  MaterialAttributes: MaterialAttributesType[],
+  SizeSelects: SizeSelectsType[]
+}
+interface MaterialDataItemType {
+  StockUnit: string,
+  Code: string,
+  UnitSelects: UnitSelectsType[],
+  MaterialSelects: MaterialSelectsType[]
+}
+
 interface MaterialGoodsPositionsType {
   PositionID: number,
   Number: number,
@@ -277,10 +319,6 @@ interface inDeliveryFormType {
   MaterialGoodsPositions: MaterialGoodsPositionsType[],
 }
 
-interface unitListType {
-  UnitID: number| string,
-  Unit: number|string,
-}
 interface GoodsPositionListType {
   PositionID: number| string,
   PositionName: number|string,
@@ -288,6 +326,8 @@ interface GoodsPositionListType {
 interface GoodsPositionItemType {
   PositionID: number| string,
   Number: number|string,
+  PositionName: number|string,
+  UpperDimension: number|string,
 }
 interface StorehouseType {
   StorehouseID: number,
@@ -299,6 +339,7 @@ interface StorehouseGoodsPositionType {
   GoodsPositionList: GoodsPositionItemType[],
 }
 interface DataType {
+  SizeSelects:null|number
   StorehouseID: number,
   SelectGoods: boolean,
   checkedMaterial:MaterialInfoType | null,
@@ -307,6 +348,8 @@ interface DataType {
   // 仓库列表
   StorehouseList:StorehouseType[]
   GoodsPositionList:GoodsPositionListType[]
+  allSelectTempMaterial:MaterialDataItemType | null,
+  itemSelectTempMaterial:MaterialSelectsType | null,
 }
 
 export default {
@@ -316,6 +359,7 @@ export default {
     OneLevelSelect,
     // TowLevelSelect,
     DialogContainerComp,
+    ThreeCascaderComp,
   },
   setup() {
     const h = ref(0);
@@ -326,8 +370,8 @@ export default {
     const selectStorehouseGoodsPosition = reactive({});
     // 入库数据表单
     const inStorehouseGoodsPosition:StorehouseGoodsPositionType[] = reactive([]);
-
     const Data:DataType = reactive({
+      SizeSelects: null,
       SelectGoods: false,
       getMaterialData: {
         MaterialID: '',
@@ -336,7 +380,9 @@ export default {
       },
       // 选择的物料
       checkedMaterial: null,
-
+      // 下拉选择的临时物料
+      allSelectTempMaterial: null,
+      itemSelectTempMaterial: null,
       // 仓库列表
       StorehouseList: [],
       // 货位列表
@@ -361,10 +407,26 @@ export default {
 
       StorehouseID: 0,
     });
-    const twoSelecValue:ComputedRef<twoSelecValueType> = computed(() => ({
-      level1Val: Data.getMaterialData.MaterialID,
-      level2Val: Data.getMaterialData.SizeID,
-    }));
+    // 选择物料
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
+      Data.SizeSelects = null;
+      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
+      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
+    }
+    // 格式化数据
+    function SizeSelectChange(ID) {
+      Data.SizeSelects = ID;
+      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
+      const temp = {
+        MaterialID: SizeObj?.MaterialID,
+        Code: SizeObj?.Code,
+        SizeDescribe: SizeObj?.SizeDescribe,
+        MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
+        StockUnit: Data.allSelectTempMaterial?.StockUnit,
+        UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 1),
+      };
+      Data.checkedMaterial = temp as MaterialInfoType;
+    }
     // 获取转换为库存单位的数量;
     const getTransitionNum = computed(() => {
       let ratio;
@@ -388,34 +450,7 @@ export default {
       // });
       window.open(routeData.href, '_blank');
     }
-    const MaterialManageList = computed(() => [{ ID: '', name: '无', TypeID: '' },
-      ...MaterialWarehouseStore.MaterialManageList.map(res => {
-        let msg = '';
-        // 组合物料名
-        res.MaterialAttributes.forEach(item => {
-          if (item.NumericValue) {
-            msg += item.NumericValue;
-            msg += item.AttributeUnit;
-          } else {
-            msg += item.InputSelectValue || item.SelectValue;
-          }
-        });
 
-        return {
-          name: msg,
-          ...res,
-        };
-      })]);
-    const cascaderOptions = computed(() => {
-      console.log('aaa');
-      return '';
-    });
-
-    function twoSelectChange(levelData) {
-      const { level1Val, level2Val } = levelData;
-      Data.getMaterialData.MaterialID = level1Val;
-      Data.getMaterialData.SizeID = level2Val;
-    }
     // 入库
     function inDelivery() {
       if (Data.checkedMaterial) {
@@ -459,6 +494,26 @@ export default {
       });
       return num;
     }
+    // 获取转换为出入库单位的数量;
+    const getInUnitNum = computed(() => {
+      const num = getStorehouseAllInNumber();
+      let ratio;
+      const temp = Data.checkedMaterial?.UnitSelects
+        .find(res => res.UnitID === Data.inDeliveryForm.UnitID);
+      if (temp) {
+        ratio = temp.ProportionDown / temp.ProportionUp;
+      } else {
+        return 0;
+      }
+      return num / ratio;
+    });
+    // 出入库单位名;
+    const inUnitName = computed(() => {
+      const { UnitID } = Data.inDeliveryForm;
+      const temp = Data.checkedMaterial?.UnitSelects.find(res => res.UnitID === UnitID);
+      if (temp) return temp.Unit;
+      return '';
+    });
     function SelectGoodsCloseClick() {
       Data.SelectGoods = false;
     }
@@ -480,40 +535,70 @@ export default {
       console.log(temp, 'temptemp');
       temp.forEach(res => {
         if (res) {
-          inStorehouseGoodsPosition.push({
-            StorehouseName: res.StorehouseName,
-            StorehouseID: res.StorehouseID,
-            GoodsPositionList: res.actions.map(it => ({
-              PositionID: it,
-              Number: '',
-            })),
-          });
+          // 是否已经有这个仓库
+          const haveStorehouse = inStorehouseGoodsPosition
+            .find(StorehouseIt => StorehouseIt.StorehouseID === res.StorehouseID);
+          // 如果有了就添加货位
+          if (haveStorehouse) { // haveStorehouse已经有的仓库
+          // 查找新选择的货位
+            const noHave = res.actions.filter(actionIt => !haveStorehouse.GoodsPositionList
+              .find(PositionIt => PositionIt.PositionID === actionIt.PositionID));
+            // 把没有的货位添加上去
+            noHave.forEach(noHaveIt => {
+              haveStorehouse.GoodsPositionList.push({
+                PositionID: noHaveIt.PositionID,
+                Number: '',
+                PositionName: noHaveIt.PositionName,
+                UpperDimension: noHaveIt.UpperDimension,
+              });
+            });
+            // 如果没有就添加仓库和货位
+          } else {
+            inStorehouseGoodsPosition.push({
+              StorehouseName: res.StorehouseName,
+              StorehouseID: res.StorehouseID,
+              GoodsPositionList: res.actions.map(it => ({
+                PositionID: it.PositionID,
+                Number: '',
+                PositionName: it.PositionName,
+                UpperDimension: it.UpperDimension,
+              })),
+            });
+          }
         }
       });
       SelectGoodsCloseClick();
       // 入库
     }
+    function delGoodsPosition(index, i, StorehouseID) {
+      // 删除货位选择 StorehouseID
+      selectStorehouseGoodsPosition[StorehouseID] = selectStorehouseGoodsPosition[StorehouseID]
+        .filter(res => res.PositionID !== inStorehouseGoodsPosition[index]
+          .GoodsPositionList[i].PositionID);
 
+      if (inStorehouseGoodsPosition[index].GoodsPositionList.length > 1) {
+        // 删除表单输入项
+        inStorehouseGoodsPosition[index].GoodsPositionList.splice(i, 1);
+        console.log(selectStorehouseGoodsPosition[StorehouseID]);
+      } else {
+        inStorehouseGoodsPosition.splice(index, 1);
+      }
+    }
     // 根据选项或sku编码查物料
-    function getMaterial(bol) {
+    function getMaterial() {
       // 物料筛选
-      if (bol) {
-        // 没选尺寸的时候不进行下一步
-        if (!Data.getMaterialData.SizeID) return;
-        Data.getMaterialData.SKUCode = '';
-        // temp = MaterialManageList.value.filter((
-        //   res:any,
-        // ) => res.ID === Data.getMaterialData.MaterialID);
-      } else { // sku编码查询
-        twoSelectChange({ level1Val: '', level2Val: '' });
-        api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-          console.log(res);
+      api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
+        console.log(res);
+        if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 1);
-        });
-      }
+        } else {
+          messageBox.failSingleError('查询失败', 'sku编码错误', () => null, () => null);
+        }
+      });
     }
+
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.in-delivery-page header', 20);
@@ -537,8 +622,7 @@ export default {
     });
     onMounted(() => {
       setHeight();
-      // 获取所有物料分类
-      MaterialWarehouseStore.getMaterialCategoryList();
+
       // 获取所有物料类型
       // MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
 
@@ -553,11 +637,13 @@ export default {
       Data,
       CommonStore,
       getTransitionNum,
+      getInUnitNum,
+      inUnitName,
+      delGoodsPosition,
       getMaterial,
       ToOutDelivery,
-      twoSelecValue,
-      MaterialManageList,
-      twoSelectChange,
+      ThreeCascaderCompChange,
+      SizeSelectChange,
       MaterialWarehouseStore,
       SelectGoodsCloseClick,
       inDelivery,
@@ -650,10 +736,13 @@ export default {
                   }
                 }
               }
-              .select-material{
-                .mp--tow-level-select{
-                  .select-box{
-                    width: 300px;
+              &.select-material{
+                .el-cascader{
+                  width: 350px;
+                  height: 40px;
+                  margin-right: 40px;
+                  .el-input{
+                    height: 40px;
                   }
                 }
               }

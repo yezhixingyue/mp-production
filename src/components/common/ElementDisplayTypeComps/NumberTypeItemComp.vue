@@ -1,7 +1,7 @@
 <template>
 <!-- <span> -->
   <el-input-number v-if="!InputContent" placeholder="请输入" :controls="false"
-  v-model="inpVal" :step="AllowDecimal ? 0.01 : 1"/>
+  v-model="inpVal" :step="0.01"/>
   <!-- <el-input type="number" placeholder="请输入" v-if="!InputContent" v-model="inpVal" /> -->
   <el-select
     v-if="InputContent"
@@ -50,7 +50,7 @@ export default {
         return props.PropValue as number;
       },
       set(value) {
-        props.UpdateData(Math.floor(value / (props.AllowDecimal ? 0.01 : 1)));
+        props.UpdateData(value);
       },
     });
     const getNumberValueList = (valueList) => {

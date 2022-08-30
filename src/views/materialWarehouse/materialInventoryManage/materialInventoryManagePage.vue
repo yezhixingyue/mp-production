@@ -39,8 +39,11 @@
     <main :style="`height:${h}px`">
       <MpCardContainer>
         <div class="btns">
-          <el-button link type="primary" @click="ToStockWarnPage">预警记录</el-button>
-          <el-button link type="primary" @click="ToInventoryPage">库存盘点</el-button>
+          <el-button link type="primary" @click="ToStockWarnPage">
+            <i class="iconfont icon-zengsongjilu"></i> 预警记录</el-button>
+          <el-button link type="primary" @click="ToInventoryPage">
+            <i class="iconfont icon-kucunpandian-"></i>
+            库存盘点</el-button>
           <el-button link type="primary" @click="Data.seeSMSShow = true">查看短信(仅测试用)</el-button>
           <!-- <el-button>仅显示预警中物料</el-button> -->
           <p>
@@ -62,13 +65,14 @@
             <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
             </template>
@@ -112,7 +116,9 @@
             <template #default="scope">
               <el-button
               type="primary"
-              link @click="SetSMSWarnClick(scope.row)">设置预警</el-button>
+              link @click="SetSMSWarnClick(scope.row)">
+              <i class="iconfont icon-xiangmuyujingshezhi" style="font-size:16px"></i>
+              设置预警</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -158,13 +164,14 @@
           <el-form-item :label="`设置物料：`">
               <template v-for="(item, index) in Data.SetSMSWarnForm.StockName"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === Data.SetSMSWarnForm.StockName.length-1 ? '' : ' ' }}
                 </template>
               </template>
           </el-form-item>
@@ -199,13 +206,14 @@
           <p>
               <template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === Data.materialManageInfo.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
           </p>
@@ -223,7 +231,8 @@
             :key="Storehouseitem.StorehouseID">
               <p class="title">
                 <span>
-                  {{Storehouseitem.StorehouseName}}：=10561321={{Data.materialManageInfo.StockUnit}}
+                  {{Storehouseitem.StorehouseName}}：
+                  {{getStorehouseStockNumber()}}{{Data.materialManageInfo.StockUnit}}
                 </span>
                 <span>
                   <el-button type="primary" link
@@ -280,7 +289,6 @@
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
@@ -291,7 +299,6 @@ import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/mat
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api/request/MaterialStorage';
-import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { useCommonStore } from '@/store/modules/common';
 
@@ -466,6 +473,16 @@ export default {
       Data.SeeImageShow = true;
       Data.SeeImageUrl = url;
     }
+    // 获取仓库的入库总数量
+    function getStorehouseStockNumber() {
+      let num = 0;
+      Data.StorehouseStockInfo.forEach(item => {
+        item.GoodsPositionStockInfos.forEach(it => {
+          num += Number(it.Number) || 0;
+        });
+      });
+      return num;
+    }
     function SetSMSWarnCloseClick() {
       // 关闭得时候清空弹框
       Data.SetSMSWarnShow = false;
@@ -547,7 +564,7 @@ export default {
       Data.getStockData.TypeID = level2Val;
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
+      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
     watch(() => CommonStore.size, () => {
       setHeight();
@@ -572,6 +589,7 @@ export default {
       h,
       Data,
       SeeImg,
+      getStorehouseStockNumber,
       ToOutDelivery,
       ToInDelivery,
       ToStockWarnPage,
@@ -628,6 +646,9 @@ export default {
       >.btns{
         display: flex;
         justify-content: flex-start;
+        .iconfont{
+          font-size: 14px;
+        }
         p{
           flex: 1;
           display: flex;

@@ -24,7 +24,7 @@
           <el-table-column
           show-overflow-tooltip prop="Linkman" label="联系人" min-width="162" />
           <el-table-column
-          show-overflow-tooltip prop="Linkman" label="电话" min-width="209" />
+          show-overflow-tooltip prop="ContactWay" label="电话" min-width="209" />
           <el-table-column
           show-overflow-tooltip prop="MaterialTypeIDS" label="供应物料类型" min-width="178">
             <template #default="scope">
@@ -72,10 +72,10 @@
     <template #default>
       <div class="add-material-supplier-dialog">
         <el-form :model="Data.MaterialSupplierForm" label-width="112px">
-          <el-form-item label="供应商名称：" required>
-            <el-input v-model="Data.MaterialSupplierForm.SupplierName" />
+          <el-form-item label="供应商名称：" class="form-item-required">
+            <el-input :maxlength="30" v-model="Data.MaterialSupplierForm.SupplierName" />
           </el-form-item>
-          <el-form-item label="所在城市：" required>
+          <el-form-item label="所在城市：" class="form-item-required">
             <TowLevelSelect
             :level1Options='Data.ProvinceList'
             :level2Options='Data.CityList'
@@ -85,15 +85,16 @@
             }"
             :value='twoSelecValue'
             @change="twoSelectChange"
+            :width="130"
             ></TowLevelSelect>
           </el-form-item>
-          <el-form-item label="详细地址：" required>
-            <el-input v-model="Data.MaterialSupplierForm.Address" />
+          <el-form-item label="详细地址：" class="form-item-required">
+            <el-input :maxlength="100" v-model="Data.MaterialSupplierForm.Address" />
           </el-form-item>
-          <el-form-item label="联系人：" required>
-            <el-input v-model="Data.MaterialSupplierForm.Linkman" />
+          <el-form-item label="联系人：" class="form-item-required">
+            <el-input :maxlength="20" v-model="Data.MaterialSupplierForm.Linkman" />
           </el-form-item>
-          <el-form-item label="联系电话：" required>
+          <el-form-item label="联系电话：" class="form-item-required">
             <el-input v-model="Data.MaterialSupplierForm.ContactWay" />
           </el-form-item>
         </el-form>
@@ -111,9 +112,17 @@
           >
             <el-checkbox
             v-for="Material in Data.MaterialTypeList"
-            :key="Material.TypeID" :label="Material.TypeID">{{
-              Material.TypeName
-            }}</el-checkbox>
+            :key="Material.TypeID" :label="Material.TypeID">
+              <el-tooltip
+                class="box-item"
+                effect="dark"
+                :content="Material.TypeName"
+                placement="top"
+                :disabled="Material.TypeName.length<7"
+              >
+            {{Material.TypeName}}
+            </el-tooltip>
+            </el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -280,9 +289,9 @@ export default {
       };
     }
     async function editMaterialSupplier(item) {
-      Data.ProvinceList = await getDistrictByParentID(1) as DistrictType[];
+      Data.ProvinceList = await getDistrictByParentID(-1) as DistrictType[];
       Data.addMaterialSupplierShow = true;
-      Data.MaterialSupplierForm = item;
+      Data.MaterialSupplierForm = { ...item };
       handleCheckedCitiesChange(Data.MaterialSupplierForm.MaterialTypeIDS);
     }
     function delMaterialSupplier(item) {
@@ -297,6 +306,7 @@ export default {
     }
 
     function addMaterialSupplierPrimaryClick() {
+      const reg = /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
       if (!Data.MaterialSupplierForm.SupplierName) {
         // 报错
         messageBox.failSingleError('保存失败', '请输入供应商名称', () => null, () => null);
@@ -312,6 +322,9 @@ export default {
       } else if (!Data.MaterialSupplierForm.ContactWay) {
         // 报错
         messageBox.failSingleError('保存失败', '请输入联系电话', () => null, () => null);
+      } else if (!reg.test(Data.MaterialSupplierForm.ContactWay)) {
+        // 报错
+        messageBox.failSingleError('保存失败', '联系电话格式不正确', () => null, () => null);
       } else if (!Data.MaterialSupplierForm.MaterialTypeIDS.length) {
         // 报错
         messageBox.failSingleError('保存失败', '请选择供应物料类型', () => null, () => null);
@@ -333,11 +346,13 @@ export default {
       Data.MaterialSupplierForm.CityID = level2Val;
     }
     watch(() => twoSelecValue.value.level1Val, async (newValue) => {
-      Data.CityList = await getDistrictByParentID(newValue) as DistrictType[];
+      if (newValue) {
+        Data.CityList = await getDistrictByParentID(newValue) as DistrictType[];
+      }
     });
     // 添加供应商
     async function addMaterialSupplier() {
-      Data.ProvinceList = await getDistrictByParentID(1) as DistrictType[];
+      Data.ProvinceList = await getDistrictByParentID(-1) as DistrictType[];
       Data.CityList = [];
       Data.addMaterialSupplierShow = true;
     }
@@ -441,6 +456,17 @@ export default {
         .el-checkbox{
           width: 25%;
           margin: 0;
+          .el-checkbox__label{
+            display: inline-block;
+            width: calc(100% - 14px - 10px);
+            .el-only-child__content{
+              max-width: 100%;
+              display: inline-block;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+          }
         }
       }
     }

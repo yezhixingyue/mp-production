@@ -25,7 +25,7 @@
           show-overflow-tooltip min-width="83" />
           <el-table-column prop="OutInUnitDescribe" label="出入库单位"
           show-overflow-tooltip min-width="378" />
-          <el-table-column prop="name" label=""
+          <el-table-column prop="name" label="非库存物料"
           show-overflow-tooltip min-width="98">
             <template #default="scope">
               {{!scope.row.IsStock?'非库存物料':''}}
@@ -69,7 +69,7 @@
     <template #default>
       <div class="add-material-classify-dialog">
         <el-form :model="Data.materialClassifyDialogForm">
-          <el-form-item label="分类：" required>
+          <el-form-item label="分类：" class="form-item-required">
             <el-select v-model="Data.materialClassifyDialogForm.CategoryID"
              placeholder="请选择分类">
               <el-option
@@ -80,11 +80,11 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="名称：" required>
-            <el-input v-model="Data.materialClassifyDialogForm.TypeName" />
+          <el-form-item  label="名称：" class="form-item-required">
+            <el-input :maxlength="30" v-model="Data.materialClassifyDialogForm.TypeName" />
           </el-form-item>
-          <el-form-item label="编码：" required>
-            <el-input v-model="Data.materialClassifyDialogForm.TypeCode" />
+          <el-form-item label="编码：" class="form-item-required">
+            <el-input :maxlength="4" v-model="Data.materialClassifyDialogForm.TypeCode" />
           </el-form-item>
           <el-form-item >
             <el-checkbox v-model="IsStock"
@@ -274,7 +274,7 @@ export default {
     }
     // 编辑物料类型点击
     function editMaterialClassifyClick(tableItemData) {
-      Data.materialClassifyDialogForm = tableItemData;
+      Data.materialClassifyDialogForm = { ...tableItemData };
       Data.materialClassifyDialogShow = true;
     }
     // 删除物料类型点击
@@ -364,8 +364,14 @@ export default {
     // }
     onActivated(() => {
       setHeight();
+      const bool = sessionStorage.getItem('updataMaterialClassifyManagePage') === 'true';
+      if (!bool) return;
+      getMaterialClassifyManage();
+      sessionStorage.removeItem('updataMaterialClassifyManagePage');
     });
     onMounted(() => {
+      sessionStorage.removeItem('updataMaterialClassifyManagePage');
+
       setHeight();
       getMaterialClassifyManage();
       MaterialCategoryStore.getMaterialCategoryList();
@@ -437,9 +443,9 @@ export default {
     .Prompt{
       padding: 0 90px;
       font-size: 12px;
+      line-height: 30px;
       text-indent: -0.8em;
       color: #F4A307;
-      line-height: 30px;
       p{
         padding-left: 20px;
       }

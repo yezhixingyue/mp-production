@@ -17,7 +17,7 @@ const api = {
   },
 
   getStaffSelect() {
-    return request({ method: 'POST', url: '/Api/Staff/Select' });
+    return request({ method: 'GET', url: '/Api/Staff/Select' });
   },
   getUploadImage() {
     return request({ method: 'POST', url: '/Api/Upload/Image' });

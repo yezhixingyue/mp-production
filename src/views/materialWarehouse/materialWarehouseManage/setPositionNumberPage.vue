@@ -8,14 +8,20 @@
       <div class="header-top">
         <el-button type="primary"
         :disabled="Data.LockStatus"
-        @click="Data.addPalletDimensionsShow = true">+ 添加货物维度</el-button>
+        @click="Data.addPalletDimensionsShow = true">+ 添加货位维度</el-button>
       </div>
     </header>
     <main :style="`height:${h}px`">
       <MpCardContainer>
         <p class="lock">
+          <span v-if="Data.LockStatus" class="isLock">
+            <i class="iconfont icon-suoding"></i>
+            已锁定
+          </span>
           <el-button type="primary" link v-if="!Data.LockStatus"
-          @click="PalletDimensionsLockCode">锁定货物编号</el-button>
+          @click="PalletDimensionsLockCode">
+          <i class="iconfont icon-suoding"></i>
+          锁定货位编号</el-button>
           <el-button type="danger" link v-else
           @click="PalletDimensionsUnlockCode">解锁</el-button>
         </p>
@@ -52,7 +58,7 @@
       <el-button type="primary" @click="$goback">返回</el-button>
     </footer>
     <DialogContainerComp
-    :title="Data.addPalletDimensionsTitle"
+    :title="`${Data.addPalletDimensionsForm.CodeID ? '修改': '添加'}货位维度`"
     :visible='Data.addPalletDimensionsShow'
     :width="660"
     :primaryClick="addPalletDimensionsPrimaryClick"
@@ -62,18 +68,32 @@
       <div class="add-pallet-dimensions-dialog">
         <el-form :model="Data.addPalletDimensionsForm" label-width="112px">
           <el-form-item label="维度单位：">
-            <el-input v-model="Data.addPalletDimensionsForm.DimensionUnit" style="width:435px"/>
+            <el-input :maxlength="16"
+            v-model="Data.addPalletDimensionsForm.DimensionUnit"  style="width:300px"/>
           </el-form-item>
           <el-form-item label="起止编号：">
-            <el-input v-model="Data.addPalletDimensionsForm.StartCode" />
+            <el-input :maxlength="4" v-model="Data.addPalletDimensionsForm.StartCode"
+            style="width:100px" />
             <span class="to">至</span>
-            <el-input v-model="Data.addPalletDimensionsForm.EndCode" />
+            <el-input :maxlength="4" v-model="Data.addPalletDimensionsForm.EndCode"
+            style="width:100px"/>
           </el-form-item>
           <el-form-item label="显示顺序：">
-            <el-input v-model.number="Data.addPalletDimensionsForm.Sort" />
-            <span class="span">数字越小显示越靠前</span>
+            <el-input :maxlength="3" v-model.number="Data.addPalletDimensionsForm.Sort"
+            style="width:100px" />
+            <span class="hint">数字越小显示越靠前</span>
           </el-form-item>
-          <p>起止编号为 1 到 4位的字母或数字组成，开始和结束编号组成形式必须一致。 例如：001 至 179，A001 至 E135，</p>
+          <div class="explain">
+
+            <p>起止编号为 1 到 4位的字母或数字组成，开始和结束编号组成形式必须一致。
+            </p>
+            <p>
+                例如：001 至 179，AA 至 ZZ，等等。
+            </p>
+            <p>
+              中间所有顺序编号和起止编号都为此货位维度的可取编号，如果起止编号相同，则仅含一个可取编号。
+            </p>
+          </div>
         </el-form>
       </div>
     </template>
@@ -122,7 +142,6 @@ interface DataType {
   SeeimgUrl: string,
   StorehouseName: string,
   LockStatus: boolean,
-  addPalletDimensionsTitle: string,
   addPalletDimensionsShow: boolean,
   addPalletDimensionsForm:addPalletDimensionsFormType,
   getPalletDimensionsListData:getPalletDimensionsListDataType,
@@ -145,7 +164,6 @@ export default {
       LookImgShow: false,
       SeeimgUrl: '',
       LockStatus: false,
-      addPalletDimensionsTitle: '添加货位维度',
       StorehouseName: '',
       addPalletDimensionsShow: false,
       addPalletDimensionsForm: {
@@ -169,6 +187,9 @@ export default {
         }
       });
     }
+    function setStorage() { // 设置会话存储
+      sessionStorage.setItem('updataMaterialWarehouseManagePage', 'true');
+    }
     function seeImg(imgUrl:string) {
       Data.SeeimgUrl = imgUrl;
       Data.LookImgShow = true;
@@ -185,7 +206,7 @@ export default {
       };
     }
     function editStorehouse(item) {
-      Data.addPalletDimensionsForm = item;
+      Data.addPalletDimensionsForm = { ...item };
       Data.addPalletDimensionsShow = true;
     }
     function delStorehouse(item) {
@@ -194,6 +215,7 @@ export default {
           if (res.data.Status === 1000) {
           // 删除成功
             getPalletDimensionsList();
+            setStorage();
           }
         });
       }, () => undefined);
@@ -209,13 +231,16 @@ export default {
         api.getGoodsPositionDimensionSave(Data.addPalletDimensionsForm).then(res => {
           if (res.data.Status === 1000) {
           // 保存成功
-            getPalletDimensionsList();
-            addPalletDimensionsCloseClick();
+            const cb = () => {
+              getPalletDimensionsList();
+              addPalletDimensionsCloseClick();
+              setStorage();
+            };
+            messageBox.successSingle('保存成功', cb, cb);
           }
         });
       }
     }
-    // 添加供应商
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.set-position-number-page > header', 20 + 32 + 20);
@@ -230,7 +255,7 @@ export default {
       });
     }
     function PalletDimensionsLockCode() {
-      messageBox.warnCancelMsgSM('确定要锁定货位编号吗？', () => {
+      messageBox.warnCancelNullMsg('确定要锁定货位编号吗？', () => {
         api.getGoodsPositionDimensionLockCode(
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
@@ -241,7 +266,12 @@ export default {
       }, () => undefined);
     }
     function PalletDimensionsUnlockCode() {
-      messageBox.warnCancelMsgSM('确定要解锁吗？', () => {
+      const html = `
+        <p class="danger-content">解锁后，将清除所有已设置的禁用货位、清空已规划的货位图</p>
+        <p class="danger-content">如果此仓库存放有任何物料，将会解锁失败；</p>
+        <p class="danger-content">请谨慎操作！！！！！</p>
+      `;
+      messageBox.dangerCancelBox('确定要解锁吗？', html, () => {
         api.getGoodsPositionDimensionUnlockCode(
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
@@ -312,6 +342,15 @@ export default {
       height: 100%;
       .lock{
         margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+        .isLock{
+          display: flex;
+          align-items: center;
+          color: #f56c6c;
+          font-size: 14px;
+          margin-right: 20px;
+        }
       }
       .el-table{
         flex: 1;
@@ -327,6 +366,11 @@ export default {
     text-align: center;
   }
   .add-pallet-dimensions-dialog{
+    padding: 0 65px 0 110px;
+    .el-dialog__body{
+      padding-left: 130px;
+      padding-right: 85px;
+    }
     .el-form{
       .el-input{
         width: 200px;
@@ -334,14 +378,40 @@ export default {
       .to{
         margin: 0 10px;
       }
-      .span{
-        margin-left: 10px;
+      // .span{
+      //   margin-left: 10px;
+      //   color: #F4A307;
+      // }
+      .hint, .explain{
+        font-size: 12px;
+        line-height: 30px;
         color: #F4A307;
+        position: relative;
+        padding-left: 33px;
+        &::before{
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
+          width: 13px;
+          height: 13px;
+          margin: 0 10px;
+          position: absolute;
+          left: 0;
+          top: 9px;
+        }
       }
-      p{
-        color: #F4A307;
-        padding: 0 30px;
-      }
+      // .explain{
+      //   color: #F4A307;
+      //   &::before{
+      //     content: '说明：';
+      //     position: absolute;
+      //   }
+      //   p{
+      //     padding: 0 30px;
+      //     padding-left: 3em;
+      //   }
+      // }
     }
   }
 }

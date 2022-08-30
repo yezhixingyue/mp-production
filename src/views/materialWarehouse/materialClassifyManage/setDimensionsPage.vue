@@ -67,20 +67,22 @@
       <div class="add-dimensions-dialog">
         <el-form :model="Data.addDimensionsForm" label-width="100px">
           <el-form-item label="尺寸名称：">
-            <el-input v-model="Data.addDimensionsForm.SizeName" />
+            <el-input :maxlength="30" v-model="Data.addDimensionsForm.SizeName" />
           </el-form-item>
           <el-form-item label="尺寸编码：">
-            <el-input v-model="Data.addDimensionsForm.SizeCode" style="width:100px"/>
+            <el-input :maxlength="3" v-model="Data.addDimensionsForm.SizeCode" style="width:100px"/>
           </el-form-item>
           <p class="hint">编码由 1 到 3 位的英文字母或数字组成，附在物料编码之后，可快速定位具体物料尺寸</p>
           <el-form-item label="长度：">
-            <el-input-number v-model="Data.addDimensionsForm.SizeLength" :controls="false"/>
+            <el-input-number :max="999999999"
+            v-model="Data.addDimensionsForm.SizeLength" :controls="false"/>
             mm
             <el-checkbox v-model="Data.addDimensionsForm.SizeLengthIsChange"
             label="长度可加工"/>
           </el-form-item>
           <el-form-item label="宽度：">
-            <el-input-number v-model="Data.addDimensionsForm.SizeWidth" :controls="false"/>
+            <el-input-number :max="999999999"
+            v-model="Data.addDimensionsForm.SizeWidth" :controls="false"/>
             mm
             <el-checkbox v-model="Data.addDimensionsForm.SizeWidthIsChange"
             label="宽度可加工"/>
@@ -171,7 +173,10 @@ export default {
     }
     function editDimensions(item) {
       Data.dialogShow = true;
-      Data.addDimensionsForm = item;
+      Data.addDimensionsForm = { ...item };
+    }
+    function setStorage() { // 设置会话存储
+      sessionStorage.setItem('updataMaterialClassifyManagePage', 'true');
     }
     function delDimensions(item) {
       messageBox.warnCancelBox('确定要删除此尺寸吗？', `${item.SizeName}`, () => {
@@ -179,10 +184,12 @@ export default {
           if (res.data.Status === 1000) {
           // 删除成功
             getDimensisnsList();
+            setStorage();
           }
         });
       }, () => undefined);
     }
+
     function primaryClick() {
       if (!Data.addDimensionsForm.SizeName) {
         messageBox.failSingleError('保存失败', '请输入尺寸名称', () => null, () => null);
@@ -199,6 +206,7 @@ export default {
             const cb = () => {
               closeClick();
               getDimensisnsList();
+              setStorage();
             };
               // 成功
             messageBox.successSingle(`${Data.addDimensionsForm.SizeID ? '修改' : '添加'}成功`, cb, cb);
@@ -278,6 +286,7 @@ export default {
     .el-form{
       .hint{
         font-size: 12px;
+        line-height: 30px;
         color: #F4A307;
         text-align: center;
         margin-bottom: 20px;

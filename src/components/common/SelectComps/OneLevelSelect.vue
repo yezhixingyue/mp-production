@@ -21,7 +21,7 @@
         :style="`width:${width}px`">
         <el-option
           v-for="item in options"
-          :key="item.value"
+          :key="item[defaultProps.value]"
           :label="item[defaultProps.label]"
           :value="item[defaultProps.value]"
         />
@@ -36,7 +36,7 @@ import { computed } from 'vue';
 export default {
   props: {
     value: {
-      default: '不限',
+      default: '',
     },
     placeholder: {
       default: '请选择',

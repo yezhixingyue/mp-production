@@ -99,3 +99,26 @@
 .none {
   display: none
 }
+
+
+.el-button{
+  .iconfont{
+    font-size: 12px;
+    // background-color: red;
+    margin-right: 5px;
+  }
+}
+
+// 用于处理表单的必填字段标签的必填标识
+.required::before{
+  content: '*';
+  color: #f56c6c;
+  margin-right: 4px;
+}
+.form-item-required{
+  >.el-form-item__label::before{
+    content: '*';
+    color: #f56c6c;
+    margin-right: 4px;
+  }
+}

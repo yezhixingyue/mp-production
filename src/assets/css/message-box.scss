@@ -391,3 +391,31 @@
         }
     }
 }
+.mp-operation-reverse-danger{
+    @include reverse-warn;
+    width: 490px !important;
+    max-width: 490px;
+    .el-message-box__message{
+        >p{
+            padding: 0 53px !important;
+        }
+    }
+    .el-message-box__btns{
+        .el-button--primary{
+            background-color: #FF3769;
+            border-color: #FF3769;
+            &:active{
+                background-color: #a72747;
+            }
+            &:hover{
+                box-shadow: 0 1px 0 #a72747, 0 1px 1px rgb(0 0 0 / 20%);
+            }
+        }
+    }
+    .danger-content{
+        color: #FF3769;
+        text-align: left;
+        line-height: 33px;
+    }
+
+}

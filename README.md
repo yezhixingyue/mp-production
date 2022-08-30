@@ -8,13 +8,11 @@
 
 
 遗留问题：
-  从其他页面跳转过来之后 onresize 时间不执行的问题
+  从其他页面跳转过来之后 onresize 事件不执行的问题
   无法阻止浏览器回退问题；
-  深层路由页面刷新不能回到浅层页面；---已解决
   element plus不能分别导入的问题
   
   表单项添加 required 字段 输入框会一直出 is required
-    select选择器添加 filterable 后获取焦点下拉选项会隐藏
 
 
 

@@ -14,9 +14,25 @@
         <el-table border fit
         :data="Data.AttributesList" style="width: 100%">
           <el-table-column prop="AttributeName" label="名称" min-width="209" />
-          <el-table-column prop="AttributeType" label="类型" min-width="218" />
+          <el-table-column prop="AttributeType" label="类型" min-width="218">
+            <template #default="scope">
+              {{scope.row.AttributeType === 1 ? '数字值' : '选择项'}}
+            </template>
+          </el-table-column>
           <el-table-column prop="RegularQuantity" label="描述" min-width="658">
-            {{'==='}}
+            <template #default="scope">
+              <template v-if="scope.row.AttributeType === 1">
+                单位：{{scope.row.AttributeUnit}}；
+                是否必填：{{scope.row.IsRequired?'必填':'非必填'}}；
+                自定义值：{{scope.row.IsCustom?'允许':'不允许'}}；
+                允许小数：{{scope.row.IsAllowDecimal?'允许':'不允许'}}；
+              </template>
+              <template v-else>
+                选项数量：{{scope.row.AttributeSelects.length}}；
+                是否必选：{{scope.row.IsRequired?'必选':'非必选'}}；
+                自定义值：{{scope.row.IsCustom?'允许':'不允许'}}；
+              </template>
+            </template>
           </el-table-column>
           <el-table-column prop="Sort" label="显示顺序" min-width="176" />
           <el-table-column prop="name" label="操作" min-width="295">
@@ -231,9 +247,15 @@ export default {
       getAttributesList();
     }
     function editAttributes(AttributesItem:AttributeType) {
-      Data.addAttributesForm = { ...AttributesItem };
-      Data.addAttributesForm.AttributeSelects = AttributesItem.AttributeSelects || [];
+      console.log(AttributesItem);
+      console.log(AttributesItem.AttributeSelects);
+
+      Data.addAttributesForm = { TypeID: Data.addAttributesForm.TypeID, ...AttributesItem };
+      Data.addAttributesForm.AttributeSelects = [...AttributesItem.AttributeSelects || []] || [];
       Data.dialogShow = true;
+    }
+    function setStorage() { // 设置会话存储
+      sessionStorage.setItem('updataMaterialClassifyManagePage', 'true');
     }
     function delAttributes(item) {
       messageBox.warnCancelBox('确定要删除此属性吗？', `${item.AttributeName}`, () => {
@@ -242,6 +264,7 @@ export default {
           // 删除成功
             getAttributesList();
             closeClick();
+            setStorage();
           }
         });
       }, () => undefined);
@@ -278,6 +301,7 @@ export default {
           const cb = () => {
             closeClick();
             getAttributesList();
+            setStorage();
           };
             // 成功
           messageBox.successSingle(`${Data.addAttributesForm.AttributeID ? '修改' : '添加'}成功`, cb, cb);
@@ -365,6 +389,7 @@ export default {
       width: 380px;
       .hint{
         font-size: 12px;
+        line-height: 30px;
         color: #F4A307;
         position: relative;
         padding-left: 33px;

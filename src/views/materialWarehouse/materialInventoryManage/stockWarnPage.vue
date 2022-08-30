@@ -47,13 +47,14 @@
             <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
             </template>
@@ -124,11 +125,9 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import {
   ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
 } from 'vue';
-import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api/request/MaterialStorage';
-import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
 
 interface twoSelecValueType {
@@ -192,7 +191,6 @@ export default {
     console.log('steup');
 
     const CommonStore = useCommonStore();
-    const router = useRouter();
     const h = ref(0);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -247,7 +245,7 @@ export default {
       getStockWarnPageList();
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
+      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
 
     function setHeight() {

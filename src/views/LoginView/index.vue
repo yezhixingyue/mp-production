@@ -25,9 +25,11 @@
                 { pattern: /1[3456789]\d{9}/, message: '手机号码格式不正确', trigger: 'blur' },
               ]">
                   <el-input v-model.trim="loginForm.Mobile" placeholder="请输入账号" maxlength="11">
-                    <!-- <i slot="prefix">
+                    <template #prefix>
+                    <i>
                       <img src="../../assets/images/login1.png" alt="">
-                    </i> -->
+                    </i>
+                  </template>
                   </el-input>
               </el-form-item>
               <el-form-item prop="Password" :rules="[
@@ -36,9 +38,11 @@
               ]">
                   <el-input type="password" v-model.trim="loginForm.Password"
                   @keyup.enter="submitForm" placeholder="请输入密码" maxlength="16">
-                    <!-- <i slot="prefix">
+                  <template #prefix>
+                    <i>
                       <img src="../../assets/images/login2.png" alt="">
-                    </i> -->
+                    </i>
+                  </template>
                   </el-input>
               </el-form-item>
               <el-form-item>
@@ -176,13 +180,14 @@ export default {
                   border-left: none;
                   border-right: none;
                   font-size: 15px;
-                  margin-bottom: 3px;
-                  padding-left: 50px;
+                  // margin-bottom: 3px;
+                  padding-left: 10px;
                   &::placeholder {
                     color: #aaa;
                   }
                 }
                 .el-input__prefix {
+                  align-items: center;
                   > i {
                     width: 23px;
                     height: 23px;

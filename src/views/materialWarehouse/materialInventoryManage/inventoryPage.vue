@@ -18,9 +18,9 @@
           <el-table-column
           show-overflow-tooltip prop="LastInventoryStatus" label="上次盘点状态" min-width="271">
             <template #default="scope">
-              <span v-if="scope.LastInventoryStatus=== 1">--{{scope.LastInventoryStatus}}--</span>
-              <span v-if="scope.LastInventoryStatus=== 50">完成</span>
-              <span v-if="scope.LastInventoryStatus=== 1">强制 = 完成</span>
+              <span v-if="scope.row.LastInventoryStatus=== 1">盘库中</span>
+              <span v-if="scope.row.LastInventoryStatus=== 50" style="color:#428DFA">完成</span>
+              <span v-if="scope.row.LastInventoryStatus=== 49" style="color:#FF3769">强制完成</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -34,9 +34,11 @@
             <template #default="scope">
               <el-button type="primary" v-if="scope.row.LastInventoryStatus === 1"
               link @click="ToMakeAnInventory(scope.row)">
-                <i class="iconfont icon-bianji"></i>继续盘点</el-button>
+                <i class="iconfont icon-ico_kufangguanli_wupinpandian" style="font-size:14px"></i>
+                继续盘点</el-button>
               <el-button type="primary" v-else link @click="beginInventory(scope.row)">
-                <i class="iconfont icon-bianji"></i>开始盘点</el-button>
+                <i class="iconfont icon-ico_kufangguanli_wupinpandian" style="font-size:14px"></i>
+                开始盘点</el-button>
             </template>
           </el-table-column>
         </el-table>

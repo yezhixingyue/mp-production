@@ -15,22 +15,28 @@
                   <span>或者</span>
                 </el-form-item>
                 <el-form-item :label="`选择物料：`" class="select-material">
-                  <TowLevelSelect
-                    :level1Options='MaterialManageList'
-                    :level2Options='SizeS'
+                  <!-- <el-cascader :props="props" /> -->
+                  <ThreeCascaderComp
+                  :change="ThreeCascaderCompChange"
+                  ></ThreeCascaderComp>
+                  <OneLevelSelect
+                  v-if="Data.itemSelectTempMaterial"
+                    :options='Data.itemSelectTempMaterial.SizeSelects'
                     :defaultProps="{
-                      value:'CategoryID',
-                      label:'CategoryName',
-                    }"
-                    :lv2DefaultProps="{
                       value:'SizeID',
-                      label:'SizeName',
+                      label:'SizeDescribe',
                     }"
-                    :value='twoSelecValue'
-                    @change="twoSelectChange"
-                    @requestFunc='getMaterial(true)'
-                    :width="300"
-                    ></TowLevelSelect>
+                    :value='Data.SizeSelects'
+                    @change="SizeSelectChange"
+                    :width="250"
+                    :placeholder="'请选择物料尺寸'"
+                    ></OneLevelSelect>
+                  <OneLevelSelect
+                    v-else
+                    :options='[]'
+                    :width="250"
+                    :placeholder="'请选择物料尺寸'"
+                    ></OneLevelSelect>
                 </el-form-item>
                 <p class="material-info">
                   <template v-if="Data.checkedMaterial">
@@ -38,13 +44,15 @@
                     <span>
                       <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
                       :key="item.AttributeID">
-                        {{index === 0 ? '' : ' - ' }}
                         <template v-if="item.NumericValue">
-                          <span>{{item.NumericValue}}</span>
-                          {{item.AttributeUnit}}
+                          <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                         </template>
                         <template v-else>
                           <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                        </template>
+                        <template
+                        v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                          {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
                         </template>
                       </template>
                     </span>
@@ -142,8 +150,10 @@
                   </div>
                 </div>
               </el-scrollbar>
-              <p class="total">合计：{{getStorehouseAllInNumber()}}
-                {{Data.checkedMaterial?.StockUnit}}</p>
+              <p class="total" v-if="Data.StorehouseStockInfo.length">
+                合计：{{getStorehouseAllOutNumber()}}
+                {{Data.checkedMaterial?.StockUnit}}
+                （{{getOutUnitNum}} {{outUnitName}}）</p>
             </div>
           </div>
           <div class="btn">
@@ -164,12 +174,9 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
-import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
-import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  ref, reactive, onMounted, computed, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -179,11 +186,8 @@ import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { MaterialInfoType } from '@/assets/Types/common';
+import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 
-interface twoSelecValueType {
-  level1Val:null|string|number,
-  level2Val:null|string|number,
-}
 interface MaterialGoodsPositionsType {
   PositionID: number,
   Number: number,
@@ -202,10 +206,42 @@ interface outDeliveryFormType {
   Remark: string,
   MaterialGoodsPositions: MaterialGoodsPositionsType[],
 }
-
-interface unitListType {
-  UnitID: number| string,
+interface UnitSelectsType {
+  UnitID: number,
   Unit: string,
+  UnitName: string,
+  ProportionUp: number,
+  ProportionDown: number,
+  UnitPurpose: number
+}
+interface MaterialAttributesType {
+  MaterialID: number,
+  CodeID: number,
+  AttributeID: number,
+  SelectID: number,
+  NumericValue: string,
+  InputSelectValue: string,
+  SelectValue: string,
+  AttributeUnit: string,
+  IsBrand: true
+}
+interface SizeSelectsType {
+  MaterialID: number,
+  SizeID: number,
+  Code: string,
+  SizeDescribe: string
+}
+interface MaterialSelectsType {
+  CodeID: number,
+  Code: string,
+  MaterialAttributes: MaterialAttributesType[],
+  SizeSelects: SizeSelectsType[]
+}
+interface MaterialDataItemType {
+  StockUnit: string,
+  Code: string,
+  UnitSelects: UnitSelectsType[],
+  MaterialSelects: MaterialSelectsType[]
 }
 interface GoodsPositionStockInfosType {
   StorehouseID: number | string,
@@ -222,12 +258,15 @@ interface StorehouseStockInfoType {
   GoodsPositionStockInfos: GoodsPositionStockInfosType[],
 }
 interface DataType {
+  SizeSelects:null|number
   SeeImageShow:boolean,
   SeeImageUrl:string,
   checkedMaterial:MaterialInfoType | null,
   getMaterialData:getMaterialDataType,
   outDeliveryForm: outDeliveryFormType,
   StorehouseStockInfo: StorehouseStockInfoType[],
+  allSelectTempMaterial:MaterialDataItemType | null,
+  itemSelectTempMaterial:MaterialSelectsType | null,
 }
 
 export default {
@@ -235,7 +274,7 @@ export default {
   components: {
     MpCardContainer,
     OneLevelSelect,
-    TowLevelSelect,
+    ThreeCascaderComp,
     SeeImageDialogComp,
   },
   setup() {
@@ -244,6 +283,7 @@ export default {
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const CommonStore = useCommonStore();
     const Data:DataType = reactive({
+      SizeSelects: null,
       SeeImageShow: false,
       SeeImageUrl: '',
       getMaterialData: {
@@ -253,6 +293,9 @@ export default {
       },
       // 选择的物料
       checkedMaterial: null,
+      // 下拉选择的临时物料
+      allSelectTempMaterial: null,
+      itemSelectTempMaterial: null,
       outDeliveryForm: {
         MaterialID: 0,
         Number: null,
@@ -269,93 +312,7 @@ export default {
       },
       StorehouseStockInfo: [],
     });
-    const twoSelecValue:ComputedRef<twoSelecValueType> = computed(() => ({
-      level1Val: Data.getMaterialData.MaterialID,
-      level2Val: Data.getMaterialData.SizeID,
-    }));
-    // 获取转换为库存单位的数量;
-    const getTransitionNum = computed(() => {
-      let ratio;
-      const temp = Data.checkedMaterial?.UnitSelects
-        .find(res => res.UnitID === Data.outDeliveryForm.UnitID);
-      if (temp) {
-        ratio = temp.ProportionDown / temp.ProportionUp;
-      } else {
-        return 0;
-      }
-      return ratio * Number(Data.outDeliveryForm.Number);
-    });
-    // 获取仓库的出库总数量
-    function getStorehouseOutNumber(list) {
-      let num = 0;
-      list.GoodsPositionStockInfos.forEach(it => {
-        if (it.checked) {
-          num += Number(it.inputValue);
-        }
-      });
-      return num;
-    }
-    // 获取全部仓库的出库总数量
-    function getStorehouseAllInNumber() {
-      let num = 0;
-      Data.StorehouseStockInfo.forEach(res => {
-        res.GoodsPositionStockInfos.forEach(it => {
-          if (it.checked) {
-            num += Number(it.inputValue);
-          }
-        });
-      });
-      return num;
-    }
-    function SeeImg(url) {
-      Data.SeeImageShow = true;
-      Data.SeeImageUrl = url;
-    }
-    function ToOutDelivery() {
-      const routeData = router.resolve({
-        name: 'outDelivery',
-      });
-      // let routeData = this.$router.resolve({
-      //   name: "searchGoods",
-      //   query: params,
-      //   params:{ catId:params.catId }
-      // });
-      window.open(routeData.href, '_blank');
-    }
-    const MaterialManageList = computed(() => [{ CategoryID: '', CategoryName: '无' },
-      ...MaterialWarehouseStore.MaterialManageList]);
-    const SizeS = computed(() => {
-      if (!twoSelecValue.value.level1Val) {
-        return [{
-          SizeID: '',
-          SizeName: '无',
-        }];
-      }
-      let temp:any[] = MaterialManageList.value.filter((
-        res,
-      ) => res.CategoryID === twoSelecValue.value.level1Val);
 
-      if (!temp.length) {
-        return [{
-          SizeID: '',
-          SizeName: '无',
-        }];
-      }
-      temp = temp[0]?.MaterialSizes.map(res => ({
-        SizeID: res.SizeID,
-        SizeName: `${res.SizeName} ${res.SizeLength}mm x ${res.SizeWidth}mm`,
-      }));
-      return [{
-        SizeID: '',
-        SizeName: '无',
-      }, ...temp];
-    });
-
-    function twoSelectChange(levelData) {
-      const { level1Val, level2Val } = levelData;
-      Data.getMaterialData.MaterialID = level1Val;
-      Data.getMaterialData.SizeID = level2Val;
-    }
     // 获取物料货位数据信息
     function GetGoodsAllocation(MaterialID) {
       api.getStorehouseStock(MaterialID).then(res => {
@@ -375,28 +332,118 @@ export default {
         }
       });
     }
-    function getMaterial(bol) {
-      // 物料筛选
-      if (bol) {
-        // 没选尺寸的时候不进行下一步
-        if (!Data.getMaterialData.SizeID) return;
-        Data.getMaterialData.SKUCode = '';
-        const temp = MaterialManageList.value.filter((
-          res:any,
-        ) => res.ID === Data.getMaterialData.MaterialID);
-        console.log(temp, 'temp');
+    // 选择物料
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
+      Data.SizeSelects = null;
+      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
+      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
+    }
+    // 格式化数据
+    function SizeSelectChange(ID) {
+      Data.SizeSelects = ID;
+      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
+      const temp = {
+        MaterialID: SizeObj?.MaterialID,
+        Code: SizeObj?.Code,
+        SizeDescribe: SizeObj?.SizeDescribe,
+        MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
+        StockUnit: Data.allSelectTempMaterial?.StockUnit,
+        UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 2),
+      };
+      Data.checkedMaterial = temp as MaterialInfoType;
+      GetGoodsAllocation(Data.checkedMaterial.MaterialID);
+    }
+    // 获取转换为库存单位的数量;
+    const getTransitionNum = computed(() => {
+      let ratio;
+      const temp = Data.checkedMaterial?.UnitSelects
+        .find(res => res.UnitID === Data.outDeliveryForm.UnitID);
+      if (temp) {
+        ratio = temp.ProportionDown / temp.ProportionUp;
+      } else {
+        return 0;
+      }
+      return ratio * Number(Data.outDeliveryForm.Number);
+    });
 
-        // GetGoodsAllocation(Data.checkedMaterial.MaterialID);
-      } else { // sku编码查询
-        twoSelectChange({ level1Val: '', level2Val: '' });
-        api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-          console.log(res);
+    // 获取仓库的出库总数量
+    function getStorehouseOutNumber(list) {
+      let num = 0;
+      list.GoodsPositionStockInfos.forEach(it => {
+        if (it.checked) {
+          num += Number(it.inputValue) || 0;
+        }
+      });
+      return num;
+    }
+    // 获取全部仓库的出库总数量
+    function getStorehouseAllOutNumber() {
+      let num = 0;
+      Data.StorehouseStockInfo.forEach(res => {
+        res.GoodsPositionStockInfos.forEach(it => {
+          if (it.checked) {
+            num += Number(it.inputValue) || 0;
+          }
+        });
+      });
+      return num;
+    }
+    // 获取转换为出入库单位的数量;
+    const getOutUnitNum = computed(() => {
+      const num = getStorehouseAllOutNumber();
+      let ratio;
+      const temp = Data.checkedMaterial?.UnitSelects
+        .find(res => res.UnitID === Data.outDeliveryForm.UnitID);
+      if (temp) {
+        ratio = temp.ProportionDown / temp.ProportionUp;
+      } else {
+        return 0;
+      }
+      return num / ratio;
+    });
+    // 出入库单位名;
+    const outUnitName = computed(() => {
+      const { UnitID } = Data.outDeliveryForm;
+      const temp = Data.checkedMaterial?.UnitSelects.find(res => res.UnitID === UnitID);
+      if (temp) return temp.Unit;
+      return '';
+    });
+    function SeeImg(url) {
+      Data.SeeImageShow = true;
+      Data.SeeImageUrl = url;
+    }
+    function ToOutDelivery() {
+      const routeData = router.resolve({
+        name: 'outDelivery',
+      });
+      // let routeData = this.$router.resolve({
+      //   name: "searchGoods",
+      //   query: params,
+      //   params:{ catId:params.catId }
+      // });
+      window.open(routeData.href, '_blank');
+    }
+
+    function twoSelectChange(levelData) {
+      const { level1Val, level2Val } = levelData;
+      Data.getMaterialData.MaterialID = level1Val;
+      Data.getMaterialData.SizeID = level2Val;
+    }
+
+    // 根据选项或sku编码查物料
+    function getMaterial() {
+      // 物料筛选
+      api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
+        console.log(res);
+        if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
-            .filter(it => it.UnitPurpose === 2);
+            .filter(it => it.UnitPurpose === 1);
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
-        });
-      }
+        } else {
+          messageBox.failSingleError('查询失败', 'sku编码错误', () => null, () => null);
+        }
+      });
     }
     function outDelvery() {
       // 设置物料id
@@ -443,18 +490,19 @@ export default {
     return {
       h,
       Data,
-      SizeS,
       SeeImg,
       CommonStore,
       getTransitionNum,
+      getOutUnitNum,
+      outUnitName,
       getMaterial,
       ToOutDelivery,
-      twoSelecValue,
-      MaterialManageList,
       outDelvery,
       twoSelectChange,
       getStorehouseOutNumber,
-      getStorehouseAllInNumber,
+      getStorehouseAllOutNumber,
+      ThreeCascaderCompChange,
+      SizeSelectChange,
     };
   },
 
@@ -535,10 +583,13 @@ export default {
                   }
                 }
               }
-              .select-material{
-                .mp--tow-level-select{
-                  .select-box{
-                    width: 300px;
+              &.select-material{
+                .el-cascader{
+                  width: 350px;
+                  height: 40px;
+                  margin-right: 40px;
+                  .el-input{
+                    height: 40px;
                   }
                 }
               }

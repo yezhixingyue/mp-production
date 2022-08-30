@@ -1,7 +1,8 @@
 import api from '@/api';
 import { defineStore, DefineStoreOptions } from 'pinia';
-import { RouteLocationNormalized } from 'vue-router';
+import { RouteLocationNormalized, useRouter } from 'vue-router';
 
+const Router = useRouter();
 interface DistrictType {
     ID: number,
     Name: string,
@@ -23,6 +24,7 @@ interface IActions {
   setLastPagePathsFilterAfterGoback:(name:string)=>void,
   getStaffSelect:()=>void,
   onresize:(size:string)=>void,
+  replace:(routerUrl:string)=>void,
 }
 type IGetters = Record<string, never>;
 
@@ -56,6 +58,9 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
     onresize(size) { // 回转页面信息后删除掉回转前的路由信息,
       this.size = size;
+    },
+    replace(routerUrl) { // 回转页面信息后删除掉回转前的路由信息,
+      Router.replace(routerUrl);
     },
   },
 };

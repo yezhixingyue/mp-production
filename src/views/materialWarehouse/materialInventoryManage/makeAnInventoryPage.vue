@@ -9,7 +9,8 @@
               <div class="title">
                 <p>当前盘点仓库：
                   <span>
-                    {{Data.StorehouseName}}-
+                    {{Data.StorehouseName}}
+                    {{Data.InventoryDetail.CurrentUpperDimension}}
                     {{Data.InventoryDetail.CurrentPositionName}}
                   </span>
                 </p>
@@ -23,14 +24,16 @@
                 <p>
                   <span class="label">物料:</span>
                   <span class="value">
-                    <template v-for="(item) in Data.InventoryDetail.MaterialAttributes"
+                    <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
                     :key="item.AttributeID">
                       <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}</span>
-                        {{item.AttributeUnit}}
+                        <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                       </template>
                       <template v-else>
                         <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                      </template>
+                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                        {{index ===  Data.InventoryDetail.MaterialAttributes.length-1 ? '' : ' ' }}
                       </template>
                     </template>
                     {{Data.InventoryDetail.SizeDescribe}}
@@ -46,27 +49,36 @@
             </div>
             <div class="last" v-if="Data.InventoryDetail?.PrevPositionMaterial">
               <div class="title">
-                <p>上一货位：<span>主料藏</span></p>
-                <el-button link type="primary" @click="anewLast">重新盘点上一个</el-button>
+                <p>上一货位：
+                  <span>
+                    {{Data.InventoryDetail.PrevUpperDimension}}
+                    {{Data.InventoryDetail.PrevPositionName}}
+                  </span>
+                </p>
+                <el-button link type="primary" :disabled="!Data.InventoryDetail?.PrevDetailID"
+                @click="anewLast">重新盘点上一个</el-button>
               </div>
-              <ul>
-                <li>
-                  <span class="delivery">aaa</span>
-                  <span class="size">aaa</span>
-                  <span class="code">aaa</span>
-                  <span class="number">aaa</span>
-                </li>
-                <li>
-                  <span class="delivery">aaa</span>
-                  <span class="size">aaa</span>
-                  <span class="code">aaa</span>
-                  <span class="number">aaa</span>
-                </li>
-                <li>
-                  <span class="delivery">aaa</span>
-                  <span class="size">aaa</span>
-                  <span class="code">aaa</span>
-                  <span class="number">aaa</span>
+              <ul v-if="Data.InventoryDetail?.PrevPositionMaterial.length">
+                <li v-for="(PrevItem,index) in Data.InventoryDetail.PrevPositionMaterial"
+                :key="index">
+                <!-- 物料 -->
+                  <span class="delivery">
+                    <template v-for="(item) in PrevItem.MaterialAttributes"
+                    :key="item.AttributeID">
+                      <template v-if="item.NumericValue">
+                        <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                      </template>
+                      <template v-else>
+                        <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                      </template>
+                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                        {{index === PrevItem.MaterialAttributes.length-1 ? '' : ' ' }}
+                      </template>
+                    </template>
+                  </span>
+                  <span class="size">{{PrevItem.SizeDescribe}}</span>
+                  <span class="code">{{PrevItem.Code}}</span>
+                  <span class="number">{{PrevItem.Stock}}{{PrevItem.StockUnit}}</span>
                 </li>
               </ul>
             </div>
@@ -128,15 +140,12 @@ import AddMaterialDialog from '@/components/materialInventoryManage/addMaterialD
 import MakeAnInventoryErrorDialog from '@/components/materialInventoryManage/makeAnInventoryErrorDialog.vue';
 
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useCommonStore } from '@/store/modules/common';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useRouter, useRoute } from 'vue-router';
 
 interface MaterialAttributesType {
   MaterialID: number,
@@ -182,7 +191,6 @@ export default {
   setup() {
     const h = ref(0);
     const CommonStore = useCommonStore();
-    const route = useRoute();
     const Data:DataType = reactive({
       StorehouseName: '',
       // 还有物料 添加物料弹窗
@@ -209,19 +217,24 @@ export default {
     }
     // 获取盘库详情
     function getInventoryDetail() {
-      console.log(Data.DetailID);
-
+      const errorCb = () => {
+        messageBox.failSingleError('错误', '请重新打开此标签', () => {
+          window.close();
+        }, () => {
+          window.close();
+        });
+      };
       if (Data.DetailID && !Number.isNaN(Number(Data.DetailID))) {
         api.getInventoryDetail(Data.DetailID).then(res => {
           if (res.data.Status === 1000) {
             Data.InventoryDetail = res.data.Data as InventoryDetailType;
             Data.InventoryDetail.DetailID = Data.DetailID as number;
+          } else {
+            errorCb();
           }
         });
       } else {
-        messageBox.failSingle('请重新打开此标签', () => {
-          window.close();
-        }, () => null);
+        errorCb();
       }
     }
 
@@ -238,7 +251,10 @@ export default {
     }
     // 盘库强制结束
     function ForcedEnd() {
-      messageBox.warnCancelMsgSM('确定结束盘库吗?', () => {
+      const html = `
+        <p class="danger-content">强制结束后将不能再继续盘点库存，请谨慎操作！！！</p>
+      `;
+      messageBox.dangerCancelBox('确定结束盘库吗?', html, () => {
         api.getInventoryForcedEnd(Data.InventoryDetail?.DetailID).then(() => {
           over();
         });
@@ -292,12 +308,13 @@ export default {
       console.log(data);
       const temp = { ...data };
 
-      temp.MaterialID = Data.InventoryDetail?.MaterialID;
       temp.PositionID = Data.InventoryDetail?.PositionID;
-      console.log(temp);
       api.getInventoryOmission(temp).then(res => {
         if (res.data.Status === 1000) {
           // 补货成功
+          messageBox.successSingle('添加成功', () => {
+            Data.addMaterialShow = false;
+          }, () => null);
         }
       });
     }
@@ -306,7 +323,6 @@ export default {
       console.log(data, 'dialogSaveInventoryError');
       const temp = { ...data };
       temp.DetailID = Data.InventoryDetail?.DetailID;
-      console.log(temp);
       api.getInventoryError(temp).then(res => {
         if (res.data.Status === 1000) {
           // 货物修改成功

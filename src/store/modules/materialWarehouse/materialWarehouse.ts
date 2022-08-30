@@ -65,6 +65,10 @@ interface SupplierSelectListType {
   SupplierID: number| string,
   SupplierName: string,
 }
+interface getMaterialType {
+  categoryID: number| string,
+  isStock?: boolean,
+}
 interface IState {
   CategoryList:CategoryType[],
   MaterialTypeList:MaterialType[],
@@ -74,8 +78,8 @@ interface IState {
   SupplierSelectList:SupplierSelectListType[],
 }
 interface IActions {
-  getMaterialCategoryList:()=>void,
-  getMaterialTypeAll:(categoryID:number)=>void,
+  getMaterialCategoryList:(data?, callback?)=>void,
+  getMaterialTypeAll:(data:getMaterialType, callback?)=>void,
   getMaterialTypeAttributeAllByTypeID: (TypeID:number, callback?)=>void
   getMaterialTypeSizeAllByTypeID: (TypeID:number, callback?)=>void
   getMaterialManageList: (getMaterialManageData:object, callback?)=>void
@@ -103,19 +107,21 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
   },
   actions: {
     // 物料所有分类查询
-    getMaterialCategoryList(data = {}) {
+    getMaterialCategoryList(data = {}, callback = () => null) {
       api.getMaterialCategoryAll(data).then(res => {
         if (res.data.Status === 1000) {
           this.CategoryList = res.data.Data as CategoryType[];
+          callback();
         }
       });
     },
     // 所有物料类型
-    getMaterialTypeAll(categoryID) {
+    getMaterialTypeAll({ categoryID, isStock = true }, callback = () => null) {
       if (!categoryID) return;
-      api.getMaterialTypeAll(categoryID).then(res => {
+      api.getMaterialTypeAll({ categoryID, isStock }).then(res => {
         if (res.data.Status === 1000) {
           this.MaterialTypeList = res.data.Data as MaterialType[];
+          callback();
         }
       });
     },

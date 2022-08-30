@@ -50,13 +50,14 @@
             <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
             </template>
@@ -104,7 +105,7 @@
           <el-form-item :label="`类型：`">
             <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
           </el-form-item>
-          <el-form-item :label="`编码：`" required>
+          <el-form-item :label="`编码：`" class="form-item-required" prop="MaterialCode">
             <el-input
             v-model="Data.addMaterialManageForm.MaterialCode" />
           </el-form-item>
@@ -112,28 +113,24 @@
             编码由 1 到 10 位的英文字母或数字组成，方便记忆，在入库搜索物料时输入编码，可快速定位物料， 类似于超市称重时输入的物品
           </p>
           <el-form-item :label="`${item.AttributeName}：`" class="attributes"
-          :required="item.IsRequired"
+          :class="item.IsRequired?'form-item-required':''"
           v-for="(item, index) in Data.addMaterialManageForm.MaterialRelationAttributes"
-          :key="item.AttributeID">
+          :key="item.AttributeID" :prop="['NumericValue','SelectID','InputSelectValue']">
           <p v-if="item.AttributeType === 1">
 
             <NumberTypeItemComp
-              :PropValue="Data.addMaterialManageForm.
-              MaterialRelationAttributes[index].NumericValue||null"
+              :PropValue="item.NumericValue||null"
               :InputContent="item.RegularQuantity"
               :Allow="item.IsCustom"
               :AllowDecimal="item.IsAllowDecimal"
-              :UpdateData="(newVal) => Data.addMaterialManageForm
-              .MaterialRelationAttributes[index].NumericValue = newVal">
+              :UpdateData="(newVal) => item.NumericValue = newVal">
             </NumberTypeItemComp>
             {{item.AttributeUnit}}
           </p>
             <OptionTypeItemComp
               v-else
-              :PropValue="Data.addMaterialManageForm.
-              MaterialRelationAttributes[index].InputSelectValue
-              ||Data.addMaterialManageForm.
-              MaterialRelationAttributes[index].SelectID"
+              :PropValue="item.InputSelectValue
+              ||item.SelectID"
               :options="item.AttributeSelects"
               :Allow="item.IsCustom"
               :UpdateData="(newVal) => UpdateData(item.AttributeSelects || [],newVal,index)">
@@ -390,7 +387,7 @@ export default {
     function addMaterialManagePrimaryClick() {
       const msg:string[] = [];
       // 表单验证
-      Data.addMaterialManageForm.MaterialRelationAttributes.forEach((item, index) => {
+      Data.addMaterialManageForm.MaterialRelationAttributes.forEach((item) => {
         // 数字输入或选择
         if (item.AttributeType === 1 && item.IsRequired && !item.NumericValue) {
           msg.push(item.AttributeName);
@@ -446,27 +443,18 @@ export default {
           Data.addMaterialManageForm.ID = item.ID;
           // 根据获取到的所有属性的id查保存的数据并分别赋值给表单
           MaterialWarehouseStore.MaterialTypeAttributeAllList.forEach(res => {
+            console.log(item.MaterialAttributes);
+            console.log(res.AttributeID);
+
             let temp = item.MaterialAttributes.find((saveAttributeData) => res.AttributeID
               === saveAttributeData.AttributeID);
-            temp = {
-              AttributeID: res.AttributeID,
-              NumericValue: temp.NumericValue,
-              SelectID: temp.SelectID,
-              InputSelectValue: temp.InputSelectValue,
-              AttributeName: res.AttributeName,
-              AttributeType: res.AttributeType,
-              RegularQuantity: res.RegularQuantity,
-              IsAllowDecimal: res.IsAllowDecimal,
-              AttributeUnit: res.AttributeUnit,
-              IsRequired: res.IsRequired,
-              AttributeSelects: res.AttributeSelects,
-              IsCustom: res.IsCustom,
-            };
+            console.log(temp, 'tempaaaaaaaaaa');
+
             if (!temp) { // 处理可能出现的 已经设置物料 的类型中添加属性后没有值的问题
               temp = {
                 SelectValue: null,
                 AttributeID: res.AttributeID,
-                NumericValue: '',
+                NumericValue: null,
                 SelectID: '',
                 InputSelectValue: '',
                 AttributeName: res.AttributeName,
@@ -476,6 +464,21 @@ export default {
                 AttributeUnit: res.AttributeUnit,
                 IsRequired: res.IsRequired,
                 AttributeSelects: res.AttributeSelects,
+              };
+            } else {
+              temp = {
+                AttributeID: res.AttributeID,
+                NumericValue: temp.NumericValue || null,
+                SelectID: temp.SelectID,
+                InputSelectValue: temp.InputSelectValue,
+                AttributeName: res.AttributeName,
+                AttributeType: res.AttributeType,
+                RegularQuantity: res.RegularQuantity,
+                IsAllowDecimal: res.IsAllowDecimal,
+                AttributeUnit: res.AttributeUnit,
+                IsRequired: res.IsRequired,
+                AttributeSelects: res.AttributeSelects,
+                IsCustom: res.IsCustom,
               };
             }
             console.log(temp, 'temp');
@@ -554,7 +557,7 @@ export default {
       getMaterialManageList();
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
+      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
 
     function setHeight() {
@@ -649,6 +652,7 @@ export default {
       }
       >p{
         margin-bottom:10px;
+        font-size: 12px;
         line-height: 30px;
         color: #F4A307;
       }

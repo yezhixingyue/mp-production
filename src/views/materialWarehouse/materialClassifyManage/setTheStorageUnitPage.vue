@@ -61,20 +61,22 @@
     <template #default>
       <div class="add-unit-dialog">
         <el-form :model="Data.addUnitForm" label-width="100px">
-          <el-form-item label="单位：" required>
-            <el-input v-model="Data.addUnitForm.Unit" />
+          <el-form-item label="单位：" class="form-item-required">
+            <el-input :maxlength="8" v-model="Data.addUnitForm.Unit" />
           </el-form-item>
-          <el-form-item label="单位用途：" required>
+          <el-form-item label="单位用途：" class="form-item-required">
             <el-radio-group v-model="Data.addUnitForm.UnitPurpose">
               <el-radio :label="1" size="large">入库</el-radio>
               <el-radio :label="2" size="large">出库</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="单位换算：" required>
-            <el-input-number v-model="Data.addUnitForm.ProportionUp" :controls="false"/>
+          <el-form-item label="单位换算：" class="form-item-required">
+            <el-input-number :maxlength="4"
+             v-model="Data.addUnitForm.ProportionUp" :controls="false"/>
             <span class="unit">{{Data.addUnitForm.Unit}}</span>
             <span>=</span>
-            <el-input-number v-model="Data.addUnitForm.ProportionDown" :controls="false"/>
+            <el-input-number :maxlength="4"
+             v-model="Data.addUnitForm.ProportionDown" :controls="false"/>
             <span class="unit">{{Data.currentStoreUnit}}</span>
           </el-form-item>
         </el-form>
@@ -164,6 +166,9 @@ export default {
         }
       });
     }
+    function setStorage() { // 设置会话存储
+      sessionStorage.setItem('updataMaterialClassifyManagePage', 'true');
+    }
     function PaginationChange(newVal) {
       if (Data.getUnitListData.Page === newVal) return;
       Data.getUnitListData.Page = newVal;
@@ -193,11 +198,12 @@ export default {
       Data.addUnitForm = Object.assign(Data.addUnitForm, item);
     }
     function delStorageUnit(item) {
-      messageBox.warnCancelBox('确定要删除此单位吗？', `${item.UnitName}`, () => {
+      messageBox.warnCancelBox('确定要删除此单位吗？', `${item.Unit}`, () => {
         api.getMaterialTypeUnitRemove(item.UnitID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getUnitList();
+            setStorage();
           }
         });
       }, () => undefined);
@@ -224,6 +230,7 @@ export default {
             const cb = () => {
               addUnitCloseClick();
               getUnitList();
+              setStorage();
             };
             // 成功
             messageBox.successSingle(`${Data.addUnitForm.UnitID ? '修改' : '添加'}成功`, cb, cb);

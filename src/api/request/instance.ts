@@ -1,10 +1,42 @@
-import { AxiosResponse, AxiosRequestHeaders } from 'axios';
+import { AxiosResponse } from 'axios';
 import { useUserStore } from '@/store/modules/user';
 import { useRouter } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { ElLoading } from 'element-plus';
 import Axios from './axios';
 
 const apiListByNotNeedToken = ['/Api/Staff/Login']; // 不需要token访问的接口列表
+
+const closeTip = false;
+let requestNum = 0;
+let loadingInstance;
+const getShowLoading = (config) => { // 查看当前请求是否需要展示弹窗
+  let showLoading = true;
+  const arr = ['/Api/MaterialType/All', '/Api/Upload/File', '/Api/SingleMaterial/ByType']; // 不需要展示loading的api地址
+  if (config && config.url) {
+    for (let i = 0; i < arr.length; i += 1) {
+      if (config.url.split('?')[0].includes(arr[i]) || config.closeLoading) {
+        showLoading = false;
+      }
+    }
+  }
+  return showLoading;
+};
+const handleLoadingOpen = () => { // 打开弹窗
+  requestNum += 1;
+  loadingInstance = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    spinner: 'el-icon-loading',
+    background: 'rgba(255, 255, 255, 0.3)',
+    customClass: 'mp-general-loading-box',
+  });
+};
+const handleLoadingClose = () => { // 关闭弹窗
+  requestNum -= 1;
+  if (requestNum < 0) requestNum = 0;
+  if (requestNum === 0 && loadingInstance) loadingInstance.close();
+};
 
 const instance = new Axios({
   interceptors: {
@@ -14,6 +46,7 @@ const instance = new Axios({
       const router = useRouter();
       const curConfig = config;
       const { token } = userStore;
+      console.log(router, 'router');
 
       if (!token && !apiListByNotNeedToken.includes(curConfig.url || '')) {
         router.replace('/login');
@@ -23,18 +56,22 @@ const instance = new Axios({
       curConfig.headers = {
         Authorization: `Bearer ${token}`,
       };
-
+      // 打开loading
+      if (getShowLoading(curConfig)) handleLoadingOpen();
       return config;
     },
     // 响应拦截器
     responseInterceptors: (result:AxiosResponse) => {
-      const router = useRouter();
+      // 关闭loading
+      if (getShowLoading(result.config) && loadingInstance) handleLoadingClose();
       const userStore = useUserStore();
       if (result.data.Status !== 1000) {
         if (result.data.Status === 8037) {
+          instance.cancelAllRequest();
           messageBox.failSingle('请重新登录', () => {
+            const host = window.location.href.split('#')[0] || '';
             userStore.token = '';
-            return router.replace('/login');
+            window.location.href = `${host}#/login`;
           });
         } else {
           messageBox.failSingleError('操作失败', result.data.Message, () => null);
@@ -43,14 +80,14 @@ const instance = new Axios({
       return result;
     },
     responseInterceptorsCatch: (error:any) => {
-      const router = useRouter();
+      if (getShowLoading(error.config) && loadingInstance) handleLoadingClose();
+
       const userStore = useUserStore();
       if (error.response) {
         let _msg = '';
         switch (error.response.status) {
           case 401:
             userStore.token = '';
-            router.replace('/login');
             break;
           case 403:
             break;

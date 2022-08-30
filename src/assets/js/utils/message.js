@@ -76,6 +76,27 @@ function warnCancelBox(title, msg, successFunc, failFunc) {
     cancelButtonText: '取消',
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
+/**
+ * 警告提示框 --- 有标题和内容 双按钮   用于取消或删除 操作确认 如订单列表取消
+ *
+ * @param {string} [title='确定取消此订单吗 ?']
+ * @param {*} msg
+ * @param {*} successFunc
+ * @param {*} failFunc
+ */
+function dangerCancelBox(title, msg, successFunc, failFunc) {
+  ElMessageBox({
+    showClose: true,
+    message: msg,
+    type: 'success ',
+    confirmButtonText: '确定',
+    title,
+    customClass: 'mp-operation-reverse-danger',
+    showCancelButton: true,
+    cancelButtonText: '取消',
+    dangerouslyUseHTMLString: true,
+  }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
+}
 
 /**
  * 警告提示框 --- 有标题, 无内容 双按钮   用于图片删除等
@@ -166,6 +187,8 @@ const obj = {
   // 警告提示框 --- 有标题, 无内容 双按钮   用于图片删除等 小文字 可换行
   warnCancelMsgSM,
   handleLoadingError,
+  // 危险操作确认弹框 -- 有标题和内容 双按钮
+  dangerCancelBox,
 };
 
 export default obj;

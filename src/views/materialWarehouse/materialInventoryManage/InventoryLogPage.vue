@@ -78,13 +78,14 @@
             <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
             </template>
@@ -156,26 +157,18 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, nextTick, onActivated,
+  ref, reactive, onMounted, watch, computed, nextTick, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useCommonStore } from '@/store/modules/common';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
-import messageBox from '@/assets/js/utils/message';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 
-interface twoSelecValueType {
-  level1Val:null|string|number,
-  level2Val:null|string|number,
-}
 interface getInventoryLogListDataType {
   DateType:string
 

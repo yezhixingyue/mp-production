@@ -1,31 +1,37 @@
 interface UnitSelectsType {
   UnitID: number,
   Unit: string,
+  UnitName: string,
   ProportionUp: number,
   ProportionDown: number,
   UnitPurpose: number
 }
 interface MaterialAttributesType {
   MaterialID: number,
+  CodeID: number,
   AttributeID: number,
   SelectID: number,
   NumericValue: string,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
-  IsBrand: boolean
+  IsBrand: true
 }
-// 根据sku编码或者物料查询的物料
-interface MaterialInfoType {
+interface SizeSelectsType {
   MaterialID: number,
-  Code: string,
-  SizeDescribe: string,
-  MaterialAttributes: MaterialAttributesType[],
-  StockUnit: string,
-  UnitSelects: UnitSelectsType[]
+  Code: string
+  SizeID: number,
+  SizeDescribe: string
 }
-
-export {
-  MaterialInfoType,
-  MaterialAttributesType,
-};
+export interface MaterialSelectsType {
+  CodeID: number,
+  Code: string,
+  MaterialAttributes: MaterialAttributesType[],
+  SizeSelects: SizeSelectsType[]
+}
+export interface MaterialDataItemType {
+  StockUnit: string,
+  Code: string,
+  UnitSelects: UnitSelectsType[],
+  MaterialSelects: MaterialSelectsType[]
+}

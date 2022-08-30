@@ -23,19 +23,44 @@
             <span>或者</span>
           </el-form-item>
           <el-form-item :label="`选择物料：`" class="select-material">
-            aaaa
+                  <ThreeCascaderComp
+                  v-if="Dialog"
+                  ref="ThreeCascaderComp"
+                  :change="ThreeCascaderCompChange"
+                  ></ThreeCascaderComp>
+                  <OneLevelSelect
+                  v-if="Data.itemSelectTempMaterial"
+                    :options='Data.itemSelectTempMaterial.SizeSelects'
+                    :defaultProps="{
+                      value:'SizeID',
+                      label:'SizeDescribe',
+                    }"
+                    :value='Data.SizeSelects'
+                    @change="SizeSelectChange"
+                    :width="140"
+                    :placeholder="'请选择物料尺寸'"
+                    ></OneLevelSelect>
+                  <OneLevelSelect
+                    v-else
+                    :options='[]'
+                    :width="140"
+                    :placeholder="'请选择物料尺寸'"
+                    ></OneLevelSelect>
           </el-form-item>
           <el-form-item :label="`物料：`" class="red">
             <template v-if="Data.checkedMaterial">
               <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
               :key="item.AttributeID">
-                {{index === 0 ? '' : ' - ' }}
+                <!-- {{index === 0 ? '' : ' - ' }} -->
                 <template v-if="item.NumericValue">
                   <span>{{item.NumericValue}}</span>
                   {{item.AttributeUnit}}
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
+                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                  {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
             </template>
@@ -59,11 +84,15 @@
 </template>
 <script lang="ts">
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
+import messageBox from '@/assets/js/utils/message';
 import {
   reactive, computed,
 } from 'vue';
 import api from '@/api/request/MaterialStorage';
 import { MaterialInfoType } from '@/assets/Types/common';
+import { MaterialDataItemType, MaterialSelectsType } from '@/assets/Types/materialWarehouse/useSKUandSelectMaterialType';
+import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
+import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 
 interface getMaterialDataType {
   MaterialID: string|number,
@@ -76,14 +105,19 @@ interface inDeliveryFormType {
     Remark: string|number,
 }
 interface DataType {
+  SizeSelects: null | number,
   addMaterialShow: boolean,
   getMaterialData: getMaterialDataType,
   inDeliveryForm: inDeliveryFormType,
   checkedMaterial:MaterialInfoType | null,
+  allSelectTempMaterial:MaterialDataItemType | null,
+  itemSelectTempMaterial:MaterialSelectsType | null,
 }
 export default {
   components: {
     DialogContainerComp,
+    OneLevelSelect,
+    ThreeCascaderComp,
   },
   props: {
     visible: {
@@ -105,6 +139,7 @@ export default {
   },
   setup(props) {
     const Data:DataType = reactive({
+      SizeSelects: null,
       addMaterialShow: false,
       // 此货位还有物料时添加物料的物料查询表单
       getMaterialData: {
@@ -120,6 +155,9 @@ export default {
       },
       // 查询到的物料
       checkedMaterial: null,
+      // 下拉选择的临时物料
+      allSelectTempMaterial: null,
+      itemSelectTempMaterial: null,
     });
     const Dialog = computed({
       get() {
@@ -138,29 +176,74 @@ export default {
     // 此货位还有物料时添加物料的弹框
     function addMaterialPrimaryClick() {
       console.log('addMaterialPrimaryClick');
-      props.dialogSaveMaterial(Data.inDeliveryForm);
+      // 组装 MaterialInfo 数据
+
+      const msg:string[] = [];
+      Data.checkedMaterial?.MaterialAttributes.forEach((item) => {
+        if (item.NumericValue) {
+          msg.push(`${item.NumericValue}${item.AttributeUnit}`);
+        } else {
+          msg.push(`${item.InputSelectValue || item.SelectValue || ''}`);
+        }
+      });
+      msg.push(Data.checkedMaterial?.SizeDescribe || '');
+      msg.push(`（${Data.checkedMaterial?.Code}）`);
+
+      const temp = {
+        MaterialInfo: msg.join(' '),
+        ...Data.inDeliveryForm,
+      };
+      temp.MaterialID = Data.checkedMaterial?.MaterialID as number;
+      props.dialogSaveMaterial(temp);
     }
+
+    // 选择物料
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
+      console.log(itemMaterial, allSellectMaterial, 'itemMaterial, allSellectMaterial');
+
+      Data.SizeSelects = null;
+      Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
+      Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;
+    }
+    // 格式化数据
+    function SizeSelectChange(ID) {
+      console.log(ID);
+      console.log(Data.SizeSelects);
+      console.log(Data.itemSelectTempMaterial);
+
+      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
+      const temp = {
+        MaterialID: SizeObj?.MaterialID,
+        Code: SizeObj?.Code,
+        SizeDescribe: SizeObj?.SizeDescribe,
+        MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
+        StockUnit: Data.allSelectTempMaterial?.StockUnit,
+        UnitSelects: Data.allSelectTempMaterial?.UnitSelects,
+      };
+      Data.checkedMaterial = { ...temp } as MaterialInfoType;
+      Data.SizeSelects = ID;
+    }
+
     // 根据选项或sku编码查物料
-    function getMaterial(bol) {
+    function getMaterial() {
       // 物料筛选
-      if (bol) {
-        // 没选尺寸的时候不进行下一步
-        if (!Data.getMaterialData.SizeID) return;
-        Data.getMaterialData.SKUCode = '';
-        // temp = MaterialManageList.value.filter((
-        //   res:any,
-        // ) => res.ID === Data.getMaterialData.MaterialID);
-      } else { // sku编码查询
-        api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-          console.log(res);
+      api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
+        console.log(res);
+        if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
-        });
-      }
+          Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
+            .filter(it => it.UnitPurpose === 1);
+        } else {
+          messageBox.failSingleError('查询失败', 'sku编码错误', () => null, () => null);
+        }
+      });
     }
     return {
       Data,
       Dialog,
       getMaterial,
+      ThreeCascaderCompChange,
+      SizeSelectChange,
       addMaterialCloseClick,
       addMaterialClosed,
       addMaterialPrimaryClick,
@@ -190,6 +273,12 @@ export default {
         >span{
           margin: 10px 0;
         }
+      }
+    }
+    .select-material{
+      .el-cascader{
+        width: 300px;
+        margin-right: 20px;
       }
     }
     .red{

@@ -8,8 +8,8 @@ const api = {
   getMaterialTypeSave(data) { // POST /Api/MaterialType/Save  物料类型编辑
     return request({ method: 'POST', url: '/Api/MaterialType/Save', data });
   },
-  getMaterialTypeAll(categoryID) { // POST /Api/MaterialType/All  所有物料类型
-    return request({ method: 'POST', url: `/Api/MaterialType/All?categoryID=${categoryID}` });
+  getMaterialTypeAll({ categoryID, isStock }) { // POST /Api/MaterialType/All  所有物料类型
+    return request({ method: 'GET', url: `/Api/MaterialType/All?categoryID=${categoryID}&isStock=${isStock}` });
   },
   getMaterialTypeRemove(typeID) { // DELETE /Api/MaterialType/Remove  物料分类删除
     return request({ method: 'DELETE', url: `/Api/MaterialType/Remove?typeID=${typeID}` });
@@ -34,7 +34,7 @@ const api = {
     return request({ method: 'GET', url: '/Api/MaterialTypeAttribute/SelectType', data });
   },
   getMaterialTypeAttributeAll(data) { // POST /Api/MaterialTypeAttribute/All  物料类型属性 -
-    return request({ method: 'POST', url: `/Api/MaterialTypeAttribute/All?typeID=${data.TypeID}` });
+    return request({ method: 'GET', url: `/Api/MaterialTypeAttribute/All?typeID=${data.TypeID}` });
   },
   // 物料分类 ------------------------ MaterialCategory
   getMaterialCategorySave(data) { // POST /Api/MaterialCategory/Save  物料分类编辑
@@ -44,7 +44,7 @@ const api = {
     return request({ method: 'POST', url: '/Api/MaterialCategory/List', data });
   },
   getMaterialCategoryAll(data) { // POST /Api/MaterialCategory/All  物料所有分类查询
-    return request({ method: 'POST', url: '/Api/MaterialCategory/All', data });
+    return request({ method: 'GET', url: '/Api/MaterialCategory/All', data });
   },
   getMaterialCategoryRemove(CategoryID) { // DELETE /Api/MaterialCategory/Remove  物料分类删除
     return request({ method: 'DELETE', url: `/Api/MaterialCategory/Remove?categoryID=${CategoryID}` });
@@ -66,8 +66,8 @@ const api = {
   getMaterialTypeSizeList(data) { // POST /Api/MaterialTypeSize/List  物料类型尺寸查询
     return request({ method: 'POST', url: '/Api/MaterialTypeSize/List', data });
   },
-  getMaterialTypeSizeAll(typeID) { // POST /Api/MaterialTypeSize/All  物料类型尺寸 -
-    return request({ method: 'POST', url: `/Api/MaterialTypeSize/All?typeID=${typeID}` });
+  getMaterialTypeSizeAll(typeID) { // GET /Api/MaterialTypeSize/All  物料类型尺寸 -
+    return request({ method: 'GET', url: `/Api/MaterialTypeSize/All?typeID=${typeID}` });
   },
   getMaterialTypeSizeSave(data) { // POST /Api/MaterialTypeSize/Save  物料类型尺寸编辑
     return request({ method: 'POST', url: '/Api/MaterialTypeSize/Save', data });
@@ -94,7 +94,7 @@ const api = {
     return request({ method: 'POST', url: '/Api/MaterialSupplier/List', data });
   },
   getMaterialSupplierSelect() { // POST /Api/MaterialSupplier/Select  物料供应商选择项
-    return request({ method: 'POST', url: '/Api/MaterialSupplier/Select' });
+    return request({ method: 'GET', url: '/Api/MaterialSupplier/Select' });
   },
   getMaterialSupplierRemove(ID) { // POST /Api/MaterialSupplier/Remove  物料供应商列表
     return request({ method: 'DELETE', url: `/Api/MaterialSupplier/Remove?id=${ID}` });
@@ -104,7 +104,7 @@ const api = {
     return request({ method: 'POST', url: '/Api/Storehouse/List', data });
   },
   getStorehouseAll() { // POST /Api/Storehouse/All  所有仓库查询
-    return request({ method: 'POST', url: '/Api/Storehouse/All' });
+    return request({ method: 'GET', url: '/Api/Storehouse/All' });
   },
   getStorehouseSave(data) { // POST /Api/Storehouse/Save  仓库查询
     return request({ method: 'POST', url: '/Api/Storehouse/Save', data });
@@ -120,7 +120,7 @@ const api = {
     return request({ method: 'POST', url: '/Api/GoodsPositionDimension/List', data });
   },
   getGoodsPositionDimensionSelect(storehouseID) { // POST /Api/GoodsPositionDimension/Select  所有货位维度
-    return request({ method: 'POST', url: `/Api/GoodsPositionDimension/Select?storehouseID=${storehouseID}` });
+    return request({ method: 'GET', url: `/Api/GoodsPositionDimension/Select?storehouseID=${storehouseID}` });
   },
   getGoodsPositionDimensionSave(data) { // POST /Api/GoodsPositionDimension/Save  货位维度
     return request({ method: 'POST', url: '/Api/GoodsPositionDimension/Save', data });
@@ -169,14 +169,20 @@ const api = {
     // POST /ApiStockWarn/List  预警记录
     return request({ method: 'POST', url: '/Api/StockWarn/List', data });
   },
-  getStockSingle(code) {
-    // POST /Api/Stock/Single  单个库存查询
-    return request({ method: 'GET', url: `/Api/Stock/Single?code=${code}` });
-  },
   getStockLogPosition(logID) {
     // POST /Api/StockLog/Position  出入库位置信息
     return request({ method: 'POST', url: `/Api/StockLog/Position?logID=${logID}` });
   },
+
+  getStockSingle(code) {
+    // POST /Api/SingleMaterial/ByCode  单个物料查询
+    return request({ method: 'GET', url: `/Api/SingleMaterial/ByCode?code=${code}` });
+  },
+  getSingleMaterialByType(typeID) {
+    // POST /Api/SingleMaterial/ByType  单个物料查询
+    return request({ method: 'GET', url: `/Api/SingleMaterial/ByType?typeID=${typeID}` });
+  },
+
   // 货位 --------------------------- GoodsPosition
   getGoodsPositionSave(data) {
     // GET /Api/GoodsPosition/Save  货位编辑
