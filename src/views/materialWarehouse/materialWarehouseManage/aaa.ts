@@ -7,7 +7,7 @@ export default class Draw {
 
   // 画单元格
   tableCell(lint, isline = false) {
-    console.log(this.node.offsetWidth);
+    console.log(this);
     console.log(lint);
   }
 }
