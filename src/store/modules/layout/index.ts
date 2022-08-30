@@ -9,10 +9,11 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
   id: 'layout',
   state: () => ({
     editableTabs: [],
-    editableTabsValue: '1',
+    editableTabsValue: '',
     leftMenuDefaultActive: '',
     otherTabPageNames: [],
     oldRoute: undefined,
+    isCollapse: false,
   }),
   // 也可以定义为
   // state: () => ({ count: 0 })
@@ -51,17 +52,14 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         it:addBarType,
       ) => it.name === this.editableTabsValue);
       if (targetTab && targetTab.path !== newPath) targetTab.path = newPath;
-      console.log(this.editableTabs, 'this.editableTabs');
     },
     setOtherTabPageNames(tabItem:RouteLocationNormalizedLoaded) {
       const t = this.otherTabPageNames.find((it) => it.name === tabItem.name);
       if (!t) this.otherTabPageNames.push(tabItem);
-      console.log(this.otherTabPageNames, 'otherTabPageNames');
     },
     filterOtherTabPageNames(routeNames:string[]) {
       this.otherTabPageNames = this.otherTabPageNames
         .filter((it) => !routeNames.includes(it.name as string));
-      console.log(this.otherTabPageNames, 'filterOtherTabPageNames');
     },
   },
 };

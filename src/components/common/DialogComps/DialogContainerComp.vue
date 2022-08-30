@@ -4,7 +4,9 @@
     :width="width"
     custom-class='mp-common-dialog'
     @close="Close"
-    @closed="closed">
+    @closed="closedC"
+    :append-To-Body="appendToBody"
+    :top="top">
     <template #header>
       <slot name="header">
         <p>
@@ -42,6 +44,9 @@ export default {
     width: {
       type: Number,
     },
+    top: {
+      type: String,
+    },
     showClose: {
       type: Boolean,
       default: true,
@@ -78,6 +83,10 @@ export default {
       type: Function,
       default: () => null,
     },
+    appendToBody: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const dialogVisible = computed({
@@ -87,7 +96,6 @@ export default {
       set(value) {
         if (value === props.visible) return;
         context.emit('update:visible', props.visible);
-        console.log(props.visible);
       },
     });
     function Primary() {
@@ -99,13 +107,14 @@ export default {
     function Close() {
       props.closeClick();
     }
-    function closed() {
+    function closedC() {
       props.closed();
     }
     return {
       Primary,
       Del,
       Close,
+      closedC,
       dialogVisible,
     };
   },

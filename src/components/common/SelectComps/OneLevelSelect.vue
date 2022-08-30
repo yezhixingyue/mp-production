@@ -16,7 +16,7 @@
     <li class="select-box first-select-box ">
       <el-select
         v-model="result"
-        placeholder="Select"
+        :placeholder="placeholder"
         :filterable='filterable'
         :style="`width:${width}px`">
         <el-option
@@ -37,6 +37,9 @@ export default {
   props: {
     value: {
       default: '不限',
+    },
+    placeholder: {
+      default: '请选择',
     },
     title: {
       type: String,
@@ -81,6 +84,7 @@ export default {
       set(newVal) {
         if (newVal === props.value) return;
         context.emit('change', newVal);
+        context.emit('requestFunc', newVal);
       },
     });
     return {

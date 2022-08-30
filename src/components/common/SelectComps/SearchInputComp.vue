@@ -11,7 +11,7 @@
     >
     <template #append>
       <button class="mp-search-box-btn" @click="onKeyWordSubmit">
-        <i>a</i>
+        <i class="iconfont icon-sousuo"></i>
       </button>
     </template>
     </el-input>

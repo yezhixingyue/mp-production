@@ -9,12 +9,20 @@ interface DistrictType {
     IsVirtual: boolean,
     Level: number
 }
+interface StaffSelectListType {
+  StaffID: string,
+  StaffName: string
+}
 interface IState {
   lastPagePaths:RouteLocationNormalized[],
+  StaffSelectList:StaffSelectListType[],
+  size:string,
 }
 interface IActions {
   setLastPagePaths:(path:RouteLocationNormalized)=>void,
   setLastPagePathsFilterAfterGoback:(name:string)=>void,
+  getStaffSelect:()=>void,
+  onresize:(size:string)=>void,
 }
 type IGetters = Record<string, never>;
 
@@ -22,6 +30,8 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
   id: 'common',
   state: () => ({
     lastPagePaths: [],
+    StaffSelectList: [],
+    size: '',
   }),
   getters: {
   },
@@ -36,6 +46,16 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       this.lastPagePaths = this.lastPagePaths.filter((
         it:RouteLocationNormalized,
       ) => it.name !== name);
+    },
+    getStaffSelect() { // 回转页面信息后删除掉回转前的路由信息,
+      api.getStaffSelect().then(res => {
+        if (res.data.Status === 1000) {
+          this.StaffSelectList = res.data.Data as StaffSelectListType[];
+        }
+      });
+    },
+    onresize(size) { // 回转页面信息后删除掉回转前的路由信息,
+      this.size = size;
     },
   },
 };

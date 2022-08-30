@@ -2,15 +2,15 @@
   <div class="material-manage-page">
     <header>
       <div class="header-top">
-        <el-button :disabled="!Data.getMaterialManageData.TypeID"
+        <el-button
         type="primary" @click="addMaterialManage">+ 添加物料</el-button>
-        <el-button :disabled="!Data.getMaterialManageData.TypeID"
+        <el-button
         type="primary" @click="batchAddMaterialManage">批量生成</el-button>
       </div>
       <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
           <TowLevelSelect
-            :title='"二级"'
+            :title='"物料筛选"'
             :level1Options='CategoryList'
             :level2Options='MaterialTypeList'
             :defaultProps="{
@@ -41,19 +41,25 @@
     <main :style="`height:${h}px`">
       <MpCardContainer>
         <el-table border fit
-        :data="Data.MaterialManageList" style="width: 100%">
-          <el-table-column prop="操作" label="操作" min-width="238">
-            <template #default="scope">
-              <el-button type="primary" link @click="editMaterial(scope.row)">编辑</el-button>
-              <el-button type="danger" link @click="delMaterial(scope.row.ID)">删除</el-button>
-            </template>
-          </el-table-column>
+        :data="MaterialWarehouseStore.MaterialManageList" style="width: 100%">
           <el-table-column prop="CategoryName" label="分类" min-width="208"/>
           <el-table-column prop="TypeName" label="类型" min-width="157"/>
-          <el-table-column prop="物料" label="物料" min-width="192">
-            <template #default>
-                物料
+          <el-table-column prop="Code" label="编码" min-width="157"/>
+          <el-table-column prop="物料" label="物料"
+          show-overflow-tooltip min-width="192">
+            <template #default="scope">
+              <template v-for="(item, index) in scope.row.MaterialAttributes"
+              :key="item.AttributeID">
+                {{index === 0 ? '' : ' - ' }}
+                <template v-if="item.NumericValue">
+                  <span>{{item.NumericValue}}</span>
+                  {{item.AttributeUnit}}
+                </template>
+                <template v-else>
+                  <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                </template>
               </template>
+            </template>
           </el-table-column>
           <el-table-column prop="可选尺寸" label="可选尺寸" min-width="608">
             <template #default="scope">
@@ -64,9 +70,21 @@
               </template>
             </template>
           </el-table-column>
+          <el-table-column prop="操作" label="操作" min-width="238">
+            <template #default="scope">
+              <el-button type="primary" link @click="editMaterial(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <el-button type="danger" link @click="delMaterial(scope.row)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div>
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getMaterialManageData.Page"
+          :pageSize="Data.getMaterialManageData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange"/>
         </div>
       </MpCardContainer>
     </main>
@@ -78,32 +96,38 @@
     :primaryClick="addMaterialManagePrimaryClick"
     :closeClick="addMaterialManageCloseClick"
     :closed="addMaterialManageClosed"
+    :top="'10vh'"
     >
     <template #default>
       <div class="add-material-manage-dialog">
-        <el-form :model="Data.addMaterialManageForm" label-width="100px">
+        <el-form :model="Data.addMaterialManageForm" label-width="120px">
           <el-form-item :label="`类型：`">
             <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
           </el-form-item>
-          <el-form-item :label="`编码：`">
+          <el-form-item :label="`编码：`" required>
             <el-input
             v-model="Data.addMaterialManageForm.MaterialCode" />
           </el-form-item>
           <p>
             编码由 1 到 10 位的英文字母或数字组成，方便记忆，在入库搜索物料时输入编码，可快速定位物料， 类似于超市称重时输入的物品
           </p>
-          <el-form-item :label="`${item.AttributeName}：`"
-          v-for="(item, index) in MaterialWarehouseStore.MaterialTypeAttributeAllList"
+          <el-form-item :label="`${item.AttributeName}：`" class="attributes"
+          :required="item.IsRequired"
+          v-for="(item, index) in Data.addMaterialManageForm.MaterialRelationAttributes"
           :key="item.AttributeID">
+          <p v-if="item.AttributeType === 1">
+
             <NumberTypeItemComp
-              v-if="item.AttributeType === 1"
               :PropValue="Data.addMaterialManageForm.
-              MaterialRelationAttributes[index].NumericValue"
+              MaterialRelationAttributes[index].NumericValue||null"
               :InputContent="item.RegularQuantity"
-              :Allow="item.IsAllowDecimal"
+              :Allow="item.IsCustom"
+              :AllowDecimal="item.IsAllowDecimal"
               :UpdateData="(newVal) => Data.addMaterialManageForm
               .MaterialRelationAttributes[index].NumericValue = newVal">
             </NumberTypeItemComp>
+            {{item.AttributeUnit}}
+          </p>
             <OptionTypeItemComp
               v-else
               :PropValue="Data.addMaterialManageForm.
@@ -111,18 +135,18 @@
               ||Data.addMaterialManageForm.
               MaterialRelationAttributes[index].SelectID"
               :options="item.AttributeSelects"
-              :Allow="item.IsAllowDecimal"
-              :UpdateData="(newVal) => UpdateData(item.AttributeSelects,newVal,index)">
+              :Allow="item.IsCustom"
+              :UpdateData="(newVal) => UpdateData(item.AttributeSelects || [],newVal,index)">
             </OptionTypeItemComp>
           </el-form-item>
         </el-form>
-        <div class="material-type">
-          <p>供应物料类型：
+        <div class="material-type" v-if="MaterialWarehouseStore.MaterialTypeSizeAllList.length">
+          <p class="required">可选尺寸：
             <el-checkbox
               v-model="Data.checkAll"
               :indeterminate="Data.isIndeterminate"
               @change="handleCheckAllChange"
-            >全部分类</el-checkbox>
+            >所有尺寸</el-checkbox>
           </p>
           <el-checkbox-group
             v-model="Data.addMaterialManageForm.SizeIDS"
@@ -130,9 +154,9 @@
           >
             <el-checkbox
             v-for="city in MaterialWarehouseStore.MaterialTypeSizeAllList"
-            :key="city.SizeID" :label="city.SizeID">{{
-              city.SizeName
-            }}</el-checkbox>
+            :key="city.SizeID" :label="city.SizeID">
+            {{city.SizeName}}{{city.SizeLength}}x{{city.SizeWidth}}mm
+            </el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -149,7 +173,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, getCurrentInstance,
+  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
@@ -157,6 +181,7 @@ import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/mat
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
+import { useCommonStore } from '@/store/modules/common';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -169,36 +194,13 @@ interface getMaterialManageDataType {
   KeyWords: string,
   PageSize:number,
 }
-interface MaterialAttributesType {
-  CodeID: number| string,
-  AttributeID: number| string,
-  SelectID: number| string,
-  NumericValue: string,
-  InputSelectValue: string,
-  SelectValue: string,
-}
-interface MaterialSizesType {
-  CodeID: number| string,
-  SizeName: string,
-  SizeLength: number,
-  SizeWidth: number,
-}
 
-interface MaterialManageListType {
-  CategoryID: number| string,
-  CategoryName: string,
-  ID: number| string,
-  TypeID: number| string,
-  TypeName: string,
-  Code: string,
-  MaterialAttributes: MaterialAttributesType[],
-  MaterialSizes: MaterialSizesType[]
-}
 interface MaterialRelationAttributesType {
   AttributeID: number|string,
   NumericValue: string,
   SelectID: number|string,
   InputSelectValue: string,
+  [a:string]:any
 }
 interface addMaterialManageFormType {
   ID: number|string,
@@ -217,9 +219,9 @@ interface DataType {
   addMaterialManageShow:boolean,
   addMaterialManageForm:addMaterialManageFormType,
   editTypeID: null|number,
+  DataTotal: number,
   dialogTypeData:dialogTypeDataType,
   getMaterialManageData: getMaterialManageDataType,
-  MaterialManageList:MaterialManageListType[]
 }
 
 export default {
@@ -235,6 +237,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const CommonStore = useCommonStore();
     const h = ref(0);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -254,6 +257,7 @@ export default {
         CategoryName: '',
         TypeName: '',
       },
+      DataTotal: 0,
       getMaterialManageData: {
         TypeID: '',
         CategoryID: '',
@@ -261,7 +265,6 @@ export default {
         KeyWords: '',
         PageSize: 20,
       },
-      MaterialManageList: [],
     });
 
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '不限' },
@@ -269,22 +272,22 @@ export default {
     const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '不限' },
       ...MaterialWarehouseStore.MaterialTypeList]);
       // 跳转
-    function ToMaterialManageSetuepPage(ID) {
-      console.log(ID);
-
+    function ToMaterialManageSetuepPage(IDs) {
       router.push({
         name: 'materialManageSetuep',
-        params: { TypeID: ID },
+        params: { TypeID: IDs.TypeID, CategoryID: IDs.CategoryID },
       });
     }
 
     function getMaterialManageList() {
-      api.getMaterialList(Data.getMaterialManageData).then(res => {
-        if (res.data.Status === 1000) {
-          // 成功
-          Data.MaterialManageList = res.data.Data as MaterialManageListType[];
-        }
+      MaterialWarehouseStore.getMaterialManageList(Data.getMaterialManageData, (DataNumber) => {
+        Data.DataTotal = DataNumber as number;
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getMaterialManageData.Page === newVal) return;
+      Data.getMaterialManageData.Page = newVal;
+      getMaterialManageList();
     }
     function addMaterialManageCloseClick() {
       // 关闭得时候清空弹框
@@ -311,17 +314,33 @@ export default {
 
     // 添加物料;
     function addMaterialManage() {
+      console.log(Data.addMaterialManageForm
+        .MaterialRelationAttributes);
+
       if (!Data.getMaterialManageData.TypeID) {
         // 请选择物料类型
+        messageBox.failSingle('请选择物料类型', () => null, () => null);
       } else {
         const callback = () => {
           Data.addMaterialManageForm.MaterialRelationAttributes = [];
+          console.log(MaterialWarehouseStore.MaterialTypeAttributeAllList, 'MaterialWarehouseStore.MaterialTypeAttributeAllList');
+
           MaterialWarehouseStore.MaterialTypeAttributeAllList.forEach(res => {
+            console.log(res.AttributeName);
+
             Data.addMaterialManageForm.MaterialRelationAttributes.push({
               AttributeID: res.AttributeID,
               NumericValue: '',
               SelectID: '',
               InputSelectValue: '',
+              AttributeName: res.AttributeName,
+              AttributeType: res.AttributeType,
+              RegularQuantity: res.RegularQuantity,
+              IsAllowDecimal: res.IsAllowDecimal,
+              AttributeUnit: res.AttributeUnit,
+              IsRequired: res.IsRequired,
+              AttributeSelects: res.AttributeSelects,
+              IsCustom: res.IsCustom,
             });
           });
         };
@@ -344,12 +363,15 @@ export default {
     function batchAddMaterialManage() {
       if (!Data.getMaterialManageData.TypeID) {
         // 请选择物料类型
+        messageBox.failSingle('请选择物料类型', () => null, () => null);
+      } else {
+        ToMaterialManageSetuepPage({
+          TypeID: Data.getMaterialManageData.TypeID,
+          CategoryID: Data.getMaterialManageData.CategoryID,
+        });
       }
-      ToMaterialManageSetuepPage(Data.getMaterialManageData.TypeID);
     }
     const handleCheckedCitiesChange = (value:number[]) => {
-      console.log(value, MaterialWarehouseStore.MaterialTypeSizeAllList);
-
       const checkedCount = value.length;
       Data.checkAll = checkedCount === MaterialWarehouseStore.MaterialTypeSizeAllList.length;
       Data.isIndeterminate = checkedCount > 0
@@ -366,43 +388,52 @@ export default {
       Data.isIndeterminate = false;
     };
     function addMaterialManagePrimaryClick() {
+      const msg:string[] = [];
       // 表单验证
-      MaterialWarehouseStore.MaterialTypeAttributeAllList.forEach((item, index) => {
+      Data.addMaterialManageForm.MaterialRelationAttributes.forEach((item, index) => {
         // 数字输入或选择
-        if (item.AttributeType === 1 && !Data.addMaterialManageForm
-          .MaterialRelationAttributes[index].NumericValue) {
-          // 数字输入框未填写
-          if (item.RegularQuantity) {
-            // label  {{item.AttributeName{{ 未填写
-          }
-        } else if (item.AttributeSelects.length && !Data.addMaterialManageForm
-          .MaterialRelationAttributes[index].SelectID) {
-          // 未选择
-        } else if (!Data.addMaterialManageForm
-          .MaterialRelationAttributes[index].InputSelectValue) {
-          // 未自定义选项
-        } else {
-          console.log('a');
+        if (item.AttributeType === 1 && item.IsRequired && !item.NumericValue) {
+          msg.push(item.AttributeName);
+          // messageBox.failSingleError('保存失败', `请输入${item.AttributeName}`, () => null, () => null);
+          // 选择项选择未填写
+        } else if (
+          // 是选择项并且是必填项
+          item.AttributeType === 2 && item.IsRequired
+          // 没选择并且没输入
+          && !item.SelectID && !item.InputSelectValue) {
+          msg.push(item.AttributeName);
+          // messageBox.failSingleError('保存失败', `请选择${item.AttributeName}`, () => null, () => null);
         }
       });
-      api.getMaterialSave({
-        TypeID: Data.editTypeID || Data.getMaterialManageData.TypeID,
-        Materials: [
-          Data.addMaterialManageForm,
-        ],
-      }).then(res => {
-        if (res.data.Status === 1000) {
+      if (!Data.addMaterialManageForm.MaterialCode) {
+        messageBox.failSingleError('保存失败', '请输入编码', () => null, () => null);
+      } else if (msg.length) {
+        messageBox.failSingleError('保存失败', `请输入或选择：${msg.join('、')}属性`, () => null, () => null);
+      } else if (MaterialWarehouseStore
+        .MaterialTypeSizeAllList.length && !Data
+        .addMaterialManageForm.SizeIDS.length) {
+        messageBox.failSingleError('保存失败', '请选择可选尺寸属性', () => null, () => null);
+      } else {
+        // 发送请求
+        api.getMaterialSave({
+          TypeID: Data.editTypeID || Data.getMaterialManageData.TypeID,
+          Materials: [
+            Data.addMaterialManageForm,
+          ],
+        }).then(res => {
           if (res.data.Status === 1000) {
-            // 添加成功
-            const cb = () => {
-              addMaterialManageCloseClick();
-              getMaterialManageList();
-            };
-            // 成功
-            messageBox.successSingle(`${Data.editTypeID ? '修改' : '添加'}成功`, cb, cb);
+            if (res.data.Status === 1000) {
+              // 添加成功
+              const cb = () => {
+                addMaterialManageCloseClick();
+                getMaterialManageList();
+              };
+              // 成功
+              messageBox.successSingle(`${Data.editTypeID ? '修改' : '添加'}成功`, cb, cb);
+            }
           }
-        }
-      });
+        });
+      }
     }
     function editMaterial(item) {
       Data.editTypeID = item.TypeID;
@@ -412,14 +443,25 @@ export default {
         // 请选择物料类型
       } else {
         const callback = () => {
-          console.log('aaaaaaaaaaaaaaaaaaaaa');
-
           Data.addMaterialManageForm.ID = item.ID;
           // 根据获取到的所有属性的id查保存的数据并分别赋值给表单
           MaterialWarehouseStore.MaterialTypeAttributeAllList.forEach(res => {
             let temp = item.MaterialAttributes.find((saveAttributeData) => res.AttributeID
               === saveAttributeData.AttributeID);
-            console.log(temp);
+            temp = {
+              AttributeID: res.AttributeID,
+              NumericValue: temp.NumericValue,
+              SelectID: temp.SelectID,
+              InputSelectValue: temp.InputSelectValue,
+              AttributeName: res.AttributeName,
+              AttributeType: res.AttributeType,
+              RegularQuantity: res.RegularQuantity,
+              IsAllowDecimal: res.IsAllowDecimal,
+              AttributeUnit: res.AttributeUnit,
+              IsRequired: res.IsRequired,
+              AttributeSelects: res.AttributeSelects,
+              IsCustom: res.IsCustom,
+            };
             if (!temp) { // 处理可能出现的 已经设置物料 的类型中添加属性后没有值的问题
               temp = {
                 SelectValue: null,
@@ -427,8 +469,17 @@ export default {
                 NumericValue: '',
                 SelectID: '',
                 InputSelectValue: '',
+                AttributeName: res.AttributeName,
+                AttributeType: res.AttributeType,
+                RegularQuantity: res.RegularQuantity,
+                IsAllowDecimal: res.IsAllowDecimal,
+                AttributeUnit: res.AttributeUnit,
+                IsRequired: res.IsRequired,
+                AttributeSelects: res.AttributeSelects,
               };
             }
+            console.log(temp, 'temp');
+
             Data.addMaterialManageForm.MaterialRelationAttributes.push(temp);
           });
 
@@ -446,11 +497,19 @@ export default {
         });
       }
     }
-    function delMaterial(ID) {
+    function delMaterial(item) {
       // 确定要删除吗？
-
-      messageBox.warnCancelMsgSM('确定要删除此物料吗？', () => {
-        api.getMaterialRemove(ID).then(res => {
+      let msg = '';
+      item.MaterialAttributes.forEach(res => {
+        if (res.NumericValue) {
+          msg += res.NumericValue;
+          msg += res.AttributeUnit;
+        } else {
+          msg += res.InputSelectValue || res.SelectValue;
+        }
+      });
+      messageBox.warnCancelBox('确定要删除此物料吗？', msg, () => {
+        api.getMaterialRemove(item.ID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getMaterialManageList();
@@ -473,6 +532,7 @@ export default {
       };
     }
     function UpdateData(AttributeSelects, newVal, index) {
+      console.log(newVal, 'AttributeSelects');
       const temp = AttributeSelects.find(res => res.SelectID === newVal);
       if (temp) {
         Data.addMaterialManageForm
@@ -481,10 +541,11 @@ export default {
           .MaterialRelationAttributes[index].InputSelectValue = '';
       } else {
         Data.addMaterialManageForm
-          .MaterialRelationAttributes[index].SelectID = 0;
+          .MaterialRelationAttributes[index].SelectID = '';
         Data.addMaterialManageForm
           .MaterialRelationAttributes[index].InputSelectValue = newVal;
       }
+      return true;
     }
     function twoSelectChange(levelData) {
       const { level1Val, level2Val } = levelData;
@@ -499,13 +560,19 @@ export default {
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-manage-page header', 20);
-      console.log(h.value);
-      window.onresize = () => {
-        h.value = getHeight('.material-manage-page header', 20);
-      };
     }
-
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
+    onActivated(() => {
+      setHeight();
+      const bool = sessionStorage.getItem('saveGenerative') === 'true';
+      if (!bool) return;
+      getMaterialManageList();
+      sessionStorage.removeItem('saveGenerative');
+    });
     onMounted(() => {
+      sessionStorage.removeItem('saveGenerative');
       setHeight();
       MaterialWarehouseStore.getMaterialCategoryList();
       getMaterialManageList();
@@ -526,6 +593,7 @@ export default {
       MaterialWarehouseStore,
       UpdateData,
       twoSelecValue,
+      PaginationChange,
       addMaterialManagePrimaryClick,
       addMaterialManageCloseClick,
       addMaterialManageClosed,
@@ -563,6 +631,26 @@ export default {
       .el-table{
         flex: 1;
         max-height: calc(100% - 21px);
+      }
+    }
+  }
+  .add-material-manage-dialog{
+    .el-form{
+      .el-form-item{
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 370px;
+        &.attributes {
+
+          .el-input, .el-select, .el-input-number{
+            width: 150px;
+          }
+        }
+      }
+      >p{
+        margin-bottom:10px;
+        line-height: 30px;
+        color: #F4A307;
       }
     }
   }

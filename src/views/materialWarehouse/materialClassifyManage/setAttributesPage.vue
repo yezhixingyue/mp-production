@@ -2,10 +2,8 @@
   <div class="set-attributes-page">
     <header>
       <el-breadcrumb>
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
+        <el-breadcrumb-item>设置属性：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
         <el-button type="primary" @click="Data.dialogShow = true">+ 添加属性</el-button>
@@ -15,20 +13,28 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.AttributesList" style="width: 100%">
-          <el-table-column prop="name" label="操作" min-width="295">
-            <template #default="scope">
-              <el-button type="primary" link @click="editAttributes(scope.row)">编辑</el-button>
-              <el-button type="danger" link
-                @click="delAttributes(scope.row.AttributeID)">删除</el-button>
-            </template>
-          </el-table-column>
           <el-table-column prop="AttributeName" label="名称" min-width="209" />
           <el-table-column prop="AttributeType" label="类型" min-width="218" />
-          <el-table-column prop="RegularQuantity" label="描述" min-width="658" />
+          <el-table-column prop="RegularQuantity" label="描述" min-width="658">
+            {{'==='}}
+          </el-table-column>
           <el-table-column prop="Sort" label="显示顺序" min-width="176" />
+          <el-table-column prop="name" label="操作" min-width="295">
+            <template #default="scope">
+              <el-button type="primary" link @click="editAttributes(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <el-button type="danger" link
+                @click="delAttributes(scope.row)">
+                <i class="iconfont icon-delete"></i>删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="bottom-count-box">
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getAttributesData.Page"
+          :pageSize="Data.getAttributesData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange" />
         </div>
       </MpCardContainer>
     </main>
@@ -41,6 +47,7 @@
     :width="660"
     :primaryClick="primaryClick"
     :closeClick="closeClick"
+    :closed="closed"
     >
     <template #default>
       <div class="add-attributes-dialog">
@@ -88,7 +95,7 @@
                     @click="toDown(index)">
                     下移
                   </el-button>
-                  <el-button type="primary" link>删除</el-button>
+                  <el-button type="danger" link @click="delAttributeSelect(index)">删除</el-button>
                 </p>
               </div>
             </el-form-item>
@@ -113,12 +120,13 @@ import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance, nextTick,
+  ref, reactive, onMounted, nextTick, watch, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { useCommonStore } from '@/store/modules/common';
 
 interface AttributeSelectsType {
     SelectID: number,
@@ -143,7 +151,7 @@ interface DataType {
 }
 
 export default {
-  name: 'setTheStorageUnitPage',
+  name: 'setAttributesPage',
   components: {
     MpCardContainer,
     MpPagination,
@@ -151,9 +159,12 @@ export default {
   },
   setup() {
     const h = ref(0);
+    const CommonStore = useCommonStore();
     const dialog = ref(false);
     const route = useRoute();
     const Data:DataType = reactive({
+      CategoryName: '',
+      TypeName: '',
       dialogTitle: '添加属性',
       dialogShow: false,
       AttributesList: [],
@@ -177,14 +188,18 @@ export default {
         ],
 
       },
+      DataTotal: 0,
       getAttributesData: {
         TypeID: 0,
         Page: 1,
         PageSize: 20,
       },
     });
+
     function closeClick() {
       Data.dialogShow = false;
+    }
+    function closed() {
       Data.addAttributesForm = {
         TypeID: Data.addAttributesForm.TypeID,
         AttributeID: 0,
@@ -201,19 +216,28 @@ export default {
       };
     }
     function getAttributesList() {
+      console.log(Data.getAttributesData, 'Data.getAttributesData');
+
       api.getMaterialTypeAttributeList(Data.getAttributesData).then(res => {
         if (res.data.Status === 1000) {
           Data.AttributesList = res.data.Data as AttributeType[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
     }
+    function PaginationChange(newVal) {
+      if (Data.getAttributesData.Page === newVal) return;
+      Data.getAttributesData.Page = newVal;
+      getAttributesList();
+    }
     function editAttributes(AttributesItem:AttributeType) {
-      Data.addAttributesForm = AttributesItem;
+      Data.addAttributesForm = { ...AttributesItem };
+      Data.addAttributesForm.AttributeSelects = AttributesItem.AttributeSelects || [];
       Data.dialogShow = true;
     }
-    function delAttributes(AttributesID) {
-      messageBox.warnCancelMsgSM('确定要删除此属性吗？', () => {
-        api.getMaterialTypeAttributeRemove(AttributesID).then(res => {
+    function delAttributes(item) {
+      messageBox.warnCancelBox('确定要删除此属性吗？', `${item.AttributeName}`, () => {
+        api.getMaterialTypeAttributeRemove(item.AttributeID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getAttributesList();
@@ -223,6 +247,8 @@ export default {
       }, () => undefined);
     }
     function addAttributeSelect() {
+      console.log(Data.addAttributesForm.AttributeSelects);
+
       Data.addAttributesForm.AttributeSelects.push({
         SelectID: Math.random() + new Date().getTime(),
         Sort: 0,
@@ -242,6 +268,10 @@ export default {
         Data.addAttributesForm.AttributeSelects[i]] = [Data.addAttributesForm.AttributeSelects[i],
         Data.addAttributesForm.AttributeSelects[i + 1]];
     }
+    function delAttributeSelect(i) {
+      Data.addAttributesForm.AttributeSelects.splice(i, 1);
+    }
+
     function primaryClick() {
       api.getMaterialTypeAttributeSave(Data.addAttributesForm).then(res => {
         if (res.data.Status === 1000) {
@@ -257,11 +287,16 @@ export default {
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.set-attributes-page header', 72);
-      window.onresize = () => {
-        h.value = getHeight('.set-attributes-page header', 72);
-      };
     }
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
+    onActivated(() => {
+      setHeight();
+    });
     onMounted(() => {
+      Data.CategoryName = route.params.CategoryName as string;
+      Data.TypeName = route.params.TypeName as string;
       Data.addAttributesForm.TypeID = Number(route.params.TypeID);
       Data.getAttributesData.TypeID = Number(route.params.TypeID);
       nextTick(() => {
@@ -274,15 +309,17 @@ export default {
       Data,
       dialog,
       addAttributeSelect,
+      delAttributeSelect,
       toUp,
       toDown,
       primaryClick,
       closeClick,
+      closed,
       editAttributes,
       delAttributes,
+      PaginationChange,
     };
   },
-
 };
 </script>
 <style lang='scss'>
@@ -325,15 +362,23 @@ export default {
   .add-attributes-dialog{
     .el-form{
       margin: 0 auto;
-      width: 370px;
+      width: 380px;
       .hint{
         font-size: 12px;
         color: #F4A307;
+        position: relative;
+        padding-left: 33px;
         &::before{
-          content: '!';
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
           width: 13px;
           height: 13px;
           margin: 0 10px;
+          position: absolute;
+          left: 0;
+          top: 9px;
         }
       }
       .el-form-item{

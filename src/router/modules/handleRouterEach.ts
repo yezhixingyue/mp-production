@@ -2,10 +2,10 @@ import { useCommonStore } from '@/store/modules/common';
 // import NProgress from 'nprogress';
 // import 'nprogress/nprogress.css';
 // import messageBox from '../assets/js/utils/message';
-import TokenClass from '@/assets/js/utils/tokenManage';
 import { useUserStore } from '@/store/modules/user';
 // import { RouterType } from '@/router/modules/routerTypes';
 import { Router, RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
+// import routerData from '@/router';
 import { getLastRouteInfoByName } from './getLastRouteInfoByName';
 
 // if (window.location.protocol.includes('https')) {
@@ -44,7 +44,7 @@ const NextHandler = (
 /**
  * @description: 记录是否为首次初始化运行
  */
-// const isInit = true;
+let isInit = true;
 
 /**
   * 处理权限验证信息，在forEach中使用
@@ -140,7 +140,7 @@ export const handleRouterEach = (router:Router) => {
           if (token) { // 如果有token 不允许跳转
             next({ name: 'home' });
           } else {
-          // TokenClass.removeToken();
+            userStore.token = '';
             NextHandler(from, to, next);
           }
         } else if (token) { // 2.4 如果有token信息，获取到当前用户权限信息
@@ -161,10 +161,25 @@ export const handleRouterEach = (router:Router) => {
         //     path: '/login',
         //   });
         // }
-        // 临时调用
-          next();
+          // 看是否第一次调用，如果第一次找出根路由跳转
+          if (isInit) { // 初始根页面跳转
+            if (to.matched.length >= 2) {
+              if (to.name) {
+                const t = getLastRouteInfoByName(to.name, 'root');
+                if (t) next({ name: t });
+                if (!t) next();
+              }
+            } else {
+              // 处理首页刷新跳转不了的
+              next();
+            }
+            isInit = false;
+          } else {
+            NextHandler(from, to, next);
+          }
+          // ;
         } else { // 如果没有token，跳转登录或提示页面
-          TokenClass.removeToken();
+          userStore.token = '';
           next({
             path: '/login', // 此处应当跳转登录页面
           // query: { redirect: to.fullPath },
@@ -172,12 +187,12 @@ export const handleRouterEach = (router:Router) => {
         }
 
         // 临时调用
-        NextHandler(from, to, next);
-        next();
+        // NextHandler(from, to, () => null);
+        // next();
       } else if (to.name === 'login' && token) {
         next({ name: 'home' });
       } else {
-        TokenClass.removeToken();
+        userStore.token = '';
         NextHandler(from, to, next);
       }
     },
@@ -196,22 +211,19 @@ export const handleRouterEach = (router:Router) => {
    * @return {*}
    */
 
-  window.addEventListener('popstate', (e) => {
-    // eslint-disable-next-line no-restricted-globals
-    // history.pushState(null, '', '/');
-    let url = '/';
-    console.log(router.currentRoute.value.fullPath, 'router.currentRoute.value.fullPath----', window.location.pathname, 'e:', e.state.forward);
-    if (router && router.currentRoute.value && router.currentRoute.value.fullPath) {
-      url = `${router.currentRoute.value.fullPath}`;
-    }
-    if (e.state.forward) {
-      url = e.state.forward;
-    }
-    console.log(url, router, router.currentRoute.value.fullPath, 'urlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurlurl');
-    // eslint-disable-next-line no-restricted-globals
-    history.pushState(null, '', url);
-    goBackLastPage(router);
-  });
+  // window.addEventListener('popstate', (e) => {
+  //   // e.preventDefault();
+  //   // return false;
+  //   // let url = '/';
+  //   // if (router && router.currentRoute.value && router.currentRoute.value.fullPath) {
+  //   //   url = `${router.currentRoute.value.fullPath}`;
+  //   // }
+  //   // console.log(e.state.forward, 'aaaaaaaaaaa');
+
+  //   // eslint-disable-next-line no-restricted-globals
+  //   // history.pushState(null, '', `#${e.state.forward}`);
+  //   routerData.getGoBackFun();
+  // });
 };
 
 export default handleRouterEach;

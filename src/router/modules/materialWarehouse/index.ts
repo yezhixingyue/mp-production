@@ -23,7 +23,82 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-chanpinguanli',
         pageName: 'materialInventoryManagePage',
       },
-      component: () => import('@/views/materialWarehouse/materialClassify/indexView.vue'),
+      component: () => import('@/views/materialWarehouse/materialInventoryManage/materialInventoryManagePage.vue'),
+    },
+    {
+      path: '/stockWarn',
+      name: 'stockWarn',
+      meta: {
+        title: '预警记录',
+        requiresAuth: true,
+        hideMenu: true,
+        icon: 'iconfont icon-chanpinguanli',
+        pageName: 'stockWarnPage',
+      },
+      component: () => import('@/views/materialWarehouse/materialInventoryManage/stockWarnPage.vue'),
+    },
+    {
+      path: '/outDelivery',
+      name: 'outDelivery',
+      meta: {
+        title: '出库',
+        requiresAuth: true,
+        fullAcreen: true,
+        hideMenu: true,
+        icon: 'iconfont icon-chanpinguanli',
+        pageName: 'outDeliveryPage',
+      },
+      component: () => import('@/views/materialWarehouse/materialInventoryManage/outDelivery.vue'),
+    },
+    {
+      path: '/inDelivery',
+      name: 'inDelivery',
+      meta: {
+        title: '入库',
+        requiresAuth: true,
+        fullAcreen: true,
+        hideMenu: true,
+        icon: 'iconfont icon-chanpinguanli',
+        pageName: 'inDeliveryPage',
+      },
+      component: () => import('@/views/materialWarehouse/materialInventoryManage/inDelivery.vue'),
+    },
+    {
+      path: '/makeAnInventory',
+      name: 'makeAnInventory',
+      meta: {
+        title: '盘库',
+        requiresAuth: true,
+        fullAcreen: true,
+        hideMenu: true,
+        icon: 'iconfont icon-chanpinguanli',
+        pageName: 'makeAnInventoryPage',
+      },
+      component: () => import('@/views/materialWarehouse/materialInventoryManage/makeAnInventoryPage.vue'),
+    },
+    {
+      path: '/inventory',
+      name: 'inventory',
+      meta: {
+        title: '库存盘点',
+        requiresAuth: true,
+        hideMenu: true,
+        icon: 'iconfont icon-chanpinguanli',
+        pageName: 'inventoryPage',
+      },
+      component: () => import('@/views/materialWarehouse/materialInventoryManage/inventoryPage.vue'),
+    },
+    {
+      path: '/inventoryLog',
+      name: 'inventoryLog',
+      meta: {
+        title: '盘点记录',
+        requiresAuth: true,
+        hideMenu: true,
+        icon: 'iconfont icon-chanpinguanli',
+        pageName: 'InventoryLogPage',
+      },
+      component: () => import('@/views/materialWarehouse/materialInventoryManage/InventoryLogPage.vue'),
     },
 
     {
@@ -36,7 +111,7 @@ const routes: RouteRecordRaw = {
         pageName: 'materialClassifyRecordPage',
         prevPage: 'materialClassifyManage',
       },
-      component: () => import('@/views/materialWarehouse/materialClassify/materialClassifySetUnitPage.vue'),
+      component: () => import('@/views/materialWarehouse/materialClassifyRecordPage.vue'),
     },
     // 物料管理
     {
@@ -55,7 +130,7 @@ const routes: RouteRecordRaw = {
       path: '/materialManageSetuep',
       name: 'materialManageSetuep',
       meta: {
-        title: '物料管理',
+        title: '批量生成物料',
         requiresAuth: true,
         hideMenu: true,
         pageName: 'materialManageSetuepPage',
@@ -155,6 +230,17 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/materialWarehouse/materialWarehouseManage/setPositionNumberPage.vue'),
     },
+    {
+      path: '/goodsAllocation',
+      name: 'goodsAllocation',
+      meta: {
+        title: '设置货位编号',
+        requiresAuth: true,
+        hideMenu: true,
+        pageName: 'goodsAllocationPage',
+      },
+      component: () => import('@/views/materialWarehouse/materialWarehouseManage/goodsAllocationPage.vue'),
+    },
 
     {
       path: '/testLayout',
@@ -176,7 +262,15 @@ const routeTree:RouteTreeType = {
   children: [
     {
       name: 'materialInventoryManage',
-      children: [],
+      children: [
+        { name: 'stockWarn', children: [] },
+        {
+          name: 'inventory',
+          children: [
+            { name: 'inventoryLog', children: [] },
+          ],
+        },
+      ],
     },
     {
       name: 'materialClassifyRecord',
@@ -205,6 +299,7 @@ const routeTree:RouteTreeType = {
       name: 'materialWarehouseManage',
       children: [
         { name: 'setPositionNumber', children: [] },
+        { name: 'goodsAllocation', children: [] },
       ],
     },
   ],

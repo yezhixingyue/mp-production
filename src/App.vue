@@ -4,19 +4,32 @@
 
 <script lang='ts'>
 import LayoutComp from '@/components/Layout/Index.vue';
+import { useCommonStore } from '@/store/modules/common';
+import { onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default {
   components: {
     LayoutComp,
   },
-  // mounted() {
-  //   window.addEventListener('popstate', () => {
-  //     console.log(document.URL, window.location.href, '11111111111111');
-  //     // eslint-disable-next-line no-restricted-globals
-  //     history.pushState(null, '', document.URL);
-  //   // goBackLastPage();
-  //   });
-  // },
+  setup() {
+    const CommonStore = useCommonStore();
+    const Route = useRoute();
+    watch(() => Route.path, () => {
+      console.log(Route.path);
+
+      CommonStore.size = (document
+        .documentElement.clientWidth + document
+        .documentElement.clientHeight) + Route.path;
+    });
+    onMounted(() => {
+      window.onresize = () => {
+        CommonStore.size = (document
+          .documentElement.clientWidth + document
+          .documentElement.clientHeight) + Route.path;
+      };
+    });
+  },
 };
 </script>
 
@@ -43,6 +56,10 @@ html, body {
     flex: none;
     width: 240px;
     height: 100vh;
+    &.collapse{
+      width: 64px;
+      transition:width 300ms;
+    }
   }
   > .mp-erp-layout-content-right-wrap {
     flex: 1;
@@ -61,6 +78,18 @@ html, body {
     > .mp-erp-layout-page-content-comp-wrap {
       flex: 1;
     }
+  }
+  .el-button{
+    .iconfont{
+      font-size: 12px;
+      // background-color: red;
+      margin-right: 5px;
+    }
+  }
+  .required::before{
+    content: '*';
+    color: #f56c6c;
+    margin-right: 4px;
   }
 }
 

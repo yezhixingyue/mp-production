@@ -11,6 +11,7 @@
         @change="lv1SelectChange"
         :defaultProps="defaultProps"
         :showLine="showLine"
+        :width="width"
       ></OneLevelSelect>
     </li>
     <li class="select-box first-select-box ">
@@ -20,6 +21,7 @@
         @change="lv2SelectChange"
         :defaultProps="lv2DefaultProps || defaultProps"
         :showLine="showLine"
+        :width="width"
       ></OneLevelSelect>
     </li>
   </ul>
@@ -64,6 +66,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    width: {
+      type: Number,
+      default: 100,
+    },
   },
   components: {
     OneLevelSelect,
@@ -80,6 +86,7 @@ export default {
           level1Val: newVal,
           level2Val: props.isAssociated ? '' : level2.value,
         });
+        context.emit('requestFunc');
       },
     });
 
@@ -92,6 +99,7 @@ export default {
           level1Val: level1.value,
           level2Val: newVal,
         });
+        context.emit('requestFunc');
       },
     });
 

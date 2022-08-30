@@ -10,6 +10,27 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.tableData" style="width: 100%">
+
+          <el-table-column prop="CategoryName" label="分类"
+          show-overflow-tooltip min-width="123" />
+          <el-table-column prop="TypeName" label="类型"
+          show-overflow-tooltip min-width="98" />
+          <el-table-column prop="TypeCode" label="编码"
+          show-overflow-tooltip min-width="81" />
+          <el-table-column prop="AttributeDescribe"
+          show-overflow-tooltip label="属性" min-width="150" />
+          <el-table-column prop="BrandDescribe" label="品牌属性"
+          show-overflow-tooltip min-width="83" />
+          <el-table-column prop="SizeDescribe" label="尺寸规格"
+          show-overflow-tooltip min-width="83" />
+          <el-table-column prop="OutInUnitDescribe" label="出入库单位"
+          show-overflow-tooltip min-width="378" />
+          <el-table-column prop="name" label=""
+          show-overflow-tooltip min-width="98">
+            <template #default="scope">
+              {{!scope.row.IsStock?'非库存物料':''}}
+            </template>
+          </el-table-column>
           <el-table-column prop="name" label="操作" min-width="428">
             <template #default="scope">
               <el-button type="primary" link
@@ -23,22 +44,17 @@
               <el-button type="primary" link
               @click="editMaterialClassifyClick(scope.row)">编辑</el-button>
               <el-button type="danger" link
-              @click="delMaterialClassify(scope.row.TypeID)">删除</el-button>
+              @click="delMaterialClassify(scope.row)">删除</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="CategoryName" label="分类" min-width="123" />
-          <el-table-column prop="TypeName" label="类型" min-width="98" />
-          <el-table-column prop="TypeCode" label="编码" min-width="81" />
-          <el-table-column prop="date" label="属性" min-width="150" />
-          <el-table-column prop="name" label="品牌属性" min-width="83" />
-          <el-table-column prop="name" label="尺寸规格" min-width="83" />
-          <el-table-column prop="date" label="出入库单位" min-width="378" />
-          <el-table-column prop="name" label="" min-width="98" />
-
           <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
         <div>
-          <MpPagination />
+          <MpPagination
+          :nowPage="Data.getMaterialTypeData.Page"
+          :pageSize="Data.getMaterialTypeData.PageSize"
+          :total="Data.DataTotal"
+          :handlePageChange="PaginationChange"/>
         </div>
       </MpCardContainer>
     </main>
@@ -53,9 +69,9 @@
     <template #default>
       <div class="add-material-classify-dialog">
         <el-form :model="Data.materialClassifyDialogForm">
-          <el-form-item label="分类：">
+          <el-form-item label="分类：" required>
             <el-select v-model="Data.materialClassifyDialogForm.CategoryID"
-             placeholder="Select">
+             placeholder="请选择分类">
               <el-option
                 v-for="item in MaterialCategoryStore.CategoryList"
                 :key="item.CategoryID"
@@ -64,14 +80,14 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="名称：">
+          <el-form-item label="名称：" required>
             <el-input v-model="Data.materialClassifyDialogForm.TypeName" />
           </el-form-item>
-          <el-form-item label="编码：">
+          <el-form-item label="编码：" required>
             <el-input v-model="Data.materialClassifyDialogForm.TypeCode" />
           </el-form-item>
           <el-form-item >
-            <el-checkbox v-model="Data.materialClassifyDialogForm.IsStock"
+            <el-checkbox v-model="IsStock"
             label="非库存物料"/>
           </el-form-item>
         </el-form>
@@ -111,7 +127,7 @@
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, getCurrentInstance,
+  ref, reactive, onMounted, computed, watch, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -119,6 +135,7 @@ import { useRouter } from 'vue-router';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
+import { useCommonStore } from '@/store/modules/common';
 
 interface formType {
   TypeID: number | null,
@@ -140,6 +157,11 @@ interface tableItemType {
   TypeID: number|null,
   TypeName: string
 }
+interface getMaterialTypeDataType {
+  Page: number,
+  KeyWords: string,
+  PageSize: number|string,
+}
 interface dataType {
   // materialClassifyTitle:string,
   materialClassifyDialogShow:boolean,
@@ -149,12 +171,14 @@ interface dataType {
     TypeID: number
     AttributeID: number
   }
+  DataTotal: number
+  getMaterialTypeData: getMaterialTypeDataType,
   brandTitle:string,
   brandShow:boolean,
 }
 
 export default {
-  name: 'materialManagePage',
+  name: 'materialClassifyManagePage',
   components: {
     MpCardContainer,
     MpPagination,
@@ -162,6 +186,7 @@ export default {
   },
   setup() {
     const h = ref(0);
+    const CommonStore = useCommonStore();
     const router = useRouter();
     const MaterialCategoryStore = useMaterialWarehouseStore();
     // 添加/编辑 物料类型点击
@@ -173,7 +198,7 @@ export default {
         CategoryID: undefined,
         TypeName: '',
         TypeCode: '',
-        IsStock: false,
+        IsStock: true,
       },
       tableData: [],
       // 品牌属性
@@ -183,15 +208,34 @@ export default {
       },
       brandTitle: '品牌属性',
       brandShow: false,
+      DataTotal: 0,
+      getMaterialTypeData: {
+        Page: 1,
+        KeyWords: '',
+        PageSize: 20,
+      },
+    });
+    const IsStock = computed({
+      get() {
+        return !Data.materialClassifyDialogForm.IsStock;
+      },
+      set(newVal) {
+        Data.materialClassifyDialogForm.IsStock = !newVal;
+      },
     });
     // 获取物料类型列表
     function getMaterialClassifyManage() {
-      api.getMaterialTypeList({}).then(res => {
-        console.log(res);
+      api.getMaterialTypeList(Data.getMaterialTypeData).then(res => {
         if (res.data.Status === 1000) {
           Data.tableData = res.data.Data as tableItemType[];
+          Data.DataTotal = res.data.DataNumber as number;
         }
       });
+    }
+    function PaginationChange(newVal) {
+      if (Data.getMaterialTypeData.Page === newVal) return;
+      Data.getMaterialTypeData.Page = newVal;
+      getMaterialClassifyManage();
     }
     function materialClassifyCloseClick() {
       Data.materialClassifyDialogForm = {
@@ -199,7 +243,7 @@ export default {
         CategoryID: undefined,
         TypeName: '',
         TypeCode: '',
-        IsStock: false,
+        IsStock: true,
       };
       Data.materialClassifyDialogShow = false;
     }
@@ -217,17 +261,15 @@ export default {
       router.push({ name: 'setTheStorageUnit', params: itemData });
     }
     function ToSetAttributesPage(itemData) {
-      // 物料类型管理;
+      // 设置属性;
       router.push({ name: 'setAttributes', params: itemData });
     }
     function ToSetDimensionsPage(itemData) {
-      // 物料类型管理;
       router.push({ name: 'setDimensions', params: itemData });
     }
 
     // 添加物料类型点击
     function addMaterialClassifyClick() {
-      console.log('addMaterialClassifyClick');
       Data.materialClassifyDialogShow = true;
     }
     // 编辑物料类型点击
@@ -236,9 +278,9 @@ export default {
       Data.materialClassifyDialogShow = true;
     }
     // 删除物料类型点击
-    function delMaterialClassify(typeID) {
-      messageBox.warnCancelMsgSM('确定要删除此物料类型吗？', () => {
-        api.getMaterialTypeRemove(typeID).then(res => {
+    function delMaterialClassify(item) {
+      messageBox.warnCancelBox('确定要删除此物料类型吗？', `${item.TypeName}`, () => {
+        api.getMaterialTypeRemove(item.TypeID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getMaterialClassifyManage();
@@ -251,21 +293,25 @@ export default {
     function materialClassifyPrimaryClick() {
       if (!Data.materialClassifyDialogForm.CategoryID) {
         // 弹窗
+        messageBox.failSingleError('保存失败', '请选择分类', () => null, () => null);
       } else if (!Data.materialClassifyDialogForm.TypeName) {
+        messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
         // 弹窗
       } else if (!Data.materialClassifyDialogForm.TypeCode) {
+        messageBox.failSingleError('保存失败', '请输入编码', () => null, () => null);
         // 弹窗
+      } else {
+        api.getMaterialTypeSave(Data.materialClassifyDialogForm).then(res => {
+          if (res.data.Status === 1000) {
+            const cb = () => {
+              getMaterialClassifyManage();
+              materialClassifyCloseClick();
+            };
+              // 成功
+            messageBox.successSingle(`${Data.materialClassifyDialogForm.TypeID ? '修改' : '添加'}成功`, cb, cb);
+          }
+        });
       }
-      api.getMaterialTypeSave(Data.materialClassifyDialogForm).then(res => {
-        if (res.data.Status === 1000) {
-          const cb = () => {
-            getMaterialClassifyManage();
-            materialClassifyCloseClick();
-          };
-            // 成功
-          messageBox.successSingle(`${Data.materialClassifyDialogForm.TypeID ? '修改' : '添加'}成功`, cb, cb);
-        }
-      });
     }
     function setBrandClick(typeID) {
       Data.brandShow = true;
@@ -291,6 +337,7 @@ export default {
               // 设置成功
               const cback = () => {
                 brandCloseClick();
+                getMaterialClassifyManage();
               };
               // 成功
               messageBox.successSingle('保存成功', cback, cback);
@@ -303,11 +350,10 @@ export default {
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-classify-manage-page header', 20);
-      window.onresize = () => {
-        h.value = getHeight('.material-classify-manage-page header', 20);
-      };
     }
-
+    watch(() => CommonStore.size, () => {
+      setHeight();
+    });
     // function getMaterialCategoryList() {
     //   api.getMaterialCategoryAll({}).then(res => {
     //     if (res.data.Status === 1000) {
@@ -316,6 +362,9 @@ export default {
     //     console.log(res);
     //   });
     // }
+    onActivated(() => {
+      setHeight();
+    });
     onMounted(() => {
       setHeight();
       getMaterialClassifyManage();
@@ -324,7 +373,9 @@ export default {
     return {
       h,
       Data,
+      IsStock,
       MaterialCategoryStore,
+      PaginationChange,
       ToMaterialClassifyManageList,
       ToSetTheStorageUnitPage,
       ToSetAttributesPage,

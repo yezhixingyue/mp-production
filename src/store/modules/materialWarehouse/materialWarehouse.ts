@@ -35,17 +35,51 @@ interface MaterialTypeSizeType {
   SizeLengthIsChange: boolean,
   SizeWidthIsChange: boolean
 }
+interface MaterialAttributesType {
+  CodeID: number| string,
+  AttributeID: number| string,
+  SelectID: number| string,
+  NumericValue: string,
+  InputSelectValue: string,
+  SelectValue: string,
+
+  AttributeUnit:string
+}
+interface MaterialSizesType {
+  CodeID: number| string,
+  SizeName: string,
+  SizeLength: number,
+  SizeWidth: number,
+}
+interface MaterialManageListType {
+  CategoryID: number| string,
+  CategoryName: string,
+  ID: number| string,
+  TypeID: number| string,
+  TypeName: string,
+  Code: string,
+  MaterialAttributes: MaterialAttributesType[],
+  MaterialSizes: MaterialSizesType[]
+}
+interface SupplierSelectListType {
+  SupplierID: number| string,
+  SupplierName: string,
+}
 interface IState {
   CategoryList:CategoryType[],
   MaterialTypeList:MaterialType[],
   MaterialTypeAttributeAllList:AttributeType[]
   MaterialTypeSizeAllList:MaterialTypeSizeType[]
+  MaterialManageList:MaterialManageListType[]
+  SupplierSelectList:SupplierSelectListType[],
 }
 interface IActions {
   getMaterialCategoryList:()=>void,
   getMaterialTypeAll:(categoryID:number)=>void,
   getMaterialTypeAttributeAllByTypeID: (TypeID:number, callback?)=>void
   getMaterialTypeSizeAllByTypeID: (TypeID:number, callback?)=>void
+  getMaterialManageList: (getMaterialManageData:object, callback?)=>void
+  getSupplierSelectList: (callback?)=>void
 }
 type IGetters = {
   selectMaterialTypeAttribute: ()=>AttributeType[]
@@ -58,6 +92,8 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     MaterialTypeList: [],
     MaterialTypeAttributeAllList: [],
     MaterialTypeSizeAllList: [],
+    MaterialManageList: [],
+    SupplierSelectList: [],
   }),
   getters: {
     // 选择项的属性
@@ -101,6 +137,25 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         if (res.data.Status === 1000) {
           this.MaterialTypeSizeAllList = res.data.Data as MaterialTypeSizeType[];
           callback();
+        }
+      });
+    },
+    // 所有物料
+    getMaterialManageList(getMaterialManageData, callback = () => null) {
+      api.getMaterialList(getMaterialManageData).then(res => {
+        if (res.data.Status === 1000) {
+          // 成功
+          this.MaterialManageList = res.data.Data as MaterialManageListType[];
+          callback(res.data.DataNumber as number);
+        }
+      });
+    },
+    // 所有供应商
+    getSupplierSelectList() {
+      api.getMaterialSupplierSelect().then(res => {
+        if (res.data.Status === 1000) {
+          // 成功
+          this.SupplierSelectList = res.data.Data as SupplierSelectListType[];
         }
       });
     },

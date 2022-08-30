@@ -14,6 +14,7 @@ export interface IState {
   leftMenuDefaultActive:string,
   otherTabPageNames:RouteLocationNormalizedLoaded[],
   oldRoute:RouteLocationNormalizedLoaded|undefined,
+  isCollapse: boolean
 }
 export type IGetters = {
   curTabPagesNameList:()=>string[]

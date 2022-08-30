@@ -12,7 +12,6 @@ export default () => {
     + (oWrapStylePdiTopStr.slice(0, oWrapStylePdiBtmStr.length - 2) - 0);
 
     const oHeader = elementSelector ? document.querySelector(elementSelector) : null;
-    console.log(oWrap);
     const _diff = oHeader ? oWrap.offsetHeight - oHeader.offsetHeight : oWrap.offsetHeight;
     return _diff - elePaddingHeight - distance;
   }

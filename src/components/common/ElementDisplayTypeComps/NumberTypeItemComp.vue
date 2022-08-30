@@ -1,7 +1,8 @@
 <template>
-<span>
-  <el-input placeholder="请输入" v-if="!InputContent" v-model.number="inpVal" />
-
+<!-- <span> -->
+  <el-input-number v-if="!InputContent" placeholder="请输入" :controls="false"
+  v-model="inpVal" :step="AllowDecimal ? 0.01 : 1"/>
+  <!-- <el-input type="number" placeholder="请输入" v-if="!InputContent" v-model="inpVal" /> -->
   <el-select
     v-if="InputContent"
     v-model="inpVal"
@@ -18,10 +19,10 @@
       :value="item">
     </el-option>
   </el-select>
-</span>
+<!-- </span> -->
 </template>
 <script lang='ts'>
-import { computed } from 'vue';
+import { computed, WritableComputedRef } from 'vue';
 
 export default {
   props: {
@@ -34,18 +35,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    AllowDecimal: { // 是否允许小数
+      type: Boolean,
+      default: false,
+    },
     UpdateData: {
       type: Function,
       default: () => [],
     },
   },
   setup(props, context) {
-    const inpVal = computed({
+    const inpVal:WritableComputedRef<number> = computed({
       get() {
-        return props.PropValue;
+        return props.PropValue as number;
       },
       set(value) {
-        props.UpdateData(value);
+        props.UpdateData(Math.floor(value / (props.AllowDecimal ? 0.01 : 1)));
       },
     });
     const getNumberValueList = (valueList) => {
@@ -56,7 +61,6 @@ export default {
       if (!props.InputContent) return [];
       return getNumberValueList(props.InputContent);
     });
-
     return {
       inpVal,
       options,

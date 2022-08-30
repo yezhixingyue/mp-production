@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 // import { useUserStore } from '@/store/modules/user/index';
 import aboutView from '@/views/aboutView.vue';
 import LoginView from '../views/LoginView/index.vue';
@@ -52,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });
 
@@ -75,9 +75,7 @@ handleRouterEach(router);
 // router.afterEach(to => {
 //   document.title = String(to.meta.title);
 // });
-const getGoBackFun = () => {
-  console.log('getGoBackFun');
-
+export const getGoBackFun = () => {
   goBackLastPage(router);
 };
 export default { router, getGoBackFun };

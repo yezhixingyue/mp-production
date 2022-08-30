@@ -2,7 +2,7 @@
 import { ElMessageBox } from 'element-plus';
 
 /**
- * 警告提示框 --- 不含内容，只有标题 单按钮
+ * 失败提示框 --- 不含内容，只有标题 单按钮
  *
  * @param {*} msg
  * @param {*} successFunc
@@ -57,7 +57,7 @@ function warnSingleError(msg, successFunc, failFunc, title = '注意', text = '�
 }
 
 /**
- * 警告提示框 --- 有标题和内容 双按钮   用于取消或删除  如订单列表取消
+ * 警告提示框 --- 有标题和内容 双按钮   用于取消或删除 操作确认 如订单列表取消
  *
  * @param {string} [title='确定取消此订单吗 ?']
  * @param {*} msg
@@ -151,12 +151,19 @@ function handleLoadingError(error, trueFunc, failFunc) {
 }
 
 const obj = {
+  // 失败/错误提示框 --- 不含内容，只有标题 单按钮
   failSingle,
+  // 失败/错误提示框 --- 有标题和内容 单按钮
   failSingleError,
+  // 警告提示框 --- 有标题和内容 单按钮
   warnSingleError,
+  // 警告提示框 --- 有标题和内容 双按钮   用于取消或删除 操作确认 如订单列表取消
   warnCancelBox, // 删除常用
+  // 警告提示框 --- 有标题, 无内容 双按钮   用于图片删除等
   warnCancelNullMsg,
+  // 成功提示框 --- 不含内容，只有标题 单按钮 -- 后加msg 添加有内容
   successSingle, // 成功
+  // 警告提示框 --- 有标题, 无内容 双按钮   用于图片删除等 小文字 可换行
   warnCancelMsgSM,
   handleLoadingError,
 };
