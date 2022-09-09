@@ -149,12 +149,12 @@ import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
 
 interface AttributeSelectsType {
-    SelectID: number,
+    SelectID: string,
     Sort: number,
     SelectItemValue: string
 }
 interface AttributeType {
-   AttributeID: number,
+   AttributeID: string,
    AttributeName: string,
    Sort: number,
    AttributeType: number,
@@ -189,8 +189,8 @@ export default {
       dialogShow: false,
       AttributesList: [],
       addAttributesForm: {
-        TypeID: 0,
-        AttributeID: 0,
+        TypeID: '',
+        AttributeID: '',
         AttributeName: '',
         Sort: 0,
         AttributeType: 1,
@@ -210,7 +210,7 @@ export default {
       },
       DataTotal: 0,
       getAttributesData: {
-        TypeID: 0,
+        TypeID: '',
         Page: 1,
         PageSize: 20,
       },
@@ -222,7 +222,7 @@ export default {
     function closed() {
       Data.addAttributesForm = {
         TypeID: Data.addAttributesForm.TypeID,
-        AttributeID: 0,
+        AttributeID: '',
         AttributeName: '',
         Sort: 0,
         AttributeType: 1,
@@ -325,8 +325,8 @@ export default {
     onMounted(() => {
       Data.CategoryName = route.params.CategoryName as string;
       Data.TypeName = route.params.TypeName as string;
-      Data.addAttributesForm.TypeID = Number(route.params.TypeID);
-      Data.getAttributesData.TypeID = Number(route.params.TypeID);
+      Data.addAttributesForm.TypeID = route.params.TypeID;
+      Data.getAttributesData.TypeID = route.params.TypeID;
       nextTick(() => {
         setHeight();
       });

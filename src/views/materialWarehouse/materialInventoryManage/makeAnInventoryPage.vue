@@ -148,18 +148,18 @@ import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 
 interface MaterialAttributesType {
-  MaterialID: number,
-  AttributeID: number,
-  SelectID: number,
-  NumericValue: string,
+  MaterialID: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
   IsBrand: boolean
 }
 interface InventoryDetailType {
-  MaterialID: number,
-  PositionID: number,
+  MaterialID: string,
+  PositionID: string,
   Code: string,
   SizeDescribe: string,
   MaterialAttributes: MaterialAttributesType[],
@@ -168,12 +168,12 @@ interface InventoryDetailType {
   CurrentPositionName: string
   IsLastMaterial:boolean
   IsLastPosition:boolean
-  DetailID:number
+  DetailID:string
   PrevDetailID:number|null
 }
 interface DataType {
   StorehouseName:string
-  DetailID:number|string
+  DetailID:string
   inventoryCorrectDialog: boolean,
   makeAnInventoryError: boolean,
   addMaterialShow: boolean,
@@ -224,11 +224,11 @@ export default {
           window.close();
         });
       };
-      if (Data.DetailID && !Number.isNaN(Number(Data.DetailID))) {
+      if (Data.DetailID) {
         api.getInventoryDetail(Data.DetailID).then(res => {
           if (res.data.Status === 1000) {
             Data.InventoryDetail = res.data.Data as InventoryDetailType;
-            Data.InventoryDetail.DetailID = Data.DetailID as number;
+            Data.InventoryDetail.DetailID = Data.DetailID as string;
           } else {
             errorCb();
           }

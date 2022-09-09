@@ -127,15 +127,15 @@ import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 
 interface addPalletDimensionsFormType {
-  DimensionID: number,
-  StorehouseID: number,
+  DimensionID: string,
+  StorehouseID: string,
   DimensionUnit: string,
   StartCode: string,
   EndCode: string,
   Sort: number,
 }
 interface getPalletDimensionsListDataType {
-  StorehouseID: number,
+  StorehouseID: string,
 }
 interface DataType {
   LookImgShow: boolean,
@@ -167,15 +167,15 @@ export default {
       StorehouseName: '',
       addPalletDimensionsShow: false,
       addPalletDimensionsForm: {
-        DimensionID: 0,
-        StorehouseID: 0,
+        DimensionID: '',
+        StorehouseID: '',
         DimensionUnit: '',
         StartCode: '',
         EndCode: '',
         Sort: 0,
       },
       getPalletDimensionsListData: {
-        StorehouseID: 0,
+        StorehouseID: '',
       },
       PalletDimensionsList: [],
     });
@@ -197,7 +197,7 @@ export default {
     function addPalletDimensionsCloseClick() {
       Data.addPalletDimensionsShow = false;
       Data.addPalletDimensionsForm = {
-        DimensionID: 0,
+        DimensionID: '',
         StorehouseID: Data.addPalletDimensionsForm.StorehouseID,
         DimensionUnit: '',
         StartCode: '',
@@ -291,8 +291,8 @@ export default {
     });
     onMounted(() => {
       Data.StorehouseName = route.params.StorehouseName as string;
-      Data.getPalletDimensionsListData.StorehouseID = Number(route.params.StorehouseID);
-      Data.addPalletDimensionsForm.StorehouseID = Number(route.params.StorehouseID);
+      Data.getPalletDimensionsListData.StorehouseID = route.params.StorehouseID as string;
+      Data.addPalletDimensionsForm.StorehouseID = route.params.StorehouseID as string;
       getLockStatus();
       setHeight();
       getPalletDimensionsList();

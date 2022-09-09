@@ -200,9 +200,9 @@ import { getGoBackFun } from '@/router';
 import { useCommonStore } from '@/store/modules/common';
 
 interface item {
-  AttributeID: number,
-  NumericValue: string,
-  SelectID: number|string,
+  AttributeID: string,
+  NumericValue: number|null,
+  SelectID: string,
   InputSelectValue:string,
 }
 interface DataType{
@@ -228,7 +228,7 @@ export default {
       checkAll: false,
       isIndeterminate: false,
       dialogShow: false,
-      TypeID: 0,
+      TypeID: '',
       BatchAddList: [
         // {
         //   ID: 0,
@@ -283,7 +283,7 @@ export default {
     const handleCheckAllChange = (val: boolean) => {
       if (val) {
         const temp = MaterialWarehouseStore
-          .MaterialTypeSizeAllList.map(it => it.SizeID as number);
+          .MaterialTypeSizeAllList.map(it => it.SizeID as string);
         Data.generativeRule.SizeIDS = temp;
       } else {
         Data.generativeRule.SizeIDS = [];
@@ -399,14 +399,14 @@ export default {
               temp = AttributesItem.selfDefiningValue;
               actionItem.push({
                 AttributeID: AttributesItem.AttributeID,
-                NumericValue: '',
+                NumericValue: null,
                 SelectID: '',
                 InputSelectValue: temp,
               });
             } else {
               actionItem.push({
                 AttributeID: AttributesItem.AttributeID,
-                NumericValue: '',
+                NumericValue: null,
                 SelectID: temp,
                 InputSelectValue: '',
               });
@@ -461,7 +461,7 @@ export default {
         if (isAgain) Data.BatchAddList = [];
         temp.forEach(res => {
           Data.BatchAddList.push({
-            ID: 0,
+            ID: '',
             key: Math.random().toString(16).slice(-10),
             MaterialRelationAttributes: res instanceof Array ? res : [res],
             MaterialCode: '',
@@ -554,8 +554,8 @@ export default {
       setHeight();
     });
     onMounted(() => {
-      Data.TypeID = Number(route.params.TypeID);
-      Data.CategoryID = Number(route.params.CategoryID);
+      Data.TypeID = route.params.TypeID;
+      Data.CategoryID = route.params.CategoryID;
       setHeight();
       MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(Data.TypeID);
       MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.TypeID);

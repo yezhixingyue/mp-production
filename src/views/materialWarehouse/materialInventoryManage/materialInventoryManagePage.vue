@@ -330,7 +330,7 @@ interface twoSelecValueType {
 interface getStockDataType {
   IsWarn: boolean,
 
-  TypeID:number|string,
+  TypeID:string,
   CategoryID:number|string,
   Page:number,
   KeyWords: string,
@@ -338,7 +338,7 @@ interface getStockDataType {
 }
 interface SetSMSWarnFormType {
   StockName:string,
-  MaterialID: number,
+  MaterialID: string,
   WarnThreshold: number|string,
   NoticeMobile: string
   StockUnit: string
@@ -351,10 +351,10 @@ interface StockListType {
   IsWarn: boolean,
   IsOpenWarn: boolean,
   TotalStock: number,
-  MaterialID: number,
+  MaterialID: string,
   CategoryID: number,
   CategoryName: string,
-  TypeID: number,
+  TypeID: string,
   TypeName: string,
   StockUnit: string,
   Operater: string|'00000000-0000-0000-0000-000000000000',
@@ -363,18 +363,18 @@ interface StockListType {
   MaterialCode: string,
   SizeDescribe: string,
   AttributeDescribe: string,
-  SizeID: number
+  SizeID: string
   MaterialAttributes:MaterialAttributesType[]
 }
 
 interface GoodsPositionStockInfosType {
-  StorehouseID: number | string,
+  StorehouseID: string,
   PositionName: string,
-  PositionID: number | string,
+  PositionID: string,
   Number: number | string,
 }
 interface StorehouseStockInfoType {
-  StorehouseID: number | string,
+  StorehouseID: string,
   StorehouseName: string,
   StorehouseImg: string,
   GoodsPositionStockInfos: GoodsPositionStockInfosType[],
@@ -433,7 +433,7 @@ export default {
       },
       SetSMSWarnForm: {
         StockName: '',
-        MaterialID: 0,
+        MaterialID: '',
         WarnThreshold: '',
         NoticeMobile: '',
         StockUnit: '',
@@ -527,7 +527,7 @@ export default {
     function SetSMSWarnClosed() {
       Data.SetSMSWarnForm = {
         StockName: '',
-        MaterialID: 0,
+        MaterialID: '',
         WarnThreshold: '',
         NoticeMobile: '',
         StockUnit: '',
@@ -567,7 +567,7 @@ export default {
     // 清空筛选项
     function clearCondition() {
       Data.getStockData = {
-        TypeID: 0,
+        TypeID: '',
         CategoryID: 0,
         IsWarn: true,
         Page: 0,

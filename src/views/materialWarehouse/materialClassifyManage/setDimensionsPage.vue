@@ -128,8 +128,8 @@ export default {
       dialogTitle: '添加属性',
       dialogShow: false,
       addDimensionsForm: {
-        TypeID: 0,
-        SizeID: null,
+        TypeID: '',
+        SizeID: '',
         SizeName: '',
         SizeCode: '',
         SizeLength: null,
@@ -140,7 +140,7 @@ export default {
       dimensisnsList: [],
       DataTotal: 0,
       getDimensisnsData: {
-        TypeID: 0,
+        TypeID: '',
         Page: 0,
         PageSize: 20,
       },
@@ -149,7 +149,7 @@ export default {
       Data.dialogShow = false;
       Data.addDimensionsForm = {
         TypeID: Data.addDimensionsForm.TypeID,
-        SizeID: null,
+        SizeID: '',
         SizeName: '',
         SizeCode: '',
         SizeLength: null,
@@ -227,8 +227,8 @@ export default {
     onMounted(() => {
       Data.CategoryName = route.params.CategoryName as string;
       Data.TypeName = route.params.TypeName as string;
-      Data.getDimensisnsData.TypeID = Number(route.params.TypeID);
-      Data.addDimensionsForm.TypeID = Number(route.params.TypeID);
+      Data.getDimensisnsData.TypeID = route.params.TypeID as string;
+      Data.addDimensionsForm.TypeID = route.params.TypeID as string;
       setHeight();
       getDimensisnsList();
     });

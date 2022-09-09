@@ -2,7 +2,7 @@ import { Square } from './Square';
 import { LocationColorEnums, goodsPositionStockDetailsType } from './types';
 
 export class LocationSetClass {
-  PositionID: number | '' = ''
+  PositionID = ''
 
   PositionName = ''
 

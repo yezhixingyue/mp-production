@@ -51,7 +51,7 @@ export class LocationMapClass {
   DefaultAction: LocationSetClass[] = []
 
   // 当前物料的ID
-  currentMaterialID: number
+  currentMaterialID: string
 
   DimensionUnit:DimensionUnitType
 

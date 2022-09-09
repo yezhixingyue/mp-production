@@ -94,12 +94,12 @@ import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 
 interface getMaterialDataType {
-  MaterialID: string|number,
-  SizeID: string|number,
+  MaterialID: string,
+  SizeID: string,
   SKUCode: string|number,
 }
 interface inDeliveryFormType {
-    MaterialID: string|number,
+    MaterialID: string,
     Number: number|null,
     Remark: string|number,
 }
@@ -148,7 +148,7 @@ export default {
       },
       // 此货位还有物料时添加物料的表单
       inDeliveryForm: {
-        MaterialID: 0,
+        MaterialID: '',
         Number: null,
         Remark: '',
       },
@@ -192,7 +192,7 @@ export default {
         MaterialInfo: msg.join(' '),
         ...Data.inDeliveryForm,
       };
-      temp.MaterialID = Data.checkedMaterial?.MaterialID as number;
+      temp.MaterialID = Data.checkedMaterial?.MaterialID as string;
       props.dialogSaveMaterial(temp);
     }
 

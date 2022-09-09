@@ -89,7 +89,7 @@ interface getInventoryListDataType {
   PageSize: number|string,
 }
 interface InventoryListType {
-  StorehouseID: number,
+  StorehouseID: string,
   StorehouseName: string,
   LastInventoryStatus: number,
   LastHandler: string,

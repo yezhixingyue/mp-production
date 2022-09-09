@@ -138,8 +138,8 @@ export default {
       // 当前库存单位
       currentStoreUnit: '',
       addUnitForm: {
-        TypeID: 0,
-        UnitID: 0,
+        TypeID: '',
+        UnitID: '',
         Unit: '',
         UnitPurpose: 1,
         ProportionUp: 1,
@@ -147,13 +147,13 @@ export default {
       },
       DataTotal: 0,
       getUnitListData: {
-        TypeID: 0,
+        TypeID: '',
         Page: 1,
         PageSize: 20,
       },
       unitList: [],
       setStoreUnitForm: {
-        TypeID: 0,
+        TypeID: '',
         StockUnit: '',
       },
     });
@@ -178,7 +178,7 @@ export default {
       Data.addUnitDialogShow = false;
       Data.addUnitForm = {
         TypeID: Data.addUnitForm.TypeID,
-        UnitID: 0,
+        UnitID: '',
         Unit: '',
         UnitPurpose: 1,
         ProportionUp: 1,
@@ -270,9 +270,9 @@ export default {
     onMounted(() => {
       Data.CategoryName = route.params.CategoryName as string;
       Data.TypeName = route.params.TypeName as string;
-      Data.setStoreUnitForm.TypeID = Number(route.params.TypeID);
-      Data.getUnitListData.TypeID = Number(route.params.TypeID);
-      Data.addUnitForm.TypeID = Number(route.params.TypeID);
+      Data.setStoreUnitForm.TypeID = route.params.TypeID as string;
+      Data.getUnitListData.TypeID = route.params.TypeID as string;
+      Data.addUnitForm.TypeID = route.params.TypeID as string;
       Data.currentStoreUnit = route.params.StockUnit as string;
       setHeight();
       getUnitList();

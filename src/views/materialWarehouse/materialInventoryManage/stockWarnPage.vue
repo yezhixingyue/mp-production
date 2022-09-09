@@ -138,28 +138,28 @@ interface twoSelecValueType {
   level2Val:null|string|number,
 }
 interface getStockWarnDataType {
-  TypeID:number|string,
+  TypeID:string,
   CategoryID:number|string,
   Page:number,
   KeyWords: string,
   PageSize:number,
 }
 interface MaterialAttributesType {
-  MaterialID: number|string,
-  AttributeID: number|string,
-  SelectID: number|string,
-  NumericValue: string,
+  MaterialID: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
   IsBrand: boolean,
 }
 interface StockWarnListType {
-  LogID: number|string,
-  MaterialID: number|string,
+  LogID: string,
+  MaterialID: string,
   CategoryID: number|string,
-  TypeID: number|string,
-  SizeID: number|string,
+  TypeID: string,
+  SizeID: string,
   CodeID: number|string,
   MaterialCode: string,
   MaterialAttributes: MaterialAttributesType[],

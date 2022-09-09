@@ -61,8 +61,8 @@ export interface AllPositionDetailsType {
   DimensionUnitY: string
 }
 export interface DimensionDataType {
-  PositionID: number,
-  DetailID: number,
+  PositionID: string,
+  DetailID: string,
   LeftTopX: number,
   LeftTopY: number,
   DimensionX: string,

@@ -251,7 +251,7 @@ import InDeliveryDialog from '@/components/materialInventoryManage/inDeliveryDia
 import { LocationSetClass } from '@/components/LocationMap/LocationSetClass';
 
 interface UnitSelectsType {
-  UnitID: number,
+  UnitID: string,
   Unit: string,
   UnitName: string,
   ProportionUp: number,
@@ -259,19 +259,19 @@ interface UnitSelectsType {
   UnitPurpose: number
 }
 interface MaterialAttributesType {
-  MaterialID: number,
+  MaterialID: string,
   CodeID: number,
-  AttributeID: number,
-  SelectID: number,
-  NumericValue: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
   IsBrand: true
 }
 interface SizeSelectsType {
-  MaterialID: number,
-  SizeID: number,
+  MaterialID: string,
+  SizeID: string,
   Code: string,
   SizeDescribe: string
 }
@@ -289,50 +289,50 @@ interface MaterialDataItemType {
 }
 
 interface MaterialGoodsPositionsType {
-  PositionID: number,
+  PositionID: string,
   Number: number,
 }
 interface getMaterialDataType {
-  MaterialID:string|number,
-  SizeID:string|number,
+  MaterialID:string,
+  SizeID:string,
   SKUCode:string,
 }
 interface inDeliveryFormType {
-  MaterialID: number,
-  UnitID: number|string,
+  MaterialID: string,
+  UnitID: string,
   Number: number|null,
   InStockType: number,
   Handler: string,
-  SupplierID: number|string,
+  SupplierID: string,
   Price: number|null,
   Remark: string,
   MaterialGoodsPositions: MaterialGoodsPositionsType[],
 }
 
 interface GoodsPositionListType {
-  PositionID: number| string,
+  PositionID: string,
   PositionName: number|string,
 }
 interface GoodsPositionItemType {
-  PositionID: number| string,
+  PositionID: string,
   Number: number|string,
   PositionName: number|string,
   LocationName: number|string,
   selectedLocationID: number|string,
 }
 interface StorehouseType {
-  StorehouseID: number,
+  StorehouseID: string,
   StorehouseName: string,
 }
 interface StorehouseGoodsPositionType {
   StorehouseName: string,
-  StorehouseID: number,
+  StorehouseID: string,
   GoodsPositionList: GoodsPositionItemType[],
 }
 interface DataType {
-  TypeID:string|number
+  TypeID:string
   SizeSelects:null|number
-  StorehouseID: number,
+  StorehouseID: string,
   SelectGoods: boolean,
   checkedMaterial:MaterialInfoType | null,
   getMaterialData:getMaterialDataType,
@@ -381,7 +381,7 @@ export default {
       GoodsPositionList: [],
 
       inDeliveryForm: {
-        MaterialID: 0,
+        MaterialID: '',
         UnitID: '',
         Number: null,
         InStockType: 1,
@@ -391,14 +391,14 @@ export default {
         Remark: '',
         MaterialGoodsPositions: [
           {
-            PositionID: 6,
+            PositionID: '',
             Number: 10,
           },
         ],
       },
       // 入库数据表单
       inStorehouseGoodsPosition: [],
-      StorehouseID: 0,
+      StorehouseID: '',
     });
     // 选择物料
     function ThreeCascaderCompChange(itemMaterial, allSellectMaterial, TypeID) {
@@ -410,7 +410,7 @@ export default {
     }
     function clearFrom() {
       Data.inDeliveryForm = {
-        MaterialID: 0,
+        MaterialID: '',
         UnitID: '',
         Number: null,
         InStockType: 1,
@@ -420,7 +420,7 @@ export default {
         Remark: '',
         MaterialGoodsPositions: [
           {
-            PositionID: 0,
+            PositionID: '',
             Number: 0,
           },
         ],
@@ -562,7 +562,7 @@ export default {
           });
           // 是否已经有这个仓库
           const haveStorehouse = Data.inStorehouseGoodsPosition
-            .find(StorehouseIt => StorehouseIt.StorehouseID === Number(StorehouseKey));
+            .find(StorehouseIt => StorehouseIt.StorehouseID === StorehouseKey);
           // 如果有了就添加货位
           if (haveStorehouse) { // haveStorehouse已经有的仓库
           // 查找新选择的货位
@@ -585,10 +585,10 @@ export default {
             }
           // 如果没有就添加仓库和货位
           } else if (list.length) {
-            const Storehouse = Data.StorehouseList.find(it => it.StorehouseID === Number(StorehouseKey));
+            const Storehouse = Data.StorehouseList.find(it => it.StorehouseID === StorehouseKey);
             Data.inStorehouseGoodsPosition.push({
               StorehouseName: Storehouse?.StorehouseName || '',
-              StorehouseID: Storehouse?.StorehouseID || 0,
+              StorehouseID: Storehouse?.StorehouseID || '',
               GoodsPositionList: list.map(it => ({
                 PositionID: it.PositionID,
                 Number: '',
