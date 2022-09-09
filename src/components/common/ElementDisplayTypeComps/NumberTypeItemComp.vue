@@ -9,12 +9,13 @@
     :filterable='Allow'
     default-first-option
     :allow-create='Allow'
+    no-data-text="无数据"
     placeholder="请选择"
     ref="oSelect"
     class="mp-erp-number-type-element-display-select-comp">
     <el-option
       v-for="(item,index) in options"
-      :key="item + '' + index"
+      :key="item + '-' + index"
       :label="item"
       :value="item">
     </el-option>
@@ -50,7 +51,7 @@ export default {
         return props.PropValue as number;
       },
       set(value) {
-        props.UpdateData(value);
+        props.UpdateData(Number(value) || null);
       },
     });
     const getNumberValueList = (valueList) => {

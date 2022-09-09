@@ -28,21 +28,20 @@
       :format="format"
       :clearable='false'
       @focus='onPickerFocus'
-      @blur="onPickerBlur"
       @change="onPickerBlur"
       ref="oPicker"
       :default-time="defaultTime"
       popper-class="date-selector-popper-box"
     >
+      <!-- @blur="onPickerBlur" -->
     </el-date-picker>
   </div>
 </template>
 
 <script lang="ts">
 import {
-  computed, reactive, onMounted, onBeforeUnmount, getCurrentInstance,
-  onActivated, onDeactivated,
-  ComponentInternalInstance,
+  computed, reactive, onMounted, onBeforeUnmount,
+  onActivated, onDeactivated, Ref, ref,
 } from 'vue';
 
 export default {
@@ -93,8 +92,7 @@ export default {
     },
   },
   setup(props, context) {
-    console.log(context, 'console.log(context);');
-    let currentInstance;
+    const oPicker:Ref = ref(null);
     const Data = reactive({
       beginTime: '',
       endTime: '',
@@ -107,15 +105,10 @@ export default {
       localValue1: '',
     });
     function formatDateContent(str, dateType) {
-      console.log(str, dateType, 'str, dateTypestr, dateTypestr, dateType');
-
       if (str) {
         const d = str.split('T')[0];
-        console.log(d, 'dddddh');
         if (dateType === 'daterange') return d;
         const h = str.split('T')[1].slice(0, 5);
-        console.log(d, h, 'dhdhdh');
-
         return `${d} ${h}`;
       }
       return '';
@@ -152,9 +145,9 @@ export default {
     });
 
     function onDefineBtnClick() {
-      console.log(currentInstance);
-      currentInstance?.ctx.$refs.oPicker.focus();
-      // context.refs.oPicker.focus();
+      if (oPicker.value) {
+        oPicker.value.focus();
+      }
     }
     function onPickerFocus() {
       setTimeout(() => {
@@ -185,7 +178,6 @@ export default {
 
     onMounted(() => {
       document.body.addEventListener('click', onDocumentClick, { passive: true });
-      currentInstance = getCurrentInstance() as ComponentInternalInstance;
     });
 
     onActivated(() => {
@@ -201,6 +193,7 @@ export default {
     });
 
     return {
+      oPicker,
       Data,
       date,
       showText,
@@ -255,6 +248,12 @@ export default {
   min-width: 760px;
   display: flex;
   align-items: center;
+  .el-radio-button:last-child .el-radio-button__inner{
+    border-radius: 0;
+  }
+  .el-radio-button:first-child .el-radio-button__inner{
+    border-radius: 0;
+  }
   &.mp-line-date-selector-wrap-is-full {
     .manual-select-date-box {
       top: 0;
@@ -267,7 +266,7 @@ export default {
       }
       &:hover {
         // background-color: $--color-text-table-hover;
-        color: #1890FF;
+        color: $--color-primary;
       }
     }
     .mp-common-comps-radio-group-wrap {
@@ -285,6 +284,7 @@ export default {
   .el-radio-group{
     .el-radio-button{
       .el-radio-button__inner{
+        height: 32px;
 
         width: 80px;
       }
@@ -297,7 +297,7 @@ export default {
     width: 5em;
     margin-right: 15px;
     line-height: 23px;
-    font-weight: 600;
+    // font-weight: 600;
     color: $--color-text-primary;
     text-align: right;
   }
@@ -337,7 +337,7 @@ export default {
     &.active {
       color: #fff;
       border-color: #26bcf9;
-      background-color: #1890FF;
+      background-color: $--color-primary;
     }
     &.active:hover {
       color: #fff;

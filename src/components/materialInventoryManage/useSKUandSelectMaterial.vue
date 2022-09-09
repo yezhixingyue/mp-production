@@ -2,6 +2,7 @@
   <el-form-item :label="`SKU编码：`" class="sku">
     <p>
       <el-input v-model="Data.getMaterialData.SKUCode"
+      placeholder="请输入完整SKU编码，包括尺寸编码"
        @keyup.enter="getMaterial(false)" size="large"/>
       <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
     </p>
@@ -102,7 +103,7 @@ export default {
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 1);
         } else {
-          messageBox.failSingleError('查询失败', 'sku编码错误', () => null, () => null);
+          messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
       });
     }

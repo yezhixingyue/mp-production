@@ -1,13 +1,25 @@
 <template>
   <div class="stock-warn-page">
     <header>
-      <el-breadcrumb >
-        <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
-        <el-breadcrumb-item>预警记录</el-breadcrumb-item>
-      </el-breadcrumb>
+      <div class="header-top">
+        <el-breadcrumb >
+          <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
+          <el-breadcrumb-item>预警记录</el-breadcrumb-item>
+        </el-breadcrumb>
+        <SearchInputComp
+          :word='Data.getStockWarnData.KeyWords'
+          title="关键词搜索"
+          placeholder="请输入搜索关键词"
+          resetWords="清空所有筛选条件"
+          :changePropsFunc="(words) => Data.getStockWarnData.KeyWords = words"
+          :requestFunc='getStockWarnPageList'
+          @reset='clearCondition'
+          >
+        </SearchInputComp>
+      </div>
       <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
-          <TowLevelSelect
+          <RadioGroupComp
             :title='"物料筛选"'
             :level1Options='CategoryList'
             :level2Options='MaterialTypeList'
@@ -21,18 +33,7 @@
             }"
             :value='twoSelecValue'
             @change="twoSelectChange"
-            ></TowLevelSelect>
-
-            <SearchInputComp
-              :word='Data.getStockWarnData.KeyWords'
-              title="关键词搜索"
-              placeholder="请输入搜索关键词"
-              resetWords="清空所有筛选条件"
-              :changePropsFunc="(words) => Data.getStockWarnData.KeyWords = words"
-              :requestFunc='getStockWarnPageList'
-              @reset='clearCondition'
-              >
-            </SearchInputComp>
+            ></RadioGroupComp>
         </div>
       </MpCardContainer>
     </header>
@@ -40,7 +41,11 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.StockWarnList" style="width: 100%">
-          <el-table-column prop="CreateTime" label="预警时间" min-width="197"/>
+          <el-table-column prop="CreateTime" label="预警时间" min-width="197">
+            <template #default="scope">
+              {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
+            </template>
+          </el-table-column>
           <el-table-column prop="MaterialCode" label="SKU编码" min-width="152"/>
           <el-table-column prop="物料" label="物料"
           show-overflow-tooltip min-width="190">
@@ -48,7 +53,7 @@
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -87,17 +92,15 @@
             </template> -->
           </el-table-column>
           <el-table-column prop="RelieveTime" label="解除时间" min-width="195">
-            <!-- <template #default="scope">
-              <template v-for="(it,i) in scope.row.MaterialSizes">
-                {{it.SizeName}}
-                {{it.SizeWidth}}x{{it.SizeLength}}
-                {{i<scope.row.MaterialSizes.length-1?'mm、':'mm'}}
-              </template>
-            </template> -->
+            <template #default="scope">
+              {{$format.format2MiddleLangTypeDateFunc2(scope.row.RelieveTime)}}
+            </template>
           </el-table-column>
           <el-table-column prop="操作" label="解除方式" min-width="186">
-            <template #default>
-              =====
+            <template #default="scope">
+              <span v-if="scope.row.HandleType===1">手动解除</span>
+              <span v-if="scope.row.HandleType===2">补充库存</span>
+              <span v-if="scope.row.HandleType===3">改动设置</span>
             </template>
           </el-table-column>
         </el-table>
@@ -119,7 +122,7 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
+import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
@@ -183,7 +186,7 @@ export default {
   name: 'stockWarnPage',
   components: {
     MpCardContainer,
-    TowLevelSelect,
+    RadioGroupComp,
     SearchInputComp,
     MpPagination,
   },
@@ -205,11 +208,14 @@ export default {
       StockWarnList: [],
     });
 
-    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '不限' },
+    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
       ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '不限' },
+    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
       ...MaterialWarehouseStore.MaterialTypeList]);
-
+    function setHeight() {
+      const { getHeight } = autoHeightMixins();
+      h.value = getHeight('.stock-warn-page header', 72);
+    }
     function getStockWarnPageList() {
       api.getStockWarnList(Data.getStockWarnData).then(res => {
         if (res.data.Status === 1000) {
@@ -240,18 +246,17 @@ export default {
     }
     function twoSelectChange(levelData) {
       const { level1Val, level2Val } = levelData;
-      Data.getStockWarnData.CategoryID = level1Val;
-      Data.getStockWarnData.TypeID = level2Val;
-      getStockWarnPageList();
+      if (level1Val !== undefined) {
+        Data.getStockWarnData.CategoryID = level1Val;
+        Data.getStockWarnData.TypeID = level2Val;
+        getStockWarnPageList();
+        setHeight();
+      }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.stock-warn-page header', 72);
-    }
     watch(() => CommonStore.size, () => {
       setHeight();
     });
@@ -283,8 +288,13 @@ export default {
 @import '@/assets/css/var.scss';
 .stock-warn-page{
   >header{
-    .el-breadcrumb{
+    .header-top{
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 20px;
+    }
+    .el-breadcrumb{
+      line-height: 32px;
     }
     >.mp-card-container{
       >.top-main{

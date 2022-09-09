@@ -131,6 +131,8 @@ export default {
 };
 </script>
 <style lang='scss'>
+@import "@/assets/css/var.scss";
+// @use '@/assets/css/var.scss';
 .mp-erp-layout-header-comp-wrap{
   display: flex;
   align-items: center;
@@ -182,8 +184,8 @@ export default {
               margin: 0;
             }
             &.is-active{
-              background-color: #428DFA;
-              border-color: #428DFA;
+              background-color: $--color-primary;
+              border-color: $--color-primary;
               color: #fff;
             }
             &.is-active::before{

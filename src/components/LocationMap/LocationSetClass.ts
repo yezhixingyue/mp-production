@@ -1,5 +1,5 @@
 import { Square } from './Square';
-import { LocationColorEnums } from './types';
+import { LocationColorEnums, goodsPositionStockDetailsType } from './types';
 
 export class LocationSetClass {
   PositionID: number | '' = ''
@@ -10,10 +10,16 @@ export class LocationSetClass {
 
   squares: Square[] = []
 
-  constructor(PositionID, PositionName, status, points) {
+  goodsPositionStockDetails: goodsPositionStockDetailsType[] = []
+
+  LocationName = ''
+
+  constructor(PositionID, PositionName, status, points, goodsPositionStockDetails, LocationName = '') {
     this.PositionID = PositionID;
     this.PositionName = PositionName;
     this.color = status;
     this.squares = points;
+    this.goodsPositionStockDetails = goodsPositionStockDetails;
+    this.LocationName = LocationName;
   }
 }

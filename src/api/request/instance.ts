@@ -22,6 +22,13 @@ const getShowLoading = (config) => { // 查看当前请求是否需要展示弹�
   }
   return showLoading;
 };
+// 出库的时候连续调用接口 关闭loading后 类名 el-loading-parent--relative 属性 loading-number 残留 手动删除
+const loadingInstanceClose = () => {
+  const obody = document.querySelector('body');
+  obody?.classList.remove('el-loading-parent--relative');
+  obody?.removeAttribute('loading-number');
+  loadingInstance.close();
+};
 const handleLoadingOpen = () => { // 打开弹窗
   requestNum += 1;
   loadingInstance = ElLoading.service({
@@ -35,7 +42,7 @@ const handleLoadingOpen = () => { // 打开弹窗
 const handleLoadingClose = () => { // 关闭弹窗
   requestNum -= 1;
   if (requestNum < 0) requestNum = 0;
-  if (requestNum === 0 && loadingInstance) loadingInstance.close();
+  if (requestNum === 0 && loadingInstance) loadingInstanceClose();
 };
 
 const instance = new Axios({

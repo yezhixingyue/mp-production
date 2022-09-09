@@ -98,6 +98,7 @@
     >
     <template #default>
       <div class="add-Generative-Rule-dialog">
+        <el-scrollbar>
         <el-form :model="Data.generativeRule" label-width="180px">
           <el-form-item :label="`${item.AttributeName}：`"
           :class="item.IsRequired?'form-item-required':''"
@@ -143,15 +144,34 @@
 
           <el-divider />
 
-          <el-form-item label="可选尺寸：" class="form-item-required"
+          <el-form-item label="可选尺寸：" class="form-item-required select-size"
           v-if="MaterialWarehouseStore.MaterialTypeSizeAllList.length">
-            <el-checkbox-group v-model="Data.generativeRule.SizeIDS">
+          <p>
+            <el-checkbox
+              v-model="Data.checkAll"
+              :indeterminate="Data.isIndeterminate"
+              @change="handleCheckAllChange"
+            >所有尺寸</el-checkbox>
+          </p>
+            <el-checkbox-group v-model="Data.generativeRule.SizeIDS"
+            @change="handleCheckedCitiesChange">
               <el-checkbox
               v-for="size in MaterialWarehouseStore.MaterialTypeSizeAllList"
-              :key="size" :label="size.SizeID">{{size.SizeName}}</el-checkbox>
+              :key="size" :label="size.SizeID">
+                <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  :content="`${size.SizeName}${size.SizeLength}x${size.SizeWidth}mm`"
+                  placement="top"
+                  :disabled="size.SizeName.length<7"
+                >
+                {{size.SizeName}}{{size.SizeLength}}x{{size.SizeWidth}}mm
+                </el-tooltip>
+              </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-form>
+        </el-scrollbar>
       </div>
     </template>
     <template #footer>
@@ -182,10 +202,12 @@ import { useCommonStore } from '@/store/modules/common';
 interface item {
   AttributeID: number,
   NumericValue: string,
-  SelectID: number,
+  SelectID: number|string,
   InputSelectValue:string,
 }
 interface DataType{
+  checkAll:boolean,
+  isIndeterminate:boolean,
   generativeRule: any,
   [a:string]:any
 }
@@ -203,6 +225,8 @@ export default {
     const MaterialWarehouseStore = useMaterialWarehouseStore();
 
     const Data:DataType = reactive({
+      checkAll: false,
+      isIndeterminate: false,
       dialogShow: false,
       TypeID: 0,
       BatchAddList: [
@@ -248,6 +272,23 @@ export default {
     const getNumberValueList = (valueList) => {
       const reg = /\s|,|，/;
       return valueList.split(reg).filter(it => it);
+    };
+
+    const handleCheckedCitiesChange = (value:number[]) => {
+      const checkedCount = value.length;
+      Data.checkAll = checkedCount === MaterialWarehouseStore.MaterialTypeSizeAllList.length;
+      Data.isIndeterminate = checkedCount > 0
+       && checkedCount < MaterialWarehouseStore.MaterialTypeSizeAllList.length;
+    };
+    const handleCheckAllChange = (val: boolean) => {
+      if (val) {
+        const temp = MaterialWarehouseStore
+          .MaterialTypeSizeAllList.map(it => it.SizeID as number);
+        Data.generativeRule.SizeIDS = temp;
+      } else {
+        Data.generativeRule.SizeIDS = [];
+      }
+      Data.isIndeterminate = false;
     };
     function generativeRuleClick() {
       Data.dialogShow = true;
@@ -343,7 +384,7 @@ export default {
             actionItem.push({
               AttributeID: AttributesItem.AttributeID,
               NumericValue: temp,
-              SelectID: 0,
+              SelectID: '',
               InputSelectValue: '',
             });
           });
@@ -359,7 +400,7 @@ export default {
               actionItem.push({
                 AttributeID: AttributesItem.AttributeID,
                 NumericValue: '',
-                SelectID: 0,
+                SelectID: '',
                 InputSelectValue: temp,
               });
             } else {
@@ -525,6 +566,8 @@ export default {
       BatchAddData,
       getCustominp,
       materialManageName,
+      handleCheckedCitiesChange,
+      handleCheckAllChange,
       generativeRuleClick,
       delMaterial,
       delSize,
@@ -628,8 +671,28 @@ export default {
     text-align: center;
   }
   .add-Generative-Rule-dialog{
-    .el-checkbox-group{
-      flex: 1;
+    max-height: 500px;
+    .el-form{
+      max-height: 500px;
+      .select-size{
+        .el-checkbox-group{
+          width: 100%;
+          .el-checkbox{
+            max-width: 400px;
+            .el-checkbox__label{
+              display: inline-block;
+              width: calc(100% - 14px - 10px);
+              .el-only-child__content{
+                max-width: 400px;
+                display: inline-block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+        }
+      }
     }
     .custom{
       width: 100%;

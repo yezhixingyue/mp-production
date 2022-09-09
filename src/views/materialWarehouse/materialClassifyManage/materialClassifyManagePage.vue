@@ -20,22 +20,26 @@
           <el-table-column prop="AttributeDescribe"
           show-overflow-tooltip label="属性" min-width="150" />
           <el-table-column prop="BrandDescribe" label="品牌属性"
-          show-overflow-tooltip min-width="83" />
+          show-overflow-tooltip min-width="83">
+          <template #default="scope">
+            {{scope.row.BrandDescribe || (scope.row.BrandIsSet ? "无" : '')}}
+          </template>
+          </el-table-column>
           <el-table-column prop="SizeDescribe" label="尺寸规格"
           show-overflow-tooltip min-width="83" />
           <el-table-column prop="OutInUnitDescribe" label="出入库单位"
           show-overflow-tooltip min-width="378" />
-          <el-table-column prop="name" label="非库存物料"
+          <!-- <el-table-column prop="name" label="非库存物料"
           show-overflow-tooltip min-width="98">
             <template #default="scope">
               {{!scope.row.IsStock?'非库存物料':''}}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="name" label="操作" min-width="428">
             <template #default="scope">
               <el-button type="primary" link
               @click="ToSetAttributesPage(scope.row)">设置属性</el-button>
-              <el-button type="primary" link
+              <el-button type="primary" link :disabled="scope.row.BrandIsSet"
               @click="setBrandClick(scope.row.TypeID)">品牌属性</el-button>
               <el-button type="primary" link
               @click="ToSetDimensionsPage(scope.row)">尺寸规格</el-button>
@@ -71,6 +75,7 @@
         <el-form :model="Data.materialClassifyDialogForm">
           <el-form-item label="分类：" class="form-item-required">
             <el-select v-model="Data.materialClassifyDialogForm.CategoryID"
+            no-data-text="无数据"
              placeholder="请选择分类">
               <el-option
                 v-for="item in MaterialCategoryStore.CategoryList"
@@ -86,14 +91,14 @@
           <el-form-item label="编码：" class="form-item-required">
             <el-input :maxlength="4" v-model="Data.materialClassifyDialogForm.TypeCode" />
           </el-form-item>
-          <el-form-item >
+          <!-- <el-form-item >
             <el-checkbox v-model="IsStock"
             label="非库存物料"/>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         <div class="Prompt">
           <p>1.编码由 1 到 4 位的英文字母或数字组成，方便记忆，在入库搜索物料时输入编码， 可快速定位物料，类似于超市称重时输入的物品编号</p>
-          <p>2.非库存物料指该物料仅用于生产过程，但无需进行出入库操作， 例如：外协工厂加工好的烫印版、模切版</p>
+          <!-- <p>2.非库存物料指该物料仅用于生产过程，但无需进行出入库操作， 例如：外协工厂加工好的烫印版、模切版</p> -->
         </div>
       </div>
     </template>
@@ -329,21 +334,17 @@ export default {
         console.log('cb');
       };
       messageBox.warnCancelBox('您确定要保存吗?', '保存后将不能更改品牌属性，请谨慎操作', () => {
-        if (!Data.setBrandForm.AttributeID) {
-          // 未选择属性
-        } else {
-          api.getMaterialTypeAttributeSetBrand(Data.setBrandForm).then(res => {
-            if (res.data.Status === 1000) {
-              // 设置成功
-              const cback = () => {
-                brandCloseClick();
-                getMaterialClassifyManage();
-              };
-              // 成功
-              messageBox.successSingle('保存成功', cback, cback);
-            }
-          });
-        }
+        api.getMaterialTypeAttributeSetBrand(Data.setBrandForm).then(res => {
+          if (res.data.Status === 1000) {
+            // 设置成功
+            const cback = () => {
+              brandCloseClick();
+              getMaterialClassifyManage();
+            };
+            // 成功
+            messageBox.successSingle('保存成功', cback, cback);
+          }
+        });
       }, cb);
     }
 

@@ -2,15 +2,28 @@
   <div class="material-manage-page">
     <header>
       <div class="header-top">
-        <el-button
-        type="primary" @click="addMaterialManage">+ 添加物料</el-button>
-        <el-button
-        type="primary" @click="batchAddMaterialManage">批量生成</el-button>
+        <div class="bt">
+
+          <el-button
+          type="primary" @click="addMaterialManage">+ 添加物料</el-button>
+          <el-button
+          type="primary" @click="batchAddMaterialManage">批量生成</el-button>
+        </div>
+
+            <SearchInputComp
+              :word='Data.getMaterialManageData.KeyWords'
+              title="关键词搜索"
+              placeholder="请输入搜索关键词"
+              resetWords="清空所有筛选条件"
+              :changePropsFunc="(words) => Data.getMaterialManageData.KeyWords = words"
+              :requestFunc='getMaterialManageList'
+              @reset='clearCondition'
+              >
+            </SearchInputComp>
       </div>
       <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
-          <TowLevelSelect
-            :title='"物料筛选"'
+          <RadioGroupComp
             :level1Options='CategoryList'
             :level2Options='MaterialTypeList'
             :defaultProps="{
@@ -23,18 +36,8 @@
             }"
             :value='twoSelecValue'
             @change="twoSelectChange"
-            ></TowLevelSelect>
+            ></RadioGroupComp>
 
-            <SearchInputComp
-              :word='Data.getMaterialManageData.KeyWords'
-              title="关键词搜索"
-              placeholder="请输入搜索关键词"
-              resetWords="清空所有筛选条件"
-              :changePropsFunc="(words) => Data.getMaterialManageData.KeyWords = words"
-              :requestFunc='getMaterialManageList'
-              @reset='clearCondition'
-              >
-            </SearchInputComp>
         </div>
       </MpCardContainer>
     </header>
@@ -51,7 +54,7 @@
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -62,7 +65,8 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="可选尺寸" label="可选尺寸" min-width="608">
+          <el-table-column prop="可选尺寸" label="可选尺寸"
+          show-overflow-tooltip min-width="608">
             <template #default="scope">
               <template v-for="(it,i) in scope.row.MaterialSizes">
                 {{it.SizeName}}
@@ -100,7 +104,9 @@
     :top="'10vh'"
     >
     <template #default>
+        <el-scrollbar>
       <div class="add-material-manage-dialog">
+
         <el-form :model="Data.addMaterialManageForm" label-width="120px">
           <el-form-item :label="`类型：`">
             <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
@@ -150,13 +156,22 @@
             @change="handleCheckedCitiesChange"
           >
             <el-checkbox
-            v-for="city in MaterialWarehouseStore.MaterialTypeSizeAllList"
-            :key="city.SizeID" :label="city.SizeID">
-            {{city.SizeName}}{{city.SizeLength}}x{{city.SizeWidth}}mm
+            v-for="size in MaterialWarehouseStore.MaterialTypeSizeAllList"
+            :key="size.SizeID" :label="size.SizeID">
+                <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  :content="`${size.SizeName}${size.SizeLength}x${size.SizeWidth}mm`"
+                  placement="top"
+                  :disabled="size.SizeName.length<7"
+                >
+                {{size.SizeName}}{{size.SizeLength}}x{{size.SizeWidth}}mm
+                </el-tooltip>
             </el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
+        </el-scrollbar>
     </template>
     </DialogContainerComp>
   </div>
@@ -164,13 +179,12 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated, nextTick,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
@@ -179,6 +193,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
+import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -225,7 +240,7 @@ export default {
   name: 'materialManagePage',
   components: {
     MpCardContainer,
-    TowLevelSelect,
+    RadioGroupComp,
     SearchInputComp,
     MpPagination,
     NumberTypeItemComp,
@@ -264,9 +279,9 @@ export default {
       },
     });
 
-    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '不限' },
+    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
       ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '不限' },
+    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
       ...MaterialWarehouseStore.MaterialTypeList]);
       // 跳转
     function ToMaterialManageSetuepPage(IDs) {
@@ -275,10 +290,14 @@ export default {
         params: { TypeID: IDs.TypeID, CategoryID: IDs.CategoryID },
       });
     }
-
+    function setHeight() {
+      const { getHeight } = autoHeightMixins();
+      h.value = getHeight('.material-manage-page header', 20);
+    }
     function getMaterialManageList() {
       MaterialWarehouseStore.getMaterialManageList(Data.getMaterialManageData, (DataNumber) => {
         Data.DataTotal = DataNumber as number;
+        setHeight();
       });
     }
     function PaginationChange(newVal) {
@@ -348,9 +367,10 @@ export default {
         MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(
           Data.getMaterialManageData.TypeID as number,
         );
-        const Categoryresp = CategoryList.value.filter(res => res.CategoryID);
+
+        const Categoryresp = CategoryList.value.filter(res => res.CategoryID === Data.getMaterialManageData.CategoryID);
         Data.dialogTypeData.CategoryName = Categoryresp[0].CategoryName;
-        const Typeresp = MaterialTypeList.value.filter(res => res.TypeID);
+        const Typeresp = MaterialTypeList.value.filter(res => res.TypeID === Data.getMaterialManageData.TypeID);
         Data.dialogTypeData.TypeName = Typeresp[0].TypeName;
 
         Data.addMaterialManageShow = true;
@@ -550,20 +570,20 @@ export default {
       }
       return true;
     }
+
     function twoSelectChange(levelData) {
       const { level1Val, level2Val } = levelData;
-      Data.getMaterialManageData.CategoryID = level1Val;
-      Data.getMaterialManageData.TypeID = level2Val;
-      getMaterialManageList();
+      if (level1Val !== undefined) {
+        Data.getMaterialManageData.CategoryID = level1Val;
+        Data.getMaterialManageData.TypeID = level2Val;
+        getMaterialManageList();
+        setHeight();
+      }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-manage-page header', 20);
-    }
     watch(() => CommonStore.size, () => {
       setHeight();
     });
@@ -576,8 +596,9 @@ export default {
     });
     onMounted(() => {
       sessionStorage.removeItem('saveGenerative');
-      setHeight();
-      MaterialWarehouseStore.getMaterialCategoryList();
+      MaterialWarehouseStore.getMaterialCategoryList(() => {
+        setHeight();
+      });
       getMaterialManageList();
     });
 
@@ -612,6 +633,8 @@ export default {
 .material-manage-page{
   >header{
     >.header-top{
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 20px;
     }
     >.mp-card-container{
@@ -638,6 +661,7 @@ export default {
     }
   }
   .add-material-manage-dialog{
+    max-height: 500px;
     .el-form{
       .el-form-item{
         margin: 0 auto;
@@ -650,6 +674,7 @@ export default {
           }
         }
       }
+
       >p{
         margin-bottom:10px;
         font-size: 12px;
@@ -657,6 +682,23 @@ export default {
         color: #F4A307;
       }
     }
+      .el-checkbox-group{
+        width: 100%;
+        .el-checkbox{
+          max-width: 580px;
+          .el-checkbox__label{
+            display: inline-block;
+            width: calc(100% - 14px - 10px);
+            .el-only-child__content{
+              max-width: 580px;
+              display: inline-block;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
   }
 }
 </style>

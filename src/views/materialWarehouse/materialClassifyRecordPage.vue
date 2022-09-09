@@ -10,7 +10,7 @@
       </div>
       <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
-          <TowLevelSelect
+          <RadioGroupComp
             :title='"物料筛选"'
             :level1Options='CategoryList'
             :level2Options='MaterialTypeList'
@@ -25,7 +25,9 @@
             :value='twoSelecValue'
             @change="twoSelectChange"
             @requestFunc='getRecordList'
-            ></TowLevelSelect>
+            ></RadioGroupComp>
+        </div>
+        <div class="top-main">
           <template v-if="Data.getRecordData.LogType === 2">
             <OneLevelSelect
               :title='"出库类型"'
@@ -86,7 +88,7 @@
           :typeList="[['DateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
           :dateValue='Data.getRecordData.DateType'
           :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
-          label="申请时间"
+          :label="Data.getRecordData.LogType === 1 ? '入库时间' : '出库时间'"
           >
           <!-- :dateList="dateList" -->
           </LineDateSelectorComp>
@@ -118,7 +120,7 @@
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -141,8 +143,16 @@
             </template>
           </el-table-column>
           <template v-if="Data.getRecordData.LogType === 1">
-            <el-table-column prop="Price" label="单价" min-width="104"/>
-            <el-table-column prop="amount" label="金额" min-width="112"/>
+            <el-table-column prop="Price" label="单价" min-width="104">
+              <template #default="scope">
+                {{scope.row.Price}}元/{{scope.row.StockUnit}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="amount" label="金额" min-width="112">
+              <template #default="scope">
+                {{scope.row.amount}}元
+              </template>
+            </el-table-column>
             <el-table-column prop="HandleType" label="入库类型" min-width="88">
               <template #default="scope">
                 {{getHandleType(scope.row.HandleType)}}
@@ -172,14 +182,22 @@
           <template v-if="Data.getRecordData.LogType === 1">
             <el-table-column prop="OperaterName" label="操作人" min-width="79"/>
             <el-table-column
-            show-overflow-tooltip prop="CreateTime" label="入库时间" min-width="158"/>
+            show-overflow-tooltip prop="CreateTime" label="入库时间" min-width="158">
+              <template #default="scope">
+                {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
+              </template>
+            </el-table-column>
           </template>
 
           <template v-if="Data.getRecordData.LogType === 2">
             <el-table-column prop="HandlerName" label="领取人" min-width="79"/>
             <el-table-column prop="OperaterName" label="操作人" min-width="79"/>
             <el-table-column
-            show-overflow-tooltip prop="CreateTime" label="出库时间" min-width="158"/>
+            show-overflow-tooltip prop="CreateTime" label="出库时间" min-width="158">
+              <template #default="scope">
+                {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
+              </template>
+            </el-table-column>
           </template>
 
         </el-table>
@@ -231,11 +249,10 @@
     <template #default>
       <div class="storehouse-stock-dialog">
         <div class="material-manage">
-          <p>
-              <template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
+          <p>物料：<template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -246,10 +263,10 @@
               </template>
           </p>
           <p>
-            {{Data.materialManageInfo.SizeDescribe}}
+            尺寸规格：{{Data.materialManageInfo.SizeDescribe}}
           </p>
           <p>
-            {{Data.materialManageInfo.MaterialCode}}
+            SKU编码：{{Data.materialManageInfo.MaterialCode}}
           </p>
         </div>
         <el-scrollbar>
@@ -260,15 +277,16 @@
               <p class="title">
                 <span>
                   {{Storehouseitem.StorehouseName}}：
-                  {{getStorehouseAllInNumber()}}{{Data.materialManageInfo.StockUnit}}
+                  {{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}
+                  {{Math.abs(getStorehouseInNumber(Storehouseitem.GoodsPositionStockInfos))}}{{Data.materialManageInfo.StockUnit}}
                 </span>
               </p>
               <ul>
                 <li v-for="GoodsPosition in Storehouseitem.GoodsPositionStockInfos"
                 :key="GoodsPosition.PositionID">
                   <span class="ranks">
+                    {{GoodsPosition.UpperDimension}}
                     {{GoodsPosition.PositionName}}
-                    {{GoodsPosition.UpperDimensionUnit}}
                     <!-- A区 001柜 3行 2列 -->
                   </span>
                   <span class="PCS">
@@ -278,6 +296,7 @@
                 </li>
               </ul>
             </div>
+            <p>合计{{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}：{{Math.abs(getStorehouseAllInNumber())}}{{Data.materialManageInfo.StockUnit}}</p>
           </div>
         </el-scrollbar>
         <!-- {{Data.StorehouseStockInfo}} -->
@@ -289,7 +308,7 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
+import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
@@ -400,7 +419,7 @@ export default {
   name: 'materialClassifyRecordPage',
   components: {
     MpCardContainer,
-    TowLevelSelect,
+    RadioGroupComp,
     OneLevelSelect,
     SearchInputComp,
     MpPagination,
@@ -442,19 +461,19 @@ export default {
       },
       {
         value: 51,
-        label: '采购',
+        label: '领料',
       },
       {
         value: 52,
-        label: '退料',
+        label: '补料',
       },
       {
         value: 53,
-        label: '赠送',
+        label: '无订单领料',
       },
       {
         value: 54,
-        label: '成品',
+        label: '销售',
       },
     ];
     const Data:DataType = reactive({
@@ -509,6 +528,10 @@ export default {
       StaffName: '不限',
     }, ...CommonStore.StaffSelectList]);
 
+    function setHeight() {
+      const { getHeight } = autoHeightMixins();
+      h.value = getHeight('.material-classify-record-page header', 20);
+    }
     function getRecordList() {
       ClassType.setDate(Data.getRecordData, 'CreateTime');
       const _obj = ClassType.filter(Data.getRecordData, true);
@@ -522,6 +545,7 @@ export default {
         if (res.data.Status === 1000) {
           Data.RecordList = res.data.Data as RecordListType[];
           Data.DataTotal = res.data.DataNumber as number;
+          setHeight();
         }
       });
     }
@@ -547,10 +571,14 @@ export default {
       });
       return num;
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-classify-record-page header', 20);
+    function getStorehouseInNumber(GoodsPositionStockInfo) {
+      let num = 0;
+      GoodsPositionStockInfo.forEach(it => {
+        num += Number(it.Number);
+      });
+      return num;
     }
+
     // 查看入库货位
     function SeeGoodsAllocation(data) {
       api.getStockLogPosition(data.LogID).then(res => {
@@ -573,9 +601,9 @@ export default {
       getRecordList();
       setHeight();
     }
-    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '不限' },
+    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
       ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '不限' },
+    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
       ...MaterialWarehouseStore.MaterialTypeList]);
 
     function addMaterialManageCloseClick() {
@@ -613,8 +641,11 @@ export default {
 
     function twoSelectChange(levelData) {
       const { level1Val, level2Val } = levelData;
-      Data.getRecordData.CategoryID = level1Val;
-      Data.getRecordData.TypeID = level2Val;
+      if (level1Val !== undefined) {
+        Data.getRecordData.CategoryID = level1Val;
+        Data.getRecordData.TypeID = level2Val;
+        setHeight();
+      }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
@@ -659,6 +690,7 @@ export default {
       MaterialWarehouseStore,
       SeeGoodsAllocation,
       getStorehouseAllInNumber,
+      getStorehouseInNumber,
     };
   },
 
@@ -722,7 +754,7 @@ export default {
       flex-direction: column;
       height: 100%;
       .material-manage{
-        font-size: 18px;
+        font-size: 14px;
         p{
           padding: 0 10px;
         }
@@ -742,7 +774,7 @@ export default {
             span{
               color: #566176;
             }
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             padding: 0 10px;
           }
             &.warehouse-item + .warehouse-item {
@@ -778,6 +810,11 @@ export default {
               }
             }
           }
+        }
+        p{
+          font-size: 18px;
+          padding: 0 10px;
+          padding-top: 15px;
         }
       }
       .total{

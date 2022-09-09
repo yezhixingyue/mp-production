@@ -21,6 +21,9 @@ type IGetters = {
   lastWeekDate: ()=> DateType
   curMonthDate: ()=> DateType
   lastMonthDate: ()=> DateType
+  toYearDate: ()=> DateType
+  lastYearDate: ()=> DateType
+  beforeyesterYearDate: ()=> DateType
 };
 /**
  * 该模块主要用于时间选择模块,为公共模块,方便在需要使用时调用
@@ -116,6 +119,45 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         ).setMonth(new Date(this.newDate).getMonth() - 1),
       ));
       const stringDate2 = ConvertTimeFormat(new Date(new Date(this.newDate).setDate(0)));
+      return {
+        First: `${stringDate1}T00:00:00.000Z`,
+        Second: `${stringDate2}T23:59:59.997Z`,
+      };
+    },
+    toYearDate() { // 今年
+      const year = this.newDate.getFullYear();
+      const stringDate1 = ConvertTimeFormat(
+        new Date(`${year}-01-01`),
+      );
+      const stringDate2 = ConvertTimeFormat(
+        new Date(`${year}-12-31`),
+      );
+      return {
+        First: `${stringDate1}T00:00:00.000Z`,
+        Second: `${stringDate2}T23:59:59.997Z`,
+      };
+    },
+    lastYearDate() { // 去年
+      const year = this.newDate.getFullYear() - 1;
+      const stringDate1 = ConvertTimeFormat(
+        new Date(`${year}-01-01`),
+      );
+      const stringDate2 = ConvertTimeFormat(
+        new Date(`${year}-12-31`),
+      );
+      return {
+        First: `${stringDate1}T00:00:00.000Z`,
+        Second: `${stringDate2}T23:59:59.997Z`,
+      };
+    },
+    beforeyesterYearDate() { // 前年
+      const year = this.newDate.getFullYear() - 2;
+      const stringDate1 = ConvertTimeFormat(
+        new Date(`${year}-01-01`),
+      );
+      const stringDate2 = ConvertTimeFormat(
+        new Date(`${year}-12-31`),
+      );
       return {
         First: `${stringDate1}T00:00:00.000Z`,
         Second: `${stringDate2}T23:59:59.997Z`,

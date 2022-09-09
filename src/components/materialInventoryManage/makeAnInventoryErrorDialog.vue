@@ -21,7 +21,7 @@
                <template v-for="(item, index) in materialInfo.MaterialAttributes"
                :key="item.AttributeID">
                  <template v-if="item.NumericValue">
-                   <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                   <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                  </template>
                  <template v-else>
                    <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -50,7 +50,7 @@
                <template v-for="(item,index) in Data.newMaterialInfo.MaterialAttributes"
                :key="item.AttributeID">
                  <template v-if="item.NumericValue">
-                   <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                   <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                  </template>
                  <template v-else>
                    <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -95,7 +95,7 @@
                     <template v-for="(item,index) in materialInfo.MaterialAttributes"
                     :key="item.AttributeID">
                       <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                        <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                       </template>
                       <template v-else>
                         <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -135,6 +135,7 @@
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
                     <el-input @keyup.enter="getMaterial(false)"
+                    placeholder="请输入完整SKU编码，包括尺寸编码"
                     v-model="Data.getMaterialData.SKUCode"/>
                     <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
                   </p>
@@ -361,6 +362,10 @@ export default {
 
     // 根据选项或sku编码查物料
     function getMaterial() {
+      if (!Data.getMaterialData.SKUCode) {
+        messageBox.failSingleError('查询失败', '请输入SKU编码', () => null, () => null);
+        return;
+      }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
         console.log(res);
@@ -369,7 +374,7 @@ export default {
           Data.tempMaterialInfo.UnitSelects = Data.tempMaterialInfo.UnitSelects
             .filter(it => it.UnitPurpose === 1);
         } else {
-          messageBox.failSingleError('查询失败', 'sku编码错误', () => null, () => null);
+          messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
       });
     }

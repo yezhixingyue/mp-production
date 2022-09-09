@@ -5,6 +5,7 @@
    default-first-option
    :allow-create='Allow'
    :filterable='Allow'
+   no-data-text="无数据"
    v-if="options && options.length"
    class="mp-erp-option-type-element-display-select-comp">
     <el-option

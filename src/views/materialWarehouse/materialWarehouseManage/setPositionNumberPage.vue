@@ -58,7 +58,7 @@
       <el-button type="primary" @click="$goback">返回</el-button>
     </footer>
     <DialogContainerComp
-    :title="`${Data.addPalletDimensionsForm.CodeID ? '修改': '添加'}货位维度`"
+    :title="`${Data.addPalletDimensionsForm.DimensionID ? '修改': '添加'}货位维度`"
     :visible='Data.addPalletDimensionsShow'
     :width="660"
     :primaryClick="addPalletDimensionsPrimaryClick"
@@ -259,7 +259,8 @@ export default {
         api.getGoodsPositionDimensionLockCode(
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
-          if (res.data.Status) {
+          if (res.data.Status === 1000) {
+            setStorage();
             getLockStatus();
           }
         });
@@ -275,7 +276,8 @@ export default {
         api.getGoodsPositionDimensionUnlockCode(
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
-          if (res.data.Status) {
+          if (res.data.Status === 1000) {
+            setStorage();
             getLockStatus();
           }
         });

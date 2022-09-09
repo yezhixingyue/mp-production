@@ -1,0 +1,8 @@
+@import "@/assets/css/var.scss";
+
+.el-button--primary{
+  &.el-button:focus, &.el-button:hover{
+    background-color: $-el-button--primary-hover-bg ;
+    border-color: $-el-button--primary-hover-bg ;
+  }
+}

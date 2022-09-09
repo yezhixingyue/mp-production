@@ -17,7 +17,7 @@
           </el-form-item>
           <el-form-item :label="`SKU编码：`" class="sku">
             <p>
-              <el-input  @keyup.enter="getMaterial(false)" v-model="Data.getMaterialData.SKUCode"/>
+              <el-input  @keyup.enter="getMaterial(false)" placeholder="请输入完整SKU编码，包括尺寸编码" v-model="Data.getMaterialData.SKUCode"/>
               <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
             </p>
             <span>或者</span>
@@ -53,11 +53,10 @@
               :key="item.AttributeID">
                 <!-- {{index === 0 ? '' : ' - ' }} -->
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>
-                  {{item.AttributeUnit}}
+                  <span style="margin-right:5px">{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
-                  <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                  <span style="margin-right:5px">{{item.InputSelectValue || item.SelectValue}}</span>
                 </template>
                 <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                   {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
@@ -226,17 +225,21 @@ export default {
 
     // 根据选项或sku编码查物料
     function getMaterial() {
-      // 物料筛选
-      api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        console.log(res);
-        if (res.data.Data) {
-          Data.checkedMaterial = res.data.Data as MaterialInfoType;
-          Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
-            .filter(it => it.UnitPurpose === 1);
-        } else {
-          messageBox.failSingleError('查询失败', 'sku编码错误', () => null, () => null);
-        }
-      });
+      if (!Data.getMaterialData.SKUCode) {
+        messageBox.failSingleError('查询失败', '请输入SKU编码', () => null, () => null);
+      } else {
+        // 物料筛选
+        api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
+          console.log(res);
+          if (res.data.Data) {
+            Data.checkedMaterial = res.data.Data as MaterialInfoType;
+            Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
+              .filter(it => it.UnitPurpose === 1);
+          } else {
+            messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
+          }
+        });
+      }
     }
     return {
       Data,

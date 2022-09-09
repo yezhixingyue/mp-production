@@ -1,9 +1,16 @@
 <template>
-  <section class="mp-pd-location-map-comp-wrap" :style="`width:${width + 270}px;height:${height + 90}px`">
+  <section class="mp-pd-location-map-comp-wrap" :style="`width:${width + 270}px;height:${height + 70}px`">
     <div class="content">
       <template v-if="locationMap">
         <canvas id="location-map" ref="canvas" :width="`${width + 60}`" :height="`${height + 60}`">
         </canvas>
+          <div class="location-tip" v-show="position.show" :class="position.hidden ? 'hidden':''" :style="`top:${position.y}px;left:${position.x}px`">
+            <div class="main" v-if="locationMap.hoverHtml.length">
+              <p v-for="(item,i) in locationMap.hoverHtml" :key="item+i">
+                {{item}}
+              </p>
+            </div>
+          </div>
         <LocationSetupDialog
           v-model:visible="visible"
           :locationSet="locationMap.locationSet"
@@ -16,29 +23,46 @@
     <aside>
       <dl>
         <dt>图例</dt>
-        <dd>
+        <dd v-if="!isMultiSelect">
           <i :style="`background:${LocationColorEnums.squareEmptyColor};border-color:${LocationColorEnums.strokeStyle}`"></i>
           <span>可选</span>
         </dd>
+        <dd v-if="isMultiSelect">
+          <i :style="`background:${LocationColorEnums.vacancy};border-color:${LocationColorEnums.vacancy}`"></i>
+          <span>空货位</span>
+        </dd>
+        <dd v-if="isMultiSelect">
+          <i :style="`background:${LocationColorEnums.normal};border-color:${LocationColorEnums.normal}`"></i>
+          <span>其他物料</span>
+        </dd>
+        <dd v-if="isMultiSelect">
+          <i :style="`background:${LocationColorEnums.identical};border-color:${LocationColorEnums.identical}`"></i>
+          <span>{{readonly?'当前物料':'与入库物料一致'}}</span>
+        </dd>
+        <dd v-if="!readonly">
+          <i :style="`background:${LocationColorEnums.isSetSelected};border-color:${LocationColorEnums.isSetSelected}`"></i>
+          <span v-if="isMultiSelect">已选择</span>
+          <span v-else>选中已有货位</span>
+        </dd>
         <dd>
           <i :style="`background:${LocationColorEnums.squareFillColor};border-color:${LocationColorEnums.squareFillColor}`"></i>
-          <span>选中单元格</span>
-        </dd>
-        <dd>
-          <i :style="`background:${LocationColorEnums.isSetSelected};border-color:${LocationColorEnums.isSetSelected}`"></i>
-          <span>选中已有货位</span>
+          <span v-if="isMultiSelect && !readonly">禁用</span>
+          <span v-else-if="readonly && readonly">不可选</span>
+          <span v-else>选中单元格</span>
         </dd>
       </dl>
-      <el-button :disabled="locationMap.newLocation.length===0" type="primary" @click="onSetNewClick">设置新货位</el-button>
-      <!-- <el-button :disabled="!locationMap.selectedLocation" type="primary" @click="onRenameClick">修改货位名称</el-button> -->
-      <el-button :disabled="!locationMap.selectedLocation" type="danger" @click="onRemoveClick">删除货位</el-button>
+      <template v-if="!isMultiSelect">
+        <el-button :disabled="locationMap.newLocation.length===0" type="primary" @click="onSetNewClick">设置新货位</el-button>
+        <!-- <el-button :disabled="!locationMap.selectedLocation" type="primary" @click="onRenameClick">修改货位名称</el-button> -->
+        <el-button :disabled="!locationMap.selectedLocation" type="danger" @click="onRemoveClick">删除货位</el-button>
+      </template>
     </aside>
   </section>
 </template>
 
 <script lang='ts'>
 import {
-  onMounted, Ref, ref,
+  onMounted, Ref, ref, watch,
 } from 'vue';
 import { message } from '@/assets/js/utils/message';
 import { LocationMapClass } from './LocationMapClass';
@@ -76,6 +100,26 @@ export default {
       type: Number,
       default: 600,
     },
+    isMultiSelect: { // 是否多选
+      type: Boolean,
+      default: false,
+    },
+    selectedLocationChange: { // 选中货位改变
+      type: Function,
+      default: () => null,
+    },
+    DefaultAction: { // 默认选择的货位
+      type: Array,
+      default: () => [],
+    },
+    currentMaterialID: { // 当前物料
+      type: Number,
+      default: 0,
+    },
+    readonly: { // 只读
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     LocationSetupDialog,
@@ -85,21 +129,65 @@ export default {
 
     const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 
+    const position = ref({
+      x: 50,
+      y: 50,
+      hidden: true,
+      show: false,
+    });
     const mapOption = {
       width: props.width,
       height: props.height,
     };
 
-    const locationMap: Ref<LocationMapClass> = ref(new LocationMapClass(originData, mapOption));
-
+    const locationMap: Ref<LocationMapClass> = ref(new LocationMapClass(
+      originData,
+      mapOption,
+      props.isMultiSelect,
+      props.DefaultAction as LocationSetClass[],
+      props.currentMaterialID,
+    ));
     const initDraw = () => {
       if (canvas.value) {
+        console.log(canvas.value, 'aaaaaaaaaaaaaa');
         const viewer = new Viewer(canvas.value);
-        viewer.draw(locationMap.value); // 渲染
+        // 画单元格 货位
+        viewer.draw(locationMap.value, props.isMultiSelect, originData.DyadicArrayDimensionData); // 渲染
 
         canvas.value.onclick = (e) => {
-          locationMap.value.onMapClick(e, viewer);
+          if (!props.readonly) {
+            locationMap.value.onMapClick(e, viewer);
+          }
         };
+        canvas.value.onmouseout = (e) => {
+          position.value.show = false;
+        };
+        let a = true;
+
+        canvas.value.onmousemove = (e) => {
+          const x = Math.floor((e.offsetX - MapConditionEnum.labelGapWidth) / locationMap.value.squareWidth);
+          const y = Math.floor((e.offsetY - MapConditionEnum.labelGapHeight) / locationMap.value.squareHeight);
+          // 如果不在图标内部则不往后执行
+          if (x < 0 || y < 0 || y > locationMap.value.rows.length - 1 || x > locationMap.value.rows[y].length - 1) {
+            position.value.show = false;
+            return;
+          }
+          position.value.show = true;
+
+          position.value.x = e.clientX;
+          position.value.y = e.clientY;
+          position.value.hidden = true;
+          locationMap.value.onMapMove(e, viewer, locationMap.value.DimensionUnit);
+          if (a) { // 节流
+            a = false;
+            setTimeout(() => {
+              position.value.hidden = false;
+              a = true;
+            }, 500);
+          }
+        };
+        // 设置默认选中的货位 （入库）
+        locationMap.value.setDefaultAction(viewer);
       }
     };
 
@@ -140,24 +228,34 @@ export default {
           LeftTopY: it.y,
         }));
       } else {
-        PositionDetails = locationMap.value.selectedLocation?.squares.map(it => ({
-          DimensionX: it.DimensionX,
-          DimensionY: it.DimensionY,
-          LeftTopX: it.x,
-          LeftTopY: it.y,
-        })) || [];
+        PositionDetails = [];
+        locationMap.value.selectedLocation?.forEach(item => {
+          const temp = item.squares.map(it => ({
+            DimensionX: it.DimensionX,
+            DimensionY: it.DimensionY,
+            LeftTopX: it.x,
+            LeftTopY: it.y,
+          }) || []);
+          PositionDetails?.push(...temp);
+        });
+        // PositionDetails = locationMap.value.selectedLocation?.squares.map(it => ({
+        //   DimensionX: it.DimensionX,
+        //   DimensionY: it.DimensionY,
+        //   LeftTopX: it.x,
+        //   LeftTopY: it.y,
+        //   GridID: it.GridID,
+        // })) || [];
       }
-      const DetailSets = PositionDetails.map(it => ({ DimensionX: it.DimensionX, DimensionY: it.DimensionY }));
+      const DimensionXYS = PositionDetails.map(res => ({ DimensionX: res.DimensionX, DimensionY: res.DimensionY }));
       const temp = {
         PositionID: ruleForm.PositionID,
         PositionName: ruleForm.PositionName,
-        DetailSets,
+        DimensionXYS,
       };
-
       const res = await props.add(temp);
 
       if (res || res === 0) {
-        const PositionID = res;
+        const { PositionID } = res;
         const l = {
           PositionID,
           PositionName: ruleForm.PositionName,
@@ -169,16 +267,24 @@ export default {
         visible.value = false;
       }
     };
-
+    watch(() => locationMap.value.selectedLocation, (val) => {
+      props.selectedLocationChange(val);
+    });
     const onRemoveClick = () => {
       if (!locationMap.value.selectedLocation) return;
+      console.log(locationMap.value.selectedLocation, 'locationMap.value.selectedLocation');
+
       message.warnCancelBox(
         '确定删除该货位吗',
-        `货位名称: [ ${locationMap.value.selectedLocation.PositionName} ]`,
+        `货位名称: [ ${locationMap.value.selectedLocation[0].PositionName} ]`,
         async () => {
-          const res = await props.remove(locationMap.value.selectedLocation?.PositionID);
-          if (res && locationMap.value.selectedLocation) {
-            reflowOnLocationChange(locationMap.value.selectedLocation, true);
+          if (locationMap.value.selectedLocation) {
+            console.log(locationMap.value.selectedLocation[0].PositionID, 'locationMap.value.selectedLocation[0].PositionID');
+
+            const res = await props.remove(locationMap.value.selectedLocation[0].PositionID);
+            if (res && locationMap.value.selectedLocation) {
+              reflowOnLocationChange(locationMap.value.selectedLocation[0], true);
+            }
           }
         },
         null,
@@ -187,6 +293,7 @@ export default {
 
     return {
       canvas,
+      position,
       locationMap,
       LocationColorEnums,
       visible,
@@ -201,13 +308,34 @@ export default {
 </script>
 <style lang='scss'>
 .mp-pd-location-map-comp-wrap {
+  #location-map{
+    // background-color: #efefef;
+  }
   margin: 0px;
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   > .content {
+    position: relative;
     canvas {
       cursor: pointer;
+    }
+    .location-tip{
+      position: fixed;
+      background-color: rgb(243, 235, 235);
+      border-radius: 4px;
+      transform: translateX(-50%) translateY(-120%) ;
+      transition-property: width, height;
+      transition-duration: 200ms;
+      transition-delay:200ms;
+      .main{
+        padding: 5px;
+      }
+      &.hidden{
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
     }
     .el-dialog__body {
       padding-right: 40px;

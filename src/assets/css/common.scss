@@ -122,3 +122,10 @@
     margin-right: 4px;
   }
 }
+// 重写多选框的样式 以保持文字显示完整 （行高过小时可能会有这个问题）
+.el-checkbox-group{
+  .el-tooltip__trigger{
+    line-height: 20px;
+    padding-top: 2px;
+  }
+}

@@ -17,6 +17,9 @@
         <el-scrollbar>
           <el-radio-group @change="getInventoryLogList"
           v-model="Data.getInventoryLogListData.StorehouseID">
+            <el-radio-button :label="0">
+              所有仓库
+            </el-radio-button>
             <el-radio-button v-for="item in Data.StorehouseList" :key="item.StorehouseID"
             :label="item.StorehouseID">
               {{item.StorehouseName}}
@@ -30,6 +33,12 @@
         </div>
         <div class="top-main flex-between">
           <LineDateSelectorComp
+          :dateList="[
+            { name: '不限', ID: 'all' },
+            { name: '今年记录', ID: 'toYear' },
+            { name: '去年记录', ID: 'lastYear' },
+            { name: '前年记录', ID: 'beforeyesterYear' },
+          ]"
           :changePropsFunc='setCondition4DataList'
           :requestFunc='getInventoryLogList'
           :isFull="true"
@@ -68,74 +77,30 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.RecordList" style="width: 100%">
-          <el-table-column prop="MaterialCode" label="SKU编码" min-width="115"/>
-          <el-table-column
-          show-overflow-tooltip prop="CategoryName" label="分类" min-width="66"/>
-          <el-table-column
-          show-overflow-tooltip prop="TypeName" label="类型" min-width="66"/>
-          <el-table-column
-          show-overflow-tooltip prop="物料" label="物料" min-width="152">
+          <el-table-column prop="MaterialCode" label="时间" min-width="200">
             <template #default="scope">
-              <template v-for="(item, index) in scope.row.MaterialAttributes"
-              :key="item.AttributeID">
-                <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
-                </template>
-                <template v-else>
-                  <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                </template>
-                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                  {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
-                </template>
-              </template>
+              {{scope.row.CreateTime}}
             </template>
           </el-table-column>
           <el-table-column
-          show-overflow-tooltip prop="SizeDescribe" label="尺寸规格" min-width="199">
-          </el-table-column>
-          <el-table-column prop="Stock" label="数量" min-width="158"/>
-
-          <template v-if="Data.getInventoryLogListData.LogType === 1">
-            <el-table-column prop="Price" label="单价" min-width="104"/>
-            <el-table-column prop="amount" label="金额" min-width="112"/>
-            <el-table-column prop="HandleType" label="入库类型" min-width="88">
-              <template #default="scope">
-                {{getHandleType(scope.row.HandleType)}}
-              </template>
-            </el-table-column>
-          </template>
-          <template v-if="Data.getInventoryLogListData.LogType === 2">
-            <el-table-column prop="HandleType" label="出库类型" min-width="88">
-              <template #default="scope">
-                {{getHandleType(scope.row.HandleType)}}
-              </template>
-            </el-table-column>
-          </template>
-
-          <template v-if="Data.getInventoryLogListData.LogType === 1">
-            <el-table-column
-            show-overflow-tooltip prop="SupplierName" label="供应商/退料人" min-width="149">
-              <template #default="scope">
-                {{scope.row.SupplierName}}{{scope.row.HandlerName}}
-              </template>
-            </el-table-column>
-          </template>
-
+          show-overflow-tooltip prop="StorehouseName" label="仓库" min-width="122"/>
           <el-table-column
-          show-overflow-tooltip prop="Remark" label="备注" min-width="118"/>
-
-          <template v-if="Data.getInventoryLogListData.LogType === 1">
-            <el-table-column prop="OperaterName" label="操作人" min-width="79"/>
-            <el-table-column
-            show-overflow-tooltip prop="CreateTime" label="入库时间" min-width="158"/>
-          </template>
-
-          <template v-if="Data.getInventoryLogListData.LogType === 2">
-            <el-table-column prop="HandlerName" label="领取人" min-width="79"/>
-            <el-table-column prop="OperaterName" label="操作人" min-width="79"/>
-            <el-table-column
-            show-overflow-tooltip prop="CreateTime" label="出库时间" min-width="158"/>
-          </template>
+          show-overflow-tooltip prop="HandlerName" label="操作人" min-width="122"/>
+          <el-table-column
+          show-overflow-tooltip prop="HandleType" label="动作" min-width="136">
+            <template #default="scope">
+              <span v-if="scope.row.HandleType === 1">开始盘点</span>
+              <span v-if="scope.row.HandleType === 2">修改库存</span>
+              <span v-if="scope.row.HandleType === 3">修改物料</span>
+              <span v-if="scope.row.HandleType === 4">登记遗漏</span>
+              <span v-if="scope.row.HandleType === 49">强制结束</span>
+              <span v-if="scope.row.HandleType === 50">结束盘点</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+          show-overflow-tooltip prop="HandleContent" label="动作内容" min-width="800">
+          </el-table-column>
+          <el-table-column prop="Remark" label="备注" min-width="331"/>
 
         </el-table>
         <div>
@@ -223,7 +188,7 @@ export default {
       DataTotal: 0,
       InventoryLogList: [],
       getInventoryLogListData: {
-        DateType: 'today',
+        DateType: 'all',
 
         StorehouseID: 0,
         Handler: '',
@@ -259,8 +224,6 @@ export default {
     }, ...CommonStore.StaffSelectList]);
 
     function getInventoryLogList() {
-      console.log(ClassType, 'aaaaaaaaaaa');
-
       ClassType.setDate(Data.getInventoryLogListData, 'CheckTime');
       const _obj = ClassType.filter(Data.getInventoryLogListData, true);
       console.log(_obj);
@@ -313,7 +276,6 @@ export default {
       api.getStorehouseAll().then(res => {
         if (res.data.Status === 1000) {
           Data.StorehouseList = res.data.Data as StorehouseType[];
-          Data.getInventoryLogListData.StorehouseID = Data.StorehouseList[0].StorehouseID;
           cb();
           nextTick(() => {
             setHeight();

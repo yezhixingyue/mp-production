@@ -1,3 +1,19 @@
+export interface MaterialRelationAttributesType {
+  AttributeID: number
+  AttributeUnit: string
+  InputSelectValue: string
+  IsBrand: boolean
+  NumericValue: string
+  SelectID: number|string
+  SelectValue: number|string
+  Sort: number
+}
+export interface goodsPositionStockDetailsType {
+  MaterialID: number
+  MaterialRelationAttributes: MaterialRelationAttributesType[]
+  Stock: number
+  StockUnit: string
+}
 export interface ILocationMapOriginPointData {
   LeftTopX: number
   LeftTopY: number
@@ -9,19 +25,37 @@ export interface IUsePositionDetailsItem {
   PositionID: number
   PositionName: string
   PositionDetails: ILocationMapOriginPointData[]
+  goodsPositionStockDetails?:goodsPositionStockDetailsType[]
 }
-
+interface DimensionType {
+  Dimension:string
+  DimensionNumber: number
+}
+export interface AllPositionDetailsType {
+  DimensionXS: DimensionType[],
+  DimensionYS: DimensionType[]
+  DimensionUnitX: string
+  DimensionUnitY: string
+}
 export interface ILocationMapOriginData {
-  AllPositionDetails:ILocationMapOriginPointData[]
+  AllPositionDetails:AllPositionDetailsType
   UsePositionDetails: IUsePositionDetailsItem[]
+  DyadicArrayDimensionData: ILocationMapOriginPointData[][]
 }
 
 export enum LocationColorEnums {
   strokeStyle = '#444',
   squareEmptyColor = '#fff',
+  // 灰色
   squareFillColor = '#d7d7d7',
+  // 黄色
   normal = '#F5A407',
-  isSetSelected = '#ff3769'
+  // 选中的红色
+  isSetSelected = '#ff3769',
+  // 与入库物料一致 蓝色
+  identical = '#02a7f0',
+  // 空货位 绿色
+  vacancy = '#95f204',
 }
 
 export interface IPoint {

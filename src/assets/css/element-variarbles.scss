@@ -1,0 +1,18 @@
+// @forward 'element-plus/theme-chalk/src/common/var.scss' with (
+// $colors: (
+// 'primary': (
+// 'base': red,
+// ),
+// "success": (
+// "base": #67C23A,
+// ),
+// ),
+// );
+// @use "element-plus/theme-chalk/src/index.scss" as *;
+
+:root {
+/* 改变主题色变量 */
+  --el-color-primary: #26bcf9;
+  --el-color-warning: #F4A307;
+  --el-color-danger: #ff3769;
+}

@@ -1,16 +1,21 @@
 <template>
   <div class="goods-allocation-page">
     <header>
-      <MpCardContainer :TopAndButtomPadding = '12'>
-        {{Data.StorehouseName}}
+      <el-breadcrumb style="margin-bottom:20px">
+        <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
+        <el-breadcrumb-item>规划货位图：{{Data.StorehouseName}}</el-breadcrumb-item>
+      </el-breadcrumb>
+      <MpCardContainer :TopAndButtomPadding = '12' v-if="Data.selectData.length">
         <div class="top-main">
           <template v-for="(item, index) in Data.selectData" :key="item.id">
             <el-select
+              no-data-text="无数据"
               v-model="item.inputValue"
               @change="getGoodsPosition(index)"
               :filterable='true'>
+              <!-- 如果前一个选择的有，就显示下拉数据，否则不显示 -->
               <el-option
-                v-for="optionitem in item.list"
+                v-for="optionitem in (index === 0 ? item.list : Data.selectData[index-1].inputValue ? item.list : [])"
                 :key="optionitem.DimensionID"
                 :label="`${optionitem.Dimension}`"
                 :value="optionitem.DimensionID"
@@ -22,51 +27,19 @@
     </header>
     <main :style="`height:${h}px`">
       <MpCardContainer>
-        <LocationMap
-          v-if="Data.allDimensionData"
-          :allDimensionData="Data.allDimensionData"
-          :add="handleAdd"
-          :remove="handleRemove"
-        />
-        <!-- <el-button @click="Data.PositionNameShow = true"
-        :disabled="Data.actionCells.length === 0">设置新货位</el-button>
-        <div>
-          <el-checkbox-group v-model="Data.actionCells">
-            <p v-for="(rowLine,index) in Data.DyadicArrayDimensionData"
-            :key="index">
-                <el-checkbox v-for="(col,i) in rowLine" :key="`${index}-${i}`" :label="col"
-                :disabled="disCheck(col)">
-                  {{col.DimensionX}}-{{col.DimensionY}}
-                </el-checkbox>
-            </p>
-          </el-checkbox-group>
-          <canvas id="setposition" width="1000" height="600"></canvas>
-        </div> -->
+        <el-scrollbar>
+          <LocationMap
+            v-if="Data.allDimensionData.UsePositionDetails"
+            :allDimensionData="Data.allDimensionData"
+            :add="handleAdd"
+            :remove="handleRemove"
+          />
+        </el-scrollbar>
       </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" @click="$goback">返回</el-button>
     </footer>
-    <!-- <DialogContainerComp
-    title="货位名"
-    :visible='Data.PositionNameShow'
-    :width="440"
-    :primaryClick="setPositionNamePrimaryClick"
-    :closeClick="setPositionNameCloseClick"
-    :closed="setPositionNameClosed"
-    :top="'10vh'"
-    >
-    <template #default>
-      <div class="name-dialog">
-        <el-form :model="Data.GoodsPositionSaveData" label-width="120px">
-          <el-form-item :label="`货位名：`" required>
-            <el-input
-            v-model="Data.GoodsPositionSaveData.PositionName" />
-          </el-form-item>
-        </el-form>
-      </div>
-    </template>
-    </DialogContainerComp> -->
   </div>
 </template>
 
@@ -88,12 +61,24 @@ import LocationMap from '../../../components/LocationMap/Index.vue';
 import Draw from './aaa';
 
 interface DimensionsType {
-  CodeID: number
   Dimension: string
   DimensionID: number
 }
+interface DimensionSelectsType {
+  DimensionUnit: string
+  Dimensions: DimensionsType[]
+}
+interface DimensionType {
+  Dimension:string
+  DimensionNumber: number
+}
 interface GoodsPositionDimensionSelectType {
   Dimensions: DimensionsType[]
+  DimensionSelects:DimensionSelectsType[]
+  DimensionXS:DimensionType[]
+  DimensionYS:DimensionType[]
+  DimensionUnitX:string
+  DimensionUnitY:string
 }
 interface DimensionsFromType {
   id: string,
@@ -105,26 +90,33 @@ export interface DimensionDataType {
   DetailID: number,
   LeftTopX: number,
   LeftTopY: number,
-  LeftDownX: number,
-  LeftDownY: number,
-  RightTopX: number,
-  RightTopY: number,
-  RightDownX: number,
-  RightDownY: number,
   DimensionX: string,
   DimensionY: string
 }
+export interface DyadicArrayDimensionDataType {
+  DimensionX: string,
+  DimensionY: string
+  xNum: number,
+  yNum: number
+}
+export interface AllPositionDetailsType {
+  DimensionXS: DimensionType[],
+  DimensionYS: DimensionType[]
+  DimensionUnitX: string,
+  DimensionUnitY: string
+}
 export interface allDimensionDataType {
-  AllPositionDetails:DimensionDataType[]
-  UsePositionDetails:DimensionDataType[]
+  AllPositionDetails:AllPositionDetailsType
+  UsePositionDetails:DimensionDataType[]|null
+  DyadicArrayDimensionData:DyadicArrayDimensionDataType[][]
 }
 
 interface DataType {
   PositionNameShow:boolean,
-  GoodsPositionDimensionSelect:GoodsPositionDimensionSelectType[],
+  GoodsPositionDimensionSelect:GoodsPositionDimensionSelectType | null,
   selectData:DimensionsFromType[]
-  allDimensionData:allDimensionDataType|null
-  DyadicArrayDimensionData:DimensionDataType[][]
+  allDimensionData:allDimensionDataType
+  // DyadicArrayDimensionData:DimensionDataType[][]
   actionCells:DimensionDataType[]
   GoodsPositionSaveData:any
   StorehouseName:string
@@ -143,10 +135,9 @@ export default {
     const CommonStore = useCommonStore();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const route = useRoute();
-    let setDraw;
     const Data:DataType = reactive({
       PositionNameShow: false,
-      GoodsPositionDimensionSelect: [],
+      GoodsPositionDimensionSelect: null,
       StorehouseName: '',
       // 添加/修改货位的表单
       GoodsPositionSaveData: {
@@ -163,23 +154,49 @@ export default {
       actionCells: [],
       // 货位编号选择
       selectData: [],
-      // 所有单元格数据（无序）
-      allDimensionData: null,
+      //
+      allDimensionData: {
+        DyadicArrayDimensionData: [],
+        UsePositionDetails: null,
+        AllPositionDetails: {
+          DimensionXS: [],
+          DimensionYS: [],
+          DimensionUnitX: '',
+          DimensionUnitY: '',
+        },
+      },
       // 二维单元格数据
       DyadicArrayDimensionData: [],
     });
     // 格式化单元格数据为二维数组
-    function getDyadicArray(rowNum) {
-      // 获取所有x轴为0的数据 （）
-      let temp = Data.allDimensionData?.AllPositionDetails.filter(res => res.LeftTopX === rowNum);
-      if (!temp || !temp.length) return;
-      temp = temp.sort((a, b) => a.LeftTopY - b.LeftTopY);
-      Data.DyadicArrayDimensionData.push(temp);
-      getDyadicArray(rowNum + 1);
+    function getDyadicArray() {
+      const temp:DyadicArrayDimensionDataType[][] = [];
+      const x = Data.GoodsPositionDimensionSelect?.DimensionXS;
+      const y = Data.GoodsPositionDimensionSelect?.DimensionYS;
+      Data.allDimensionData.AllPositionDetails.DimensionXS = x as DimensionType[];
+      Data.allDimensionData.AllPositionDetails.DimensionYS = y as DimensionType[];
+      if (Data.GoodsPositionDimensionSelect) {
+        Data.allDimensionData.AllPositionDetails.DimensionUnitX = Data.GoodsPositionDimensionSelect.DimensionUnitX;
+        Data.allDimensionData.AllPositionDetails.DimensionUnitY = Data.GoodsPositionDimensionSelect.DimensionUnitY;
+      }
+      y?.forEach(element => {
+        const xArr:DyadicArrayDimensionDataType[] = [];
+        x?.forEach(item => {
+          xArr.push({
+            DimensionX: item.Dimension,
+            DimensionY: element.Dimension,
+            xNum: item.DimensionNumber,
+            yNum: element.DimensionNumber,
+          });
+        });
+        temp?.push(xArr);
+      });
+
+      Data.allDimensionData.DyadicArrayDimensionData = temp;
     }
     // 判断是否被占用
     function disCheck(col) {
-      const temp = Data.allDimensionData?.UsePositionDetails.find(res => {
+      const temp = Data.allDimensionData.UsePositionDetails?.find(res => {
         const x = res.DimensionX === col.DimensionX;
         const y = res.DimensionY === col.DimensionY;
         return x && y;
@@ -189,21 +206,21 @@ export default {
     // 获取货位详情
     function getGoodsPosition() {
       // 最后一个没有值则不请求
-      if (!Data.selectData[Data.selectData.length - 1].inputValue) return;
+      if (Data.selectData.length && !Data.selectData[Data.selectData.length - 1].inputValue) return;
 
       const temp = {
         StorehouseID: Data.GoodsPositionSaveData.StorehouseID as number|string,
         DimensionIDS: [] as Array<string|number>,
       };
       temp.DimensionIDS = Data.selectData.map(res => res.inputValue);
-      Data.allDimensionData = null;
       api.getGoodsPositionDetail(temp).then(res => {
         if (res.data.Status === 1000) {
-          Data.allDimensionData = res.data.Data as allDimensionDataType;
-          Data.DyadicArrayDimensionData = [];
-          getDyadicArray(0);
-          // 渲染单元格
-          setDraw.tableCell(Data.DyadicArrayDimensionData, true);
+          const t = res.data.Data as any;
+          Data.allDimensionData.UsePositionDetails = null;
+          setTimeout(() => {
+            Data.allDimensionData.UsePositionDetails = t.UsePositionDetails;
+          }, 30);
+          // Data.allDimensionData.AllPositionDetails = t.AllPositionDetails;
         }
       });
     }
@@ -211,18 +228,29 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.goods-allocation-page header', 72);
     }
-    // 根据货位编号的sort值分组
+    //
     watch(() => Data.GoodsPositionDimensionSelect, (newValue) => {
       const returnData:DimensionsFromType[] = [];
-      newValue.forEach(res => {
-        returnData.push({
-          id: Math.random().toString(16).slice(-10),
-          inputValue: '',
-          list: res.Dimensions as DimensionsType[],
+      if (newValue && newValue.DimensionSelects) {
+        newValue.DimensionSelects.forEach(res => {
+          returnData.push({
+            id: Math.random().toString(16).slice(-10),
+            inputValue: '',
+            list: res.Dimensions.map(it => ({
+              Dimension: `${it.Dimension}${res.DimensionUnit}`,
+              DimensionID: it.DimensionID,
+            })) as DimensionsType[],
+          });
         });
-      });
-      Data.selectData = returnData;
-      console.log(returnData, 'returnData');
+        Data.selectData = returnData;
+        console.log(returnData, 'returnData');
+      }
+      console.log(Data.GoodsPositionDimensionSelect, 'Data.GoodsPositionDimensionSelect');
+
+      getGoodsPosition();
+      // 获取二维数组
+      Data.allDimensionData.DyadicArrayDimensionData = [];
+      getDyadicArray();
 
       nextTick(() => {
         setHeight();
@@ -237,7 +265,7 @@ export default {
         DimensionIDS,
         PositionID: e.PositionID,
         PositionName: e.PositionName,
-        DetailSets: e.DetailSets,
+        DimensionXYS: e.DimensionXYS,
       };
 
       // 此处是否需要调用接口验证空格是否连续 ??? 如需要 加至此处
@@ -303,14 +331,12 @@ export default {
       setHeight();
     });
     onMounted(() => {
-      // 创建画图的实例
-      setDraw = new Draw(document.querySelector('#setposition'));
       Data.StorehouseName = route.params.StorehouseName as string;
       Data.GoodsPositionSaveData.StorehouseID = Number(route.params.StorehouseID);
       setHeight();
       api.getGoodsPositionDimensionSelect(route.params.StorehouseID).then(res => {
         if (res.data.Status === 1000) {
-          Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType[];
+          Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;
         }
       });
     });
@@ -339,7 +365,10 @@ export default {
     >.mp-card-container{
       >.top-main{
         display: flex;
-        justify-content: space-between;
+        // justify-content: space-between;
+        .el-select+.el-select{
+          margin-left: 20px;
+        }
         .mp-search-input-comp{
           display: flex;
         }

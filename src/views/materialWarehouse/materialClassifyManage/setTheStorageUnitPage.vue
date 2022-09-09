@@ -249,6 +249,7 @@ export default {
             const cb = () => {
               Data.currentStoreUnit = Data.setStoreUnitForm.StockUnit;
               setStoreUnitCloseClick();
+              setStorage();
             };
             // 成功
             messageBox.successSingle('设置成功', cb, cb);

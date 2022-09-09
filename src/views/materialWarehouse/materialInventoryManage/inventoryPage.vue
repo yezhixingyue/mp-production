@@ -24,11 +24,18 @@
             </template>
           </el-table-column>
           <el-table-column
-          show-overflow-tooltip prop="LastInventoryStartTime" label="上次盘点开始时间" min-width="299" />
+          show-overflow-tooltip prop="LastInventoryStartTime" label="上次盘点开始时间" min-width="299">
+            <template #default="scope">
+              {{$format.format2MiddleLangTypeDateFunc2(scope.row.LastInventoryStartTime)}}
+            </template>
+          </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="LastInventoryEndTime" label="上次盘点结束时间" min-width="299">
+            <template #default="scope">
+              {{$format.format2MiddleLangTypeDateFunc2(scope.row.LastInventoryEndTime)}}
+            </template>
           </el-table-column>
-          <el-table-column prop="HandlerName" label="操作人"
+          <el-table-column prop="HandlerName" label="上次操作人"
           show-overflow-tooltip min-width="229" />
           <el-table-column prop="name" label="操作" min-width="243">
             <template #default="scope">

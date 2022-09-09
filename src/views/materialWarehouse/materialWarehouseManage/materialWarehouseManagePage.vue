@@ -24,7 +24,7 @@
             <template #default="scope">
               <el-button type="primary" link
               @click="ToSetPositionNumberPage(scope.row)">设置货位编号</el-button>
-              <el-button type="primary" link
+              <el-button type="primary" link :disabled="!scope.row.IsLockDimension"
               @click="ToGoodsAllocationPage(scope.row)">规划货位图</el-button>
               <el-button type="primary" link
               @click="seeImg(scope.row.StorehouseImg)">查看平面布局图</el-button>
@@ -67,6 +67,7 @@
                 class="upload-demo"
                 action="/Api/Upload/Image?type=1"
                 :limit="1"
+                accept=".png,.jpeg,.gif,.jpg,.bmp"
                 :on-success='handllePictureUploaded'
                 :before-upload='beforeUpload'
               >
@@ -211,6 +212,8 @@ export default {
       }
     }
     function beforeUpload(file) {
+      console.log(file);
+
       const isLt15M = file.size / 1024 / 1024 < 15;
       if (!isLt15M) {
         // 文件过大上传失败
@@ -228,6 +231,8 @@ export default {
       Data.LookImgShow = true;
     }
     function ToSetPositionNumberPage(item) {
+      console.log(item, 'itemitemitem');
+
       router.push({
         name: 'setPositionNumber',
         params: item,

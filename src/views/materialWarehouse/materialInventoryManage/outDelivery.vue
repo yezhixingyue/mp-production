@@ -9,6 +9,7 @@
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
                     <el-input size="large" @keyup.enter="getMaterial(false)"
+                    placeholder="请输入完整SKU编码，包括尺寸编码"
                      v-model="Data.getMaterialData.SKUCode"/>
                     <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
                   </p>
@@ -45,7 +46,7 @@
                       <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
                       :key="item.AttributeID">
                         <template v-if="item.NumericValue">
-                          <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                          <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                         </template>
                         <template v-else>
                           <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -62,6 +63,7 @@
                 </p>
                 <el-form-item :label="`出库数量：`" class="out-number">
                   <el-input-number size="large"
+                  :max="999999" placeholder="请输入出库数量"
                   :controls="false" v-model="Data.outDeliveryForm.Number" />
                   <OneLevelSelect
                     v-if="Data.checkedMaterial"
@@ -103,7 +105,7 @@
                     ></OneLevelSelect>
                 </el-form-item>
                 <el-form-item :label="`备注：`" class="remark">
-                  <el-input size="large" v-model="Data.outDeliveryForm.Remark" /> (选填)
+                  <el-input :maxlength="300" placeholder="请输入备注" size="large" v-model="Data.outDeliveryForm.Remark" /> (选填)
                 </el-form-item>
               </el-form>
 
@@ -116,7 +118,7 @@
                   v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
                     <p class="title">
                       <span>
-                        {{Storehouse.StorehouseName}}：{{Data.checkedMaterial?.StockUnit}}
+                        {{Storehouse.StorehouseName}}：{{getStorehouseAllNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
                       </span>
                       <span>
                         出库：{{getStorehouseOutNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
@@ -130,8 +132,8 @@
                       <li v-for="GoodsPosition in Storehouse.GoodsPositionStockInfos"
                       :key="GoodsPosition.PositionID">
                         <span class="ranks">
+                          {{GoodsPosition.UpperDimension}}
                           {{GoodsPosition.PositionName}}
-                          {{GoodsPosition.UpperDimensionUnit}}
                           <!-- A区 001柜 3行 2列 -->
                         </span>
                         <span class="PCS">
@@ -139,12 +141,14 @@
                         </span>
                         <span class="number">
                           <el-checkbox v-model="GoodsPosition.checked" label="出库" size="large" />
-                          <span>
-                            <el-input v-model="GoodsPosition.inputValue"></el-input>
-                            {{Data.checkedMaterial?.StockUnit}}
-                          </span>
+                          <div v-if="GoodsPosition.checked"><el-input-number :max="999999"
+                          :controls="false" v-model="GoodsPosition.inputValue"></el-input-number>
+                            <span class="unit">
+                              {{Data.checkedMaterial?.StockUnit}}
+                            </span>
+                          </div>
                         </span>
-                        <el-button type="primary">位置</el-button>
+                        <el-button type="primary" @click="seePosition(Storehouse,GoodsPosition)">位置</el-button>
                       </li>
                     </ul>
                   </div>
@@ -162,6 +166,93 @@
         </el-scrollbar>
       </MpCardContainer>
     </main>
+    <!-- 出库确认 -->
+    <DialogContainerComp
+    title="出库确认"
+    :visible='Data.outVerify'
+    :primaryClick="outVerifyPrimaryClick"
+    :closeClick="() => Data.outVerify = false"
+    :primaryText="'打印并出库'"
+    :closeBtnText="'取消出库'"
+    :width="600"
+    >
+    <template #default>
+      <div class="out-verify-dialog" id="print">
+        <div class="material-info" style="padding:0 20px;display: flex;color:#566176;display: flex;">
+          <div style="display: flex;flex-wrap: wrap;width:120px">
+            <div>
+              <img style="width:120px;height:120px" src="https://img-blog.csdnimg.cn/a2830dd85a9e4cc990b3fd999bf323a7.png" alt="">
+            </div>
+            <span>ID:</span>
+          </div>
+          <div class="material"
+          style="line-height: 32px;margin-left:50px;font-size:16px;font-weight: 600;padding-top:10px">
+            <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">SKU：</span>
+              <span style="">{{Data.checkedMaterial.Code}}</span></p>
+            <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">物料：</span>
+              <span style="">
+                      <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
+                      :key="item.AttributeID">
+                        <template v-if="item.NumericValue">
+                          <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
+                        </template>
+                        <template v-else>
+                          <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                        </template>
+                        <template
+                        v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                          {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
+                        </template>
+                      </template>
+              </span>
+            </p>
+            <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;"></span>
+              <span style="">{{Data.checkedMaterial.SizeDescribe}}</span></p>
+            <p style="color:#7a8b9c;margin-top:10px">
+              出库数量：{{getStorehouseAllOutNumber()}}
+                {{Data.checkedMaterial?.StockUnit}}
+                （{{getOutUnitNum}} {{outUnitName}}）
+            </p>
+          </div>
+        </div>
+        <div style="border-top: 1px dashed #A6B6C6;height:1px;margin:40px 0"></div>
+        <div class="storehouse-stock" style="display: flex;padding:0 20px">
+          <div style="display: flex;flex-wrap: wrap;width:156px;">
+            <div>
+              <img style="width:156px;height:156px" src="https://img-blog.csdnimg.cn/a2830dd85a9e4cc990b3fd999bf323a7.png" alt="">
+            </div>
+            <span>ID:</span>
+          </div>
+          <div style="display: flex;flex-direction: column;flex:1">
+
+            <div style="line-height: 32px;margin-left:50px;font-size:16px;font-weight: 600;">
+              <p style="display: flex;text-align: right;"><span style="color:#7A8B9C;">领料人：</span>
+                <span style="">{{getReceiptorName}}</span></p>
+              <p style="display: flex;text-align: right;">
+                <span style="">名片生产线  印刷机 CD102  3号机</span></p>
+            </div>
+            <div style="padding-left:40px;margin:5px 0">
+              <p style="color:#7A8B9C;">出库位置：</p>
+              <ul :style="`border: 1px solid #A6B6C6;border-radius: 8px;padding:0 18px;color:#566176`">
+                <template v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
+                  <template v-for="GoodsPosition in Storehouse.GoodsPositionStockInfos" :key="GoodsPosition.PositionID">
+
+                    <li v-if="GoodsPosition.checked"
+                      style="line-height: 45px;border-bottom:1px solid #F2F6FC;display: flex;justify-content: space-between;">
+                      <span style="width:33.33%;text-align:center;">{{Storehouse.StorehouseName}}</span>
+                      <span style="width:33.33%;text-align:center;">{{GoodsPosition.UpperDimension}} {{GoodsPosition.PositionName}}</span>
+                      <span style="width:33.33%;text-align:center;">{{GoodsPosition.inputValue}}{{Data.checkedMaterial?.StockUnit}}</span>
+                    </li>
+                  </template>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <el-button v-print="print">打印</el-button>
+    </template>
+    </DialogContainerComp>
     <SeeImageDialogComp
     title="仓库货位平面图"
     :visible='Data.SeeImageShow'
@@ -169,14 +260,26 @@
     :closeClick="() => Data.SeeImageShow = false"
     >
     </SeeImageDialogComp>
+
+    <OutDeliveryDialog
+    :visible='Data.seePositionShow'
+    :changeVisible="(visible) => Data.seePositionShow = visible"
+    :currentMaterialID="Data.checkedMaterial?.MaterialID"
+    :getGoodsPositionData="Data.getGoodsPositionData"
+    >
+    </OutDeliveryDialog>
   </div>
 </template>
 
 <script lang='ts'>
+import LocationMap from '@/components/LocationMap/Index.vue';
+
+import OutDeliveryDialog from '@/components/materialInventoryManage/outDeliveryDialog.vue';
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
+import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, reactive, onMounted, computed, onActivated,
+  ref, reactive, onMounted, computed, onActivated, watch,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -184,7 +287,7 @@ import { useCommonStore } from '@/store/modules/common';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { MaterialInfoType } from '@/assets/Types/common';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 
@@ -257,8 +360,32 @@ interface StorehouseStockInfoType {
   StorehouseImg: string,
   GoodsPositionStockInfos: GoodsPositionStockInfosType[],
 }
+
+export interface DimensionDataType {
+  PositionID: number,
+  DetailID: number,
+  LeftTopX: number,
+  LeftTopY: number,
+  DimensionX: string,
+  DimensionY: string
+}
+export interface DyadicArrayDimensionDataType {
+  DimensionX: string,
+  DimensionY: string
+  xNum: number,
+  yNum: number
+}
+
+interface getGoodsPositionDataType {
+  StorehouseID:string|number
+  DimensionIDS: Array<string|number>
+  StorehouseGoodsPosition:string
+}
+
 interface DataType {
+  TypeID:string|number
   SizeSelects:null|number
+  outVerify:boolean,
   SeeImageShow:boolean,
   SeeImageUrl:string,
   checkedMaterial:MaterialInfoType | null,
@@ -267,6 +394,9 @@ interface DataType {
   StorehouseStockInfo: StorehouseStockInfoType[],
   allSelectTempMaterial:MaterialDataItemType | null,
   itemSelectTempMaterial:MaterialSelectsType | null,
+  seePositionShow:boolean
+
+  getGoodsPositionData:getGoodsPositionDataType
 }
 
 export default {
@@ -276,15 +406,25 @@ export default {
     OneLevelSelect,
     ThreeCascaderComp,
     SeeImageDialogComp,
+    DialogContainerComp,
+    OutDeliveryDialog,
   },
   setup() {
+    const print = ref({
+      id: 'print',
+      preview: false,
+    });
     const h = ref(0);
     const router = useRouter();
+    const route = useRoute();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const CommonStore = useCommonStore();
     const Data:DataType = reactive({
+      TypeID: '',
       SizeSelects: null,
       SeeImageShow: false,
+      seePositionShow: false,
+      outVerify: false,
       SeeImageUrl: '',
       getMaterialData: {
         MaterialID: '',
@@ -305,14 +445,40 @@ export default {
         Remark: '',
         MaterialGoodsPositions: [
           {
-            PositionID: 6,
-            Number: 1,
+            PositionID: 0,
+            Number: 0,
           },
         ],
       },
       StorehouseStockInfo: [],
-    });
 
+      getGoodsPositionData: {
+        StorehouseID: '',
+        DimensionIDS: [],
+        StorehouseGoodsPosition: '',
+      },
+
+    });
+    const getReceiptorName = computed(() => {
+      const staff = CommonStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
+      return staff?.StaffName || '';
+    });
+    function clearFrom() {
+      Data.outDeliveryForm = {
+        MaterialID: 0,
+        Number: null,
+        UnitID: null,
+        OutStockType: 51,
+        Handler: '',
+        Remark: '',
+        MaterialGoodsPositions: [
+          {
+            PositionID: 0,
+            Number: 0,
+          },
+        ],
+      };
+    }
     // 获取物料货位数据信息
     function GetGoodsAllocation(MaterialID) {
       api.getStorehouseStock(MaterialID).then(res => {
@@ -333,10 +499,12 @@ export default {
       });
     }
     // 选择物料
-    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial, TypeID) {
       Data.SizeSelects = null;
       Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
       Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
+      Data.TypeID = TypeID;
+      Data.outDeliveryForm.UnitID = null;
     }
     // 格式化数据
     function SizeSelectChange(ID) {
@@ -344,6 +512,7 @@ export default {
       const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
+        TypeID: Data.TypeID,
         Code: SizeObj?.Code,
         SizeDescribe: SizeObj?.SizeDescribe,
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
@@ -351,6 +520,7 @@ export default {
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 2),
       };
       Data.checkedMaterial = temp as MaterialInfoType;
+      Data.outDeliveryForm.UnitID = null;
       GetGoodsAllocation(Data.checkedMaterial.MaterialID);
     }
     // 获取转换为库存单位的数量;
@@ -373,6 +543,14 @@ export default {
         if (it.checked) {
           num += Number(it.inputValue) || 0;
         }
+      });
+      return num;
+    }
+    // 获取仓库的出库总数量
+    function getStorehouseAllNumber(list) {
+      let num = 0;
+      list.GoodsPositionStockInfos.forEach(it => {
+        num += Number(it.Number) || 0;
       });
       return num;
     }
@@ -432,43 +610,78 @@ export default {
 
     // 根据选项或sku编码查物料
     function getMaterial() {
+      if (!Data.getMaterialData.SKUCode) {
+        messageBox.failSingleError('查询失败', '请输入SKU编码', () => null, () => null);
+        return;
+      }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
         console.log(res);
         if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
+          Data.outDeliveryForm.UnitID = null;
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 1);
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
         } else {
-          messageBox.failSingleError('查询失败', 'sku编码错误', () => null, () => null);
+          messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
+        }
+      });
+    }
+    function outVerifyPrimaryClick() {
+      api.getStockOut(Data.outDeliveryForm).then(res => {
+        if (res.data.Status === 1000) {
+          const cb = () => {
+            Data.StorehouseStockInfo = [];
+            GetGoodsAllocation(Data.checkedMaterial?.MaterialID);
+            clearFrom();
+            Data.outVerify = false;
+          };
+          messageBox.successSingle('出库成功', cb, cb);
+          console.log('打印出库单');
         }
       });
     }
     function outDelvery() {
+      if (!Data.checkedMaterial?.MaterialID) {
+        messageBox.failSingleError('出库失败', '请选择物料', () => null, () => null);
+      // } else if (!Data.outDeliveryForm.Number) {
+      //   messageBox.failSingleError('出库失败', '请输入出库数量', () => null, () => null);
+      // } else if (!Data.outDeliveryForm.UnitID) {
+      //   messageBox.failSingleError('出库失败', '请输入出库单位', () => null, () => null);
+      // } else if (!Data.outDeliveryForm.Handler) {
+      //   messageBox.failSingleError('出库失败', '请选择领取人', () => null, () => null);
+      // } else if (Number(Data.outDeliveryForm.Number) !== Number(getOutUnitNum.value)) {
+      //   messageBox.failSingleError('出库失败', '出库数量与合计出库数量不一致', () => null, () => null);
+      } else {
       // 设置物料id
-      if (Data.checkedMaterial) {
         Data.outDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
-      }
-      const temp: MaterialGoodsPositionsType[] = [];
-      Data.StorehouseStockInfo.forEach(StorehouseIt => {
-        StorehouseIt.GoodsPositionStockInfos.forEach(PositionIt => {
-          if (PositionIt.checked) {
-            temp.push({
-              PositionID: PositionIt.PositionID as number,
-              Number: Number(PositionIt.inputValue),
-            });
-          }
+        const temp: MaterialGoodsPositionsType[] = [];
+        Data.StorehouseStockInfo.forEach(StorehouseIt => {
+          StorehouseIt.GoodsPositionStockInfos.forEach(PositionIt => {
+            if (PositionIt.checked) {
+              temp.push({
+                PositionID: PositionIt.PositionID as number,
+                Number: Number(PositionIt.inputValue),
+              });
+            }
+          });
         });
-      });
-      Data.outDeliveryForm.MaterialGoodsPositions = temp;
-      // 设置出库货位及数量
-      console.log(Data.outDeliveryForm);
-      api.getStockOut(Data.outDeliveryForm).then(res => {
-        if (res.data.Status === 1000) {
-          messageBox.successSingle('出库成功', () => null, () => null);
-        }
-      });
+        Data.outDeliveryForm.MaterialGoodsPositions = temp;
+        // 设置出库货位及数量
+        console.log(Data.outDeliveryForm);
+        Data.outVerify = true;
+      }
+    }
+
+    // 查看物料货位
+    function seePosition(Storehouse, GoodsPosition) {
+      console.log(GoodsPosition);
+
+      Data.getGoodsPositionData.StorehouseID = Storehouse.StorehouseID;
+      Data.getGoodsPositionData.DimensionIDS = GoodsPosition.UpperDimensionIDS.split(',');
+      Data.getGoodsPositionData.StorehouseGoodsPosition = `${Storehouse.StorehouseName} ${GoodsPosition.UpperDimension} ${GoodsPosition.PositionName}`;
+      Data.seePositionShow = true;
     }
     function setHeight() {
       const { getHeight } = autoHeightMixins();
@@ -482,24 +695,36 @@ export default {
       setHeight();
     });
     onMounted(() => {
+      const MaterialCode = JSON.parse(route.query.MaterialCode as string);
+      console.log(MaterialCode, 'MaterialCode');
+      if (MaterialCode) {
+        Data.getMaterialData.SKUCode = MaterialCode;
+        getMaterial();
+      }
+
       setHeight();
       MaterialWarehouseStore.getMaterialManageList({});
       CommonStore.getStaffSelect();
     });
 
     return {
+      print,
       h,
       Data,
       SeeImg,
+      getReceiptorName,
       CommonStore,
       getTransitionNum,
       getOutUnitNum,
       outUnitName,
+      seePosition,
       getMaterial,
       ToOutDelivery,
       outDelvery,
       twoSelectChange,
+      outVerifyPrimaryClick,
       getStorehouseOutNumber,
+      getStorehouseAllNumber,
       getStorehouseAllOutNumber,
       ThreeCascaderCompChange,
       SizeSelectChange,
@@ -596,6 +821,9 @@ export default {
               &.out-number{
                 .el-input-number{
                   width: 300px;
+                  input{
+                    text-align: left;
+                  }
                 }
                 .mp-one-level-select{
                   margin: 0 20px;
@@ -638,11 +866,12 @@ export default {
                 line-height: 17px;
                 display: flex;
                 justify-content: space-between;
+                margin-bottom: 10px;
+                padding: 0 10px;
+                margin-top: 10px;
                 >span{
                   color: #566176;
                 }
-                margin-bottom: 20px;
-                padding: 0 10px;
               }
                 &.warehouse-item + .warehouse-item {
                   .title{
@@ -673,14 +902,20 @@ export default {
                   }
                   .number{
                     width: 240px;
-                    align-items: center;
                     display: flex;
-                    .el-input{
-                      width: 100px;
-                    }
-                    >span{
+                    >div{
                       align-items: center;
                       display: flex;
+                      justify-content: space-between;
+                      .el-input-number{
+                        width: 100px;
+                        input{
+                          text-align: left;
+                        }
+                      }
+                      >span{
+                        margin-left: 15px;
+                      }
                       .el-input{
                         margin: 0 10px;
                       }
@@ -718,6 +953,10 @@ export default {
         }
       }
     }
+  }
+
+  .see-goods-dialog{
+    min-height: 580px;
   }
 }
 </style>

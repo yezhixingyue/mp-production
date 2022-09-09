@@ -99,20 +99,24 @@
             <el-form-item label="选项：" style="margin-bottom:8px">
               <div class="attribute-selects">
                 <p><el-button type="primary" link @click="addAttributeSelect">添加一行</el-button></p>
-                <p v-for="(item, index) in Data.addAttributesForm.AttributeSelects"
-                  :key="item.SelectID">
-                  <el-input v-model="item.SelectItemValue" />
-                  <el-button type="primary"
-                    :disabled="index===0" link @click="toUp(index)">
-                    上移
-                  </el-button>
-                  <el-button type="primary"
-                    :disabled="index===Data.addAttributesForm.AttributeSelects.length-1" link
-                    @click="toDown(index)">
-                    下移
-                  </el-button>
-                  <el-button type="danger" link @click="delAttributeSelect(index)">删除</el-button>
-                </p>
+                  <el-scrollbar>
+                <div style="max-height:222px;padding-right:10px">
+                    <p v-for="(item, index) in Data.addAttributesForm.AttributeSelects"
+                      :key="item.SelectID">
+                      <el-input v-model="item.SelectItemValue" />
+                      <el-button type="primary"
+                        :disabled="index===0" link @click="toUp(index)">
+                        上移
+                      </el-button>
+                      <el-button type="primary"
+                        :disabled="index===Data.addAttributesForm.AttributeSelects.length-1" link
+                        @click="toDown(index)">
+                        下移
+                      </el-button>
+                      <el-button type="danger" link @click="delAttributeSelect(index)">删除</el-button>
+                    </p>
+                </div>
+                  </el-scrollbar>
               </div>
             </el-form-item>
           </template>

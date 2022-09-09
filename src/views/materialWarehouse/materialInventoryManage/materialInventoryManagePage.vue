@@ -2,12 +2,25 @@
   <div class="stock-list-page">
     <header>
       <div class="header-top">
-        <el-button @click="ToOutDelivery">出库</el-button>
-        <el-button @click="ToInDelivery">入库</el-button>
+        <div class="btns">
+
+          <el-button @click="ToOutDelivery" type="primary">出库</el-button>
+          <el-button @click="ToInDelivery" type="danger">入库</el-button>
+        </div>
+          <SearchInputComp
+            :word='Data.getStockData.KeyWords'
+            title="关键词搜索"
+            placeholder="请输入搜索关键词"
+            resetWords="清空所有筛选条件"
+            :changePropsFunc="(words) => Data.getStockData.KeyWords = words"
+            :requestFunc='getStockList'
+            @reset='clearCondition'
+            >
+          </SearchInputComp>
       </div>
       <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
-          <TowLevelSelect
+          <RadioGroupComp
             :title='"物料筛选"'
             :level1Options='CategoryList'
             :level2Options='MaterialTypeList'
@@ -22,17 +35,8 @@
             :value='twoSelecValue'
             @change="twoSelectChange"
             @requestFunc='getStockList'
-            ></TowLevelSelect>
-          <SearchInputComp
-            :word='Data.getStockData.KeyWords'
-            title="关键词搜索"
-            placeholder="请输入搜索关键词"
-            resetWords="清空所有筛选条件"
-            :changePropsFunc="(words) => Data.getStockData.KeyWords = words"
-            :requestFunc='getStockList'
-            @reset='clearCondition'
-            >
-          </SearchInputComp>
+            ></RadioGroupComp>
+
         </div>
       </MpCardContainer>
     </header>
@@ -44,7 +48,7 @@
           <el-button link type="primary" @click="ToInventoryPage">
             <i class="iconfont icon-kucunpandian-"></i>
             库存盘点</el-button>
-          <el-button link type="primary" @click="Data.seeSMSShow = true">查看短信(仅测试用)</el-button>
+          <el-button link type="primary" @click="seeSMSShow">查看短信(仅测试用)</el-button>
           <!-- <el-button>仅显示预警中物料</el-button> -->
           <p>
             <el-checkbox @change="getStockList"
@@ -66,7 +70,7 @@
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -100,7 +104,14 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="WarnThreshold" label="预警阀值" min-width="103"/>
+          <el-table-column prop="WarnThreshold" label="预警阀值" min-width="103">
+            <template #default="scope">
+              <template v-if="scope.row.WarnThreshold">
+                {{scope.row.WarnThreshold}}
+                {{scope.row.StockUnit}}
+              </template>
+            </template>
+          </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="NoticeMobile" label="接收号码" min-width="259"/>
           <el-table-column label="预警状态" min-width="196">
@@ -138,11 +149,12 @@
     :visible='Data.seeSMSShow'
     :showPrimary="false"
     :closeClick="() => Data.seeSMSShow = false"
+    :width="900"
     >
     <template #default>
       <div class="set-sms-marn-dialog">
         <p v-for="item in Data.SMSList" :key="item">
-          {{item}}
+          物料：{{item.Material}}；库存：{{item.Stock}}{{item.StockUnit}}; 电话：{{item.Mobiles.join(',')}}
         </p>
         <span v-if="!Data.SMSList.length">无短信</span>
       </div>
@@ -162,32 +174,38 @@
       <div class="set-sms-marn-dialog">
         <el-form :model="Data.SetSMSWarnForm" label-width="120px">
           <el-form-item :label="`设置物料：`">
+            <div>
               <template v-for="(item, index) in Data.SetSMSWarnForm.StockName"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
                 </template>
                 <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                  {{index === Data.SetSMSWarnForm.StockName.length-1 ? '' : ' ' }}
+                  {{index === Data.SetSMSWarnForm.StockName.length-1 ? ' ' : ' ' }}
                 </template>
               </template>
+            </div>
           </el-form-item>
           <el-form-item :label="`预警阈值：`">
             <el-input
-            v-model="Data.SetSMSWarnForm.WarnThreshold" />
+            style="width:100px; margin-right:10px"
+            maxlength="6"
+            v-model="Data.SetSMSWarnForm.WarnThreshold" /> {{Data.SetSMSWarnForm.StockUnit}}
           </el-form-item>
           <el-form-item :label="`接收手机号码：`">
             <el-input v-model="Data.SetSMSWarnForm.NoticeMobile" />
-            <p>多个手机号码使用空格分开</p>
+            <p class="hint">多个手机号码使用空格分开</p>
           </el-form-item>
-          <p>
-            说明：
-            不需要预警时请将所有输入框置空；<br>
-            当库存小于等于设置阈值时，会向此处填写的所有接收手机号码发送短信预警，发送短信频率为每日 8:00-22:00，每30分钟发送一次短信，直至库存超过阈值，或者手动解除预警。
-          </p>
+          <div class="explain">
+            <p>说明：不需要预警时请将所有输入框置空；
+            </p>
+            <p>
+              当库存小于等于设置阈值时，会向此处填写的所有接收手机号码发送短信预警，发送短信频率为每日 8:00-22:00，每30分钟发送一次短信，直至库存超过阈值，或者手动解除预警。
+            </p>
+          </div>
         </el-form>
       </div>
     </template>
@@ -199,15 +217,17 @@
     :width="660"
     :primaryClick="StorehouseStockPrimaryClick"
     :closeClick="StorehouseStockCloseClick"
+    :primaryText="'出库'"
+    :closeBtnText="'关闭'"
     >
     <template #default>
       <div class="storehouse-stock-dialog">
         <div class="material-manage">
           <p>
-              <template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
+            物料：<template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
                 <template v-else>
                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -218,10 +238,10 @@
               </template>
           </p>
           <p>
-            {{Data.materialManageInfo.SizeDescribe}}
+            尺寸规格：{{Data.materialManageInfo.SizeDescribe}}
           </p>
           <p>
-            {{Data.materialManageInfo.MaterialCode}}
+            SKU编码：{{Data.materialManageInfo.MaterialCode}}
           </p>
         </div>
         <el-scrollbar>
@@ -243,8 +263,8 @@
                 <li v-for="GoodsPosition in Storehouseitem.GoodsPositionStockInfos"
                 :key="GoodsPosition.PositionID">
                   <span class="ranks">
+                    {{GoodsPosition.UpperDimension}}
                     {{GoodsPosition.PositionName}}
-                    {{GoodsPosition.UpperDimensionUnit}}
                     <!-- A区 001柜 3行 2列 -->
                   </span>
                   <span class="PCS">
@@ -288,7 +308,7 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
+import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
@@ -301,6 +321,7 @@ import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogCo
 import api from '@/api/request/MaterialStorage';
 import { useRouter } from 'vue-router';
 import { useCommonStore } from '@/store/modules/common';
+import { MaterialInfoType, MaterialAttributesType } from '@/assets/Types/common';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -320,6 +341,7 @@ interface SetSMSWarnFormType {
   MaterialID: number,
   WarnThreshold: number|string,
   NoticeMobile: string
+  StockUnit: string
 }
 
 interface StockListType {
@@ -342,6 +364,7 @@ interface StockListType {
   SizeDescribe: string,
   AttributeDescribe: string,
   SizeID: number
+  MaterialAttributes:MaterialAttributesType[]
 }
 
 interface GoodsPositionStockInfosType {
@@ -377,7 +400,7 @@ export default {
   name: 'materialInventoryManagePage',
   components: {
     MpCardContainer,
-    TowLevelSelect,
+    RadioGroupComp,
     SearchInputComp,
     MpPagination,
     DialogContainerComp,
@@ -413,6 +436,7 @@ export default {
         MaterialID: 0,
         WarnThreshold: '',
         NoticeMobile: '',
+        StockUnit: '',
       },
 
       // 仓库货位信息
@@ -423,12 +447,16 @@ export default {
       level1Val: Data.getStockData.CategoryID,
       level2Val: Data.getStockData.TypeID,
     }));
-
+    function setHeight() {
+      const { getHeight } = autoHeightMixins();
+      h.value = getHeight('.stock-list-page header', 20);
+    }
     function getStockList() {
       api.getStockList(Data.getStockData).then(res => {
         if (res.data.Status === 1000) {
           Data.StockList = res.data.Data as StockListType[];
           Data.DataTotal = res.data.DataNumber as number;
+          setHeight();
         }
       });
     }
@@ -437,15 +465,14 @@ export default {
       Data.getStockData.Page = newVal;
       getStockList();
     }
-    function ToOutDelivery() {
+    function ToOutDelivery(materialManageInfo) {
+      // const routeData = router.resolve({
+      //   name: 'outDelivery',
+      // });
       const routeData = router.resolve({
         name: 'outDelivery',
+        query: { MaterialCode: JSON.stringify(materialManageInfo.MaterialCode || null) },
       });
-      // let routeData = this.$router.resolve({
-      //   name: "searchGoods",
-      //   query: params,
-      //   params:{ catId:params.catId }
-      // });
       window.open(routeData.href, '_blank');
     }
     function ToInDelivery() {
@@ -464,14 +491,23 @@ export default {
         name: 'inventory',
       });
     }
-    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '不限' },
+    const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
       ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '不限' },
+    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
       ...MaterialWarehouseStore.MaterialTypeList]);
 
     function SeeImg(url) {
       Data.SeeImageShow = true;
       Data.SeeImageUrl = url;
+    }
+    function seeSMSShow() {
+      Data.seeSMSShow = true;
+      // 获取所有短信
+      api.getIStockSMSList({}).then(res => {
+        if (res.data.Status === 1000) {
+          Data.SMSList = res.data.Data;
+        }
+      });
     }
     // 获取仓库的入库总数量
     function getStorehouseStockNumber() {
@@ -494,6 +530,7 @@ export default {
         MaterialID: 0,
         WarnThreshold: '',
         NoticeMobile: '',
+        StockUnit: '',
       };
     }
     // 货位弹框
@@ -523,8 +560,9 @@ export default {
     }
     // 货位弹框
     function StorehouseStockPrimaryClick() {
+      if (!Data.materialManageInfo) return;
       // 出库
-      ToInDelivery();
+      ToOutDelivery(Data.materialManageInfo);
     }
     // 清空筛选项
     function clearCondition() {
@@ -543,6 +581,7 @@ export default {
       Data.SetSMSWarnForm.MaterialID = item.MaterialID;
       Data.SetSMSWarnForm.WarnThreshold = item.WarnThreshold;
       Data.SetSMSWarnForm.NoticeMobile = item.NoticeMobile;
+      Data.SetSMSWarnForm.StockUnit = item.StockUnit;
       Data.SetSMSWarnShow = true;
     }
     function CancelSMSWarnClick(item) {
@@ -554,14 +593,13 @@ export default {
       });
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.stock-list-page header', 20);
-    }
     function twoSelectChange(levelData) {
       const { level1Val, level2Val } = levelData;
-      Data.getStockData.CategoryID = level1Val;
-      Data.getStockData.TypeID = level2Val;
+      if (level1Val !== undefined) {
+        Data.getStockData.CategoryID = level1Val;
+        Data.getStockData.TypeID = level2Val;
+        setHeight();
+      }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
@@ -576,16 +614,11 @@ export default {
       setHeight();
       MaterialWarehouseStore.getMaterialCategoryList();
       getStockList();
-
-      // 获取所有短信
-      api.getIStockSMSList({}).then(res => {
-        if (res.data.Status === 1000) {
-          Data.SMSList = res.data.Data;
-        }
-      });
     });
 
     return {
+      seeSMSShow,
+
       h,
       Data,
       SeeImg,
@@ -619,9 +652,16 @@ export default {
 .stock-list-page{
   >header{
     >.header-top{
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 20px;
       .el-radio-group{
         margin-bottom: 0;
+      }
+      .btns{
+        .el-button{
+          width: 100px;
+        }
       }
     }
     >.mp-card-container{
@@ -663,7 +703,7 @@ export default {
       flex-direction: column;
       height: 100%;
       .material-manage{
-        font-size: 18px;
+        font-size: 14px;
         p{
           padding: 0 10px;
         }
@@ -683,7 +723,7 @@ export default {
             >span{
               color: #566176;
             }
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             padding: 0 10px;
           }
             &.warehouse-item + .warehouse-item {
@@ -729,6 +769,28 @@ export default {
         padding: 0 10px;
       }
     }
+  }
+  .set-sms-marn-dialog{
+      padding: 0 25px;
+      .hint, .explain{
+        font-size: 12px;
+        line-height: 30px;
+        color: #F4A307;
+        position: relative;
+        padding-left: 33px;
+        &::before{
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
+          width: 13px;
+          height: 13px;
+          margin: 0 10px;
+          position: absolute;
+          left: 0;
+          top: 7px;
+        }
+      }
   }
 }
 </style>

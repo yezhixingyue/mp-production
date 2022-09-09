@@ -157,8 +157,8 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       });
     },
     // 所有供应商
-    getSupplierSelectList() {
-      api.getMaterialSupplierSelect().then(res => {
+    getSupplierSelectList(typeID) {
+      api.getMaterialSupplierSelect(typeID).then(res => {
         if (res.data.Status === 1000) {
           // 成功
           this.SupplierSelectList = res.data.Data as SupplierSelectListType[];

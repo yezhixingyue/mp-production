@@ -7,7 +7,8 @@
     @closed="closedC"
     @open="onOpen"
     :append-To-Body="appendToBody"
-    :top="top">
+    :top="top"
+    :close-on-click-modal="closeOnClickModal">
     <template #header>
       <slot name="header">
         <p>
@@ -89,6 +90,10 @@ export default {
       default: () => null,
     },
     appendToBody: {
+      type: Boolean,
+      default: false,
+    },
+    closeOnClickModal: {
       type: Boolean,
       default: false,
     },

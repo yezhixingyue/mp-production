@@ -35,7 +35,7 @@
               <template v-else>
                 <template v-if="Data.MaterialTypeList.length">
                   <span v-for="(item, index) in scope.row.MaterialTypeIDS" :key="item">
-                    {{index === 0 ? '' : '、' + index}}{{useIdGetMaterialTypeName(item)}}
+                    {{index === 0 ? '' : '、'}}{{useIdGetMaterialTypeName(item)}}
                   </span>
                 </template>
               </template>
@@ -120,8 +120,8 @@
                 placement="top"
                 :disabled="Material.TypeName.length<7"
               >
-            {{Material.TypeName}}
-            </el-tooltip>
+              {{Material.TypeName}}
+              </el-tooltip>
             </el-checkbox>
           </el-checkbox-group>
         </div>

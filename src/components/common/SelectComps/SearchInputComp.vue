@@ -104,11 +104,11 @@ export default {
   align-items: center;
   line-height: 30px;
   > span:first-of-type {
-    font-weight: 600;
+    // font-weight: 600;
     display: inline-block;
     // margin-right: 15px;
     user-select: none;
-    color:#566167;
+    // color:#566167;
     line-height: 28px;
     min-width: 5em;
   }
@@ -132,7 +132,7 @@ export default {
         line-height: 30px;
         width: 52px;
         border: none;
-        background-color: #1890FF;
+        background-color: $--color-primary;
         border-radius: 0px 3px 3px 0px;
         i{
           color: #fff;
@@ -155,7 +155,7 @@ export default {
     &:active {
       background-color: rgba(168, 168, 168, 0.1);
     }
-    color: #1890FF;
+    color: $--color-primary;
     height: 28px;
     cursor: pointer;
   }

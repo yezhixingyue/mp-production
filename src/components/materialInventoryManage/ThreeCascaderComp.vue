@@ -1,6 +1,12 @@
 <template>
   <!-- 三级级联选择框 用于选择物料 -->
-  <el-cascader :props="cascaderProps" @change="cascaderChange" filterable placeholder="请选择物料"/>
+  <el-cascader no-data-text="无数据" :props="cascaderProps" @change="cascaderChange" filterable placeholder="请选择物料">
+    <template #empty>
+      <div style="color:#c0c4cc;line-height:30px">
+        无数据
+      </div>
+    </template>
+  </el-cascader>
 </template>
 
 <script lang='ts'>
@@ -139,9 +145,7 @@ export default {
             }
           });
         });
-        console.log(allMaterial);
-
-        props.change(itemMaterial, allMaterial);
+        props.change(itemMaterial, allMaterial, vaslus[1] || '');
       }
     }
 

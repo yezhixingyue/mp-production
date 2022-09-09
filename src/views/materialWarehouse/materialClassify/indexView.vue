@@ -1,7 +1,8 @@
 <template>
   <div>
     物料分类管理列表页面
-    <el-select v-model="value" filterable placeholder="Select">
+    <el-select v-model="value" filterable placeholder="Select"
+    no-data-text="无数据">
       <el-option
         v-for="item in options"
         :key="item.value"

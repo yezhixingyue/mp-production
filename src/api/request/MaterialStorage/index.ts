@@ -29,10 +29,10 @@ const api = {
     // POST /Api/MaterialTypeAttribute/SetBrand  物料类型属性 - 设置品牌
     return request({ method: 'POST', url: '/Api/MaterialTypeAttribute/SetBrand', data });
   },
-  getMaterialTypeAttributeSetSelectType(data) {
-    // POST /Api/MaterialTypeAttribute/SelectType  物料类型属性 选择项查询
-    return request({ method: 'GET', url: '/Api/MaterialTypeAttribute/SelectType', data });
-  },
+  // getMaterialTypeAttributeSetSelectType(data) {
+  //   // POST /Api/MaterialTypeAttribute/SelectType  物料类型属性 选择项查询
+  //   return request({ method: 'GET', url: '/Api/MaterialTypeAttribute/SelectType', data });
+  // },
   getMaterialTypeAttributeAll(data) { // POST /Api/MaterialTypeAttribute/All  物料类型属性 -
     return request({ method: 'GET', url: `/Api/MaterialTypeAttribute/All?typeID=${data.TypeID}` });
   },
@@ -93,11 +93,11 @@ const api = {
   getMaterialSupplierList(data) { // POST /Api/MaterialSupplier/List  物料供应商列表
     return request({ method: 'POST', url: '/Api/MaterialSupplier/List', data });
   },
-  getMaterialSupplierSelect() { // POST /Api/MaterialSupplier/Select  物料供应商选择项
-    return request({ method: 'GET', url: '/Api/MaterialSupplier/Select' });
+  getMaterialSupplierSelect(TypeID) { // POST /Api/MaterialSupplier/Select  物料供应商选择项
+    return request({ method: 'GET', url: `/Api/MaterialSupplier/Select?typeID=${TypeID}` });
   },
   getMaterialSupplierRemove(ID) { // POST /Api/MaterialSupplier/Remove  物料供应商列表
-    return request({ method: 'DELETE', url: `/Api/MaterialSupplier/Remove?id=${ID}` });
+    return request({ method: 'DELETE', url: `/Api/MaterialSupplier/Remove?supplierID=${ID}` });
   },
   // 仓库管理 ------------------------------ Storehouse
   getStorehouseList(data) { // POST /Api/Storehouse/List  仓库查询
@@ -139,6 +139,10 @@ const api = {
   getGoodsPositionDimensionUnlockCode(storehouseID) {
     // GET /Api/GoodsPositionDimension/UnlockCode  锁定货位编号
     return request({ method: 'GET', url: `/Api/GoodsPositionDimension/UnlockCode?storehouseID=${storehouseID}` });
+  },
+  getGoodsPositionDimensionPositionPlan(storehouseID) {
+    // GET /Api/GoodsPositionDimension/PositionPlan  锁定货位编号
+    return request({ method: 'GET', url: `/Api/GoodsPositionDimension/PositionPlan?storehouseID=${storehouseID}` });
   },
   // 出入库记录  -------------------- Stock
   getStockLogList(data) {
@@ -188,9 +192,9 @@ const api = {
     // GET /Api/GoodsPosition/Save  货位编辑
     return request({ method: 'POST', url: '/Api/GoodsPosition/Save', data });
   },
-  getGoodsPositionRemove(detailID) {
+  getGoodsPositionRemove(PositionID) {
     // DELETE /Api/GoodsPosition/Remove  货位删除
-    return request({ method: 'delete', url: '/Api/GoodsPosition/Remove', params: { detailID } });
+    return request({ method: 'delete', url: '/Api/GoodsPosition/Remove', params: { positionID: PositionID } });
   },
   getGoodsPositionDetail(data) {
     // GET /Api/GoodsPosition/Detail  货位详情

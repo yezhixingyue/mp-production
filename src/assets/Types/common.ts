@@ -18,6 +18,7 @@ interface MaterialAttributesType {
 // 根据sku编码或者物料查询的物料
 interface MaterialInfoType {
   MaterialID: number,
+  TypeID?: number,
   Code: string,
   SizeDescribe: string,
   MaterialAttributes: MaterialAttributesType[],

@@ -18,6 +18,7 @@
         v-model="result"
         :placeholder="placeholder"
         :filterable='filterable'
+        no-data-text="无数据"
         :style="`width:${width}px`">
         <el-option
           v-for="item in options"

@@ -27,7 +27,7 @@
                     <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
                     :key="item.AttributeID">
                       <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                        <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                       </template>
                       <template v-else>
                         <span>{{item.InputSelectValue || item.SelectValue}}</span>
@@ -66,7 +66,7 @@
                     <template v-for="(item) in PrevItem.MaterialAttributes"
                     :key="item.AttributeID">
                       <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
+                        <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
                       </template>
                       <template v-else>
                         <span>{{item.InputSelectValue || item.SelectValue}}</span>
