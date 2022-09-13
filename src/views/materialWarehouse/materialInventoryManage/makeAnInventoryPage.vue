@@ -392,6 +392,9 @@ export default {
   margin: 0;
   background-color: #F5F5F5;
   padding: 50px 50px 0 50px;
+  .makeAn-inventory-page{
+    margin: 0;
+  }
 }
 .makeAn-inventory-page{
   main{

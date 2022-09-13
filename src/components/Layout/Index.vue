@@ -45,8 +45,10 @@ export default {
   max-height: calc(100vh - 41px);
   overflow-y: auto;
   overflow-x: hidden;
-  margin-left: 10px;
-  background-color: #fff;
+  >div{
+    background-color: #fff;
+    margin-left: 10px;
+  }
   &.no-padding{
     padding: 0;
   }
@@ -55,7 +57,9 @@ export default {
     max-height: 100vh;
   }
   &.no-margin{
-    margin: 0;
+    >div{
+      margin: 0;
+    }
   }
 }
 </style>

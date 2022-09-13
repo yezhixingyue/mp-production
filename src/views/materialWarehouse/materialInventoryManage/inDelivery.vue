@@ -731,8 +731,12 @@ export default {
   margin: 0;
   background-color: #F5F5F5;
   padding: 30px 50px 0 50px;
+  .in-delivery-page{
+    margin: 0;
+  }
 }
 .in-delivery-page{
+  margin: 0;
   main{
       background-color: #fff;
       border-radius: 8px;

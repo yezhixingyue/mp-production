@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <div>首页</div>
+  <div class="home">首页</div>
 </template>
 
 <script lang='ts'>
@@ -11,4 +11,7 @@ export default {
 };
 </script>
 <style lang='scss'>
+.home{
+  padding: 20px;
+}
 </style>

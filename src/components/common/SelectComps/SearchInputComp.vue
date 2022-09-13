@@ -103,6 +103,8 @@ export default {
   display: flex;
   align-items: center;
   line-height: 30px;
+  min-width: 430px;
+  margin-left: 20px;
   > span:first-of-type {
     // font-weight: 600;
     display: inline-block;

@@ -655,6 +655,7 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-bottom: 20px;
+      flex-wrap: wrap;
       .el-radio-group{
         margin-bottom: 0;
       }

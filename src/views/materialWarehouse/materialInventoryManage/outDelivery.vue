@@ -756,9 +756,11 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .mp-erp-layout-page-content-comp-wrap{
-  margin: 0;
   background-color: #F5F5F5;
   padding: 30px 50px 0 50px;
+  .out-delivery-page{
+    margin: 0;
+  }
 }
 .out-delivery-page{
   >main{
