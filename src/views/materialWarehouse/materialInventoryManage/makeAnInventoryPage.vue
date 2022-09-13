@@ -203,10 +203,14 @@ export default {
       InventoryDetail: null,
 
     });
+    function editState() { // 修改盘库状态
+      localStorage.setItem('updataInventoryState', 'true');
+    }
     // 盘库结束 关闭标签
     function over() {
       const cb = () => {
         window.close();
+        editState();
       };
       messageBox.successSingle('盘库结束', cb, cb);
     }
@@ -215,6 +219,7 @@ export default {
       localStorage.setItem('DetailID', DetailID);
       console.log(localStorage.getItem('DetailID'), 'localStorage');
     }
+
     // 获取盘库详情
     function getInventoryDetail() {
       const errorCb = () => {
@@ -291,7 +296,11 @@ export default {
       // Data.InventoryDetail.IsLastMaterial;
       // 如果是最后一个货物
       if (Data.InventoryDetail?.IsLastMaterial) {
-        Data.inventoryCorrectDialog = true;
+        if (Data.InventoryDetail?.IsLastPosition) {
+          toNext();
+        } else {
+          Data.inventoryCorrectDialog = true;
+        }
       } else {
         // 下一个
         toNext();

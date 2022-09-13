@@ -63,6 +63,7 @@
     :width="660"
     :primaryClick="addPalletDimensionsPrimaryClick"
     :closeClick="addPalletDimensionsCloseClick"
+    :closed="addPalletDimensionsCloseedClick"
     >
     <template #default>
       <div class="add-pallet-dimensions-dialog">
@@ -194,8 +195,7 @@ export default {
       Data.SeeimgUrl = imgUrl;
       Data.LookImgShow = true;
     }
-    function addPalletDimensionsCloseClick() {
-      Data.addPalletDimensionsShow = false;
+    function addPalletDimensionsCloseedClick() {
       Data.addPalletDimensionsForm = {
         DimensionID: 0,
         StorehouseID: Data.addPalletDimensionsForm.StorehouseID,
@@ -204,6 +204,9 @@ export default {
         EndCode: '',
         Sort: 0,
       };
+    }
+    function addPalletDimensionsCloseClick() {
+      Data.addPalletDimensionsShow = false;
     }
     function editStorehouse(item) {
       Data.addPalletDimensionsForm = { ...item };
@@ -307,6 +310,7 @@ export default {
       PalletDimensionsLockCode,
       PalletDimensionsUnlockCode,
       addPalletDimensionsCloseClick,
+      addPalletDimensionsCloseedClick,
       addPalletDimensionsPrimaryClick,
     };
   },

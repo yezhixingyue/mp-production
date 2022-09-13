@@ -57,6 +57,7 @@
     :width="660"
     :primaryClick="addUnitPrimaryClick"
     :closeClick="addUnitCloseClick"
+    :closed="addUnitCloseedClick"
     >
     <template #default>
       <div class="add-unit-dialog">
@@ -174,8 +175,7 @@ export default {
       Data.getUnitListData.Page = newVal;
       getUnitList();
     }
-    function addUnitCloseClick() {
-      Data.addUnitDialogShow = false;
+    function addUnitCloseedClick() {
       Data.addUnitForm = {
         TypeID: Data.addUnitForm.TypeID,
         UnitID: 0,
@@ -184,6 +184,9 @@ export default {
         ProportionUp: 1,
         ProportionDown: 1,
       };
+    }
+    function addUnitCloseClick() {
+      Data.addUnitDialogShow = false;
     }
     function setStoreUnitCloseClick() {
       Data.setStoreUnitDialogShow = false;
@@ -289,6 +292,7 @@ export default {
       setStoreUnitPrimaryClick,
       addUnitPrimaryClick,
       addUnitCloseClick,
+      addUnitCloseedClick,
     };
   },
 

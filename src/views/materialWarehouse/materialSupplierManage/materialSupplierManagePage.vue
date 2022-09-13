@@ -68,6 +68,7 @@
     :width="660"
     :primaryClick="addMaterialSupplierPrimaryClick"
     :closeClick="addMaterialSupplierCloseClick"
+    :closed="addMaterialSupplierCloseedClick"
     >
     <template #default>
       <div class="add-material-supplier-dialog">
@@ -272,8 +273,7 @@ export default {
       Data.isIndeterminate = checkedCount > 0
        && checkedCount < Data.MaterialTypeList.length;
     };
-    function addMaterialSupplierCloseClick() {
-      Data.addMaterialSupplierShow = false;
+    function addMaterialSupplierCloseedClick() {
       Data.checkAll = false;
       Data.isIndeterminate = false;
 
@@ -287,6 +287,9 @@ export default {
         ContactWay: '',
         MaterialTypeIDS: [],
       };
+    }
+    function addMaterialSupplierCloseClick() {
+      Data.addMaterialSupplierShow = false;
     }
     async function editMaterialSupplier(item) {
       Data.ProvinceList = await getDistrictByParentID(-1) as DistrictType[];
@@ -402,6 +405,7 @@ export default {
       editMaterialSupplier,
       delMaterialSupplier,
       addMaterialSupplierCloseClick,
+      addMaterialSupplierCloseedClick,
       addMaterialSupplierPrimaryClick,
     };
   },

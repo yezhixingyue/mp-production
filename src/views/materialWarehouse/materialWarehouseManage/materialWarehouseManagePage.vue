@@ -52,6 +52,7 @@
     :width="660"
     :primaryClick="SaveStorehousePrimaryClick"
     :closeClick="SaveStorehouseCloseClick"
+    :closed="SaveStorehouseCloseedClick"
     >
     <template #default>
       <div class="add-storehouse-dialog">
@@ -251,12 +252,14 @@ export default {
       // messageBox.handleLoadingError('error', () => null, () => null);
     }
 
-    function SaveStorehouseCloseClick() {
+    function SaveStorehouseCloseedClick() {
       Data.SaveStorehouseForm = {
         StorehouseID: 0,
         StorehouseName: '',
         StorehouseImg: '',
       };
+    }
+    function SaveStorehouseCloseClick() {
       Data.SaveStorehouseShow = false;
     }
     function editStorehouse(item) {
@@ -331,6 +334,7 @@ export default {
       ToSetPositionNumberPage,
       ToGoodsAllocationPage,
       SaveStorehouseCloseClick,
+      SaveStorehouseCloseedClick,
       SaveStorehousePrimaryClick,
     };
   },

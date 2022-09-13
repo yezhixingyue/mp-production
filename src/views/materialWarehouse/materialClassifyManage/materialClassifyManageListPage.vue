@@ -44,6 +44,7 @@
     :visible='dialog'
     :primaryClick="primaryClick"
     :closeClick="closeClick"
+    :closed="closeedClick"
     >
     <div class="add-material-classify ">
       <span class="required">分类名称：</span>
@@ -132,11 +133,13 @@ export default {
         });
       }, () => undefined);
     }
-    function closeClick() {
+    function closeedClick() {
       Data.classifyInfo = {
         CategoryID: undefined,
         CategoryName: '',
       };
+    }
+    function closeClick() {
       dialog.value = false;
     }
     function primaryClick() {
@@ -182,6 +185,7 @@ export default {
       delCategory,
       primaryClick,
       closeClick,
+      closeedClick,
     };
   },
 

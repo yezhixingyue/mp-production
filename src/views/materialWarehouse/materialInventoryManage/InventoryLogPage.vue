@@ -17,7 +17,7 @@
         <el-scrollbar>
           <el-radio-group @change="getInventoryLogList"
           v-model="Data.getInventoryLogListData.StorehouseID">
-            <el-radio-button :label="0">
+            <el-radio-button :label="''">
               所有仓库
             </el-radio-button>
             <el-radio-button v-for="item in Data.StorehouseList" :key="item.StorehouseID"
@@ -79,7 +79,7 @@
         :data="Data.RecordList" style="width: 100%">
           <el-table-column prop="MaterialCode" label="时间" min-width="200">
             <template #default="scope">
-              {{scope.row.CreateTime}}
+              {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
             </template>
           </el-table-column>
           <el-table-column
@@ -100,7 +100,8 @@
           <el-table-column
           show-overflow-tooltip prop="HandleContent" label="动作内容" min-width="800">
           </el-table-column>
-          <el-table-column prop="Remark" label="备注" min-width="331"/>
+          <el-table-column
+          show-overflow-tooltip prop="Remark" label="备注" min-width="331"/>
 
         </el-table>
         <div>

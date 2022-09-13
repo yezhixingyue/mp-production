@@ -250,7 +250,7 @@
           </div>
         </div>
       </div>
-      <el-button v-print="print">打印</el-button>
+      <el-button v-print="print" v-show="false" ref="printBtn">打印</el-button>
     </template>
     </DialogContainerComp>
     <SeeImageDialogComp
@@ -279,7 +279,7 @@ import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, reactive, onMounted, computed, onActivated, watch,
+  ref, Ref, reactive, onMounted, computed, onActivated, watch,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -414,6 +414,7 @@ export default {
       id: 'print',
       preview: false,
     });
+    const printBtn:Ref = ref(null);
     const h = ref(0);
     const router = useRouter();
     const route = useRoute();
@@ -636,23 +637,23 @@ export default {
             GetGoodsAllocation(Data.checkedMaterial?.MaterialID);
             clearFrom();
             Data.outVerify = false;
+            printBtn.value.ref.click();
           };
           messageBox.successSingle('出库成功', cb, cb);
-          console.log('打印出库单');
         }
       });
     }
     function outDelvery() {
       if (!Data.checkedMaterial?.MaterialID) {
         messageBox.failSingleError('出库失败', '请选择物料', () => null, () => null);
-      // } else if (!Data.outDeliveryForm.Number) {
-      //   messageBox.failSingleError('出库失败', '请输入出库数量', () => null, () => null);
-      // } else if (!Data.outDeliveryForm.UnitID) {
-      //   messageBox.failSingleError('出库失败', '请输入出库单位', () => null, () => null);
-      // } else if (!Data.outDeliveryForm.Handler) {
-      //   messageBox.failSingleError('出库失败', '请选择领取人', () => null, () => null);
-      // } else if (Number(Data.outDeliveryForm.Number) !== Number(getOutUnitNum.value)) {
-      //   messageBox.failSingleError('出库失败', '出库数量与合计出库数量不一致', () => null, () => null);
+      } else if (!Data.outDeliveryForm.Number) {
+        messageBox.failSingleError('出库失败', '请输入出库数量', () => null, () => null);
+      } else if (!Data.outDeliveryForm.UnitID) {
+        messageBox.failSingleError('出库失败', '请输入出库单位', () => null, () => null);
+      } else if (!Data.outDeliveryForm.Handler) {
+        messageBox.failSingleError('出库失败', '请选择领取人', () => null, () => null);
+      } else if (Number(Data.outDeliveryForm.Number) !== Number(getOutUnitNum.value)) {
+        messageBox.failSingleError('出库失败', '出库数量与合计出库数量不一致', () => null, () => null);
       } else {
       // 设置物料id
         Data.outDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
@@ -709,6 +710,7 @@ export default {
 
     return {
       print,
+      printBtn,
       h,
       Data,
       SeeImg,

@@ -109,7 +109,8 @@
       <MpCardContainer>
         <el-table border fit
         :data="Data.RecordList" style="width: 100%">
-          <el-table-column prop="MaterialCode" label="SKU编码" min-width="115"/>
+          <el-table-column
+          show-overflow-tooltip prop="MaterialCode" label="SKU编码" min-width="115"/>
           <el-table-column
           show-overflow-tooltip prop="CategoryName" label="分类" min-width="66"/>
           <el-table-column

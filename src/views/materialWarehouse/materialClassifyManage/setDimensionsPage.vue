@@ -62,6 +62,7 @@
     :width="660"
     :primaryClick="primaryClick"
     :closeClick="closeClick"
+    :closed="closeedClick"
     >
     <template #default>
       <div class="add-dimensions-dialog">
@@ -145,8 +146,7 @@ export default {
         PageSize: 20,
       },
     });
-    function closeClick() {
-      Data.dialogShow = false;
+    function closeedClick() {
       Data.addDimensionsForm = {
         TypeID: Data.addDimensionsForm.TypeID,
         SizeID: null,
@@ -157,6 +157,9 @@ export default {
         SizeLengthIsChange: false,
         SizeWidthIsChange: false,
       };
+    }
+    function closeClick() {
+      Data.dialogShow = false;
     }
     function getDimensisnsList() {
       api.getMaterialTypeSizeList(Data.getDimensisnsData).then(res => {
@@ -239,6 +242,7 @@ export default {
       delDimensions,
       primaryClick,
       closeClick,
+      closeedClick,
       PaginationChange,
     };
   },

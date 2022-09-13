@@ -60,7 +60,9 @@
     </main>
     <footer>
       <!-- <el-button type="primary" @click="saveGenerativeRule">保存</el-button> -->
-      <el-button type="primary" @click="$goback">返回</el-button>
+      <el-button @click="removeEventListener" @keydown="() => null" style="padding:0;border:0">
+        <el-button type="primary" @click="$goback">返回</el-button>
+      </el-button>
     </footer>
   </div>
 </template>
@@ -69,7 +71,7 @@
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, computed, watch, onActivated,
+  ref, reactive, onMounted, computed, watch, onActivated, onBeforeUnmount,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -157,6 +159,7 @@ export default {
               DetailID: res.data.Data,
               StorehouseName: item.StorehouseName,
             });
+            localStorage.setItem('updataInventoryState', 'true');
           }
         });
       }, () => null);
@@ -168,16 +171,29 @@ export default {
     watch(() => CommonStore.size, () => {
       setHeight();
     });
+    function visibilitychange() {
+      if (document.visibilityState === 'visible' && localStorage.getItem('updataInventoryState')) {
+        // 切换到该页面时执行
+        localStorage.removeItem('updataInventoryState');
+        getInventoryList();
+      }
+    }
     onActivated(() => {
       setHeight();
     });
     onMounted(() => {
+      document.addEventListener('visibilitychange', visibilitychange);
       setHeight();
       getInventoryList();
     });
+    function removeEventListener() {
+      document.removeEventListener('visibilitychange', visibilitychange);
+    }
+
     return {
       h,
       Data,
+      removeEventListener,
       beginInventory,
       ToMakeAnInventory,
       ToInventoryLogPage,

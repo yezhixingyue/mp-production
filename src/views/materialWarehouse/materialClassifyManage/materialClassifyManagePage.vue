@@ -69,6 +69,7 @@
     :width="660"
     :primaryClick="materialClassifyPrimaryClick"
     :closeClick="materialClassifyCloseClick"
+    :closed="materialClassifyCloseedClick"
     >
     <template #default>
       <div class="add-material-classify-dialog">
@@ -242,7 +243,7 @@ export default {
       Data.getMaterialTypeData.Page = newVal;
       getMaterialClassifyManage();
     }
-    function materialClassifyCloseClick() {
+    function materialClassifyCloseedClick() {
       Data.materialClassifyDialogForm = {
         TypeID: null,
         CategoryID: undefined,
@@ -250,6 +251,8 @@ export default {
         TypeCode: '',
         IsStock: true,
       };
+    }
+    function materialClassifyCloseClick() {
       Data.materialClassifyDialogShow = false;
     }
     function brandCloseClick() {
@@ -392,6 +395,7 @@ export default {
       delMaterialClassify,
       materialClassifyPrimaryClick,
       materialClassifyCloseClick,
+      materialClassifyCloseedClick,
       setBrandClick,
       brandPrimaryClick,
       brandCloseClick,
