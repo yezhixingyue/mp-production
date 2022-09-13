@@ -69,11 +69,12 @@
           </el-form-item>
 
           <el-form-item :label="`入库数量：`" class="in-number">
-            <el-input-number :controls="false" v-model="Data.inDeliveryForm.Number" />
+            <el-input-number style="margin-right:5px" placeholder="请输入入库数量" :controls="false"
+            v-model="Data.inDeliveryForm.Number" /> {{materialInfo.StockUnit}}
           </el-form-item>
 
           <el-form-item :label="`备注：`" class="remark">
-            <el-input v-model="Data.inDeliveryForm.Remark"/> (选填)
+            <el-input placeholder="请输入备注" v-model="Data.inDeliveryForm.Remark"/> (选填)
           </el-form-item>
         </el-form>
       </div>
@@ -206,10 +207,6 @@ export default {
     }
     // 格式化数据
     function SizeSelectChange(ID) {
-      console.log(ID);
-      console.log(Data.SizeSelects);
-      console.log(Data.itemSelectTempMaterial);
-
       const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,

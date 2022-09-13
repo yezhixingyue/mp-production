@@ -28,7 +28,7 @@
                 允许小数：{{scope.row.IsAllowDecimal?'允许':'不允许'}}；
               </template>
               <template v-else>
-                选项数量：{{scope.row.AttributeSelects.length}}；
+                选项数量：{{scope.row.AttributeSelects?.length}}；
                 是否必选：{{scope.row.IsRequired?'必选':'非必选'}}；
                 自定义值：{{scope.row.IsCustom?'允许':'不允许'}}；
               </template>
@@ -45,17 +45,18 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="bottom-count-box">
-          <MpPagination
-          :nowPage="Data.getAttributesData.Page"
-          :pageSize="Data.getAttributesData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange" />
-        </div>
+
       </MpCardContainer>
     </main>
     <footer>
-      <el-button type="primary" @click="$goback">返回</el-button>
+      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getAttributesData.Page"
+        :pageSize="Data.getAttributesData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
     </footer>
     <DialogContainerComp
     :title="`${Data.addAttributesForm.AttributeID ? '修改' : '添加'}属性`"
@@ -354,6 +355,8 @@ export default {
 @import '@/assets/css/var.scss';
 .set-attributes-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
@@ -379,13 +382,24 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
     }
   }
   >footer{
-    padding-top: 20px;
-    text-align: center;
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .el-button{
+      align-self: center;
+    }
+    .bottom-count-box{
+      min-width: calc((100% - 100px) / 2);
+      justify-content: flex-end;
+      display: flex;
+      align-items: center;
+    }
   }
   .add-attributes-dialog{
     .el-form{

@@ -66,11 +66,13 @@
           </el-form-item>
 
           <el-form-item :label="`正确数量：`" class="in-number">
-            <el-input-number :controls="false" v-model="Data.editDeliveryForm.Number" />
+            <el-input-number style="margin-right:5px" placeholder="请输入正确数量"
+            :controls="false" v-model="Data.editDeliveryForm.Number" />
+            {{materialInfo.StockUnit}}
           </el-form-item>
 
           <el-form-item :label="`备注：`" class="remark">
-            <el-input v-model="Data.editDeliveryForm.Remark"/> (选填)
+            <el-input v-model="Data.editDeliveryForm.Remark" placeholder="请输入备注"/> (选填)
           </el-form-item>
         </el-form>
 

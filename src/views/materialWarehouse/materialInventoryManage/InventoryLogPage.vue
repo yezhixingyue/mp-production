@@ -28,9 +28,6 @@
         </el-scrollbar>
       </div>
       <MpCardContainer :TopAndButtomPadding = '12'>
-        <div class="top-main">
-
-        </div>
         <div class="top-main flex-between">
           <LineDateSelectorComp
           :dateList="[
@@ -45,7 +42,7 @@
           :typeList="[['DateType', ''], ['CheckTime', 'First'], ['CheckTime', 'Second']]"
           :dateValue='Data.getInventoryLogListData.DateType'
           :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
-          label="申请时间"
+          label="时间筛选"
           >
           <!-- :dateList="dateList" -->
           </LineDateSelectorComp>
@@ -76,7 +73,7 @@
     <main :style="`height:${h}px`">
       <MpCardContainer>
         <el-table border fit
-        :data="Data.RecordList" style="width: 100%">
+        :data="Data.InventoryLogList" style="width: 100%">
           <el-table-column prop="MaterialCode" label="时间" min-width="200">
             <template #default="scope">
               {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
@@ -98,25 +95,24 @@
             </template>
           </el-table-column>
           <el-table-column
-          show-overflow-tooltip prop="HandleContent" label="动作内容" min-width="800">
+          show-overflow-tooltip prop="HandleContent" label="动作内容" min-width="400">
           </el-table-column>
           <el-table-column
-          show-overflow-tooltip prop="Remark" label="备注" min-width="331"/>
+          show-overflow-tooltip prop="Remark" label="备注" min-width="200"/>
 
         </el-table>
-        <div>
-          <MpPagination
-          :nowPage="Data.getInventoryLogListData.Page"
-          :pageSize="Data.getInventoryLogListData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"
-          />
-        </div>
       </MpCardContainer>
     </main>
     <footer>
       <!-- <el-button type="primary" @click="saveGenerativeRule">保存</el-button> -->
-      <el-button type="primary" @click="$goback">返回</el-button>
+      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getInventoryLogListData.Page"
+        :pageSize="Data.getInventoryLogListData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
     </footer>
   </div>
 </template>
@@ -191,7 +187,7 @@ export default {
       getInventoryLogListData: {
         DateType: 'all',
 
-        StorehouseID: 0,
+        StorehouseID: '',
         Handler: '',
         CheckTime: {
           First: '',
@@ -317,6 +313,8 @@ export default {
 @import '@/assets/css/var.scss';
 .inventory-log-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     .el-breadcrumb{
       margin-bottom: 20px;
     }
@@ -366,13 +364,21 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
     }
   }
   >footer{
-    padding-top: 20px;
-    text-align: center;
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .bottom-count-box{
+      width: calc((100% - 100px) / 2);
+      justify-content: flex-end;
+      display: flex;
+      align-items: center;
+    }
   }
 }
 </style>

@@ -149,7 +149,6 @@ export default {
     ));
     const initDraw = () => {
       if (canvas.value) {
-        console.log(canvas.value, 'aaaaaaaaaaaaaa');
         const viewer = new Viewer(canvas.value);
         // 画单元格 货位
         viewer.draw(locationMap.value, props.isMultiSelect, originData.DyadicArrayDimensionData); // 渲染
@@ -272,15 +271,11 @@ export default {
     });
     const onRemoveClick = () => {
       if (!locationMap.value.selectedLocation) return;
-      console.log(locationMap.value.selectedLocation, 'locationMap.value.selectedLocation');
-
       message.warnCancelBox(
         '确定删除该货位吗',
         `货位名称: [ ${locationMap.value.selectedLocation[0].PositionName} ]`,
         async () => {
           if (locationMap.value.selectedLocation) {
-            console.log(locationMap.value.selectedLocation[0].PositionID, 'locationMap.value.selectedLocation[0].PositionID');
-
             const res = await props.remove(locationMap.value.selectedLocation[0].PositionID);
             if (res && locationMap.value.selectedLocation) {
               reflowOnLocationChange(locationMap.value.selectedLocation[0], true);

@@ -10,19 +10,22 @@
                 <p>当前盘点仓库：
                   <span>
                     {{Data.StorehouseName}}
-                    {{Data.InventoryDetail.CurrentUpperDimension}}
-                    {{Data.InventoryDetail.CurrentPositionName}}
                   </span>
                 </p>
                 <el-button type="danger" @click="ForcedEnd">强制完成</el-button>
               </div>
               <div class="current-material">
                 <p>
-                  <span class="label">SKU编码:</span>
+                  <span class="label">当前货位：</span>
+                  <span class="value">{{Data.InventoryDetail.CurrentUpperDimension}}
+                    {{Data.InventoryDetail.CurrentPositionName}}</span>
+                </p>
+                <p>
+                  <span class="label">SKU编码：</span>
                   <span class="value">{{Data.InventoryDetail.Code}}</span>
                 </p>
                 <p>
-                  <span class="label">物料:</span>
+                  <span class="label">物料：</span>
                   <span class="value">
                     <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
                     :key="item.AttributeID">
@@ -40,8 +43,8 @@
                   </span>
                 </p>
                 <p>
-                  <span class="label">数量:</span>
-                  <span class="value">
+                  <span class="label">数量：</span>
+                  <span class="value is-red">
                     {{Data.InventoryDetail.Stock}}{{Data.InventoryDetail.StockUnit}}
                   </span>
                 </p>
@@ -56,7 +59,7 @@
                   </span>
                 </p>
                 <el-button link type="primary" :disabled="!Data.InventoryDetail?.PrevDetailID"
-                @click="anewLast">重新盘点上一个</el-button>
+                @click="anewLast">重新盘点上一个 ></el-button>
               </div>
               <ul v-if="Data.InventoryDetail?.PrevPositionMaterial.length">
                 <li v-for="(PrevItem,index) in Data.InventoryDetail.PrevPositionMaterial"
@@ -78,7 +81,7 @@
                   </span>
                   <span class="size">{{PrevItem.SizeDescribe}}</span>
                   <span class="code">{{PrevItem.Code}}</span>
-                  <span class="number">{{PrevItem.Stock}}{{PrevItem.StockUnit}}</span>
+                  <span class="number is-red">{{PrevItem.Stock}}{{PrevItem.StockUnit}}</span>
                 </li>
               </ul>
             </div>
@@ -116,7 +119,7 @@
 
       <template #header>
         <p class="inventory-correct-title">
-          是否调转到下一货位
+          是否跳转到下一货位
         </p>
       </template>
       <template #default>
@@ -348,7 +351,7 @@ export default {
 
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.makeAn-inventory-page header', 20);
+      h.value = getHeight('.makeAn-inventory-page header', 100);
     }
     watch(() => CommonStore.size, () => {
       setHeight();
@@ -385,18 +388,26 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
+.mp-erp-layout-page-content-comp-wrap{
+  margin: 0;
+  background-color: #F5F5F5;
+  padding: 50px 50px 0 50px;
+}
 .makeAn-inventory-page{
   main{
-    margin-top: 20px;
     overflow-x: auto;
     .mp-card-container{
-
+      background-color: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      box-sizing: border-box;
       .delivery-info{
         flex: 1;
         display: flex;
         flex-direction: column;
         color: #7A8B9C;
         font-weight: 600;
+
         >div{
           >.title{
             display: flex;
@@ -427,6 +438,9 @@ export default {
               .value{
                 color: #566176;
               }
+              .is-red{
+                color: #FF3769;
+              }
             }
           }
         }
@@ -446,6 +460,9 @@ export default {
               .size,.code,.number{
                 width: 22%;
                 text-align: center;
+              }
+              .is-red{
+                color: #FF3769;
               }
               border-bottom: 1px solid #F2F6FC;
             }

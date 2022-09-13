@@ -159,13 +159,13 @@ export default {
     .el-tabs{
       max-width: calc(100% - 51px);
       border: 0;
-      height: 39px;
+      height: 26px;
       &.el-tabs--border-card>.el-tabs__header{
         background-color: #fff;
         border-bottom:none;
         .el-tabs__nav{
           display: flex;
-          height: 40px;
+          height: 26px;
           align-items: center;
           padding: 0 2px;
           .el-tabs__item{
@@ -173,10 +173,10 @@ export default {
             font-size: 14px;
             color: #7C7C7C;
             border: 1px solid #E8E8E8;
-            border-radius: 4px;
-            line-height: 30px;
+            // border-radius: 4px;
+            line-height: 26px;
             padding: 0px 10px;
-            height: 30px;
+            height: 26px;
             margin-right: 10px;
             display: flex;
             align-items: center;

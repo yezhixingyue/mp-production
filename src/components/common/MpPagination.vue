@@ -1,6 +1,5 @@
 <template>
   <section class="mp--pagination">
-    <span class="count">共 <i> {{total}} </i> 条记录</span>
     <el-config-provider :locale="locale">
       <!-- 分页 -->
       <el-pagination
@@ -13,6 +12,7 @@
          :total="total">
        </el-pagination>
     </el-config-provider>
+    <span class="count">共 <i> {{total}} </i> 条记录</span>
   </section>
 </template>
 
@@ -56,11 +56,11 @@ export default {
 .mp--pagination{
   display: flex;
   justify-content: flex-end;
-  padding-top: 20px;
+  // padding-top: 20px;
   .count{
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    margin: 0 40px;
     i{
       color: #428DFA;
       padding: 0 3px;

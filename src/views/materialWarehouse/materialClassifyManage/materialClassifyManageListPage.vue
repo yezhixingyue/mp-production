@@ -37,7 +37,7 @@
       </MpCardContainer>
     </main>
     <footer>
-      <el-button type="primary" @click="$goback">返回</el-button>
+      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
     </footer>
     <DialogContainerComp
     :title="`${Data.classifyInfo.CategoryID ? '修改' : '添加'}物料分类`"
@@ -208,6 +208,8 @@ export default {
     }
   }
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
@@ -233,16 +235,22 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
       .bottom-count-box{
         width: 600px;
+        height: 50px;
+        display: flex;
+        justify-items: center;
+        justify-content: flex-end;
       }
     }
   }
   >footer{
-    padding-top: 20px;
-    text-align: center;
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>

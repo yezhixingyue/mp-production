@@ -1,6 +1,7 @@
 export default () => {
-  // distance 其他高度 (如main 的 margin) 默认20像素为据上方的margin值
+  // distance 其他高度 (如main 的 margin 默认20像素为据上方的margin值)
   //          + footer 元素的高度，包括 margin
+  // 或者说是 除了 头部高度 和 当前需要设置动态高度的元素 之外的所有高度 等于 distance
   function getHeight(elementSelector, distance = 20) {
     const oWrap = document.querySelector('#app .mp-erp-layout-page-content-comp-wrap');
     if (!oWrap || !oWrap.offsetHeight) return 886;

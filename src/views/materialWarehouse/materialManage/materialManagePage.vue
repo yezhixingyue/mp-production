@@ -84,15 +84,17 @@
             </template>
           </el-table-column>
         </el-table>
-        <div>
-          <MpPagination
-          :nowPage="Data.getMaterialManageData.Page"
-          :pageSize="Data.getMaterialManageData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"/>
-        </div>
       </MpCardContainer>
     </main>
+    <footer>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getMaterialManageData.Page"
+        :pageSize="Data.getMaterialManageData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
+    </footer>
     <!-- 添加物料 -->
     <DialogContainerComp
     :title="`${Data.editTypeID ? '修改' : '添加'}物料`"
@@ -292,7 +294,7 @@ export default {
     }
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-manage-page header', 20);
+      h.value = getHeight('.material-manage-page header', 72);
     }
     function getMaterialManageList() {
       MaterialWarehouseStore.getMaterialManageList(Data.getMaterialManageData, (DataNumber) => {
@@ -330,20 +332,14 @@ export default {
 
     // 添加物料;
     function addMaterialManage() {
-      console.log(Data.addMaterialManageForm
-        .MaterialRelationAttributes);
-
       if (!Data.getMaterialManageData.TypeID) {
         // 请选择物料类型
         messageBox.failSingle('请选择物料类型', () => null, () => null);
       } else {
         const callback = () => {
           Data.addMaterialManageForm.MaterialRelationAttributes = [];
-          console.log(MaterialWarehouseStore.MaterialTypeAttributeAllList, 'MaterialWarehouseStore.MaterialTypeAttributeAllList');
 
           MaterialWarehouseStore.MaterialTypeAttributeAllList.forEach(res => {
-            console.log(res.AttributeName);
-
             Data.addMaterialManageForm.MaterialRelationAttributes.push({
               AttributeID: res.AttributeID,
               NumericValue: '',
@@ -431,6 +427,10 @@ export default {
         .addMaterialManageForm.SizeIDS.length) {
         messageBox.failSingleError('保存失败', '请选择可选尺寸属性', () => null, () => null);
       } else {
+        const temp = Data.addMaterialManageForm;
+        temp.MaterialRelationAttributes = temp.MaterialRelationAttributes
+          .filter(res => !(res.NumericValue === '' || res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
+
         // 发送请求
         api.getMaterialSave({
           TypeID: Data.editTypeID || Data.getMaterialManageData.TypeID,
@@ -463,12 +463,8 @@ export default {
           Data.addMaterialManageForm.ID = item.ID;
           // 根据获取到的所有属性的id查保存的数据并分别赋值给表单
           MaterialWarehouseStore.MaterialTypeAttributeAllList.forEach(res => {
-            console.log(item.MaterialAttributes);
-            console.log(res.AttributeID);
-
             let temp = item.MaterialAttributes.find((saveAttributeData) => res.AttributeID
               === saveAttributeData.AttributeID);
-            console.log(temp, 'tempaaaaaaaaaa');
 
             if (!temp) { // 处理可能出现的 已经设置物料 的类型中添加属性后没有值的问题
               temp = {
@@ -501,8 +497,6 @@ export default {
                 IsCustom: res.IsCustom,
               };
             }
-            console.log(temp, 'temp');
-
             Data.addMaterialManageForm.MaterialRelationAttributes.push(temp);
           });
 
@@ -555,7 +549,6 @@ export default {
       };
     }
     function UpdateData(AttributeSelects, newVal, index) {
-      console.log(newVal, 'AttributeSelects');
       const temp = AttributeSelects.find(res => res.SelectID === newVal);
       if (temp) {
         Data.addMaterialManageForm
@@ -632,6 +625,8 @@ export default {
 @import '@/assets/css/var.scss';
 .material-manage-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.header-top{
       display: flex;
       justify-content: space-between;
@@ -656,9 +651,15 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
     }
+  }
+  >footer{
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
   .add-material-manage-dialog{
     max-height: 500px;

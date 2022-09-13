@@ -53,15 +53,17 @@
             </template>
           </el-table-column>
         </el-table>
-        <div>
-          <MpPagination
-          :nowPage="Data.getMaterialSupplierData.Page"
-          :pageSize="Data.getMaterialSupplierData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"/>
-        </div>
       </MpCardContainer>
     </main>
+    <footer>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getMaterialSupplierData.Page"
+        :pageSize="Data.getMaterialSupplierData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
+    </footer>
     <DialogContainerComp
     :title="`${Data.MaterialSupplierForm.SupplierID ? '修改' : '添加'}供应商`"
     :visible='Data.addMaterialSupplierShow'
@@ -370,7 +372,7 @@ export default {
     };
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-supplier-manage-page > header', 20);
+      h.value = getHeight('.material-supplier-manage-page > header', 72);
     }
     watch(() => CommonStore.size, () => {
       setHeight();
@@ -416,6 +418,8 @@ export default {
 @import '@/assets/css/var.scss';
 .material-supplier-manage-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.header-top{
       margin-bottom: 20px;
       display: flex;
@@ -440,9 +444,15 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
     }
+  }
+  >footer{
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
   .add-material-supplier-dialog{
     .el-form{

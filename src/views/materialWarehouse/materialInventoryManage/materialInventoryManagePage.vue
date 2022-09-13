@@ -3,9 +3,19 @@
     <header>
       <div class="header-top">
         <div class="btns">
-
           <el-button @click="ToOutDelivery" type="primary">出库</el-button>
           <el-button @click="ToInDelivery" type="danger">入库</el-button>
+          <el-button link type="primary" @click="ToStockWarnPage">
+            <i class="iconfont icon-zengsongjilu"></i> 预警记录</el-button>
+          <el-button link type="primary" @click="ToInventoryPage">
+            <i class="iconfont icon-kucunpandian-"></i>
+            库存盘点</el-button>
+          <el-button link type="primary" @click="seeSMSShow">查看短信(仅测试用)</el-button>
+          <!-- <el-button>仅显示预警中物料</el-button> -->
+          <p>
+            <el-checkbox @change="getStockList"
+            v-model="Data.getStockData.IsWarn" label="仅显示预警中物料" size="large" />
+          </p>
         </div>
           <SearchInputComp
             :word='Data.getStockData.KeyWords'
@@ -42,19 +52,6 @@
     </header>
     <main :style="`height:${h}px`">
       <MpCardContainer>
-        <div class="btns">
-          <el-button link type="primary" @click="ToStockWarnPage">
-            <i class="iconfont icon-zengsongjilu"></i> 预警记录</el-button>
-          <el-button link type="primary" @click="ToInventoryPage">
-            <i class="iconfont icon-kucunpandian-"></i>
-            库存盘点</el-button>
-          <el-button link type="primary" @click="seeSMSShow">查看短信(仅测试用)</el-button>
-          <!-- <el-button>仅显示预警中物料</el-button> -->
-          <p>
-            <el-checkbox @change="getStockList"
-            v-model="Data.getStockData.IsWarn" label="仅显示预警中物料" size="large" />
-          </p>
-        </div>
         <el-table border fit
         :data="Data.StockList" style="width: 100%">
 
@@ -133,16 +130,17 @@
             </template>
           </el-table-column>
         </el-table>
-        <div>
-          <MpPagination
-          :nowPage="Data.getStockData.Page"
-          :pageSize="Data.getStockData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"
-          />
-        </div>
       </MpCardContainer>
     </main>
+    <footer>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getStockData.Page"
+        :pageSize="Data.getStockData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
+    </footer>
     <!-- 设置库存预警 -->
     <DialogContainerComp
     title="预警短信"
@@ -449,7 +447,7 @@ export default {
     }));
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.stock-list-page header', 20);
+      h.value = getHeight('.stock-list-page header', 72);
     }
     function getStockList() {
       api.getStockList(Data.getStockData).then(res => {
@@ -651,6 +649,8 @@ export default {
 @import '@/assets/css/var.scss';
 .stock-list-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.header-top{
       display: flex;
       justify-content: space-between;
@@ -659,8 +659,17 @@ export default {
         margin-bottom: 0;
       }
       .btns{
+        display: flex;
+        flex: 1;
         .el-button{
           width: 100px;
+        }
+        .iconfont{
+          font-size: 14px;
+        }
+        p{
+          display: flex;
+          margin-left: 26px;
         }
       }
     }
@@ -681,20 +690,18 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
-      >.btns{
-        display: flex;
-        justify-content: flex-start;
-        .iconfont{
-          font-size: 14px;
-        }
-        p{
-          flex: 1;
-          display: flex;
-          justify-content: flex-end;
-        }
-      }
+    }
+  }
+  >footer{
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .bottom-count-box{
+      display: flex;
+      align-items: center;
     }
   }
   .storehouse-stock-dialog{

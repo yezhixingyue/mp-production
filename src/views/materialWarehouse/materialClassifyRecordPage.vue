@@ -202,16 +202,17 @@
           </template>
 
         </el-table>
-        <div>
-          <MpPagination
-          :nowPage="Data.getRecordData.Page"
-          :pageSize="Data.getRecordData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"
-          />
-        </div>
       </MpCardContainer>
     </main>
+    <footer>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getRecordData.Page"
+        :pageSize="Data.getRecordData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
+    </footer>
     <!-- 添加物料 -->
     <DialogContainerComp
     :title="`${Data.editTypeID ? '修改' : '添加'}物料`"
@@ -531,7 +532,7 @@ export default {
 
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-classify-record-page header', 20);
+      h.value = getHeight('.material-classify-record-page header', 72);
     }
     function getRecordList() {
       ClassType.setDate(Data.getRecordData, 'CreateTime');
@@ -701,6 +702,8 @@ export default {
 @import '@/assets/css/var.scss';
 .material-classify-record-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.header-top{
       margin-bottom: 20px;
       .el-radio-group{
@@ -745,8 +748,20 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
+    }
+  }
+  >footer{
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .bottom-count-box{
+      width: calc((100% - 100px) / 2);
+      justify-content: flex-end;
+      display: flex;
+      align-items: center;
     }
   }
   .storehouse-stock-dialog{

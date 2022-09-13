@@ -353,6 +353,7 @@ interface GoodsPositionStockInfosType {
   Number: number | string,
   checked: boolean,
   inputValue:string,
+  UpperDimension: string
 }
 interface StorehouseStockInfoType {
   StorehouseID: number | string,
@@ -494,7 +495,11 @@ export default {
             }));
             return _StorehouseIt;
           });
-          Data.StorehouseStockInfo = temp;
+          Data.StorehouseStockInfo = [];
+          setTimeout(() => {
+            Data.StorehouseStockInfo = temp;
+          }, 20);
+
           console.log(Data.StorehouseStockInfo, 'Data.StorehouseStockInfo');
         }
       });
@@ -644,6 +649,17 @@ export default {
       });
     }
     function outDelvery() {
+      const inventory = () => {
+        const inventoryMsgs:string[] = [];
+        Data.StorehouseStockInfo.forEach(item => {
+          item.GoodsPositionStockInfos.forEach(it => {
+            if (it.checked && Number(it.inputValue) > it.Number) {
+              inventoryMsgs.push(`${item.StorehouseName} ${it.UpperDimension} ${it.PositionName}`);
+            }
+          });
+        });
+        return inventoryMsgs;
+      };
       if (!Data.checkedMaterial?.MaterialID) {
         messageBox.failSingleError('出库失败', '请选择物料', () => null, () => null);
       } else if (!Data.outDeliveryForm.Number) {
@@ -654,6 +670,8 @@ export default {
         messageBox.failSingleError('出库失败', '请选择领取人', () => null, () => null);
       } else if (Number(Data.outDeliveryForm.Number) !== Number(getOutUnitNum.value)) {
         messageBox.failSingleError('出库失败', '出库数量与合计出库数量不一致', () => null, () => null);
+      } else if (inventory().length) {
+        messageBox.failSingleError('出库失败', `货位 ${inventory().join('、')} 出库数量大于库存数量`, () => null, () => null);
       } else {
       // 设置物料id
         Data.outDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
@@ -686,10 +704,10 @@ export default {
     }
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.out-delivery-page header', 20);
+      h.value = getHeight('.out-delivery-page header', 50);
       console.log(h.value);
       window.onresize = () => {
-        h.value = getHeight('.out-delivery-page header', 20);
+        h.value = getHeight('.out-delivery-page header', 50);
       };
     }
     onActivated(() => {
@@ -737,9 +755,17 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
+.mp-erp-layout-page-content-comp-wrap{
+  margin: 0;
+  background-color: #F5F5F5;
+  padding: 30px 50px 0 50px;
+}
 .out-delivery-page{
   >main{
-    margin-top: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-sizing: border-box;
     overflow-x: auto;
     >.mp-card-container{
       display: flex;

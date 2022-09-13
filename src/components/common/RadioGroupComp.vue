@@ -111,6 +111,10 @@ export default {
   li+li{
     margin-top: 20px;
   }
+  .el-radio-group{
+    margin-left: 1px;
+    margin-top: 1px;
+  }
   .el-radio-button:last-child .el-radio-button__inner{
     border-radius: 0;
   }
@@ -119,9 +123,15 @@ export default {
   }
   .el-radio-button{
     width: 120px;
+    height: 29px;
+    margin-left: -1px;
+    margin-top: -1px;
+    overflow: hidden;
+    box-sizing: border-box;
     &.is-active{
+      border: none;
       .el-radio-button__inner{
-        border-left: none;
+        height: 100%;
       }
     }
     .el-radio-button__inner{
@@ -133,6 +143,7 @@ export default {
         text-overflow: ellipsis;
         line-height: 15px;
       }
+      padding: 5px 15px;
       width: 120px;
       overflow: hidden;
       border-left: 1px solid rgb(220, 223, 230);

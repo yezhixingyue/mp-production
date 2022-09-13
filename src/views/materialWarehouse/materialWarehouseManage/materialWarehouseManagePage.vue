@@ -37,15 +37,18 @@
           </el-table-column>
         </el-table>
         <div>
-          <MpPagination
-          :nowPage="Data.getStorehouseData.Page"
-          :pageSize="Data.getStorehouseData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"
-          />
         </div>
       </MpCardContainer>
     </main>
+    <footer>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getStorehouseData.Page"
+        :pageSize="Data.getStorehouseData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
+    </footer>
     <DialogContainerComp
     :title="`${Data.SaveStorehouseForm.StorehouseID ? '修改' : '添加'}仓库`"
     :visible='Data.SaveStorehouseShow'
@@ -302,7 +305,7 @@ export default {
     // 添加供应商
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-warehouse-manage-page > header', 20);
+      h.value = getHeight('.material-warehouse-manage-page > header', 72);
     }
     watch(() => CommonStore.size, () => {
       setHeight();
@@ -346,7 +349,9 @@ export default {
 .material-warehouse-manage-page{
   >header{
     >.header-top{
-      margin-bottom: 20px;
+      // margin: 20px 0;
+      padding: 20px;
+      padding-bottom: 0;
       display: flex;
       justify-content: space-between;
     }
@@ -369,11 +374,21 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
         .el-table__inner-wrapper{
           height: 100%;
         }
       }
+    }
+  }
+  >footer{
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .bottom-count-box{
+      display: flex;
+      align-items: center;
     }
   }
   .add-storehouse-dialog{

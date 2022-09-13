@@ -1,15 +1,11 @@
 .el-table{
   text-align: center;
-  border: none;
-  &::before{
-    width: 0;
-  }
-  &::after{
-    width: 0;
-  }
+  // border: none;
+
   .el-table__header-wrapper {
     tr{
       th{
+        padding: 5px 0;
         &.el-table__cell{
           background-color: #F2F6FC;
           text-align: center;
@@ -23,7 +19,7 @@
           display: inline-block;
           position: absolute;
           right: 0;
-          top: 14px;
+          top: 11px;
           background-color: #ACB5C2;
           pointer-events: none;
         }
@@ -38,16 +34,12 @@
             text-align: center;
             border-right: none;
             border-left: none;
-            height: 50px;
+            height: 44px;
+            padding: 5px 0;
           }
         }
       }
     }
   }
-  .el-table__border-left-patch{
-    width: 0;
-  }
-  .el-table__inner-wrapper::after{
-    width: 0;
-  }
+
 }

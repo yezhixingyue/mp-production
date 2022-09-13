@@ -9,10 +9,6 @@
         <el-button type="primary"
         :disabled="Data.LockStatus"
         @click="Data.addPalletDimensionsShow = true">+ 添加货位维度</el-button>
-      </div>
-    </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
         <p class="lock">
           <span v-if="Data.LockStatus" class="isLock">
             <i class="iconfont icon-suoding"></i>
@@ -25,6 +21,10 @@
           <el-button type="danger" link v-else
           @click="PalletDimensionsUnlockCode">解锁</el-button>
         </p>
+      </div>
+    </header>
+    <main :style="`height:${h}px`">
+      <MpCardContainer>
         <el-table border fit
         :data="Data.PalletDimensionsList" style="width: 100%">
           <el-table-column prop="DimensionUnit" label="维度单位" min-width="399" />
@@ -55,7 +55,7 @@
       </MpCardContainer>
     </main>
     <footer>
-      <el-button type="primary" @click="$goback">返回</el-button>
+      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
     </footer>
     <DialogContainerComp
     :title="`${Data.addPalletDimensionsForm.DimensionID ? '修改': '添加'}货位维度`"
@@ -321,6 +321,8 @@ export default {
 @import '@/assets/css/var.scss';
 .set-position-number-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
@@ -360,7 +362,6 @@ export default {
       }
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
         .el-table__inner-wrapper{
           height: 100%;
         }
@@ -368,8 +369,11 @@ export default {
     }
   }
   >footer{
-    padding-top: 20px;
-    text-align: center;
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .add-pallet-dimensions-dialog{
     padding: 0 65px 0 110px;

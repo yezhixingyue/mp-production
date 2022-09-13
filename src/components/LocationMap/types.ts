@@ -11,6 +11,7 @@ export interface MaterialRelationAttributesType {
 export interface goodsPositionStockDetailsType {
   MaterialID: number
   MaterialRelationAttributes: MaterialRelationAttributesType[]
+  SizeDescribe:string
   Stock: number
   StockUnit: string
 }

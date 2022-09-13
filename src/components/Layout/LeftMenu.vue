@@ -6,7 +6,7 @@
     </div>
 
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu
+      <!-- <el-menu
         :default-active="defaultActive"
         :default-openeds='defaultOpeneds'
         :collapse-transition='true'
@@ -27,6 +27,26 @@
            :key="route.path"
            :class="{hidden: route.meta.hiddenItem}">
             <span v-if="route.meta" slot:title>{{route.meta.title}}</span>
+          </el-menu-item>
+        </el-sub-menu>
+      </el-menu> -->
+      <el-menu :default-active="defaultActive" :default-openeds='defaultOpeneds' background-color="#222B3A" :collapse="isCollapse"
+        :collapse-transition='true' text-color="#fff" class="el-menu-vertical-demo" active-text-color="#26bcf9">
+        <el-sub-menu v-for="(routeWrap, index) in menuList" :key="routeWrap.path" :index='`${index + 1}`' v-show="routeWrap.children.length > 0">
+          <template #title>
+            <i :class="routeWrap.meta.icon" class="title-icon" v-show="isCollapse"></i>
+            <span>{{routeWrap.meta.title}}</span>
+          </template>
+          <el-menu-item
+           :index="`${index + 1}-${i + 1}`"
+           @click="onMenuItemClick(route, `${index + 1}-${i + 1}`)"
+            v-for="(route, i) in routeWrap.children"
+           :key="route.path"
+           :class="{hidden: route.meta.hiddenItem}">
+           <template #title>
+              <i v-if="route.meta" :class="routeWrap.meta.icon"></i>
+              <span v-if="route.meta">{{route.meta.title}}</span>
+           </template>
           </el-menu-item>
         </el-sub-menu>
       </el-menu>

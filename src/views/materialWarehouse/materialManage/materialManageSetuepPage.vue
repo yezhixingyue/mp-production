@@ -428,7 +428,6 @@ export default {
     }
 
     function primaryClick(isAgain) {
-      console.log(Data.generativeRule.Attributes, 'Data.generativeRule.Attributes');
       const msg:string[] = [];
       const CustomMsg:string[] = [];
       // 表单验证
@@ -445,7 +444,6 @@ export default {
             CustomMsg.push(res.AttributeName);
           }
         }
-        console.log(res);
       });
 
       if (msg.length) {
@@ -587,6 +585,8 @@ export default {
 @import '@/assets/css/var.scss';
 .material-manage-setuep-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
@@ -667,8 +667,14 @@ export default {
     }
   }
   >footer{
-    padding-top: 20px;
-    text-align: center;
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .el-button{
+      width: 100px;
+    }
   }
   .add-Generative-Rule-dialog{
     max-height: 500px;

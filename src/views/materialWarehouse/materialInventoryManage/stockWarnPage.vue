@@ -104,18 +104,17 @@
             </template>
           </el-table-column>
         </el-table>
-        <div>
-          <MpPagination
-          :nowPage="Data.getStockWarnData.Page"
-          :pageSize="Data.getStockWarnData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"/>
-        </div>
       </MpCardContainer>
     </main>
     <footer>
-      <!-- <el-button type="primary" @click="saveGenerativeRule">保存</el-button> -->
-      <el-button type="primary" @click="$goback">返回</el-button>
+      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getStockWarnData.Page"
+        :pageSize="Data.getStockWarnData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
     </footer>
   </div>
 </template>
@@ -288,6 +287,8 @@ export default {
 @import '@/assets/css/var.scss';
 .stock-warn-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     .header-top{
       display: flex;
       justify-content: space-between;
@@ -315,13 +316,21 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
     }
   }
   >footer{
-    padding-top: 20px;
-    text-align: center;
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .bottom-count-box{
+      width: calc((100% - 100px) / 2);
+      justify-content: flex-end;
+      display: flex;
+      align-items: center;
+    }
   }
 }
 </style>

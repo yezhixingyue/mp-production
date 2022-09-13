@@ -38,7 +38,7 @@
       </MpCardContainer>
     </main>
     <footer>
-      <el-button type="primary" @click="$goback">返回</el-button>
+      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
     </footer>
   </div>
 </template>
@@ -362,6 +362,8 @@ export default {
 @import '@/assets/css/var.scss';
 .goods-allocation-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.mp-card-container{
       >.top-main{
         display: flex;
@@ -378,19 +380,22 @@ export default {
   >main{
     margin-top: 20px;
     overflow-x: auto;
+    padding-left: 20px;
     >.mp-card-container{
       display: flex;
       flex-direction: column;
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
     }
   }
   >footer{
-    padding-top: 20px;
-    text-align: center;
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .add-material-manage-dialog{
     .el-form{

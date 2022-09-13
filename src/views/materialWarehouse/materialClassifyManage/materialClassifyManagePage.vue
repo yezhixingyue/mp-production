@@ -53,15 +53,17 @@
           </el-table-column>
           <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
-        <div>
-          <MpPagination
-          :nowPage="Data.getMaterialTypeData.Page"
-          :pageSize="Data.getMaterialTypeData.PageSize"
-          :total="Data.DataTotal"
-          :handlePageChange="PaginationChange"/>
-        </div>
       </MpCardContainer>
     </main>
+    <footer>
+      <div class="bottom-count-box">
+        <MpPagination
+        :nowPage="Data.getMaterialTypeData.Page"
+        :pageSize="Data.getMaterialTypeData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange" />
+      </div>
+    </footer>
     <!-- 添加、编辑物料类型 -->
     <DialogContainerComp
     :title="`${Data.materialClassifyDialogForm.TypeID ? '修改' : '添加'}物料类型`"
@@ -353,7 +355,7 @@ export default {
 
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-classify-manage-page header', 20);
+      h.value = getHeight('.material-classify-manage-page header', 72);
     }
     watch(() => CommonStore.size, () => {
       setHeight();
@@ -408,6 +410,8 @@ export default {
 @import '@/assets/css/var.scss';
 .material-classify-manage-page{
   >header{
+    padding: 20px;
+    padding-bottom: 0;
     >.header-top{
       margin-bottom: 20px;
     }
@@ -430,9 +434,15 @@ export default {
       height: 100%;
       .el-table{
         flex: 1;
-        max-height: calc(100% - 21px);
       }
     }
+  }
+  >footer{
+    min-height: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
   .add-material-classify-dialog{
     .el-form{

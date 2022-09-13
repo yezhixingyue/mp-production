@@ -282,6 +282,7 @@ export class LocationMapClass {
                 msg.push(String(res.InputSelectValue || res.SelectValue || ''));
               }
             });
+            msg.push(res.SizeDescribe || '');
             msg.push(`${res.Stock}${res.StockUnit || ''}`);
             return msg.join(' ');
           }));

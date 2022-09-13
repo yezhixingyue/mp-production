@@ -67,10 +67,10 @@ html, body {
     flex-direction: column;
     overflow: hidden;
     height: 100vh;
-    background-color: #f5f9fc;
+    background-color: #F5F5F5;
     > .mp-erp-layout-header-comp-wrap {
       flex: none;
-      height: 50px;
+      // height: 50px;
       width: 100%;
       // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
       border-bottom: 1px solid #d8dce5;

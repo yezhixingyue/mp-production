@@ -3,7 +3,7 @@
   <LeftMenu v-if="displaySider && !fullAcreen" />
   <div class="mp-erp-layout-content-right-wrap">
     <LayoutHeader v-if="displaySider && !fullAcreen" />
-    <div class="mp-erp-layout-page-content-comp-wrap" :class="{'no-padding height100': isLogin}">
+    <div class="mp-erp-layout-page-content-comp-wrap" :class="{'no-padding height100 no-margin': isLogin}">
       <router-view/>
     </div>
   </div>
@@ -40,17 +40,22 @@ export default {
 </script>
 <style lang='scss'>
 .mp-erp-layout-page-content-comp-wrap{
-  padding: 20px 30px;
-  height: calc(100vh - 51px);
-  max-height: calc(100vh - 51px);
+  // padding: 20px 30px;
+  height: calc(100vh - 41px);
+  max-height: calc(100vh - 41px);
   overflow-y: auto;
   overflow-x: hidden;
+  margin-left: 10px;
+  background-color: #fff;
   &.no-padding{
     padding: 0;
   }
   &.height100{
     height: 100vh;
     max-height: 100vh;
+  }
+  &.no-margin{
+    margin: 0;
   }
 }
 </style>

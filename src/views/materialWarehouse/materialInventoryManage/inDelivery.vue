@@ -385,7 +385,7 @@ export default {
         UnitID: '',
         Number: null,
         InStockType: 1,
-        Handler: '589705d2-c0ba-44aa-aab9-ae5900df1dd6',
+        Handler: '',
         SupplierID: '',
         Price: null,
         Remark: '',
@@ -472,24 +472,51 @@ export default {
 
     // 入库
     function inDelivery() {
-      if (Data.checkedMaterial) {
-        Data.inDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
-      }
-      const temp:GoodsPositionItemType[] = [];
-      Data.inStorehouseGoodsPosition.forEach(item => {
-        temp.push(...item.GoodsPositionList);
-      });
-      Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
-      api.getStockIn(Data.inDeliveryForm).then(res => {
-        if (res.data.Status === 1000) {
-          console.log(res);
-          messageBox.successSingle('入库成功', () => {
-            clearFrom();
-          }, () => {
-            clearFrom();
+      const getMsgs = () => {
+        const Msgs:string[] = [];
+        Data.inStorehouseGoodsPosition.forEach(item => {
+          item.GoodsPositionList.forEach(it => {
+            if (!it.Number) {
+              Msgs.push(`${item.StorehouseName} ${it.LocationName} ${it.PositionName}`);
+            }
           });
+        });
+        return Msgs;
+      };
+      if (!Data.checkedMaterial?.MaterialID) {
+        messageBox.failSingleError('入库失败', '请选择物料', () => null, () => null);
+      } else if (!Data.inDeliveryForm.Number) {
+        messageBox.failSingleError('入库失败', '请输入入库数量', () => null, () => null);
+      } else if (!Data.inDeliveryForm.UnitID) {
+        messageBox.failSingleError('入库失败', '请输入入库单位', () => null, () => null);
+      } else if ((Data.inDeliveryForm.InStockType === 1 || Data.inDeliveryForm.InStockType === 3) && !Data.inDeliveryForm.SupplierID) {
+        messageBox.failSingleError('入库失败', '请选择供应商', () => null, () => null);
+      } else if (Data.inDeliveryForm.InStockType === 1 && !Data.inDeliveryForm.Price) {
+        messageBox.failSingleError('入库失败', '请输入单价', () => null, () => null);
+      } else if ((Data.inDeliveryForm.InStockType === 2 || Data.inDeliveryForm.InStockType === 4) && !Data.inDeliveryForm.Handler) {
+        messageBox.failSingleError('入库失败', '请选择退料人', () => null, () => null);
+      } else if (getMsgs().length) {
+        messageBox.failSingleError('入库失败', `请输入${getMsgs().join('、')}的入库数量`, () => null, () => null);
+      } else {
+        if (Data.checkedMaterial) {
+          Data.inDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
         }
-      });
+        const temp:GoodsPositionItemType[] = [];
+        Data.inStorehouseGoodsPosition.forEach(item => {
+          temp.push(...item.GoodsPositionList);
+        });
+        Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
+        api.getStockIn(Data.inDeliveryForm).then(res => {
+          if (res.data.Status === 1000) {
+            console.log(res);
+            messageBox.successSingle('入库成功', () => {
+              clearFrom();
+            }, () => {
+              clearFrom();
+            });
+          }
+        });
+      }
     }
     function getGoodsPositionList() {
       api.getGoodsPositionList({ StorehouseID: Data.StorehouseID }).then(res => {
@@ -644,9 +671,9 @@ export default {
 
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.in-delivery-page header', 20);
+      h.value = getHeight('.in-delivery-page header', 50);
       window.onresize = () => {
-        h.value = getHeight('.in-delivery-page header', 20);
+        h.value = getHeight('.in-delivery-page header', 50);
       };
     }
     // 获取仓库列表
@@ -700,9 +727,17 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
+.mp-erp-layout-page-content-comp-wrap{
+  margin: 0;
+  background-color: #F5F5F5;
+  padding: 30px 50px 0 50px;
+}
 .in-delivery-page{
   main{
-    margin-top: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-sizing: border-box;
     overflow-x: auto;
     .mp-card-container{
       // display: flex;
@@ -731,7 +766,7 @@ export default {
         min-height: 480px;
         >div{
           width: 855px;
-          min-width: 855px;
+          // min-width: 855px;
           &.line{
             min-width: 1px;
             width: 1px;
