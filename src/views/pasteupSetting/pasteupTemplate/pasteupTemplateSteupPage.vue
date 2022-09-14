@@ -10,7 +10,22 @@
       <p class="title">编辑拼版模板</p>
       <el-form :model="Data.addPasteupTemplateFrom" label-width="100px">
         <el-form-item :label="`分类：`">
-
+          <OneLevelSelect
+            :options='[
+              {
+                StaffID: 0,
+                StaffName: 1,
+              }
+            ]'
+            :defaultProps="{
+              value:'StaffID',
+              label:'StaffName',
+            }"
+            :value='Data.addPasteupTemplateFrom.classify'
+            @change="(ID) => Data.addPasteupTemplateFrom.classify = ID"
+            @requestFunc='() => null'
+            :width="200"
+            ></OneLevelSelect>
         </el-form-item>
         <el-form-item :label="`名称：`" class="form-item-required template-name">
           <el-input v-model="Data.addPasteupTemplateFrom.name" placeholder="请输入"></el-input>
@@ -19,7 +34,7 @@
               <el-checkbox v-model="Data.addPasteupTemplateFrom.printingEdition" label="印刷版"/>
               <el-checkbox v-model="Data.addPasteupTemplateFrom.printingEditionAccordance" label="和印刷版保持一致" style="--el-checkbox-font-size: 12px"/>
             </p>
-            <p>
+            <p class="hint">
               每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。
             </p>
           </div>
@@ -99,10 +114,10 @@
           <template v-if="Data.addPasteupTemplateFrom.size === 2">
             <el-form-item :label="`白边：`" class="form-item-required white-edge">
               <ul>
-                <li>上: <el-input size="small"></el-input> mm</li>
-                <li>左: <el-input size="small"></el-input> mm</li>
-                <li>右: <el-input size="small"></el-input> mm</li>
-                <li>下: <el-input size="small"></el-input> mm</li>
+                <li>上: <el-input></el-input> mm</li>
+                <li>左: <el-input></el-input> mm</li>
+                <li>右: <el-input></el-input> mm</li>
+                <li>下: <el-input></el-input> mm</li>
               </ul>
             </el-form-item>
           </template>
@@ -127,10 +142,12 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
+import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 
 export default {
   name: 'pasteupTemplateSteupPage',
   components: {
+    OneLevelSelect,
   },
   setup() {
     const h = ref(0);
@@ -211,6 +228,25 @@ export default {
             width: 300px;
           }
         }
+        .hint{
+          font-size: 12px;
+          line-height: 30px;
+          color: #F4A307;
+          position: relative;
+          padding-left: 23px;
+          &::before{
+            content: '';
+            background-image: url('@/assets/images/warn.png');
+            display: inline-block;
+            background-size: 13px 13px;
+            width: 13px;
+            height: 13px;
+            margin-right: 10px;
+            position: absolute;
+            left: 0;
+            top: 8px;
+          }
+        }
       }
       .white-edge{
         ul{
@@ -222,6 +258,10 @@ export default {
             width: 130px;
             .el-input{
               width: 60px;
+              height: 28px;
+              input{
+                height: 28px;
+              }
             }
           }
           li:first-child{
@@ -231,13 +271,13 @@ export default {
       }
       .template-location-list{
         .table-title, ul, li{
-          width: 780px;
+          width: 800px;
           display: flex;
           .coord{
             width: 260px;
           }
           .size{
-            width: 250px;
+            width: 270px;
           }
           .row{
             width: 100px;
@@ -277,7 +317,7 @@ export default {
               margin: 0 5px;
             }
             .el-input{
-              width: 50px;
+              width: 60px;
               height: 28px;
               input{
                 height: 28px;
