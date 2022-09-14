@@ -186,7 +186,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated, nextTick,
+  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
@@ -429,7 +429,7 @@ export default {
       } else {
         const temp = Data.addMaterialManageForm;
         temp.MaterialRelationAttributes = temp.MaterialRelationAttributes
-          .filter(res => !(res.NumericValue === '' || res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
+          .filter(res => !(res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
 
         // 发送请求
         api.getMaterialSave({

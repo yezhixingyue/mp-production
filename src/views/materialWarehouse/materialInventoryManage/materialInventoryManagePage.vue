@@ -319,7 +319,7 @@ import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogCo
 import api from '@/api/request/MaterialStorage';
 import { useRouter } from 'vue-router';
 import { useCommonStore } from '@/store/modules/common';
-import { MaterialInfoType, MaterialAttributesType } from '@/assets/Types/common';
+import { MaterialAttributesType } from '@/assets/Types/common';
 
 interface twoSelecValueType {
   level1Val:null|string|number,

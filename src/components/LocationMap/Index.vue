@@ -158,7 +158,7 @@ export default {
             locationMap.value.onMapClick(e, viewer);
           }
         };
-        canvas.value.onmouseout = (e) => {
+        canvas.value.onmouseout = () => {
           position.value.show = false;
         };
         let a = true;
@@ -303,9 +303,9 @@ export default {
 </script>
 <style lang='scss'>
 .mp-pd-location-map-comp-wrap {
-  #location-map{
-    // background-color: #efefef;
-  }
+  // #location-map{
+  //   // background-color: #efefef;
+  // }
   margin: 0px;
   margin-bottom: 10px;
   display: flex;

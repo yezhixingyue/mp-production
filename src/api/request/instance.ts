@@ -7,7 +7,7 @@ import Axios from './axios';
 
 const apiListByNotNeedToken = ['/Api/Staff/Login']; // 不需要token访问的接口列表
 
-const closeTip = false;
+// const closeTip = false;
 let requestNum = 0;
 let loadingInstance;
 const getShowLoading = (config) => { // 查看当前请求是否需要展示弹窗

@@ -91,7 +91,7 @@ export default {
       default: 'daterange',
     },
   },
-  setup(props, context) {
+  setup(props) {
     const oPicker:Ref = ref(null);
     const Data = reactive({
       beginTime: '',

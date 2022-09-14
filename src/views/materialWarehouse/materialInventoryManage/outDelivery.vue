@@ -272,14 +272,13 @@
 </template>
 
 <script lang='ts'>
-import LocationMap from '@/components/LocationMap/Index.vue';
 
 import OutDeliveryDialog from '@/components/materialInventoryManage/outDeliveryDialog.vue';
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, Ref, reactive, onMounted, computed, onActivated, watch,
+  ref, Ref, reactive, onMounted, computed, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';

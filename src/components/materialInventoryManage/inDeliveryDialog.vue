@@ -78,19 +78,13 @@
 </template>
 
 <script lang='ts'>
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, reactive, onMounted, computed, onActivated, watch,
+  reactive, onMounted, computed, watch,
 } from 'vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
-import messageBox from '@/assets/js/utils/message';
-import { useRouter } from 'vue-router';
-import { MaterialInfoType } from '@/assets/Types/common';
-import { ILocationMapOriginData } from '@/components/LocationMap/types';
 import LocationMap from '@/components/LocationMap/Index.vue';
 import { LocationSetClass } from '@/components/LocationMap/LocationSetClass';
 
@@ -200,7 +194,6 @@ export default {
     },
   },
   setup(props) {
-    const router = useRouter();
     // 入库数据表单
     const Data:DataType = reactive({
       SeeimgUrl: '',
@@ -413,17 +406,17 @@ export default {
       });
     }
     // 获取仓库列表
-    function getStorehouseAll() {
-      api.getStorehouseAll().then(res => {
-        if (res.data.Status === 1000) {
-          Data.StorehouseList = res.data.Data as StorehouseType[];
-          if (Data.StorehouseList.length) {
-            Data.StorehouseID = Data.StorehouseList[Data.StorehouseList.length - 1].StorehouseID;
-            getGoodsPositionDimensionSelect();
-          }
-        }
-      });
-    }
+    // function getStorehouseAll() {
+    //   api.getStorehouseAll().then(res => {
+    //     if (res.data.Status === 1000) {
+    //       Data.StorehouseList = res.data.Data as StorehouseType[];
+    //       if (Data.StorehouseList.length) {
+    //         Data.StorehouseID = Data.StorehouseList[Data.StorehouseList.length - 1].StorehouseID;
+    //         getGoodsPositionDimensionSelect();
+    //       }
+    //     }
+    //   });
+    // }
     watch(() => props.visible, (val) => {
       if (val) {
         const _StorehouseList:StorehouseType[] = props.StorehouseList as StorehouseType[];

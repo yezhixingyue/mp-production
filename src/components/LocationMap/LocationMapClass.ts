@@ -1,4 +1,3 @@
-import instance from '@/api/request/instance';
 import { ElMessage } from 'element-plus';
 import { LocationSetClass } from './LocationSetClass';
 import { Square } from './Square';

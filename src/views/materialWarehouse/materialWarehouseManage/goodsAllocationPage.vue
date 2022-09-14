@@ -45,20 +45,17 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated, nextTick,
+  ref, reactive, onMounted, watch, onActivated, nextTick,
 } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
 import LocationMap from '../../../components/LocationMap/Index.vue';
-import Draw from './aaa';
 
 interface DimensionsType {
   Dimension: string

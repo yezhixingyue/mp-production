@@ -45,7 +45,7 @@ export default {
       default: () => [],
     },
   },
-  setup(props, context) {
+  setup(props) {
     const inpVal:WritableComputedRef<number> = computed({
       get() {
         return props.PropValue as number;
