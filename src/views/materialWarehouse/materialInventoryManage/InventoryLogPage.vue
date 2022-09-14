@@ -134,7 +134,7 @@ import ClassType from '@/store/modules/formattingTime/CommonClassType';
 interface getInventoryLogListDataType {
   DateType:string
 
-  StorehouseID: number|string,
+  StorehouseID: string,
   Handler: string | '00000000-0000-0000-0000-000000000000',
   Page:number,
   KeyWords: string,
@@ -145,9 +145,9 @@ interface getInventoryLogListDataType {
   },
 }
 interface InventoryLogListType {
-  LogID: number,
-  InventoryID: number,
-  StorehouseID: number,
+  LogID: string,
+  InventoryID: string,
+  StorehouseID: string,
   StorehouseName: string,
   HandleType: number,
   HandleContent: string,
@@ -158,7 +158,7 @@ interface InventoryLogListType {
 }
 
 interface StorehouseType {
-  StorehouseID: number,
+  StorehouseID: string,
   StorehouseName: string,
 }
 interface DataType {
@@ -257,7 +257,7 @@ export default {
       Data.getInventoryLogListData = {
         DateType: 'today',
 
-        StorehouseID: 0,
+        StorehouseID: '',
         Handler: '',
         CheckTime: {
           First: '',

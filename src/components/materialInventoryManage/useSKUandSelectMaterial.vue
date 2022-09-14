@@ -43,8 +43,8 @@ import { MaterialInfoType } from '@/assets/Types/common';
 import { MaterialDataItemType, MaterialSelectsType } from '@/assets/Types/materialWarehouse/useSKUandSelectMaterialType';
 
 interface getMaterialDataType {
-  MaterialID:string|number,
-  SizeID:string|number,
+  MaterialID:string,
+  SizeID:string,
   SKUCode:string,
 }
 interface DataType {

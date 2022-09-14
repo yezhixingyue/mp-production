@@ -146,7 +146,7 @@ import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/mat
 import { useCommonStore } from '@/store/modules/common';
 
 interface formType {
-  TypeID: number | null,
+  TypeID: string,
   CategoryID: number | undefined,
   TypeName: string,
   TypeCode: string,
@@ -162,7 +162,7 @@ interface tableItemType {
   SizeDescribe: string,
   StockUnit: null | string,
   TypeCode: string | number,
-  TypeID: number|null,
+  TypeID: string,
   TypeName: string
 }
 interface getMaterialTypeDataType {
@@ -176,8 +176,8 @@ interface dataType {
   materialClassifyDialogForm:formType,
   tableData: tableItemType[],
   setBrandForm: {
-    TypeID: number
-    AttributeID: number
+    TypeID: string
+    AttributeID: string
   }
   DataTotal: number
   getMaterialTypeData: getMaterialTypeDataType,
@@ -202,7 +202,7 @@ export default {
       // materialClassifyTitle: '添加物料类型',
       materialClassifyDialogShow: false,
       materialClassifyDialogForm: {
-        TypeID: null,
+        TypeID: '',
         CategoryID: undefined,
         TypeName: '',
         TypeCode: '',
@@ -211,8 +211,8 @@ export default {
       tableData: [],
       // 品牌属性
       setBrandForm: {
-        TypeID: 0,
-        AttributeID: 0.0,
+        TypeID: '',
+        AttributeID: '',
       },
       brandTitle: '品牌属性',
       brandShow: false,
@@ -247,7 +247,7 @@ export default {
     }
     function materialClassifyCloseedClick() {
       Data.materialClassifyDialogForm = {
-        TypeID: null,
+        TypeID: '',
         CategoryID: undefined,
         TypeName: '',
         TypeCode: '',
@@ -259,7 +259,7 @@ export default {
     }
     function brandCloseClick() {
       Data.brandShow = false;
-      Data.setBrandForm.AttributeID = 0;
+      Data.setBrandForm.AttributeID = '';
     }
     function ToMaterialClassifyManageList() {
       // 管理物料类型;

@@ -143,7 +143,7 @@ import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
 
 interface SaveStorehouseFormType {
-  StorehouseID: number,
+  StorehouseID: string,
   StorehouseName: string,
   StorehouseImg: string,
 }
@@ -182,7 +182,7 @@ export default {
       // SaveStorehouseTitle: '添加仓库',
       SaveStorehouseShow: false,
       SaveStorehouseForm: {
-        StorehouseID: 0,
+        StorehouseID: '',
         StorehouseName: '',
         StorehouseImg: '',
       },
@@ -257,7 +257,7 @@ export default {
 
     function SaveStorehouseCloseedClick() {
       Data.SaveStorehouseForm = {
-        StorehouseID: 0,
+        StorehouseID: '',
         StorehouseName: '',
         StorehouseImg: '',
       };

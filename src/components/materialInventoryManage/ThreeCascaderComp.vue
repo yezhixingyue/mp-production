@@ -15,26 +15,26 @@ import api from '@/api/request/MaterialStorage';
 import { onMounted } from 'vue';
 
 interface UnitSelectsType {
-  UnitID: number,
+  UnitID: string,
   Unit: string,
   ProportionUp: number,
   ProportionDown: number,
   UnitPurpose: number
 }
 interface MaterialAttributesType {
-  MaterialID: number,
+  MaterialID: string,
   CodeID: number,
-  AttributeID: number,
-  SelectID: number,
-  NumericValue: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
   IsBrand: true
 }
 interface SizeSelectsType {
-  MaterialID: number,
-  SizeID: number,
+  MaterialID: string,
+  SizeID: string,
   SizeDescribe: string
 }
 interface MaterialSelectsType {

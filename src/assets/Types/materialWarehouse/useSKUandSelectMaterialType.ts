@@ -1,5 +1,5 @@
 interface UnitSelectsType {
-  UnitID: number,
+  UnitID: string,
   Unit: string,
   UnitName: string,
   ProportionUp: number,
@@ -7,20 +7,20 @@ interface UnitSelectsType {
   UnitPurpose: number
 }
 interface MaterialAttributesType {
-  MaterialID: number,
+  MaterialID: string,
   CodeID: number,
-  AttributeID: number,
-  SelectID: number,
-  NumericValue: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
   IsBrand: true
 }
 interface SizeSelectsType {
-  MaterialID: number,
+  MaterialID: string,
   Code: string
-  SizeID: number,
+  SizeID: string,
   SizeDescribe: string
 }
 export interface MaterialSelectsType {

@@ -4,7 +4,7 @@ import { RouteLocationNormalized, useRouter } from 'vue-router';
 
 const Router = useRouter();
 interface DistrictType {
-    ID: number,
+    ID: string,
     Name: string,
     ParentID: number,
     IsVirtual: boolean,
