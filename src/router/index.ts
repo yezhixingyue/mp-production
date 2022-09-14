@@ -6,8 +6,6 @@ import HomeView from '../views/HomeView.vue';
 import { moduleRoutes } from './modules/index';
 import { goBackLastPage, handleRouterEach } from './modules/handleRouterEach';
 
-console.log(moduleRoutes);
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',

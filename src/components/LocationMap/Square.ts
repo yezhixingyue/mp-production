@@ -48,7 +48,6 @@ export class Square {
     if (locationMap.newLocation.includes(this)) {
       const _locationMap = locationMap;
       _locationMap.newLocation = _locationMap.newLocation.filter(it => it !== this);
-      console.log(_locationMap.newLocation.length);
       viewer.squareViewer(this, '', LocationColorEnums.squareEmptyColor);
     } else {
       locationMap.newLocation.push(this);

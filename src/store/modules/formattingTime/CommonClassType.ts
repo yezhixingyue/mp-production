@@ -4,8 +4,6 @@ const store = useTimeSelectModuleStore();
 
 export default class CommonClassType {
   static setDate(obj, key = 'Date', defalutProps = { First: 'First', Second: 'Second' }) {
-    console.log(obj);
-
     const _obj = obj;
     switch (obj.DateType) {
       case 'all':
@@ -63,7 +61,6 @@ export default class CommonClassType {
 
   static filter(obj, bool = false) { // 布尔值用于判断是否保留value为0的键值对，为true时保留，为false不保留
     const _tempObj = {};
-    // console.log(obj);
     if (!obj) return {};
     Object.keys(obj).forEach(key => {
       if (Object.prototype.toString.call(obj[key]) !== '[object Object]') {

@@ -220,7 +220,6 @@ export default {
     function setDetail(DetailID) {
       Data.DetailID = DetailID;
       localStorage.setItem('DetailID', DetailID);
-      console.log(localStorage.getItem('DetailID'), 'localStorage');
     }
 
     // 获取盘库详情
@@ -253,10 +252,6 @@ export default {
     function addMaterialClosed() {
       // 清空表单
     }
-    // 此货位还有物料时添加物料的弹框
-    function addMaterialPrimaryClick() {
-      console.log('addMaterialPrimaryClick');
-    }
     // 盘库强制结束
     function ForcedEnd() {
       const html = `
@@ -267,7 +262,6 @@ export default {
           over();
         });
       }, () => null);
-      console.log('addMaterialPrimaryClick');
     }
     // 重新盘点上一个
     function anewLast() {
@@ -275,7 +269,6 @@ export default {
         setDetail(Data.InventoryDetail?.PrevDetailID);
         getInventoryDetail();
       }, () => null);
-      console.log('addMaterialPrimaryClick');
     }
     // 去下一个
     function toNext() {
@@ -295,7 +288,6 @@ export default {
     }
     // 库存正确 点击
     function inventoryCorrect() {
-      console.log('selectStorehouseGoodsPosition');
       // Data.InventoryDetail.IsLastMaterial;
       // 如果是最后一个货物
       if (Data.InventoryDetail?.IsLastMaterial) {
@@ -311,13 +303,11 @@ export default {
     }
     // 库存错误 点击
     function inventoryError() {
-      console.log('selectStorehouseGoodsPosition');
       Data.makeAnInventoryError = true;
     }
 
     // 此货位还有物料时添加物料的弹框 确定
     function dialogSaveMaterial(data) {
-      console.log(data);
       const temp = { ...data };
 
       temp.PositionID = Data.InventoryDetail?.PositionID;
@@ -332,7 +322,6 @@ export default {
     }
     // 物料错误的修改保存
     function dialogSaveInventoryError(data) {
-      console.log(data, 'dialogSaveInventoryError');
       const temp = { ...data };
       temp.DetailID = Data.InventoryDetail?.DetailID;
       api.getInventoryError(temp).then(res => {
@@ -380,7 +369,6 @@ export default {
       dialogSaveInventoryError,
       addMaterialCloseClick,
       addMaterialClosed,
-      addMaterialPrimaryClick,
     };
   },
 

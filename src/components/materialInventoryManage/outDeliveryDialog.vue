@@ -29,7 +29,7 @@
 
 <script lang='ts'>
 import {
-  reactive, onMounted, computed, watch,
+  reactive, computed, watch,
 } from 'vue';
 
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -203,9 +203,6 @@ export default {
           }
         });
       }
-    });
-    onMounted(() => {
-      console.log('onMountedonMountedonMounted');
     });
 
     return {

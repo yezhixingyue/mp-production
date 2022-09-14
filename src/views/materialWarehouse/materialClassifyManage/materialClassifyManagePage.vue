@@ -335,9 +335,6 @@ export default {
     }
 
     function brandPrimaryClick() {
-      const cb = () => {
-        console.log('cb');
-      };
       messageBox.warnCancelBox('您确定要保存吗?', '保存后将不能更改品牌属性，请谨慎操作', () => {
         api.getMaterialTypeAttributeSetBrand(Data.setBrandForm).then(res => {
           if (res.data.Status === 1000) {
@@ -350,7 +347,7 @@ export default {
             messageBox.successSingle('保存成功', cback, cback);
           }
         });
-      }, cb);
+      }, () => null);
     }
 
     function setHeight() {

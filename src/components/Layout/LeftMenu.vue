@@ -44,7 +44,7 @@
            :key="route.path"
            :class="{hidden: route.meta.hiddenItem}">
            <template #title>
-              <i v-if="route.meta" :class="routeWrap.meta.icon"></i>
+              <i v-if="route.meta" :class="route.meta.icon"></i>
               <span v-if="route.meta">{{route.meta.title}}</span>
            </template>
           </el-menu-item>
@@ -258,6 +258,9 @@ export default {
             color: #B8C6E0;
             border-left: 2px solid #161B26;
             padding-left: 86px;
+            i{
+              margin-right: 10px;
+            }
             &.is-active{
               color: #fff;
               border-left: 2px solid #26BCF9;

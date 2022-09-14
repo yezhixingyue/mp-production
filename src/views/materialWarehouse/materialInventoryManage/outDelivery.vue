@@ -484,7 +484,6 @@ export default {
     function GetGoodsAllocation(MaterialID) {
       api.getStorehouseStock(MaterialID).then(res => {
         if (res.data.Status === 1000) {
-          console.log(res);
           const temp = [...res.data.Data as StorehouseStockInfoType[]];
           temp.map(StorehouseIt => {
             const _StorehouseIt = StorehouseIt.GoodsPositionStockInfos.map(Positionit => ({
@@ -498,8 +497,6 @@ export default {
           setTimeout(() => {
             Data.StorehouseStockInfo = temp;
           }, 20);
-
-          console.log(Data.StorehouseStockInfo, 'Data.StorehouseStockInfo');
         }
       });
     }
@@ -621,7 +618,6 @@ export default {
       }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        console.log(res);
         if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           Data.outDeliveryForm.UnitID = '';
@@ -687,15 +683,12 @@ export default {
         });
         Data.outDeliveryForm.MaterialGoodsPositions = temp;
         // 设置出库货位及数量
-        console.log(Data.outDeliveryForm);
         Data.outVerify = true;
       }
     }
 
     // 查看物料货位
     function seePosition(Storehouse, GoodsPosition) {
-      console.log(GoodsPosition);
-
       Data.getGoodsPositionData.StorehouseID = Storehouse.StorehouseID;
       Data.getGoodsPositionData.DimensionIDS = GoodsPosition.UpperDimensionIDS.split(',');
       Data.getGoodsPositionData.StorehouseGoodsPosition = `${Storehouse.StorehouseName} ${GoodsPosition.UpperDimension} ${GoodsPosition.PositionName}`;
@@ -704,7 +697,6 @@ export default {
     function setHeight() {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.out-delivery-page header', 50);
-      console.log(h.value);
       window.onresize = () => {
         h.value = getHeight('.out-delivery-page header', 50);
       };
@@ -714,7 +706,6 @@ export default {
     });
     onMounted(() => {
       const MaterialCode = JSON.parse(route.query.MaterialCode as string);
-      console.log(MaterialCode, 'MaterialCode');
       if (MaterialCode) {
         Data.getMaterialData.SKUCode = MaterialCode;
         getMaterial();

@@ -47,8 +47,6 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       };
     },
     TodayDate() {
-      console.log(this.newDate);
-
       const stringDate = ConvertTimeFormat(new Date(this.newDate));
       return {
         First: `${stringDate}T00:00:00.000Z`,

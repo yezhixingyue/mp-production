@@ -237,8 +237,6 @@ export default {
       };
     }
     function getAttributesList() {
-      console.log(Data.getAttributesData, 'Data.getAttributesData');
-
       api.getMaterialTypeAttributeList(Data.getAttributesData).then(res => {
         if (res.data.Status === 1000) {
           Data.AttributesList = res.data.Data as AttributeType[];
@@ -252,9 +250,6 @@ export default {
       getAttributesList();
     }
     function editAttributes(AttributesItem:AttributeType) {
-      console.log(AttributesItem);
-      console.log(AttributesItem.AttributeSelects);
-
       Data.addAttributesForm = { TypeID: Data.addAttributesForm.TypeID, ...AttributesItem };
       Data.addAttributesForm.AttributeSelects = [...AttributesItem.AttributeSelects || []] || [];
       Data.dialogShow = true;
@@ -275,8 +270,6 @@ export default {
       }, () => undefined);
     }
     function addAttributeSelect() {
-      console.log(Data.addAttributesForm.AttributeSelects);
-
       Data.addAttributesForm.AttributeSelects.push({
         SelectID: Math.random() + new Date().getTime(),
         Sort: 0,

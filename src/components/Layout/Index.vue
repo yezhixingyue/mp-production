@@ -23,11 +23,9 @@ export default {
   },
   setup() {
     const route = useRoute();
-    console.log(route);
 
     const displaySider = computed(() => route.meta.requiresAuth);
     const fullAcreen = computed(() => route.meta.fullAcreen);
-    console.log(route.name === 'login');
 
     const isLogin = computed(() => route.name === 'login');
     return {

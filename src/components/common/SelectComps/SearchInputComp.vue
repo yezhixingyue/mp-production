@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { watch, computed } from 'vue';
+import { computed } from 'vue';
 
 export default {
   props: {
@@ -67,9 +67,6 @@ export default {
       },
     });
 
-    watch(inpVal, (newVal, oldVal) => {
-      console.log(newVal, oldVal);
-    });
     function onKeyWordSubmit(e) {
       props.requestFunc();
       e.target.blur();
