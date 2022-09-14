@@ -240,9 +240,7 @@ export default {
           });
         });
         Data.selectData = returnData;
-        console.log(returnData, 'returnData');
       }
-      console.log(Data.GoodsPositionDimensionSelect, 'Data.GoodsPositionDimensionSelect');
 
       getGoodsPosition();
       // 获取二维数组

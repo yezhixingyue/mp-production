@@ -175,7 +175,6 @@ export default {
     }
     // 此货位还有物料时添加物料的弹框
     function addMaterialPrimaryClick() {
-      console.log('addMaterialPrimaryClick');
       // 组装 MaterialInfo 数据
 
       const msg:string[] = [];
@@ -199,8 +198,6 @@ export default {
 
     // 选择物料
     function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
-      console.log(itemMaterial, allSellectMaterial, 'itemMaterial, allSellectMaterial');
-
       Data.SizeSelects = null;
       Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
       Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;
@@ -227,7 +224,6 @@ export default {
       } else {
         // 物料筛选
         api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-          console.log(res);
           if (res.data.Data) {
             Data.checkedMaterial = res.data.Data as MaterialInfoType;
             Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects

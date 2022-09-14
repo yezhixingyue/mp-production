@@ -53,7 +53,6 @@ const instance = new Axios({
       const router = useRouter();
       const curConfig = config;
       const { token } = userStore;
-      console.log(router, 'router');
 
       if (!token && !apiListByNotNeedToken.includes(curConfig.url || '')) {
         router.replace('/login');

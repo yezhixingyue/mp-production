@@ -23,7 +23,6 @@
 <script lang='ts'>
 import { ref } from 'vue';
 import ccc from '@/router';
-import { useUserStore } from '@/store/modules/user';
 import TopMiddleBottomConstruction from '@/components/common/TopMiddleBottomConstruction.vue';
 
 export default {
@@ -33,9 +32,6 @@ export default {
   },
   setup() {
     const a = ref('');
-    const userStore = useUserStore();
-    console.log(userStore);
-
     function goback() {
       // eslint-disable-next-line import/no-named-as-default-member
       ccc.getGoBackFun();

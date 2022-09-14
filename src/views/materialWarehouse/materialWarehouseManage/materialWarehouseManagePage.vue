@@ -216,8 +216,6 @@ export default {
       }
     }
     function beforeUpload(file) {
-      console.log(file);
-
       const isLt15M = file.size / 1024 / 1024 < 15;
       if (!isLt15M) {
         // 文件过大上传失败
@@ -227,16 +225,11 @@ export default {
       // Data.SaveStorehouseForm.StorehouseImg = e.Data.Url;
     }
 
-    function submitUpload(e) {
-      console.log(e);
-    }
     function seeImg(imgUrl:string) {
       Data.SeeimgUrl = imgUrl;
       Data.LookImgShow = true;
     }
     function ToSetPositionNumberPage(item) {
-      console.log(item, 'itemitemitem');
-
       router.push({
         name: 'setPositionNumber',
         params: item,
@@ -327,7 +320,6 @@ export default {
       Data,
       MaterialWarehouseStore,
       seeImg,
-      submitUpload,
       editStorehouse,
       delStorehouse,
       PaginationChange,

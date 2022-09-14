@@ -423,9 +423,7 @@ export default {
           },
         ],
       };
-      console.log(Data.inStorehouseGoodsPosition);
       Data.inStorehouseGoodsPosition = [];
-      console.log(Data.inStorehouseGoodsPosition);
     }
     // 格式化数据
     function SizeSelectChange(ID) {
@@ -506,7 +504,6 @@ export default {
         Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
         api.getStockIn(Data.inDeliveryForm).then(res => {
           if (res.data.Status === 1000) {
-            console.log(res);
             messageBox.successSingle('入库成功', () => {
               clearFrom();
             }, () => {
@@ -519,7 +516,6 @@ export default {
     function getGoodsPositionList() {
       api.getGoodsPositionList({ StorehouseID: Data.StorehouseID }).then(res => {
         if (res.data.Status === 1000) {
-          console.log(res);
           Data.GoodsPositionList = res.data.Data as GoodsPositionListType[];
         }
       });
@@ -569,7 +565,6 @@ export default {
       // 清空表单
     }
     function SelectGoodsPrimaryClick(_selectStorehouseGoodsPosition) {
-      console.log(_selectStorehouseGoodsPosition, '_selectStorehouseGoodsPosition');
       Object.keys(_selectStorehouseGoodsPosition).forEach(res => {
         selectStorehouseGoodsPosition[res] = { ..._selectStorehouseGoodsPosition[res] };
       });
@@ -641,7 +636,6 @@ export default {
       if (Data.inStorehouseGoodsPosition[index].GoodsPositionList.length > 1) {
         // 删除表单输入项
         Data.inStorehouseGoodsPosition[index].GoodsPositionList.splice(i, 1);
-        console.log(selectStorehouseGoodsPosition[StorehouseID]);
       } else {
         Data.inStorehouseGoodsPosition.splice(index, 1);
       }
@@ -654,7 +648,6 @@ export default {
       }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        console.log(res);
         if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           Data.inDeliveryForm.UnitID = '';
@@ -679,7 +672,6 @@ export default {
       api.getStorehouseAll().then(res => {
         if (res.data.Status === 1000) {
           Data.StorehouseList = res.data.Data as StorehouseType[];
-          console.log(Data.StorehouseList, 'Data.StorehouseListData.StorehouseListData.StorehouseList');
         }
       });
     }

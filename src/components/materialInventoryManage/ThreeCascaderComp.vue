@@ -86,8 +86,6 @@ export default {
               label: res.TypeName,
               disabled: node.loaded && node.chchildren === 0,
             }));
-            console.log(nodes, 'nodes');
-
             resolve(nodes || []);
           };
           MaterialWarehouseStore.getMaterialTypeAll({ categoryID: node.value as number }, callback);
@@ -134,7 +132,6 @@ export default {
 
     function cascaderChange(vaslus) {
       if (Array.isArray(vaslus) && vaslus.length === 3) {
-        console.log(MaterialData, 'MaterialData');
         let allMaterial:MaterialDataItemType | null = null;
         let itemMaterial:MaterialSelectsType | null = null;
         MaterialData.forEach(item => {

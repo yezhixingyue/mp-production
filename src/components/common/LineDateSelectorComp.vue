@@ -133,8 +133,6 @@ export default {
         return [];
       },
       set(val) {
-        console.log(val);
-
         if (Array.isArray(val)) {
           [Data.beginTime, Data.endTime] = val;
         } else {
@@ -155,10 +153,7 @@ export default {
       }, 0);
     }
     function onPickerBlur() {
-      console.log('onPickerBlur');
       setTimeout(() => {
-        console.log(!Data.clickTarget);
-
         props.changePropsFunc([props.typeList[0], '']);
         props.changePropsFunc([props.typeList[1], Data.beginTime]);
         props.changePropsFunc([props.typeList[2], Data.endTime]);
@@ -167,7 +162,6 @@ export default {
       }, 0);
     }
     function onDocumentClick(e) {
-      // console.log(e, 'eeeeeeeeeeeeeeeee');
       Data.clickTarget = e;
     }
 

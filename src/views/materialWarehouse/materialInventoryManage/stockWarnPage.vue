@@ -47,9 +47,9 @@
             </template>
           </el-table-column>
           <el-table-column prop="MaterialCode" label="SKU编码" min-width="152"/>
-          <el-table-column prop="物料" label="物料"
+          <el-table-column prop="AttributeDescribe" label="物料"
           show-overflow-tooltip min-width="190">
-            <template #default="scope">
+            <!-- <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -62,7 +62,7 @@
                   {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="SizeDescribe" label="可选尺寸" min-width="237">
             <!-- <template #default="scope">
@@ -190,8 +190,6 @@ export default {
     MpPagination,
   },
   setup() {
-    console.log('steup');
-
     const CommonStore = useCommonStore();
     const h = ref(0);
     const MaterialWarehouseStore = useMaterialWarehouseStore();

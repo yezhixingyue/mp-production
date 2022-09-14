@@ -16,8 +16,6 @@ export default {
     const CommonStore = useCommonStore();
     const Route = useRoute();
     watch(() => Route.path, () => {
-      console.log(Route.path);
-
       CommonStore.size = (document
         .documentElement.clientWidth + document
         .documentElement.clientHeight) + Route.path;

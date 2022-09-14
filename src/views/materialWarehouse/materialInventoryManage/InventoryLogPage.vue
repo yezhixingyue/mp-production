@@ -205,8 +205,6 @@ export default {
     });
 
     function setCondition4DataList([[key1, key2], value]) {
-      console.log([[key1, key2], value], '[[key1, key2], value]');
-
       if (key2) Data.getInventoryLogListData[key1][key2] = value;
       else Data.getInventoryLogListData[key1] = value;
     }
@@ -223,7 +221,6 @@ export default {
     function getInventoryLogList() {
       ClassType.setDate(Data.getInventoryLogListData, 'CheckTime');
       const _obj = ClassType.filter(Data.getInventoryLogListData, true);
-      console.log(_obj);
 
       // if (_obj.Date) {
       //   _obj.ApplyTime = _obj.Date;

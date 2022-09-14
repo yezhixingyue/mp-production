@@ -79,7 +79,7 @@
 
 <script lang='ts'>
 import {
-  reactive, onMounted, computed, watch,
+  reactive, computed, watch,
 } from 'vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 
@@ -245,9 +245,6 @@ export default {
       let imgUrl = '';
       props.StorehouseList.forEach(res => {
         const temp = res as StorehouseType;
-        console.log(temp);
-        console.log(temp.StorehouseID, Data.StorehouseID);
-        console.log(temp.StorehouseID === Data.StorehouseID);
 
         if (temp.StorehouseID === Data.StorehouseID) {
           imgUrl = temp.StorehouseImg;
@@ -297,7 +294,6 @@ export default {
     // 格式化单元格数据为二维数组
     function getDyadicArray() {
       const temp:DyadicArrayDimensionDataType[][] = [];
-      console.log(Data.GoodsPositionDimensionSelect?.DimensionXS, 'Data.GoodsPositionDimensionSelect?.DimensionXS');
 
       const x = Data.GoodsPositionDimensionSelect?.DimensionXS;
       const y = Data.GoodsPositionDimensionSelect?.DimensionYS;
@@ -428,9 +424,6 @@ export default {
         }
         getGoodsPositionDimensionSelect();
       }
-    });
-    onMounted(() => {
-      console.log('onMountedonMountedonMounted');
     });
 
     return {

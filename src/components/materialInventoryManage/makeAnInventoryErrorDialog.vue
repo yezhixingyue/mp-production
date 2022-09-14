@@ -327,17 +327,13 @@ export default {
     }
     // 修改物料
     function editMaterialPrimaryClick() {
-      console.log('newMaterialInfo');
       if (!Data.tempMaterialInfo) {
         // 请选择物料
         messageBox.failSingle('请选择物料', () => null, () => null);
       } else {
-        console.log(Data.tempMaterialInfo);
-
         Data.newMaterialInfo = { ...Data.tempMaterialInfo };
         editMaterialCloseClick();
         Data.tempMaterialInfo = null;
-        console.log(Data.newMaterialInfo);
       }
     }
 
@@ -370,7 +366,6 @@ export default {
       }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        console.log(res);
         if (res.data.Data) {
           Data.tempMaterialInfo = res.data.Data as MaterialInfoType;
           Data.tempMaterialInfo.UnitSelects = Data.tempMaterialInfo.UnitSelects

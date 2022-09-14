@@ -116,8 +116,8 @@
           <el-table-column
           show-overflow-tooltip prop="TypeName" label="类型" min-width="66"/>
           <el-table-column
-          show-overflow-tooltip prop="物料" label="物料" min-width="152">
-            <template #default="scope">
+          show-overflow-tooltip prop="AttributeDescribe" label="物料" min-width="152">
+            <!-- <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -130,14 +130,14 @@
                   {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="SizeDescribe" label="尺寸规格" min-width="199">
           </el-table-column>
           <el-table-column prop="Stock" label="数量" min-width="158">
             <template #default="scope">
-              {{Math.abs(scope.row.Stock)}} {{scope.row.StockUnit}}
+              {{Math.abs(scope.row.StoreNumber)}} {{scope.row.StockUnit}}
               <el-button link type="primary" @click="SeeGoodsAllocation(scope.row)">
                 {{Data.getRecordData.LogType === 1 ? '入库货位' : '出库货位'}}
               </el-button>
@@ -213,32 +213,6 @@
         :handlePageChange="PaginationChange" />
       </div>
     </footer>
-    <!-- 添加物料 -->
-    <DialogContainerComp
-    :title="`${Data.editTypeID ? '修改' : '添加'}物料`"
-    :visible='Data.addMaterialManageShow'
-    :width="660"
-    :primaryClick="addMaterialManagePrimaryClick"
-    :closeClick="addMaterialManageCloseClick"
-    :closed="addMaterialManageClosed"
-    >
-    <template #default>
-      <div class="add-material-manage-dialog">
-        <el-form :model="Data.addMaterialManageForm" label-width="100px">
-          <el-form-item :label="`类型：`">
-            <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
-          </el-form-item>
-          <el-form-item :label="`编码：`">
-            <el-input
-            v-model="Data.addMaterialManageForm.MaterialCode" />
-          </el-form-item>
-          <p>
-            编码由 1 到 10 位的英文字母或数字组成，方便记忆，在入库搜索物料时输入编码，可快速定位物料， 类似于超市称重时输入的物品
-          </p>
-        </el-form>
-      </div>
-    </template>
-    </DialogContainerComp>
     <!-- 仓库货位信息 -->
     <DialogContainerComp
     title="仓库货位信息"
@@ -251,18 +225,7 @@
     <template #default>
       <div class="storehouse-stock-dialog">
         <div class="material-manage">
-          <p>物料：<template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
-              :key="item.AttributeID">
-                <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                </template>
-                <template v-else>
-                  <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                </template>
-                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                  {{index === Data.materialManageInfo.MaterialAttributes.length-1 ? '' : ' ' }}
-                </template>
-              </template>
+          <p>物料：{{Data.materialManageInfo.AttributeDescribe}}
           </p>
           <p>
             尺寸规格：{{Data.materialManageInfo.SizeDescribe}}
@@ -293,12 +256,15 @@
                   </span>
                   <span class="PCS">
                     {{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}
-                    {{Math.abs(GoodsPosition.Number)}}{{Data.materialManageInfo.StockUnit}}
+                    {{Math.abs(GoodsPosition.StoreNumber)}}{{Data.materialManageInfo.StockUnit}}
                   </span>
                 </li>
               </ul>
             </div>
-            <p>合计{{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}：{{Math.abs(getStorehouseAllInNumber())}}{{Data.materialManageInfo.StockUnit}}</p>
+            <p>合计{{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}：{{Math.abs(getStorehouseAllInNumber())}}{{Data.materialManageInfo.StockUnit}}
+              （{{Math.abs(Data.materialManageInfo.OutInNumber)}}
+              {{Data.materialManageInfo.OutInUnit}}）
+            </p>
           </div>
         </el-scrollbar>
         <!-- {{Data.StorehouseStockInfo}} -->
@@ -399,7 +365,7 @@ interface GoodsPositionStockInfosType {
   StorehouseID: string,
   PositionName: string,
   PositionID: string,
-  Number: number | string,
+  StoreNumber: number | string,
 }
 interface StorehouseStockInfoType {
   StorehouseID: string,
@@ -408,7 +374,6 @@ interface StorehouseStockInfoType {
   GoodsPositionStockInfos: GoodsPositionStockInfosType[],
 }
 interface DataType {
-  addMaterialManageShow:boolean,
   StorehouseStockShow:boolean,
   DataTotal: number,
   RecordList:RecordListType[],
@@ -479,7 +444,6 @@ export default {
       },
     ];
     const Data:DataType = reactive({
-      addMaterialManageShow: false,
       DataTotal: 0,
       RecordList: [],
       getRecordData: {
@@ -568,15 +532,15 @@ export default {
       let num = 0;
       Data.StorehouseStockInfo.forEach(res => {
         res.GoodsPositionStockInfos.forEach(it => {
-          num += Number(it.Number);
+          num += Number(it.StoreNumber);
         });
       });
       return num;
     }
-    function getStorehouseInNumber(GoodsPositionStockInfo) {
+    function getStorehouseInNumber(GoodsPositionStockInfo:GoodsPositionStockInfosType[]) {
       let num = 0;
       GoodsPositionStockInfo.forEach(it => {
-        num += Number(it.Number);
+        num += Number(it.StoreNumber);
       });
       return num;
     }
@@ -607,19 +571,6 @@ export default {
       ...MaterialWarehouseStore.CategoryList]);
     const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
       ...MaterialWarehouseStore.MaterialTypeList]);
-
-    function addMaterialManageCloseClick() {
-      // 关闭得时候清空弹框
-      Data.addMaterialManageShow = false;
-    }
-
-    function addMaterialManageClosed() {
-      console.log('aaa');
-    }
-
-    function addMaterialManagePrimaryClick() {
-      console.log('aa');
-    }
     // 清空筛选项
     function clearCondition() {
       Data.getRecordData = {
@@ -686,9 +637,6 @@ export default {
       getRecordList,
       clearCondition,
       radioGroupChange,
-      addMaterialManagePrimaryClick,
-      addMaterialManageCloseClick,
-      addMaterialManageClosed,
       MaterialWarehouseStore,
       SeeGoodsAllocation,
       getStorehouseAllInNumber,

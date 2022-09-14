@@ -138,7 +138,6 @@ class AxiosClass {
   cancelAllRequest() {
     this.cancelRequestSourceList.forEach(source => {
       const key = Object.keys(source)[0];
-      console.log(key, source[key]);
       source[key]();
     });
     this.cancelRequestSourceList = [];

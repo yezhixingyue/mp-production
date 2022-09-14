@@ -20,7 +20,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '库存管理',
         requiresAuth: true,
-        icon: 'iconfont icon-chanpinguanli',
+        icon: 'iconfont icon-kucunguanli',
         pageName: 'materialInventoryManagePage',
       },
       component: () => import('@/views/materialWarehouse/materialInventoryManage/materialInventoryManagePage.vue'),
@@ -107,7 +107,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '出入库记录',
         requiresAuth: true,
-        icon: 'iconfont icon-chanpinguanli',
+        icon: 'iconfont icon-churukujilu',
         pageName: 'materialClassifyRecordPage',
         prevPage: 'materialClassifyManage',
       },
@@ -120,7 +120,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '物料管理',
         requiresAuth: true,
-        icon: 'iconfont icon-chanpinguanli',
+        icon: 'iconfont icon-xinwuliaocaigoubaojiashenqingliucheng',
         pageName: 'materialManagePage',
         prevPage: 'materialClassifyManage',
       },
@@ -145,7 +145,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '物料类型管理',
         requiresAuth: true,
-        icon: 'iconfont icon-chanpinguanli',
+        icon: 'iconfont icon-hesuankemuleixing',
         pageName: 'materialClassifyManagePage',
       },
       component: () => import('@/views/materialWarehouse/materialClassifyManage/materialClassifyManagePage.vue'),
@@ -201,7 +201,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '供应商管理',
         requiresAuth: true,
-        icon: 'iconfont icon-chanpinguanli',
+        icon: 'iconfont icon-gongyingshangguanli-',
         pageName: 'materialSupplierManagePage',
         prevPage: 'materialClassifyManage',
       },
@@ -213,7 +213,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '仓库管理',
         requiresAuth: true,
-        icon: 'iconfont icon-chanpinguanli',
+        icon: 'iconfont icon-cangku_kucunxiangqing',
         pageName: 'materialWarehouseManagePage',
         prevPage: 'materialClassifyManage',
       },

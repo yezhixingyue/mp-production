@@ -540,7 +540,6 @@ export default {
     function SeeGoodsAllocation(data) {
       api.getStorehouseStock(data.MaterialID).then(res => {
         if (res.data.Status === 1000) {
-          console.log(res);
           Data.StorehouseStockInfo = res.data.Data as StorehouseStockInfoType[];
           Data.materialManageInfo = { ...data };
           Data.StorehouseStockShow = true;

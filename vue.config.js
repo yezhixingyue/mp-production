@@ -40,7 +40,21 @@ module.exports = defineConfig({
     },
   },
 
-  configureWebpack: {
-    devtool: 'source-map',
+  // configureWebpack: {
+  //   devtool: 'source-map',
+  // },
+  configureWebpack: config => {
+    // eslint-disable-next-line no-param-reassign
+    config.devtool = 'source-map';
+    // 处理图标乱码的问题 （是否解决待确认）
+    config.module.rules.filter(rule => rule.test.toString().indexOf('scss') !== -1).forEach(rule => {
+      rule.oneOf.forEach(oneOfRule => {
+        oneOfRule.use.splice(
+          oneOfRule.use.indexOf(require.resolve('sass-loader')),
+          0,
+          { loader: require.resolve('css-unicode-loader') },
+        );
+      });
+    });
   },
 });

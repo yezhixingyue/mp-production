@@ -184,24 +184,24 @@ export class LocationMapClass {
     }
   }
 
-  async addLocationSet() { // 添加货位 -- 取消该方法
-    // const list = this.newLocation.map(square => ({ x: square.x + 1, y: square.y + 1 }));
-    // const resp = await api.getGoodsAllocationVerify(list).catch(() => null);
-    // if (resp?.data.Data === 'True') {
-    //   // 验证通过
-    // } else {
-    //   // 报错处理
-    // }
-    console.log(this.newLocation);
-  }
+  // async addLocationSet() { // 添加货位 -- 取消该方法
+  //   // const list = this.newLocation.map(square => ({ x: square.x + 1, y: square.y + 1 }));
+  //   // const resp = await api.getGoodsAllocationVerify(list).catch(() => null);
+  //   // if (resp?.data.Data === 'True') {
+  //   //   // 验证通过
+  //   // } else {
+  //   //   // 报错处理
+  //   // }
+  //   console.log(this.newLocation);
+  // }
 
-  removeLocationSet() { // 删除货位
-    console.log('removeLocationSet', this.selectedLocation);
-  }
+  // removeLocationSet() { // 删除货位
+  //   console.log('removeLocationSet', this.selectedLocation);
+  // }
 
-  renameLocationSet() { // 编辑货位名称
-    console.log('editLocationSet', this.selectedLocation);
-  }
+  // renameLocationSet() { // 编辑货位名称
+  //   console.log('editLocationSet', this.selectedLocation);
+  // }
 
   // 点击事件 选中货位或者单元格
   onMapClick(e: MouseEvent, viewer: Viewer) {
