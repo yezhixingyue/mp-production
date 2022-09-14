@@ -152,21 +152,21 @@ import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
 
 interface DistrictType {
-  ID: number|string,
+  ID: string,
   Name: string,
   ParentID: number|string,
   IsVirtual: boolean,
   Level: number
 }
 interface MaterialSupplierFormType {
-  SupplierID: number,
+  SupplierID: string,
   SupplierName: string,
   ProvinceID: number|string,
   CityID: number|string,
   Address: string,
   Linkman: string,
   ContactWay: string,
-  MaterialTypeIDS: number[],
+  MaterialTypeIDS: string[],
 }
 interface getMaterialSupplierDataType {
   Page: number,
@@ -183,7 +183,7 @@ interface MaterialTypeListType {
   SizeDescribe: string,
   StockUnit: null | string,
   TypeCode: string | number,
-  TypeID: number|null,
+  TypeID: string,
   TypeName: string
 }
 interface DataType {
@@ -221,7 +221,7 @@ export default {
       ProvinceList: [],
       CityList: [],
       MaterialSupplierForm: {
-        SupplierID: 0,
+        SupplierID: '',
         SupplierName: '',
         ProvinceID: '',
         CityID: '',
@@ -269,7 +269,7 @@ export default {
         PageSize: 20,
       };
     }
-    const handleCheckedCitiesChange = (value:number[]) => {
+    const handleCheckedCitiesChange = (value:string[]) => {
       const checkedCount = value.length;
       Data.checkAll = checkedCount === Data.MaterialTypeList.length;
       Data.isIndeterminate = checkedCount > 0
@@ -280,7 +280,7 @@ export default {
       Data.isIndeterminate = false;
 
       Data.MaterialSupplierForm = {
-        SupplierID: 0,
+        SupplierID: '',
         SupplierName: '',
         ProvinceID: '',
         CityID: '',
@@ -363,7 +363,7 @@ export default {
     }
     const handleCheckAllChange = (val: boolean) => {
       if (val) {
-        const a = Data.MaterialTypeList.map(it => it.TypeID as number);
+        const a = Data.MaterialTypeList.map(it => it.TypeID as string);
         Data.MaterialSupplierForm.MaterialTypeIDS = a;
       } else {
         Data.MaterialSupplierForm.MaterialTypeIDS = [];

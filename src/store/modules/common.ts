@@ -3,13 +3,6 @@ import { defineStore, DefineStoreOptions } from 'pinia';
 import { RouteLocationNormalized, useRouter } from 'vue-router';
 
 const Router = useRouter();
-interface DistrictType {
-    ID: number,
-    Name: string,
-    ParentID: number,
-    IsVirtual: boolean,
-    Level: number
-}
 interface StaffSelectListType {
   StaffID: string,
   StaffName: string

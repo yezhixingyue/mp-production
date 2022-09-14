@@ -1,15 +1,15 @@
 export interface MaterialRelationAttributesType {
-  AttributeID: number
+  AttributeID: string
   AttributeUnit: string
   InputSelectValue: string
   IsBrand: boolean
-  NumericValue: string
-  SelectID: number|string
+  NumericValue: number
+  SelectID: string
   SelectValue: number|string
   Sort: number
 }
 export interface goodsPositionStockDetailsType {
-  MaterialID: number
+  MaterialID: string
   MaterialRelationAttributes: MaterialRelationAttributesType[]
   SizeDescribe:string
   Stock: number
@@ -23,7 +23,7 @@ export interface ILocationMapOriginPointData {
 }
 
 export interface IUsePositionDetailsItem {
-  PositionID: number
+  PositionID: string
   PositionName: string
   PositionDetails: ILocationMapOriginPointData[]
   goodsPositionStockDetails?:goodsPositionStockDetailsType[]
@@ -72,7 +72,7 @@ export enum pointDirection {
 }
 
 export interface IDialogRuleForm {
-  PositionID: number | '',
+  PositionID: string,
   PositionName: string,
 }
 

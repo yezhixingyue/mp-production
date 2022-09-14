@@ -6,16 +6,16 @@ interface CategoryType {
   CategoryName: string
 }
 interface MaterialType {
-  TypeID: number | undefined
+  TypeID: string
   TypeName: string
 }
 interface AttributeSelectsType {
-  SelectID: number,
+  SelectID: string,
   Sort: number,
   SelectItemValue: string
 }
 interface AttributeType {
- AttributeID: number,
+ AttributeID: string,
  AttributeName: string,
  Sort: number,
  AttributeType: number,
@@ -27,7 +27,7 @@ interface AttributeType {
  AttributeSelects: AttributeSelectsType[]
 }
 interface MaterialTypeSizeType {
-  SizeID: number,
+  SizeID: string,
   SizeName: string,
   SizeCode: string,
   SizeLength: number,
@@ -37,9 +37,9 @@ interface MaterialTypeSizeType {
 }
 interface MaterialAttributesType {
   CodeID: number| string,
-  AttributeID: number| string,
-  SelectID: number| string,
-  NumericValue: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number,
   InputSelectValue: string,
   SelectValue: string,
 
@@ -54,15 +54,15 @@ interface MaterialSizesType {
 interface MaterialManageListType {
   CategoryID: number| string,
   CategoryName: string,
-  ID: number| string,
-  TypeID: number| string,
+  ID: string,
+  TypeID: string,
   TypeName: string,
   Code: string,
   MaterialAttributes: MaterialAttributesType[],
   MaterialSizes: MaterialSizesType[]
 }
 interface SupplierSelectListType {
-  SupplierID: number| string,
+  SupplierID: string,
   SupplierName: string,
 }
 interface getMaterialType {
@@ -80,8 +80,8 @@ interface IState {
 interface IActions {
   getMaterialCategoryList:(data?, callback?)=>void,
   getMaterialTypeAll:(data:getMaterialType, callback?)=>void,
-  getMaterialTypeAttributeAllByTypeID: (TypeID:number, callback?)=>void
-  getMaterialTypeSizeAllByTypeID: (TypeID:number, callback?)=>void
+  getMaterialTypeAttributeAllByTypeID: (TypeID:string, callback?)=>void
+  getMaterialTypeSizeAllByTypeID: (TypeID:string, callback?)=>void
   getMaterialManageList: (getMaterialManageData:object, callback?)=>void
   getSupplierSelectList: (callback?)=>void
 }

@@ -194,12 +194,12 @@ import {
 } from 'vue';
 
 interface getMaterialDataType {
-  MaterialID: string|number,
-  SizeID: string|number,
+  MaterialID: string,
+  SizeID: string,
   SKUCode: string|number,
 }
 interface editDeliveryFormType {
-    MaterialID: string|number,
+    MaterialID: string,
     Number: number|null,
     Remark: string|number,
     MaterialInfo: string
@@ -252,7 +252,7 @@ export default {
       },
       // 修改物料/数量
       editDeliveryForm: {
-        MaterialID: 0,
+        MaterialID: '',
         Number: null,
         Remark: '',
         MaterialInfo: '',

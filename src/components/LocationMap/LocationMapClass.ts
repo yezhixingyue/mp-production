@@ -1,4 +1,3 @@
-import instance from '@/api/request/instance';
 import { ElMessage } from 'element-plus';
 import { LocationSetClass } from './LocationSetClass';
 import { Square } from './Square';
@@ -51,7 +50,7 @@ export class LocationMapClass {
   DefaultAction: LocationSetClass[] = []
 
   // 当前物料的ID
-  currentMaterialID: number
+  currentMaterialID: string
 
   DimensionUnit:DimensionUnitType
 

@@ -272,14 +272,13 @@
 </template>
 
 <script lang='ts'>
-import LocationMap from '@/components/LocationMap/Index.vue';
 
 import OutDeliveryDialog from '@/components/materialInventoryManage/outDeliveryDialog.vue';
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, Ref, reactive, onMounted, computed, onActivated, watch,
+  ref, Ref, reactive, onMounted, computed, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -292,25 +291,25 @@ import { MaterialInfoType } from '@/assets/Types/common';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 
 interface MaterialGoodsPositionsType {
-  PositionID: number,
+  PositionID: string,
   Number: number,
 }
 interface getMaterialDataType {
-  MaterialID:string|number,
-  SizeID:string|number,
+  MaterialID:string,
+  SizeID:string,
   SKUCode:string,
 }
 interface outDeliveryFormType {
-  MaterialID: number,
+  MaterialID: string,
   Number: number|null,
-  UnitID: number|null,
+  UnitID: string,
   OutStockType: number,
   Handler: string,
   Remark: string,
   MaterialGoodsPositions: MaterialGoodsPositionsType[],
 }
 interface UnitSelectsType {
-  UnitID: number,
+  UnitID: string,
   Unit: string,
   UnitName: string,
   ProportionUp: number,
@@ -318,19 +317,19 @@ interface UnitSelectsType {
   UnitPurpose: number
 }
 interface MaterialAttributesType {
-  MaterialID: number,
+  MaterialID: string,
   CodeID: number,
-  AttributeID: number,
-  SelectID: number,
-  NumericValue: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
   IsBrand: true
 }
 interface SizeSelectsType {
-  MaterialID: number,
-  SizeID: number,
+  MaterialID: string,
+  SizeID: string,
   Code: string,
   SizeDescribe: string
 }
@@ -347,24 +346,24 @@ interface MaterialDataItemType {
   MaterialSelects: MaterialSelectsType[]
 }
 interface GoodsPositionStockInfosType {
-  StorehouseID: number | string,
+  StorehouseID: string,
   PositionName: string,
-  PositionID: number | string,
+  PositionID: string,
   Number: number | string,
   checked: boolean,
   inputValue:string,
   UpperDimension: string
 }
 interface StorehouseStockInfoType {
-  StorehouseID: number | string,
+  StorehouseID: string,
   StorehouseName: string,
   StorehouseImg: string,
   GoodsPositionStockInfos: GoodsPositionStockInfosType[],
 }
 
 export interface DimensionDataType {
-  PositionID: number,
-  DetailID: number,
+  PositionID: string,
+  DetailID: string,
   LeftTopX: number,
   LeftTopY: number,
   DimensionX: string,
@@ -378,13 +377,13 @@ export interface DyadicArrayDimensionDataType {
 }
 
 interface getGoodsPositionDataType {
-  StorehouseID:string|number
-  DimensionIDS: Array<string|number>
+  StorehouseID:string
+  DimensionIDS: Array<string>
   StorehouseGoodsPosition:string
 }
 
 interface DataType {
-  TypeID:string|number
+  TypeID:string
   SizeSelects:null|number
   outVerify:boolean,
   SeeImageShow:boolean,
@@ -439,15 +438,15 @@ export default {
       allSelectTempMaterial: null,
       itemSelectTempMaterial: null,
       outDeliveryForm: {
-        MaterialID: 0,
+        MaterialID: '',
         Number: null,
-        UnitID: null,
+        UnitID: '',
         OutStockType: 51,
         Handler: '',
         Remark: '',
         MaterialGoodsPositions: [
           {
-            PositionID: 0,
+            PositionID: '',
             Number: 0,
           },
         ],
@@ -467,15 +466,15 @@ export default {
     });
     function clearFrom() {
       Data.outDeliveryForm = {
-        MaterialID: 0,
+        MaterialID: '',
         Number: null,
-        UnitID: null,
+        UnitID: '',
         OutStockType: 51,
         Handler: '',
         Remark: '',
         MaterialGoodsPositions: [
           {
-            PositionID: 0,
+            PositionID: '',
             Number: 0,
           },
         ],
@@ -510,7 +509,7 @@ export default {
       Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
       Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
       Data.TypeID = TypeID;
-      Data.outDeliveryForm.UnitID = null;
+      Data.outDeliveryForm.UnitID = '';
     }
     // 格式化数据
     function SizeSelectChange(ID) {
@@ -526,7 +525,7 @@ export default {
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 2),
       };
       Data.checkedMaterial = temp as MaterialInfoType;
-      Data.outDeliveryForm.UnitID = null;
+      Data.outDeliveryForm.UnitID = '';
       GetGoodsAllocation(Data.checkedMaterial.MaterialID);
     }
     // 获取转换为库存单位的数量;
@@ -625,7 +624,7 @@ export default {
         console.log(res);
         if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
-          Data.outDeliveryForm.UnitID = null;
+          Data.outDeliveryForm.UnitID = '';
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 1);
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
@@ -680,7 +679,7 @@ export default {
           StorehouseIt.GoodsPositionStockInfos.forEach(PositionIt => {
             if (PositionIt.checked) {
               temp.push({
-                PositionID: PositionIt.PositionID as number,
+                PositionID: PositionIt.PositionID as string,
                 Number: Number(PositionIt.inputValue),
               });
             }

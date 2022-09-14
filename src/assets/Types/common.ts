@@ -1,15 +1,15 @@
 interface UnitSelectsType {
-  UnitID: number,
+  UnitID: string,
   Unit: string,
   ProportionUp: number,
   ProportionDown: number,
   UnitPurpose: number
 }
 interface MaterialAttributesType {
-  MaterialID: number,
-  AttributeID: number,
-  SelectID: number,
-  NumericValue: string,
+  MaterialID: string,
+  AttributeID: string,
+  SelectID: string,
+  NumericValue: number|null,
   InputSelectValue: string,
   SelectValue: string,
   AttributeUnit: string,
@@ -17,8 +17,8 @@ interface MaterialAttributesType {
 }
 // 根据sku编码或者物料查询的物料
 interface MaterialInfoType {
-  MaterialID: number,
-  TypeID?: number,
+  MaterialID: string,
+  TypeID?: string,
   Code: string,
   SizeDescribe: string,
   MaterialAttributes: MaterialAttributesType[],

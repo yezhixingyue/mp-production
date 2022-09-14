@@ -45,20 +45,17 @@
 
 <script lang='ts'>
 import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated, nextTick,
+  ref, reactive, onMounted, watch, onActivated, nextTick,
 } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
 import LocationMap from '../../../components/LocationMap/Index.vue';
-import Draw from './aaa';
 
 interface DimensionsType {
   Dimension: string
@@ -86,8 +83,8 @@ interface DimensionsFromType {
   list: DimensionsType[],
 }
 export interface DimensionDataType {
-  PositionID: number,
-  DetailID: number,
+  PositionID: string,
+  DetailID: string,
   LeftTopX: number,
   LeftTopY: number,
   DimensionX: string,
@@ -141,8 +138,8 @@ export default {
       StorehouseName: '',
       // 添加/修改货位的表单
       GoodsPositionSaveData: {
-        PositionID: 0,
-        StorehouseID: 0,
+        PositionID: '',
+        StorehouseID: '',
         PositionName: Math.random().toString(16).slice(-10),
         DetailSets: [
           {
@@ -209,8 +206,8 @@ export default {
       if (Data.selectData.length && !Data.selectData[Data.selectData.length - 1].inputValue) return;
 
       const temp = {
-        StorehouseID: Data.GoodsPositionSaveData.StorehouseID as number|string,
-        DimensionIDS: [] as Array<string|number>,
+        StorehouseID: Data.GoodsPositionSaveData.StorehouseID as string,
+        DimensionIDS: [] as Array<string>,
       };
       temp.DimensionIDS = Data.selectData.map(res => res.inputValue);
       api.getGoodsPositionDetail(temp).then(res => {
@@ -259,7 +256,7 @@ export default {
 
     async function handleAdd(e) {
       const DimensionIDS = Data.selectData.map(res => res.inputValue);
-      const StorehouseID = Number(route.params.StorehouseID);
+      const StorehouseID = route.params.StorehouseID as string;
       const temp = {
         StorehouseID,
         DimensionIDS,
@@ -273,7 +270,7 @@ export default {
       if (resp?.data.Status === 1000) {
         return {
           ...temp,
-          PositionID: Number(resp.data.Data),
+          PositionID: resp.data.Data,
         };
       }
       return false;
@@ -332,7 +329,7 @@ export default {
     });
     onMounted(() => {
       Data.StorehouseName = route.params.StorehouseName as string;
-      Data.GoodsPositionSaveData.StorehouseID = Number(route.params.StorehouseID);
+      Data.GoodsPositionSaveData.StorehouseID = route.params.StorehouseID;
       setHeight();
       api.getGoodsPositionDimensionSelect(route.params.StorehouseID).then(res => {
         if (res.data.Status === 1000) {

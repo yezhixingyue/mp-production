@@ -186,7 +186,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated, nextTick,
+  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
@@ -202,7 +202,7 @@ interface twoSelecValueType {
   level2Val:null|string|number,
 }
 interface getMaterialManageDataType {
-  TypeID:number|string,
+  TypeID:string,
   CategoryID:number|string,
   Page:number,
   KeyWords: string,
@@ -210,17 +210,17 @@ interface getMaterialManageDataType {
 }
 
 interface MaterialRelationAttributesType {
-  AttributeID: number|string,
-  NumericValue: string,
-  SelectID: number|string,
+  AttributeID: string,
+  NumericValue: number|null,
+  SelectID: string,
   InputSelectValue: string,
   [a:string]:any
 }
 interface addMaterialManageFormType {
-  ID: number|string,
+  ID: string,
   MaterialRelationAttributes: MaterialRelationAttributesType[],
   MaterialCode: string,
-  SizeIDS: number[],
+  SizeIDS: string[],
   BrandID: number|string,
 }
 interface dialogTypeDataType {
@@ -232,7 +232,7 @@ interface DataType {
   isIndeterminate:boolean,
   addMaterialManageShow:boolean,
   addMaterialManageForm:addMaterialManageFormType,
-  editTypeID: null|number,
+  editTypeID: string,
   DataTotal: number,
   dialogTypeData:dialogTypeDataType,
   getMaterialManageData: getMaterialManageDataType,
@@ -260,13 +260,13 @@ export default {
       checkAll: false,
       isIndeterminate: false,
       addMaterialManageForm: {
-        ID: 0,
+        ID: '',
         MaterialRelationAttributes: [],
         MaterialCode: '',
         SizeIDS: [],
         BrandID: 0,
       },
-      editTypeID: null,
+      editTypeID: '',
       dialogTypeData: {
         CategoryName: '',
         TypeName: '',
@@ -313,12 +313,12 @@ export default {
     }
 
     function addMaterialManageClosed() {
-      Data.editTypeID = null;
+      Data.editTypeID = '';
       Data.checkAll = false;
       Data.isIndeterminate = false;
       MaterialWarehouseStore.MaterialTypeAttributeAllList = [];
       Data.addMaterialManageForm = {
-        ID: 0,
+        ID: '',
         MaterialRelationAttributes: [],
         MaterialCode: '',
         SizeIDS: [],
@@ -342,7 +342,7 @@ export default {
           MaterialWarehouseStore.MaterialTypeAttributeAllList.forEach(res => {
             Data.addMaterialManageForm.MaterialRelationAttributes.push({
               AttributeID: res.AttributeID,
-              NumericValue: '',
+              NumericValue: null,
               SelectID: '',
               InputSelectValue: '',
               AttributeName: res.AttributeName,
@@ -357,11 +357,11 @@ export default {
           });
         };
         MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(
-          Data.getMaterialManageData.TypeID as number,
+          Data.getMaterialManageData.TypeID as string,
           callback,
         );
         MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(
-          Data.getMaterialManageData.TypeID as number,
+          Data.getMaterialManageData.TypeID as string,
         );
 
         const Categoryresp = CategoryList.value.filter(res => res.CategoryID === Data.getMaterialManageData.CategoryID);
@@ -384,7 +384,7 @@ export default {
         });
       }
     }
-    const handleCheckedCitiesChange = (value:number[]) => {
+    const handleCheckedCitiesChange = (value:string[]) => {
       const checkedCount = value.length;
       Data.checkAll = checkedCount === MaterialWarehouseStore.MaterialTypeSizeAllList.length;
       Data.isIndeterminate = checkedCount > 0
@@ -393,7 +393,7 @@ export default {
     const handleCheckAllChange = (val: boolean) => {
       if (val) {
         const temp = MaterialWarehouseStore
-          .MaterialTypeSizeAllList.map(it => it.SizeID as number);
+          .MaterialTypeSizeAllList.map(it => it.SizeID as string);
         Data.addMaterialManageForm.SizeIDS = temp;
       } else {
         Data.addMaterialManageForm.SizeIDS = [];
@@ -429,7 +429,7 @@ export default {
       } else {
         const temp = Data.addMaterialManageForm;
         temp.MaterialRelationAttributes = temp.MaterialRelationAttributes
-          .filter(res => !(res.NumericValue === '' || res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
+          .filter(res => !(res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
 
         // 发送请求
         api.getMaterialSave({
@@ -505,10 +505,10 @@ export default {
         };
 
         MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(
-          Data.editTypeID as number,
+          Data.editTypeID as string,
           callback,
         );
-        MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.editTypeID as number, () => {
+        MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.editTypeID as string, () => {
           Data.addMaterialManageForm.SizeIDS = item.MaterialSizes.map(res => res.SizeID);
           handleCheckedCitiesChange(Data.addMaterialManageForm.SizeIDS);
         });

@@ -78,19 +78,13 @@
 </template>
 
 <script lang='ts'>
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, reactive, onMounted, computed, onActivated, watch,
+  reactive, onMounted, computed, watch,
 } from 'vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
-import messageBox from '@/assets/js/utils/message';
-import { useRouter } from 'vue-router';
-import { MaterialInfoType } from '@/assets/Types/common';
-import { ILocationMapOriginData } from '@/components/LocationMap/types';
 import LocationMap from '@/components/LocationMap/Index.vue';
 import { LocationSetClass } from '@/components/LocationMap/LocationSetClass';
 
@@ -111,8 +105,8 @@ export interface AllPositionDetailsType {
   DimensionUnitY: string
 }
 export interface DimensionDataType {
-  PositionID: number,
-  DetailID: number,
+  PositionID: string,
+  DetailID: string,
   LeftTopX: number,
   LeftTopY: number,
   DimensionX: string,
@@ -148,7 +142,7 @@ interface DimensionsFromType {
 }
 // 上方为新的
 interface StorehouseType {
-  StorehouseID: number,
+  StorehouseID: string,
   StorehouseName: string,
   StorehouseImg: string,
 }
@@ -156,7 +150,7 @@ interface DataType {
   SeeimgUrl: string,
   LookImgShow: boolean,
   SelectGoods: boolean,
-  StorehouseID: number,
+  StorehouseID: string,
   // 仓库列表
   StorehouseList:StorehouseType[]
   GoodsPositionDimensionSelect:GoodsPositionDimensionSelectType | null
@@ -200,14 +194,13 @@ export default {
     },
   },
   setup(props) {
-    const router = useRouter();
     // 入库数据表单
     const Data:DataType = reactive({
       SeeimgUrl: '',
       LookImgShow: false,
       SelectGoods: false,
       // 当前选择的仓库id
-      StorehouseID: 0,
+      StorehouseID: '',
       // 仓库列表
       StorehouseList: [], //
 
@@ -347,8 +340,8 @@ export default {
           .selectData[selectStorehouseGoodsPosition[Data.StorehouseID].selectData.length - 1].inputValue) return;
       }
       const temp = {
-        StorehouseID: Data.StorehouseID as number|string,
-        DimensionIDS: [] as Array<string|number>,
+        StorehouseID: Data.StorehouseID as string,
+        DimensionIDS: [] as Array<string>,
       };
       temp.DimensionIDS = getDimensionIDS.value;
       api.getGoodsPositionDetail(temp).then(res => {
@@ -413,17 +406,17 @@ export default {
       });
     }
     // 获取仓库列表
-    function getStorehouseAll() {
-      api.getStorehouseAll().then(res => {
-        if (res.data.Status === 1000) {
-          Data.StorehouseList = res.data.Data as StorehouseType[];
-          if (Data.StorehouseList.length) {
-            Data.StorehouseID = Data.StorehouseList[Data.StorehouseList.length - 1].StorehouseID;
-            getGoodsPositionDimensionSelect();
-          }
-        }
-      });
-    }
+    // function getStorehouseAll() {
+    //   api.getStorehouseAll().then(res => {
+    //     if (res.data.Status === 1000) {
+    //       Data.StorehouseList = res.data.Data as StorehouseType[];
+    //       if (Data.StorehouseList.length) {
+    //         Data.StorehouseID = Data.StorehouseList[Data.StorehouseList.length - 1].StorehouseID;
+    //         getGoodsPositionDimensionSelect();
+    //       }
+    //     }
+    //   });
+    // }
     watch(() => props.visible, (val) => {
       if (val) {
         const _StorehouseList:StorehouseType[] = props.StorehouseList as StorehouseType[];

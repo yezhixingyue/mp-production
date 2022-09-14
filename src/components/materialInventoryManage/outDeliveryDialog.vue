@@ -28,21 +28,13 @@
 </template>
 
 <script lang='ts'>
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, reactive, onMounted, computed, onActivated, watch,
+  reactive, onMounted, computed, watch,
 } from 'vue';
-import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
-import messageBox from '@/assets/js/utils/message';
-import { useRouter } from 'vue-router';
-import { MaterialInfoType } from '@/assets/Types/common';
-import { ILocationMapOriginData } from '@/components/LocationMap/types';
 import LocationMap from '@/components/LocationMap/Index.vue';
-import { LocationSetClass } from '@/components/LocationMap/LocationSetClass';
 
 interface DimensionType {
   Dimension:string
@@ -61,8 +53,8 @@ export interface AllPositionDetailsType {
   DimensionUnitY: string
 }
 export interface DimensionDataType {
-  PositionID: number,
-  DetailID: number,
+  PositionID: string,
+  DetailID: string,
   LeftTopX: number,
   LeftTopY: number,
   DimensionX: string,
@@ -126,7 +118,6 @@ export default {
     },
   },
   setup(props) {
-    const router = useRouter();
     // 入库数据表单
     const Data:DataType = reactive({
       GoodsPositionDimensionSelect: null,
@@ -195,7 +186,7 @@ export default {
         }
       });
     }
-    watch(() => Data.GoodsPositionDimensionSelect, (newValue) => {
+    watch(() => Data.GoodsPositionDimensionSelect, () => {
       // 处理第二次进入时没有获取货位信息的情况
       getGoodsPosition();
       // 获取二维数组
