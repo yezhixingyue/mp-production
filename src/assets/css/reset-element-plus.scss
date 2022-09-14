@@ -6,3 +6,17 @@
     border-color: $-el-button--primary-hover-bg ;
   }
 }
+.el-radio{
+  // 单选按钮的字体大小
+  --el-radio-font-size:12px;
+}
+.el-checkbox{
+  // 多选按钮的字体大小
+  --el-checkbox-font-size:12px;
+}
+.el-form-item__content{
+  font-size: 12px;
+}
+.el-input{
+  font-size: 12px;
+}
