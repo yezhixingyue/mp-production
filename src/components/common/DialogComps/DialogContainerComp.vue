@@ -2,10 +2,12 @@
   <el-dialog
     v-model="dialogVisible"
     :width="width"
-    custom-class='mp-common-dialog'
+    class='mp-common-dialog'
     @close="Close"
     @closed="closedC"
     @open="onOpen"
+    @opened="onOpened"
+    draggable
     :append-To-Body="appendToBody"
     :top="top"
     :close-on-click-modal="closeOnClickModal">
@@ -21,16 +23,16 @@
     </template>
     <template #footer>
       <slot name="footer">
-        <el-button type="primary" v-if="showPrimary"
+        <el-button type="primary" class="gradient" v-if="showPrimary"
         @click="Primary">{{primaryText}}</el-button>
         <el-button type="danger" v-if="showDel" @click="Del">{{delBtnText }}</el-button>
-        <el-button v-if="showClose" @click="Close">{{closeBtnText}}</el-button>
+        <el-button v-if="showClose" class="blue" @click="Close">{{closeBtnText}}</el-button>
       </slot>
     </template>
   </el-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { computed } from 'vue';
 
 export default {
@@ -97,7 +99,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    autoClose: { // 是否在点击取消或关闭时 自动关闭弹窗展示
+      type: Boolean,
+      default: false,
+    },
   },
+  emits: ['closed', 'open', 'opened', 'submit', 'cancel', 'update:visible'],
   setup(props, context) {
     const dialogVisible = computed({
       get() {
@@ -105,30 +112,43 @@ export default {
       },
       set(value) {
         if (value === props.visible) return;
-        context.emit('update:visible', props.visible);
+        context.emit('update:visible', value);
       },
     });
     function Primary() {
       props.primaryClick();
+      context.emit('submit');
     }
     function Del() {
       props.delClick();
     }
     function Close() {
       props.closeClick();
+      if (props.autoClose) {
+        dialogVisible.value = false;
+      }
+      context.emit('cancel');
     }
     function closedC() {
       props.closed();
+      context.emit('closed');
     }
     function onOpen() {
       props.open();
+      context.emit('open');
     }
+
+    const onOpened = () => {
+      context.emit('opened');
+    };
+
     return {
       Primary,
       Del,
       onOpen,
       Close,
       closedC,
+      onOpened,
       dialogVisible,
     };
   },
@@ -138,6 +158,7 @@ export default {
 <style lang="scss">
 .mp-common-dialog{
   position: relative;
+  border-radius: 5px;
   .el-dialog__header{
     height: 40px;
     box-sizing: border-box;
@@ -151,7 +172,7 @@ export default {
     .el-dialog__headerbtn{
       width: 56px;
       height: 40px;
-      top: 0;
+      top: 2px;
     }
     &::after{
       content: '';
@@ -177,7 +198,7 @@ export default {
       height: 35px;
     }
     .el-button+.el-button{
-      margin-left: 20px;
+      margin-left: 30px;
     }
   }
 }

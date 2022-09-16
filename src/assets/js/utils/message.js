@@ -8,12 +8,14 @@ import { ElMessageBox } from 'element-plus';
  * @param {*} successFunc
  * @param {*} failFunc
  */
-function failSingle(msg, successFunc, failFunc) {
+function failSingle(msg, successFunc, failFunc, dangerouslyUseHTMLString = false) {
   ElMessageBox({
     showClose: true,
     confirmButtonText: '确定',
     title: msg,
-    customClass: 'mp-order-del-pop-reverse-warn-null fail',
+    draggable: false,
+    customClass: 'mp-order-del-pop-reverse-warn-null fail mp-message',
+    dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
 
@@ -25,14 +27,16 @@ function failSingle(msg, successFunc, failFunc) {
  * @param {*} successFunc
  * @param {*} failFunc
  */
-function failSingleError(title, msg, successFunc, failFunc) {
+function failSingleError(title, msg, successFunc, failFunc, dangerouslyUseHTMLString = false) {
   ElMessageBox({
     showClose: true,
     message: msg,
     type: 'fail ',
     confirmButtonText: '关闭',
     title,
-    customClass: 'mp-order-del-pop-reverse-fail',
+    draggable: false,
+    customClass: 'mp-order-del-pop-reverse-fail mp-message',
+    dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
 
@@ -45,14 +49,15 @@ function failSingleError(title, msg, successFunc, failFunc) {
  * @param {string} [title='注意']
  * @param {string} [text='关闭']
  */
-function warnSingleError(msg, successFunc, failFunc, title = '注意', text = '关闭') {
+function warnSingleError(msg, successFunc, failFunc, title = '注意', text = '关闭', dangerouslyUseHTMLString = false) {
   ElMessageBox({
     showClose: true,
     message: msg,
     type: 'warning',
     confirmButtonText: text,
     title,
-    customClass: 'mp-order-del-pop-reverse-warn',
+    customClass: 'mp-order-del-pop-reverse-warn mp-message',
+    dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
 
@@ -64,16 +69,18 @@ function warnSingleError(msg, successFunc, failFunc, title = '注意', text = '�
  * @param {*} successFunc
  * @param {*} failFunc
  */
-function warnCancelBox(title, msg, successFunc, failFunc) {
+function warnCancelBox(title, msg, successFunc, failFunc, dangerouslyUseHTMLString = false) {
   ElMessageBox({
     showClose: true,
     message: msg,
     type: 'success ',
     confirmButtonText: '确定',
     title,
-    customClass: 'mp-order-del-pop-reverse-warn',
+    customClass: 'mp-order-del-pop-reverse-warn mp-message',
     showCancelButton: true,
     cancelButtonText: '取消',
+    draggable: false,
+    dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
 /**
@@ -91,7 +98,7 @@ function dangerCancelBox(title, msg, successFunc, failFunc) {
     type: 'success ',
     confirmButtonText: '确定',
     title,
-    customClass: 'mp-operation-reverse-danger',
+    customClass: 'mp-operation-reverse-danger mp-message',
     showCancelButton: true,
     cancelButtonText: '取消',
     dangerouslyUseHTMLString: true,
@@ -105,14 +112,16 @@ function dangerCancelBox(title, msg, successFunc, failFunc) {
  * @param {*} successFunc
  * @param {*} failFunc
  */
-function warnCancelNullMsg(title, successFunc, failFunc) {
+function warnCancelNullMsg(title, successFunc, failFunc, dangerouslyUseHTMLString = false) {
   ElMessageBox({
     showClose: true,
     confirmButtonText: '确定',
     showCancelButton: true,
     cancelButtonText: '取消',
     title,
-    customClass: 'mp-order-del-pop-reverse-warn-null',
+    customClass: 'mp-order-del-pop-reverse-warn-null mp-message',
+    draggable: false,
+    dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
 
@@ -124,8 +133,8 @@ function warnCancelNullMsg(title, successFunc, failFunc) {
  * @param {*} failFunc
  * @param {boolean} [canCloseOnPressEscape=true]
  */
-function successSingle(title, successFunc, failFunc, canCloseOnPressEscape = true, msg = '') {
-  let customClass = 'mp-order-del-pop-success';
+function successSingle(title, successFunc, failFunc, canCloseOnPressEscape = true, msg = '', dangerouslyUseHTMLString = false) {
+  let customClass = 'mp-order-del-pop-success mp-message';
   if (!msg) customClass = `${customClass} none-msg`;
   ElMessageBox({
     showClose: true,
@@ -134,6 +143,8 @@ function successSingle(title, successFunc, failFunc, canCloseOnPressEscape = tru
     message: msg,
     closeOnPressEscape: canCloseOnPressEscape,
     customClass,
+    draggable: false,
+    dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
 
@@ -152,7 +163,7 @@ function warnCancelMsgSM(title, successFunc, failFunc) {
     cancelButtonText: '取消',
     // dangerouslyUseHTMLString: true,
     title,
-    customClass: 'mp-del-pop-reverse-warn-wrap-sm',
+    customClass: 'mp-del-pop-reverse-warn-wrap-sm mp-message',
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
 

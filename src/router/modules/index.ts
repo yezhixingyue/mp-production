@@ -3,6 +3,7 @@ import LoginView from '@/views/LoginView/index.vue';
 import HomeView from '@/views/HomeView.vue';
 import { RouteTreeType } from '@/router/modules/routerTypes';
 import materialWarehouseRouteRoot from './materialWarehouse';
+import productionResources from './productionResources';
 
 export const moduleRoutes: RouteRecordRaw[] = [
   {
@@ -24,6 +25,7 @@ export const moduleRoutes: RouteRecordRaw[] = [
     component: LoginView,
   },
   materialWarehouseRouteRoot.routes,
+  productionResources.routes,
   { // 无权限页
     path: '/notauth',
     name: 'notauth',
@@ -37,6 +39,7 @@ export const moduleRoutes: RouteRecordRaw[] = [
 ];
 const routeTree:RouteTreeType[] = [
   materialWarehouseRouteRoot.routeTree,
+  productionResources.routeTree,
 ];
 
 export default {

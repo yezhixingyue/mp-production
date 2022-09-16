@@ -200,7 +200,7 @@ export const handleRouterEach = (router:Router) => {
 
   router.afterEach((to:RouteLocationNormalized) => {
     if (to.meta.title) { // 1. 根据路由元信息中title信息设置页面标题
-      document.title = `${to.meta.title} - 名片之家后台管理系统`;
+      document.title = `${to.meta.title} - 名片之家生产管理系统`;
     }
     // NProgress.done();
   });

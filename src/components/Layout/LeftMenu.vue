@@ -94,7 +94,7 @@ export default {
         if (!Array.isArray(_it.children)) return _it;
         return {
           ..._it,
-          children: _it.children.filter(child => child.meta && !child.meta.hideMenu), // 此处筛选权限
+          children: _it.children.filter(child => child.meta && child.meta.icon && !child.meta.hideMenu), // 此处筛选权限
         };
       });
 

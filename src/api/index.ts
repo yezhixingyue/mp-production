@@ -1,4 +1,5 @@
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
+import { resourceApis } from './modules/resourceApis';
 import MaterialStorage from './request/MaterialStorage/index';
 import request from './request/request';
 
@@ -24,6 +25,8 @@ const api = {
   },
   // 物料仓储 api
   ...MaterialStorage,
+  // 生产资源 api
+  ...resourceApis,
 };
 
 export default api;

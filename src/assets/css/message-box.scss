@@ -4,6 +4,11 @@
 .el-message-box__wrapper::after {
     vertical-align: -700px !important;
 }
+.el-overlay.is-message-box .el-overlay-message-box{
+    &::after {
+        display: none;
+    }
+}
 @mixin mp-ele-pop--base {
 
     width: 350px !important;
@@ -40,6 +45,9 @@
                 color: $--color-text-regular;
                 font-size: 16px;
                 font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
         }
         >.el-message-box__headerbtn{
@@ -286,6 +294,7 @@
             > span {
               display: flex;
               justify-content: center;
+              align-items: center;
               line-height: 30px;
               max-height: 90px;
               overflow: hidden;

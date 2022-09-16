@@ -1,7 +1,10 @@
 <template>
-  <section class="mp--pagination">
+  <section class="mp--pagination" :class='{center:center, countInLeft: countInLeft}'>
     <el-config-provider :locale="locale">
       <!-- 分页 -->
+      <span>
+        <slot></slot>
+      </span>
       <el-pagination
          @current-change="handleCurrentChange"
          v-model:current-page="currentPage"
@@ -12,7 +15,7 @@
          :total="total">
        </el-pagination>
     </el-config-provider>
-    <span class="count">共 <i> {{total}} </i> 条记录</span>
+    <span class="count">共检索出 <i> {{total}} </i> 条记录</span>
   </section>
 </template>
 
@@ -37,6 +40,14 @@ export default {
       type: Number,
     },
     handlePageChange: {},
+    center: {
+      type: Boolean,
+      default: false,
+    },
+    countInLeft: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     function handleCurrentChange(val) {
@@ -61,10 +72,37 @@ export default {
     display: flex;
     align-items: center;
     margin: 0 40px;
+    line-height: 36px;
+    color: #444;
     i{
-      color: #428DFA;
+      color: #26bcf9;
+      font-weight: 700;
       padding: 0 3px;
     }
+  }
+  &.center {
+    .el-pagination {
+      flex: 1;
+      justify-content: center;
+      position: relative;
+      right: -32px;
+    }
+    > span {
+      flex: none;
+      min-width: 120px;
+    }
+  }
+  &.countInLeft {
+    // justify-content: flex-start;
+    .count {
+      margin: 0 20px;
+    }
+    &.center {
+      .el-pagination {
+        left: -20px;
+      }
+    }
+    flex-direction: row-reverse;
   }
 }
 </style>

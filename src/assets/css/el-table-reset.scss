@@ -1,26 +1,29 @@
+@import './var.scss';
+
 .el-table{
   text-align: center;
-  // border: none;
+  border: none;
 
   .el-table__header-wrapper {
     tr{
       th{
-        padding: 5px 0;
+        padding: 6px 0;
         &.el-table__cell{
-          background-color: #F2F6FC;
+          background-color: #f5f5f5;
+          color: #444;
           text-align: center;
           border-right: none;
           border-left: none !important;
         }
         &.el-table__cell::after{
-          content: 'a';
+          content: '';
           width: 1px;
           height: 12px;
           display: inline-block;
           position: absolute;
           right: 0;
           top: 11px;
-          background-color: #ACB5C2;
+          background-color: #d0d0d0;
           pointer-events: none;
         }
       }
@@ -34,12 +37,51 @@
             text-align: center;
             border-right: none;
             border-left: none;
-            height: 44px;
+            border: none;
+            height: 42px;
             padding: 5px 0;
+            color: #444;
+            .el-button--info {
+              .iconfont {
+                font-size: 14px;
+                margin-right: 6px;
+                &.icon-bianji {
+                  color: $--color-primary;
+                }
+                &.icon-delete {
+                  color: $--color-pink;
+                }
+              }
+              font-size: 12px;
+              &:hover {
+                .iconfont {
+                  &.icon-bianji {
+                    color: lighten($color: $--color-primary, $amount: 15);
+                  }
+                  &.icon-delete {
+                    color: lighten($color: $--color-pink, $amount: 15);
+                  }
+                }
+              }
+              &:active {
+                .iconfont {
+                  &.icon-bianji {
+                    color: darken($color: $--color-primary, $amount: 15);
+                  }
+                  &.icon-delete {
+                    color: darken($color: $--color-pink, $amount: 15);
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
   }
-
+  &.row-ft-12 {
+    .el-table__body-wrapper .el-table__body tbody .el-table__row .el-table__cell {
+      font-size: 12px;
+    }
+  }
 }

@@ -10,10 +10,10 @@ $warning: $origin !default;
 $success: $green !default;
 
 $theme-colors: (
-  'primary': $primary,
-  'danger': $danger,
-  'warning': $warning,
-  'success': $success,
+  'is-primary': $primary,
+  'is-danger': $danger,
+  'is-warning': $warning,
+  'is-success': $success,
 );
 
 
@@ -22,18 +22,18 @@ $theme-colors: (
  $--color-primary-light: #35dff9;
  $--color-primary-lighter: #63f9d5;
  $--color-blue:#2196f3;
- $--color-blue-1:#428dfa;
+ $--color-blue-light:#428dfa;
  $--color-pink:#ff3769;
  $--color-pink-ligth:#ff90ac;
- $--color-gray-1:#888888;
+ $--color-gray:#888888;
  $--color-primary-1:#333333;
  $--color-cyan: #33BBD5;
  
  $--color-text-btn-hover: #009EF9;
 //  $--color-text-btn-active: #009EF9;
 
- $--color-text-primary-light: #585858;
  $--color-text-primary: #444444; // 主要文字
+ $--color-text-primary-light: #585858;
  $--color-text-regular: #444444; // 常规文字  11111
  $--color-text-light: #a2a2a2; // 次要文字
  $--color-text-table: #444444 ;  // 表格内容文字 11111

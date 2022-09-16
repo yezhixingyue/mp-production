@@ -20,7 +20,8 @@
     "qs": "^6.9.7",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
-    "vue3-print-nb": "^0.1.4"
+    "vue3-print-nb": "^0.1.4",
+    "yezhixingyue-js-utils-4-mpzj": "^0.0.10"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
