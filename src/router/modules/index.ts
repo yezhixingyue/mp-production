@@ -24,8 +24,8 @@ export const moduleRoutes: RouteRecordRaw[] = [
     },
     component: LoginView,
   },
-  materialWarehouseRouteRoot.routes,
   pasteupSettingRouteRoot.routes,
+  materialWarehouseRouteRoot.routes,
   { // 无权限页
     path: '/notauth',
     name: 'notauth',

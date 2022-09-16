@@ -1,5 +1,6 @@
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import MaterialStorage from './request/MaterialStorage/index';
+import PasteupSetting from './request/PasteupSetting/index';
 import request from './request/request';
 
 const api = {
@@ -24,6 +25,7 @@ const api = {
   },
   // 物料仓储 api
   ...MaterialStorage,
+  ...PasteupSetting,
 };
 
 export default api;

@@ -1,51 +1,70 @@
 <template>
-  <div class="material-supplier-manage-page">
+  <div class="pasteup-template-page">
     <header>
-      <div class="header-top">
-        <el-button type="primary" @click="addMaterialSupplier">+ 添加拼版模板</el-button>
+      <div class="classs">
+        <RadioGroupComp
+          :level1Options='ImpositionTemmplateClassList'
+          :level2Options='[]'
+          :defaultProps="{
+            value:'ID',
+            label:'Name',
+          }"
+          :value='RadioGroupCompValue'
+          @change="RadioGroupCompChange"
+          ></RadioGroupComp>
+        <el-button type="primary" link @click="ManagementClass">管理分类</el-button>
       </div>
-       <div class="top-main">
-         <RadioGroupComp
-           :level1Options='CategoryList'
-           :level2Options='MaterialTypeList'
-           :defaultProps="{
-             value:'CategoryID',
-             label:'CategoryName',
-           }"
-           :lv2DefaultProps="{
-             value:'TypeID',
-             label:'TypeName',
-           }"
-           :value='twoSelecValue'
-           @change="twoSelectChange"
-           ></RadioGroupComp>
-       </div>
+      <div class="header-top">
+        <el-button type="primary" @click="ToPasteupTemplateSteupPagePage">+ 添加拼版模板</el-button>
+      </div>
     </header>
     <main :style="`height:${h}px`">
         <el-table border fit
-        :data="Data.MaterialSupplierList" style="width: 100%">
-          <el-table-column
-          show-overflow-tooltip prop="SupplierName" label="供应商名称" min-width="233" />
-          <el-table-column
-          show-overflow-tooltip prop="Linkman" label="联系人" min-width="162" />
-          <el-table-column
-          show-overflow-tooltip prop="ContactWay" label="电话" min-width="209" />
-          <el-table-column
-          show-overflow-tooltip prop="MaterialTypeIDS" label="供应物料类型" min-width="178">
-            <template #default>
+        :data="Data.ImpositionTemmplateList" style="width: 100%">
+          <el-table-column show-overflow-tooltip prop="SupplierName" label="分类" min-width="224">
+            <template #default="scope">
               <span >
-              全部分类
+                {{getClassName(scope.row.ClassID) }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="Address" label="地址"
-          show-overflow-tooltip min-width="551" />
+          <el-table-column
+          show-overflow-tooltip prop="Name" label="名称" min-width="280" />
+          <el-table-column
+          show-overflow-tooltip prop="ContactWay" label="类型" min-width="308">
+            <template #default="scope">
+              <span v-if="scope.row.IsPrintingPlate">
+                印刷版
+              </span>
+              <span v-if="scope.row.IsSameSizeWithPrintingPlate">
+                和印刷版布局保持一致
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+          show-overflow-tooltip prop="MaterialTypeIDS" label="尺寸" min-width="272">
+            <template #default="scope">
+              <span v-if="scope.row.SizeType===0">
+                按模板尺寸
+              </span>
+              <span v-if="scope.row.SizeType===1">
+                按实际拼版尺寸
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="Address" label="拼版方式" show-overflow-tooltip min-width="280" >
+            <template #default="scope">
+              <span v-if="scope.row.ModeSizeAttribute">
+                按模位（{{scope.row.ModeSizeAttribute.PlateInfo.AreaList.length}}条记录）
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope">
-              <el-button type="primary" link @click="editMaterialSupplier(scope.row)">
+              <el-button type="primary" link @click="ToPasteupTemplateSteupPagePage(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
               <el-button type="danger" link
-                @click="delMaterialSupplier(scope.row)">
+                @click="delImpositionTemmplate(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
@@ -54,8 +73,8 @@
     <footer>
       <div class="bottom-count-box">
         <MpPagination
-        :nowPage="Data.getMaterialSupplierData.Page"
-        :pageSize="Data.getMaterialSupplierData.PageSize"
+        :nowPage="Data.getImpositionTemmplateData.Page"
+        :pageSize="Data.getImpositionTemmplateData.PageSize"
         :total="Data.DataTotal"
         :handlePageChange="PaginationChange" />
       </div>
@@ -66,123 +85,142 @@
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, watch, onActivated,
+  ref, reactive, onMounted, watch, onActivated, computed,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useCommonStore } from '@/store/modules/common';
+import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
+import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
+import { ImpositionTemmplate } from './types';
 
-interface MaterialSupplierFormType {
-  SupplierID: string,
-  SupplierName: string,
-  ProvinceID: number|string,
-  CityID: number|string,
-  Address: string,
-  Linkman: string,
-  ContactWay: string,
-  MaterialTypeIDS: string[],
-}
-interface getMaterialSupplierDataType {
+interface getImpositionTemmplateDataType {
   Page: number,
-  KeyWords: string,
-  PageSize: number|string,
+  PageSize: number,
+  ClassID: number|string,
 }
 interface DataType {
   DataTotal: number,
-  getMaterialSupplierData:getMaterialSupplierDataType,
-  MaterialSupplierList:MaterialSupplierFormType[],
+  getImpositionTemmplateData:getImpositionTemmplateDataType,
+  ImpositionTemmplateList:ImpositionTemmplate[],
 }
 export default {
   name: 'pasteupTemplatePage',
   components: {
     MpPagination,
+    RadioGroupComp,
   },
   setup() {
     const h = ref(0);
     const router = useRouter();
-
+    const PasteupSettingStore = usePasteupSettingStore();
     const CommonStore = useCommonStore();
     const Data:DataType = reactive({
       DataTotal: 0,
-      getMaterialSupplierData: {
+      getImpositionTemmplateData: {
+        ClassID: '',
         Page: 1,
-        KeyWords: '',
         PageSize: 20,
       },
-      MaterialSupplierList: [],
+      ImpositionTemmplateList: [],
     });
-    function getMaterialSupplierList() {
-      api.getMaterialSupplierList(Data.getMaterialSupplierData).then(res => {
+    const ImpositionTemmplateClassList = computed(() => [{
+      ID: '',
+      Name: '所有分类',
+    }, ...PasteupSettingStore.ImpositionTemmplateClassList]);
+    const RadioGroupCompValue = computed(() => ({
+      level1Val: Data.getImpositionTemmplateData.ClassID,
+      level2Val: '',
+    }));
+
+    function getImpositionTemmplateList() {
+      api.getImpositionTemmplateList(Data.getImpositionTemmplateData).then(res => {
         if (res.data.Status === 1000) {
-          Data.MaterialSupplierList = res.data.Data as MaterialSupplierFormType[];
+          Data.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
           Data.DataTotal = res.data.DataNumber as number;
         }
       });
     }
-    function ToPasteupTemplateSteupPagePage() {
+    function RadioGroupCompChange(levelData) {
+      const { level1Val } = levelData;
+      if (level1Val !== undefined) {
+        Data.getImpositionTemmplateData.ClassID = level1Val;
+        getImpositionTemmplateList();
+      }
+    }
+    // 管理分类
+    function ManagementClass() {
+      router.push({
+        name: 'impositionTemmplateClass',
+      });
+    }
+    // 添加修改拼版模板
+    function ToPasteupTemplateSteupPagePage(item = null) {
+      console.log(item, 'item');
+
       router.push({
         name: 'pasteupTemplateSteup',
-        // params: { TypeID: IDs.TypeID, CategoryID: IDs.CategoryID },
+        params: { Template: JSON.stringify(item) },
       });
     }
     function PaginationChange(newVal) {
-      if (Data.getMaterialSupplierData.Page === newVal) return;
-      Data.getMaterialSupplierData.Page = newVal;
-      getMaterialSupplierList();
-    }
-    function clearCondition() {
-      Data.getMaterialSupplierData = {
-        Page: 1,
-        KeyWords: '',
-        PageSize: 20,
-      };
+      if (Data.getImpositionTemmplateData.Page === newVal) return;
+      Data.getImpositionTemmplateData.Page = newVal;
+      getImpositionTemmplateList();
     }
 
-    async function editMaterialSupplier() {
-      console.log('editMaterialSupplier');
-      ToPasteupTemplateSteupPagePage();
-    }
-    function delMaterialSupplier(item) {
-      messageBox.warnCancelBox('确定要删除此供应商吗？', `${item.SupplierName}`, () => {
-        api.getMaterialSupplierRemove(item.SupplierID).then(res => {
+    function delImpositionTemmplate(item) {
+      messageBox.warnCancelBox('确定要删除此拼版模板吗？', `${item.Name}`, () => {
+        api.getImpositionTemmplateRemove(item.ID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
-            getMaterialSupplierList();
+            getImpositionTemmplateList();
           }
         });
       }, () => undefined);
     }
-
-    // 添加供应商
-    async function addMaterialSupplier() {
-      console.log('addMaterialSupplier');
-      ToPasteupTemplateSteupPagePage();
+    function getClassName(ClassID) {
+      const ClassItem = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === ClassID);
+      return ClassItem?.Name;
     }
+
     function setHeight() {
       const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-supplier-manage-page > header', 72);
+      h.value = getHeight('.pasteup-template-page > header', 72);
     }
     watch(() => CommonStore.size, () => {
       setHeight();
     });
     onActivated(() => {
       setHeight();
+      const pasteupTemplateSteupPage = sessionStorage.getItem('pasteupTemplateSteupPage') === 'true';
+      if (pasteupTemplateSteupPage) {
+        getImpositionTemmplateList();
+        sessionStorage.removeItem('pasteupTemplateSteupPage');
+      }
     });
     onMounted(() => {
+      sessionStorage.removeItem('pasteupTemplateSteupPage');
       setHeight();
-      getMaterialSupplierList();
+      getImpositionTemmplateList();
+      // 获取所有分类
+      PasteupSettingStore.getImpositionTemmplateClassList();
     });
     return {
       h,
       Data,
-      clearCondition,
-      getMaterialSupplierList,
+      ImpositionTemmplateClassList,
+      PasteupSettingStore,
+      RadioGroupCompValue,
+      getClassName,
+      ManagementClass,
+      RadioGroupCompChange,
+      getImpositionTemmplateList,
       PaginationChange,
-      addMaterialSupplier,
-      editMaterialSupplier,
-      delMaterialSupplier,
+      delImpositionTemmplate,
+      ToPasteupTemplateSteupPagePage,
     };
   },
 
@@ -190,10 +228,19 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
-.material-supplier-manage-page{
+.pasteup-template-page{
   >header{
     padding: 20px;
     padding-bottom: 0;
+    .classs{
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      .el-button{
+        height: 30px;
+        margin-left: 20px;
+      }
+    }
     >.header-top{
       margin-bottom: 20px;
       display: flex;

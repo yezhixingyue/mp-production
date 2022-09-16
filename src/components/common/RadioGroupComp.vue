@@ -16,7 +16,7 @@
         </el-radio-button>
       </el-radio-group>
     </li>
-    <li v-if="Data.level1">
+    <li v-if="Data.level1 && level2Options.length">
       <el-radio-group v-model="Data.level2" @change="lv2SelectChange">
         <el-radio-button v-for="item in level2Options" :key="item[computedLv2DefaultProps.value]"
         :label="item[computedLv2DefaultProps.value]">

@@ -88,6 +88,7 @@
                     <el-radio :label="2">退料</el-radio>
                     <el-radio :label="3">赠送</el-radio>
                     <el-radio :label="4">成品</el-radio>
+                    <el-radio :label="5">盘库</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="`供应商：`"

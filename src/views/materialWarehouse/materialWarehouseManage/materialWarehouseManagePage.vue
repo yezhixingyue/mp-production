@@ -70,7 +70,6 @@
                 ref="upload"
                 class="upload-demo"
                 action="/Api/Upload/Image?type=1"
-                :limit="1"
                 accept=".png,.jpeg,.gif,.jpg,.bmp"
                 :on-success='handllePictureUploaded'
                 :before-upload='beforeUpload'
