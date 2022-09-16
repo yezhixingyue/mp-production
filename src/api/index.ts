@@ -28,6 +28,7 @@ const api = {
   ...MaterialStorage,
   // 生产资源 api
   ...resourceApis,
+  // 拼版设置 api
   ...PasteupSetting,
 };
 

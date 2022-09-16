@@ -485,7 +485,7 @@ export default {
       } else if (!Data.inDeliveryForm.Number) {
         messageBox.failSingleError('入库失败', '请输入入库数量', () => null, () => null);
       } else if (!Data.inDeliveryForm.UnitID) {
-        messageBox.failSingleError('入库失败', '请输入入库单位', () => null, () => null);
+        messageBox.failSingleError('入库失败', '请选择入库单位', () => null, () => null);
       } else if ((Data.inDeliveryForm.InStockType === 1 || Data.inDeliveryForm.InStockType === 3) && !Data.inDeliveryForm.SupplierID) {
         messageBox.failSingleError('入库失败', '请选择供应商', () => null, () => null);
       } else if (Data.inDeliveryForm.InStockType === 1 && !Data.inDeliveryForm.Price) {

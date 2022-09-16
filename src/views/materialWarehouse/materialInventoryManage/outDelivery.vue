@@ -660,7 +660,7 @@ export default {
       } else if (!Data.outDeliveryForm.Number) {
         messageBox.failSingleError('出库失败', '请输入出库数量', () => null, () => null);
       } else if (!Data.outDeliveryForm.UnitID) {
-        messageBox.failSingleError('出库失败', '请输入出库单位', () => null, () => null);
+        messageBox.failSingleError('出库失败', '请选择出库单位', () => null, () => null);
       } else if (!Data.outDeliveryForm.Handler) {
         messageBox.failSingleError('出库失败', '请选择领取人', () => null, () => null);
       } else if (Number(Data.outDeliveryForm.Number) !== Number(getOutUnitNum.value)) {
