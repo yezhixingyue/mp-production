@@ -229,6 +229,7 @@ export default {
       isIndeterminate: false,
       dialogShow: false,
       TypeID: '',
+      CategoryID: '',
       BatchAddList: [
         // {
         //   ID: 0,
@@ -336,6 +337,8 @@ export default {
     function closed() {
       Data.generativeRule.SizeIDS = [];
       Data.generativeRule.Attributes = [];
+      Data.checkAll = false;
+      Data.isIndeterminate = false;
     }
     function closeClick() {
       Data.dialogShow = false;
@@ -553,7 +556,7 @@ export default {
     });
     onMounted(() => {
       Data.TypeID = route.params.TypeID;
-      Data.CategoryID = route.params.CategoryID;
+      Data.CategoryID = Number(route.params.CategoryID);
       setHeight();
       MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(Data.TypeID);
       MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.TypeID);

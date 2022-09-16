@@ -87,6 +87,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import api from '@/api/request/MaterialStorage';
 import LocationMap from '@/components/LocationMap/Index.vue';
 import { LocationSetClass } from '@/components/LocationMap/LocationSetClass';
+import messageBox from '@/assets/js/utils/message';
 
 interface DimensionType {
   Dimension:string
@@ -277,8 +278,12 @@ export default {
       // 清除
     }
     function SelectGoodsPrimaryClick() {
-      props.primaryClick(selectStorehouseGoodsPosition);
-      SelectGoodsCloseClick();
+      if (!getSelectedLocationList.value.length) {
+        messageBox.failSingle('请选择货位', () => null, () => null);
+      } else {
+        props.primaryClick(selectStorehouseGoodsPosition);
+        SelectGoodsCloseClick();
+      }
     }
     function getLocaName() {
       const msg:string[] = [];

@@ -98,6 +98,7 @@
     :visible='Data.LookImgShow'
     :imgUrl="Data.SeeimgUrl"
     :closeClick="() => Data.LookImgShow = false"
+    noImgText="未上传平面布局图"
     >
     </SeeImageDialogComp>
 <!--

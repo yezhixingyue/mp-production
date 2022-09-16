@@ -2,7 +2,7 @@
   <div class="inventory-page">
     <header>
       <el-breadcrumb >
-        <el-breadcrumb-item :to="{ path: '/materialManage' }">库存管理</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
         <el-breadcrumb-item>库存盘点</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">

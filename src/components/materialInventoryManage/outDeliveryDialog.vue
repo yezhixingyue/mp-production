@@ -113,8 +113,8 @@ export default {
       default: () => null,
     },
     currentMaterialID: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   setup(props) {
@@ -196,6 +196,7 @@ export default {
 
     watch(() => props.visible, (val) => {
       if (val) {
+        Data.allDimensionData.UsePositionDetails = null;
         api.getGoodsPositionDimensionPositionPlan(props.getGoodsPositionData.StorehouseID).then(res => {
           if (res.data.Status) {
             Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;

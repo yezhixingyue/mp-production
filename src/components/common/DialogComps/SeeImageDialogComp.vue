@@ -13,7 +13,10 @@
       </slot>
     </template>
     <template #default>
-      <el-image :src="imgUrl" fit="contain" />
+      <el-image v-if="imgUrl" :src="imgUrl" fit="contain" />
+      <p v-else style="text-align: center;">
+        {{noImgText}}
+      </p>
     </template>
   </DialogContainerComp>
 </template>
@@ -41,6 +44,10 @@ export default {
     closeClick: {
       type: Function,
       default: () => null,
+    },
+    noImgText: {
+      type: String,
+      default: '暂无图片',
     },
   },
   setup(props) {

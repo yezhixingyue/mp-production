@@ -976,7 +976,7 @@ export default {
   }
 
   .see-goods-dialog{
-    min-height: 580px;
+    min-height: 600px;
   }
 }
 </style>

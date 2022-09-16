@@ -113,8 +113,8 @@ export default {
       default: () => [],
     },
     currentMaterialID: { // 当前物料
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
     readonly: { // 只读
       type: Boolean,
