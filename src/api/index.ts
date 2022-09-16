@@ -1,6 +1,7 @@
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import { resourceApis } from './modules/resourceApis';
 import MaterialStorage from './request/MaterialStorage/index';
+import PasteupSetting from './request/PasteupSetting/index';
 import request from './request/request';
 
 const api = {
@@ -27,6 +28,7 @@ const api = {
   ...MaterialStorage,
   // 生产资源 api
   ...resourceApis,
+  ...PasteupSetting,
 };
 
 export default api;

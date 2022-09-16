@@ -4,6 +4,7 @@ import HomeView from '@/views/HomeView.vue';
 import { RouteTreeType } from '@/router/modules/routerTypes';
 import materialWarehouseRouteRoot from './materialWarehouse';
 import productionResources from './productionResources';
+import pasteupSettingRouteRoot from './pasteupSetting';
 
 export const moduleRoutes: RouteRecordRaw[] = [
   {
@@ -24,6 +25,7 @@ export const moduleRoutes: RouteRecordRaw[] = [
     },
     component: LoginView,
   },
+  pasteupSettingRouteRoot.routes,
   materialWarehouseRouteRoot.routes,
   productionResources.routes,
   { // 无权限页
@@ -40,6 +42,7 @@ export const moduleRoutes: RouteRecordRaw[] = [
 const routeTree:RouteTreeType[] = [
   materialWarehouseRouteRoot.routeTree,
   productionResources.routeTree,
+  pasteupSettingRouteRoot.routeTree,
 ];
 
 export default {
