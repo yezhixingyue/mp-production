@@ -15,15 +15,12 @@
       </button>
     </template>
     </el-input>
-    <el-button
-     class="order-header-reset-btn"
-     v-if="showResetBtn" link
-     @click="onResetBtn">{{resetWords}}</el-button>
+    <el-button link class="order-header-reset-btn" v-if="showResetBtn" @click="onResetBtn">{{resetWords}}</el-button>
   </section>
 </template>
 
-<script>
-import { computed } from 'vue';
+<script lang="ts">
+import { ref, watch } from 'vue';
 
 export default {
   props: {
@@ -32,12 +29,12 @@ export default {
       type: String,
     },
     title: {
-      default: '活动标题',
+      default: '关键词',
       type: String,
     },
     placeholder: {
       type: String,
-      default: '请输入活动标题',
+      default: '请输入搜索关键词',
     },
     changePropsFunc: {
       type: Function,
@@ -55,19 +52,21 @@ export default {
       default: '清空所有筛选项条件',
       type: String,
     },
-
+    searchWatchKey: {
+      default: 0,
+    },
+    typeList: {},
   },
   setup(props, context) {
-    const inpVal = computed({
-      get() {
-        return props.word;
-      },
-      set(keywords) {
-        props.changePropsFunc(keywords);
-      },
-    });
+    const inpVal = ref('');
 
     function onKeyWordSubmit(e) {
+      const _keywords = inpVal.value;
+      if (Array.isArray(props.typeList) && props.typeList.length > 0) {
+        props.changePropsFunc([props.typeList[0], _keywords]);
+      } else {
+        props.changePropsFunc(_keywords);
+      }
       props.requestFunc();
       e.target.blur();
     }
@@ -76,18 +75,15 @@ export default {
       props.requestFunc();
       inpVal.value = '';
     }
-
+    watch(() => props.searchWatchKey, () => {
+      inpVal.value = props.word;
+    });
     return {
       inpVal,
       onKeyWordSubmit,
       onResetBtn,
     };
   },
-  // watch: {
-  //   searchWatchKey() {
-  //     this.inpVal = this.word;
-  //   },
-  // },
 };
 </script>
 
@@ -102,14 +98,14 @@ export default {
   line-height: 30px;
   min-width: 430px;
   margin-left: 20px;
-  > span:first-of-type {
-    // font-weight: 600;
+  > span.text {
     display: inline-block;
-    // margin-right: 15px;
     user-select: none;
-    // color:#566167;
     line-height: 28px;
     min-width: 5em;
+    font-weight: 600;
+    margin-right: 10px;
+    color: #444;
   }
   > .el-input {
     width: 208px;
@@ -135,26 +131,28 @@ export default {
         border-radius: 0px 3px 3px 0px;
         i{
           color: #fff;
+          font-size: 20px;
         }
       }
     }
   }
   > .order-header-reset-btn {
     user-select: none;
-    // margin-left: 20px;
     font-size: 12px;
     width: auto;
     font-weight: 400;
-    // background-color: #fff;
     line-height: 28px;
     box-sizing: border-box;
     padding: 0 20px;
     border-radius: 1px;
     white-space: nowrap;
-    &:active {
-      background-color: rgba(168, 168, 168, 0.1);
-    }
     color: $--color-primary;
+    &:hover, &:focus {
+      color: lighten($color: $--color-primary, $amount: 13);
+    }
+    &:active {
+      color: darken($color: $--color-primary, $amount: 15) !important;
+    }
     height: 28px;
     cursor: pointer;
   }

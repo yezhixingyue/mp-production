@@ -168,6 +168,7 @@ export default {
       line-height: 16px;
       border-left: 3px solid #428DFA;
       padding-left: 20px;
+      color: #888E99;
     }
     .el-dialog__headerbtn{
       width: 56px;

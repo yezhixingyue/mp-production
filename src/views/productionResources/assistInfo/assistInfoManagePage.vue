@@ -102,7 +102,7 @@ export default {
 
 <style lang='scss' scoped>
 .assist-page-containner {
-  margin: 0 8px;
+  // margin: 0 8px;
   display: flex;
   flex-direction: column;
   height: 100%;

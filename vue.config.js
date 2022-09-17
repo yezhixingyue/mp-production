@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { defineConfig } = require('@vue/cli-service');
 
 const publicPath = process.env.NODE_ENV === 'development' ? '' : '/PD/';
@@ -49,7 +50,6 @@ module.exports = defineConfig({
   //   devtool: 'source-map',
   // },
   configureWebpack: config => {
-    // eslint-disable-next-line no-param-reassign
     config.devtool = 'source-map';
     // 处理图标乱码的问题 （是否解决待确认）
     config.module.rules.filter(rule => rule.test.toString().indexOf('scss') !== -1).forEach(rule => {

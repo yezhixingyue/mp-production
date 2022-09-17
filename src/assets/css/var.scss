@@ -9,13 +9,6 @@ $danger: $pink !default;
 $warning: $origin !default;
 $success: $green !default;
 
-$theme-colors: (
-  'is-primary': $primary,
-  'is-danger': $danger,
-  'is-warning': $warning,
-  'is-success': $success,
-);
-
 
  $--color-primary: #26bcf9;
  $--color-white: #ffffff;
@@ -58,3 +51,15 @@ $theme-colors: (
  $--border-radius-small: 2px ; // 小圆角
 
  $-el-button--primary-hover-bg: #51c9fa;
+
+$theme-colors: (
+  'is-primary': $primary,
+  'is-blue': $primary,
+  'is-danger': $danger,
+  'is-pink': $danger,
+  'is-warning': $warning,
+  'is-orange': $warning,
+  'is-success': $success,
+  'is-gray': $--color-gray,
+  'is-gray-light': $gray,
+);

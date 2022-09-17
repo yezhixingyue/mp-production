@@ -1,9 +1,8 @@
 import api from '@/api';
 import { defineStore, DefineStoreOptions } from 'pinia';
-import { RouteLocationNormalized, useRouter } from 'vue-router';
-import { getGoBackFun } from '@/router';
+import { RouteLocationNormalized } from 'vue-router';
+import router, { getGoBackFun } from '@/router';
 
-const Router = useRouter();
 interface StaffSelectListType {
   StaffID: string,
   StaffName: string
@@ -24,7 +23,7 @@ interface IActions {
 type IGetters = Record<string, never>;
 
 const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
-  id: 'common',
+  id: 'routerStore',
   state: () => ({
     lastPagePaths: [],
     StaffSelectList: [],
@@ -55,7 +54,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       this.size = size;
     },
     replace(routerUrl) { // 回转页面信息后删除掉回转前的路由信息,
-      Router.replace(routerUrl);
+      router.router.replace(routerUrl);
     },
     goBack() { // 返回
       getGoBackFun();

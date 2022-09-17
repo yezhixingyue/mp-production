@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { useUserStore } from '@/store/modules/user';
-import { useRouter } from 'vue-router';
+import router from '@/router';
 import messageBox from '@/assets/js/utils/message';
 import { ElLoading } from 'element-plus';
 import Axios from './axios';
@@ -29,12 +29,16 @@ const loadingInstanceClose = () => {
   obody?.removeAttribute('loading-number');
   loadingInstance.close();
 };
+
 const handleLoadingOpen = () => { // 打开弹窗
   requestNum += 1;
+  // eslint-disable-next-line max-len
+  const spinner = '<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-029747aa=""><path fill="currentColor" d="M512 64a32 32 0 0 1 32 32v192a32 32 0 0 1-64 0V96a32 32 0 0 1 32-32zm0 640a32 32 0 0 1 32 32v192a32 32 0 1 1-64 0V736a32 32 0 0 1 32-32zm448-192a32 32 0 0 1-32 32H736a32 32 0 1 1 0-64h192a32 32 0 0 1 32 32zm-640 0a32 32 0 0 1-32 32H96a32 32 0 0 1 0-64h192a32 32 0 0 1 32 32zM195.2 195.2a32 32 0 0 1 45.248 0L376.32 331.008a32 32 0 0 1-45.248 45.248L195.2 240.448a32 32 0 0 1 0-45.248zm452.544 452.544a32 32 0 0 1 45.248 0L828.8 783.552a32 32 0 0 1-45.248 45.248L647.744 692.992a32 32 0 0 1 0-45.248zM828.8 195.264a32 32 0 0 1 0 45.184L692.992 376.32a32 32 0 0 1-45.248-45.248l135.808-135.808a32 32 0 0 1 45.248 0zm-452.544 452.48a32 32 0 0 1 0 45.248L240.448 828.8a32 32 0 0 1-45.248-45.248l135.808-135.808a32 32 0 0 1 45.248 0z"></path></svg>';
   loadingInstance = ElLoading.service({
     lock: true,
     text: 'Loading',
-    spinner: 'el-icon-loading',
+    svgViewBox: '0 0 20 20',
+    spinner,
     background: 'rgba(255, 255, 255, 0.3)',
     customClass: 'mp-general-loading-box',
   });
@@ -50,12 +54,12 @@ const instance = new Axios({
     // 请求拦截器
     requestInterceptors: (config) => {
       const userStore = useUserStore();
-      const router = useRouter();
+      // const router = useRouter();
       const curConfig = config;
       const { token } = userStore;
 
       if (!token && !apiListByNotNeedToken.includes(curConfig.url || '')) {
-        router.replace('/login');
+        router.router.replace('/login');
 
         throw new Error('请重新登录');
       }

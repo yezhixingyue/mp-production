@@ -2,8 +2,8 @@ import api from '@/api';
 
 export default () => {
   async function getDistrictByParentID(ParentID) {
-    const resp = await api.getDistrictList(ParentID);
-    if (resp.data.Status === 1000) {
+    const resp = await api.getDistrictList(ParentID).catch(() => null);
+    if (resp?.data?.Status === 1000) {
       return resp.data.Data;
     }
     return [];
