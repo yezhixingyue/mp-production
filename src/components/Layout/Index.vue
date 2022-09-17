@@ -46,7 +46,7 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   >div{
-    background-color: #fff;
+    // background-color: #fff;
     margin: 0 8px;
     height: 100%;
   }

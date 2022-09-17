@@ -30,3 +30,11 @@ export {
   MaterialInfoType,
   MaterialAttributesType,
 };
+
+export interface IDistrictItem {
+  ID: number
+  Name: string
+  Level: number
+  ParentID: number
+  IsVirtual: boolean
+}

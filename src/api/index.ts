@@ -1,3 +1,4 @@
+import { IDistrictItem } from '@/assets/Types/common';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import { resourceApis } from './modules/resourceApis';
 import MaterialStorage from './request/MaterialStorage/index';
@@ -11,11 +12,8 @@ const api = {
   getUser() {
     return request<null, IUser>({ method: 'get', url: '/Api/Customer/Detail' });
   },
-  getStaffDetail() {
-    return request<null, IUser>({ method: 'get', url: '/Api/Customer/Detail' });
-  },
-  getDistrictList(ID:number) {
-    return request({ method: 'get', url: `/Api/District/List?parentID=${ID}` });
+  getDistrictList(ID?:number) {
+    return request<number, IDistrictItem[]>({ method: 'get', url: '/Api/District/List', params: { parentID: ID } });
   },
 
   getStaffSelect() {
