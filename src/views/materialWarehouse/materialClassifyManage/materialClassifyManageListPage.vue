@@ -65,7 +65,7 @@ import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 interface tableItem {
   CategoryID: number | undefined
@@ -90,7 +90,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const dialog = ref(false);
     const MaterialCategoryStore = useMaterialWarehouseStore();
     const Data:dataType = reactive({
@@ -166,7 +166,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-classify-manage-list-page header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

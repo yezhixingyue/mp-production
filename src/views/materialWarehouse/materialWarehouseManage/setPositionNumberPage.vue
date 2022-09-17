@@ -118,7 +118,7 @@ import {
   ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 // import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
@@ -158,7 +158,7 @@ export default {
   setup() {
     const h = ref(0);
     // const { getDistrictByParentID } = getDistrictMixins();
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const route = useRoute();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -286,7 +286,7 @@ export default {
         });
       }, () => undefined);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

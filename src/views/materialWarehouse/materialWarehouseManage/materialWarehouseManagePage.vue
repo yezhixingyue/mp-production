@@ -140,7 +140,7 @@ import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogCo
 import api from '@/api/request/MaterialStorage';
 import { useRouter } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 interface SaveStorehouseFormType {
   StorehouseID: string,
@@ -171,7 +171,7 @@ export default {
     SeeImageDialogComp,
   },
   setup() {
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const h = ref(0);
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
@@ -300,7 +300,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-warehouse-manage-page > header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {
@@ -339,6 +339,7 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-warehouse-manage-page{
+  // margin: 0 8px;
   >header{
     >.header-top{
       // margin: 20px 0;

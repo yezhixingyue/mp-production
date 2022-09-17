@@ -110,7 +110,7 @@ import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 export default {
   name: 'setDimensionsPage',
@@ -121,7 +121,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const route = useRoute();
     const Data = reactive({
       CategoryName: '',
@@ -221,7 +221,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.set-dimensions-page header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

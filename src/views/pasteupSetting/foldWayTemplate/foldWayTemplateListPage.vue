@@ -96,7 +96,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import { useRouter } from 'vue-router';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
@@ -123,7 +123,7 @@ export default {
   setup() {
     const h = ref(0);
     const router = useRouter();
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
     const Data:DataType = reactive({
       ApplyEquipmentShow: false,
@@ -202,7 +202,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.foldWay-template-page > header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

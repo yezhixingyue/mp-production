@@ -1,4 +1,4 @@
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 // import NProgress from 'nprogress';
 // import 'nprogress/nprogress.css';
 // import messageBox from '../assets/js/utils/message';
@@ -35,9 +35,9 @@ const NextHandler = (
   to:RouteLocationNormalized,
   next:NavigationGuardNext,
 ) => {
-  const CommonStore = useCommonStore();
+  const RouterStore = useRouterStore();
   // store.commit('common/setLastPagePaths', from);
-  CommonStore.setLastPagePaths(from);
+  RouterStore.setLastPagePaths(from);
   next();
 };
 
@@ -99,7 +99,7 @@ let isInit = true;
    * @return {*}
    */
 export const goBackLastPage = (router:Router) => {
-  const CommonStore = useCommonStore();
+  const RouterStore = useRouterStore();
   if (!router || !router.currentRoute) return;
   const curRouteName = router.currentRoute.value.name;
   if (!curRouteName) return;
@@ -108,7 +108,7 @@ export const goBackLastPage = (router:Router) => {
 
   if (!lastRouteName) return;
   // 2 然后根据该name名称在lastPaths中从后往前找到其上级name所对应的路径名称
-  const lastPaths = CommonStore.lastPagePaths;
+  const lastPaths = RouterStore.lastPagePaths;
   if (!Array.isArray(lastPaths)) return;
   const t = lastPaths.find(it => it.name === lastRouteName);
   if (!t) return;
@@ -116,7 +116,7 @@ export const goBackLastPage = (router:Router) => {
   router.replace(t.fullPath);
   setTimeout(() => {
     // store.commit('common/setLastPagePathsFilterAfterGoback', curRouteName);
-    CommonStore.setLastPagePathsFilterAfterGoback(curRouteName as string);
+    RouterStore.setLastPagePathsFilterAfterGoback(curRouteName as string);
   }, 0);
 };
 

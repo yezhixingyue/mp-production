@@ -197,7 +197,7 @@ import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import messageBox from '@/assets/js/utils/message';
 import { getGoBackFun } from '@/router';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 interface item {
   AttributeID: string,
@@ -219,7 +219,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const route = useRoute();
 
     const MaterialWarehouseStore = useMaterialWarehouseStore();
@@ -548,7 +548,7 @@ export default {
         });
       }
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

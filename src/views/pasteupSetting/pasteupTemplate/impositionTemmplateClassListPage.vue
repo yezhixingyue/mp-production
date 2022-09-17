@@ -62,7 +62,7 @@ import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { FoldWayTemplateClassType } from '@/store/modules/pasteupSetting/types';
 
@@ -79,7 +79,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
     const Data:DataType = reactive({
       addClassShow: false,
@@ -149,7 +149,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.imposition-temmplate-class-page > header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

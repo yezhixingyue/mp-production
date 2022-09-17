@@ -91,7 +91,7 @@ import { useRouter } from 'vue-router';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import { ImpositionTemmplate } from './types';
@@ -116,7 +116,7 @@ export default {
     const h = ref(0);
     const router = useRouter();
     const PasteupSettingStore = usePasteupSettingStore();
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const Data:DataType = reactive({
       DataTotal: 0,
       getImpositionTemmplateData: {
@@ -190,7 +190,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.pasteup-template-page > header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

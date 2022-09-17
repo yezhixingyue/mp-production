@@ -106,7 +106,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { useRoute } from 'vue-router';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { PositionListType, FoldWayTemplateType } from './type';
@@ -132,7 +132,7 @@ export default {
   setup() {
     const h = ref(0);
     const route = useRoute();
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
     const Data:DataType = reactive({
       setPageShow: false,
@@ -250,7 +250,7 @@ export default {
               };
               Data.FoldWayPositionList = [];
               setStorage();
-              CommonStore.goBack();
+              RouterStore.goBack();
             };
             // 保存成功
             messageBox.successSingle('保存成功', cb, cb);
@@ -284,7 +284,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.foldWay-template-steup-page > header', 122);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

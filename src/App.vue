@@ -4,7 +4,7 @@
 
 <script lang='ts'>
 import LayoutComp from '@/components/Layout/Index.vue';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import { onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -13,16 +13,16 @@ export default {
     LayoutComp,
   },
   setup() {
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const Route = useRoute();
     watch(() => Route.path, () => {
-      CommonStore.size = (document
+      RouterStore.size = (document
         .documentElement.clientWidth + document
         .documentElement.clientHeight) + Route.path;
     });
     onMounted(() => {
       window.onresize = () => {
-        CommonStore.size = (document
+        RouterStore.size = (document
           .documentElement.clientWidth + document
           .documentElement.clientHeight) + Route.path;
       };

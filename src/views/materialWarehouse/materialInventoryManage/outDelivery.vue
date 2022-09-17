@@ -93,7 +93,7 @@
                 </el-form-item>
                 <el-form-item :label="`领取人：`">
                   <OneLevelSelect
-                    :options='CommonStore.StaffSelectList'
+                    :options='RouterStore.StaffSelectList'
                     :defaultProps="{
                       value:'StaffID',
                       label:'StaffName',
@@ -282,7 +282,7 @@ import {
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
@@ -419,7 +419,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const Data:DataType = reactive({
       TypeID: '',
       SizeSelects: null,
@@ -461,7 +461,7 @@ export default {
 
     });
     const getReceiptorName = computed(() => {
-      const staff = CommonStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
+      const staff = RouterStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
       return staff?.StaffName || '';
     });
     function clearFrom() {
@@ -713,7 +713,7 @@ export default {
 
       setHeight();
       MaterialWarehouseStore.getMaterialManageList({});
-      CommonStore.getStaffSelect();
+      RouterStore.getStaffSelect();
     });
 
     return {
@@ -723,7 +723,7 @@ export default {
       Data,
       SeeImg,
       getReceiptorName,
-      CommonStore,
+      RouterStore,
       getTransitionNum,
       getOutUnitNum,
       outUnitName,

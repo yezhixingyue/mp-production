@@ -143,7 +143,7 @@ import { useRouter } from 'vue-router';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 interface formType {
   TypeID: string,
@@ -194,7 +194,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const router = useRouter();
     const MaterialCategoryStore = useMaterialWarehouseStore();
     // 添加/编辑 物料类型点击
@@ -354,7 +354,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-classify-manage-page header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     // function getMaterialCategoryList() {

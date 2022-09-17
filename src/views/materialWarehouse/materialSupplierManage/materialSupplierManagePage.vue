@@ -149,7 +149,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 interface DistrictType {
   ID: string,
@@ -209,7 +209,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const { getDistrictByParentID } = getDistrictMixins();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -374,7 +374,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.material-supplier-manage-page > header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

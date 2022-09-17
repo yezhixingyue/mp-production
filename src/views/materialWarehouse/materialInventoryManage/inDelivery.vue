@@ -122,7 +122,7 @@
                 || Data.inDeliveryForm.InStockType === 4"
                 class="supplier">
                   <OneLevelSelect
-                    :options='CommonStore.StaffSelectList'
+                    :options='RouterStore.StaffSelectList'
                     :defaultProps="{
                       value:'StaffID',
                       label:'StaffName',
@@ -242,7 +242,7 @@ import {
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
@@ -357,7 +357,7 @@ export default {
     const h = ref(0);
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     // 选择仓库货位弹框的表单数据
     const selectStorehouseGoodsPosition = reactive({});
     const Data:DataType = reactive({
@@ -686,14 +686,14 @@ export default {
       // MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
 
       MaterialWarehouseStore.getMaterialManageList({});
-      CommonStore.getStaffSelect();
+      RouterStore.getStaffSelect();
       getStorehouseAll();
     });
 
     return {
       h,
       Data,
-      CommonStore,
+      RouterStore,
       getTransitionNum,
       getInUnitNum,
       inUnitName,

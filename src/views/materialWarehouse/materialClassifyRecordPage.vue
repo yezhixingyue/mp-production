@@ -286,7 +286,7 @@ import {
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
@@ -395,7 +395,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     // 入库类型
     const inStorageType = [
@@ -496,7 +496,7 @@ export default {
     const StaffSelectList = computed(() => [{
       StaffID: '',
       StaffName: '不限',
-    }, ...CommonStore.StaffSelectList]);
+    }, ...RouterStore.StaffSelectList]);
 
     function setHeight() {
       const { getHeight } = autoHeightMixins();
@@ -607,7 +607,7 @@ export default {
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {
@@ -618,7 +618,7 @@ export default {
       MaterialWarehouseStore.getMaterialCategoryList();
       getRecordList();
       MaterialWarehouseStore.getSupplierSelectList();
-      CommonStore.getStaffSelect();
+      RouterStore.getStaffSelect();
     });
 
     return {
@@ -629,7 +629,7 @@ export default {
       Data,
       getHandleType,
       twoSelecValue,
-      CommonStore,
+      RouterStore,
       inStorageType,
       outStorageType,
       CategoryList,

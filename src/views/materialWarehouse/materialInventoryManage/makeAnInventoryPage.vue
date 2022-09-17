@@ -146,7 +146,7 @@ import {
   ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 
@@ -193,7 +193,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const Data:DataType = reactive({
       StorehouseName: '',
       // 还有物料 添加物料弹窗
@@ -266,8 +266,12 @@ export default {
     // 重新盘点上一个
     function anewLast() {
       messageBox.warnCancelBox('操作确认', '确定要重新盘点上一个', () => {
-        setDetail(Data.InventoryDetail?.PrevDetailID);
-        getInventoryDetail();
+        api.getInventoryAgainPrev(Data.InventoryDetail?.DetailID).then(res => {
+          if (res.data.Status === 1000) {
+            setDetail(Data.InventoryDetail?.PrevDetailID);
+            getInventoryDetail();
+          }
+        });
       }, () => null);
     }
     // 去下一个
@@ -342,7 +346,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.makeAn-inventory-page header', 100);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

@@ -229,6 +229,10 @@ const api = {
     // GET /Api/Inventory/Detail  盘库详情
     return request({ method: 'GET', url: `/Api/Inventory/Detail?detailID=${detailID}` });
   },
+  getInventoryAgainPrev(detailID) {
+    // GET /Api/Inventory/AgainPrev  盘库上一个
+    return request({ method: 'GET', url: `/Api/Inventory/AgainPrev?detailID=${detailID}` });
+  },
   getInventoryRight(detailID) {
     // GET /Api/Inventory/Right
     return request({ method: 'GET', url: `/Api/Inventory/Right?detailID=${detailID}` });

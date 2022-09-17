@@ -62,4 +62,4 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
   },
 };
-export const useCommonStore = defineStore(options);
+export const useRouterStore = defineStore(options);

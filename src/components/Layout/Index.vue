@@ -4,7 +4,9 @@
   <div class="mp-erp-layout-content-right-wrap">
     <LayoutHeader v-if="displaySider && !fullAcreen" />
     <div class="mp-erp-layout-page-content-comp-wrap" :class="{'no-padding height100 no-margin': isLogin}">
-      <router-view/>
+      <div>
+        <router-view/>
+      </div>
     </div>
   </div>
 </template>
@@ -45,7 +47,8 @@ export default {
   overflow-x: hidden;
   >div{
     background-color: #fff;
-    margin-left: 10px;
+    margin: 0 8px;
+    height: 100%;
   }
   &.no-padding{
     padding: 0;

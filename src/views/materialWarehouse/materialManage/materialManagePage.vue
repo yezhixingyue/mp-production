@@ -194,7 +194,7 @@ import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/mat
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 
 interface twoSelecValueType {
@@ -251,7 +251,7 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const h = ref(0);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -577,7 +577,7 @@ export default {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
 
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {

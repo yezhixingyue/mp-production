@@ -74,7 +74,7 @@ import {
   ref, reactive, onMounted, watch, onActivated,
 } from 'vue';
 import { useRouter } from 'vue-router';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
@@ -107,7 +107,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const router = useRouter();
 
     const Data:DataType = reactive({
@@ -163,7 +163,7 @@ export default {
       const { getHeight } = autoHeightMixins();
       h.value = getHeight('.inventory-page > header', 72);
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     function visibilitychange() {

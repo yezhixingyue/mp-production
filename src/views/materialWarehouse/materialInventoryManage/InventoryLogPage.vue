@@ -127,7 +127,7 @@ import {
   ref, reactive, onMounted, watch, computed, nextTick, onActivated,
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import api from '@/api/request/MaterialStorage';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 
@@ -179,7 +179,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     // 入库类型
     const Data:DataType = reactive({
       DataTotal: 0,
@@ -216,7 +216,7 @@ export default {
     const StaffSelectList = computed(() => [{
       StaffID: '',
       StaffName: '不限',
-    }, ...CommonStore.StaffSelectList]);
+    }, ...RouterStore.StaffSelectList]);
 
     function getInventoryLogList() {
       ClassType.setDate(Data.getInventoryLogListData, 'CheckTime');
@@ -277,7 +277,7 @@ export default {
         }
       });
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {
@@ -286,7 +286,7 @@ export default {
     onMounted(() => {
       setHeight();
       getStorehouseAll(getInventoryLogList);
-      CommonStore.getStaffSelect();
+      RouterStore.getStaffSelect();
     });
 
     return {
@@ -295,7 +295,7 @@ export default {
 
       h,
       Data,
-      CommonStore,
+      RouterStore,
       StaffSelectList,
       PaginationChange,
       getInventoryLogList,

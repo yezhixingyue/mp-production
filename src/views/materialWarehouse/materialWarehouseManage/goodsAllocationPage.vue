@@ -54,7 +54,7 @@ import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useCommonStore } from '@/store/modules/common';
+import { useRouterStore } from '@/store/modules/routerStore';
 import LocationMap from '../../../components/LocationMap/Index.vue';
 
 interface DimensionsType {
@@ -129,7 +129,7 @@ export default {
   },
   setup() {
     const h = ref(0);
-    const CommonStore = useCommonStore();
+    const RouterStore = useRouterStore();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const route = useRoute();
     const Data:DataType = reactive({
@@ -319,7 +319,7 @@ export default {
       setNewPosition();
       setPositionNameCloseClick();
     }
-    watch(() => CommonStore.size, () => {
+    watch(() => RouterStore.size, () => {
       setHeight();
     });
     onActivated(() => {
