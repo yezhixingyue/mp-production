@@ -32,7 +32,12 @@ module.exports = defineConfig({
         ws: true,
         changeOrigin: true,
       },
-      '/Storage': { // 代理临时图片地址
+      '/Storage': { //
+        target: proxyUrl,
+        ws: true,
+        changeOrigin: true,
+      },
+      '/PlateFile': { //
         target: proxyUrl,
         ws: true,
         changeOrigin: true,

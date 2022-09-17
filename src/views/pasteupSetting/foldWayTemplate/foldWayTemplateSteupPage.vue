@@ -8,7 +8,7 @@
         </el-breadcrumb-item>
       </el-breadcrumb>
     </header>
-    <main :style="`height:${h}px`">
+    <main>
     <el-scrollbar class="main-scrollbar">
       <div class="left">
         <p class="title">{{Data.foldWayTemplateFrom.ID?'编辑' :'添加'}}折手模板</p>
@@ -40,7 +40,7 @@
       </div>
       <div class="right">
         <p><el-button type="primary" link @click="Data.rotatePage = !Data.rotatePage">翻转印面</el-button></p>
-        <div :style="`height:${h - 60}px`">
+        <div>
           <el-scrollbar>
           <ul class="rows" :class="{ 'rotate-page':Data.rotatePage }">
             <li v-for="(PositionRow, RowIndex) in Data.FoldWayPositionList" :key="RowIndex">
@@ -98,10 +98,9 @@
 
 <script lang='ts'>
 import {
-  ref, reactive, onMounted, watch, onActivated,
+  reactive, onMounted,
 } from 'vue';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
@@ -130,7 +129,6 @@ export default {
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
     const route = useRoute();
     const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
@@ -280,16 +278,6 @@ export default {
       }
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.foldWay-template-steup-page > header', 122);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     // 转换为显示的列表
     function toFoldWayPositionList(PositionList:PositionListType[]) {
       PositionList.forEach(res => {
@@ -302,7 +290,6 @@ export default {
       });
     }
     onMounted(() => {
-      setHeight();
       const temp = JSON.parse(route.params.Template as string) as FoldWayTemplateType;
       if (temp.ID) {
         Data.foldWayTemplateFrom = temp;
@@ -314,7 +301,6 @@ export default {
       }
     });
     return {
-      h,
       Data,
       PasteupSettingStore,
       createMap,
@@ -333,13 +319,17 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .foldWay-template-steup-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   font-size: 12px;
+    background-color: #fff;
   >header{
     padding: 20px;
-    padding-bottom: 0;
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
     >.main-scrollbar{
       >.el-scrollbar__wrap{
@@ -387,7 +377,6 @@ export default {
       }
     }
     .right{
-      flex: 1;
       margin-left: 150px;
       padding-right: 50px;
       >p{
@@ -403,6 +392,8 @@ export default {
         display: inline-block;
         width: 100%;
         max-width: 1010px;
+        // 40 便签 54 header 32 翻转印面 100 footer 50 预留50px
+        height: calc(100vh - 40px - 54px - 32px - 100px - 50px);
       }
       .rows{
         display: inline-block;
@@ -472,6 +463,9 @@ export default {
     padding-bottom: 50px;
     .el-button{
       width: 100px;
+    }
+    .el-button + .el-button{
+      margin-left: 30px;
     }
   }
 }

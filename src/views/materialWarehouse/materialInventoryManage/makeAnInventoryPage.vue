@@ -44,7 +44,7 @@
                 </p>
                 <p>
                   <span class="label">数量：</span>
-                  <span class="value is-red">
+                  <span class="value is-red" v-if="Data.InventoryDetail?.Code">
                     {{Data.InventoryDetail.Stock}}{{Data.InventoryDetail.StockUnit}}
                   </span>
                 </p>
@@ -88,7 +88,7 @@
           </div>
           <div class="btn">
             <el-button type="primary" @click="inventoryCorrect">正确</el-button>
-            <el-button @click="inventoryError">错误</el-button>
+            <el-button @click="inventoryError" :disabled="!Data.InventoryDetail?.Code">错误</el-button>
           </div>
         </el-scrollbar>
       </MpCardContainer>

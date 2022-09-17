@@ -5,8 +5,7 @@
         <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
         <el-breadcrumb-item>规划货位图：{{Data.StorehouseName}}</el-breadcrumb-item>
       </el-breadcrumb>
-      <MpCardContainer :TopAndButtomPadding = '12' v-if="Data.selectData.length">
-        <div class="top-main">
+        <div class="top-main" v-if="Data.selectData.length">
           <template v-for="(item, index) in Data.selectData" :key="item.id">
             <el-select
               no-data-text="无数据"
@@ -23,10 +22,8 @@
             </el-select>
           </template>
         </div>
-      </MpCardContainer>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
+    <main>
         <el-scrollbar>
           <LocationMap
             v-if="Data.allDimensionData.UsePositionDetails"
@@ -35,7 +32,6 @@
             :remove="handleRemove"
           />
         </el-scrollbar>
-      </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -44,17 +40,12 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 
-import {
-  ref, reactive, onMounted, watch, onActivated, nextTick,
-} from 'vue';
+import { reactive, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 import LocationMap from '../../../components/LocationMap/Index.vue';
 
 interface DimensionsType {
@@ -122,14 +113,11 @@ interface DataType {
 export default {
   name: 'goodsAllocationPage',
   components: {
-    MpCardContainer,
     // DialogContainerComp,
     LocationMap,
     // OneLevelSelect,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const route = useRoute();
     const Data:DataType = reactive({
@@ -221,11 +209,7 @@ export default {
         }
       });
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.goods-allocation-page header', 72);
-    }
-    //
+
     watch(() => Data.GoodsPositionDimensionSelect, (newValue) => {
       const returnData:DimensionsFromType[] = [];
       if (newValue && newValue.DimensionSelects) {
@@ -246,10 +230,6 @@ export default {
       // 获取二维数组
       Data.allDimensionData.DyadicArrayDimensionData = [];
       getDyadicArray();
-
-      nextTick(() => {
-        setHeight();
-      });
     });
 
     async function handleAdd(e) {
@@ -319,16 +299,10 @@ export default {
       setNewPosition();
       setPositionNameCloseClick();
     }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
       Data.StorehouseName = route.params.StorehouseName as string;
       Data.GoodsPositionSaveData.StorehouseID = route.params.StorehouseID;
-      setHeight();
       api.getGoodsPositionDimensionSelect(route.params.StorehouseID).then(res => {
         if (res.data.Status === 1000) {
           Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;
@@ -337,7 +311,6 @@ export default {
     });
 
     return {
-      h,
       Data,
       disCheck,
       setNewPosition,
@@ -356,36 +329,36 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .goods-allocation-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
+    background-color: #fff;
     padding: 20px;
-    padding-bottom: 0;
-    >.mp-card-container{
-      >.top-main{
+    >.top-main{
+      display: flex;
+      // justify-content: space-between;
+      .el-select+.el-select{
+        margin-left: 20px;
+      }
+      .mp-search-input-comp{
         display: flex;
-        // justify-content: space-between;
-        .el-select+.el-select{
-          margin-left: 20px;
-        }
-        .mp-search-input-comp{
-          display: flex;
-        }
       }
     }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
     padding-left: 20px;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
+    background-color: #fff;
+    .el-table{
       height: 100%;
-      .el-table{
-        flex: 1;
-      }
+      flex: 1;
     }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

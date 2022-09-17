@@ -9,8 +9,7 @@
         <el-button type="primary" @click="Data.dialogShow = true">+ 添加尺寸</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
+    <main>
         <el-table border fit
         :data="Data.dimensisnsList" style="width: 100%">
 
@@ -44,7 +43,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -100,28 +98,20 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import {
-  ref, reactive, onMounted, watch, onActivated,
-} from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
+import { reactive, onMounted } from 'vue';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 export default {
   name: 'setDimensionsPage',
   components: {
-    MpCardContainer,
     MpPagination,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const route = useRoute();
     const Data = reactive({
       CategoryName: '',
@@ -217,26 +207,15 @@ export default {
         });
       }
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.set-dimensions-page header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
       Data.CategoryName = route.params.CategoryName as string;
       Data.TypeName = route.params.TypeName as string;
       Data.getDimensisnsData.TypeID = route.params.TypeID as string;
       Data.addDimensionsForm.TypeID = route.params.TypeID as string;
-      setHeight();
       getDimensisnsList();
     });
     return {
-      h,
       Data,
       editDimensions,
       delDimensions,
@@ -252,38 +231,28 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .set-dimensions-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
-    >.header-top{
-      margin-bottom: 20px;
-    }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
       .el-table{
+        height: 100%;
         flex: 1;
       }
-    }
+    background-color: #fff;
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

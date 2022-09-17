@@ -15,9 +15,8 @@
         </SearchInputComp>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.MaterialSupplierList" style="width: 100%">
           <el-table-column
           show-overflow-tooltip prop="SupplierName" label="供应商名称" min-width="233" />
@@ -53,7 +52,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <div class="bottom-count-box">
@@ -135,21 +133,18 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, computed, watch, onActivated,
+  reactive, onMounted, computed, watch,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface DistrictType {
   ID: string,
@@ -201,15 +196,12 @@ interface DataType {
 export default {
   name: 'materialSupplierManagePage',
   components: {
-    MpCardContainer,
     MpPagination,
     TowLevelSelect,
     SearchInputComp,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const { getDistrictByParentID } = getDistrictMixins();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -370,18 +362,7 @@ export default {
       }
       Data.isIndeterminate = false;
     };
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-supplier-manage-page > header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
-      setHeight();
       getMaterialSupplierList();
       // 获取物料分类
       MaterialWarehouseStore.getMaterialCategoryList();
@@ -392,7 +373,6 @@ export default {
       });
     });
     return {
-      h,
       Data,
       twoSelecValue,
       MaterialWarehouseStore,
@@ -417,37 +397,36 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-supplier-manage-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
+    background-color: #fff;
     padding: 20px;
-    padding-bottom: 0;
     >.header-top{
-      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
     }
-    >.mp-card-container{
-      >.top-main{
+    >.top-main{
+      display: flex;
+      justify-content: space-between;
+      .mp-search-input-comp{
         display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
       }
     }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
+    background-color: #fff;
+    .el-table{
       height: 100%;
-      .el-table{
-        flex: 1;
-      }
+      flex: 1;
     }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

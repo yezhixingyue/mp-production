@@ -5,9 +5,9 @@
         <el-button type="primary" @click="Data.SaveStorehouseShow = true">添加仓库</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+      <!-- <MpCardContainer> -->
+        <el-table border fit stripe
         :data="Data.StorehouseList" style="width: 100%">
           <el-table-column
           show-overflow-tooltip prop="StorehouseName" label="名称" min-width="302" />
@@ -36,9 +36,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div>
-        </div>
-      </MpCardContainer>
+      <!-- </MpCardContainer> -->
     </main>
     <footer>
       <div class="bottom-count-box">
@@ -126,21 +124,16 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
-import {
-  ref, reactive, onMounted, watch, onActivated,
-} from 'vue';
+import { reactive, onMounted, onActivated } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 // import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api/request/MaterialStorage';
 import { useRouter } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface SaveStorehouseFormType {
   StorehouseID: string,
@@ -165,14 +158,12 @@ interface DataType {
 export default {
   name: 'materialWarehouseManagePage',
   components: {
-    MpCardContainer,
+    // MpCardContainer,
     MpPagination,
     DialogContainerComp,
     SeeImageDialogComp,
   },
   setup() {
-    const RouterStore = useRouterStore();
-    const h = ref(0);
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -295,16 +286,8 @@ export default {
         });
       }
     }
-    // 添加供应商
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-warehouse-manage-page > header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
+
     onActivated(() => {
-      setHeight();
       const bool = sessionStorage.getItem('updataMaterialWarehouseManagePage') === 'true';
       if (!bool) return;
       getStorehouseList();
@@ -312,11 +295,9 @@ export default {
     });
     onMounted(() => {
       sessionStorage.removeItem('updataMaterialWarehouseManagePage');
-      setHeight();
       getStorehouseList();
     });
     return {
-      h,
       Data,
       MaterialWarehouseStore,
       seeImg,
@@ -340,41 +321,35 @@ export default {
 @import '@/assets/css/var.scss';
 .material-warehouse-manage-page{
   // margin: 0 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
+    background-color: #fff;
     >.header-top{
       // margin: 20px 0;
       padding: 20px;
-      padding-bottom: 0;
+      // padding-bottom: 0;
       display: flex;
       justify-content: space-between;
     }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
+    background-color: #fff;
+    .el-table{
       height: 100%;
-      .el-table{
-        flex: 1;
-        .el-table__inner-wrapper{
-          height: 100%;
-        }
+      flex: 1;
+      .el-table__inner-wrapper{
+        height: 100%;
       }
     }
   }
   >footer{
     min-height: 50px;
+    background-color: #fff;
     height: 50px;
     display: flex;
     justify-content: flex-end;

@@ -9,8 +9,7 @@
         <el-button type="primary" @click="Data.dialogShow = true">+ 添加属性</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
+    <main>
         <el-table border fit
         :data="Data.AttributesList" style="width: 100%">
           <el-table-column prop="AttributeName" label="名称" min-width="209" />
@@ -46,7 +45,6 @@
           </el-table-column>
         </el-table>
 
-      </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -137,17 +135,14 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, nextTick, watch, onActivated,
+  ref, reactive, onMounted,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface AttributeSelectsType {
     SelectID: string,
@@ -174,13 +169,10 @@ interface DataType {
 export default {
   name: 'setAttributesPage',
   components: {
-    MpCardContainer,
     MpPagination,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const dialog = ref(false);
     const route = useRoute();
     const Data:DataType = reactive({
@@ -306,28 +298,15 @@ export default {
         }
       });
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.set-attributes-page header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
       Data.CategoryName = route.params.CategoryName as string;
       Data.TypeName = route.params.TypeName as string;
       Data.addAttributesForm.TypeID = route.params.TypeID;
       Data.getAttributesData.TypeID = route.params.TypeID;
-      nextTick(() => {
-        setHeight();
-      });
       getAttributesList();
     });
     return {
-      h,
       Data,
       dialog,
       addAttributeSelect,
@@ -347,38 +326,28 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .set-attributes-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
-    >.header-top{
-      margin-bottom: 20px;
-    }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
+    background-color: #fff;
+    .el-table{
       height: 100%;
-      .el-table{
-        flex: 1;
-      }
+      flex: 1;
     }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

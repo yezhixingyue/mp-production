@@ -3,13 +3,11 @@
     <header>
       <div class="header-top">
         <div class="bt">
-
           <el-button
           type="primary" @click="addMaterialManage">+ 添加物料</el-button>
           <el-button
           type="primary" @click="batchAddMaterialManage">批量生成</el-button>
         </div>
-
             <SearchInputComp
               :word='Data.getMaterialManageData.KeyWords'
               title="关键词搜索"
@@ -21,7 +19,6 @@
               >
             </SearchInputComp>
       </div>
-      <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
           <RadioGroupComp
             :level1Options='CategoryList'
@@ -37,13 +34,10 @@
             :value='twoSelecValue'
             @change="twoSelectChange"
             ></RadioGroupComp>
-
         </div>
-      </MpCardContainer>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main >
+        <el-table border fit stripe
         :data="MaterialWarehouseStore.MaterialManageList" style="width: 100%">
           <el-table-column prop="CategoryName" label="分类" min-width="208"/>
           <el-table-column prop="TypeName" label="类型" min-width="157"/>
@@ -84,7 +78,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <div class="bottom-count-box">
@@ -180,21 +173,18 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  reactive, onMounted, watch, computed, ComputedRef, onActivated,
 } from 'vue';
 import { useRouter } from 'vue-router';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 
 interface twoSelecValueType {
@@ -241,7 +231,6 @@ interface DataType {
 export default {
   name: 'materialManagePage',
   components: {
-    MpCardContainer,
     RadioGroupComp,
     SearchInputComp,
     MpPagination,
@@ -251,8 +240,6 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const RouterStore = useRouterStore();
-    const h = ref(0);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
       addMaterialManageTitle: '',
@@ -292,14 +279,10 @@ export default {
         params: { TypeID: IDs.TypeID, CategoryID: IDs.CategoryID },
       });
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-manage-page header', 72);
-    }
+
     function getMaterialManageList() {
       MaterialWarehouseStore.getMaterialManageList(Data.getMaterialManageData, (DataNumber) => {
         Data.DataTotal = DataNumber as number;
-        setHeight();
       });
     }
     function PaginationChange(newVal) {
@@ -570,18 +553,13 @@ export default {
         Data.getMaterialManageData.CategoryID = level1Val;
         Data.getMaterialManageData.TypeID = level2Val;
         getMaterialManageList();
-        setHeight();
       }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
 
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
     onActivated(() => {
-      setHeight();
       const bool = sessionStorage.getItem('saveGenerative') === 'true';
       if (!bool) return;
       getMaterialManageList();
@@ -589,14 +567,11 @@ export default {
     });
     onMounted(() => {
       sessionStorage.removeItem('saveGenerative');
-      MaterialWarehouseStore.getMaterialCategoryList(() => {
-        setHeight();
-      });
+      MaterialWarehouseStore.getMaterialCategoryList();
       getMaterialManageList();
     });
 
     return {
-      h,
       Data,
       CategoryList,
       MaterialTypeList,
@@ -624,15 +599,17 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-manage-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.header-top{
       display: flex;
       justify-content: space-between;
       margin-bottom: 20px;
     }
-    >.mp-card-container{
       >.top-main{
         display: flex;
         justify-content: space-between;
@@ -640,21 +617,19 @@ export default {
           display: flex;
         }
       }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
       .el-table{
+        height: 100%;
         flex: 1;
       }
-    }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

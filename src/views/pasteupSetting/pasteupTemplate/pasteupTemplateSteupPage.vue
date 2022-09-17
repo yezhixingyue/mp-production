@@ -7,7 +7,7 @@
           {{Data.addPasteupTemplateFrom.ID?`${Data.addPasteupTemplateFrom.Name}` :''}}</el-breadcrumb-item>
       </el-breadcrumb>
     </header>
-    <main :style="`height:${h}px`">
+    <main>
       <p class="title">{{Data.addPasteupTemplateFrom.ID?'编辑' :'添加'}}拼版模板</p>
       <el-form :model="Data.addPasteupTemplateFrom" label-width="100px">
         <el-form-item :label="`分类：`">
@@ -83,7 +83,9 @@
                     </div>
                   </template>
                 </el-upload>
-                <el-button link type="primary">下载当前模板文件</el-button>
+                <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath">
+                  {{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath}}</el-link>
+                <!-- <el-button link type="primary">下载当前模板文件</el-button> -->
               </div>
               <p class="hint">
                 模板制作说明：版芯使用 PANTONE 804C 标记
@@ -163,11 +165,9 @@
 
 <script lang='ts'>
 import {
-  ref, reactive, onMounted, watch, onActivated,
+  reactive, onMounted,
 } from 'vue';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
@@ -185,7 +185,6 @@ export default {
     OneLevelSelect,
   },
   setup() {
-    const h = ref(0);
     const route = useRoute();
     const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
@@ -368,18 +367,8 @@ export default {
       }
       return isLt15M;
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.pasteup-template-steup-page > header', 122);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
-      setHeight();
       const temp = JSON.parse(route.params.Template as string) as ImpositionTemmplate;
       if (!temp.ModeSizeAttribute) {
         temp.ModeSizeAttribute = {
@@ -428,7 +417,6 @@ export default {
       }
     });
     return {
-      h,
       Data,
       PasteupSettingStore,
       addModeItem,
@@ -444,12 +432,17 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .pasteup-template-steup-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff;
   font-size: 12px;
   >header{
     padding: 20px;
     padding-bottom: 0;
   }
   >main{
+    flex: 1;
     margin-top: 20px;
     overflow-x: auto;
     padding-left: 40px;
@@ -613,6 +606,9 @@ export default {
     padding-bottom: 50px;
     .el-button{
       width: 100px;
+    }
+    .el-button + .el-button{
+      margin-left: 30px;
     }
   }
 }

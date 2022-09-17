@@ -9,9 +9,8 @@
         <el-button type="primary" @click="ToInventoryLogPage">查看盘点记录</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.InventoryList" style="width: 100%">
           <el-table-column
           show-overflow-tooltip prop="StorehouseName" label="仓库" min-width="215" />
@@ -49,7 +48,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <!-- <el-button type="primary" @click="saveGenerativeRule">保存</el-button> -->
@@ -68,15 +66,10 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
-import {
-  ref, reactive, onMounted, watch, onActivated,
-} from 'vue';
+import { reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useRouterStore } from '@/store/modules/routerStore';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 
@@ -102,12 +95,9 @@ interface DataType {
 }
 export default {
   components: {
-    MpCardContainer,
     MpPagination,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const router = useRouter();
 
     const Data:DataType = reactive({
@@ -159,13 +149,7 @@ export default {
         });
       }, () => null);
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.inventory-page > header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
+
     function visibilitychange() {
       if (document.visibilityState === 'visible' && localStorage.getItem('updataInventoryState')) {
         // 切换到该页面时执行
@@ -173,12 +157,8 @@ export default {
         getInventoryList();
       }
     }
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
       document.addEventListener('visibilitychange', visibilitychange);
-      setHeight();
       getInventoryList();
     });
     function removeEventListener() {
@@ -186,7 +166,6 @@ export default {
     }
 
     return {
-      h,
       Data,
       removeEventListener,
       beginInventory,
@@ -201,40 +180,32 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .inventory-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     .el-breadcrumb{
       margin-bottom: 20px;
     }
     >.header-top{
-      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
     }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
       .el-table{
+        height: 100%;
         flex: 1;
       }
-    }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

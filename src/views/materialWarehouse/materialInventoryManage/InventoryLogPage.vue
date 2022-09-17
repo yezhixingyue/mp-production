@@ -2,7 +2,7 @@
   <div class="inventory-log-page">
     <header>
       <el-breadcrumb >
-        <el-breadcrumb-item :to="{ path: '/materialManage' }">库存管理</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/inventory' }">库存盘点</el-breadcrumb-item>
         <el-breadcrumb-item>盘点记录</el-breadcrumb-item>
       </el-breadcrumb>
@@ -27,7 +27,6 @@
           </el-radio-group>
         </el-scrollbar>
       </div>
-      <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main flex-between">
           <LineDateSelectorComp
           :dateList="[
@@ -68,11 +67,9 @@
               >
             </SearchInputComp>
         </div>
-      </MpCardContainer>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.InventoryLogList" style="width: 100%">
           <el-table-column prop="MaterialCode" label="时间" min-width="200">
             <template #default="scope">
@@ -101,7 +98,6 @@
           show-overflow-tooltip prop="Remark" label="备注" min-width="200"/>
 
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <!-- <el-button type="primary" @click="saveGenerativeRule">保存</el-button> -->
@@ -118,15 +114,13 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, nextTick, onActivated,
+  reactive, onMounted, computed,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useRouterStore } from '@/store/modules/routerStore';
 import api from '@/api/request/MaterialStorage';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
@@ -171,14 +165,12 @@ interface DataType {
 export default {
   name: 'InventoryLogPage',
   components: {
-    MpCardContainer,
     OneLevelSelect,
     SearchInputComp,
     MpPagination,
     LineDateSelectorComp,
   },
   setup() {
-    const h = ref(0);
     const RouterStore = useRouterStore();
     // 入库类型
     const Data:DataType = reactive({
@@ -240,10 +232,7 @@ export default {
       Data.getInventoryLogListData.Page = newVal;
       getInventoryLogList();
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.inventory-log-page header', 72);
-    }
+
     function radioGroupChange(StorehouseID) {
       Data.getInventoryLogListData.StorehouseID = StorehouseID;
       getInventoryLogList();
@@ -271,20 +260,11 @@ export default {
         if (res.data.Status === 1000) {
           Data.StorehouseList = res.data.Data as StorehouseType[];
           cb();
-          nextTick(() => {
-            setHeight();
-          });
         }
       });
     }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
-      setHeight();
       getStorehouseAll(getInventoryLogList);
       RouterStore.getStaffSelect();
     });
@@ -293,7 +273,6 @@ export default {
       setCondition4DataList,
       UserDefinedTimeIsActive,
 
-      h,
       Data,
       RouterStore,
       StaffSelectList,
@@ -309,9 +288,13 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .inventory-log-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    padding-bottom: 0px;
+    background-color: #fff;
     .el-breadcrumb{
       margin-bottom: 20px;
     }
@@ -323,7 +306,6 @@ export default {
         padding-bottom: 8px;
       }
     }
-    >.mp-card-container{
       >.top-main{
         display: flex;
         flex-wrap: wrap;
@@ -350,22 +332,20 @@ export default {
           }
         }
       }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
       .el-table{
+        height: 100%;
         flex: 1;
       }
-    }
   }
   >footer{
     min-height: 50px;
+    background-color: #fff;
     height: 50px;
     display: flex;
     justify-content: flex-end;

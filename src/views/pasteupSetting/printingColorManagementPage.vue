@@ -5,7 +5,7 @@
         <el-button type="primary" @click="addPrintingColor">+ 添加印色</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
+    <main>
       <el-table fit stripe
       :data="Data.PrintColorList" style="width: 100%">
         <el-table-column
@@ -62,21 +62,12 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
-import {
-  ref, reactive, onMounted, computed, watch, onActivated,
-} from 'vue';
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
+import { reactive, onMounted } from 'vue';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface addPrintingColorShowFromType {
 IsSpecialColor:boolean,
@@ -99,10 +90,6 @@ export default {
     MpPagination,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
-    const { getDistrictByParentID } = getDistrictMixins();
-    const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
       addPrintingColorShow: false,
       addPrintingColorShowFrom: {
@@ -177,22 +164,10 @@ export default {
       Data.addPrintingColorShow = true;
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.printing-color-management-page > header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
-      setHeight();
       getPrintColorList();
     });
     return {
-      h,
       Data,
       addPrintingColor,
       addColorPrimaryClick,
@@ -208,30 +183,24 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .printing-color-management-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.header-top{
-      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
     }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    background-color: #fff;
     .el-table{
       flex: 1;
       max-width: 700px;
@@ -242,6 +211,7 @@ export default {
   }
   >footer{
     min-height: 50px;
+    background-color: #fff;
     height: 50px;
     display: flex;
     justify-content: flex-end;

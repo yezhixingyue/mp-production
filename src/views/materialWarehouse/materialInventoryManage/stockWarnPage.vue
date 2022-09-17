@@ -17,7 +17,6 @@
           >
         </SearchInputComp>
       </div>
-      <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
           <RadioGroupComp
             :title='"物料筛选"'
@@ -35,11 +34,9 @@
             @change="twoSelectChange"
             ></RadioGroupComp>
         </div>
-      </MpCardContainer>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.StockWarnList" style="width: 100%">
           <el-table-column prop="CreateTime" label="预警时间" min-width="197">
             <template #default="scope">
@@ -104,7 +101,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -120,17 +116,14 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  reactive, onMounted, watch, computed, ComputedRef,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api/request/MaterialStorage';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -184,14 +177,11 @@ interface DataType {
 export default {
   name: 'stockWarnPage',
   components: {
-    MpCardContainer,
     RadioGroupComp,
     SearchInputComp,
     MpPagination,
   },
   setup() {
-    const RouterStore = useRouterStore();
-    const h = ref(0);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
       DataTotal: 0,
@@ -209,10 +199,6 @@ export default {
       ...MaterialWarehouseStore.CategoryList]);
     const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
       ...MaterialWarehouseStore.MaterialTypeList]);
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.stock-warn-page header', 72);
-    }
     function getStockWarnPageList() {
       api.getStockWarnList(Data.getStockWarnData).then(res => {
         if (res.data.Status === 1000) {
@@ -247,27 +233,18 @@ export default {
         Data.getStockWarnData.CategoryID = level1Val;
         Data.getStockWarnData.TypeID = level2Val;
         getStockWarnPageList();
-        setHeight();
       }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
 
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
-      setHeight();
       MaterialWarehouseStore.getMaterialCategoryList();
       getStockWarnPageList();
     });
 
     return {
-      h,
       Data,
       CategoryList,
       MaterialTypeList,
@@ -284,9 +261,12 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .stock-warn-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     .header-top{
       display: flex;
       justify-content: space-between;
@@ -295,29 +275,19 @@ export default {
     .el-breadcrumb{
       line-height: 32px;
     }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
       .el-table{
+        height: 100%;
         flex: 1;
       }
-    }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

@@ -9,7 +9,7 @@
         <el-button type="primary" @click="addClass">+ 添加分类</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
+    <main>
       <el-table fit stripe
       :data="PasteupSettingStore.ImpositionTemmplateClassList" style="width: 100%">
         <el-table-column
@@ -55,14 +55,12 @@
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, watch, onActivated,
+  reactive, onMounted,
 } from 'vue';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { FoldWayTemplateClassType } from '@/store/modules/pasteupSetting/types';
 
@@ -78,8 +76,6 @@ export default {
     MpPagination,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
     const Data:DataType = reactive({
       addClassShow: false,
@@ -145,22 +141,10 @@ export default {
       Data.addClassShow = true;
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.imposition-temmplate-class-page > header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
-      setHeight();
       getClassList();
     });
     return {
-      h,
       Data,
       PasteupSettingStore,
       addClass,
@@ -177,24 +161,27 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .imposition-temmplate-class-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     .el-breadcrumb{
       margin-bottom: 20px;
     }
     >.header-top{
-      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
     }
   }
   >main{
+    flex: 1;
     margin-top: 20px;
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    background-color: #fff;
     .el-table{
       flex: 1;
       max-width: 560px;
@@ -204,6 +191,7 @@ export default {
     }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

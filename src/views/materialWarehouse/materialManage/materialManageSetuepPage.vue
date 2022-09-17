@@ -9,8 +9,7 @@
         <el-button type="primary" @click="generativeRuleClick">生成规则</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
+    <main >
         <!-- :data="Data.BatchAddList" style="width: 100%"> -->
         <el-scrollbar>
           <div class="material-item"
@@ -82,7 +81,6 @@
             </el-scrollbar>
           </div>
         </el-scrollbar>
-      </MpCardContainer>
     </main>
     <footer>
       <el-button :disabled="!Data.BatchAddList.length"
@@ -186,18 +184,15 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, onActivated,
+  reactive, onMounted, computed,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import messageBox from '@/assets/js/utils/message';
 import { getGoBackFun } from '@/router';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface item {
   AttributeID: string,
@@ -214,12 +209,9 @@ interface DataType{
 export default {
   name: 'materialManageSetuepPage',
   components: {
-    MpCardContainer,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const route = useRoute();
 
     const MaterialWarehouseStore = useMaterialWarehouseStore();
@@ -507,10 +499,7 @@ export default {
         .MaterialTypeSizeAllList.find(res => res.SizeID === sizeId);
       return `${temp?.SizeName}${temp?.SizeLength}x${temp?.SizeWidth}mm`;
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-manage-setuep-page header', 72);
-    }
+
     function saveGenerativeRule() {
       const nullSizeIDS:number[] = [];
       Data.BatchAddList.forEach((res, i) => {
@@ -548,21 +537,13 @@ export default {
         });
       }
     }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
       Data.TypeID = route.params.TypeID;
       Data.CategoryID = Number(route.params.CategoryID);
-      setHeight();
       MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(Data.TypeID);
       MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.TypeID);
     });
     return {
-      h,
       Data,
       BatchAddData,
       getCustominp,
@@ -587,34 +568,20 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-manage-setuep-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
-    >.header-top{
-      margin-bottom: 20px;
-    }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
-    >.mp-card-container{
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      height: 100%;
-      padding: 20px 80px;
-      // min-width: 740px;
+    flex: 1;
+    margin-top: 10px;
+    background-color: #fff;
       >.el-scrollbar{
         flex: 1;
         padding: 0 40px;
@@ -667,16 +634,19 @@ export default {
           }
         }
       }
-    }
   }
   >footer{
     min-height: 50px;
+    background-color: #fff;
     height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
     .el-button{
       width: 100px;
+    }
+    .el-button + .el-button{
+      margin-left: 30px;
     }
   }
   .add-Generative-Rule-dialog{

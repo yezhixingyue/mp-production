@@ -18,7 +18,7 @@
         <el-button type="primary" @click="TofoldWayTemplate">+ 添加折手模板</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
+    <main>
       <el-table fit stripe
       :data="Data.FoldWayTemplateList" style="width: 100%">
         <el-table-column
@@ -82,25 +82,18 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, computed, watch, onActivated,
+  reactive, onMounted, computed, onActivated,
 } from 'vue';
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 import { useRouter } from 'vue-router';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
-import { PositionListType, FoldWayTemplateType } from './type';
+import { FoldWayTemplateType } from './type';
 
 interface getFoldWayTemplateDataType {
   ClassID:number|string,
@@ -121,9 +114,7 @@ export default {
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
     const router = useRouter();
-    const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
     const Data:DataType = reactive({
       ApplyEquipmentShow: false,
@@ -198,15 +189,8 @@ export default {
       const ClassItem = PasteupSettingStore.FoldWayTemplateClassList.find(it => it.ID === ClassID);
       return ClassItem?.Name;
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.foldWay-template-page > header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
+
     onActivated(() => {
-      setHeight();
       const foldWayTemplateSteupPage = sessionStorage.getItem('foldWayTemplateSteupPage') === 'true';
       if (foldWayTemplateSteupPage) {
         getFoldWayTemplateList();
@@ -215,13 +199,11 @@ export default {
     });
     onMounted(() => {
       sessionStorage.removeItem('foldWayTemplateSteupPage');
-      setHeight();
       getFoldWayTemplateList();
       // 获取所有分类
       PasteupSettingStore.getFoldWayTemplateClassList();
     });
     return {
-      h,
       Data,
       RadioGroupCompValue,
       PasteupSettingStore,
@@ -241,9 +223,12 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .foldWay-template-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     .classs{
       display: flex;
       align-items: flex-start;
@@ -254,31 +239,23 @@ export default {
       }
     }
     >.header-top{
-      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
     }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    margin-top: 10px;
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1;
+    background-color: #fff;
     .el-table{
       flex: 1;
     }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

@@ -11,8 +11,7 @@
         <span>当前库存单位：{{Data.currentStoreUnit}}</span>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
+    <main >
         <el-table border fit
         :data="Data.unitList" style="width: 600px">
           <el-table-column prop="date" label="单位换算" min-width="195">
@@ -45,7 +44,6 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange"/>
         </div>
-      </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -106,28 +104,20 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
-import {
-  ref, reactive, onMounted, watch, onActivated,
-} from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
+import { reactive, onMounted } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 export default {
   name: 'setTheStorageUnitPage',
   components: {
-    MpCardContainer,
     MpPagination,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const route = useRoute();
     const Data = reactive({
       CategoryName: '',
@@ -260,16 +250,7 @@ export default {
         });
       }
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.set-the-storage-unit-page header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
       Data.CategoryName = route.params.CategoryName as string;
       Data.TypeName = route.params.TypeName as string;
@@ -277,11 +258,9 @@ export default {
       Data.getUnitListData.TypeID = route.params.TypeID as string;
       Data.addUnitForm.TypeID = route.params.TypeID as string;
       Data.currentStoreUnit = route.params.StockUnit as string;
-      setHeight();
       getUnitList();
     });
     return {
-      h,
       Data,
       addStorageUnit,
       editStorageUnit,
@@ -301,14 +280,16 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .set-the-storage-unit-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
     >.header-top{
-      margin-bottom: 20px;
       display: flex;
       align-items: center;
       >span{
@@ -316,34 +297,26 @@ export default {
         margin-left: 12px;
       }
     }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
       .el-table{
+        height: 100%;
         flex: 1;
       }
       >.bottom-count-box{
         display: flex;
         height: 50px;
       }
-    }
   }
   >footer{
     min-height: 50px;
+    background-color: #fff;
     height: 50px;
     display: flex;
     justify-content: center;

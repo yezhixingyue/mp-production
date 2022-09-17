@@ -1,39 +1,14 @@
 <!-- 侧边栏 -->
 <template>
-  <div class="mp-erp-layout-side-bar-comp-wrap" :class="{'collapse': isCollapse}">
-    <div class="logo">
-      <img src="@/assets/images/logo.png" alt="">
+  <div class="mp-erp-layout-left-menu-comp-wrap" :class="isCollapse ? 'collapsed':'unfold'">
+    <div class="logo-box" @click="onMenuItemClick(homeRouteInfo, '0')" @keyup="() => null">
+      <img src="@/assets/images/logo.png" alt="" class="broad">
     </div>
-
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <!-- <el-menu
-        :default-active="defaultActive"
-        :default-openeds='defaultOpeneds'
-        :collapse-transition='true'
-        :collapse="isCollapse"
-        class="el-menu-vertical-demo">
-        <el-sub-menu
-          v-for="(routeWrap, index) in menuList"
-          :key="routeWrap.path" :index='`${index + 1}`'
-          v-show="routeWrap.children.length > 0">
-          <template #title>
-            <i class="title-icon" :class="routeWrap.meta.icon"></i>
-            <span>{{routeWrap.meta.title}}</span>
-          </template>
-          <el-menu-item
-           :index="`${index + 1}-${i + 1}`"
-           @click="onMenuItemClick(route, `${index + 1}-${i + 1}`)"
-            v-for="(route, i) in routeWrap.children"
-           :key="route.path"
-           :class="{hidden: route.meta.hiddenItem}">
-            <span v-if="route.meta" slot:title>{{route.meta.title}}</span>
-          </el-menu-item>
-        </el-sub-menu>
-      </el-menu> -->
       <el-menu :default-active="defaultActive" :default-openeds='defaultOpeneds' background-color="#222B3A" :collapse="isCollapse"
         :collapse-transition='true' text-color="#fff" class="el-menu-vertical-demo" active-text-color="#26bcf9">
         <el-sub-menu v-for="(routeWrap, index) in menuList" :key="routeWrap.path" :index='`${index + 1}`' v-show="routeWrap.children.length > 0">
-          <template #title>
+          <template v-slot:title>
             <i :class="routeWrap.meta.icon" class="title-icon" v-show="isCollapse"></i>
             <span>{{routeWrap.meta.title}}</span>
           </template>
@@ -43,27 +18,12 @@
             v-for="(route, i) in routeWrap.children"
            :key="route.path"
            :class="{hidden: route.meta.hiddenItem}">
-           <template #title>
-              <i v-if="route.meta" :class="route.meta.icon"></i>
-              <span v-if="route.meta">{{route.meta.title}}</span>
-           </template>
+            <i v-if="route.meta" :class="route.meta.icon"></i>
+            <span v-if="route.meta">{{route.meta.title}}</span>
           </el-menu-item>
         </el-sub-menu>
       </el-menu>
     </el-scrollbar>
-
-    <!-- <template v-for="(routeWrap, index) in menuList" :key="routeWrap.path">
-      <router-link :to="routeWrap.path">1{{routeWrap.meta.title}}</router-link>
-      <template v-if="routeWrap.children && routeWrap.children.length">
-        <button v-for="(route, i) in routeWrap.children" :key="route.path"
-          @click="onMenuItemClick(route,`${index + 1}-${i + 1}`)"
-          :style="defaultActive===`${index + 1}-${i + 1}`?'color:red;':''">
-          {{route.meta.title}}
-        </button>
-      </template>
-    </template>
-    <router-link to="/">主页</router-link>
-    <router-link to="/about">关于</router-link> -->
   </div>
 </template>
 
@@ -222,96 +182,191 @@ export default {
 };
 </script>
 <style lang='scss'>
-.mp-erp-layout-side-bar-comp-wrap {
-  background-color: #222b3a;
-  a {
-    color: #fff;
-    text-decoration: none;
-    display: block;
-    line-height:40px;
+  .mp-erp-layout-left-menu-comp-wrap{
+    width: 186px;
+    background-color: rgb(34, 43, 58);
     font-size: 14px;
-    &.router-link-active {
-      color: rgb(38, 188, 249);
-      background-color: #0e1727;
-    }
-  }
-  > .logo {
-    cursor: pointer;
-    background-color: #242832;
-    width: 100%;
-    height: 84px;
-    -webkit-box-sizing: border-box;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
     box-sizing: border-box;
-    text-align: center;
-    line-height: 84px;
-    padding: 6px;
-    text-align: center;
-  }
-  .scrollbar-wrapper{
-    font-size: 14px;
-    .el-menu-vertical-demo{
-      background-color: #242832;
-      .el-sub-menu{
-        .el-menu--inline{
-          background-color: #161B26;
-          .el-menu-item{
-            color: #B8C6E0;
-            border-left: 2px solid #161B26;
-            padding-left: 86px;
-            i{
-              margin-right: 10px;
-            }
-            &.is-active{
-              color: #fff;
-              border-left: 2px solid #26BCF9;
-              background:linear-gradient(to right,#428DFA, #124897);
-            }
-            &:hover{
-              color: #fff;
-              background-color: #5b7289;
-            }
-          }
-        }
-        .el-sub-menu__title{
-          padding-left: 50px;
-          padding-right: 43px;
-          height: 50px;
-          line-height: 50px;
-          // background-color: #242832;
-          color: #B8C6E0;
-          .el-sub-menu__icon-arrow{
-            right: 43px;
-          }
-          &:hover{
-            background-color: #5b7289;
-          }
-        }
-        &.is-active{
-          .el-sub-menu__title{
-            color: #fff;
-            &:hover{
-              background-color: #5b7289;
-            }
-          }
-        }
-        &.is-opened > .el-sub-menu__title .el-sub-menu__icon-arrow {
-          transform: rotateZ(0deg);
-        }
-        &:not(.is-opened) {
-          .el-sub-menu__title .el-sub-menu__icon-arrow  {
-            transform: rotateZ(-90deg);
-          }
+    transition: width 0.3s ease-in-out;
+    a {
+      text-decoration: none;
+    }
+    > div.logo-box {
+      cursor: pointer;
+      background-color: rgb(25, 31, 42);
+      width: 100%;
+      height: 47px;
+      box-sizing: border-box;
+      text-align: center;
+      line-height: 47px;
+      padding: 6px;
+    }
+    .el-menu {
+      border: none;
+    }
+    .el-scrollbar {
+      .el-scrollbar__wrap {
+        overflow: hidden;
+        overflow-y: auto;
+        padding-bottom: 30px;
+        // width: 100%;
+        .el-scrollbar__view {
+          max-width: 186px;
         }
       }
-      border: 0;
-      .title-icon{
-        // background-color:red;
-        width:18px;
-        height:18px;
-        margin-right: 20px;
-        line-height: 18px;
+    }
+
+    p.login-out-box {
+      width: 100%;
+      padding: 15px 18px;
+      box-sizing: border-box;
+      cursor: pointer;
+      background-color: rgb(34, 43, 58);
+      color: #fff;
+      // padding-bottom: 40px;
+      // margin: 20px 0;
+      margin-top: 20px;
+      &:hover {
+        background-color: rgb(54, 66, 88);
+      }
+      &:active {
+        background-color: rgb(15, 29, 53);
+      }
+      display: flex;
+      align-items: center;
+      // justify-content: center;
+      white-space: nowrap;
+      > i {
+        font-size: 18px;
+        margin-right: 5px;
+        &.not-c {
+          margin-right: 12px;
+        }
+      }
+    }
+    .el-menu-vertical-demo:not(.el-menu--collapse) {
+      width: 100%;
+      min-height: 400px;
+      min-height: calc(100vh - 120px);
+      .el-sub-menu .el-menu-item {
+        width: 100%;
+        height: 42px;
+        line-height: 42px;
+        box-sizing: border-box;
+        min-width: unset;
+        background-color: rgb(15, 29, 53);
+        transition: 0.05s ease-in-out;
+        user-select: none;
+        > i {
+          margin-right: 5px;
+          margin-top: -2px;
+          &.iconfont {
+            font-size: 15px;
+            margin-left: 4px;
+            margin-right: 10px;
+          }
+        }
+        > i, > span {
+          color: #fff;
+        }
+        &:hover {
+          background-color: rgb(38, 188, 249) !important;
+          background-color: rgb(14, 23, 39) !important;
+          > i, > span {
+            color: #fff;
+          }
+        }
+        &.is-active {
+          background-color: rgb(14, 23, 39) !important;
+          > i, > span {
+            color: #fff;
+            color: rgb(38, 188, 249) !important;
+          }
+        }
+        &.hidden {
+          display: none;
+        }
+      }
+    }
+    &:not(.collapsed) {
+      .el-sub-menu__title > i:last-of-type {
+        transform: rotateZ(-90deg) !important;
+        margin-top: -8px;
+      }
+    }
+    .el-sub-menu__title {
+      background-color: rgb(15, 29, 53) !important;
+      height: 42px;
+      line-height: 38px;
+      user-select: none;
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0px;
+        background-color: rgb(38, 188, 249);
+        transition: width 0.1s ease-in-out;
+      }
+      &:hover {
+        color: rgb(38, 188, 249) !important;
+        &::before {
+          width: 2px;
+        }
+        > i.title-icon {
+          color: rgb(38, 188, 249) !important;
+        }
+      }
+      > i {
+        font-size: 17px;
+        color: #fff;
+        &.title-icon {
+          margin-left: -2px !important;
+          transition: color 0.1s ease-in-out;
+        }
+      }
+    }
+    .el-sub-menu.is-opened > .el-sub-menu__title{
+      .el-sub-menu__icon-arrow {
+        transform: rotateZ(0deg) !important;
+      }
+    }
+    .el-menu--collapse {
+      width: 55px;
+    }
+    &.collapsed {
+      width: 55px;
+    }
+    .login-out-box.show{
+      animation: hiddenFrames 0.6s ease-in-out;
+    }
+    @keyframes hiddenFrames {
+      from {
+        opacity: 1;
+      };
+      1% {
+        opacity: 0;
+      };
+      99% {
+        opacity: 0;
+      };
+      to {
+        opacity: 1;
       }
     }
   }
-}
+  .el-menu .el-menu-item > i.el-icon {
+    margin-right: 0;
+  }
+  .el-menu--vertical > .el-menu .el-menu-item > i.el-icon {
+    text-align: left;
+    margin-left: 5px;
+  }
 </style>

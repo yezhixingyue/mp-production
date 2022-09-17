@@ -9,9 +9,8 @@
         <el-button type="primary" @click="dialog = true">+ 添加物料分类</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.tableData" style="width: 600px">
           <el-table-column
           show-overflow-tooltip prop="CategoryName" label="分类" min-width="288" />
@@ -34,7 +33,6 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange" />
         </div>
-      </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -55,17 +53,14 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted, watch, onActivated,
+  ref, reactive, onMounted,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface tableItem {
   CategoryID: number | undefined
@@ -84,13 +79,10 @@ interface dataType {
 export default {
   name: 'materialClassifyManageListPage',
   components: {
-    MpCardContainer,
     MpPagination,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const dialog = ref(false);
     const MaterialCategoryStore = useMaterialWarehouseStore();
     const Data:dataType = reactive({
@@ -162,22 +154,10 @@ export default {
       }
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-classify-manage-list-page header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
-      setHeight();
       getMaterialCategoryList();
     });
     return {
-      h,
       Data,
       dialog,
       PaginationChange,
@@ -194,6 +174,9 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-classify-manage-list-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   .add-material-classify{
     display: flex;
     justify-content: center;
@@ -209,31 +192,20 @@ export default {
   }
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.el-breadcrumb{
       margin-bottom: 20px;
     }
-    >.header-top{
-      margin-bottom: 20px;
-    }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
+  display: flex;
+  flex-direction: column;
       .el-table{
+        height: 100%;
         flex: 1;
       }
       .bottom-count-box{
@@ -243,9 +215,9 @@ export default {
         justify-items: center;
         justify-content: flex-end;
       }
-    }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

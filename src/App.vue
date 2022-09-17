@@ -50,15 +50,6 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  > .mp-erp-layout-side-bar-comp-wrap {
-    flex: none;
-    width: 240px;
-    height: 100vh;
-    &.collapse{
-      width: 64px;
-      transition:width 300ms;
-    }
-  }
   > .mp-erp-layout-content-right-wrap {
     flex: 1;
     display: flex;

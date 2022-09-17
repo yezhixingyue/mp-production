@@ -28,7 +28,6 @@
             >
           </SearchInputComp>
       </div>
-      <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
           <RadioGroupComp
             :title='"物料筛选"'
@@ -46,13 +45,10 @@
             @change="twoSelectChange"
             @requestFunc='getStockList'
             ></RadioGroupComp>
-
         </div>
-      </MpCardContainer>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.StockList" style="width: 100%">
 
           <el-table-column
@@ -130,7 +126,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <div class="bottom-count-box">
@@ -305,20 +300,17 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  reactive, onMounted, watch, computed, ComputedRef,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api/request/MaterialStorage';
 import { useRouter } from 'vue-router';
-import { useRouterStore } from '@/store/modules/routerStore';
 import { MaterialAttributesType } from '@/assets/Types/common';
 
 interface twoSelecValueType {
@@ -397,7 +389,6 @@ interface DataType {
 export default {
   name: 'materialInventoryManagePage',
   components: {
-    MpCardContainer,
     RadioGroupComp,
     SearchInputComp,
     MpPagination,
@@ -405,8 +396,6 @@ export default {
     SeeImageDialogComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -445,16 +434,12 @@ export default {
       level1Val: Data.getStockData.CategoryID,
       level2Val: Data.getStockData.TypeID,
     }));
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.stock-list-page header', 72);
-    }
+
     function getStockList() {
       api.getStockList(Data.getStockData).then(res => {
         if (res.data.Status === 1000) {
           Data.StockList = res.data.Data as StockListType[];
           Data.DataTotal = res.data.DataNumber as number;
-          setHeight();
         }
       });
     }
@@ -595,20 +580,13 @@ export default {
       if (level1Val !== undefined) {
         Data.getStockData.CategoryID = level1Val;
         Data.getStockData.TypeID = level2Val;
-        setHeight();
       }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
-      setHeight();
       MaterialWarehouseStore.getMaterialCategoryList();
       getStockList();
     });
@@ -616,7 +594,6 @@ export default {
     return {
       seeSMSShow,
 
-      h,
       Data,
       SeeImg,
       getStorehouseStockNumber,
@@ -647,9 +624,12 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .stock-list-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.header-top{
       display: flex;
       justify-content: space-between;
@@ -673,27 +653,24 @@ export default {
         }
       }
     }
-    >.mp-card-container{
       >.top-main{
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
       }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
       .el-table{
+        height: 100%;
         flex: 1;
       }
-    }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

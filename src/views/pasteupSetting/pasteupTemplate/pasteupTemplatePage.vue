@@ -18,8 +18,8 @@
         <el-button type="primary" @click="ToPasteupTemplateSteupPagePage">+ 添加拼版模板</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.ImpositionTemmplateList" style="width: 100%">
           <el-table-column show-overflow-tooltip prop="SupplierName" label="分类" min-width="224">
             <template #default="scope">
@@ -85,13 +85,11 @@
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, watch, onActivated, computed,
+  reactive, onMounted, onActivated, computed,
 } from 'vue';
 import { useRouter } from 'vue-router';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { useRouterStore } from '@/store/modules/routerStore';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import { ImpositionTemmplate } from './types';
@@ -113,10 +111,8 @@ export default {
     RadioGroupComp,
   },
   setup() {
-    const h = ref(0);
     const router = useRouter();
     const PasteupSettingStore = usePasteupSettingStore();
-    const RouterStore = useRouterStore();
     const Data:DataType = reactive({
       DataTotal: 0,
       getImpositionTemmplateData: {
@@ -186,15 +182,7 @@ export default {
       return ClassItem?.Name;
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.pasteup-template-page > header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
     onActivated(() => {
-      setHeight();
       const pasteupTemplateSteupPage = sessionStorage.getItem('pasteupTemplateSteupPage') === 'true';
       if (pasteupTemplateSteupPage) {
         getImpositionTemmplateList();
@@ -203,13 +191,11 @@ export default {
     });
     onMounted(() => {
       sessionStorage.removeItem('pasteupTemplateSteupPage');
-      setHeight();
       getImpositionTemmplateList();
       // 获取所有分类
       PasteupSettingStore.getImpositionTemmplateClassList();
     });
     return {
-      h,
       Data,
       ImpositionTemmplateClassList,
       PasteupSettingStore,
@@ -229,9 +215,12 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .pasteup-template-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
     padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     .classs{
       display: flex;
       align-items: flex-start;
@@ -242,32 +231,24 @@ export default {
       }
     }
     >.header-top{
-      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
     }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
+    background-color: #fff;
       display: flex;
       flex-direction: column;
-      height: 100%;
       .el-table{
         flex: 1;
       }
   }
   >footer{
     min-height: 50px;
+    background-color: #fff;
     height: 50px;
     display: flex;
     justify-content: flex-end;

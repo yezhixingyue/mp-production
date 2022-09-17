@@ -2,13 +2,16 @@
   <div class="material-classify-record-page">
     <header>
       <div class="header-top">
-        <el-radio-group v-model="Data.getRecordData.LogType"
-        @change="radioGroupChange">
+        <el-tabs type="border-card" v-model="Data.getRecordData.LogType" @change="LogTypeChange">
+          <el-tab-pane label="入库记录" :name="1"></el-tab-pane>
+          <el-tab-pane label="出库记录" :name="2"></el-tab-pane>
+        </el-tabs>
+        <!-- <el-radio-group v-model="Data.getRecordData.LogType"
+        @change="LogTypeChange">
           <el-radio-button :label="1">入库记录</el-radio-button>
           <el-radio-button :label="2">出库记录</el-radio-button>
-        </el-radio-group>
+        </el-radio-group> -->
       </div>
-      <MpCardContainer :TopAndButtomPadding = '12'>
         <div class="top-main">
           <RadioGroupComp
             :title='"物料筛选"'
@@ -103,11 +106,9 @@
               >
             </SearchInputComp>
         </div>
-      </MpCardContainer>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.RecordList" style="width: 100%">
           <el-table-column
           show-overflow-tooltip prop="MaterialCode" label="SKU编码" min-width="115"/>
@@ -202,7 +203,6 @@
           </template>
 
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <div class="bottom-count-box">
@@ -275,16 +275,14 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
-  ref, reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  reactive, onMounted, watch, computed, ComputedRef,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useRouterStore } from '@/store/modules/routerStore';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -385,7 +383,6 @@ interface DataType {
 export default {
   name: 'materialClassifyRecordPage',
   components: {
-    MpCardContainer,
     RadioGroupComp,
     OneLevelSelect,
     SearchInputComp,
@@ -394,7 +391,6 @@ export default {
     LineDateSelectorComp,
   },
   setup() {
-    const h = ref(0);
     const RouterStore = useRouterStore();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     // 入库类型
@@ -498,10 +494,6 @@ export default {
       StaffName: '不限',
     }, ...RouterStore.StaffSelectList]);
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-classify-record-page header', 72);
-    }
     function getRecordList() {
       ClassType.setDate(Data.getRecordData, 'CreateTime');
       const _obj = ClassType.filter(Data.getRecordData, true);
@@ -515,7 +507,6 @@ export default {
         if (res.data.Status === 1000) {
           Data.RecordList = res.data.Data as RecordListType[];
           Data.DataTotal = res.data.DataNumber as number;
-          setHeight();
         }
       });
     }
@@ -559,7 +550,7 @@ export default {
         }
       });
     }
-    function radioGroupChange(Type) {
+    function LogTypeChange(Type) {
       Data.getRecordData.LogType = Type;
       Data.getRecordData.Handler = '';
       Data.getRecordData.Operater = '';
@@ -569,7 +560,6 @@ export default {
       Data.getRecordData.CategoryID = '';
       Data.getRecordData.TypeID = '';
       getRecordList();
-      setHeight();
     }
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
       ...MaterialWarehouseStore.CategoryList]);
@@ -601,20 +591,13 @@ export default {
       if (level1Val !== undefined) {
         Data.getRecordData.CategoryID = level1Val;
         Data.getRecordData.TypeID = level2Val;
-        setHeight();
       }
     }
     watch(() => twoSelecValue.value.level1Val, (newValue) => {
       MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
     });
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
-      setHeight();
       MaterialWarehouseStore.getMaterialCategoryList();
       getRecordList();
       MaterialWarehouseStore.getSupplierSelectList();
@@ -625,7 +608,6 @@ export default {
       setCondition4DataList,
       UserDefinedTimeIsActive,
 
-      h,
       Data,
       getHandleType,
       twoSelecValue,
@@ -640,7 +622,7 @@ export default {
       twoSelectChange,
       getRecordList,
       clearCondition,
-      radioGroupChange,
+      LogTypeChange,
       MaterialWarehouseStore,
       SeeGoodsAllocation,
       getStorehouseAllInNumber,
@@ -653,17 +635,61 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-classify-record-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
-    padding: 20px;
-    padding-bottom: 0;
+    background-color: #fff;
     >.header-top{
       margin-bottom: 20px;
-      .el-radio-group{
-        margin-bottom: 0;
+  > .el-tabs {
+    border: none;
+    .el-tabs__content{
+      display: none;
+    }
+    > .el-tabs__header {
+      background-color: rgb(245, 245, 245);
+      padding-left: 30px;
+      padding-top: 13px;
+      .el-tabs__nav {
+        margin-left: 1px;
+        margin-top: 1px;
+        .el-tabs__item{
+          border-color: #E4E7ED;
+        }
+        .el-tabs__item:first-child{
+          border-radius: 3px 0 0 0;
+        }
+        .el-tabs__item:last-child{
+          border-radius: 0 3px 0 0;
+        }
+        > div {
+          height: 38px;
+          line-height: 36px;
+          &.is-active {
+            position: relative;
+            background-color: #fff;
+            border-bottom: none;
+            &::before {
+              content: "";
+              position: absolute;
+              height: 2px;
+              width: calc(100%);
+              background-color: rgb(38, 188, 249);
+              left: 0px;
+              top: -1px;
+              border-radius: 2px;
+            }
+          }
+          font-size: 13px;
+          // font-weight: 600;
+        }
       }
     }
-    >.mp-card-container{
+  }
+    }
       >.top-main{
+        padding: 0 20px;
         display: flex;
         flex-wrap: wrap;
         &.flex-between{
@@ -689,21 +715,19 @@ export default {
           }
         }
       }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    background-color: #fff;
       .el-table{
+        height: 100%;
         flex: 1;
       }
-    }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

@@ -6,9 +6,8 @@
         <el-button link type="primary" @click="ToMaterialClassifyManageList">管理物料分类</el-button>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.tableData" style="width: 100%">
 
           <el-table-column prop="CategoryName" label="分类"
@@ -39,7 +38,7 @@
             <template #default="scope">
               <el-button type="primary" link
               @click="ToSetAttributesPage(scope.row)">设置属性</el-button>
-              <el-button type="primary" link :disabled="scope.row.BrandIsSet"
+              <el-button type="primary" link :disabled="Boolean(scope.row.BrandIsSet)"
               @click="setBrandClick(scope.row.TypeID)">品牌属性</el-button>
               <el-button type="primary" link
               @click="ToSetDimensionsPage(scope.row)">尺寸规格</el-button>
@@ -53,7 +52,6 @@
           </el-table-column>
           <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
-      </MpCardContainer>
     </main>
     <footer>
       <div class="bottom-count-box">
@@ -132,18 +130,15 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  ref, reactive, onMounted, computed, watch, onActivated,
+  reactive, onMounted, computed, onActivated,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useRouter } from 'vue-router';
 import api from '@/api/request/MaterialStorage';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useRouterStore } from '@/store/modules/routerStore';
 
 interface formType {
   TypeID: string,
@@ -188,13 +183,10 @@ interface dataType {
 export default {
   name: 'materialClassifyManagePage',
   components: {
-    MpCardContainer,
     MpPagination,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    const RouterStore = useRouterStore();
     const router = useRouter();
     const MaterialCategoryStore = useMaterialWarehouseStore();
     // 添加/编辑 物料类型点击
@@ -350,13 +342,6 @@ export default {
       }, () => null);
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.material-classify-manage-page header', 72);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
     // function getMaterialCategoryList() {
     //   api.getMaterialCategoryAll({}).then(res => {
     //     if (res.data.Status === 1000) {
@@ -366,7 +351,6 @@ export default {
     //   });
     // }
     onActivated(() => {
-      setHeight();
       const bool = sessionStorage.getItem('updataMaterialClassifyManagePage') === 'true';
       if (!bool) return;
       getMaterialClassifyManage();
@@ -375,12 +359,10 @@ export default {
     onMounted(() => {
       sessionStorage.removeItem('updataMaterialClassifyManagePage');
 
-      setHeight();
       getMaterialClassifyManage();
       MaterialCategoryStore.getMaterialCategoryList();
     });
     return {
-      h,
       Data,
       IsStock,
       MaterialCategoryStore,
@@ -406,35 +388,25 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-classify-manage-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
+    background-color: #fff;
     padding: 20px;
-    padding-bottom: 0;
-    >.header-top{
-      margin-bottom: 20px;
-    }
-    >.mp-card-container{
-      >.top-main{
-        display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
-      }
-    }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
+    background-color: #fff;
+    .el-table{
       height: 100%;
-      .el-table{
-        flex: 1;
-      }
+      flex: 1;
     }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;

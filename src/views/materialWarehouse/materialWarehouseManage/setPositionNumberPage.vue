@@ -23,9 +23,8 @@
         </p>
       </div>
     </header>
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-table border fit
+    <main>
+        <el-table border fit stripe
         :data="Data.PalletDimensionsList" style="width: 100%">
           <el-table-column prop="DimensionUnit" label="维度单位" min-width="399" />
           <el-table-column prop="StorehouseName" label="起止编号" min-width="399">
@@ -49,10 +48,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <div>
-          <!-- <MpPagination /> -->
-        </div>
-      </MpCardContainer>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -113,14 +108,9 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
-import {
-  ref, reactive, onMounted, watch, onActivated,
-} from 'vue';
+import { reactive, onMounted } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useRouterStore } from '@/store/modules/routerStore';
 
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 // import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api/request/MaterialStorage';
@@ -151,14 +141,9 @@ interface DataType {
 export default {
   name: 'setPositionNumberPage',
   components: {
-    MpCardContainer,
-    // MpPagination,
     DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
-    // const { getDistrictByParentID } = getDistrictMixins();
-    const RouterStore = useRouterStore();
     const route = useRoute();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -244,10 +229,7 @@ export default {
         });
       }
     }
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.set-position-number-page > header', 20 + 32 + 20);
-    }
+
     function getLockStatus() {
       api.getGoodsPositionDimensionLockStatus(
         Data.getPalletDimensionsListData.StorehouseID,
@@ -286,22 +268,15 @@ export default {
         });
       }, () => undefined);
     }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
+
     onMounted(() => {
       Data.StorehouseName = route.params.StorehouseName as string;
       Data.getPalletDimensionsListData.StorehouseID = route.params.StorehouseID as string;
       Data.addPalletDimensionsForm.StorehouseID = route.params.StorehouseID as string;
       getLockStatus();
-      setHeight();
       getPalletDimensionsList();
     });
     return {
-      h,
       Data,
       MaterialWarehouseStore,
       seeImg,
@@ -320,7 +295,11 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .set-position-number-page{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   >header{
+    background-color: #fff;
     padding: 20px;
     padding-bottom: 0;
     >.el-breadcrumb{
@@ -331,44 +310,33 @@ export default {
       display: flex;
       justify-content: space-between;
     }
-    >.mp-card-container{
-      >.top-main{
+    .lock{
         display: flex;
-        justify-content: space-between;
-        .mp-search-input-comp{
-          display: flex;
-        }
+        align-items: center;
+      .isLock{
+        display: flex;
+        align-items: center;
+        color: #f56c6c;
+        font-size: 14px;
+        margin-right: 20px;
       }
     }
   }
   >main{
-    margin-top: 20px;
+    flex: 1;
+    margin-top: 10px;
+    background-color: #fff;
     overflow-x: auto;
-    >.mp-card-container{
-      display: flex;
-      flex-direction: column;
+    .el-table{
       height: 100%;
-      .lock{
-        margin-bottom: 20px;
-          display: flex;
-          align-items: center;
-        .isLock{
-          display: flex;
-          align-items: center;
-          color: #f56c6c;
-          font-size: 14px;
-          margin-right: 20px;
-        }
-      }
-      .el-table{
-        flex: 1;
-        .el-table__inner-wrapper{
-          height: 100%;
-        }
+      flex: 1;
+      .el-table__inner-wrapper{
+        height: 100%;
       }
     }
   }
   >footer{
+    background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;
