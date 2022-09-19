@@ -19,7 +19,7 @@
       </div>
     </header>
     <main>
-      <el-table fit stripe
+      <el-table border fit stripe
       :data="Data.FoldWayTemplateList" style="width: 100%">
         <el-table-column
         show-overflow-tooltip prop="Name" label="分类" min-width="180">

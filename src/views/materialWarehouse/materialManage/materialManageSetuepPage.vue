@@ -580,7 +580,7 @@ export default {
   }
   >main{
     flex: 1;
-    margin-top: 10px;
+    // margin-top: 10px;
     background-color: #fff;
       >.el-scrollbar{
         flex: 1;

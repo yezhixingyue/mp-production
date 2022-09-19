@@ -84,7 +84,7 @@
                   </template>
                 </el-upload>
                 <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath">
-                  {{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath}}</el-link>
+                  下载当前模板文件</el-link>
                 <!-- <el-button link type="primary">下载当前模板文件</el-button> -->
               </div>
               <p class="hint">
@@ -205,33 +205,33 @@ export default {
             Length: 0,
             Width: 0,
             AreaList: [
-              {
-                XCoordinate: 0,
-                YCoordinate: 0,
-                Length: 0,
-                Width: 0,
-              },
+              // {
+              //   XCoordinate: 0,
+              //   YCoordinate: 0,
+              //   Length: 0,
+              //   Width: 0,
+              // },
             ],
           },
           // 是否按模位
           UseMode: false,
           ModeItemList: [
             {
-              XCoordinate: 0,
-              YCoordinate: 0,
-              Length: 0,
-              Width: 0,
-              RowNumber: 0,
-              ColumnNumber: 0,
+              XCoordinate: null,
+              YCoordinate: null,
+              Length: null,
+              Width: null,
+              RowNumber: null,
+              ColumnNumber: null,
               key: '1',
             },
           ],
         },
         ActualSizeAttribute: {
-          BleedTop: 0,
-          BleedBottom: 0,
-          BleedLeft: 0,
-          BleedRight: 0,
+          BleedTop: null,
+          BleedBottom: null,
+          BleedLeft: null,
+          BleedRight: null,
         },
         CreateTime: '',
         ID: '',
@@ -241,12 +241,12 @@ export default {
 
     function addModeItem() {
       Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.push({
-        XCoordinate: 0,
-        YCoordinate: 0,
-        Length: 0,
-        Width: 0,
-        RowNumber: 0,
-        ColumnNumber: 0,
+        XCoordinate: null,
+        YCoordinate: null,
+        Length: null,
+        Width: null,
+        RowNumber: null,
+        ColumnNumber: null,
         key: Math.random().toString(16).slice(-10),
       });
     }
@@ -307,8 +307,12 @@ export default {
             // 当前模位起点所在可拼版区域
             const Area = AreaList.find(res => {
               // 分别找到横轴和竖轴的起点是否都在此可拼版区域
-              const xinclude = ModeItem.XCoordinate >= res.XCoordinate && ModeItem.XCoordinate <= Number(res.XCoordinate) + Number(res.Length);
-              const yinclude = ModeItem.YCoordinate >= res.YCoordinate && ModeItem.YCoordinate <= Number(res.YCoordinate) + Number(res.Width);
+              const xinclude = Number(ModeItem.XCoordinate)
+              >= Number(res.XCoordinate) && Number(ModeItem.XCoordinate)
+              <= Number(res.XCoordinate) + Number(res.Length);
+              const yinclude = Number(ModeItem.YCoordinate)
+              >= Number(res.YCoordinate) && Number(ModeItem.YCoordinate)
+              <= Number(res.YCoordinate) + Number(res.Width);
               return xinclude && yinclude;
             });
             // 没找到说明起点不在可拼版区域
@@ -389,12 +393,12 @@ export default {
           UseMode: false,
           ModeItemList: [
             {
-              XCoordinate: 0,
-              YCoordinate: 0,
-              Length: 0,
-              Width: 0,
-              RowNumber: 0,
-              ColumnNumber: 0,
+              XCoordinate: null,
+              YCoordinate: null,
+              Length: null,
+              Width: null,
+              RowNumber: null,
+              ColumnNumber: null,
               key: '1',
             },
           ],
@@ -402,10 +406,10 @@ export default {
       }
       if (!temp.ActualSizeAttribute) {
         temp.ActualSizeAttribute = {
-          BleedTop: 0,
-          BleedBottom: 0,
-          BleedLeft: 0,
-          BleedRight: 0,
+          BleedTop: null,
+          BleedBottom: null,
+          BleedLeft: null,
+          BleedRight: null,
         };
       }
       if (temp.ClassID) {
@@ -508,7 +512,7 @@ export default {
           align-items: flex-start;
           >div{
             display: flex;
-            >.el-button{
+            >.el-link{
               margin-left: 20px;
             }
           }

@@ -56,7 +56,7 @@ export default {
     });
     const getNumberValueList = (valueList) => {
       const reg = /\s|,|，/;
-      return valueList.split(reg).filter(it => it);
+      return valueList.split(reg).filter(it => it).map(it => Number(it));
     };
     const options = computed(() => {
       if (!props.InputContent) return [];

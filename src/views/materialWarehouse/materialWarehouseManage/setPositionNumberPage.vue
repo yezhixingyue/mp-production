@@ -37,17 +37,20 @@
           <el-table-column prop="Sort" label="显示顺序" min-width="399" />
           <el-table-column prop="name" label="操作" min-width="371">
             <template #default="scope">
-              <el-button type="primary"
+              <el-button type="info"
               :disabled="Data.LockStatus" link @click="editStorehouse(scope.row)">
               <i class="iconfont icon-bianji"></i>
               编辑</el-button>
-              <el-button type="danger"
+              <el-button type="info"
               :disabled="Data.LockStatus" link
                 @click="delStorehouse(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
         </el-table>
+        <p class="hint">
+          1:只有锁定货位编号后才可以进行“设置禁用货位”、“规划货位图”、”入库“操作；2:锁定后再进行解锁，将清空所有已设置的禁用货位、规划货位；3:库存不为空时解锁失败；
+        </p>
     </main>
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
@@ -327,8 +330,29 @@ export default {
     margin-top: 10px;
     background-color: #fff;
     overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+      .hint{
+        font-size: 12px;
+        line-height: 30px;
+        color: #F4A307;
+        position: relative;
+        padding-left: 33px;
+        &::before{
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
+          width: 13px;
+          height: 13px;
+          margin: 0 10px;
+          position: absolute;
+          left: 0;
+          top: 9px;
+        }
+      }
     .el-table{
-      height: 100%;
+      // height: 100%;
       flex: 1;
       .el-table__inner-wrapper{
         height: 100%;

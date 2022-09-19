@@ -1,16 +1,16 @@
 interface AreaList {
-  XCoordinate: number|'',
-  YCoordinate: number|'',
-  Length: number|'',
-  Width: number|'',
+  XCoordinate: number|null|'',
+  YCoordinate: number|null|'',
+  Length: number|null|'',
+  Width: number|null|'',
 }
 interface ModeItemList {
-  XCoordinate: number|'',
-  YCoordinate: number|'',
-  Length: number|'',
-  Width: number|'',
-  RowNumber: number|'',
-  ColumnNumber: number|'',
+  XCoordinate: number|null|'',
+  YCoordinate: number|null|'',
+  Length: number|null|'',
+  Width: number|null|'',
+  RowNumber: number|null|'',
+  ColumnNumber: number|null|'',
   key: string,
 }
 interface PlateInfo {
@@ -26,10 +26,10 @@ interface ModeSizeAttribute {
   ModeItemList: ModeItemList[],
 }
 interface ActualSizeAttribute {
-  BleedTop: number|'',
-  BleedBottom: number|'',
-  BleedLeft: number|'',
-  BleedRight: number|'',
+  BleedTop: number|null|'',
+  BleedBottom: number|null|'',
+  BleedLeft: number|null|'',
+  BleedRight: number|null|'',
 }
 export interface ImpositionTemmplate{
   ClassID: number | string,

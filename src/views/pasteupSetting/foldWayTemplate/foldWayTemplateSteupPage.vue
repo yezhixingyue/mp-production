@@ -39,25 +39,24 @@
         </el-form>
       </div>
       <div class="right">
-        <p><el-button type="primary" link @click="Data.rotatePage = !Data.rotatePage">翻转印面</el-button></p>
+        <p><el-button type="primary" link @click="rotatePage">翻转印面</el-button></p>
         <div>
           <el-scrollbar>
-          <ul class="rows" :class="{ 'rotate-page':Data.rotatePage }">
+          <ul class="rows">
             <li v-for="(PositionRow, RowIndex) in Data.FoldWayPositionList" :key="RowIndex">
               <ul class="cols" >
                 <li :class="{ 'rotate':PositionCol.ShowType === 1 }"
                 v-for="(PositionCol, ColIndex) in PositionRow" :key="`${RowIndex}-${ColIndex}`">
                   <!-- {{PositionCol.RowValue}}- {{PositionCol.ColumnValue}} -->
-                  <span v-if="Data.rotatePage" class="page" :class="{
-                    'is-even': isEven(isEven(PositionCol.PageNumber)?PositionCol.PageNumber-1:PositionCol.PageNumber+1),
-                    'rotate-page':Data.rotatePage,
+                  <span class="page" :class="{
+                    'is-even': isEven(PositionCol.PageNumber),
                   }">
                     <!-- 如果翻转印面了 -->
-                    {{isEven(PositionCol.PageNumber)?PositionCol.PageNumber-1:PositionCol.PageNumber+1}}
+                    {{PositionCol.PageNumber}}
                   </span>
-                  <span v-else class="page" :class="{'is-even': isEven(PositionCol.PageNumber)}">{{PositionCol.PageNumber}}</span>
+                  <!-- <span v-else class="page" :class="{'is-even': isEven(PositionCol.PageNumber)}">{{PositionCol.PageNumber}}</span> -->
 
-                  <div class="btns" :class="{ 'rotate-page':Data.rotatePage }">
+                  <div class="btns">
                     <p><el-button type="primary" link @click="rotate(RowIndex,ColIndex)">旋转</el-button></p>
                     <p><el-button type="primary" link @click="setPage(RowIndex,ColIndex,PositionCol.PageNumber)">设置页码</el-button></p>
                   </div>
@@ -120,7 +119,6 @@ interface DataType {
   setPageObj:setPageObjType
   setPageShow:boolean
   setPageInp:number | ''
-  rotatePage:boolean
 }
 export default {
   name: 'foldWayTemplateSteupPage',
@@ -157,8 +155,6 @@ export default {
         RowIndex: '',
         ColIndex: '',
       },
-      // 翻转印面
-      rotatePage: false,
     });
     // 是否是双数
     function isEven(num) {
@@ -289,6 +285,16 @@ export default {
         }
       });
     }
+    // 翻转印面
+    function rotatePage() {
+      Data.FoldWayPositionList.map((item, index) => item.reverse().map((res, i) => {
+        const temp = res;
+        temp.RowValue = index + 1;
+        temp.ColumnValue = i + 1;
+        temp.PageNumber = isEven(res.PageNumber) ? res.PageNumber - 1 : res.PageNumber + 1;
+        return temp;
+      }));
+    }
     onMounted(() => {
       const temp = JSON.parse(route.params.Template as string) as FoldWayTemplateType;
       if (temp.ID) {
@@ -307,6 +313,7 @@ export default {
       setPage,
       rotate,
       isEven,
+      rotatePage,
       foldWayTemplateSave,
       setPagePrimaryClick,
       setPageCloseClick,
@@ -382,12 +389,6 @@ export default {
       >p{
         line-height: 32px;
       }
-      .rotate-page{
-        transform: rotateY(180deg);
-        >li{
-          margin-right: -1px;
-        }
-      }
       >div{
         display: inline-block;
         width: 100%;
@@ -424,20 +425,14 @@ export default {
           &.rotate{
             align-items: flex-start;
             .page{
-              transform: rotateX(180deg);
+              transform: rotateZ(180deg);
               line-height: 14px;
               // 旋转单数居左 双数居右
-              text-align: left;
+              text-align: right;
               &.is-even{
-                text-align: right;
+                text-align: left;
               }
-              // 翻转的单数居左 双数居右 （因为翻转所以反着写）
-              &.rotate-page{
-                text-align: right;
-                &.is-even{
-                  text-align: left;
-                }
-              }
+
             }
           }
           .btns{

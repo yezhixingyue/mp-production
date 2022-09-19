@@ -303,7 +303,7 @@ export default {
       .el-radio-group{
         width: 100%;
         flex-wrap: nowrap;
-        padding-bottom: 8px;
+        // padding-bottom: 8px;
       }
     }
       >.top-main{

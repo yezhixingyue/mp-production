@@ -664,10 +664,13 @@ export default {
     margin-top: 10px;
     overflow-x: auto;
     background-color: #fff;
-      .el-table{
-        height: 100%;
-        flex: 1;
+    .el-table{
+      height: 100%;
+      flex: 1;
+      .el-button{
+        font-size: 12px;
       }
+    }
   }
   >footer{
     background-color: #fff;

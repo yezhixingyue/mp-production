@@ -29,10 +29,12 @@
               <el-button type="primary" link
               @click="seeImg(scope.row.StorehouseImg)">查看平面布局图</el-button>
               <el-button type="primary" link @click="editStorehouse(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
+                <!-- <i class="iconfont icon-bianji"></i> -->
+                编辑</el-button>
               <el-button type="danger" link
                 @click="delStorehouse(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+                <!-- <i class="iconfont icon-delete"></i> -->
+                删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -342,6 +344,12 @@ export default {
     .el-table{
       height: 100%;
       flex: 1;
+      .el-button{
+        font-size: 12px;
+      }
+      .el-button+.el-button{
+        margin-left: 50px;
+      }
       .el-table__inner-wrapper{
         height: 100%;
       }

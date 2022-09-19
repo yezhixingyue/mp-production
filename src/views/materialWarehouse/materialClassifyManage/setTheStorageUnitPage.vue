@@ -30,13 +30,15 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="167">
             <template #default="scope">
-              <el-button type="primary" link @click="editStorageUnit(scope.row)">
+              <el-button type="info" link @click="editStorageUnit(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="danger" link @click="delStorageUnit(scope.row)">
+              <el-button type="info" link @click="delStorageUnit(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
         </el-table>
+    </main>
+    <footer>
         <div class="bottom-count-box">
           <MpPagination
           :nowPage="Data.getUnitListData.Page"
@@ -44,8 +46,6 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange"/>
         </div>
-    </main>
-    <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
     </footer>
     <!-- 添加单位 -->
@@ -280,6 +280,8 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .set-the-storage-unit-page{
+  border: 1px solid #E5E5E5;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -300,7 +302,8 @@ export default {
   }
   >main{
     flex: 1;
-    margin-top: 10px;
+    border-bottom: 1px solid #E5E5E5;
+    // margin-top: 10px;
     overflow-x: auto;
     background-color: #fff;
     display: flex;
@@ -308,10 +311,9 @@ export default {
       .el-table{
         height: 100%;
         flex: 1;
-      }
-      >.bottom-count-box{
-        display: flex;
-        height: 50px;
+        &.el-table--border:after, .el-table__inner-wrapper::before{
+          width: 0;
+        }
       }
   }
   >footer{
@@ -319,8 +321,13 @@ export default {
     background-color: #fff;
     height: 50px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    >.bottom-count-box{
+      width: calc((100% - 100px) / 2);
+      display: flex;
+      height: 50px;
+    }
   }
   .add-unit-dialog{
     .el-form{

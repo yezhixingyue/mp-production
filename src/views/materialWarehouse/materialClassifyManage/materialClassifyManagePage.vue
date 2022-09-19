@@ -401,6 +401,9 @@ export default {
     overflow-x: auto;
     background-color: #fff;
     .el-table{
+      .el-button{
+        font-size: 12px;
+      }
       height: 100%;
       flex: 1;
     }

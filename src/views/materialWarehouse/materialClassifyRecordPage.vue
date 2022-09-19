@@ -205,6 +205,7 @@
         </el-table>
     </main>
     <footer>
+      <p>总金额：<span>￥{{}}元</span></p>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getRecordData.Page"
@@ -731,8 +732,16 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+    >p{
+      font-size: 12px;
+      font-weight: 600;
+      padding-left: 40px;
+      span{
+        color: #FF3769;
+      }
+    }
     .bottom-count-box{
       width: calc((100% - 100px) / 2);
       justify-content: flex-end;

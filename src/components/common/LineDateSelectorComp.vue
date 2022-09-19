@@ -289,9 +289,9 @@ export default {
     position: relative;
     top: -2px;
     width: 5em;
-    margin-right: 15px;
+    // margin-right: 15px;
     line-height: 23px;
-    // font-weight: 600;
+    font-weight: 600;
     color: $--color-text-primary;
     text-align: right;
   }

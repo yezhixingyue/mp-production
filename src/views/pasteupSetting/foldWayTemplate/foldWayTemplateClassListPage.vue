@@ -168,6 +168,9 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .foldWay-template-class-list-page{
+  border: 1px solid #E5E5E5;
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -184,7 +187,9 @@ export default {
   }
   >main{
     flex: 1;
-    margin-top: 10px;
+    border-bottom: 1px solid #E5E5E5;
+    box-sizing: border-box;
+    // margin-top: 10px;
     overflow-x: auto;
     display: flex;
     flex-direction: column;
@@ -192,7 +197,7 @@ export default {
     .el-table{
       flex: 1;
       max-width: 560px;
-      &.el-table--border:after{
+      &.el-table--border:after, .el-table__inner-wrapper::before{
         width: 0;
       }
     }

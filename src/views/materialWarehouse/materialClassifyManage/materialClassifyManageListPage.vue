@@ -26,6 +26,9 @@
 
           <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
+
+    </main>
+    <footer>
         <div class="bottom-count-box">
           <MpPagination
           :nowPage="Data.getMaterialCategoryData.Page"
@@ -33,8 +36,6 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange" />
         </div>
-    </main>
-    <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
     </footer>
     <DialogContainerComp
@@ -174,6 +175,9 @@ export default {
 <style lang='scss'>
 @import '@/assets/css/var.scss';
 .material-classify-manage-list-page{
+  border: 1px solid #E5E5E5;
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -199,29 +203,33 @@ export default {
   }
   >main{
     flex: 1;
-    margin-top: 10px;
+    // margin-top: 10px;
     overflow-x: auto;
     background-color: #fff;
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #E5E5E5;
       .el-table{
         height: 100%;
         flex: 1;
-      }
-      .bottom-count-box{
-        width: 600px;
-        height: 50px;
-        display: flex;
-        justify-items: center;
-        justify-content: flex-end;
+        &.el-table--border:after, .el-table__inner-wrapper::before{
+          width: 0;
+        }
       }
   }
   >footer{
+    .bottom-count-box{
+      width: calc((100% - 100px) / 2);
+      height: 50px;
+      display: flex;
+      justify-items: center;
+      justify-content: flex-start;
+    }
     background-color: #fff;
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
   }
 }

@@ -202,6 +202,9 @@ export default {
       .el-table{
         height: 100%;
         flex: 1;
+        .el-button{
+          font-size: 12px;
+        }
       }
   }
   >footer{

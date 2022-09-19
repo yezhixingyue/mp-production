@@ -71,9 +71,9 @@
           </el-table-column>
           <el-table-column prop="操作" label="操作" min-width="238">
             <template #default="scope">
-              <el-button type="primary" link @click="editMaterial(scope.row)">
+              <el-button type="info" link @click="editMaterial(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="danger" link @click="delMaterial(scope.row)">
+              <el-button type="info" link @click="delMaterial(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
           </el-table-column>
@@ -532,6 +532,8 @@ export default {
       };
     }
     function UpdateData(AttributeSelects, newVal, index) {
+      console.log(newVal, 'newVal');
+
       const temp = AttributeSelects.find(res => res.SelectID === newVal);
       if (temp) {
         Data.addMaterialManageForm
@@ -620,7 +622,7 @@ export default {
   }
   >main{
     flex: 1;
-    margin-top: 10px;
+    // margin-top: 10px;
     overflow-x: auto;
     background-color: #fff;
       .el-table{

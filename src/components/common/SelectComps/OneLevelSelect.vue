@@ -101,6 +101,7 @@ export default {
   display: flex;
   line-height: 30px;
   >.text{
+    font-weight: 600;
     text-align: right;
   }
   .el-select {

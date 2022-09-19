@@ -201,10 +201,11 @@ export default {
     display: flex;
     flex-direction: column;
     background-color: #fff;
+    border: 1px solid #E5E5E5;
     .el-table{
       flex: 1;
       max-width: 700px;
-      &.el-table--border:after{
+      &.el-table--border:after, .el-table__inner-wrapper::before{
         width: 0;
       }
     }

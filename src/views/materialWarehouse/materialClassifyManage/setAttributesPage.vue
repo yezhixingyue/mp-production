@@ -36,9 +36,9 @@
           <el-table-column prop="Sort" label="显示顺序" min-width="176" />
           <el-table-column prop="name" label="操作" min-width="295">
             <template #default="scope">
-              <el-button type="primary" link @click="editAttributes(scope.row)">
+              <el-button type="info" link @click="editAttributes(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="danger" link
+              <el-button type="info" link
                 @click="delAttributes(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
