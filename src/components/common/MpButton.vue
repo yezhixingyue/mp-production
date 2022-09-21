@@ -1,5 +1,5 @@
 <template>
-  <el-button v-blur v-bind="$attrs" class="mp-button" ref="btnRef">
+  <el-button v-blur v-bind="$attrs" class="mp-button">
     <slot></slot>
   </el-button>
 </template>
@@ -13,7 +13,7 @@ export default {
   directives: {
     blur: {
       mounted(el: Element) {
-        el.addEventListener('focus', (e) => {
+        el.addEventListener('mouseup', (e) => {
           if (e.target && e.target instanceof HTMLElement) {
             const getTargetDom = (dom: HTMLElement) => {
               if (dom.nodeName === 'BUTTON' && dom.className.includes('mp-button')) {
