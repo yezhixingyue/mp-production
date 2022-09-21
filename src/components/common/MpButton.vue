@@ -1,14 +1,23 @@
 <template>
-  <el-button v-bind="$attrs" class="mp-button">
+  <el-button v-blur v-bind="$attrs" class="mp-button">
     <slot></slot>
   </el-button>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'MpButton',
   setup() {
-    // console.log(this.$attrs);
+    // 无
+  },
+  directives: {
+    blur: {
+      mounted(el: HTMLElement) {
+        document.addEventListener('mouseup', () => {
+          el.blur();
+        });
+      },
+    },
   },
 };
 </script>

@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import { computed } from 'vue';
-// import { getListByEnums, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
-import { localEnumValueIDType, getListByEnums } from '@/assets/js/utils/getListByEnums';
+import { localEnumValueIDType, getEnumList } from '@/assets/js/utils/getListByEnums';
+import MpButton from '@/components/common/MpButton.vue';
 
 const props = defineProps<{
   modelValue: localEnumValueIDType
@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue', 'change', 'add']);
 
-const radioMenus = getListByEnums(AssistInfoTypeEnums, { withNoLimit: true });
+const radioMenus = getEnumList(AssistInfoTypeEnums, { withNoLimit: true });
 
 const radioValue = computed({
   get() {
@@ -30,7 +30,7 @@ const onClick = () => {
 
 <template>
   <header>
-    <el-button type="primary" @click="onClick">+添加辅助信息</el-button>
+    <mp-button type="primary" @click="onClick">+添加辅助信息</mp-button>
     <span class="bold ft-14 mr-13">筛选：</span>
     <el-radio-group v-model="radioValue">
       <el-radio class="ft-12" v-for="it in radioMenus" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>

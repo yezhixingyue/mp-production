@@ -132,3 +132,30 @@
 .is-goback-button{
   width: 100px;
 }
+
+.mp-common-title-wrap {
+  min-width: 4em;
+  line-height: 14px;
+  font-size: 14px;
+  color: $--color-primary;
+  display: inline-block;
+  font-weight: 700;
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    margin-right: 10px;
+    vertical-align: -15%;
+    background: linear-gradient(233deg,  $--color-primary-light 0%, $--color-primary 100%);
+  }
+  &.black {
+    color: #444;
+  }
+  &.f-15 {
+    font-size: 15px;
+    &::before {
+      height: 16px;
+    }
+  }
+ }

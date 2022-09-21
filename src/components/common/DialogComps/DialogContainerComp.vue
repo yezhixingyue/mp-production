@@ -166,9 +166,10 @@ export default {
     padding-bottom: 12px;
     p{
       line-height: 16px;
-      border-left: 3px solid #428DFA;
-      padding-left: 20px;
+      border-left: 3px solid #26bcf9;
+      padding-left: 16px;
       color: #888E99;
+      font-size: 14px;
     }
     .el-dialog__headerbtn{
       width: 56px;

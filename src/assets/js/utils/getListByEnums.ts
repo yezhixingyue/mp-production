@@ -11,11 +11,18 @@ interface IGetListByEnumsOptions {
   value?: localEnumValueIDType,
 }
 
-export interface ILocalEnum {
+export interface IEnumsType {
   [key: string]: ILocalEnumValue
 }
 
-export const getListByEnums = (enums: ILocalEnum, options: IGetListByEnumsOptions = {}) => {
+/**
+ * 通过自定义枚举对象 生成 对应枚举列表
+ *
+ * @param {IEnumsType} enums 枚举对象
+ * @param {IGetListByEnumsOptions} [options={}] 选项 withNoLimit： 是否包含不限 默认false  label："不限"的展示文字 value: "不限"的值
+ * @returns
+ */
+export const getEnumList = (enums: IEnumsType, options: IGetListByEnumsOptions = {}) => {
   const list: ILocalEnumValue[] = [];
 
   Object.keys(enums).forEach(key => {
@@ -34,4 +41,9 @@ export const getListByEnums = (enums: ILocalEnum, options: IGetListByEnumsOption
   }
 
   return list;
+};
+
+export const getEnumNameByIDAndEnums = (id: localEnumValueIDType, enums: IEnumsType) => {
+  const t = Object.values(enums).find(it => it.ID === id);
+  return t ? t.Name : '';
 };

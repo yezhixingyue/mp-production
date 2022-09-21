@@ -39,7 +39,7 @@ const routes: RouteRecordRaw = {
       component: () => import('@/views/productionResources/resourceBundle/resourceBundleManagePage.vue'),
     },
     {
-      path: '/resourceBundleSetup',
+      path: '/resourceBundleSetup/:id',
       name: 'resourceBundleSetup',
       meta: {
         title: '设置物料资源包',

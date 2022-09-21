@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang='ts'>
-import { getListByEnums } from '@/assets/js/utils/getListByEnums';
+import { getEnumList } from '@/assets/js/utils/getListByEnums';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { AssistInfoItem } from '@/views/productionResources/assistInfo/TypeClass/assistInfoItem';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
@@ -42,7 +42,7 @@ const localVisible = computed({
 
 const dialogTitle = computed(() => (props.item ? '编辑辅助信息' : '添加辅助信息'));
 
-const radioMenus = getListByEnums(AssistInfoTypeEnums);
+const radioMenus = getEnumList(AssistInfoTypeEnums);
 
 const ruleForm = ref<null | AssistInfoItem>(null);
 

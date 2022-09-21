@@ -136,7 +136,6 @@ export default {
 .subcontractor-manage-page-wrap {
   display: flex;
   flex-direction: column;
-  // margin: 0 8px;
   height: 100%;
   > header {
     height: 70px;

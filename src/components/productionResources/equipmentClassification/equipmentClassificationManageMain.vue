@@ -1,8 +1,8 @@
 <template>
   <main>
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12">
-      <el-table-column align="center" prop="Name" label="分类" />
-      <el-table-column align="center" width="310px" label="操作">
+      <el-table-column align="center" width="280px" prop="Name" label="分类" />
+      <el-table-column align="center" width="280px" label="操作">
         <template #default="scope">
           <mp-button type="info" link @click="onEditClick(scope.row)">
             <i class="iconfont icon-bianji"></i>编辑
