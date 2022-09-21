@@ -127,7 +127,7 @@ export default {
     overflow: hidden;
     > :deep(.el-table) {
       height: 100%;
-      width: 900px;
+      // width: 900px;
     }
   }
   > footer {
@@ -136,9 +136,9 @@ export default {
     background-color: #fff;
     box-sizing: border-box;
     padding-top: 5px;
-    :deep(.el-pagination) {
-      margin-left: 150px;
-    }
+    // :deep(.el-pagination) {
+    //   margin-left: 150px;
+    // }
   }
 }
 </style>

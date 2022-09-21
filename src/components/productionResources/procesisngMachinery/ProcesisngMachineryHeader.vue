@@ -1,6 +1,6 @@
 <template>
   <header>
-    <mp-button type="primary" @click="onClick">+添加设备分类</mp-button>
+    <mp-button type="primary" @click="onClick">+添加加工设备</mp-button>
   </header>
 </template>
 
@@ -16,5 +16,4 @@ const onClick = () => {
 </script>
 
 <style scoped lang='scss'>
-// deep
 </style>

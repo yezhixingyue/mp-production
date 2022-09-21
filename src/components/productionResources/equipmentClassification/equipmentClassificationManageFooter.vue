@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <MpPagination countInLeft :total="props.total" />
+    <MpPagination countInLeft center :total="props.total" />
   </footer>
 </template>
 

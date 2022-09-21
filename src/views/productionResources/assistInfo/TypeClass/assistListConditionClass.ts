@@ -9,6 +9,10 @@ export const AssistInfoTypeEnums = {
     ID: 1,
     Name: '文字信息',
   },
+  numerical: {
+    ID: 2,
+    Name: '数值',
+  },
 };
 
 export class AssistListConditionClass {
@@ -16,5 +20,5 @@ export class AssistListConditionClass {
 
   Page = 1
 
-  PageSize = 10
+  PageSize = 20
 }

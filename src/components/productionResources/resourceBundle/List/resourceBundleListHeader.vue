@@ -1,6 +1,6 @@
 <template>
   <header>
-    <mp-button type="primary" @click="onClick">+添加设备分类</mp-button>
+    <mp-button type="primary" @click="onClick">+添加物料资源包</mp-button>
   </header>
 </template>
 
