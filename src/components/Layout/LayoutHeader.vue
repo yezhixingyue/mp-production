@@ -47,7 +47,7 @@
         <el-dropdown trigger="click">
           <span class="el-dropdown-link">
             <i class="el-icon-user"></i>
-            <el-button>退出登录</el-button>
+            <mp-button>退出登录</mp-button>
           </span>
           <template #dropdown>
             <el-dropdown-menu class="mp-erp-user-drop-down-wrap">

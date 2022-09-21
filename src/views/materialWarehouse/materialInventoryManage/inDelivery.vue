@@ -12,7 +12,7 @@
                     <el-input v-model.trim="Data.getMaterialData.SKUCode"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
                      @keyup.enter="getMaterial(false)" size="large"/>
-                    <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
+                    <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
                   </p>
                   <span>或者</span>
                 </el-form-item>
@@ -144,7 +144,7 @@
             </div>
             <div class="line"></div>
             <div class="right">
-              <el-button type="primary" @click="Data.SelectGoods = true">选择货位</el-button>
+              <mp-button type="primary" @click="Data.SelectGoods = true">选择货位</mp-button>
                 <div class="warehouse">
               <el-scrollbar>
                   <div class="warehouse-item"
@@ -171,39 +171,9 @@
                             {{Data.checkedMaterial?.StockUnit}}
                           </span>
                         </span>
-                        <el-button type="danger"
-                        @click="delGoodsPosition(index, i, item.StorehouseID, GoodsPosition.selectedLocationID)">删除</el-button>
+                        <mp-button type="danger"
+                        @click="delGoodsPosition(index, i, item.StorehouseID, GoodsPosition.selectedLocationID)">删除</mp-button>
                       </li>
-                      <!-- <li>
-                        <span class="ranks">
-                          A区 001柜 3行 2列
-                        </span>
-                        <span class="PCS">
-                          5112300张
-                        </span>
-                        <span class="number">
-                          <span>
-                          入库
-                            <el-input></el-input>张
-                          </span>
-                        </span>
-                        <el-button type="primary">删除</el-button>
-                      </li>
-                      <li>
-                        <span class="ranks">
-                          A区 001柜 3行 2列
-                        </span>
-                        <span class="PCS">
-                          5112300张
-                        </span>
-                        <span class="number">
-                          <span>
-                          入库
-                            <el-input></el-input>张
-                          </span>
-                        </span>
-                        <el-button type="primary">删除</el-button>
-                      </li> -->
                     </ul>
                   </div>
               </el-scrollbar>
@@ -215,7 +185,7 @@
             </div>
           </div>
           <div class="btn">
-            <el-button type="primary" @click="inDelivery">入库</el-button>
+            <mp-button type="primary" @click="inDelivery">入库</mp-button>
           </div>
         </el-scrollbar>
       <!-- </MpCardContainer> -->

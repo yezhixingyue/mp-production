@@ -139,9 +139,9 @@
           <el-table-column prop="Stock" label="数量" min-width="158">
             <template #default="scope">
               {{Math.abs(scope.row.StoreNumber)}} {{scope.row.StockUnit}}
-              <el-button link type="primary" @click="SeeGoodsAllocation(scope.row)">
+              <mp-button link type="primary" @click="SeeGoodsAllocation(scope.row)">
                 {{Data.getRecordData.LogType === 1 ? '入库货位' : '出库货位'}}
-              </el-button>
+              </mp-button>
             </template>
           </el-table-column>
           <template v-if="Data.getRecordData.LogType === 1">

@@ -12,10 +12,10 @@
           :value='RadioGroupCompValue'
           @change="RadioGroupCompChange"
           ></RadioGroupComp>
-        <el-button type="primary" link @click="ManagementClass">管理分类</el-button>
+        <mp-button type="primary" link @click="ManagementClass">管理分类</mp-button>
       </div>
       <div class="header-top">
-        <el-button type="primary" @click="ToPasteupTemplateSteupPagePage">+ 添加拼版模板</el-button>
+        <mp-button type="primary" @click="ToPasteupTemplateSteupPagePage">+ 添加拼版模板</mp-button>
       </div>
     </header>
     <main>
@@ -61,11 +61,11 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope">
-              <el-button type="info" link @click="ToPasteupTemplateSteupPagePage(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="info" link
+              <mp-button type="info" link @click="ToPasteupTemplateSteupPagePage(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="info" link
                 @click="delImpositionTemmplate(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+                <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
         </el-table>

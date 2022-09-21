@@ -2,8 +2,8 @@
   <div class="material-classify-manage-page">
     <header>
       <div class="header-top">
-        <el-button type="primary" @click="addMaterialClassifyClick">+ 添加物料类型</el-button>
-        <el-button link type="primary" @click="ToMaterialClassifyManageList">管理物料分类</el-button>
+        <mp-button type="primary" @click="addMaterialClassifyClick">+ 添加物料类型</mp-button>
+        <mp-button link type="primary" @click="ToMaterialClassifyManageList">管理物料分类</mp-button>
       </div>
     </header>
     <main>
@@ -36,18 +36,18 @@
           </el-table-column> -->
           <el-table-column prop="name" label="操作" min-width="428">
             <template #default="scope">
-              <el-button type="primary" link
-              @click="ToSetAttributesPage(scope.row)">设置属性</el-button>
-              <el-button type="primary" link :disabled="Boolean(scope.row.BrandIsSet)"
-              @click="setBrandClick(scope.row.TypeID)">品牌属性</el-button>
-              <el-button type="primary" link
-              @click="ToSetDimensionsPage(scope.row)">尺寸规格</el-button>
-              <el-button type="primary" link
-              @click="ToSetTheStorageUnitPage(scope.row)" >出入库单位</el-button>
-              <el-button type="primary" link
-              @click="editMaterialClassifyClick(scope.row)">编辑</el-button>
-              <el-button type="danger" link
-              @click="delMaterialClassify(scope.row)">删除</el-button>
+              <mp-button type="primary" link
+              @click="ToSetAttributesPage(scope.row)">设置属性</mp-button>
+              <mp-button type="primary" link :disabled="Boolean(scope.row.BrandIsSet)"
+              @click="setBrandClick(scope.row.TypeID)">品牌属性</mp-button>
+              <mp-button type="primary" link
+              @click="ToSetDimensionsPage(scope.row)">尺寸规格</mp-button>
+              <mp-button type="primary" link
+              @click="ToSetTheStorageUnitPage(scope.row)" >出入库单位</mp-button>
+              <mp-button type="primary" link
+              @click="editMaterialClassifyClick(scope.row)">编辑</mp-button>
+              <mp-button type="danger" link
+              @click="delMaterialClassify(scope.row)">删除</mp-button>
             </template>
           </el-table-column>
           <!-- <el-table-column prop="address" label="Address" /> -->

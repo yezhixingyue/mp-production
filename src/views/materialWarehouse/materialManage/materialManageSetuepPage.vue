@@ -6,7 +6,7 @@
         <el-breadcrumb-item>批量生成： {{materialManageName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary" @click="generativeRuleClick">生成规则</el-button>
+        <mp-button type="primary" @click="generativeRuleClick">生成规则</mp-button>
       </div>
     </header>
     <main >
@@ -22,7 +22,7 @@
                 编码：<el-input v-model.trim="item.MaterialCode" style="width:120px"></el-input>
               </span>
               <span>
-                操作：<el-button link type="danger" @click="delMaterial(index)">删除物料</el-button>
+                操作：<mp-button link type="danger" @click="delMaterial(index)">删除物料</mp-button>
               </span>
             </div>
             <el-scrollbar>
@@ -30,62 +30,18 @@
                 <template v-for="(size, i) in item.SizeIDS">
                   <li class="size-item" v-if="size" :key="size">
                     <span>{{getSizeName(size)}}</span>
-                    <el-button link type="danger" @click="delSize(index,i)">删除</el-button>
+                    <mp-button link type="danger" @click="delSize(index,i)">删除</mp-button>
                   </li>
                 </template>
-                <!-- <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li>
-                <li class="size-item">
-                  <span>数码不干胶460x320mm</span>
-                  <el-button link type="danger">删除</el-button>
-                </li> -->
               </ul>
             </el-scrollbar>
           </div>
         </el-scrollbar>
     </main>
     <footer>
-      <el-button :disabled="!Data.BatchAddList.length"
-      type="primary" @click="saveGenerativeRule">保存</el-button>
-      <el-button @click="$goback">返回</el-button>
+      <mp-button :disabled="!Data.BatchAddList.length"
+      type="primary" @click="saveGenerativeRule">保存</mp-button>
+      <mp-button @click="$goback">返回</mp-button>
     </footer>
     <DialogContainerComp
     :title="'批量生成'"
@@ -173,11 +129,11 @@
       </div>
     </template>
     <template #footer>
-      <el-button type="primary"
-      @click="primaryClick(false)">追加生成</el-button>
-      <el-button type="danger"
-      @click="primaryClick(true)">重新生成</el-button>
-      <el-button @click="closeClick">取消</el-button>
+      <mp-button type="primary"
+      @click="primaryClick(false)">追加生成</mp-button>
+      <mp-button type="danger"
+      @click="primaryClick(true)">重新生成</mp-button>
+      <mp-button @click="closeClick">取消</mp-button>
     </template>
     </DialogContainerComp>
   </div>
@@ -200,11 +156,45 @@ interface item {
   SelectID: string,
   InputSelectValue:string,
 }
+interface AttributesListType {
+  [id:string]: item[]
+}
+interface AttributesType {
+  IsCustomValue: string,
+  actionsValue: [],
+  AttributeID: string,
+  AttributeName: string,
+  AttributeSelects: string[],
+  IsCustom: boolean,
+  selfDefiningValueID: string,
+  AttributeUnit: string,
+  // 小数
+  IsAllowDecimal: boolean,
+  AttributeType: number,
+  IsRequired: boolean,
+  selfDefiningValue?:string
+}
+interface generativeRuleType {
+  SizeIDS: string[],
+  Attributes: AttributesType[],
+}
+interface BatchAddListType {
+  ID: string,
+  key: string,
+  MaterialRelationAttributes: item[],
+  MaterialCode: string,
+  SizeIDS: string[],
+  BrandID: number,
+}
+
 interface DataType{
   checkAll:boolean,
   isIndeterminate:boolean,
-  generativeRule: any,
-  [a:string]:any
+  generativeRule: generativeRuleType,
+  CategoryID:number|''
+  TypeID:string
+  dialogShow:boolean
+  BatchAddList:BatchAddListType[]
 }
 export default {
   name: 'materialManageSetuepPage',
@@ -363,7 +353,7 @@ export default {
 
     // 获取
     function getCartesianProduct(Attributes) {
-      const AttributesList:any = {};
+      const AttributesList:AttributesListType = {};
       Attributes.forEach(AttributesItem => {
         const actionItem:item[] = [];
 
@@ -538,7 +528,7 @@ export default {
       }
     }
     onMounted(() => {
-      Data.TypeID = route.params.TypeID;
+      Data.TypeID = route.params.TypeID as string;
       Data.CategoryID = Number(route.params.CategoryID);
       MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(Data.TypeID);
       MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.TypeID);

@@ -6,7 +6,7 @@
         <el-breadcrumb-item>设置属性：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary" @click="Data.dialogShow = true">+ 添加属性</el-button>
+        <mp-button type="primary" @click="Data.dialogShow = true">+ 添加属性</mp-button>
       </div>
     </header>
     <main>
@@ -36,18 +36,18 @@
           <el-table-column prop="Sort" label="显示顺序" min-width="176" />
           <el-table-column prop="name" label="操作" min-width="295">
             <template #default="scope">
-              <el-button type="info" link @click="editAttributes(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="info" link
+              <mp-button type="info" link @click="editAttributes(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="info" link
                 @click="delAttributes(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+                <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
         </el-table>
 
     </main>
     <footer>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getAttributesData.Page"
@@ -97,22 +97,22 @@
           <template v-if="Data.addAttributesForm.AttributeType === 2">
             <el-form-item label="选项：" style="margin-bottom:8px">
               <div class="attribute-selects">
-                <p><el-button type="primary" link @click="addAttributeSelect">添加一行</el-button></p>
+                <p><mp-button type="primary" link @click="addAttributeSelect">添加一行</mp-button></p>
                   <el-scrollbar>
                 <div style="max-height:222px;padding-right:10px">
                     <p v-for="(item, index) in Data.addAttributesForm.AttributeSelects"
                       :key="item.SelectID">
                       <el-input v-model="item.SelectItemValue" />
-                      <el-button type="primary"
+                      <mp-button type="primary"
                         :disabled="index===0" link @click="toUp(index)">
                         上移
-                      </el-button>
-                      <el-button type="primary"
+                      </mp-button>
+                      <mp-button type="primary"
                         :disabled="index===Data.addAttributesForm.AttributeSelects.length-1" link
                         @click="toDown(index)">
                         下移
-                      </el-button>
-                      <el-button type="danger" link @click="delAttributeSelect(index)">删除</el-button>
+                      </mp-button>
+                      <mp-button type="danger" link @click="delAttributeSelect(index)">删除</mp-button>
                     </p>
                 </div>
                   </el-scrollbar>
@@ -145,11 +145,17 @@ import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 
 interface AttributeSelectsType {
-    SelectID: string,
+    SelectID: string | number,
     Sort: number,
     SelectItemValue: string
 }
+interface getAttributesDataType {
+  TypeID:string,
+  Page:number,
+  PageSize:number,
+}
 interface AttributeType {
+   TypeID: string,
    AttributeID: string,
    AttributeName: string,
    Sort: number,
@@ -163,7 +169,13 @@ interface AttributeType {
 }
 interface DataType {
    AttributesList:AttributeType[],
-   [key:string]:any
+   addAttributesForm:AttributeType
+   dialogShow:boolean
+   getAttributesData:getAttributesDataType
+   DataTotal:number
+   CategoryName:string
+   TypeName:string
+  //  [key:string]:any
 }
 
 export default {
@@ -242,7 +254,9 @@ export default {
       getAttributesList();
     }
     function editAttributes(AttributesItem:AttributeType) {
-      Data.addAttributesForm = { TypeID: Data.addAttributesForm.TypeID, ...AttributesItem };
+      const _AttributesItem = AttributesItem;
+      _AttributesItem.TypeID = Data.addAttributesForm.TypeID;
+      Data.addAttributesForm = { ..._AttributesItem };
       Data.addAttributesForm.AttributeSelects = [...AttributesItem.AttributeSelects || []] || [];
       Data.dialogShow = true;
     }
@@ -302,8 +316,8 @@ export default {
     onMounted(() => {
       Data.CategoryName = route.params.CategoryName as string;
       Data.TypeName = route.params.TypeName as string;
-      Data.addAttributesForm.TypeID = route.params.TypeID;
-      Data.getAttributesData.TypeID = route.params.TypeID;
+      Data.addAttributesForm.TypeID = route.params.TypeID as string;
+      Data.getAttributesData.TypeID = route.params.TypeID as string;
       getAttributesList();
     });
     return {

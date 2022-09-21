@@ -2,7 +2,7 @@
   <div class="material-warehouse-manage-page">
     <header>
       <div class="header-top">
-        <el-button type="primary" @click="Data.SaveStorehouseShow = true">添加仓库</el-button>
+        <mp-button type="primary" @click="Data.SaveStorehouseShow = true">添加仓库</mp-button>
       </div>
     </header>
     <main>
@@ -22,19 +22,19 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" show-overflow-tooltip min-width="573">
             <template #default="scope">
-              <el-button type="primary" link
-              @click="ToSetPositionNumberPage(scope.row)">设置货位编号</el-button>
-              <el-button type="primary" link :disabled="!scope.row.IsLockDimension"
-              @click="ToGoodsAllocationPage(scope.row)">规划货位图</el-button>
-              <el-button type="primary" link
-              @click="seeImg(scope.row.StorehouseImg)">查看平面布局图</el-button>
-              <el-button type="primary" link @click="editStorehouse(scope.row)">
+              <mp-button type="primary" link
+              @click="ToSetPositionNumberPage(scope.row)">设置货位编号</mp-button>
+              <mp-button type="primary" link :disabled="!scope.row.IsLockDimension"
+              @click="ToGoodsAllocationPage(scope.row)">规划货位图</mp-button>
+              <mp-button type="primary" link
+              @click="seeImg(scope.row.StorehouseImg)">查看平面布局图</mp-button>
+              <mp-button type="primary" link @click="editStorehouse(scope.row)">
                 <!-- <i class="iconfont icon-bianji"></i> -->
-                编辑</el-button>
-              <el-button type="danger" link
+                编辑</mp-button>
+              <mp-button type="danger" link
                 @click="delStorehouse(scope.row)">
                 <!-- <i class="iconfont icon-delete"></i> -->
-                删除</el-button>
+                删除</mp-button>
             </template>
           </el-table-column>
         </el-table>
@@ -75,11 +75,8 @@
                 :before-upload='beforeUpload'
               >
                 <template #trigger>
-                  <el-button type="primary">上传平面布局图</el-button>
+                  <mp-button type="primary">上传平面布局图</mp-button>
                 </template>
-                <!-- <el-button class="ml-3" type="success" @click="submitUpload">
-                  upload to server
-                </el-button> -->
                 <template #tip>
                   <div class="el-upload__tip text-red">
                     {{Data.SaveStorehouseForm.StorehouseImg? '已上传图片':'未上传'}}

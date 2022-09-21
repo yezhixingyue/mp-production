@@ -34,7 +34,7 @@
         </el-scrollbar>
     </main>
     <footer>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
     </footer>
   </div>
 </template>
@@ -81,22 +81,36 @@ export interface DimensionDataType {
   DimensionX: string,
   DimensionY: string
 }
-export interface DyadicArrayDimensionDataType {
+export interface getGoodsPositionType {
+  UsePositionDetails:DimensionDataType[]|null
+}
+interface DyadicArrayDimensionDataType {
   DimensionX: string,
   DimensionY: string
   xNum: number,
   yNum: number
 }
-export interface AllPositionDetailsType {
+interface AllPositionDetailsType {
   DimensionXS: DimensionType[],
   DimensionYS: DimensionType[]
   DimensionUnitX: string,
   DimensionUnitY: string
 }
-export interface allDimensionDataType {
+interface allDimensionDataType {
   AllPositionDetails:AllPositionDetailsType
   UsePositionDetails:DimensionDataType[]|null
   DyadicArrayDimensionData:DyadicArrayDimensionDataType[][]
+}
+interface DetailSetsType {
+  DimensionX: string,
+  DimensionY: string,
+}
+interface GoodsPositionSaveDataType {
+  PositionID: string,
+  StorehouseID: string,
+  PositionName: string,
+  DetailSets: DetailSetsType[],
+  DimensionIDS:string[]
 }
 
 interface DataType {
@@ -106,7 +120,7 @@ interface DataType {
   allDimensionData:allDimensionDataType
   // DyadicArrayDimensionData:DimensionDataType[][]
   actionCells:DimensionDataType[]
-  GoodsPositionSaveData:any
+  GoodsPositionSaveData:GoodsPositionSaveDataType
   StorehouseName:string
 }
 
@@ -135,6 +149,7 @@ export default {
             DimensionY: '1柜',
           },
         ],
+        DimensionIDS: [],
       },
       actionCells: [],
       // 货位编号选择
@@ -200,7 +215,7 @@ export default {
       temp.DimensionIDS = Data.selectData.map(res => res.inputValue);
       api.getGoodsPositionDetail(temp).then(res => {
         if (res.data.Status === 1000) {
-          const t = res.data.Data as any;
+          const t = res.data.Data as getGoodsPositionType;
           Data.allDimensionData.UsePositionDetails = null;
           setTimeout(() => {
             Data.allDimensionData.UsePositionDetails = t.UsePositionDetails;
@@ -302,7 +317,7 @@ export default {
 
     onMounted(() => {
       Data.StorehouseName = route.params.StorehouseName as string;
-      Data.GoodsPositionSaveData.StorehouseID = route.params.StorehouseID;
+      Data.GoodsPositionSaveData.StorehouseID = route.params.StorehouseID as string;
       api.getGoodsPositionDimensionSelect(route.params.StorehouseID).then(res => {
         if (res.data.Status === 1000) {
           Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;

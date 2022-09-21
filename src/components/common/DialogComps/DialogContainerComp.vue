@@ -23,10 +23,10 @@
     </template>
     <template #footer>
       <slot name="footer">
-        <el-button type="primary" class="gradient" v-if="showPrimary"
-        @click="Primary">{{primaryText}}</el-button>
-        <el-button type="danger" v-if="showDel" @click="Del">{{delBtnText }}</el-button>
-        <el-button v-if="showClose" class="blue" @click="Close">{{closeBtnText}}</el-button>
+        <mp-button type="primary" class="gradient" v-if="showPrimary"
+        @click="Primary">{{primaryText}}</mp-button>
+        <mp-button type="danger" v-if="showDel" @click="Del">{{delBtnText }}</mp-button>
+        <mp-button v-if="showClose" class="blue" @click="Close">{{closeBtnText}}</mp-button>
       </slot>
     </template>
   </el-dialog>

@@ -6,8 +6,8 @@
         <el-breadcrumb-item>出入库单位：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary" @click="addStorageUnit">+ 添加单位</el-button>
-        <el-button link type="primary" @click="setStoreUnit">设置库存单位</el-button>
+        <mp-button type="primary" @click="addStorageUnit">+ 添加单位</mp-button>
+        <mp-button link type="primary" @click="setStoreUnit">设置库存单位</mp-button>
         <span>当前库存单位：{{Data.currentStoreUnit}}</span>
       </div>
     </header>
@@ -30,10 +30,10 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="167">
             <template #default="scope">
-              <el-button type="info" link @click="editStorageUnit(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="info" link @click="delStorageUnit(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+              <mp-button type="info" link @click="editStorageUnit(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="info" link @click="delStorageUnit(scope.row)">
+                <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
         </el-table>
@@ -46,7 +46,7 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange"/>
         </div>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
     </footer>
     <!-- 添加单位 -->
     <DialogContainerComp

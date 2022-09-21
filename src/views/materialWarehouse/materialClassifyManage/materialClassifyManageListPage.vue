@@ -6,7 +6,7 @@
         <el-breadcrumb-item>管理物料分类</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary" @click="dialog = true">+ 添加物料分类</el-button>
+        <mp-button type="primary" @click="dialog = true">+ 添加物料分类</mp-button>
       </div>
     </header>
     <main>
@@ -16,11 +16,11 @@
           show-overflow-tooltip prop="CategoryName" label="分类" min-width="288" />
           <el-table-column prop="name" label="操作" min-width="288">
             <template #default="scope">
-              <el-button type="primary" link @click="editCategory(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="danger" link
+              <mp-button type="primary" link @click="editCategory(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="danger" link
               @click="delCategory(scope.row)">
-              <i class="iconfont icon-delete"></i>删除</el-button>
+              <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
 
@@ -36,7 +36,7 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange" />
         </div>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
     </footer>
     <DialogContainerComp
     :title="`${Data.classifyInfo.CategoryID ? '修改' : '添加'}物料分类`"

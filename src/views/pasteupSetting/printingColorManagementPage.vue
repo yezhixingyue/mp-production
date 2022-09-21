@@ -2,7 +2,7 @@
   <div class="printing-color-management-page">
     <header>
       <div class="header-top">
-        <el-button type="primary" @click="addPrintingColor">+ 添加印色</el-button>
+        <mp-button type="primary" @click="addPrintingColor">+ 添加印色</mp-button>
       </div>
     </header>
     <main>
@@ -22,11 +22,11 @@
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
             <template v-if="!scope.row.IsSpecialColor">
-              <el-button type="info" link @click="editPrintColor(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="info" link
+              <mp-button type="info" link @click="editPrintColor(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="info" link
                 @click="delPrintColor(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+                <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </template>
         </el-table-column>

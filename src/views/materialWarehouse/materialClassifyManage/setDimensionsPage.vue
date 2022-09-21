@@ -6,7 +6,7 @@
         <el-breadcrumb-item>尺寸规格：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary" @click="Data.dialogShow = true">+ 添加尺寸</el-button>
+        <mp-button type="primary" @click="Data.dialogShow = true">+ 添加尺寸</mp-button>
       </div>
     </header>
     <main>
@@ -35,17 +35,17 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="287">
             <template #default="scope">
-              <el-button type="info" link @click="editDimensions(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="info" link
+              <mp-button type="info" link @click="editDimensions(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="info" link
                 @click="delDimensions(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+                <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
         </el-table>
     </main>
     <footer>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getDimensisnsData.Page"

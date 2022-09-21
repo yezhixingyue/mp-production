@@ -4,7 +4,7 @@
       <el-input v-model.trim="Data.getMaterialData.SKUCode"
       placeholder="请输入完整SKU编码，包括尺寸编码"
        @keyup.enter="getMaterial(false)" size="large"/>
-      <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
+      <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
     </p>
     <span>或者</span>
   </el-form-item>

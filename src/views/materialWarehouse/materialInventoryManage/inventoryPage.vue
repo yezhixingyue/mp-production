@@ -6,7 +6,7 @@
         <el-breadcrumb-item>库存盘点</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary" @click="ToInventoryLogPage">查看盘点记录</el-button>
+        <mp-button type="primary" @click="ToInventoryLogPage">查看盘点记录</mp-button>
       </div>
     </header>
     <main>
@@ -38,22 +38,21 @@
           show-overflow-tooltip min-width="229" />
           <el-table-column prop="name" label="操作" min-width="243">
             <template #default="scope">
-              <el-button type="primary" v-if="scope.row.LastInventoryStatus === 1"
+              <mp-button type="primary" v-if="scope.row.LastInventoryStatus === 1"
               link @click="ToMakeAnInventory(scope.row)">
                 <i class="iconfont icon-ico_kufangguanli_wupinpandian" style="font-size:14px"></i>
-                继续盘点</el-button>
-              <el-button type="primary" v-else link @click="beginInventory(scope.row)">
+                继续盘点</mp-button>
+              <mp-button type="primary" v-else link @click="beginInventory(scope.row)">
                 <i class="iconfont icon-ico_kufangguanli_wupinpandian" style="font-size:14px"></i>
-                开始盘点</el-button>
+                开始盘点</mp-button>
             </template>
           </el-table-column>
         </el-table>
     </main>
     <footer>
-      <!-- <el-button type="primary" @click="saveGenerativeRule">保存</el-button> -->
-      <el-button @click="removeEventListener" @keydown="() => null" style="padding:0;border:0">
-        <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
-      </el-button>
+      <mp-button @click="removeEventListener" @keydown="() => null" style="padding:0;border:0">
+        <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+      </mp-button>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getInventoryListData.Page"

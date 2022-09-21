@@ -35,11 +35,11 @@
           <el-form-item :label="`列数：`" class="form-item-required input-num">
             <el-input v-model.number="Data.foldWayTemplateFrom.ColumnNumber" placeholder="请输入列数"></el-input> 列
           </el-form-item>
-          <div><el-button type="primary" link @click="createMap">生成模板图</el-button></div>
+          <div><mp-button type="primary" link @click="createMap">生成模板图</mp-button></div>
         </el-form>
       </div>
       <div class="right">
-        <p><el-button type="primary" link @click="rotatePage">翻转印面</el-button></p>
+        <p><mp-button type="primary" link @click="rotatePage">翻转印面</mp-button></p>
         <div>
           <el-scrollbar>
           <ul class="rows">
@@ -57,8 +57,8 @@
                   <!-- <span v-else class="page" :class="{'is-even': isEven(PositionCol.PageNumber)}">{{PositionCol.PageNumber}}</span> -->
 
                   <div class="btns">
-                    <p><el-button type="primary" link @click="rotate(RowIndex,ColIndex)">旋转</el-button></p>
-                    <p><el-button type="primary" link @click="setPage(RowIndex,ColIndex,PositionCol.PageNumber)">设置页码</el-button></p>
+                    <p><mp-button type="primary" link @click="rotate(RowIndex,ColIndex)">旋转</mp-button></p>
+                    <p><mp-button type="primary" link @click="setPage(RowIndex,ColIndex,PositionCol.PageNumber)">设置页码</mp-button></p>
                   </div>
                 </li>
               </ul>
@@ -89,8 +89,8 @@
     </template>
     </DialogContainerComp>
     <footer>
-      <el-button type="primary" @click="foldWayTemplateSave">保存</el-button>
-      <el-button @click="$goback">返回</el-button>
+      <mp-button type="primary" @click="foldWayTemplateSave">保存</mp-button>
+      <mp-button @click="$goback">返回</mp-button>
     </footer>
   </div>
 </template>

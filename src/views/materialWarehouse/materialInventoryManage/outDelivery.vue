@@ -11,7 +11,7 @@
                     <el-input size="large" @keyup.enter="getMaterial(false)"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
                      v-model.trim="Data.getMaterialData.SKUCode"/>
-                    <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
+                    <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
                   </p>
                   <span>或者</span>
                 </el-form-item>
@@ -125,8 +125,8 @@
                         出库：{{getStorehouseOutNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
                       </span>
                       <span>
-                        <el-button link type="primary"
-                        @click="SeeImg(Storehouse.StorehouseImg)">查看平面布局图</el-button>
+                        <mp-button link type="primary"
+                        @click="SeeImg(Storehouse.StorehouseImg)">查看平面布局图</mp-button>
                       </span>
                     </p>
                     <ul>
@@ -149,7 +149,7 @@
                             </span>
                           </div>
                         </span>
-                        <el-button type="primary" @click="seePosition(Storehouse,GoodsPosition)">位置</el-button>
+                        <mp-button type="primary" @click="seePosition(Storehouse,GoodsPosition)">位置</mp-button>
                       </li>
                     </ul>
                   </div>
@@ -162,7 +162,7 @@
             </div>
           </div>
           <div class="btn">
-            <el-button type="primary" @click="outDelvery">出库</el-button>
+            <mp-button type="primary" @click="outDelvery">出库</mp-button>
           </div>
         </el-scrollbar>
       <!-- </MpCardContainer> -->
@@ -275,13 +275,11 @@
 <script lang='ts'>
 
 import OutDeliveryDialog from '@/components/materialInventoryManage/outDeliveryDialog.vue';
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
-  ref, Ref, reactive, onMounted, computed, onActivated,
+  ref, Ref, reactive, onMounted, computed,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useRouterStore } from '@/store/modules/routerStore';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';

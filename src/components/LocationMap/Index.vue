@@ -52,9 +52,9 @@
         </dd>
       </dl>
       <template v-if="!isMultiSelect">
-        <el-button :disabled="locationMap.newLocation.length===0" type="primary" @click="onSetNewClick">设置新货位</el-button>
+        <mp-button :disabled="locationMap.newLocation.length===0" type="primary" @click="onSetNewClick">设置新货位</mp-button>
         <!-- <el-button :disabled="!locationMap.selectedLocation" type="primary" @click="onRenameClick">修改货位名称</el-button> -->
-        <el-button :disabled="!locationMap.selectedLocation" type="danger" @click="onRemoveClick">删除货位</el-button>
+        <mp-button :disabled="!locationMap.selectedLocation" type="danger" @click="onRemoveClick">删除货位</mp-button>
       </template>
     </aside>
   </section>

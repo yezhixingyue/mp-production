@@ -5,7 +5,7 @@
     <input type="text" v-model="a">
     <br>
   </div> -->
-    <el-button @click="goback">返回</el-button>
+    <mp-button @click="goback">返回</mp-button>
   <TopMiddleBottomConstruction>
     a
     <template v-slot:header>

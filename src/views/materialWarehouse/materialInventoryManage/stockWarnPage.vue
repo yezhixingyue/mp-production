@@ -103,7 +103,7 @@
         </el-table>
     </main>
     <footer>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getStockWarnData.Page"

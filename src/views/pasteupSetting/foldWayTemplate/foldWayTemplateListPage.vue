@@ -12,10 +12,10 @@
           :value='RadioGroupCompValue'
           @change="RadioGroupCompChange"
           ></RadioGroupComp>
-        <el-button type="primary" link @click="ManagementClass">管理分类</el-button>
+        <mp-button type="primary" link @click="ManagementClass">管理分类</mp-button>
       </div>
       <div class="header-top">
-        <el-button type="primary" @click="TofoldWayTemplate">+ 添加折手模板</el-button>
+        <mp-button type="primary" @click="TofoldWayTemplate">+ 添加折手模板</mp-button>
       </div>
     </header>
     <main>
@@ -44,16 +44,16 @@
         </el-table-column>
         <el-table-column prop="name" label="操作" min-width="277">
           <template #default="scope">
-            <el-button type="primary" link @click="setApplyEquipment(scope.row)">
+            <mp-button type="primary" link @click="setApplyEquipment(scope.row)">
               <!-- <i class="iconfont icon-bianji"></i> -->
-              适用设备</el-button>
-            <el-button type="primary" link @click="TofoldWayTemplate(scope.row)">
+              适用设备</mp-button>
+            <mp-button type="primary" link @click="TofoldWayTemplate(scope.row)">
               <!-- <i class="iconfont icon-bianji"></i> -->
-              编辑</el-button>
-            <el-button type="danger" link
+              编辑</mp-button>
+            <mp-button type="danger" link
               @click="delFoldWayTemplate(scope.row)">
               <!-- <i class="iconfont icon-delete"></i> -->
-              删除</el-button>
+              删除</mp-button>
           </template>
         </el-table-column>
       </el-table>

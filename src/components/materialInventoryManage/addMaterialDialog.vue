@@ -18,7 +18,7 @@
           <el-form-item :label="`SKU编码：`" class="sku">
             <p>
               <el-input  @keyup.enter="getMaterial(false)" placeholder="请输入完整SKU编码，包括尺寸编码" v-model.trim="Data.getMaterialData.SKUCode"/>
-              <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
+              <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
             </p>
             <span>或者</span>
           </el-form-item>

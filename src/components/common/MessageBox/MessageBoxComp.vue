@@ -15,10 +15,10 @@
     </template>
     <template #footer>
       <slot name="footer">
-        <el-button type="primary" v-if="showPrimary"
-        @click="PrimaryClick">{{primaryText}}</el-button>
-        <el-button type="danger" v-if="showDel" @click="DelClick">{{delBtnText }}</el-button>
-        <el-button v-if="showClose" @click="CloseClick">{{closeBtnText}}</el-button>
+        <mp-button type="primary" v-if="showPrimary"
+        @click="PrimaryClick">{{primaryText}}</mp-button>
+        <mp-button type="danger" v-if="showDel" @click="DelClick">{{delBtnText }}</mp-button>
+        <mp-button v-if="showClose" @click="CloseClick">{{closeBtnText}}</mp-button>
       </slot>
     </template>
   </el-dialog>

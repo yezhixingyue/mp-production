@@ -4,6 +4,7 @@ import router from '@/router';
 import messageBox from '@/assets/js/utils/message';
 import { ElLoading } from 'element-plus';
 import Axios from './axios';
+import { ICatch } from './types';
 
 const apiListByNotNeedToken = ['/Api/Staff/Login']; // 不需要token访问的接口列表
 
@@ -89,7 +90,7 @@ const instance = new Axios({
       }
       return result;
     },
-    responseInterceptorsCatch: (error:any) => {
+    responseInterceptorsCatch: (error:ICatch) => {
       if (getShowLoading(error.config) && loadingInstance) handleLoadingClose();
 
       const userStore = useUserStore();

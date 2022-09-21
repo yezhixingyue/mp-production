@@ -60,6 +60,9 @@ export interface DimensionDataType {
   DimensionX: string,
   DimensionY: string
 }
+export interface getGoodsPositionType {
+  UsePositionDetails:DimensionDataType[]|null
+}
 export interface allDimensionDataType {
   AllPositionDetails:AllPositionDetailsType
   UsePositionDetails:DimensionDataType[]|null
@@ -179,7 +182,7 @@ export default {
     function getGoodsPosition() {
       api.getGoodsPositionDetail(props.getGoodsPositionData).then(res => {
         if (res.data.Status === 1000) {
-          const t = res.data.Data as any;
+          const t = res.data.Data as getGoodsPositionType;
           setTimeout(() => {
             Data.allDimensionData.UsePositionDetails = t.UsePositionDetails;
           }, 30);

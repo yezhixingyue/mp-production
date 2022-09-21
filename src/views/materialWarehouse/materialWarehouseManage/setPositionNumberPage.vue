@@ -6,20 +6,20 @@
         <el-breadcrumb-item>设置货位编号：{{Data.StorehouseName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary"
+        <mp-button type="primary"
         :disabled="Data.LockStatus"
-        @click="Data.addPalletDimensionsShow = true">+ 添加货位维度</el-button>
+        @click="Data.addPalletDimensionsShow = true">+ 添加货位维度</mp-button>
         <p class="lock">
           <span v-if="Data.LockStatus" class="isLock">
             <i class="iconfont icon-suoding"></i>
             已锁定
           </span>
-          <el-button type="primary" link v-if="!Data.LockStatus"
+          <mp-button type="primary" link v-if="!Data.LockStatus"
           @click="PalletDimensionsLockCode">
           <i class="iconfont icon-suoding"></i>
-          锁定货位编号</el-button>
-          <el-button type="danger" link v-else
-          @click="PalletDimensionsUnlockCode">解锁</el-button>
+          锁定货位编号</mp-button>
+          <mp-button type="danger" link v-else
+          @click="PalletDimensionsUnlockCode">解锁</mp-button>
         </p>
       </div>
     </header>
@@ -37,14 +37,14 @@
           <el-table-column prop="Sort" label="显示顺序" min-width="399" />
           <el-table-column prop="name" label="操作" min-width="371">
             <template #default="scope">
-              <el-button type="info"
+              <mp-button type="info"
               :disabled="Data.LockStatus" link @click="editStorehouse(scope.row)">
               <i class="iconfont icon-bianji"></i>
-              编辑</el-button>
-              <el-button type="info"
+              编辑</mp-button>
+              <mp-button type="info"
               :disabled="Data.LockStatus" link
                 @click="delStorehouse(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+                <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
         </el-table>
@@ -53,7 +53,7 @@
         </p>
     </main>
     <footer>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
     </footer>
     <DialogContainerComp
     :title="`${Data.addPalletDimensionsForm.DimensionID ? '修改': '添加'}货位维度`"
@@ -120,6 +120,9 @@ import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 
+interface getLockStatusType {
+  LockStatus: boolean,
+}
 interface addPalletDimensionsFormType {
   DimensionID: string,
   StorehouseID: string,
@@ -236,9 +239,10 @@ export default {
     function getLockStatus() {
       api.getGoodsPositionDimensionLockStatus(
         Data.getPalletDimensionsListData.StorehouseID,
-      ).then((res:any) => {
+      ).then((res) => {
         if (res.data.Status) {
-          Data.LockStatus = res.data.Data.LockStatus as boolean;
+          const t = res.data.Data as getLockStatusType;
+          Data.LockStatus = t.LockStatus as boolean;
         }
       });
     }

@@ -45,11 +45,9 @@
 </template>
 <script lang="ts">
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import messageBox from '@/assets/js/utils/message';
 import {
-  reactive, computed, Ref, ref, onMounted, watch,
+  reactive, computed, watch,
 } from 'vue';
-import api from '@/api';
 import { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 
 interface applyEquipmentListFrom extends UseClassEquipmentGroupType{
@@ -210,5 +208,6 @@ export default {
 </script>
 <style lang="scss">
   .set-apply-equipment-dialog{
+    //
   }
 </style>

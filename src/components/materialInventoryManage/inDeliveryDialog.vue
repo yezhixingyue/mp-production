@@ -22,8 +22,8 @@
                 {{item.StorehouseName}}
               </el-radio-button>
             </el-radio-group>
-             <el-button type="primary" link
-              @click="seeImg()">查看平面布局图</el-button>
+             <mp-button type="primary" link
+              @click="seeImg()">查看平面布局图</mp-button>
           </div>
         </el-scrollbar>
         <div class="top-main">
@@ -117,6 +117,9 @@ export interface allDimensionDataType {
   AllPositionDetails:AllPositionDetailsType
   UsePositionDetails:DimensionDataType[]|null
   DyadicArrayDimensionData:DyadicArrayDimensionDataType[][]
+}
+export interface getGoodsPositionType {
+  UsePositionDetails:DimensionDataType[]|null
 }
 
 interface DimensionsType {
@@ -348,7 +351,7 @@ export default {
       api.getGoodsPositionDetail(temp).then(res => {
         if (res.data.Status === 1000) {
           Data.allDimensionData.UsePositionDetails = null;
-          const t = res.data.Data as any;
+          const t = res.data.Data as getGoodsPositionType;
           Data.allDimensionData.UsePositionDetails = null;
           setTimeout(() => {
             Data.allDimensionData.UsePositionDetails = t.UsePositionDetails;

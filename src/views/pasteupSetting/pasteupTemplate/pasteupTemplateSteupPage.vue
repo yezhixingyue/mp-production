@@ -73,11 +73,8 @@
                   :before-upload='beforeUpload'
                 >
                   <template #trigger>
-                    <el-button type="primary" :loading="Data.uploadBtnLoading">选择文件</el-button>
+                    <mp-button type="primary" :loading="Data.uploadBtnLoading">选择文件</mp-button>
                   </template>
-                  <!-- <el-button class="ml-3" type="success" @click="submitUpload">
-                    upload to server
-                  </el-button> -->
                   <template #tip>
                     <div class="el-upload__tip text-red">
                       {{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath? '已上传模板文件':'未上传'}}
@@ -86,7 +83,6 @@
                 </el-upload>
                 <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath">
                   下载当前模板文件</el-link>
-                <!-- <el-button link type="primary">下载当前模板文件</el-button> -->
               </div>
               <p class="hint">
                 模板制作说明：版芯使用 PANTONE 804C 标记
@@ -109,7 +105,7 @@
               <el-checkbox v-model="Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode" label="按模位" />
             </el-form-item>
             <div v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode" class="template-location-list">
-              <el-button type="primary" link @click="addModeItem">+ 添加一行</el-button>
+              <mp-button type="primary" link @click="addModeItem">+ 添加一行</mp-button>
               <div class="table-title">
                 <span class="coord">
                   起始坐标
@@ -150,7 +146,7 @@
                     <el-input-number :controls="false" v-model="ModeItemList.ColumnNumber"/> 列
                   </span>
                   <span class="handle">
-                    <el-button type="danger" link @click="delModeItem(index)">删除</el-button>
+                    <mp-button type="danger" link @click="delModeItem(index)">删除</mp-button>
                   </span>
                 </li>
               </ul>
@@ -172,8 +168,8 @@
       </el-scrollbar>
     </main>
     <footer>
-      <el-button type="primary" @click="savePasteupTemplate">保存</el-button>
-      <el-button @click="$goback">返回</el-button>
+      <mp-button type="primary" @click="savePasteupTemplate">保存</mp-button>
+      <mp-button @click="$goback">返回</mp-button>
     </footer>
   </div>
 </template>

@@ -12,7 +12,7 @@
                     {{Data.StorehouseName}}
                   </span>
                 </p>
-                <el-button type="danger" @click="ForcedEnd">强制完成</el-button>
+                <mp-button type="danger" @click="ForcedEnd">强制完成</mp-button>
               </div>
               <div class="current-material">
                 <p>
@@ -64,8 +64,8 @@
                     {{Data.InventoryDetail.PrevPositionName}}
                   </span>
                 </p>
-                <el-button link type="primary" :disabled="!Data.InventoryDetail?.PrevDetailID"
-                @click="anewLast">重新盘点上一个 ></el-button>
+                <mp-button link type="primary" :disabled="!Data.InventoryDetail?.PrevDetailID"
+                @click="anewLast">重新盘点上一个 ></mp-button>
               </div>
               <ul v-if="Data.InventoryDetail?.PrevPositionMaterial.length"
               :style="`height: ${Data.InventoryDetail.PrevPositionMaterial.length*51}px;`">
@@ -97,8 +97,8 @@
             </div>
           </div>
           <div class="btn">
-            <el-button type="primary" @click="inventoryCorrect">正确</el-button>
-            <el-button @click="inventoryError" :disabled="!Data.InventoryDetail?.Code">错误</el-button>
+            <mp-button type="primary" @click="inventoryCorrect">正确</mp-button>
+            <mp-button @click="inventoryError" :disabled="!Data.InventoryDetail?.Code">错误</mp-button>
           </div>
       <!-- </MpCardContainer> -->
     </main>
@@ -138,8 +138,8 @@
         </div>
       </template>
       <template #footer>
-        <el-button type="primary" @click="toNext">确定跳转</el-button>
-        <el-button  @click="Data.addMaterialShow = true ">此货位还有物料</el-button>
+        <mp-button type="primary" @click="toNext">确定跳转</mp-button>
+        <mp-button  @click="Data.addMaterialShow = true ">此货位还有物料</mp-button>
       </template>
       </el-dialog>
 
@@ -147,15 +147,12 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import AddMaterialDialog from '@/components/materialInventoryManage/addMaterialDialog.vue';
 import MakeAnInventoryErrorDialog from '@/components/materialInventoryManage/makeAnInventoryErrorDialog.vue';
 
 import {
-  ref, reactive, onMounted, watch, onActivated,
+  reactive, onMounted,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
-import { useRouterStore } from '@/store/modules/routerStore';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 
@@ -212,7 +209,6 @@ export default {
   },
   setup() {
     // const h = ref(0);
-    const RouterStore = useRouterStore();
     const Data:DataType = reactive({
       StorehouseName: '',
       // 还有物料 添加物料弹窗

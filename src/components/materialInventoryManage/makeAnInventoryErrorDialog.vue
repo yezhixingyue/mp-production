@@ -32,8 +32,8 @@
                </template>
                {{materialInfo.SizeDescribe}}
               </span>
-              <el-button
-              type="primary" @click="Data.editMaterialShow = true" link>修改物料</el-button>
+              <mp-button
+              type="primary" @click="Data.editMaterialShow = true" link>修改物料</mp-button>
             </div>
           </el-form-item>
           <el-form-item :label="`SKU编码：`" class="in-number">
@@ -61,7 +61,7 @@
                </template>
                {{Data.newMaterialInfo.SizeDescribe}}
              </span>
-              <el-button @click="Data.newMaterialInfo = null" link type="danger">删除</el-button>
+              <mp-button @click="Data.newMaterialInfo = null" link type="danger">删除</mp-button>
             </p>
           </el-form-item>
 
@@ -139,7 +139,7 @@
                     <el-input @keyup.enter="getMaterial(false)"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
                     v-model.trim="Data.getMaterialData.SKUCode"/>
-                    <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
+                    <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
                   </p>
                   <span>或者</span>
                 </el-form-item>

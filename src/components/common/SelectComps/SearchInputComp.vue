@@ -15,7 +15,7 @@
       </button>
     </template>
     </el-input>
-    <el-button link class="order-header-reset-btn" v-if="showResetBtn" @click="onResetBtn">{{resetWords}}</el-button>
+    <mp-button link class="order-header-reset-btn" v-if="showResetBtn" @click="onResetBtn">{{resetWords}}</mp-button>
   </section>
 </template>
 

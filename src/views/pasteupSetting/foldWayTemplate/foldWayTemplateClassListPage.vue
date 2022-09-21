@@ -6,7 +6,7 @@
         <el-breadcrumb-item>分类管理</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
-        <el-button type="primary" @click="addClass">+ 添加分类</el-button>
+        <mp-button type="primary" @click="addClass">+ 添加分类</mp-button>
       </div>
     </header>
     <main>
@@ -16,17 +16,17 @@
         show-overflow-tooltip prop="Name" label="名称" min-width="280" />
         <el-table-column prop="name" label="操作" min-width="280">
           <template #default="scope">
-              <el-button type="info" link @click="editClass(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="info" link
+              <mp-button type="info" link @click="editClass(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="info" link
                 @click="delClass(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+                <i class="iconfont icon-delete"></i>删除</mp-button>
           </template>
         </el-table-column>
       </el-table>
     </main>
     <footer>
-      <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
+      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
       <div class="bottom-count-box">
         <MpPagination :pageSize="Data.DataTotal" :total="Data.DataTotal"/>
       </div>

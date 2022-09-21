@@ -1,5 +1,10 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
+export interface ICatch { // 解决终端警告用
+  response:AxiosResponse
+  config:unknown,
+}
+
 /**
  * 实例拦截器
  *
@@ -13,7 +18,7 @@ export interface IRequestInterceptors {
 
   // 响应拦截
   responseInterceptors?: <T>(config: AxiosResponse<T>) => AxiosResponse<T>;
-  responseInterceptorsCatch?: (error: unknown) => unknown;
+  responseInterceptorsCatch?: (error: ICatch) => unknown;
 }
 
 export interface IRequestConfig extends AxiosRequestConfig {

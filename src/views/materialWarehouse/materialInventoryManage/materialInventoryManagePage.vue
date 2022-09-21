@@ -3,15 +3,14 @@
     <header>
       <div class="header-top">
         <div class="btns">
-          <el-button @click="ToOutDelivery" type="primary">出库</el-button>
-          <el-button @click="ToInDelivery" type="danger">入库</el-button>
-          <el-button link type="primary" @click="ToStockWarnPage">
-            <i class="iconfont icon-zengsongjilu"></i> 预警记录</el-button>
-          <el-button link type="primary" @click="ToInventoryPage">
+          <mp-button @click="ToOutDelivery" type="primary">出库</mp-button>
+          <mp-button @click="ToInDelivery" type="danger">入库</mp-button>
+          <mp-button link type="primary" @click="ToStockWarnPage">
+            <i class="iconfont icon-zengsongjilu"></i> 预警记录</mp-button>
+          <mp-button link type="primary" @click="ToInventoryPage">
             <i class="iconfont icon-kucunpandian-"></i>
-            库存盘点</el-button>
-          <el-button link type="primary" @click="seeSMSShow">查看短信(仅测试用)</el-button>
-          <!-- <el-button>仅显示预警中物料</el-button> -->
+            库存盘点</mp-button>
+          <mp-button link type="primary" @click="seeSMSShow">查看短信(仅测试用)</mp-button>
           <p>
             <el-checkbox @change="getStockList"
             v-model="Data.getStockData.IsWarn" label="仅显示预警中物料" size="large" />
@@ -89,8 +88,8 @@
               <template v-if="scope.row.TotalStock">
                 {{scope.row.TotalStock}}
                 {{scope.row.StockUnit}}
-                <el-button link type="primary" :disabled="!scope.row.TotalStock"
-                @click="SeeGoodsAllocation(scope.row)">货位</el-button>
+                <mp-button link type="primary" :disabled="!scope.row.TotalStock"
+                @click="SeeGoodsAllocation(scope.row)">货位</mp-button>
               </template>
               <template v-else>
                 暂无库存
@@ -110,19 +109,19 @@
           <el-table-column label="预警状态" min-width="196">
             <template #default="scope">
               <span style="padding:0 5px;color:#FF3769" v-if="scope.row.IsWarn">预警中</span>
-              <el-button v-if="scope.row.IsOpenWarn" type="primary"
+              <mp-button v-if="scope.row.IsOpenWarn" type="primary"
               style="margin-left:10px"
-              link @click="CancelSMSWarnClick(scope.row)">解除短信预警</el-button>
+              link @click="CancelSMSWarnClick(scope.row)">解除短信预警</mp-button>
             </template>
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="物料" label="操作" min-width="138">
             <template #default="scope">
-              <el-button
+              <mp-button
               type="primary"
               link @click="SetSMSWarnClick(scope.row)">
               <i class="iconfont icon-xiangmuyujingshezhi" style="font-size:16px"></i>
-              设置预警</el-button>
+              设置预警</mp-button>
             </template>
           </el-table-column>
         </el-table>
@@ -248,8 +247,8 @@
                   {{getStorehouseStockNumber()}}{{Data.materialManageInfo.StockUnit}}
                 </span>
                 <span>
-                  <el-button type="primary" link
-                   @click="SeeImg(Storehouseitem.StorehouseImg)">查看平面布局图</el-button>
+                  <mp-button type="primary" link
+                   @click="SeeImg(Storehouseitem.StorehouseImg)">查看平面布局图</mp-button>
                 </span>
               </p>
               <ul>
@@ -371,8 +370,8 @@ interface StorehouseStockInfoType {
 }
 interface DataType {
 
-  seeSMSShow:any,
-  SMSList:any,
+  seeSMSShow:boolean,
+  SMSList:string[],
 
   SetSMSWarnShow:boolean,
   StorehouseStockShow:boolean,
@@ -488,7 +487,7 @@ export default {
       // 获取所有短信
       api.getIStockSMSList({}).then(res => {
         if (res.data.Status === 1000) {
-          Data.SMSList = res.data.Data;
+          Data.SMSList = res.data.Data as string[];
         }
       });
     }

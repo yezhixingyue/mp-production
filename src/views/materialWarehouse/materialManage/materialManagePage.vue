@@ -3,10 +3,10 @@
     <header>
       <div class="header-top">
         <div class="bt">
-          <el-button
-          type="primary" @click="addMaterialManage">+ 添加物料</el-button>
-          <el-button
-          type="primary" @click="batchAddMaterialManage">批量生成</el-button>
+          <mp-button
+          type="primary" @click="addMaterialManage">+ 添加物料</mp-button>
+          <mp-button
+          type="primary" @click="batchAddMaterialManage">批量生成</mp-button>
         </div>
             <SearchInputComp
               :word='Data.getMaterialManageData.KeyWords'
@@ -71,10 +71,10 @@
           </el-table-column>
           <el-table-column prop="操作" label="操作" min-width="238">
             <template #default="scope">
-              <el-button type="info" link @click="editMaterial(scope.row)">
-                <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="info" link @click="delMaterial(scope.row)">
-                <i class="iconfont icon-delete"></i>删除</el-button>
+              <mp-button type="info" link @click="editMaterial(scope.row)">
+                <i class="iconfont icon-bianji"></i>编辑</mp-button>
+              <mp-button type="info" link @click="delMaterial(scope.row)">
+                <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
         </el-table>
@@ -198,13 +198,26 @@ interface getMaterialManageDataType {
   KeyWords: string,
   PageSize:number,
 }
+interface AttributeSelectsType {
+  SelectID: string;
+  Sort: number;
+  SelectItemValue: string;
+}
 
 interface MaterialRelationAttributesType {
   AttributeID: string,
   NumericValue: number|null,
   SelectID: string,
   InputSelectValue: string,
-  [a:string]:any
+  AttributeName:string
+  AttributeType:number
+  RegularQuantity:string
+  IsAllowDecimal:boolean
+  AttributeUnit:string
+  IsRequired:boolean
+  AttributeSelects:AttributeSelectsType[]
+  IsCustom:boolean
+  // [a:string]:any
 }
 interface addMaterialManageFormType {
   ID: string,
