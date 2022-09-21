@@ -35,5 +35,20 @@ export class EquipmentListClass {
     }
   }
 
-  // getList
+  async getList(Page = 1) {
+    this.condition.Page = Page;
+    this.list = [];
+    const temp = this.condition.filter();
+    const resp = await api.getEquipmentList(temp).catch(() => null);
+    if (resp?.data?.isSuccess) {
+      this.list = resp.data.Data;
+      this.listNumber = resp.data.DataNumber;
+    }
+  }
+
+  fetchInitRequiredData() { // 获取初始数据
+    this.getEquipmentClassList();
+    this.getEquipmentGroupList();
+    this.getList();
+  }
 }

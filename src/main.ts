@@ -11,6 +11,7 @@ import format from './assets/js/filters/dateFilters';
 import store from './store';
 import './assets/css/index.scss';
 import './assets/css/el-table-reset.scss';
+import MpButton from './components/common/MpButton.vue';
 
 const app = createApp(App);
 
@@ -18,6 +19,8 @@ Object.keys(ElementPlusIconsVue).forEach(key => {
   const component = ElementPlusIconsVue[key];
   app.component(key, component);
 });
+
+app.component('MpButton', MpButton);
 
 app.use(ElementPlus);
 app.use(print);

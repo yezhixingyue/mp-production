@@ -2,6 +2,7 @@ import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
+import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/TypeClass/Equipment';
 import request from '../request/request';
 
 export const resourceApis = {
@@ -75,6 +76,6 @@ export const resourceApis = {
     return request({ method: 'POST', url: '/Api/Equipment/Save', data });
   },
   getEquipmentList(condition) { // POST /Api/Equipment/List   获取加工设备列表 -- 建立条件类
-    return request({ method: 'POST', url: '/Api/Equipment/List', data: condition });
+    return request<unknown, EquipmentListItemType[]>({ method: 'POST', url: '/Api/Equipment/List', data: condition });
   },
 };

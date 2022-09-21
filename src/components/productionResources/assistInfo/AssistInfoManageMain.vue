@@ -23,7 +23,6 @@
 
 <script setup lang='ts'>
 import type { IAssistListItem } from '@/views/productionResources/assistInfo/types';
-import MpButton from '@/components/common/MpButton.vue';
 import { getEnumNameByIDAndEnums, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 
