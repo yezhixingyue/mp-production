@@ -1,10 +1,11 @@
 <template>
   <section class="procesisng-machinery-page-wrap">
-    procesisngMachinery
+    <Header />
   </section>
 </template>
 
 <script setup lang='ts'>
+import Header from '@/components/productionResources/procesisngMachinery/ProcesisngMachineryHeader.vue';
 </script>
 
 <script lang='ts'>

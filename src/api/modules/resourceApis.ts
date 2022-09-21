@@ -2,7 +2,7 @@ import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
-import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/TypeClass/Equipment';
+import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/MachineryTypeClass/Equipment';
 import request from '../request/request';
 
 export const resourceApis = {

@@ -12,20 +12,9 @@ export default {
   },
   directives: {
     blur: {
-      mounted(el: Element) {
-        el.addEventListener('mouseup', (e) => {
-          if (e.target && e.target instanceof HTMLElement) {
-            const getTargetDom = (dom: HTMLElement) => {
-              if (dom.nodeName === 'BUTTON' && dom.className.includes('mp-button')) {
-                return dom;
-              }
-              return dom.parentNode instanceof HTMLElement ? getTargetDom(dom.parentNode) : null;
-            };
-
-            const t = getTargetDom(e.target);
-
-            if (t) t.blur();
-          }
+      mounted(el: HTMLElement) {
+        document.addEventListener('mouseup', () => {
+          el.blur();
         });
       },
     },
