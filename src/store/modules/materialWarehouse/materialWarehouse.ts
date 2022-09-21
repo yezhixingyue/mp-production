@@ -1,5 +1,5 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 
 interface CategoryType {
   CategoryID: number | undefined

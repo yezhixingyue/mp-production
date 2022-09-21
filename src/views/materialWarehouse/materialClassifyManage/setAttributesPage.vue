@@ -140,7 +140,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   ref, reactive, onMounted,
 } from 'vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 

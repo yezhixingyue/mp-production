@@ -61,7 +61,7 @@
                </template>
                {{Data.newMaterialInfo.SizeDescribe}}
              </span>
-              <el-button @click="Data.newMaterialInfo = null">删除</el-button>
+              <el-button @click="Data.newMaterialInfo = null" link type="danger">删除</el-button>
             </p>
           </el-form-item>
 
@@ -138,7 +138,7 @@
                   <p>
                     <el-input @keyup.enter="getMaterial(false)"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
-                    v-model="Data.getMaterialData.SKUCode"/>
+                    v-model.trim="Data.getMaterialData.SKUCode"/>
                     <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
                   </p>
                   <span>或者</span>
@@ -183,14 +183,14 @@
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import messageBox from '@/assets/js/utils/message';
 import { MaterialInfoType } from '@/assets/Types/common';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 
 import { MaterialDataItemType, MaterialSelectsType } from '@/assets/Types/materialWarehouse/useSKUandSelectMaterialType';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 
 import {
-  reactive, computed,
+  ref, Ref, reactive, computed,
 } from 'vue';
 
 interface getMaterialDataType {
@@ -240,6 +240,7 @@ export default {
     },
   },
   setup(props) {
+    const ThreeCascaderComp:Ref = ref(null);
     const Data:DataType = reactive({
       // 选择的尺寸
       SizeSelects: null,
@@ -356,6 +357,7 @@ export default {
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects,
       };
       Data.tempMaterialInfo = temp as MaterialInfoType;
+      Data.getMaterialData.SKUCode = '';
     }
 
     // 根据选项或sku编码查物料
@@ -370,6 +372,7 @@ export default {
           Data.tempMaterialInfo = res.data.Data as MaterialInfoType;
           Data.tempMaterialInfo.UnitSelects = Data.tempMaterialInfo.UnitSelects
             .filter(it => it.UnitPurpose === 1);
+          ThreeCascaderComp.value.reset();
         } else {
           messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
@@ -378,6 +381,7 @@ export default {
     return {
       Data,
       Dialog,
+      ThreeCascaderComp,
       getMaterial,
       errorSaveCloseClick,
       errorSaveClosed,

@@ -69,7 +69,7 @@
             <el-input :maxlength="30" v-model="Data.addDimensionsForm.SizeName" />
           </el-form-item>
           <el-form-item label="尺寸编码：">
-            <el-input :maxlength="3" v-model="Data.addDimensionsForm.SizeCode" style="width:100px"/>
+            <el-input :maxlength="3" v-model.trim="Data.addDimensionsForm.SizeCode" style="width:100px"/>
           </el-form-item>
           <p class="hint">编码由 1 到 3 位的英文字母或数字组成，附在物料编码之后，可快速定位具体物料尺寸</p>
           <el-form-item label="长度：">
@@ -101,7 +101,7 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { reactive, onMounted } from 'vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 
@@ -274,10 +274,16 @@ export default {
         text-align: center;
         margin-bottom: 20px;
         &::before{
-          content: '!';
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
           width: 13px;
           height: 13px;
           margin: 0 10px;
+          position: relative;
+          left: 0;
+          top: 2px;
         }
       }
       .el-form-item{

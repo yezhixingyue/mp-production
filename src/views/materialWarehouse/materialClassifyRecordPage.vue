@@ -2,7 +2,7 @@
   <div class="material-classify-record-page">
     <header>
       <div class="header-top">
-        <el-tabs type="border-card" v-model="Data.getRecordData.LogType" @change="LogTypeChange">
+        <el-tabs type="border-card" v-model="Data.getRecordData.LogType" @tab-change="LogTypeChange">
           <el-tab-pane label="入库记录" :name="1"></el-tab-pane>
           <el-tab-pane label="出库记录" :name="2"></el-tab-pane>
         </el-tabs>
@@ -205,7 +205,7 @@
         </el-table>
     </main>
     <footer>
-      <p>总金额：<span>￥{{}}元</span></p>
+      <p>总金额：<span>￥{{Data.aggregateAmount}}元</span></p>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getRecordData.Page"
@@ -235,7 +235,7 @@
             SKU编码：{{Data.materialManageInfo.MaterialCode}}
           </p>
         </div>
-        <el-scrollbar>
+        <el-scrollbar  max-height="350px">
           <div class="warehouse">
             <div class="warehouse-item"
             v-for="Storehouseitem in Data.StorehouseStockInfo"
@@ -262,12 +262,12 @@
                 </li>
               </ul>
             </div>
+          </div>
+        </el-scrollbar>
             <p>合计{{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}：{{Math.abs(getStorehouseAllInNumber())}}{{Data.materialManageInfo.StockUnit}}
               （{{Math.abs(Data.materialManageInfo.OutInNumber)}}
               {{Data.materialManageInfo.OutInUnit}}）
             </p>
-          </div>
-        </el-scrollbar>
         <!-- {{Data.StorehouseStockInfo}} -->
       </div>
     </template>
@@ -287,7 +287,7 @@ import {
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useRouterStore } from '@/store/modules/routerStore';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 
 interface twoSelecValueType {
@@ -375,6 +375,7 @@ interface StorehouseStockInfoType {
 interface DataType {
   StorehouseStockShow:boolean,
   DataTotal: number,
+  aggregateAmount: string,
   RecordList:RecordListType[],
   getRecordData: getRecordDataType,
   StorehouseStockInfo: StorehouseStockInfoType[],
@@ -445,6 +446,7 @@ export default {
       },
     ];
     const Data:DataType = reactive({
+      aggregateAmount: '',
       DataTotal: 0,
       RecordList: [],
       getRecordData: {
@@ -508,6 +510,7 @@ export default {
         if (res.data.Status === 1000) {
           Data.RecordList = res.data.Data as RecordListType[];
           Data.DataTotal = res.data.DataNumber as number;
+          Data.aggregateAmount = res.data.Message as string;
         }
       });
     }
@@ -552,6 +555,8 @@ export default {
       });
     }
     function LogTypeChange(Type) {
+      console.log(Type);
+
       Data.getRecordData.LogType = Type;
       Data.getRecordData.Handler = '';
       Data.getRecordData.Operater = '';
@@ -750,6 +755,11 @@ export default {
     }
   }
   .storehouse-stock-dialog{
+    > p{
+      font-size: 18px;
+      padding: 0 10px;
+      padding-top: 15px;
+    }
     &.storehouse-stock-dialog{
       display: flex;
       flex-direction: column;

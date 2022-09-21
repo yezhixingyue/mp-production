@@ -143,7 +143,7 @@ import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue
 import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 
 interface DistrictType {

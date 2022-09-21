@@ -136,7 +136,7 @@ import {
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useRouter } from 'vue-router';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 

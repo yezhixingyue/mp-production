@@ -2,7 +2,7 @@
   <div class="imposition-temmplate-class-page">
     <header>
       <el-breadcrumb >
-        <el-breadcrumb-item :to="{ path: '/foldWayTemplate' }">拼版模板</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/pasteupTemplate' }">拼版模板</el-breadcrumb-item>
         <el-breadcrumb-item>分类管理</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-top">
@@ -16,9 +16,9 @@
         show-overflow-tooltip prop="Name" label="名称" min-width="280" />
         <el-table-column prop="name" label="操作" min-width="280">
           <template #default="scope">
-            <el-button type="primary" link @click="editClass(scope.row)">
+            <el-button type="info" link @click="editClass(scope.row)">
               <i class="iconfont icon-bianji"></i>编辑</el-button>
-            <el-button type="danger" link
+            <el-button type="info" link
               @click="delClass(scope.row)">
               <i class="iconfont icon-delete"></i>删除</el-button>
           </template>
@@ -28,7 +28,7 @@
     <footer>
       <el-button type="primary" class="is-goback-button" @click="$goback">返回</el-button>
       <div class="bottom-count-box">
-        <MpPagination :total="Data.DataTotal"/>
+        <MpPagination :pageSize="Data.DataTotal" :total="Data.DataTotal"/>
       </div>
     </footer>
     <DialogContainerComp

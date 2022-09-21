@@ -108,7 +108,7 @@
           </el-form-item>
           <el-form-item :label="`编码：`" class="form-item-required" prop="MaterialCode">
             <el-input
-            v-model="Data.addMaterialManageForm.MaterialCode" />
+            v-model.trim="Data.addMaterialManageForm.MaterialCode" />
           </el-form-item>
           <p>
             编码由 1 到 10 位的英文字母或数字组成，方便记忆，在入库搜索物料时输入编码，可快速定位物料， 类似于超市称重时输入的物品
@@ -183,7 +183,7 @@ import {
 import { useRouter } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 

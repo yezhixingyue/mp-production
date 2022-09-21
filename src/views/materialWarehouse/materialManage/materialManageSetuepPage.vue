@@ -19,7 +19,7 @@
                 名称：{{getMaterialName(item.MaterialRelationAttributes).join(' ')}}
               </span>
               <span>
-                编码：<el-input v-model="item.MaterialCode" style="width:120px"></el-input>
+                编码：<el-input v-model.trim="item.MaterialCode" style="width:120px"></el-input>
               </span>
               <span>
                 操作：<el-button link type="danger" @click="delMaterial(index)">删除物料</el-button>
@@ -188,7 +188,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   reactive, onMounted, computed,
 } from 'vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import messageBox from '@/assets/js/utils/message';

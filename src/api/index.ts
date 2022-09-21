@@ -1,8 +1,8 @@
 import { IDistrictItem } from '@/assets/Types/common';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import { resourceApis } from './modules/resourceApis';
-import MaterialStorage from './request/MaterialStorage/index';
-import PasteupSetting from './request/PasteupSetting/index';
+import MaterialStorage from './modules/materialStorageApis';
+import PasteupSetting from './modules/pasteupSettingApis';
 import request from './request/request';
 
 const api = {

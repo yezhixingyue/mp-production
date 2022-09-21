@@ -107,7 +107,7 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import { reactive, onMounted } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 

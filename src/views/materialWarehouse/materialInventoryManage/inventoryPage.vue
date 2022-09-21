@@ -70,7 +70,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import { reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 
 interface getInventoryListDataType {

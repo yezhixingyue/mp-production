@@ -8,6 +8,7 @@
       </el-breadcrumb>
     </header>
     <main>
+      <el-scrollbar>
       <p class="title">{{Data.addPasteupTemplateFrom.ID?'编辑' :'添加'}}拼版模板</p>
       <el-form :model="Data.addPasteupTemplateFrom" label-width="100px">
         <el-form-item :label="`分类：`">
@@ -72,7 +73,7 @@
                   :before-upload='beforeUpload'
                 >
                   <template #trigger>
-                    <el-button type="primary">选择文件</el-button>
+                    <el-button type="primary" :loading="Data.uploadBtnLoading">选择文件</el-button>
                   </template>
                   <!-- <el-button class="ml-3" type="success" @click="submitUpload">
                     upload to server
@@ -90,8 +91,21 @@
               <p class="hint">
                 模板制作说明：版芯使用 PANTONE 804C 标记
               </p>
+              <p class="template-info" v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath">
+                <ul>
+                  <li>模板：<span>长:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length}}mm</span>
+                            <span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width}}mm</span></li>
+                  <el-scrollbar max-height="100px">
+                  <li v-for="(Area,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList" :key="index">
+                  版芯：<span>X:{{Area.XCoordinate}}mm</span>
+                  <span>Y:{{Area.YCoordinate}}mm</span>
+                  <span>长:{{Area.Length}}mm</span>
+                  <span>宽:{{Area.Width}}mm</span></li>
+                  </el-scrollbar>
+                </ul>
+              </p>
             </el-form-item>
-            <el-form-item :label="`拼版方式：`" class="form-item-required">
+            <el-form-item :label="`拼版方式：`">
               <el-checkbox v-model="Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode" label="按模位" />
             </el-form-item>
             <div v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode" class="template-location-list">
@@ -155,6 +169,7 @@
           </template>
         </template>
       </el-form>
+      </el-scrollbar>
     </main>
     <footer>
       <el-button type="primary" @click="savePasteupTemplate">保存</el-button>
@@ -177,6 +192,7 @@ import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { ImpositionTemmplate } from './types';
 
 interface DataType {
+  uploadBtnLoading: boolean
   addPasteupTemplateFrom: ImpositionTemmplate
 }
 export default {
@@ -189,6 +205,7 @@ export default {
     const RouterStore = useRouterStore();
     const PasteupSettingStore = usePasteupSettingStore();
     const Data: DataType = reactive({
+      uploadBtnLoading: false,
       addPasteupTemplateFrom: {
         ClassID: '',
         // 印刷版
@@ -362,12 +379,15 @@ export default {
       } else {
         messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
       }
+      Data.uploadBtnLoading = false;
     }
     function beforeUpload(file) {
       const isLt15M = file.size / 1024 / 1024 < 15;
       if (!isLt15M) {
         // 文件过大上传失败
         messageBox.failSingleError('上传失败', '上传文件过大，请上传小于20M的文件', () => null, () => null);
+      } else {
+        Data.uploadBtnLoading = true;
       }
       return isLt15M;
     }
@@ -460,7 +480,7 @@ export default {
       padding-left: 13px;
       line-height: 14px;
     }
-    >.el-form{
+    .el-form{
       margin-top: 36px;
       .el-form-item__content{
         font-size: 12px;
@@ -469,6 +489,9 @@ export default {
           height: 32px;
           .el-upload{
             margin-right: 20px;
+            .el-button{
+              width: 110px;
+            }
           }
           .el-upload-list--text{
             display: none;
@@ -516,6 +539,19 @@ export default {
               margin-left: 20px;
             }
           }
+            .template-info{
+              color: #606266;
+              ul{
+                li{
+                  display: flex;
+                  line-height: 2em;
+                  span{
+                    width: 70px;
+                    margin: 0 5px;
+                  }
+                }
+              }
+            }
         }
       }
       .white-edge{

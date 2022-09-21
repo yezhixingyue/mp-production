@@ -237,7 +237,7 @@
             SKU编码：{{Data.materialManageInfo.MaterialCode}}
           </p>
         </div>
-        <el-scrollbar>
+        <el-scrollbar max-height="350px">
           <div class="warehouse">
             <div class="warehouse-item"
             v-for="Storehouseitem in Data.StorehouseStockInfo"
@@ -309,7 +309,7 @@ import {
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import { useRouter } from 'vue-router';
 import { MaterialAttributesType } from '@/assets/Types/common';
 

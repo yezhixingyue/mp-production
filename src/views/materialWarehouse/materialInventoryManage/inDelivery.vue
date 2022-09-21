@@ -1,15 +1,15 @@
 <template>
   <div class="in-delivery-page">
 
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
+    <main>
+      <!-- <MpCardContainer> -->
         <el-scrollbar>
-          <div class="delivery-info" :style="`height:${h-240}px`">
+          <div class="delivery-info">
             <div class="left">
               <el-form label-width="120px">
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
-                    <el-input v-model="Data.getMaterialData.SKUCode"
+                    <el-input v-model.trim="Data.getMaterialData.SKUCode"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
                      @keyup.enter="getMaterial(false)" size="large"/>
                     <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
@@ -145,8 +145,8 @@
             <div class="line"></div>
             <div class="right">
               <el-button type="primary" @click="Data.SelectGoods = true">选择货位</el-button>
-              <el-scrollbar>
                 <div class="warehouse">
+              <el-scrollbar>
                   <div class="warehouse-item"
                   v-for="(item, index) in Data.inStorehouseGoodsPosition" :key="item.StorehouseID">
                     <p class="title">
@@ -206,8 +206,8 @@
                       </li> -->
                     </ul>
                   </div>
-                </div>
               </el-scrollbar>
+                </div>
               <p class="total" v-if="Data.inStorehouseGoodsPosition.length">
                 合计：{{getStorehouseAllInNumber()}}{{Data.checkedMaterial?.StockUnit}}
                 （{{getInUnitNum}} {{inUnitName}}）
@@ -218,7 +218,7 @@
             <el-button type="primary" @click="inDelivery">入库</el-button>
           </div>
         </el-scrollbar>
-      </MpCardContainer>
+      <!-- </MpCardContainer> -->
     <InDeliveryDialog
     :visible='Data.SelectGoods'
     :primaryClick="SelectGoodsPrimaryClick"
@@ -234,16 +234,14 @@
 </template>
 
 <script lang='ts'>
-import MpCardContainer from '@/components/common/MpCardContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 import {
-  ref, reactive, onMounted, computed, onActivated,
+  ref, Ref, reactive, onMounted, computed,
 } from 'vue';
-import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useRouterStore } from '@/store/modules/routerStore';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { MaterialInfoType } from '@/assets/Types/common';
@@ -347,15 +345,15 @@ interface DataType {
 export default {
   name: 'materialManagePage',
   components: {
-    MpCardContainer,
+    // MpCardContainer,
     OneLevelSelect,
     // TowLevelSelect,
     ThreeCascaderComp,
     InDeliveryDialog,
   },
   setup() {
-    const h = ref(0);
     const router = useRouter();
+    const ThreeCascaderComp:Ref = ref(null);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const RouterStore = useRouterStore();
     // 选择仓库货位弹框的表单数据
@@ -441,6 +439,7 @@ export default {
       };
       Data.checkedMaterial = temp as MaterialInfoType;
       Data.inDeliveryForm.UnitID = '';
+      Data.getMaterialData.SKUCode = '';
       MaterialWarehouseStore.getSupplierSelectList(Data.checkedMaterial.TypeID);
     }
     // 获取转换为库存单位的数量;
@@ -654,19 +653,12 @@ export default {
           Data.inDeliveryForm.UnitID = '';
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 1);
+          ThreeCascaderComp.value.reset();
           MaterialWarehouseStore.getSupplierSelectList(Data.checkedMaterial.TypeID);
         } else {
           messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
       });
-    }
-
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.in-delivery-page header', 50);
-      window.onresize = () => {
-        h.value = getHeight('.in-delivery-page header', 50);
-      };
     }
     // 获取仓库列表
     function getStorehouseAll() {
@@ -676,12 +668,8 @@ export default {
         }
       });
     }
-    onActivated(() => {
-      setHeight();
-    });
-    onMounted(() => {
-      setHeight();
 
+    onMounted(() => {
       // 获取所有物料类型
       // MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
 
@@ -691,8 +679,8 @@ export default {
     });
 
     return {
-      h,
       Data,
+      ThreeCascaderComp,
       RouterStore,
       getTransitionNum,
       getInUnitNum,
@@ -721,44 +709,43 @@ export default {
 .mp-erp-layout-page-content-comp-wrap{
   margin: 0;
   background-color: #F5F5F5;
-  padding: 30px 50px 0 50px;
-  .in-delivery-page{
+  padding: 50px;
+  >div{
     margin: 0;
   }
 }
 .in-delivery-page{
+  height: 100%;
   margin: 0;
   main{
+      height: 100%;
       background-color: #fff;
       border-radius: 8px;
       padding: 20px;
       box-sizing: border-box;
-    overflow-x: auto;
-    .mp-card-container{
-      // display: flex;
-      height: 100%;
-      // flex-direction: column;
-      // min-width: 1620px;
-      // >div{
-      //   width: 50%;
-      // }
-      .el-input-number{
-        height: 40px;
-        .el-input{
-          height: 40px;
-        }
-      }
-      .el-select{
-        height: 40px;
-        .el-input{
-          height: 40px;
-        }
+      overflow-x: auto;
+      .el-scrollbar__view{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
       }
       .delivery-info{
         flex: 1;
         display: flex;
         justify-content: space-between;
         min-height: 480px;
+        .el-input-number{
+          height: 40px;
+          .el-input{
+            height: 40px;
+          }
+        }
+        .el-select{
+          height: 40px;
+          .el-input{
+            height: 40px;
+          }
+        }
         >div{
           width: 855px;
           // min-width: 855px;
@@ -956,7 +943,6 @@ export default {
           line-height: 17px;
         }
       }
-    }
   }
 }
 </style>

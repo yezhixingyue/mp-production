@@ -133,7 +133,7 @@ import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/mat
 // import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import { useRouter } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 

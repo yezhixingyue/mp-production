@@ -1,7 +1,7 @@
 <template>
   <el-form-item :label="`SKU编码：`" class="sku">
     <p>
-      <el-input v-model="Data.getMaterialData.SKUCode"
+      <el-input v-model.trim="Data.getMaterialData.SKUCode"
       placeholder="请输入完整SKU编码，包括尺寸编码"
        @keyup.enter="getMaterial(false)" size="large"/>
       <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
@@ -36,9 +36,9 @@
 <script lang="ts">
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
-import { reactive } from 'vue';
+import { ref, Ref, reactive } from 'vue';
 import { MaterialInfoType } from '@/assets/Types/common';
 import { MaterialDataItemType, MaterialSelectsType } from '@/assets/Types/materialWarehouse/useSKUandSelectMaterialType';
 
@@ -60,6 +60,7 @@ export default {
     ThreeCascaderComp,
   },
   setup() {
+    const ThreeCascaderComp:Ref = ref(null);
     const Data:DataType = reactive({
       SizeSelects: null,
       getMaterialData: {
@@ -92,16 +93,17 @@ export default {
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects,
       };
       Data.checkedMaterial = temp as MaterialInfoType;
+      Data.getMaterialData.SKUCode = '';
     }
     // 根据选项或sku编码查物料
     function getMaterial() {
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        console.log(res);
         if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 1);
+          ThreeCascaderComp.value.reset();
         } else {
           messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
@@ -109,6 +111,7 @@ export default {
     }
     return {
       Data,
+      ThreeCascaderComp,
       getMaterial,
       ThreeCascaderCompChange,
       SizeSelectChange,

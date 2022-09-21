@@ -22,9 +22,9 @@
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
             <template v-if="!scope.row.IsSpecialColor">
-              <el-button type="primary" link @click="editPrintColor(scope.row)">
+              <el-button type="info" link @click="editPrintColor(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</el-button>
-              <el-button type="danger" link
+              <el-button type="info" link
                 @click="delPrintColor(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</el-button>
             </template>
@@ -34,7 +34,10 @@
     </main>
     <footer>
       <div class="bottom-count-box">
-        <MpPagination :total="Data.DataTotal"/>
+        <MpPagination
+        :pageSize="Data.DataTotal"
+        :total="Data.DataTotal"
+        />
       </div>
     </footer>
     <DialogContainerComp
@@ -51,7 +54,7 @@
           <el-form-item label="名称：" class="form-item-required">
             <el-input :maxlength="100" v-model="Data.addPrintingColorShowFrom.Name" />
           </el-form-item>
-          <el-form-item label="颜色名：" class="form-item-required">
+          <el-form-item label="显示颜色：" class="form-item-required">
             <el-input :maxlength="20" v-model="Data.addPrintingColorShowFrom.ShowColor" />
           </el-form-item>
         </el-form>
@@ -119,7 +122,7 @@ export default {
       if (!Data.addPrintingColorShowFrom.Name) {
         messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
       } else if (!Data.addPrintingColorShowFrom.ShowColor) {
-        messageBox.failSingleError('保存失败', '请输入颜色名', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入显示颜色', () => null, () => null);
       } else {
         api.getPrintColorSave(Data.addPrintingColorShowFrom).then(res => {
           if (res.data.Status === 1000) {

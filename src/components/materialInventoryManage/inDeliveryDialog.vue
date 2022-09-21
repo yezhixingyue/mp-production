@@ -84,7 +84,7 @@ import {
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import LocationMap from '@/components/LocationMap/Index.vue';
 import { LocationSetClass } from '@/components/LocationMap/LocationSetClass';
 import messageBox from '@/assets/js/utils/message';
@@ -186,8 +186,8 @@ export default {
       default: () => [],
     },
     currentMaterialID: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
     _selectStorehouseGoodsPosition: {
       type: Object,

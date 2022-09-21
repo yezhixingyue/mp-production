@@ -33,7 +33,7 @@ import {
 } from 'vue';
 
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import LocationMap from '@/components/LocationMap/Index.vue';
 
 interface DimensionType {

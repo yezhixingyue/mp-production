@@ -1,6 +1,13 @@
 <template>
   <!-- 三级级联选择框 用于选择物料 -->
-  <el-cascader no-data-text="无数据" :props="cascaderProps" @change="cascaderChange" filterable placeholder="请选择物料">
+  <el-cascader v-if="!reseta" no-data-text="无数据" :props="cascaderProps" @change="cascaderChange" filterable placeholder="请选择物料">
+    <template #empty>
+      <div style="color:#c0c4cc;line-height:30px">
+        无数据
+      </div>
+    </template>
+  </el-cascader>
+  <el-cascader v-else no-data-text="无数据" filterable placeholder="请选择物料">
     <template #empty>
       <div style="color:#c0c4cc;line-height:30px">
         无数据
@@ -11,8 +18,8 @@
 
 <script lang='ts'>
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import api from '@/api/request/MaterialStorage';
-import { onMounted } from 'vue';
+import api from '@/api';
+import { onMounted, ref } from 'vue';
 
 interface UnitSelectsType {
   UnitID: string,
@@ -59,6 +66,7 @@ export default {
   setup(props) {
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const MaterialData:MaterialDataItemType[] = [];
+    const reseta = ref(false);
     const cascaderProps = {
       lazy: true,
       multiple: false,
@@ -145,14 +153,22 @@ export default {
         props.change(itemMaterial, allMaterial, vaslus[1] || '');
       }
     }
-
+    function reset() {
+      reseta.value = true;
+      props.change(null, null, '');
+      setTimeout(() => {
+        reseta.value = false;
+      }, 5);
+    }
     onMounted(() => {
       // currentInstance = getCurrentInstance() as ComponentInternalInstance;
     });
 
     return {
+      reseta,
       cascaderProps,
       cascaderChange,
+      reset,
     };
   },
 

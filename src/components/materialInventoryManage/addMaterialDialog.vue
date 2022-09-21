@@ -17,7 +17,7 @@
           </el-form-item>
           <el-form-item :label="`SKU编码：`" class="sku">
             <p>
-              <el-input  @keyup.enter="getMaterial(false)" placeholder="请输入完整SKU编码，包括尺寸编码" v-model="Data.getMaterialData.SKUCode"/>
+              <el-input  @keyup.enter="getMaterial(false)" placeholder="请输入完整SKU编码，包括尺寸编码" v-model.trim="Data.getMaterialData.SKUCode"/>
               <el-button link type="primary" @click="getMaterial(false)">查询</el-button>
             </p>
             <span>或者</span>
@@ -30,7 +30,7 @@
                   ></ThreeCascaderComp>
                   <OneLevelSelect
                   v-if="Data.itemSelectTempMaterial"
-                    :options='Data.itemSelectTempMaterial.SizeSelects'
+                    :options='Data.itemSelectTempMaterial.SizeSelects || []'
                     :defaultProps="{
                       value:'SizeID',
                       label:'SizeDescribe',
@@ -63,6 +63,7 @@
                 </template>
               </template>
             </template>
+            {{Data.checkedMaterial?.SizeDescribe}}
           </el-form-item>
           <el-form-item :label="`物料编码：`" class="red">
            {{Data.checkedMaterial?.Code}}
@@ -86,9 +87,9 @@
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import messageBox from '@/assets/js/utils/message';
 import {
-  reactive, computed,
+  reactive, computed, Ref, ref,
 } from 'vue';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import { MaterialInfoType } from '@/assets/Types/common';
 import { MaterialDataItemType, MaterialSelectsType } from '@/assets/Types/materialWarehouse/useSKUandSelectMaterialType';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
@@ -138,6 +139,7 @@ export default {
     },
   },
   setup(props) {
+    const ThreeCascaderComp:Ref = ref(null);
     const Data:DataType = reactive({
       SizeSelects: null,
       addMaterialShow: false,
@@ -172,6 +174,24 @@ export default {
     }
     function addMaterialClosed() {
       // 清空表单
+      Data.SizeSelects = null;
+
+      Data.getMaterialData = {
+        MaterialID: '',
+        SizeID: '',
+        SKUCode: '',
+      };
+      // 此货位还有物料时添加物料的表单
+      Data.inDeliveryForm = {
+        MaterialID: '',
+        Number: null,
+        Remark: '',
+      };
+      // 查询到的物料
+      Data.checkedMaterial = null;
+      // 下拉选择的临时物料
+      Data.allSelectTempMaterial = null;
+      Data.itemSelectTempMaterial = null;
     }
     // 此货位还有物料时添加物料的弹框
     function addMaterialPrimaryClick() {
@@ -198,6 +218,8 @@ export default {
 
     // 选择物料
     function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
+      console.log(itemMaterial, 'itemMaterial');
+
       Data.SizeSelects = null;
       Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
       Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;
@@ -215,6 +237,7 @@ export default {
       };
       Data.checkedMaterial = { ...temp } as MaterialInfoType;
       Data.SizeSelects = ID;
+      Data.getMaterialData.SKUCode = '';
     }
 
     // 根据选项或sku编码查物料
@@ -228,6 +251,7 @@ export default {
             Data.checkedMaterial = res.data.Data as MaterialInfoType;
             Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
               .filter(it => it.UnitPurpose === 1);
+            ThreeCascaderComp.value.reset();
           } else {
             messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
           }
@@ -237,6 +261,7 @@ export default {
     return {
       Data,
       Dialog,
+      ThreeCascaderComp,
       getMaterial,
       ThreeCascaderCompChange,
       SizeSelectChange,

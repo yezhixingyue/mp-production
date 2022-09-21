@@ -2,7 +2,7 @@
   <div class="foldWay-template-steup-page" >
     <header>
       <el-breadcrumb >
-        <el-breadcrumb-item :to="{ path: '/pasteupTemplate' }">折手模板</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/foldWayTemplate' }">折手模板</el-breadcrumb-item>
         <el-breadcrumb-item>{{Data.foldWayTemplateFrom.ID?'编辑' :'添加'}}折手模板：
           {{Data.foldWayTemplateFrom.ID?`${Data.foldWayTemplateFrom.Name}` :''}}
         </el-breadcrumb-item>
@@ -79,10 +79,10 @@
     primaryText="确定"
     >
     <template #default>
-      <div class="add-printing-color-dialog">
+      <div class="set-page-dialog">
         <el-form :model="Data" label-width="112px">
           <el-form-item label="页码：" class="form-item-required">
-            <el-input :maxlength="100" v-model.number="Data.setPageInp" />
+            <el-input-number :controls="false" :step="1" step-strictly v-model.number="Data.setPageInp" />
           </el-form-item>
         </el-form>
       </div>
@@ -165,6 +165,10 @@ export default {
         messageBox.failSingleError('生成失败', '请输入行数', () => null, () => null);
       } else if (!Data.foldWayTemplateFrom.ColumnNumber) {
         messageBox.failSingleError('生成失败', '请输入列数', () => null, () => null);
+      } else if (Number(Data.foldWayTemplateFrom.ColumnNumber) === 1 && Number(Data.foldWayTemplateFrom.RowNumber) === 1) {
+        messageBox.failSingleError('生成失败', '行数列数不能同时为1', () => null, () => null);
+      } else if (Data.foldWayTemplateFrom.RowNumber > 100 || Data.foldWayTemplateFrom.ColumnNumber > 100) {
+        messageBox.failSingleError('生成失败', '请输入100以内的行数或列数', () => null, () => null);
       } else {
         let PageNumber = 1;
         // 行
@@ -253,10 +257,18 @@ export default {
       }
     }
     function setPagePrimaryClick() {
+      // Number.isInteger(3)
       if (!Data.setPageInp) {
         messageBox.failSingleError('设置失败', '请输入页码', () => null, () => null);
+      } else if (Number(Data.setPageInp) < 1 || !Number.isInteger(3)) {
+        messageBox.failSingleError('设置失败', '请输入正整数的页码', () => null, () => null);
       } else if (Data.setPageInp > Number(Data.foldWayTemplateFrom.RowNumber) * Number(Data.foldWayTemplateFrom.ColumnNumber) * 2) {
-        messageBox.failSingleError('设置失败', '请输入正确的页码', () => null, () => null);
+        messageBox.failSingleError(
+          '设置失败',
+          `请输入小于等于${Number(Data.foldWayTemplateFrom.RowNumber) * Number(Data.foldWayTemplateFrom.ColumnNumber) * 2}的页码`,
+          () => null,
+          () => null,
+        );
       } else {
         Data.FoldWayPositionList.forEach((item, index) => {
           item.forEach((it, i) => {
@@ -445,6 +457,18 @@ export default {
               margin-top: 28px;
             }
           }
+        }
+      }
+    }
+  }
+  .set-page-dialog{
+    .el-form{
+      width: 370px;
+      margin: 0 auto;
+      .el-input-number{
+        width: 100%;
+        input{
+          text-align: left;
         }
       }
     }

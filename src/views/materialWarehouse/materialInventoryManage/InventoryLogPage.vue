@@ -122,7 +122,7 @@ import {
   reactive, onMounted, computed,
 } from 'vue';
 import { useRouterStore } from '@/store/modules/routerStore';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 
 interface getInventoryLogListDataType {

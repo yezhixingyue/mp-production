@@ -44,7 +44,7 @@
 import { reactive, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import LocationMap from '../../../components/LocationMap/Index.vue';
 

@@ -123,7 +123,7 @@ import {
   reactive, onMounted, watch, computed, ComputedRef,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 
 interface twoSelecValueType {
   level1Val:null|string|number,

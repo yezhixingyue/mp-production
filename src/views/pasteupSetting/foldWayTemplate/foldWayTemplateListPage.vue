@@ -45,34 +45,28 @@
         <el-table-column prop="name" label="操作" min-width="277">
           <template #default="scope">
             <el-button type="primary" link @click="setApplyEquipment(scope.row)">
-              <i class="iconfont icon-bianji"></i>适用设备</el-button>
+              <!-- <i class="iconfont icon-bianji"></i> -->
+              适用设备</el-button>
             <el-button type="primary" link @click="TofoldWayTemplate(scope.row)">
-              <i class="iconfont icon-bianji"></i>编辑</el-button>
+              <!-- <i class="iconfont icon-bianji"></i> -->
+              编辑</el-button>
             <el-button type="danger" link
               @click="delFoldWayTemplate(scope.row)">
-              <i class="iconfont icon-delete"></i>删除</el-button>
+              <!-- <i class="iconfont icon-delete"></i> -->
+              删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </main>
-    <DialogContainerComp
+    <SetApplyEquipmentDialog
     title="适用设备"
     :visible='Data.ApplyEquipmentShow'
-    :width="660"
-    :primaryClick="ApplyEquipmentPrimaryClick"
-    :closeClick="ApplyEquipmentCloseClick"
-    :closed="ApplyEquipmentClosedClick"
+    :changeVisible='(visble) => Data.ApplyEquipmentShow = visble'
+    :haveSetApplyEquipmentList="Data.haveSetApplyEquipmentList"
+    :applyEquipmentList="Data.applyEquipmentList"
+    :saveEquipment="saveEquipment"
     >
-    <template #default>
-      <div class="add-printing-color-dialog">
-        <el-form :model="Data" label-width="112px">
-          <el-form-item label="页码：" class="form-item-required">
-            <!-- <el-input :maxlength="100" v-model.number="Data.setPageInp" /> -->
-          </el-form-item>
-        </el-form>
-      </div>
-    </template>
-    </DialogContainerComp>
+    </SetApplyEquipmentDialog>
     <footer>
       <div class="bottom-count-box">
         <MpPagination :total="Data.DataTotal"/>
@@ -87,7 +81,8 @@ import {
   reactive, onMounted, computed, onActivated,
 } from 'vue';
 
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
+import SetApplyEquipmentDialog from '@/components/pasteupSetting/setApplyEquipmentDialog.vue';
+import { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
@@ -101,6 +96,9 @@ interface getFoldWayTemplateDataType {
   PageSize:number,
 }
 interface DataType {
+  ApplyEquipment:FoldWayTemplateType|null,
+  applyEquipmentList:UseClassEquipmentGroupType[],
+  haveSetApplyEquipmentList:EquipmentGroups[],
   ApplyEquipmentShow:boolean,
   getFoldWayTemplateData:getFoldWayTemplateDataType,
   FoldWayTemplateList:FoldWayTemplateType[]
@@ -111,12 +109,15 @@ export default {
   components: {
     MpPagination,
     RadioGroupComp,
-    DialogContainerComp,
+    SetApplyEquipmentDialog,
   },
   setup() {
     const router = useRouter();
     const PasteupSettingStore = usePasteupSettingStore();
     const Data:DataType = reactive({
+      ApplyEquipment: null,
+      applyEquipmentList: [],
+      haveSetApplyEquipmentList: [],
       ApplyEquipmentShow: false,
       FoldWayTemplateList: [],
       getFoldWayTemplateData: {
@@ -156,7 +157,7 @@ export default {
 
     function delFoldWayTemplate(item) {
       messageBox.warnCancelBox('确定要删除此折手模板吗？', `${item.Name}`, () => {
-        api.getPrintColorRemove(item.ID).then(res => {
+        api.getFoldWayTemplateRemove(item.ID).then(res => {
           if (res.data.Status === 1000) {
           // 删除成功
             getFoldWayTemplateList();
@@ -168,8 +169,10 @@ export default {
       Data.ApplyEquipmentShow = false;
     }
     // 设置适用设备
-    function setApplyEquipment() {
+    function setApplyEquipment(item) {
       Data.ApplyEquipmentShow = true;
+      Data.ApplyEquipment = item;
+      Data.haveSetApplyEquipmentList = item.UseableEquipmentGroupList as EquipmentGroups[];
     }
     // 添加/编辑折手模板
     function TofoldWayTemplate(item = null) {
@@ -189,6 +192,14 @@ export default {
       const ClassItem = PasteupSettingStore.FoldWayTemplateClassList.find(it => it.ID === ClassID);
       return ClassItem?.Name;
     }
+    // 适用设备保存
+    function saveEquipment(Equipments) {
+      console.log(Equipments, 'Equipments');
+      api.getFoldWayTemplateUseableEquipment({
+        ID: Data.ApplyEquipment?.ID,
+        UseableEquipmentGroupList: Equipments,
+      });
+    }
 
     onActivated(() => {
       const foldWayTemplateSteupPage = sessionStorage.getItem('foldWayTemplateSteupPage') === 'true';
@@ -202,12 +213,20 @@ export default {
       getFoldWayTemplateList();
       // 获取所有分类
       PasteupSettingStore.getFoldWayTemplateClassList();
+      // 获取所有适用设备
+      api.getEquipmentGroup().then(res => {
+        if (res.data.Status === 1000) {
+          console.log(res.data.Data);
+          Data.applyEquipmentList = res.data.Data as UseClassEquipmentGroupType[];
+        }
+      });
     });
     return {
       Data,
       RadioGroupCompValue,
       PasteupSettingStore,
       FoldWayTemplateClassList,
+      saveEquipment,
       getClassName,
       RadioGroupCompChange,
       ManagementClass,
@@ -252,6 +271,12 @@ export default {
     background-color: #fff;
     .el-table{
       flex: 1;
+      .el-button{
+        font-size: 12px;
+      }
+      .el-button+.el-button{
+        margin-left: 30px;
+      }
     }
   }
   >footer{

@@ -1,9 +1,9 @@
 <template>
   <div class="makeAn-inventory-page">
 
-    <main :style="`height:${h}px`">
-      <MpCardContainer>
-        <el-scrollbar>
+    <main>
+      <!-- <MpCardContainer> -->
+
           <div class="delivery-info" v-if="Data.InventoryDetail">
             <div class="current">
               <div class="title">
@@ -20,34 +20,40 @@
                   <span class="value">{{Data.InventoryDetail.CurrentUpperDimension}}
                     {{Data.InventoryDetail.CurrentPositionName}}</span>
                 </p>
-                <p>
-                  <span class="label">SKU编码：</span>
-                  <span class="value">{{Data.InventoryDetail.Code}}</span>
+                <p v-if="!Data.InventoryDetail.Code">
+                    <span class="label"></span>
+                    <span class="value" style="color:#F4A307">空货位</span>
                 </p>
-                <p>
-                  <span class="label">物料：</span>
-                  <span class="value">
-                    <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
-                    :key="item.AttributeID">
-                      <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
+                <template v-else>
+                  <p>
+                    <span class="label">SKU编码：</span>
+                    <span class="value">{{Data.InventoryDetail.Code}}</span>
+                  </p>
+                  <p>
+                    <span class="label">物料：</span>
+                    <span class="value">
+                      <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
+                      :key="item.AttributeID">
+                        <template v-if="item.NumericValue">
+                          <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
+                        </template>
+                        <template v-else>
+                          <span>{{item.InputSelectValue || item.SelectValue}}</span>
+                        </template>
+                        <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
+                          {{index ===  Data.InventoryDetail.MaterialAttributes.length-1 ? '' : ' ' }}
+                        </template>
                       </template>
-                      <template v-else>
-                        <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                      </template>
-                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                        {{index ===  Data.InventoryDetail.MaterialAttributes.length-1 ? '' : ' ' }}
-                      </template>
-                    </template>
-                    {{Data.InventoryDetail.SizeDescribe}}
-                  </span>
-                </p>
-                <p>
-                  <span class="label">数量：</span>
-                  <span class="value is-red" v-if="Data.InventoryDetail?.Code">
-                    {{Data.InventoryDetail.Stock}}{{Data.InventoryDetail.StockUnit}}
-                  </span>
-                </p>
+                      {{Data.InventoryDetail.SizeDescribe}}
+                    </span>
+                  </p>
+                  <p>
+                    <span class="label">数量：</span>
+                    <span class="value is-red" v-if="Data.InventoryDetail?.Code">
+                      {{Data.InventoryDetail.Stock}}{{Data.InventoryDetail.StockUnit}}
+                    </span>
+                  </p>
+                </template>
               </div>
             </div>
             <div class="last" v-if="Data.InventoryDetail?.PrevPositionMaterial">
@@ -61,7 +67,9 @@
                 <el-button link type="primary" :disabled="!Data.InventoryDetail?.PrevDetailID"
                 @click="anewLast">重新盘点上一个 ></el-button>
               </div>
-              <ul v-if="Data.InventoryDetail?.PrevPositionMaterial.length">
+              <ul v-if="Data.InventoryDetail?.PrevPositionMaterial.length"
+              :style="`height: ${Data.InventoryDetail.PrevPositionMaterial.length*51}px;`">
+              <el-scrollbar>
                 <li v-for="(PrevItem,index) in Data.InventoryDetail.PrevPositionMaterial"
                 :key="index">
                 <!-- 物料 -->
@@ -83,6 +91,8 @@
                   <span class="code">{{PrevItem.Code}}</span>
                   <span class="number is-red">{{PrevItem.Stock}}{{PrevItem.StockUnit}}</span>
                 </li>
+
+              </el-scrollbar>
               </ul>
             </div>
           </div>
@@ -90,8 +100,7 @@
             <el-button type="primary" @click="inventoryCorrect">正确</el-button>
             <el-button @click="inventoryError" :disabled="!Data.InventoryDetail?.Code">错误</el-button>
           </div>
-        </el-scrollbar>
-      </MpCardContainer>
+      <!-- </MpCardContainer> -->
     </main>
 
     <!-- 此货位还有物料时添加物料的弹框 -->
@@ -147,7 +156,7 @@ import {
 } from 'vue';
 import autoHeightMixins from '@/assets/js/mixins/autoHeight';
 import { useRouterStore } from '@/store/modules/routerStore';
-import api from '@/api/request/MaterialStorage';
+import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 
 interface MaterialAttributesType {
@@ -159,6 +168,15 @@ interface MaterialAttributesType {
   SelectValue: string,
   AttributeUnit: string,
   IsBrand: boolean
+}
+interface PrevPositionMaterialType {
+  Code:string
+  MaterialAttributes:MaterialAttributesType[]
+  MaterialID:string
+  PositionID:string
+  SizeDescribe:string
+  Stock:number
+  StockUnit:string
 }
 interface InventoryDetailType {
   MaterialID: string,
@@ -173,6 +191,7 @@ interface InventoryDetailType {
   IsLastPosition:boolean
   DetailID:string
   PrevDetailID:number|null
+  PrevPositionMaterial:PrevPositionMaterialType[]
 }
 interface DataType {
   StorehouseName:string
@@ -186,13 +205,13 @@ interface DataType {
 export default {
   name: 'makeAnInventoryPage',
   components: {
-    MpCardContainer,
+    // MpCardContainer,
     AddMaterialDialog,
     MakeAnInventoryErrorDialog,
     // DialogContainerComp,
   },
   setup() {
-    const h = ref(0);
+    // const h = ref(0);
     const RouterStore = useRouterStore();
     const Data:DataType = reactive({
       StorehouseName: '',
@@ -332,28 +351,21 @@ export default {
         if (res.data.Status === 1000) {
           // 货物修改成功
           if (res.data.Data) {
-            Data.makeAnInventoryError = false;
-            setDetail(res.data.Data);
-            getInventoryDetail();
-          } else {
-            over();
+            // 货位最后一个物料的时候要弹框确认是否还有其他物料
+            if (Data.InventoryDetail?.IsLastMaterial) {
+              inventoryCorrect();
+              Data.makeAnInventoryError = false;
+            } else {
+              Data.makeAnInventoryError = false;
+              setDetail(res.data.Data);
+              getInventoryDetail();
+            }
           }
         }
       });
     }
 
-    function setHeight() {
-      const { getHeight } = autoHeightMixins();
-      h.value = getHeight('.makeAn-inventory-page header', 100);
-    }
-    watch(() => RouterStore.size, () => {
-      setHeight();
-    });
-    onActivated(() => {
-      setHeight();
-    });
     onMounted(() => {
-      setHeight();
       Data.StorehouseName = localStorage.getItem('StorehouseName') as string;
       if (localStorage.getItem('DetailID')) {
         Data.DetailID = localStorage.getItem('DetailID') as string;
@@ -362,7 +374,6 @@ export default {
     });
 
     return {
-      h,
       Data,
       toNext,
       anewLast,
@@ -383,26 +394,24 @@ export default {
 .mp-erp-layout-page-content-comp-wrap{
   margin: 0;
   background-color: #F5F5F5;
-  padding: 50px 50px 0 50px;
-  .makeAn-inventory-page{
+  padding: 50px;
+  >div{
     margin: 0;
   }
 }
 .makeAn-inventory-page{
+  height: 100%;
   main{
-    overflow-x: auto;
-    .mp-card-container{
+      // height: 100%;
+      overflow-x: auto;
       background-color: #fff;
       border-radius: 20px;
       padding: 40px;
       box-sizing: border-box;
       .delivery-info{
-        flex: 1;
-        display: flex;
-        flex-direction: column;
+        // max-height: calc(100% - 90px);
         color: #7A8B9C;
         font-weight: 600;
-
         >div{
           >.title{
             display: flex;
@@ -440,11 +449,16 @@ export default {
           }
         }
         .last{
-          >ul{
+          ul{
+            // 最大高度为 100vh - 页面内边距（100px）-main内边距高度（80px）-下方按钮（90）-物料（160）-上一货位（20）外边距（24）
+            max-height: calc(100vh - 100px - 80px - 90px - 160px - 20px - 24px);
+            overflow-y: auto;
             border: 1px solid #A6B6C6;
             border-radius: 8px;
-            padding: 0 40px;
             margin-top: 24px;
+            .el-scrollbar__view{
+              padding: 0 40px;
+            }
             li{
               display: flex;
               justify-content: space-between;
@@ -477,7 +491,6 @@ export default {
           font-size: 14px;
         }
       }
-    }
   }
   .inventory-correct-dialog{
     .el-dialog__body{
