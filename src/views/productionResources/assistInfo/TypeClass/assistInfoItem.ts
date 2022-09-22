@@ -6,7 +6,7 @@ import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { IAssistListItem } from '../types';
 
 export class AssistInfoItem {
-  NoteID = '';
+  ID = '';
 
   Name = '';
 
@@ -17,13 +17,13 @@ export class AssistInfoItem {
   }
 
   validate(list: IAssistListItem[]) { // 校验
-    const { Name, Type, NoteID } = this;
+    const { Name, Type, ID } = this;
     if (!Name) {
       MpMessage.error({ title: '保存失败', msg: '请输入名称' });
       return false;
     }
 
-    const t = list.find(it => it.NoteID !== NoteID && it.Name === Name);
+    const t = list.find(it => it.ID !== ID && it.Name === Name);
     if (t) {
       MpMessage.error({ title: '保存失败', msg: '存在名称重复' });
       return false;
@@ -41,10 +41,10 @@ export class AssistInfoItem {
     const temp = CommonClassType.filter({ ...this });
     const resp = await api.getResourceNoteSave(temp).catch(() => null);
     if (resp?.data?.isSuccess) {
-      const title = this.NoteID ? '编辑成功' : '添加成功';
+      const title = this.ID ? '编辑成功' : '添加成功';
       const callback = () => {
         const temp: IAssistListItem = {
-          NoteID: resp.data.Data,
+          ID: resp.data.Data,
           Name: this.Name,
           Type: this.Type,
         };

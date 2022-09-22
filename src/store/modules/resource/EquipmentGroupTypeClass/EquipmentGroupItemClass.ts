@@ -2,7 +2,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 
 export class EquipmentGroupItemClass {
-  GroupID = ''
+  ID = ''
 
   Name = ''
 

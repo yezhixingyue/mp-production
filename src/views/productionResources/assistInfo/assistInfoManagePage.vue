@@ -58,7 +58,7 @@ const handleItemSubmit = (data: AssistInfoItem) => {
       DataList.value.unshift(temp);
       DataNumber.value += 1;
     } else {
-      const i = DataList.value.findIndex(it => it.NoteID === temp.NoteID);
+      const i = DataList.value.findIndex(it => it.ID === temp.ID);
       if (i > -1) DataList.value.splice(i, 1, temp);
     }
   };
@@ -72,16 +72,16 @@ const onRemoveClick = (item: IAssistListItem) => {
     title: '确定删除该条辅助信息吗 ?',
     msg: `名称：[ ${item.Name} ]`,
     onOk: () => {
-      handleRemove(item.NoteID);
+      handleRemove(item.ID);
     },
   });
 };
 
-const handleRemove = async (NoteID: string) => {
-  const resp = await api.getResourceNoteRemove(NoteID).catch(() => null);
+const handleRemove = async (ID: string) => {
+  const resp = await api.getResourceNoteRemove(ID).catch(() => null);
   if (resp?.data?.isSuccess) {
     const cb = () => {
-      const i = DataList.value.findIndex(it => it.NoteID === NoteID);
+      const i = DataList.value.findIndex(it => it.ID === ID);
       if (i > -1) {
         DataList.value.splice(i, 1);
         DataNumber.value -= 1;

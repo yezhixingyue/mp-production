@@ -8,7 +8,7 @@ interface IListItem {
   [key: string]: any
 }
 
-type IdType = number|string;
+type IdType = number|string|undefined;
 
 /**
  * 在一个列表中， 根据ID去找到其对应的Name值 (ID 和 Name 字段可自定义)
@@ -20,7 +20,8 @@ type IdType = number|string;
  * @returns 怎么根据T的类型 以及 options的值 去做为类型 来限制list的类型呢
  */
 export const getNameByIDAndList = (ids: IdType|IdType[], list: IListItem[], options: IgetNameByIDAndListOptions = { key: 'Name', value: 'ID' }): string => {
-  if (typeof ids === 'object') {
+  if (typeof ids === 'undefined') return '';
+  if (ids && typeof ids === 'object') {
     return list.filter(it => ids.includes(it[options.value])).map(it => it[options.key] || '').filter(it => it).join('、');
   }
   const id = ids;

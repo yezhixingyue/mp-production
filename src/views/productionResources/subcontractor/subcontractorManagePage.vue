@@ -75,7 +75,7 @@ const handleAfterSubmit = (item: ISubcontractorFactoryListItemType, isEdit: bool
     DataList.value.unshift(item);
     DataNumber.value += 1;
   } else {
-    const i = DataList.value.findIndex(it => it.FactoryID === item.FactoryID);
+    const i = DataList.value.findIndex(it => it.ID === item.ID);
     if (i > -1) DataList.value.splice(i, 1, item);
   }
 };
@@ -88,7 +88,7 @@ const handleItemSetupSubmit = async (data: SubcontractorFactory) => {
     const callback = () => {
       const temp: ISubcontractorFactoryListItemType = {
         ...data,
-        FactoryID: resp.data.Data,
+        ID: resp.data.Data,
       };
       handleAfterSubmit(temp, isEdit);
     };
@@ -103,7 +103,7 @@ const onRemoveClick = (item: ISubcontractorFactoryListItemType) => {
     title: '确定删除该外协工厂吗 ?',
     msg: `名称：[ ${item.Name} ]`,
     onOk: () => {
-      handleRemove(item.FactoryID);
+      handleRemove(item.ID);
     },
   });
 };
@@ -113,7 +113,7 @@ const handleRemove = async (ID: string) => {
   const resp = await api.getSubcontractorFactoryRemove(ID).catch(() => null);
   if (resp?.data?.isSuccess) {
     const cb = () => {
-      const i = DataList.value.findIndex(it => it.FactoryID === ID);
+      const i = DataList.value.findIndex(it => it.ID === ID);
       if (i > -1) {
         DataList.value.splice(i, 1);
         DataNumber.value -= 1;

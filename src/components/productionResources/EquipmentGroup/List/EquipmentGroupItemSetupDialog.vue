@@ -23,7 +23,7 @@
         <div class="factory-box">
           <span v-if="!ruleForm.ClassID && ruleForm.ClassID !== 0" class="tip">请先选择分类</span>
           <el-checkbox-group v-model="ruleForm.FactoryIDS" size="small" v-else-if="localSubcontractorFactoryLis.length > 0">
-            <el-checkbox v-for="it in localSubcontractorFactoryLis" :key="it.FactoryID" :label="it.FactoryID" :title="it.Name">{{it.Name}}</el-checkbox>
+            <el-checkbox v-for="it in localSubcontractorFactoryLis" :key="it.ID" :label="it.ID" :title="it.Name">{{it.Name}}</el-checkbox>
           </el-checkbox-group>
           <span v-else class="tip">当前分类下尚无可选工厂</span>
         </div>
@@ -67,7 +67,7 @@ const onOpen = () => { // 初始化 及 筛选掉不生效的工厂ID
   if (props.EquipmentGroupData.curEditItem && props.EquipmentGroupData.SubcontractorFactoryList.length > 0) { // 筛选掉不生效的工厂ID
     const allFactoryIds = props.EquipmentGroupData.SubcontractorFactoryList
       .filter(it => it.ClassIDS.includes(ruleForm.value?.ClassID || -1))
-      .map(it => it.FactoryID);
+      .map(it => it.ID);
     ruleForm.value.FactoryIDS = ruleForm.value.FactoryIDS.filter(id => allFactoryIds.includes(id));
   }
 };

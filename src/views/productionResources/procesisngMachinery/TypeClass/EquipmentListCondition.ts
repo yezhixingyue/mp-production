@@ -16,4 +16,9 @@ export class EquipmentListCondition {
   filter() {
     return CommonClassType.filter(this);
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setConditon(e: [[string, string], any]) {
+    return CommonClassType.setCondition(e, this);
+  }
 }

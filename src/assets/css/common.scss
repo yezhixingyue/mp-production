@@ -95,8 +95,7 @@
   font-weight: 700;
 }
 
-.hide,
-.none {
+.hide {
   display: none
 }
 
@@ -158,4 +157,13 @@
       height: 16px;
     }
   }
- }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  appearance: none !important;
+}
+input[type='number'] {
+  appearance: textfield;
+  text-align: center;
+}

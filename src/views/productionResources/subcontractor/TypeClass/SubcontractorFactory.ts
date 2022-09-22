@@ -7,7 +7,7 @@ import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
  * @class SubcontractorFactory
  */
 export class SubcontractorFactory {
-  FactoryID = ''
+  ID = ''
 
   Name = ''
 

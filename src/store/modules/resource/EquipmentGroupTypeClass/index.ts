@@ -16,6 +16,11 @@ export enum EquipmentGroupMenuEnumType {
   remove,
 }
 
+export interface IMaterialTypeLimitSaveParams {
+  GroupID: string,
+  MaterialTypeIDS: string[],
+}
+
 export class EquipmentGroupTypeClass {
   condition = new GroupListConditionClass()
 
@@ -50,10 +55,10 @@ export class EquipmentGroupTypeClass {
 
       const callback = () => {
         if (!isEdit) {
-          this.DataList.unshift({ ...item, GroupID: resp.data.Data });
+          this.DataList.unshift({ ...item, ID: resp.data.Data });
           this.DataNumber += 1;
         } else {
-          const i = this.DataList.findIndex(it => it.GroupID === item.GroupID);
+          const i = this.DataList.findIndex(it => it.ID === item.ID);
           if (i > -1) {
             this.DataList.splice(i, 1, item);
           }
@@ -66,10 +71,10 @@ export class EquipmentGroupTypeClass {
   }
 
   async remove(item: EquipmentGroupItemType) { // 删除
-    const resp = await api.getEquipmentGroupRemove(item.GroupID).catch(() => null);
+    const resp = await api.getEquipmentGroupRemove(item.ID).catch(() => null);
     if (resp?.data?.isSuccess) {
       const cb = () => {
-        const i = this.DataList.findIndex(it => it.GroupID === item.GroupID);
+        const i = this.DataList.findIndex(it => it.ID === item.ID);
         if (i > -1) {
           this.DataList.splice(i, 1);
           this.DataNumber -= 1;
@@ -84,7 +89,7 @@ export class EquipmentGroupTypeClass {
     const resp = await api.getEquipmentGroupSizeLimit(data).catch(() => null);
     if (resp?.data.isSuccess) {
       const cb = () => {
-        const i = this.DataList.findIndex(it => it.GroupID === data.GroupID);
+        const i = this.DataList.findIndex(it => it.ID === data.ID);
         if (i > -1) {
           const temp = { ...this.DataList[i], ...data };
           this.DataList.splice(i, 1, temp);
@@ -100,7 +105,7 @@ export class EquipmentGroupTypeClass {
     const resp = await api.getEquipmentGroupColorLimit(data).catch(() => null);
     if (resp?.data.isSuccess) {
       const cb = () => {
-        const i = this.DataList.findIndex(it => it.GroupID === data.GroupID);
+        const i = this.DataList.findIndex(it => it.ID === data.ID);
         if (i > -1) {
           const temp = { ...this.DataList[i], ...data };
           this.DataList.splice(i, 1, temp);
@@ -112,6 +117,18 @@ export class EquipmentGroupTypeClass {
     }
   }
   // 其它方法： 设置物料限制、设置印色数量限制等  api.getEquipmentGroupSave
+
+  public async submitMaterialTypeLimitSave(data: IMaterialTypeLimitSaveParams, cb: () => void) {
+    const resp = await api.getEquipmentGroupMaterialTypeSave(data).catch(() => null);
+    if (resp?.data.isSuccess) {
+      const callback = () => {
+        console.log(resp, this.curEditItem, cb);
+        // 处理数据变动
+        if (cb) cb();
+      };
+      MpMessage.success({ title: '添加成功', onOk: callback, onCancel: callback });
+    }
+  }
 
   EquipmentClassList: EquipmentClassificationListItem[] = [] // 设备分类列表
 

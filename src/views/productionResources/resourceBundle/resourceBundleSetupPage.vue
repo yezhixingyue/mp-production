@@ -1,10 +1,7 @@
 <template>
   <section class="resource-bundle-setup-page-wrap">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/resourceBundleManage' }">物料资源包</el-breadcrumb-item>
-        <el-breadcrumb-item>添加资源包</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList" />
       <p class="mp-common-title-wrap black">添加资源包</p>
     </header>
     <main>
@@ -18,9 +15,9 @@
 </template>
 
 <script setup lang='ts'>
-import { ArrowRight } from '@element-plus/icons-vue';
 import resourceBundleSetupForm from '@/components/productionResources/resourceBundle/Setup/resourceBundleSetupForm.vue';
 import MpButton from '@/components/common/MpButton.vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute } from 'vue-router';
 import { useResourceStore } from '@/store/modules/resource';
 import { storeToRefs } from 'pinia';
@@ -34,13 +31,18 @@ const route = useRoute();
 const store = useResourceStore();
 const { resourceBundleList } = storeToRefs(store);
 
+const BreadcrumbList = [
+  { to: { path: '/resourceBundleManage' }, name: '物料资源包' },
+  { name: '添加资源包' },
+];
+
 const curEditItem = ref<null|ResourceBundleClass>(null);
 const inited = ref(false);
 
 const mainRef = ref<InstanceType<typeof resourceBundleSetupForm>>();
 
 if (route.params.id !== 'null') {
-  const t = resourceBundleList.value.find(it => it.GroupID === route.params.id);
+  const t = resourceBundleList.value.find(it => it.ID === route.params.id);
   if (t) {
     curEditItem.value = t;
   }
@@ -61,7 +63,7 @@ const submit = async () => {
       const callback = () => {
         const temp: ResourceBundleClass = {
           ...formData,
-          GroupID: resp.data.Data,
+          ID: resp.data.Data,
         };
         store.handleResourceBundleItemChange({ item: temp, isEdit, isRemove: false });
         goback();

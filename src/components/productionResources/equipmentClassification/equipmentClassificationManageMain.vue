@@ -1,8 +1,8 @@
 <template>
   <main>
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12">
-      <el-table-column align="center" width="280px" prop="Name" label="分类" />
-      <el-table-column align="center" width="280px" label="操作">
+      <mp-table-column width="280px" prop="Name" label="分类"></mp-table-column>
+      <mp-table-column width="280px" label="操作">
         <template #default="scope">
           <mp-button type="info" link @click="onEditClick(scope.row)">
             <i class="iconfont icon-bianji"></i>编辑
@@ -11,7 +11,7 @@
             <i class="iconfont icon-delete"></i>删除
           </mp-button>
         </template>
-      </el-table-column>
+      </mp-table-column>
     </el-table>
   </main>
 </template>

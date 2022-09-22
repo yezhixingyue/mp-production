@@ -5,9 +5,11 @@
        class="panel-item-title"
        :modelValue="getGroupValue(it)"
        :indeterminate="getIndeterminate(it)"
+       :disabled="disabledGroupIds.includes(it.CategoryID)"
        @change="(e) => onGroupChange(it, e)">{{it.CategoryName}}</el-checkbox>
       <el-checkbox-group :modelValue="getItemValue(it)" @change="(e) => onItemChange(it, e)">
-        <el-checkbox v-for="item in it.MaterialTypes" :key="item.TypeID" :label="item.TypeID">{{item.TypeName}}</el-checkbox>
+        <el-checkbox :disabled="selectedIds.includes(item.TypeID)"
+          v-for="item in it.MaterialTypes" :key="item.TypeID" :label="item.TypeID">{{item.TypeName}}</el-checkbox>
       </el-checkbox-group>
     </li>
     <li v-if="props.MaterialTypeGroup.length === 0">
@@ -19,14 +21,20 @@
 <script setup lang='ts'>
 import { IMaterialTypeItemInBundle } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
-import { watch } from 'vue';
+import { watch, computed } from 'vue';
 
 const props = defineProps<{
   MaterialTypeGroup: IMaterialTypeGroupItemType[],
   modelValue: IMaterialTypeItemInBundle[],
+  selectedIds: string[],
 }>();
 
 const emit = defineEmits(['update:modelValue']);
+
+const disabledGroupIds = computed(() => props.MaterialTypeGroup.map(it => {
+  const t = it.MaterialTypes.find(_it => !props.selectedIds.includes(_it.TypeID));
+  return t ? '' : it.CategoryID;
+}).filter(it => it));
 
 const getGroupValue = (it: IMaterialTypeGroupItemType) => {
   const t = props.modelValue.find(_it => _it.CategoryID === it.CategoryID);
@@ -51,7 +59,7 @@ const getIndeterminate = (it: IMaterialTypeGroupItemType) => {
 const onGroupChange = (it: IMaterialTypeGroupItemType, val: boolean) => {
   const list = [...props.modelValue].filter(_it => _it.CategoryID !== it.CategoryID);
   if (val) {
-    const MaterialTypeIDS = it.MaterialTypes.map(_it => _it.TypeID);
+    const MaterialTypeIDS = it.MaterialTypes.map(_it => _it.TypeID).filter(id => !props.selectedIds.includes(id));
     const t = { CategoryID: it.CategoryID, MaterialTypeIDS };
     list.push(t);
   }

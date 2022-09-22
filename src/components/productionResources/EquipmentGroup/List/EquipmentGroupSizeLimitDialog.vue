@@ -120,14 +120,6 @@ const submit = () => {
           :deep(.el-input) {
             width: 100px;
             border-radius: 3px;
-            input::-webkit-outer-spin-button,
-            input::-webkit-inner-spin-button {
-              appearance: none !important;
-            }
-            input[type='number'] {
-              appearance: textfield;
-              text-align: center;
-            }
           }
           &.t {
             font-weight: 700;
@@ -153,7 +145,7 @@ const submit = () => {
     display: flex;
     > span.label {
       line-height: 35px;
-        > i {
+      > i {
         font-size: 14px;
         margin-right: 10px;
       }

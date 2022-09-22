@@ -58,7 +58,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
         this.resourceBundleList.unshift(item);
         this.resourceBundleListNumber += 1;
       } else {
-        const i = this.resourceBundleList.findIndex(it => it.GroupID === item.GroupID);
+        const i = this.resourceBundleList.findIndex(it => it.ID === item.ID);
         if ((i < 0)) return;
         if (isRemove) {
           this.resourceBundleList.splice(i, 1);
