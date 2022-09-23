@@ -49,9 +49,9 @@
           </el-form-item>
           <el-form-item :label="`物料：`" class="red">
             <template v-if="Data.checkedMaterial">
-              <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
+              {{Data.checkedMaterial.AttributeDescribe}}
+              <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
               :key="item.AttributeID">
-                <!-- {{index === 0 ? '' : ' - ' }} -->
                 <template v-if="item.NumericValue">
                   <span style="margin-right:5px">{{item.NumericValue}}{{item.AttributeUnit}}</span>
                 </template>
@@ -61,7 +61,7 @@
                 <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                   {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
-              </template>
+              </template> -->
             </template>
             {{Data.checkedMaterial?.SizeDescribe}}
           </el-form-item>
@@ -197,19 +197,18 @@ export default {
     function addMaterialPrimaryClick() {
       // 组装 MaterialInfo 数据
 
-      const msg:string[] = [];
-      Data.checkedMaterial?.MaterialAttributes.forEach((item) => {
-        if (item.NumericValue) {
-          msg.push(`${item.NumericValue}${item.AttributeUnit}`);
-        } else {
-          msg.push(`${item.InputSelectValue || item.SelectValue || ''}`);
-        }
-      });
-      msg.push(Data.checkedMaterial?.SizeDescribe || '');
-      msg.push(`（${Data.checkedMaterial?.Code}）`);
+      // const msg:string[] = [];
+      // Data.checkedMaterial?.MaterialAttributes.forEach((item) => {
+      //   if (item.NumericValue) {
+      //     msg.push(`${item.NumericValue}${item.AttributeUnit}`);
+      //   } else {
+      //     msg.push(`${item.InputSelectValue || item.SelectValue || ''}`);
+      //   }
+      // });
+      // msg.push(Data.checkedMaterial?.SizeDescribe || '');
+      // msg.push(`（${Data.checkedMaterial?.Code}）`);
 
       const temp = {
-        MaterialInfo: msg.join(' '),
         ...Data.inDeliveryForm,
       };
       temp.MaterialID = Data.checkedMaterial?.MaterialID as string;
@@ -218,8 +217,6 @@ export default {
 
     // 选择物料
     function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
-      console.log(itemMaterial, 'itemMaterial');
-
       Data.SizeSelects = null;
       Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
       Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;

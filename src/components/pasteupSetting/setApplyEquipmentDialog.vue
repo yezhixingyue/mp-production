@@ -9,6 +9,11 @@
     :closed="setApplyEquipmentClosed"
     :appendToBody="true"
     >
+    <template #header>
+      <p >
+        设置适用设备：<b>{{foldWayName}}</b>
+      </p>
+    </template>
     <template #default>
       <div class="set-apply-equipment-dialog">
         <el-scrollbar max-height="350px">
@@ -92,6 +97,11 @@ export default {
     applyEquipmentList: {
       type: Array,
       defalut: () => [],
+    },
+    // 折手名
+    foldWayName: {
+      type: String,
+      defalut: '',
     },
   },
   setup(props) {

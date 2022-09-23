@@ -285,34 +285,25 @@ export default {
       Data.editDeliveryForm.Remark = '';
       // 清空表单
     }
-    function getMsg(MaterialInfo) {
-      const msg:string[] = [];
-      MaterialInfo?.MaterialAttributes.forEach((item) => {
-        if (item.NumericValue) {
-          msg.push(`${item.NumericValue}${item.AttributeUnit}`);
-        } else {
-          msg.push(`${item.InputSelectValue || item.SelectValue || ''}`);
-        }
-      });
-      msg.push(MaterialInfo.SizeDescribe);
-      msg.push(`（${MaterialInfo.Code}）`);
-      return msg;
-    }
+    // function getMsg(MaterialInfo) {
+    //   const msg:string[] = [];
+    //   MaterialInfo?.MaterialAttributes.forEach((item) => {
+    //     if (item.NumericValue) {
+    //       msg.push(`${item.NumericValue}${item.AttributeUnit}`);
+    //     } else {
+    //       msg.push(`${item.InputSelectValue || item.SelectValue || ''}`);
+    //     }
+    //   });
+    //   msg.push(MaterialInfo.SizeDescribe);
+    //   msg.push(`（${MaterialInfo.Code}）`);
+    //   return msg;
+    // }
     // 此货位还有物料时添加物料的弹框
     function errorSavePrimaryClick() {
       // const MaterialInfo:MaterialInfoType = Data.newMaterialInfo
       // || props.materialInfo as MaterialInfoType;
       // 组装 MaterialInfo 数据
-      const msg:string[] = [];
-      // 原物料
-      msg.push(...getMsg(props.materialInfo));
-      // 新物料
-      if (Data.newMaterialInfo) {
-        msg.push('改为');
-        msg.push(...getMsg(Data.newMaterialInfo));
-      }
       const temp = { ...Data.editDeliveryForm };
-      temp.MaterialInfo = msg.join(' ');
       if (Data.newMaterialInfo) {
         temp.MaterialID = Data.newMaterialInfo.MaterialID;
       } else {

@@ -167,7 +167,9 @@
         <el-form :model="Data.SetSMSWarnForm" label-width="120px">
           <el-form-item :label="`设置物料：`">
             <div>
-              <template v-for="(item, index) in Data.SetSMSWarnForm.StockName"
+              {{Data.SetSMSWarnForm.AttributeDescribe}}
+              {{Data.SetSMSWarnForm.SizeDescribe}}
+              <!-- <template v-for="(item, index) in Data.SetSMSWarnForm.StockName"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
                   <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -178,7 +180,7 @@
                 <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                   {{index === Data.SetSMSWarnForm.StockName.length-1 ? ' ' : ' ' }}
                 </template>
-              </template>
+              </template> -->
             </div>
           </el-form-item>
           <el-form-item :label="`预警阈值：`">
@@ -216,7 +218,9 @@
       <div class="storehouse-stock-dialog">
         <div class="material-manage">
           <p>
-            物料：<template v-for="(item, index) in Data.materialManageInfo.MaterialAttributes"
+            物料：
+            {{Data.materialManageInfo.AttributeDescribe}}
+              <!-- <template v-for="(item) in Data.materialManageInfo.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
                   <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -227,7 +231,7 @@
                 <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                   {{index === Data.materialManageInfo.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
-              </template>
+              </template> -->
           </p>
           <p>
             尺寸规格：{{Data.materialManageInfo.SizeDescribe}}
@@ -332,6 +336,8 @@ interface SetSMSWarnFormType {
   WarnThreshold: number|string,
   NoticeMobile: string
   StockUnit: string
+  AttributeDescribe: string
+  SizeDescribe: string
 }
 
 interface StockListType {
@@ -424,6 +430,8 @@ export default {
         WarnThreshold: '',
         NoticeMobile: '',
         StockUnit: '',
+        AttributeDescribe: '',
+        SizeDescribe: '',
       },
 
       // 仓库货位信息
@@ -522,6 +530,8 @@ export default {
         WarnThreshold: '',
         NoticeMobile: '',
         StockUnit: '',
+        AttributeDescribe: '',
+        SizeDescribe: '',
       };
     }
     // 货位弹框
@@ -534,6 +544,8 @@ export default {
       api.getStorehouseStock(data.MaterialID).then(res => {
         if (res.data.Status === 1000) {
           Data.StorehouseStockInfo = res.data.Data as StorehouseStockInfoType[];
+          console.log(data, 'data');
+
           Data.materialManageInfo = { ...data };
           Data.StorehouseStockShow = true;
         }
@@ -572,6 +584,8 @@ export default {
       Data.SetSMSWarnForm.WarnThreshold = item.WarnThreshold;
       Data.SetSMSWarnForm.NoticeMobile = item.NoticeMobile;
       Data.SetSMSWarnForm.StockUnit = item.StockUnit;
+      Data.SetSMSWarnForm.AttributeDescribe = item.AttributeDescribe;
+      Data.SetSMSWarnForm.SizeDescribe = item.SizeDescribe;
       Data.SetSMSWarnShow = true;
     }
     function CancelSMSWarnClick(item) {

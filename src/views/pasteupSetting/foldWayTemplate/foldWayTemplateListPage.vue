@@ -69,6 +69,7 @@
     :haveSetApplyEquipmentList="Data.haveSetApplyEquipmentList"
     :applyEquipmentList="Data.applyEquipmentList"
     :saveEquipment="saveEquipment"
+    :foldWayName="Data.ApplyEquipment?.Name"
     >
     </SetApplyEquipmentDialog>
     <footer>
