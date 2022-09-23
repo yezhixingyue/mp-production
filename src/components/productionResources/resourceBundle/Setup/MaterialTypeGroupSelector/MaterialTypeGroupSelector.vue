@@ -11,6 +11,7 @@
     v-model="localValue"
     :MaterialTypeGroup="MaterialTypeGroup"
     :getMaterialTypeGroup="store.getMaterialTypeGroup"
+    primaryText="确定"
   />
 </template>
 

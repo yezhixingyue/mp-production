@@ -1,23 +1,23 @@
 <template>
   <main>
     <el-table :data="props.EquipmentGroupData.DataList" stripe border :row-key="getRowKey" class="row-ft-12">
-      <el-table-column align="center" min-width="120px" prop="ClassID" label="分类">
+      <mp-table-column min-width="120px" prop="ClassID" label="分类">
         <template #default="scope">{{formatListName(scope.row.ClassID, props.EquipmentGroupData.EquipmentClassList)}}</template>
-      </el-table-column>
-      <el-table-column align="center" min-width="180px" prop="Name" label="组名称" />
-      <el-table-column align="center" min-width="180px" prop="Feature" label="可以外协工厂">
+      </mp-table-column>
+      <mp-table-column min-width="180px" prop="Name" label="组名称" />
+      <mp-table-column min-width="180px" prop="Feature" label="可以外协工厂">
         <template #default="scope">
-          {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'FactoryID' })}}
+          {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}
         </template>
-      </el-table-column>
-      <el-table-column align="center" min-width="180px" label="尺寸限制">
+      </mp-table-column>
+      <mp-table-column min-width="180px" label="尺寸限制">
         <template #default="scope">{{formatSizeLimit(scope.row)}}</template>
-      </el-table-column>
-      <el-table-column align="center" min-width="220px" label="物料限制（禁用条件）">
+      </mp-table-column>
+      <mp-table-column min-width="220px" label="物料限制（禁用条件）">
         <!-- <template #default="scope">{{formatSizeLimit(scope.row)}}</template> -->
-      </el-table-column>
-      <el-table-column align="center" min-width="120px" prop="ColorLimitContent" label="印色数量限制" />
-      <el-table-column align="center" width="360px" label="操作">
+      </mp-table-column>
+      <mp-table-column min-width="120px" prop="ColorLimitContent" label="印色数量限制" />
+      <mp-table-column width="360px" label="操作">
         <template #default="scope">
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.size)">尺寸限制</mp-button>
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.material)">物料限制</mp-button>
@@ -25,7 +25,7 @@
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)">编辑</mp-button>
           <mp-button type="danger" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.remove)">删除</mp-button>
         </template>
-      </el-table-column>
+      </mp-table-column>
     </el-table>
   </main>
 </template>
@@ -83,8 +83,7 @@ const onMenuClick = (it: EquipmentGroupItemType, type: EquipmentGroupMenuEnumTyp
   emit('menuClick', it, type);
 };
 
-const getRowKey = (row: EquipmentGroupItemType) => row.GroupID;
-
+const getRowKey = (row: EquipmentGroupItemType) => row.ID;
 </script>
 
 <style scoped lang='scss'>

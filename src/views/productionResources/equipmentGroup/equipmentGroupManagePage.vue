@@ -2,7 +2,7 @@
   <section class="equipment-group-list-page-wrap">
     <Header @add="onItemSetupClick" />
     <Main :EquipmentGroupData="EquipmentGroupData" @menuClick="onMenuClick" />
-    <Footer :condition="EquipmentGroupData.condition" :total="EquipmentGroupData.DataNumber" :getList="EquipmentGroupData.getList" />
+    <Footer :condition="EquipmentGroupData.condition" :total="EquipmentGroupData.DataNumber" :getList="getList" />
     <ItemSetupDialog v-model:visible="visible" :EquipmentGroupData="EquipmentGroupData" @submit="handleItemSetupSubmit" />
     <SizeLimitDialog v-model:visible="sizeLimitVisible" :EquipmentGroupData="EquipmentGroupData" @submit="handleSizeLimitSubmit" />
     <ColorLimitDialog v-model:visible="colorLimitVisible" :EquipmentGroupData="EquipmentGroupData" @submit="handleColorLimitSubmit" />
@@ -23,7 +23,9 @@ import { onMounted, ref } from 'vue';
 import { EquipmentGroupMenuEnumType } from '@/store/modules/resource/EquipmentGroupTypeClass';
 import { GroupSizeLimitClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GroupSizeLimitClass';
 import { GroupColorLimitClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GroupColorLimitClass';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const store = useResourceStore();
 const { EquipmentGroupData } = storeToRefs(store);
 
@@ -84,7 +86,7 @@ const onMenuClick = (item: EquipmentGroupItemType, type: EquipmentGroupMenuEnumT
       break;
     case EquipmentGroupMenuEnumType.material:
       // 物料限制
-      console.log('点击了物料限制');
+      router.push({ name: 'equipmentGroupMaterialLimitList' });
       break;
     case EquipmentGroupMenuEnumType.color:
       // 印色数量限制
@@ -94,6 +96,8 @@ const onMenuClick = (item: EquipmentGroupItemType, type: EquipmentGroupMenuEnumT
       break;
   }
 };
+
+const getList = (e) => EquipmentGroupData.value.getList(e);
 
 onMounted(() => {
   EquipmentGroupData.value.fetchRequiredData();

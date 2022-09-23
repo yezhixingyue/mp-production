@@ -64,7 +64,7 @@ export default class CommonClassType {
     if (!obj) return {};
     Object.keys(obj).forEach(key => {
       if (Object.prototype.toString.call(obj[key]) !== '[object Object]') {
-        if ((obj[key] && key !== 'DateType') || (bool && obj[key] === 0)) _tempObj[key] = obj[key];
+        if ((obj[key] && key !== 'DateType') || (bool && obj[key] === 0) || obj[key] === false) _tempObj[key] = obj[key];
       } else {
         const _t = obj[key];
         Object.keys(_t).forEach(subKey => {
@@ -76,5 +76,27 @@ export default class CommonClassType {
       }
     });
     return _tempObj;
+  }
+
+  static setCondition([[key1, key2], val], condition) { // 设置条件值
+    if (!condition || typeof condition !== 'object') {
+      throw new Error('condition is an invalid parameter');
+    }
+
+    if (!key1 || !Object.hasOwnProperty.call(condition, key1)) {
+      throw new Error('key1 is an invalid parameter');
+    }
+
+    if (key2 && !Object.hasOwnProperty.call(condition, key2)) {
+      throw new Error('key2 is an invalid parameter');
+    }
+
+    const _condition = condition;
+
+    if (key2) {
+      _condition[key1][key2] = val;
+    } else {
+      _condition[key1] = val;
+    }
   }
 }

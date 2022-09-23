@@ -26,12 +26,12 @@ const {
 } = storeToRefs(store);
 
 const onItemSetupClick = (it: null | ResourceBundleClass) => {
-  const id = it ? it.GroupID : 'null';
+  const id = it ? it.ID : 'null';
   router.push({ name: 'resourceBundleSetup', params: { id } });
 };
 
 const handleRemove = async (it: ResourceBundleClass) => {
-  const resp = await api.getMaterialGroupRemove(it.GroupID).catch(() => null);
+  const resp = await api.getMaterialGroupRemove(it.ID).catch(() => null);
   if (resp?.data?.isSuccess) {
     const cb = () => {
       store.handleResourceBundleItemChange({ item: it, isEdit: false, isRemove: true });

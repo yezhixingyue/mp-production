@@ -32,7 +32,7 @@ export interface IMaterialTypeItemInBundle {
 }
 
 export class ResourceBundleClass {
-  GroupID = ''
+  ID = ''
 
   Name = ''
 

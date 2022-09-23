@@ -2,7 +2,7 @@ import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
-import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/MachineryTypeClass/Equipment';
+import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/TypeClass/Equipment';
 import request from '../request/request';
 
 export const resourceApis = {
@@ -14,8 +14,8 @@ export const resourceApis = {
   getResourceNoteList(condition) { // POST /Api/Note/List  辅助信息查询
     return request<unknown, IAssistListItem[]>({ method: 'POST', url: '/Api/Note/List', data: condition });
   },
-  getResourceNoteRemove(noteID) { // POST /Api/Note/Remove  辅助信息删除
-    return request({ method: 'DELETE', url: '/Api/Note/Remove', params: { noteID } });
+  getResourceNoteRemove(id) { // POST /Api/Note/Remove  辅助信息删除
+    return request({ method: 'DELETE', url: '/Api/Note/Remove', params: { id } });
   },
   /** 生产资源 - 设备分类相关 EquipmentClassification
    -------------------------------------------- */
@@ -36,8 +36,8 @@ export const resourceApis = {
   getSubcontractorFactoryList(conditon) { // POST /Api/Factory/List  外协工厂列表
     return request<unknown, ISubcontractorFactoryListItemType[]>({ method: 'POST', url: '/Api/Factory/List', data: conditon });
   },
-  getSubcontractorFactoryRemove(factoryID) { // DELETE /Api/Factory/Remove  外协工厂删除
-    return request({ method: 'DELETE', url: '/Api/Factory/Remove', params: { factoryID } });
+  getSubcontractorFactoryRemove(id) { // DELETE /Api/Factory/Remove  外协工厂删除
+    return request({ method: 'DELETE', url: '/Api/Factory/Remove', params: { id } });
   },
   /** 生产资源 - 物料资源包相关 resourceBundle
    -------------------------------------------- */
@@ -47,8 +47,8 @@ export const resourceApis = {
   getMaterialGroupList(condition) { // POST /Api/MaterialGroup/List   资源包列表
     return request({ method: 'POST', url: '/Api/MaterialGroup/List', data: condition });
   },
-  getMaterialGroupRemove(groupID) { // DELETE /Api/MaterialGroup/Remove  资源包删除
-    return request({ method: 'DELETE', url: '/Api/MaterialGroup/Remove', params: { groupID } });
+  getMaterialGroupRemove(id) { // DELETE /Api/MaterialGroup/Remove  资源包删除
+    return request({ method: 'DELETE', url: '/Api/MaterialGroup/Remove', params: { id } });
   },
   getMaterialTypeGroup() { // GET /Api/MaterialType/Group  根据类别分组查询返回物料类型数据
     return request({ method: 'GET', url: '/Api/MaterialType/Group' });
@@ -70,12 +70,27 @@ export const resourceApis = {
   getEquipmentGroupColorLimit(data) { // POST /Api/EquipmentGroup/ColorLimit   印色数量限制
     return request({ method: 'POST', url: '/Api/EquipmentGroup/ColorLimit', data });
   },
+
   /** 生产资源 - 加工设备相关 Equipment
   --------------------------------------------- */
   getEquipmentSave(data) { // POST /Api/Equipment/Save   加工设备保存
-    return request({ method: 'POST', url: '/Api/Equipment/Save', data });
+    return request<unknown, string>({ method: 'POST', url: '/Api/Equipment/Save', data });
   },
   getEquipmentList(condition) { // POST /Api/Equipment/List   获取加工设备列表 -- 建立条件类
     return request<unknown, EquipmentListItemType[]>({ method: 'POST', url: '/Api/Equipment/List', data: condition });
+  },
+  getEquipmentSetStatus(data) { // POST /Api/Equipment/SetStatus   设置停用和启用
+    return request({ method: 'POST', url: '/Api/Equipment/SetStatus', data });
+  },
+  getEquipmentRemove(id) { // DELETE /Api/Equipment/Remove   加工设备删除
+    return request({ method: 'DELETE', url: '/Api/Equipment/Remove', params: { id } });
+  },
+  /** 生产资源 - 设备组 - 物料限制相关 EquipmentGroupMaterialType
+  --------------------------------------------- */
+  getEquipmentGroupMaterialTypeSave(data) { // POST /Api/EquipmentGroupMaterialType/Save   设备组物料类型添加
+    return request({ method: 'POST', url: '/Api/EquipmentGroupMaterialType/Save', data });
+  },
+  getEquipmentGroupMaterialTypeList(groupID) { // GET /Api/EquipmentGroupMaterialType/List   设备组物料类型限制列表
+    return request({ method: 'GET', url: '/Api/EquipmentGroupMaterialType/List', params: { groupID } });
   },
 };

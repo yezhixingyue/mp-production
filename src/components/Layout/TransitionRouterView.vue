@@ -66,6 +66,7 @@ export default {
       }
       return _name;
     });
+
     return {
       beforeLeave,
       afterEnter,

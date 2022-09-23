@@ -10,6 +10,7 @@ export interface addBarType {
 }
 export interface IState {
   editableTabs: addBarType[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   editableTabsValue:any;
   leftMenuDefaultActive:string,
   otherTabPageNames:RouteLocationNormalizedLoaded[],

@@ -2,7 +2,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 
 export class Equipment {
-  EquipmentID = ''
+  ID = ''
 
   Name = ''
 
@@ -20,14 +20,9 @@ export class Equipment {
     }
   }
 
-  getSubmitData() { // 获取新增或编辑保存时需要提交的数据
+  getSubmitData(): null | Equipment { // 获取新增或编辑保存时需要提交的数据
     if (!this.validate()) return null;
-    const {
-      EquipmentID, Name, GroupID, Index,
-    } = this;
-    return {
-      EquipmentID, Name, GroupID, Index,
-    };
+    return this;
   }
 
   private validate() {
@@ -58,3 +53,4 @@ export class Equipment {
 }
 
 export type EquipmentListItemType = Omit<Equipment, 'getSubmitData' | 'validate'>
+export type EquipmentSubmitDataType = Pick<Required<Equipment>, 'ID'|'Name'|'GroupID'|'Index'>;
