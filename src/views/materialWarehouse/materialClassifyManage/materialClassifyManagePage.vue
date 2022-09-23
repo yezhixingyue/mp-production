@@ -79,7 +79,7 @@
             no-data-text="无数据"
              placeholder="请选择分类">
               <el-option
-                v-for="item in MaterialCategoryStore.CategoryList"
+                v-for="item in MaterialWarehouseStore.CategoryList"
                 :key="item.CategoryID"
                 :label="item.CategoryName"
                 :value="item.CategoryID"
@@ -117,7 +117,7 @@
         <el-radio-group v-model="Data.setBrandForm.AttributeID">
           <el-radio :label="0" size="large">无</el-radio>
           <el-radio :label="item.AttributeID" size="large"
-          v-for="item in MaterialCategoryStore.selectMaterialTypeAttribute"
+          v-for="item in MaterialWarehouseStore.selectMaterialTypeAttribute"
           :key="item.AttributeID">{{item.AttributeName}}</el-radio>
         </el-radio-group>
         <div class="Prompt">
@@ -188,7 +188,7 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const MaterialCategoryStore = useMaterialWarehouseStore();
+    const MaterialWarehouseStore = useMaterialWarehouseStore();
     // 添加/编辑 物料类型点击
     const Data:dataType = reactive({
       // materialClassifyTitle: '添加物料类型',
@@ -308,6 +308,7 @@ export default {
             const cb = () => {
               getMaterialClassifyManage();
               materialClassifyCloseClick();
+              MaterialWarehouseStore.getMaterialTypeGroup();
             };
               // 成功
             messageBox.successSingle(`${Data.materialClassifyDialogForm.TypeID ? '修改' : '添加'}成功`, cb, cb);
@@ -318,7 +319,7 @@ export default {
     function setBrandClick(typeID) {
       Data.brandShow = true;
       Data.setBrandForm.TypeID = typeID;
-      MaterialCategoryStore.getMaterialTypeAttributeAllByTypeID(typeID);
+      MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(typeID);
       // api.getMaterialTypeAttributeAll({ TypeID: typeID }).then((res:any) => {
       //   if (res.data.Status === 1000) {
       //     Data.setBrandAttributes = res.data.Data.filter((it) => it.AttributeType === 2);
@@ -360,12 +361,12 @@ export default {
       sessionStorage.removeItem('updataMaterialClassifyManagePage');
 
       getMaterialClassifyManage();
-      MaterialCategoryStore.getMaterialCategoryList();
+      MaterialWarehouseStore.getMaterialCategoryList();
     });
     return {
       Data,
       IsStock,
-      MaterialCategoryStore,
+      MaterialWarehouseStore,
       PaginationChange,
       ToMaterialClassifyManageList,
       ToSetTheStorageUnitPage,

@@ -1,7 +1,7 @@
 <template>
   <div class="inventory-log-page">
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/inventory' }">库存盘点</el-breadcrumb-item>
         <el-breadcrumb-item>盘点记录</el-breadcrumb-item>
@@ -120,9 +120,10 @@ import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
   reactive, onMounted, computed,
 } from 'vue';
-import { useRouterStore } from '@/store/modules/routerStore';
+import { useCommonStore } from '@/store/modules/common';
 import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
+import { ArrowRight } from '@element-plus/icons-vue';
 
 interface getInventoryLogListDataType {
   DateType:string
@@ -170,7 +171,7 @@ export default {
     LineDateSelectorComp,
   },
   setup() {
-    const RouterStore = useRouterStore();
+    const CommonStore = useCommonStore();
     // 入库类型
     const Data:DataType = reactive({
       DataTotal: 0,
@@ -207,7 +208,7 @@ export default {
     const StaffSelectList = computed(() => [{
       StaffID: '',
       StaffName: '不限',
-    }, ...RouterStore.StaffSelectList]);
+    }, ...CommonStore.StaffSelectList]);
 
     function getInventoryLogList() {
       ClassType.setDate(Data.getInventoryLogListData, 'CheckTime');
@@ -265,15 +266,17 @@ export default {
 
     onMounted(() => {
       getStorehouseAll(getInventoryLogList);
-      RouterStore.getStaffSelect();
+      if (!CommonStore.StaffSelectList.length) {
+        CommonStore.getStaffSelect();
+      }
     });
 
     return {
+      ArrowRight,
       setCondition4DataList,
       UserDefinedTimeIsActive,
-
       Data,
-      RouterStore,
+      CommonStore,
       StaffSelectList,
       PaginationChange,
       getInventoryLogList,

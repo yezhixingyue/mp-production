@@ -252,7 +252,7 @@ export default {
     .manual-select-date-box {
       top: 0;
       margin: 0;
-      border-left: none;
+      // border-left: none;
       border-top-left-radius: 0%;
       border-bottom-left-radius: 0%;
       &.active {
@@ -277,10 +277,48 @@ export default {
   }
   .el-radio-group{
     .el-radio-button{
+      border: none;
+      position: relative;
+      min-width: 80px;
+      // width: 120px;
+      height: 29px;
+      z-index: 9;
+      // overflow: hidden;
+      margin-right: -1px;
+      // margin-bottom: -1px;
+      .el-radio-button__original-radio:checked+.el-radio-button__inner {
+        box-shadow:none
+      }
       .el-radio-button__inner{
-        height: 32px;
-
-        min-width: 80px;
+        background-color: #F5F5F5;
+        border: 1px solid #E6E6E6;
+        height: 29px;
+      }
+      box-sizing: border-box;
+      &.is-active{
+        z-index: 99;
+        border: none;
+        box-shadow:none;
+        .el-radio-button__inner{
+          background-color: #fff;
+          color: $--color-primary;
+          border-color:  $--color-primary;
+          height: 100%;
+        }
+      }
+      .el-radio-button__inner{
+        .el-tooltip__trigger{
+          display: inline-block;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          line-height: 15px;
+        }
+        padding: 5px 15px;
+          width: 100%;
+        // width: 120px;
+        // overflow: hidden;
+        // border-left: 1px solid rgb(220, 223, 230);
       }
     }
   }
@@ -298,8 +336,8 @@ export default {
   > .normal-btn {
     margin: 0;
     &.un-select {
-    color: $--color-text-primary;
-    border: 1px solid $--border-color-base;
+      color: $--color-text-primary;
+      border: 1px solid $--border-color-base;
     }
     margin-left: 20px;
     position: relative;
@@ -307,21 +345,22 @@ export default {
   }
   > .define-btn {
     cursor: pointer;
-    margin-left: -1px;
+    // margin-left: -1px;
   }
   .manual-select-date-box {
     font-size: 13px;
     min-width: 110px;
-    height: 32px;
+    height: 29px;
     border: 1px solid $--border-color-base;
     display: inline-block;
     text-align: center;
-    line-height: 30px;
+    line-height: 28px;
     position: relative;
     top: -5px;
     margin-left: 20px;
     border-radius: 2px;
     box-sizing: border-box;
+    background-color: #F5F5F5;
     padding: 0 15px;
     // box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.15);
     > i > img {
@@ -329,12 +368,14 @@ export default {
       margin-left: 10px;
     }
     &.active {
-      color: #fff;
+      color: #26bcf9;
       border-color: #26bcf9;
-      background-color: $--color-primary;
+      z-index: 99;
+      box-shadow:none !important;
+      background-color: #fff;
     }
     &.active:hover {
-      color: #fff;
+      color: #26bcf9;
     }
   }
   > span {

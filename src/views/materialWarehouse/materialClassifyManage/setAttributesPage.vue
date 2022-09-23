@@ -1,7 +1,7 @@
 <template>
   <div class="set-attributes-page">
     <header>
-      <el-breadcrumb>
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
         <el-breadcrumb-item>设置属性：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -140,6 +140,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   ref, reactive, onMounted,
 } from 'vue';
+import { ArrowRight } from '@element-plus/icons-vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
@@ -321,6 +322,7 @@ export default {
       getAttributesList();
     });
     return {
+      ArrowRight,
       Data,
       dialog,
       addAttributeSelect,

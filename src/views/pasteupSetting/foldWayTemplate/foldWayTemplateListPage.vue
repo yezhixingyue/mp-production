@@ -36,11 +36,15 @@
             {{scope.row.RowNumber}}行 {{scope.row.ColumnNumber}}列
           </template>
         </el-table-column>
+        <!-- show-overflow-tooltip prop="Linkman" label="适用设备" min-width="505"> -->
         <el-table-column
-        show-overflow-tooltip prop="Linkman" label="适用设备" min-width="505">
-        <!-- show-overflow-tooltip prop="Linkman" label="适用设备" min-width="895"> -->
-          <!-- <template #default="scope">
-          </template> -->
+        show-overflow-tooltip prop="Linkman" label="适用设备" min-width="895">
+          <template #default="scope">
+            <span class="useable-equipment" v-for="(item) in getUseableEquipmentText(scope.row.UseableEquipmentGroupList)" :key="item.ClassID">
+              <!-- {{index===0?'':';'}} -->
+              <span class="group">{{item.ClassName}}：</span><span>{{item.EquipmentGroups.map(it => it.Name).join('、')}}</span>
+            </span>
+          </template>
         </el-table-column>
         <el-table-column prop="name" label="操作" min-width="277">
           <template #default="scope">
@@ -90,6 +94,16 @@ import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import { FoldWayTemplateType } from './type';
 
+interface _EquipmentGroups{
+  GroupID: string,
+  GroupName: string
+}
+
+export interface _UseClassEquipmentGroupType {
+  ClassID: 0,
+  ClassName: string,
+  EquipmentGroups: _EquipmentGroups[]
+}
 interface getFoldWayTemplateDataType {
   ClassID:number|string,
   Page:number,
@@ -198,7 +212,31 @@ export default {
       api.getFoldWayTemplateUseableEquipment({
         ID: Data.ApplyEquipment?.ID,
         UseableEquipmentGroupList: Equipments,
+      }).then(res => {
+        if (res.data.Status === 1000) {
+          const cb = () => {
+            Data.ApplyEquipmentShow = false;
+            getFoldWayTemplateList();
+          };
+          messageBox.successSingle('入库成功', cb, cb);
+        }
       });
+    }
+    // 获取保存的适用设备文字
+    function getUseableEquipmentText(Equipments) {
+      const tempGroup:UseClassEquipmentGroupType[] = [];
+      Data.applyEquipmentList.forEach(item => {
+        const EquipmentGroup = item.EquipmentGroups.filter(it => {
+          const Equipment = Equipments.find(Equipment => Equipment.ID === it.ID);
+          return Equipment;
+        });
+        if (EquipmentGroup.length) {
+          const _item = { ...item };
+          _item.EquipmentGroups = EquipmentGroup;
+          tempGroup.push(_item);
+        }
+      });
+      return tempGroup;
     }
 
     onActivated(() => {
@@ -216,8 +254,20 @@ export default {
       // 获取所有适用设备
       api.getEquipmentGroup().then(res => {
         if (res.data.Status === 1000) {
-          console.log(res.data.Data);
-          Data.applyEquipmentList = res.data.Data as UseClassEquipmentGroupType[];
+          const temp = res.data.Data as _UseClassEquipmentGroupType[];
+          Data.applyEquipmentList = [];
+          temp.forEach(item => {
+            const EquipmentGroups = item.EquipmentGroups.map(it => ({
+              ID: it.GroupID,
+              Name: it.GroupName,
+            }));
+            Data.applyEquipmentList.push({
+              ClassID: item.ClassID,
+              ClassName: item.ClassName,
+              EquipmentGroups,
+            });
+          });
+          console.log(Data.applyEquipmentList, temp);
         }
       });
     });
@@ -227,6 +277,7 @@ export default {
       PasteupSettingStore,
       FoldWayTemplateClassList,
       saveEquipment,
+      getUseableEquipmentText,
       getClassName,
       RadioGroupCompChange,
       ManagementClass,
@@ -276,6 +327,14 @@ export default {
       }
       .el-button+.el-button{
         margin-left: 30px;
+      }
+      .useable-equipment{
+        &.useable-equipment+.useable-equipment{
+          margin-left: 20px;
+        }
+        .group{
+          font-weight: 600;
+        }
       }
     }
   }

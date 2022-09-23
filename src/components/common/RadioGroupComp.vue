@@ -107,6 +107,7 @@ export default {
 };
 </script>
 <style lang='scss'>
+@import '@/assets/css/var.scss';
 .mp-tow-level-radio-group{
   li+li{
     margin-top: 20px;
@@ -122,15 +123,29 @@ export default {
     border-radius: 0;
   }
   .el-radio-button{
+    border: none;
+    position: relative;
     width: 120px;
     height: 29px;
-    margin-left: -1px;
-    margin-top: -1px;
-    overflow: hidden;
+    z-index: 9;
+    // overflow: hidden;
+    margin-right: -1px;
+    margin-bottom: -1px;
+    .el-radio-button__original-radio:checked+.el-radio-button__inner {
+      box-shadow:none
+    }
+    .el-radio-button__inner{
+      background-color: #F5F5F5;
+      border: 1px solid #E6E6E6;
+    }
     box-sizing: border-box;
     &.is-active{
+      z-index: 99;
       border: none;
       .el-radio-button__inner{
+        background-color: #fff;
+        color: $--color-primary;
+        border-color:  $--color-primary;
         height: 100%;
       }
     }
@@ -145,8 +160,8 @@ export default {
       }
       padding: 5px 15px;
       width: 120px;
-      overflow: hidden;
-      border-left: 1px solid rgb(220, 223, 230);
+      // overflow: hidden;
+      // border-left: 1px solid rgb(220, 223, 230);
     }
   }
   .box-item{

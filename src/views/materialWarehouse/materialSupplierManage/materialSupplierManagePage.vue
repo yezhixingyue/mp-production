@@ -62,7 +62,7 @@
         :handlePageChange="PaginationChange" />
       </div>
     </footer>
-    <DialogContainerComp
+    <DialogContainerComp v-if="ProvinceList.length"
     :title="`${Data.MaterialSupplierForm.SupplierID ? '修改' : '添加'}供应商`"
     :visible='Data.addMaterialSupplierShow'
     :width="660"
@@ -78,8 +78,8 @@
           </el-form-item>
           <el-form-item label="所在城市：" class="form-item-required">
             <TowLevelSelect
-            :level1Options='Data.ProvinceList'
-            :level2Options='Data.CityList'
+            :level1Options='ProvinceList'
+            :level2Options='CityList'
             :defaultProps="{
               value:'ID',
               label:'Name',
@@ -135,24 +135,17 @@
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  reactive, onMounted, computed, watch,
+  reactive, onMounted, computed,
 } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
-
-import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
+import { useCommonStore } from '@/store/modules/common/index';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 
-interface DistrictType {
-  ID: string,
-  Name: string,
-  ParentID: number|string,
-  IsVirtual: boolean,
-  Level: number
-}
 interface MaterialSupplierFormType {
   SupplierID: string,
   SupplierName: string,
@@ -184,8 +177,6 @@ interface MaterialTypeListType {
 interface DataType {
   checkAll:boolean,
   isIndeterminate:boolean,
-  ProvinceList:DistrictType[],
-  CityList:DistrictType[],
   DataTotal: number,
   addMaterialSupplierShow: boolean,
   MaterialSupplierForm:MaterialSupplierFormType,
@@ -202,16 +193,14 @@ export default {
     DialogContainerComp,
   },
   setup() {
-    const { getDistrictByParentID } = getDistrictMixins();
+    const commonStore = useCommonStore();
+    const { DistrictTreeList } = storeToRefs(commonStore);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
       checkAll: false,
       isIndeterminate: false,
       DataTotal: 0,
       addMaterialSupplierShow: false,
-      // 省级列表
-      ProvinceList: [],
-      CityList: [],
       MaterialSupplierForm: {
         SupplierID: '',
         SupplierName: '',
@@ -235,6 +224,11 @@ export default {
       level1Val: Data.MaterialSupplierForm.ProvinceID,
       level2Val: Data.MaterialSupplierForm.CityID,
     }));
+    const ProvinceList = computed(() => DistrictTreeList.value);
+    const CityList = computed(() => {
+      const actionProvince = ProvinceList.value.find(res => res.ID === Data.MaterialSupplierForm.ProvinceID);
+      return actionProvince?.children || [];
+    });
     const useIdGetMaterialTypeName = (ID) => {
       // MaterialWarehouseStore.MaterialTypeList.find;
       // console.log(IDS, 'useIdGetMaterialTypeName');
@@ -286,7 +280,6 @@ export default {
       Data.addMaterialSupplierShow = false;
     }
     async function editMaterialSupplier(item) {
-      Data.ProvinceList = await getDistrictByParentID(-1) as DistrictType[];
       Data.addMaterialSupplierShow = true;
       Data.MaterialSupplierForm = { ...item };
       handleCheckedCitiesChange(Data.MaterialSupplierForm.MaterialTypeIDS);
@@ -342,15 +335,8 @@ export default {
       Data.MaterialSupplierForm.ProvinceID = level1Val;
       Data.MaterialSupplierForm.CityID = level2Val;
     }
-    watch(() => twoSelecValue.value.level1Val, async (newValue) => {
-      if (newValue) {
-        Data.CityList = await getDistrictByParentID(newValue) as DistrictType[];
-      }
-    });
     // 添加供应商
     async function addMaterialSupplier() {
-      Data.ProvinceList = await getDistrictByParentID(-1) as DistrictType[];
-      Data.CityList = [];
       Data.addMaterialSupplierShow = true;
     }
     const handleCheckAllChange = (val: boolean) => {
@@ -363,6 +349,10 @@ export default {
       Data.isIndeterminate = false;
     };
     onMounted(() => {
+      if (!commonStore.DistrictTreeList.length) {
+        commonStore.getDistrictList();
+      }
+
       getMaterialSupplierList();
       // 获取物料分类
       MaterialWarehouseStore.getMaterialCategoryList();
@@ -373,7 +363,10 @@ export default {
       });
     });
     return {
+      ProvinceList,
+      CityList,
       Data,
+      commonStore,
       twoSelecValue,
       MaterialWarehouseStore,
       useIdGetMaterialTypeName,

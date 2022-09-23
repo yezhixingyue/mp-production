@@ -8,7 +8,14 @@ import {
 const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
   id: 'layout',
   state: () => ({
-    editableTabs: [],
+    editableTabs: [{
+      title: '首页',
+      name: '1',
+      path: '/',
+      closable: false,
+      isNew: false,
+      pageName: '',
+    }],
     editableTabsValue: '',
     leftMenuDefaultActive: '',
     otherTabPageNames: [],
@@ -45,6 +52,14 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     removeTabItem(itemName:string) { // 关闭当前
       const tabs = this.editableTabs;
       this.editableTabs = tabs.filter((tab:addBarType) => tab.name !== itemName);
+    },
+    removeOther(itemName) { // 关闭其它
+      const tabs = this.editableTabs;
+      this.editableTabs = tabs.filter(tab => tab.name === itemName || !tab.closable);
+    },
+    removeAll() { // 关闭所有
+      const tabs = this.editableTabs;
+      this.editableTabs = tabs.filter(tab => !tab.closable);
     },
     //
     changeCurTabPath(newPath:string) { // 页面内路由跳转时 记录其路径记录 方便页面跳转不会返回最初页面

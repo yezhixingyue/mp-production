@@ -234,6 +234,7 @@ export default {
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects,
+        AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = { ...temp } as MaterialInfoType;
       Data.SizeSelects = ID;

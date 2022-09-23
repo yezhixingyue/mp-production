@@ -1,7 +1,7 @@
 <template>
   <div class="material-classify-manage-list-page">
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
         <el-breadcrumb-item>管理物料分类</el-breadcrumb-item>
       </el-breadcrumb>
@@ -62,6 +62,7 @@ import {
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
+import { ArrowRight } from '@element-plus/icons-vue';
 
 interface tableItem {
   CategoryID: number | undefined
@@ -85,7 +86,7 @@ export default {
   },
   setup() {
     const dialog = ref(false);
-    const MaterialCategoryStore = useMaterialWarehouseStore();
+    const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:dataType = reactive({
       tableData: [],
       DataTotal: 0,
@@ -121,7 +122,7 @@ export default {
         api.getMaterialCategoryRemove(item.CategoryID).then(res => {
           if (res.data.Status === 1000) {
             getMaterialCategoryList();
-            MaterialCategoryStore.getMaterialCategoryList();
+            MaterialWarehouseStore.getMaterialCategoryList();
           }
         });
       }, () => undefined);
@@ -146,7 +147,8 @@ export default {
             const cb = () => {
               closeClick();
               getMaterialCategoryList();
-              MaterialCategoryStore.getMaterialCategoryList();
+              MaterialWarehouseStore.getMaterialCategoryList();
+              MaterialWarehouseStore.getMaterialTypeGroup();
             };
             // 成功
             messageBox.successSingle(`${Data.classifyInfo.CategoryID ? '修改' : '添加'}成功`, cb, cb);
@@ -159,6 +161,7 @@ export default {
       getMaterialCategoryList();
     });
     return {
+      ArrowRight,
       Data,
       dialog,
       PaginationChange,

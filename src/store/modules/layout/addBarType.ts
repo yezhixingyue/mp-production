@@ -25,6 +25,8 @@ export interface IActions {
   addTabItem: (item:addBarType) => void;
   setLeftMenuDefaultActive:(name:string)=> void
   removeTabItem:(itemName:string)=> void
+  removeOther:(itemName:string)=> void
+  removeAll:()=> void
   changeCurTabPath:(newPath:string)=> void
   setOtherTabPageNames:(tabItem:RouteLocationNormalizedLoaded)=> void
   filterOtherTabPageNames:(routeNames:string[])=> void

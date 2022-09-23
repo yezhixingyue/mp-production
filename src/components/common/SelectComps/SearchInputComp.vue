@@ -38,11 +38,11 @@ export default {
     },
     changePropsFunc: {
       type: Function,
-      default: () => undefined,
+      default: () => null,
     },
     requestFunc: {
       type: Function,
-      default: () => undefined,
+      default: () => null,
     },
     showResetBtn: {
       type: Boolean,

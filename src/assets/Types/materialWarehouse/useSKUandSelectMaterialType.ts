@@ -28,6 +28,7 @@ export interface MaterialSelectsType {
   Code: string,
   MaterialAttributes: MaterialAttributesType[],
   SizeSelects: SizeSelectsType[]
+  AttributeDescribe:string
 }
 export interface MaterialDataItemType {
   StockUnit: string,

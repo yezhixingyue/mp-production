@@ -24,6 +24,7 @@ interface MaterialInfoType {
   MaterialAttributes: MaterialAttributesType[],
   StockUnit: string,
   UnitSelects: UnitSelectsType[]
+  AttributeDescribe:string
 }
 
 export {
@@ -37,4 +38,8 @@ export interface IDistrictItem {
   Level: number
   ParentID: number
   IsVirtual: boolean
+}
+export interface StaffSelectListType {
+  StaffID: string,
+  StaffName: string
 }

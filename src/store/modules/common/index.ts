@@ -1,10 +1,11 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
 import api from '@/api';
-import { IDistrictItem } from '@/assets/Types/common';
+import { IDistrictItem, StaffSelectListType } from '@/assets/Types/common';
 import { IDistrictTreeListItemType } from './types';
 
 interface IState {
   DistrictList: IDistrictItem[]
+  StaffSelectList:StaffSelectListType[],
 }
 
 type IGetters = {
@@ -13,12 +14,14 @@ type IGetters = {
 
 interface IActions {
   getDistrictList: () => void,
+  getStaffSelect:()=>void,
 }
 
 const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存放公共数据的模块
   id: 'common',
   state: () => ({
     DistrictList: [],
+    StaffSelectList: [],
   }),
   getters: {
     DistrictTreeList(state: IState) { // 行政地区树形列表数据
@@ -45,6 +48,12 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
       const resp = await api.getDistrictList().catch(() => null);
       if (resp?.data.isSuccess) {
         this.DistrictList = resp.data.Data;
+      }
+    },
+    async getStaffSelect() { // 回转页面信息后删除掉回转前的路由信息,
+      const resp = await api.getStaffSelect().catch(() => null);
+      if (resp?.data.Status === 1000) {
+        this.StaffSelectList = resp.data.Data as StaffSelectListType[];
       }
     },
   },

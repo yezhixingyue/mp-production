@@ -1,7 +1,7 @@
 <template>
   <div class="set-dimensions-page">
     <header>
-      <el-breadcrumb>
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
         <el-breadcrumb-item>尺寸规格：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -104,6 +104,7 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { ArrowRight } from '@element-plus/icons-vue';
 
 export default {
   name: 'setDimensionsPage',
@@ -216,6 +217,7 @@ export default {
       getDimensisnsList();
     });
     return {
+      ArrowRight,
       Data,
       editDimensions,
       delDimensions,

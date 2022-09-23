@@ -1,7 +1,7 @@
 <template>
   <div class="set-position-number-page">
     <header>
-      <el-breadcrumb>
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
         <el-breadcrumb-item>设置货位编号：{{Data.StorehouseName}}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -113,8 +113,7 @@
 <script lang='ts'>
 import { reactive, onMounted } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-
-// import getDistrictMixins from '@/assets/js/mixins/getDistrictByParentID';
+import { ArrowRight } from '@element-plus/icons-vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
@@ -284,6 +283,7 @@ export default {
       getPalletDimensionsList();
     });
     return {
+      ArrowRight,
       Data,
       MaterialWarehouseStore,
       seeImg,

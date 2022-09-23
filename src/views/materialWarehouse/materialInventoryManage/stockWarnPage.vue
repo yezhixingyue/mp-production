@@ -2,7 +2,7 @@
   <div class="stock-warn-page">
     <header>
       <div class="header-top">
-        <el-breadcrumb >
+        <el-breadcrumb :separator-icon="ArrowRight">
           <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
           <el-breadcrumb-item>预警记录</el-breadcrumb-item>
         </el-breadcrumb>
@@ -120,10 +120,12 @@ import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  reactive, onMounted, watch, computed, ComputedRef,
+  reactive, onMounted, computed, ComputedRef,
 } from 'vue';
+import { ArrowRight } from '@element-plus/icons-vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api';
+import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -196,9 +198,19 @@ export default {
     });
 
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
-      ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
-      ...MaterialWarehouseStore.MaterialTypeList]);
+      ...MaterialWarehouseStore.MaterialTypeGroup]);
+    const MaterialTypeList = computed(() => {
+      const noType = {
+        TypeID: '',
+        TypeName: '全部类型',
+      };
+      const MaterialType = CategoryList.value.find(it => it.CategoryID === Data.getStockWarnData.CategoryID);
+      if (MaterialType && MaterialType.CategoryID) {
+        const temp = MaterialType as MaterialTypeGroupType;
+        return [noType, ...temp.MaterialTypes] || [];
+      }
+      return [noType];
+    });
     function getStockWarnPageList() {
       api.getStockWarnList(Data.getStockWarnData).then(res => {
         if (res.data.Status === 1000) {
@@ -235,16 +247,15 @@ export default {
         getStockWarnPageList();
       }
     }
-    watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
-    });
-
     onMounted(() => {
-      MaterialWarehouseStore.getMaterialCategoryList();
+      if (!MaterialWarehouseStore.MaterialTypeGroup.length) {
+        MaterialWarehouseStore.getMaterialTypeGroup();
+      }
       getStockWarnPageList();
     });
 
     return {
+      ArrowRight,
       Data,
       CategoryList,
       MaterialTypeList,

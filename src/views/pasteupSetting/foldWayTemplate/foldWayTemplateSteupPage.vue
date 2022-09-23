@@ -1,7 +1,7 @@
 <template>
   <div class="foldWay-template-steup-page" >
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/foldWayTemplate' }">折手模板</el-breadcrumb-item>
         <el-breadcrumb-item>{{Data.foldWayTemplateFrom.ID?'编辑' :'添加'}}折手模板：
           {{Data.foldWayTemplateFrom.ID?`${Data.foldWayTemplateFrom.Name}` :''}}
@@ -82,7 +82,8 @@
       <div class="set-page-dialog">
         <el-form :model="Data" label-width="112px">
           <el-form-item label="页码：" class="form-item-required">
-            <el-input-number :controls="false" :step="1" step-strictly v-model.number="Data.setPageInp" />
+            <!-- <el-input-number :controls="false" :step="1" step-strictly v-model.number="Data.setPageInp" /> -->
+            <el-input v-model.number="Data.setPageInp" />
           </el-form-item>
         </el-form>
       </div>
@@ -99,7 +100,7 @@
 import {
   reactive, onMounted,
 } from 'vue';
-
+import { ArrowRight } from '@element-plus/icons-vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
@@ -319,6 +320,7 @@ export default {
       }
     });
     return {
+      ArrowRight,
       Data,
       PasteupSettingStore,
       createMap,

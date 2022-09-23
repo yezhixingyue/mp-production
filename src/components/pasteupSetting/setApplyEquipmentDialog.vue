@@ -11,6 +11,7 @@
     >
     <template #default>
       <div class="set-apply-equipment-dialog">
+        <el-scrollbar max-height="350px">
         <div class="material-type" v-for="(item, index) in Data.applyEquipmentListFrom" :key="index">
           <p>
             <el-checkbox
@@ -38,6 +39,8 @@
             </el-checkbox>
           </el-checkbox-group>
         </div>
+        </el-scrollbar>
+        <p class="hint">不设置则不限制</p>
       </div>
     </template>
     </DialogContainerComp>
@@ -123,7 +126,6 @@ export default {
       Data.applyEquipmentListFrom.forEach(item => {
         allEquipment.push(...item.EquipmentGroups);
       });
-      console.log(allEquipment, 'all');
       // 选中的设备
       const actionEquipment:EquipmentGroups[] = [];
       Data.applyEquipmentListFrom.forEach(item => {
@@ -135,7 +137,6 @@ export default {
         });
       });
       props.saveEquipment(actionEquipment);
-      console.log(actionEquipment, 'actionEquipment');
     }
     function handleCheckAllChange(val: boolean, index) {
       if (val) {
@@ -155,23 +156,8 @@ export default {
     watch(() => props.applyEquipmentList, (newVal) => {
       if (newVal) {
         newVal.forEach((element) => {
-          const temp = element as UseClassEquipmentGroupType;
-          temp.EquipmentGroups = [
-            {
-              ID: 'eb2be879-0525-45fb-97f0-af1600f78f11',
-              Name: '1',
-            },
-            {
-              ID: 'eb2be879-0525-45fb-97f0-af1600f78f21',
-              Name: '2',
-            },
-            {
-              ID: 'eb2be879-0525-45fb-97f0-af1600f78f31',
-              Name: '13',
-            },
-          ];
           Data.applyEquipmentListFrom.push({
-            ...temp as UseClassEquipmentGroupType,
+            ...element as UseClassEquipmentGroupType,
             checkAll: false,
             isIndeterminate: false,
             checks: [],
@@ -208,6 +194,44 @@ export default {
 </script>
 <style lang="scss">
   .set-apply-equipment-dialog{
+    padding: 0 22px;
+    .material-type{
+      &.material-type+.material-type{
+        margin-top: 20px;
+      }
+      p{
+        font-weight: 600;
+        .el-checkbox__label{
+          font-weight: 600;
+        }
+      }
+    }
+    .el-checkbox-group{
+      .el-checkbox{
+        width: calc(25% - 10px);
+        margin-right: 10px;
+      }
+    }
+    .hint{
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 30px;
+      color: #F4A307;
+      position: relative;
+      padding-left: 33px;
+      &::before{
+        content: '';
+        background-image: url('@/assets/images/warn.png');
+        display: inline-block;
+        background-size: 13px 13px;
+        width: 13px;
+        height: 13px;
+        margin: 0 10px;
+        position: absolute;
+        left: 0;
+        top: 9px;
+      }
+    }
     //
   }
 </style>

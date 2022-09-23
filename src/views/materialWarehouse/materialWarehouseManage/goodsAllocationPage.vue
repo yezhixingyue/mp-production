@@ -1,7 +1,7 @@
 <template>
   <div class="goods-allocation-page">
     <header>
-      <el-breadcrumb style="margin-bottom:20px">
+      <el-breadcrumb :separator-icon="ArrowRight" style="margin-bottom:20px">
         <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
         <el-breadcrumb-item>规划货位图：{{Data.StorehouseName}}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -40,7 +40,7 @@
 </template>
 
 <script lang='ts'>
-
+import { ArrowRight } from '@element-plus/icons-vue';
 import { reactive, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -326,6 +326,7 @@ export default {
     });
 
     return {
+      ArrowRight,
       Data,
       disCheck,
       setNewPosition,

@@ -18,7 +18,8 @@
           <el-form-item :label="`物料：`" class="in-number">
             <div class="between">
               <span class="value">
-               <template v-for="(item, index) in materialInfo.MaterialAttributes"
+                {{materialInfo.AttributeDescribe}}&nbsp;
+               <!-- <template v-for="(item, index) in materialInfo.MaterialAttributes"
                :key="item.AttributeID">
                  <template v-if="item.NumericValue">
                    <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -29,7 +30,7 @@
                 <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                   {{index === materialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
-               </template>
+               </template> -->
                {{materialInfo.SizeDescribe}}
               </span>
               <mp-button
@@ -47,7 +48,8 @@
             <!-- <div class="between"> -->
             <p v-if="Data.newMaterialInfo" class="between">
              <span class="value">
-               <template v-for="(item,index) in Data.newMaterialInfo.MaterialAttributes"
+              {{Data.newMaterialInfo.AttributeDescribe}}&nbsp;
+               <!-- <template v-for="(item,index) in Data.newMaterialInfo.MaterialAttributes"
                :key="item.AttributeID">
                  <template v-if="item.NumericValue">
                    <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -58,7 +60,7 @@
                 <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                   {{index === Data.newMaterialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
-               </template>
+               </template> -->
                {{Data.newMaterialInfo.SizeDescribe}}
              </span>
               <mp-button @click="Data.newMaterialInfo = null" link type="danger">删除</mp-button>
@@ -94,7 +96,8 @@
                 </el-form-item>
                 <el-form-item :label="`当前物料：`" class="">
                   <span class="value">
-                    <template v-for="(item,index) in materialInfo.MaterialAttributes"
+                    {{materialInfo.AttributeDescribe}}&nbsp;
+                    <!-- <template v-for="(item,index) in materialInfo.MaterialAttributes"
                     :key="item.AttributeID">
                       <template v-if="item.NumericValue">
                         <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -105,7 +108,7 @@
                       <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                         {{index === materialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
                       </template>
-                    </template>
+                    </template> -->
                     {{materialInfo.SizeDescribe}}
                   </span>
                 </el-form-item>
@@ -118,7 +121,8 @@
 
                 <el-form-item :label="`新物料：`" class="red">
                   <span class="value" >
-                    <template v-for="(item,index) in Data.tempMaterialInfo?.MaterialAttributes"
+                    {{Data.tempMaterialInfo?.AttributeDescribe}}&nbsp;
+                    <!-- <template v-for="(item,index) in Data.tempMaterialInfo?.MaterialAttributes"
                     :key="item.AttributeID">
                       <template v-if="item.NumericValue">
                         <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
@@ -129,7 +133,7 @@
                       <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                         {{index === Data.tempMaterialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
                       </template>
-                    </template>
+                    </template> -->
                     {{Data.tempMaterialInfo?.SizeDescribe}}
                   </span>
                 </el-form-item>
@@ -348,6 +352,8 @@ export default {
     function SizeSelectChange(ID) {
       Data.SizeSelects = ID;
       const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
+      console.log(SizeObj, 'SizeObj');
+
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         Code: SizeObj?.Code,
@@ -355,6 +361,7 @@ export default {
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects,
+        AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.tempMaterialInfo = temp as MaterialInfoType;
       Data.getMaterialData.SKUCode = '';

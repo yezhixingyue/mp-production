@@ -205,7 +205,11 @@
         </el-table>
     </main>
     <footer>
-      <p>总金额：<span>￥{{Data.aggregateAmount}}元</span></p>
+      <p>
+        <template  v-if="Data.getRecordData.LogType === 1">
+        总金额：<span>￥{{Data.aggregateAmount}}元</span>
+        </template>
+        </p>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getRecordData.Page"
@@ -282,13 +286,14 @@ import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue
 import MpPagination from '@/components/common/MpPagination.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
-  reactive, onMounted, watch, computed, ComputedRef,
+  reactive, onMounted, computed, ComputedRef,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useRouterStore } from '@/store/modules/routerStore';
+import { useCommonStore } from '@/store/modules/common';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
+import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -393,7 +398,7 @@ export default {
     LineDateSelectorComp,
   },
   setup() {
-    const RouterStore = useRouterStore();
+    const CommonStore = useCommonStore();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     // 入库类型
     const inStorageType = [
@@ -495,7 +500,7 @@ export default {
     const StaffSelectList = computed(() => [{
       StaffID: '',
       StaffName: '不限',
-    }, ...RouterStore.StaffSelectList]);
+    }, ...CommonStore.StaffSelectList]);
 
     function getRecordList() {
       ClassType.setDate(Data.getRecordData, 'CreateTime');
@@ -568,9 +573,19 @@ export default {
       getRecordList();
     }
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
-      ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
-      ...MaterialWarehouseStore.MaterialTypeList]);
+      ...MaterialWarehouseStore.MaterialTypeGroup]);
+    const MaterialTypeList = computed(() => {
+      const noType = {
+        TypeID: '',
+        TypeName: '全部类型',
+      };
+      const MaterialType = CategoryList.value.find(it => it.CategoryID === Data.getRecordData.CategoryID);
+      if (MaterialType && MaterialType.CategoryID) {
+        const temp = MaterialType as MaterialTypeGroupType;
+        return [noType, ...temp.MaterialTypes] || [];
+      }
+      return [noType];
+    });
     // 清空筛选项
     function clearCondition() {
       Data.getRecordData = {
@@ -599,15 +614,16 @@ export default {
         Data.getRecordData.TypeID = level2Val;
       }
     }
-    watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
-    });
 
     onMounted(() => {
-      MaterialWarehouseStore.getMaterialCategoryList();
+      if (!MaterialWarehouseStore.MaterialTypeGroup.length) {
+        MaterialWarehouseStore.getMaterialTypeGroup();
+      }
       getRecordList();
       MaterialWarehouseStore.getSupplierSelectList();
-      RouterStore.getStaffSelect();
+      if (!CommonStore.StaffSelectList.length) {
+        CommonStore.getStaffSelect();
+      }
     });
 
     return {
@@ -617,7 +633,6 @@ export default {
       Data,
       getHandleType,
       twoSelecValue,
-      RouterStore,
       inStorageType,
       outStorageType,
       CategoryList,

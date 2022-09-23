@@ -1,82 +1,15 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
 import api from '@/api';
+import {
+  IState, getMaterialType, AttributeType,
+  CategoryType,
+  MaterialType,
+  MaterialTypeSizeType,
+  MaterialManageListType,
+  SupplierSelectListType,
+  MaterialTypeGroupType,
+} from './types';
 
-interface CategoryType {
-  CategoryID: number | undefined
-  CategoryName: string
-}
-interface MaterialType {
-  TypeID: string
-  TypeName: string
-}
-interface AttributeSelectsType {
-  SelectID: string,
-  Sort: number,
-  SelectItemValue: string
-}
-interface AttributeType {
- AttributeID: string,
- AttributeName: string,
- Sort: number,
- AttributeType: number,
- IsAllowDecimal: true,
- RegularQuantity: string,
- AttributeUnit: string,
- IsRequired: true,
- IsCustom: true,
- AttributeSelects: AttributeSelectsType[]
-}
-interface MaterialTypeSizeType {
-  SizeID: string,
-  SizeName: string,
-  SizeCode: string,
-  SizeLength: number,
-  SizeWidth: number,
-  SizeLengthIsChange: boolean,
-  SizeWidthIsChange: boolean
-}
-interface MaterialAttributesType {
-  CodeID: number| string,
-  AttributeID: string,
-  SelectID: string,
-  NumericValue: number,
-  InputSelectValue: string,
-  SelectValue: string,
-
-  AttributeUnit:string
-}
-interface MaterialSizesType {
-  CodeID: number| string,
-  SizeName: string,
-  SizeLength: number,
-  SizeWidth: number,
-}
-interface MaterialManageListType {
-  CategoryID: number| string,
-  CategoryName: string,
-  ID: string,
-  TypeID: string,
-  TypeName: string,
-  Code: string,
-  MaterialAttributes: MaterialAttributesType[],
-  MaterialSizes: MaterialSizesType[]
-}
-interface SupplierSelectListType {
-  SupplierID: string,
-  SupplierName: string,
-}
-interface getMaterialType {
-  categoryID: number| string,
-  isStock?: boolean,
-}
-interface IState {
-  CategoryList:CategoryType[],
-  MaterialTypeList:MaterialType[],
-  MaterialTypeAttributeAllList:AttributeType[]
-  MaterialTypeSizeAllList:MaterialTypeSizeType[]
-  MaterialManageList:MaterialManageListType[]
-  SupplierSelectList:SupplierSelectListType[],
-}
 interface IActions {
   getMaterialCategoryList:(data?, callback?)=>void,
   getMaterialTypeAll:(data:getMaterialType, callback?)=>void,
@@ -84,6 +17,7 @@ interface IActions {
   getMaterialTypeSizeAllByTypeID: (TypeID:string, callback?)=>void
   getMaterialManageList: (getMaterialManageData:object, callback?)=>void
   getSupplierSelectList: (callback?)=>void
+  getMaterialTypeGroup: ()=>void
 }
 type IGetters = {
   selectMaterialTypeAttribute: ()=>AttributeType[]
@@ -98,6 +32,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     MaterialTypeSizeAllList: [],
     MaterialManageList: [],
     SupplierSelectList: [],
+    MaterialTypeGroup: [],
   }),
   getters: {
     // 选择项的属性
@@ -162,6 +97,15 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         if (res.data.Status === 1000) {
           // 成功
           this.SupplierSelectList = res.data.Data as SupplierSelectListType[];
+        }
+      });
+    },
+    // 所有物料分类及类型分组查询
+    getMaterialTypeGroup() {
+      api.getMaterialTypeGroup().then(res => {
+        if (res.data.Status === 1000) {
+          // 成功
+          this.MaterialTypeGroup = res.data.Data as MaterialTypeGroupType[];
         }
       });
     },

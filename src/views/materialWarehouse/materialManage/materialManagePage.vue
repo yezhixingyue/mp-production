@@ -42,9 +42,9 @@
           <el-table-column prop="CategoryName" label="分类" min-width="208"/>
           <el-table-column prop="TypeName" label="类型" min-width="157"/>
           <el-table-column prop="Code" label="编码" min-width="157"/>
-          <el-table-column prop="物料" label="物料"
+          <el-table-column prop="AttributeDescribe" label="物料"
           show-overflow-tooltip min-width="192">
-            <template #default="scope">
+            <!-- <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -57,7 +57,7 @@
                   {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="可选尺寸" label="可选尺寸"
           show-overflow-tooltip min-width="608">
@@ -178,7 +178,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  reactive, onMounted, watch, computed, ComputedRef, onActivated,
+  reactive, onMounted, computed, ComputedRef, onActivated,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -186,6 +186,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
+import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -282,9 +283,19 @@ export default {
     });
 
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
-      ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
-      ...MaterialWarehouseStore.MaterialTypeList]);
+      ...MaterialWarehouseStore.MaterialTypeGroup]);
+    const MaterialTypeList = computed(() => {
+      const noType = {
+        TypeID: '',
+        TypeName: '全部类型',
+      };
+      const MaterialType = CategoryList.value.find(it => it.CategoryID === Data.getMaterialManageData.CategoryID);
+      if (MaterialType && MaterialType.CategoryID) {
+        const temp = MaterialType as MaterialTypeGroupType;
+        return [noType, ...temp.MaterialTypes] || [];
+      }
+      return [noType];
+    });
       // 跳转
     function ToMaterialManageSetuepPage(IDs) {
       router.push({
@@ -570,9 +581,9 @@ export default {
         getMaterialManageList();
       }
     }
-    watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
-    });
+    // watch(() => twoSelecValue.value.level1Val, (newValue) => {
+    //   MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
+    // });
 
     onActivated(() => {
       const bool = sessionStorage.getItem('saveGenerative') === 'true';
@@ -582,7 +593,9 @@ export default {
     });
     onMounted(() => {
       sessionStorage.removeItem('saveGenerative');
-      MaterialWarehouseStore.getMaterialCategoryList();
+      if (!MaterialWarehouseStore.MaterialTypeGroup.length) {
+        MaterialWarehouseStore.getMaterialTypeGroup();
+      }
       getMaterialManageList();
     });
 

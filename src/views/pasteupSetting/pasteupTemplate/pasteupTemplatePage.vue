@@ -44,19 +44,24 @@
           <el-table-column
           show-overflow-tooltip prop="MaterialTypeIDS" label="尺寸" min-width="272">
             <template #default="scope">
+              <template v-if="!scope.row.IsSameSizeWithPrintingPlate">
               <span v-if="scope.row.SizeType===0">
                 按模板尺寸
               </span>
               <span v-if="scope.row.SizeType===1">
                 按实际拼版尺寸
               </span>
+              </template>
             </template>
           </el-table-column>
           <el-table-column prop="Address" label="拼版方式" show-overflow-tooltip min-width="280" >
             <template #default="scope">
+              <template v-if="!scope.row.IsSameSizeWithPrintingPlate">
+
               <span v-if="scope.row.ModeSizeAttribute">
                 按模位（{{scope.row.ModeSizeAttribute.PlateInfo.AreaList.length}}条记录）
               </span>
+              </template>
             </template>
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241">
@@ -154,8 +159,6 @@ export default {
     }
     // 添加修改拼版模板
     function ToPasteupTemplateSteupPagePage(item = null) {
-      console.log(item, 'item');
-
       router.push({
         name: 'pasteupTemplateSteup',
         params: { Template: JSON.stringify(item) },

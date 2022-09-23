@@ -1,7 +1,7 @@
 <template>
   <div class="imposition-temmplate-class-page">
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/pasteupTemplate' }">拼版模板</el-breadcrumb-item>
         <el-breadcrumb-item>分类管理</el-breadcrumb-item>
       </el-breadcrumb>
@@ -57,7 +57,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import {
   reactive, onMounted,
 } from 'vue';
-
+import { ArrowRight } from '@element-plus/icons-vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
@@ -145,6 +145,7 @@ export default {
       getClassList();
     });
     return {
+      ArrowRight,
       Data,
       PasteupSettingStore,
       addClass,

@@ -4,29 +4,10 @@
 
 <script lang='ts'>
 import LayoutComp from '@/components/Layout/Index.vue';
-import { useRouterStore } from '@/store/modules/routerStore';
-import { onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
 
 export default {
   components: {
     LayoutComp,
-  },
-  setup() {
-    const RouterStore = useRouterStore();
-    const Route = useRoute();
-    watch(() => Route.path, () => {
-      RouterStore.size = (document
-        .documentElement.clientWidth + document
-        .documentElement.clientHeight) + Route.path;
-    });
-    onMounted(() => {
-      window.onresize = () => {
-        RouterStore.size = (document
-          .documentElement.clientWidth + document
-          .documentElement.clientHeight) + Route.path;
-      };
-    });
   },
 };
 </script>

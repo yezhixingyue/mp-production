@@ -44,7 +44,8 @@
                   <template v-if="Data.checkedMaterial">
                     <!-- <span>{{Data.checkedMaterial.Code}}</span> -->
                     <span>
-                      <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
+                      {{Data.checkedMaterial.AttributeDescribe}}
+                      <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
                       :key="item.AttributeID">
                         <template v-if="item.NumericValue">
                           <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -55,7 +56,7 @@
                       <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                         {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
                       </template>
-                      </template>
+                      </template> -->
                     </span>
                     <span>{{Data.checkedMaterial.SizeDescribe}}</span>
                     <span>{{Data.checkedMaterial.Code}}</span>
@@ -122,7 +123,7 @@
                 || Data.inDeliveryForm.InStockType === 4"
                 class="supplier">
                   <OneLevelSelect
-                    :options='RouterStore.StaffSelectList'
+                    :options='CommonStore.StaffSelectList'
                     :defaultProps="{
                       value:'StaffID',
                       label:'StaffName',
@@ -210,7 +211,7 @@ import {
   ref, Ref, reactive, onMounted, computed,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useRouterStore } from '@/store/modules/routerStore';
+import { useCommonStore } from '@/store/modules/common';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
@@ -247,6 +248,7 @@ interface MaterialSelectsType {
   Code: string,
   MaterialAttributes: MaterialAttributesType[],
   SizeSelects: SizeSelectsType[]
+  AttributeDescribe:string
 }
 interface MaterialDataItemType {
   StockUnit: string,
@@ -325,7 +327,7 @@ export default {
     const router = useRouter();
     const ThreeCascaderComp:Ref = ref(null);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
-    const RouterStore = useRouterStore();
+    const CommonStore = useCommonStore();
     // 选择仓库货位弹框的表单数据
     const selectStorehouseGoodsPosition = reactive({});
     const Data:DataType = reactive({
@@ -406,6 +408,7 @@ export default {
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 1),
+        AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = temp as MaterialInfoType;
       Data.inDeliveryForm.UnitID = '';
@@ -644,14 +647,16 @@ export default {
       // MaterialWarehouseStore.getMaterialTypeAll(newValue as number);
 
       MaterialWarehouseStore.getMaterialManageList({});
-      RouterStore.getStaffSelect();
+      if (!CommonStore.StaffSelectList.length) {
+        CommonStore.getStaffSelect();
+      }
       getStorehouseAll();
     });
 
     return {
       Data,
       ThreeCascaderComp,
-      RouterStore,
+      CommonStore,
       getTransitionNum,
       getInUnitNum,
       inUnitName,

@@ -1,7 +1,7 @@
 <template>
   <div class="material-manage-setuep-page">
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialManage' }">物料管理</el-breadcrumb-item>
         <el-breadcrumb-item>批量生成： {{materialManageName}}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -144,6 +144,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   reactive, onMounted, computed,
 } from 'vue';
+import { ArrowRight } from '@element-plus/icons-vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -246,9 +247,9 @@ export default {
       TypeSizeAllList: MaterialWarehouseStore.MaterialTypeSizeAllList,
     }));
     const materialManageName = computed(() => {
-      const CategoryTemp = MaterialWarehouseStore.CategoryList
+      const CategoryTemp = MaterialWarehouseStore.MaterialTypeGroup
         .find(res => res.CategoryID === Data.CategoryID);
-      const MaterialTypeTemp = MaterialWarehouseStore.MaterialTypeList
+      const MaterialTypeTemp = CategoryTemp?.MaterialTypes
         .find(res => res.TypeID === Data.TypeID);
       return `${CategoryTemp?.CategoryName}-${MaterialTypeTemp?.TypeName}`;
     });
@@ -534,6 +535,7 @@ export default {
       MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.TypeID);
     });
     return {
+      ArrowRight,
       Data,
       BatchAddData,
       getCustominp,

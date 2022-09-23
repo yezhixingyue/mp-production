@@ -58,7 +58,7 @@
           show-overflow-tooltip prop="TypeName" label="类型" min-width="97"/>
           <el-table-column
           show-overflow-tooltip prop="AttributeDescribe" label="物料" min-width="170">
-            <template #default="scope">
+            <!-- <template #default="scope">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -71,7 +71,7 @@
                   {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
                 </template>
               </template>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="SizeDescribe" label="尺寸规格" min-width="217">
@@ -244,7 +244,7 @@
               <p class="title">
                 <span>
                   {{Storehouseitem.StorehouseName}}：
-                  {{getStorehouseStockNumber()}}{{Data.materialManageInfo.StockUnit}}
+                  {{getStorehouseInNumber(Storehouseitem.GoodsPositionStockInfos)}}{{Data.materialManageInfo.StockUnit}}
                 </span>
                 <span>
                   <mp-button type="primary" link
@@ -303,7 +303,7 @@ import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  reactive, onMounted, watch, computed, ComputedRef,
+  reactive, onMounted, computed, ComputedRef,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -311,6 +311,7 @@ import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogCo
 import api from '@/api';
 import { useRouter } from 'vue-router';
 import { MaterialAttributesType } from '@/assets/Types/common';
+import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -474,9 +475,19 @@ export default {
       });
     }
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
-      ...MaterialWarehouseStore.CategoryList]);
-    const MaterialTypeList = computed(() => [{ TypeID: '', TypeName: '全部类型' },
-      ...MaterialWarehouseStore.MaterialTypeList]);
+      ...MaterialWarehouseStore.MaterialTypeGroup]);
+    const MaterialTypeList = computed(() => {
+      const noType = {
+        TypeID: '',
+        TypeName: '全部类型',
+      };
+      const MaterialType = CategoryList.value.find(it => it.CategoryID === Data.getStockData.CategoryID);
+      if (MaterialType && MaterialType.CategoryID) {
+        const temp = MaterialType as MaterialTypeGroupType;
+        return [noType, ...temp.MaterialTypes] || [];
+      }
+      return [noType];
+    });
 
     function SeeImg(url) {
       Data.SeeImageShow = true;
@@ -491,13 +502,11 @@ export default {
         }
       });
     }
-    // 获取仓库的入库总数量
-    function getStorehouseStockNumber() {
+    // 获取各个仓库的入库总数量
+    function getStorehouseInNumber(GoodsPositionStockInfo:GoodsPositionStockInfosType[]) {
       let num = 0;
-      Data.StorehouseStockInfo.forEach(item => {
-        item.GoodsPositionStockInfos.forEach(it => {
-          num += Number(it.Number) || 0;
-        });
+      GoodsPositionStockInfo.forEach(it => {
+        num += Number(it.Number);
       });
       return num;
     }
@@ -549,11 +558,11 @@ export default {
     function clearCondition() {
       Data.getStockData = {
         TypeID: '',
-        CategoryID: 0,
-        IsWarn: true,
-        Page: 0,
+        CategoryID: '',
+        IsWarn: false,
+        Page: 1,
         KeyWords: '',
-        PageSize: 0,
+        PageSize: 20,
       };
     }
 
@@ -581,12 +590,11 @@ export default {
         Data.getStockData.TypeID = level2Val;
       }
     }
-    watch(() => twoSelecValue.value.level1Val, (newValue) => {
-      MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
-    });
 
     onMounted(() => {
-      MaterialWarehouseStore.getMaterialCategoryList();
+      if (!MaterialWarehouseStore.MaterialTypeGroup.length) {
+        MaterialWarehouseStore.getMaterialTypeGroup();
+      }
       getStockList();
     });
 
@@ -595,7 +603,7 @@ export default {
 
       Data,
       SeeImg,
-      getStorehouseStockNumber,
+      getStorehouseInNumber,
       ToOutDelivery,
       ToInDelivery,
       ToStockWarnPage,

@@ -1,7 +1,7 @@
 <template>
   <div class="inventory-page">
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
         <el-breadcrumb-item>库存盘点</el-breadcrumb-item>
       </el-breadcrumb>
@@ -68,7 +68,7 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import { reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-
+import { ArrowRight } from '@element-plus/icons-vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 
@@ -165,6 +165,7 @@ export default {
     }
 
     return {
+      ArrowRight,
       Data,
       removeEventListener,
       beginInventory,

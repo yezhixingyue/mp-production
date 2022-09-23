@@ -1,7 +1,7 @@
 <template>
   <div class="set-the-storage-unit-page">
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
         <el-breadcrumb-item>出入库单位：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -110,6 +110,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { ArrowRight } from '@element-plus/icons-vue';
 
 export default {
   name: 'setTheStorageUnitPage',
@@ -261,6 +262,7 @@ export default {
       getUnitList();
     });
     return {
+      ArrowRight,
       Data,
       addStorageUnit,
       editStorageUnit,

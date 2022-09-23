@@ -44,7 +44,8 @@
                   <template v-if="Data.checkedMaterial">
                     <!-- <span>{{Data.checkedMaterial.Code}}</span> -->
                     <span>
-                      <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
+                      {{Data.checkedMaterial.AttributeDescribe}}
+                      <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
                       :key="item.AttributeID">
                         <template v-if="item.NumericValue">
                           <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -56,7 +57,7 @@
                         v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                           {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
                         </template>
-                      </template>
+                      </template> -->
                     </span>
                     <span>{{Data.checkedMaterial.SizeDescribe}}</span>
                     <span>{{Data.checkedMaterial.Code}}</span>
@@ -94,7 +95,7 @@
                 </el-form-item>
                 <el-form-item :label="`领取人：`">
                   <OneLevelSelect
-                    :options='RouterStore.StaffSelectList'
+                    :options='CommonStore.StaffSelectList'
                     :defaultProps="{
                       value:'StaffID',
                       label:'StaffName',
@@ -192,7 +193,8 @@
               <span style="">{{Data.checkedMaterial.Code}}</span></p>
             <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">物料：</span>
               <span style="">
-                      <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
+                {{Data.checkedMaterial.AttributeDescribe}}
+                      <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
                       :key="item.AttributeID">
                         <template v-if="item.NumericValue">
                           <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -204,7 +206,7 @@
                         v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                           {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
                         </template>
-                      </template>
+                      </template> -->
               </span>
             </p>
             <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;"></span>
@@ -281,7 +283,7 @@ import {
   ref, Ref, reactive, onMounted, computed,
 } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useRouterStore } from '@/store/modules/routerStore';
+import { useCommonStore } from '@/store/modules/common';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
@@ -337,6 +339,7 @@ interface MaterialSelectsType {
   Code: string,
   MaterialAttributes: MaterialAttributesType[],
   SizeSelects: SizeSelectsType[]
+  AttributeDescribe:string
 }
 interface MaterialDataItemType {
   StockUnit: string,
@@ -419,7 +422,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
-    const RouterStore = useRouterStore();
+    const CommonStore = useCommonStore();
     const Data:DataType = reactive({
       TypeID: '',
       SizeSelects: null,
@@ -461,7 +464,7 @@ export default {
 
     });
     const getReceiptorName = computed(() => {
-      const staff = RouterStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
+      const staff = CommonStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
       return staff?.StaffName || '';
     });
     function clearFrom() {
@@ -520,8 +523,10 @@ export default {
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 2),
+        AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = temp as MaterialInfoType;
+      console.log(Data.checkedMaterial, 'Data.checkedMaterial');
       Data.outDeliveryForm.UnitID = '';
       Data.getMaterialData.SKUCode = '';
       GetGoodsAllocation(Data.checkedMaterial.MaterialID);
@@ -705,7 +710,9 @@ export default {
       }
 
       MaterialWarehouseStore.getMaterialManageList({});
-      RouterStore.getStaffSelect();
+      if (!CommonStore.StaffSelectList.length) {
+        CommonStore.getStaffSelect();
+      }
     });
 
     return {
@@ -715,7 +722,7 @@ export default {
       SeeImg,
       ThreeCascaderComp,
       getReceiptorName,
-      RouterStore,
+      CommonStore,
       getTransitionNum,
       getOutUnitNum,
       outUnitName,

@@ -32,7 +32,8 @@
                   <p>
                     <span class="label">物料：</span>
                     <span class="value">
-                      <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
+                      {{Data.InventoryDetail.AttributeDescribe}} &nbsp;
+                      <!-- <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
                       :key="item.AttributeID">
                         <template v-if="item.NumericValue">
                           <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -43,7 +44,7 @@
                         <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                           {{index ===  Data.InventoryDetail.MaterialAttributes.length-1 ? '' : ' ' }}
                         </template>
-                      </template>
+                      </template> -->
                       {{Data.InventoryDetail.SizeDescribe}}
                     </span>
                   </p>
@@ -74,7 +75,8 @@
                 :key="index">
                 <!-- 物料 -->
                   <span class="delivery">
-                    <template v-for="(item) in PrevItem.MaterialAttributes"
+                    {{PrevItem.AttributeDescribe}}&nbsp;
+                    <!-- <template v-for="(item) in PrevItem.MaterialAttributes"
                     :key="item.AttributeID">
                       <template v-if="item.NumericValue">
                         <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
@@ -85,7 +87,7 @@
                       <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
                         {{index === PrevItem.MaterialAttributes.length-1 ? '' : ' ' }}
                       </template>
-                    </template>
+                    </template> -->
                   </span>
                   <span class="size">{{PrevItem.SizeDescribe}}</span>
                   <span class="code">{{PrevItem.Code}}</span>
@@ -128,17 +130,30 @@
 
       <template #header>
         <p class="inventory-correct-title">
-          是否跳转到下一货位
+          <template v-if="Data.InventoryDetail?.IsLastMaterial && Data.InventoryDetail?.IsLastPosition">
+            是否结束盘库
+          </template>
+          <template v-else>
+            是否跳转到下一货位
+          </template>
         </p>
       </template>
       <template #default>
         <div class="inventory-correct-main">
           <p>当前货位: <span>{{Data.InventoryDetail.CurrentPositionName}}</span></p>
-          <p>下一货位: <span>{{Data.InventoryDetail.NextPositionName}}</span></p>
+          <p v-if="!Data.InventoryDetail.IsLastMaterial || !Data.InventoryDetail.IsLastPosition">
+            下一货位: <span>{{Data.InventoryDetail.NextPositionName}}</span></p>
         </div>
       </template>
       <template #footer>
-        <mp-button type="primary" @click="toNext">确定跳转</mp-button>
+        <mp-button type="primary" @click="toNext">
+          <template v-if="Data.InventoryDetail?.IsLastMaterial && Data.InventoryDetail?.IsLastPosition">
+            结束盘库
+          </template>
+          <template v-else>
+            确定跳转
+          </template>
+        </mp-button>
         <mp-button  @click="Data.addMaterialShow = true ">此货位还有物料</mp-button>
       </template>
       </el-dialog>
@@ -310,11 +325,11 @@ export default {
       // Data.InventoryDetail.IsLastMaterial;
       // 如果是最后一个货物
       if (Data.InventoryDetail?.IsLastMaterial) {
-        if (Data.InventoryDetail?.IsLastPosition) {
-          toNext();
-        } else {
-          Data.inventoryCorrectDialog = true;
-        }
+        // if (Data.InventoryDetail?.IsLastPosition) { // 最后一个货位的话直接去下一个
+        //   toNext();
+        // } else {
+        // }
+        Data.inventoryCorrectDialog = true;
       } else {
         // 下一个
         toNext();

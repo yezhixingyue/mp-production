@@ -1,7 +1,7 @@
 <template>
   <div class="pasteup-template-steup-page" >
     <header>
-      <el-breadcrumb >
+      <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/pasteupTemplate' }">拼版模板</el-breadcrumb-item>
         <el-breadcrumb-item>{{Data.addPasteupTemplateFrom.ID?'编辑' :'添加'}}拼版模板：
           {{Data.addPasteupTemplateFrom.ID?`${Data.addPasteupTemplateFrom.Name}` :''}}</el-breadcrumb-item>
@@ -11,7 +11,7 @@
       <el-scrollbar>
       <p class="title">{{Data.addPasteupTemplateFrom.ID?'编辑' :'添加'}}拼版模板</p>
       <el-form :model="Data.addPasteupTemplateFrom" label-width="100px">
-        <el-form-item :label="`分类：`">
+        <el-form-item :label="`分类：`" class="form-item-required">
           <OneLevelSelect
             :options='PasteupSettingStore.ImpositionTemmplateClassList'
             :defaultProps="{
@@ -126,24 +126,24 @@
                   <span class="coord">
                     <span class="coord-item">
                       <span class="dark">x：</span>
-                      <el-input-number :controls="false" v-model="ModeItemList.XCoordinate"/> mm
+                      <el-input v-model.number="ModeItemList.XCoordinate"/> mm
                     </span>
                     <span class="coord-item">
                       <span class="dark">y：</span>
-                      <el-input-number :controls="false" v-model="ModeItemList.YCoordinate"/> mm
+                      <el-input v-model.number="ModeItemList.YCoordinate"/> mm
                     </span>
                   </span>
                   <span class="size">
                     <span class="dark">长：</span>
-                    <el-input-number :controls="false" v-model="ModeItemList.Length"/>
+                    <el-input v-model.number="ModeItemList.Length"/>
                     mm <i>X</i> <span class="dark">宽：</span>
-                    <el-input-number :controls="false" v-model="ModeItemList.Width"/> mm
+                    <el-input v-model.number="ModeItemList.Width"/> mm
                   </span>
                   <span class="row">
-                    <el-input-number :controls="false" v-model="ModeItemList.RowNumber"/> 行
+                    <el-input v-model.number="ModeItemList.RowNumber"/> 行
                   </span>
                   <span class="col">
-                    <el-input-number :controls="false" v-model="ModeItemList.ColumnNumber"/> 列
+                    <el-input v-model.number="ModeItemList.ColumnNumber"/> 列
                   </span>
                   <span class="handle">
                     <mp-button type="danger" link @click="delModeItem(index)">删除</mp-button>
@@ -156,10 +156,10 @@
           <template v-if="Data.addPasteupTemplateFrom.SizeType === 1">
             <el-form-item :label="`白边：`" class="form-item-required white-edge">
               <ul>
-                <li>上: <el-input-number :controls="false" v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop" /> mm</li>
-                <li>左: <el-input-number :controls="false" v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft" /> mm</li>
-                <li>右: <el-input-number :controls="false" v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight" /> mm</li>
-                <li>下: <el-input-number :controls="false" v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom" /> mm</li>
+                <li>上: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop" /> mm</li>
+                <li>左: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft" /> mm</li>
+                <li>右: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight" /> mm</li>
+                <li>下: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom" /> mm</li>
               </ul>
             </el-form-item>
           </template>
@@ -178,7 +178,7 @@
 import {
   reactive, onMounted,
 } from 'vue';
-
+import { ArrowRight } from '@element-plus/icons-vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
@@ -278,15 +278,21 @@ export default {
 
       // 不和印刷版保持一致
       if (!Data.addPasteupTemplateFrom.IsSameSizeWithPrintingPlate) {
+        console.log(Data.addPasteupTemplateFrom.ActualSizeAttribute, 'Data.addPasteupTemplateFrom.ActualSizeAttribute');
+
         // 按实际拼版尺寸 上
         if (Data.addPasteupTemplateFrom.SizeType === 1) {
-          if (!Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop) {
+          if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop === null
+          || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop === '') {
             messageBox.failSingleError('保存失败', '请输入上白边', () => null, () => null);
-          } else if (!Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft) {
+          } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft === null
+          || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft === '') {
             messageBox.failSingleError('保存失败', '请输入左白边', () => null, () => null);
-          } else if (!Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight) {
+          } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight === null
+          || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight === '') {
             messageBox.failSingleError('保存失败', '请输入右白边', () => null, () => null);
-          } else if (!Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom) {
+          } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom === null
+          || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom === '') {
             messageBox.failSingleError('保存失败', '请输入下白边', () => null, () => null);
           } else {
             return true;
@@ -437,6 +443,7 @@ export default {
       }
     });
     return {
+      ArrowRight,
       Data,
       PasteupSettingStore,
       addModeItem,
@@ -558,7 +565,7 @@ export default {
           justify-content: center;
           li{
             width: 130px;
-            .el-input-number{
+            .el-input{
               width: 60px;
               height: 28px;
               input{
@@ -618,7 +625,7 @@ export default {
             i{
               margin: 0 5px;
             }
-            .el-input-number{
+            .el-input{
               width: 60px;
               height: 28px;
               input{

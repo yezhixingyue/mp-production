@@ -6,7 +6,7 @@
       @keyup="() => {}"></i>
     </div>
 
-    <div class="centre">
+    <div class="centre" @contextmenu="onContextmenuclick" ref="oList">
       <el-tabs
         v-model="localTabsValue"
         type="border-card"
@@ -32,9 +32,20 @@
         v-if="LayoutStore.editableTabs.length > 1"
       >
         <div class="clear-box">
+          <el-button link @click="onCloseAllClick">
           <i class="iconfont icon-guanbi"></i>
+          </el-button>
         </div>
       </el-tooltip>
+      <ul
+        class="mp-erp-layout-header-show-menu-box"
+        v-show="showContextMenu"
+        :style="`left:${contextMenuLeft}px;top:${contextMenuTop}px`"
+      >
+        <li @click="() => onCloseCurClick()" @keyup="()=>null">关闭</li>
+        <li @click="onCloseOtherClick" @keyup="()=>null">关闭其它</li>
+        <li @click="onCloseAllClick" @keyup="()=>null">关闭所有</li>
+      </ul>
     </div>
 
     <!-- <button v-for="item in LayoutStore.editableTabs" :key="item.name"
@@ -67,7 +78,9 @@
 
 <script lang='ts'>
 import { useLayoutStore } from '@/store/modules/layout/index';
-import { computed } from 'vue';
+import {
+  computed, ref, Ref, onMounted, onBeforeUnmount,
+} from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import { addBarType } from '@/store/modules/layout/addBarType';
@@ -77,6 +90,7 @@ export default {
     const LayoutStore = useLayoutStore();
     const router = useRouter();
     const userStore = useUserStore();
+    const oList:Ref = ref(null);
     const localTabsValue = computed({
       get() {
         return LayoutStore.editableTabsValue;
@@ -91,6 +105,11 @@ export default {
         }
       },
     });
+    const showContextMenu = ref(false);
+    const contextMenuLeft = ref(0);
+    const contextMenuTop = ref(0);
+    const contextmenuItemData = ref<addBarType|null>(null);
+
     // 引入ui组件之后需要删除
     function changeTab(item:addBarType) {
       localTabsValue.value = item.name;
@@ -100,13 +119,12 @@ export default {
       router.replace('/login');
     }
     function onCloseCurClick(name:string) {
-      // 关闭
-      // if ((!this.contextmenuItemData && !name) ||
-      //    (this.contextmenuItemData && this.contextmenuItemData.title === '首页')) return;
-      if (!name) return;
+      // 关闭;
+      if ((!contextmenuItemData.value && !name)
+         || (contextmenuItemData.value && contextmenuItemData.value.title === '首页')) return;
       const tabs = LayoutStore.editableTabs;
       let activeName = LayoutStore.editableTabsValue;
-      const itemName = name;
+      const itemName = name || contextmenuItemData.value?.name;
       if (activeName === itemName) {
         tabs.forEach((tab, index) => {
           if (tab.name === itemName) {
@@ -117,15 +135,66 @@ export default {
           }
         });
       }
-      LayoutStore.removeTabItem(itemName);
+      LayoutStore.removeTabItem(itemName || '1');
       localTabsValue.value = activeName;
     }
+    function onCloseOtherClick() {
+      // 关闭其它
+      if (!contextmenuItemData.value) return;
+      LayoutStore.removeOther(contextmenuItemData.value.name);
+      localTabsValue.value = contextmenuItemData.value.name;
+    }
+    // 关闭所有
+    function onCloseAllClick() {
+      LayoutStore.removeAll();
+      localTabsValue.value = '1';
+    }
+    function getContextmenuItemData(title) {
+      const t = LayoutStore.editableTabs.find((it) => it.title === title);
+      if (t) contextmenuItemData.value = t;
+      else contextmenuItemData.value = null;
+    }
+    function onContextmenuclick(e) {
+      const bool = e.target.classList.contains('el-tabs__item')
+        || e.target.parentNode.classList.contains('el-tabs__item');
+      if (bool) {
+        e.preventDefault();
+        let title = e.target.innerText;
+        if (!title && e.target.parentNode.classList.contains('el-tabs__item')) {
+          title = e.target.parentNode.innerText;
+        }
+        if (title) {
+          contextMenuLeft.value = e.pageX - oList.value.offsetLeft;
+          contextMenuTop.value = e.pageY - oList.value.offsetTop;
+          showContextMenu.value = true;
+          // console.log(title);
+          getContextmenuItemData(title);
+        }
+      }
+    }
+    function onDocumentClick() {
+      if (!showContextMenu.value) return;
+      showContextMenu.value = false;
+    }
+    onMounted(() => {
+      document.addEventListener('click', onDocumentClick);
+    });
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', onDocumentClick);
+    });
     return {
+      oList,
+      onContextmenuclick,
+      showContextMenu,
+      contextMenuLeft,
+      contextMenuTop,
       handleLogoutClick,
       LayoutStore,
       localTabsValue,
       changeTab,
+      onCloseAllClick,
       onCloseCurClick,
+      onCloseOtherClick,
     };
   },
 };
@@ -138,7 +207,6 @@ export default {
   align-items: center;
   background-color: #fff;
   height: 40px;
-  overflow: hidden;
   >.open-close-left-menu{
     i{
       cursor: pointer;
@@ -156,6 +224,7 @@ export default {
     max-width: calc(100% - 188px - 51px);
     display: flex;
     align-items: center;
+    position: relative;
     .el-tabs{
       max-width: calc(100% - 51px);
       border: 0;
@@ -203,7 +272,12 @@ export default {
       }
       .el-tabs__header{
         .el-tabs__nav-wrap{
-
+          .el-tabs__nav-prev,.el-tabs__nav-next{
+            // line-height: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+          }
         }
       }
       .el-tabs__content{
@@ -222,8 +296,41 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+      .el-button{
+        width: 100%;
+        height: 100%;
+        flex: 1;
+      }
+      i{
+        margin: 0;
+      }
       &:hover{
         cursor: pointer;
+      }
+    }
+    > .mp-erp-layout-header-show-menu-box {
+      position: absolute;
+      width: 80px;
+      height: 90px;
+      font-size: 12px;
+      padding: 6px 0;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      background-color: #fff;
+      box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+      z-index: 99;
+      box-sizing: border-box;
+      border-radius: 4px;
+      color: #333;
+      > li {
+        padding: 6px 12px;
+        cursor: pointer;
+        user-select: none;
+        &:hover {
+          background-color: #eee;
+          color: rgb(38, 188, 249);
+        }
       }
     }
   }
