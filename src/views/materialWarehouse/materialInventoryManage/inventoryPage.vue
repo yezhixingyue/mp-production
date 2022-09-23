@@ -1,10 +1,7 @@
 <template>
   <div class="inventory-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
-        <el-breadcrumb-item>库存盘点</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="ToInventoryLogPage">查看盘点记录</mp-button>
       </div>
@@ -66,9 +63,9 @@
 
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 
@@ -95,6 +92,7 @@ interface DataType {
 export default {
   components: {
     MpPagination,
+    MpBreadcrumb,
   },
   setup() {
     const router = useRouter();
@@ -122,6 +120,10 @@ export default {
       Data.getInventoryListData.Page = newVal;
       getInventoryList();
     }
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialInventoryManage' }, name: '库存管理' },
+      { name: '库存盘点' },
+    ]);
     function ToInventoryLogPage() {
       router.push({
         name: 'inventoryLog',
@@ -165,7 +167,7 @@ export default {
     }
 
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       removeEventListener,
       beginInventory,

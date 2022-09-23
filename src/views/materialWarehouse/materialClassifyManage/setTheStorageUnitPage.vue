@@ -1,10 +1,7 @@
 <template>
   <div class="set-the-storage-unit-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
-        <el-breadcrumb-item>出入库单位：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="addStorageUnit">+ 添加单位</mp-button>
         <mp-button link type="primary" @click="setStoreUnit">设置库存单位</mp-button>
@@ -105,18 +102,19 @@
 
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 
 export default {
   name: 'setTheStorageUnitPage',
   components: {
     MpPagination,
     DialogContainerComp,
+    MpBreadcrumb,
   },
   setup() {
     const route = useRoute();
@@ -150,6 +148,10 @@ export default {
       },
     });
 
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialClassifyManage' }, name: '物料类型管理' },
+      { name: `出入库单位：${Data.CategoryName}-${Data.TypeName}` },
+    ]);
     function getUnitList() {
       api.getMaterialTypeUnitList(Data.getUnitListData).then(res => {
         if (res.data.Status === 1000) {
@@ -262,7 +264,7 @@ export default {
       getUnitList();
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       addStorageUnit,
       editStorageUnit,

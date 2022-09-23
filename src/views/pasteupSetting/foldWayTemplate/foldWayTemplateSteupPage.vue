@@ -1,12 +1,7 @@
 <template>
   <div class="foldWay-template-steup-page" >
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/foldWayTemplate' }">折手模板</el-breadcrumb-item>
-        <el-breadcrumb-item>{{Data.foldWayTemplateFrom.ID?'编辑' :'添加'}}折手模板：
-          {{Data.foldWayTemplateFrom.ID?`${Data.foldWayTemplateFrom.Name}` :''}}
-        </el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
     </header>
     <main>
     <el-scrollbar class="main-scrollbar">
@@ -98,9 +93,9 @@
 
 <script lang='ts'>
 import {
-  reactive, onMounted,
+  reactive, onMounted, computed,
 } from 'vue';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
@@ -126,6 +121,7 @@ export default {
   components: {
     OneLevelSelect,
     DialogContainerComp,
+    MpBreadcrumb,
   },
   setup() {
     const route = useRoute();
@@ -157,6 +153,13 @@ export default {
         ColIndex: '',
       },
     });
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/foldWayTemplate' }, name: '折手模板' },
+      {
+        name: `${Data.foldWayTemplateFrom.ID ? '编辑' : '添加'}折手模板：
+          ${Data.foldWayTemplateFrom.ID ? `${Data.foldWayTemplateFrom.Name}` : ''}`,
+      },
+    ]);
     // 是否是双数
     function isEven(num) {
       return num % 2 === 0;
@@ -320,7 +323,7 @@ export default {
       }
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       PasteupSettingStore,
       createMap,

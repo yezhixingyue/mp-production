@@ -1,10 +1,7 @@
 <template>
   <div class="goods-allocation-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight" style="margin-bottom:20px">
-        <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
-        <el-breadcrumb-item>规划货位图：{{Data.StorehouseName}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
         <div class="top-main" v-if="Data.selectData.length">
           <template v-for="(item, index) in Data.selectData" :key="item.id">
             <el-select
@@ -40,12 +37,14 @@
 </template>
 
 <script lang='ts'>
-import { ArrowRight } from '@element-plus/icons-vue';
-import { reactive, onMounted, watch } from 'vue';
+import {
+  reactive, onMounted, watch, computed,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import LocationMap from '../../../components/LocationMap/Index.vue';
 
 interface DimensionsType {
@@ -129,7 +128,7 @@ export default {
   components: {
     // DialogContainerComp,
     LocationMap,
-    // OneLevelSelect,
+    MpBreadcrumb,
   },
   setup() {
     const MaterialWarehouseStore = useMaterialWarehouseStore();
@@ -168,6 +167,10 @@ export default {
       // 二维单元格数据
       DyadicArrayDimensionData: [],
     });
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialWarehouseManage' }, name: '仓库管理' },
+      { name: `规划货位图：${Data.StorehouseName}` },
+    ]);
     // 格式化单元格数据为二维数组
     function getDyadicArray() {
       const temp:DyadicArrayDimensionDataType[][] = [];
@@ -326,7 +329,7 @@ export default {
     });
 
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       disCheck,
       setNewPosition,
@@ -351,6 +354,9 @@ export default {
   >header{
     background-color: #fff;
     padding: 20px;
+    .el-breadcrumb{
+      margin-bottom: 20px;
+    }
     >.top-main{
       display: flex;
       // justify-content: space-between;

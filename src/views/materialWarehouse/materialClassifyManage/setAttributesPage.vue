@@ -1,10 +1,7 @@
 <template>
   <div class="set-attributes-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
-        <el-breadcrumb-item>设置属性：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="Data.dialogShow = true">+ 添加属性</mp-button>
       </div>
@@ -138,9 +135,9 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted,
+  ref, reactive, onMounted, computed,
 } from 'vue';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
@@ -184,6 +181,7 @@ export default {
   components: {
     MpPagination,
     DialogContainerComp,
+    MpBreadcrumb,
   },
   setup() {
     const dialog = ref(false);
@@ -221,7 +219,10 @@ export default {
         PageSize: 20,
       },
     });
-
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialClassifyManage' }, name: '物料类型管理' },
+      { name: `设置属性：${Data.CategoryName}-${Data.TypeName}` },
+    ]);
     function closeClick() {
       Data.dialogShow = false;
     }
@@ -322,7 +323,7 @@ export default {
       getAttributesList();
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       dialog,
       addAttributeSelect,

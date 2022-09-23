@@ -1,11 +1,7 @@
 <template>
   <div class="pasteup-template-steup-page" >
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/pasteupTemplate' }">拼版模板</el-breadcrumb-item>
-        <el-breadcrumb-item>{{Data.addPasteupTemplateFrom.ID?'编辑' :'添加'}}拼版模板：
-          {{Data.addPasteupTemplateFrom.ID?`${Data.addPasteupTemplateFrom.Name}` :''}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
     </header>
     <main>
       <el-scrollbar>
@@ -176,9 +172,9 @@
 
 <script lang='ts'>
 import {
-  reactive, onMounted,
+  reactive, onMounted, computed,
 } from 'vue';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
@@ -195,6 +191,7 @@ export default {
   name: 'pasteupTemplateSteupPage',
   components: {
     OneLevelSelect,
+    MpBreadcrumb,
   },
   setup() {
     const route = useRoute();
@@ -251,7 +248,13 @@ export default {
         Name: '',
       },
     });
-
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/pasteupTemplate' }, name: '拼版模板' },
+      {
+        name: `${Data.addPasteupTemplateFrom.ID ? '编辑' : '添加'}拼版模板：
+          ${Data.addPasteupTemplateFrom.ID ? `${Data.addPasteupTemplateFrom.Name}` : ''}`,
+      },
+    ]);
     function addModeItem() {
       Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.push({
         XCoordinate: null,
@@ -278,8 +281,6 @@ export default {
 
       // 不和印刷版保持一致
       if (!Data.addPasteupTemplateFrom.IsSameSizeWithPrintingPlate) {
-        console.log(Data.addPasteupTemplateFrom.ActualSizeAttribute, 'Data.addPasteupTemplateFrom.ActualSizeAttribute');
-
         // 按实际拼版尺寸 上
         if (Data.addPasteupTemplateFrom.SizeType === 1) {
           if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop === null
@@ -443,7 +444,7 @@ export default {
       }
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       PasteupSettingStore,
       addModeItem,

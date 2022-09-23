@@ -1,10 +1,7 @@
 <template>
   <div class="set-dimensions-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
-        <el-breadcrumb-item>尺寸规格：{{Data.CategoryName}}-{{Data.TypeName}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="Data.dialogShow = true">+ 添加尺寸</mp-button>
       </div>
@@ -100,17 +97,18 @@
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 
 export default {
   name: 'setDimensionsPage',
   components: {
     MpPagination,
     DialogContainerComp,
+    MpBreadcrumb,
   },
   setup() {
     const route = useRoute();
@@ -137,6 +135,11 @@ export default {
         PageSize: 20,
       },
     });
+
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialClassifyManage' }, name: '物料类型管理' },
+      { name: `尺寸规格：${Data.CategoryName}-${Data.TypeName}` },
+    ]);
     function closeedClick() {
       Data.addDimensionsForm = {
         TypeID: Data.addDimensionsForm.TypeID,
@@ -217,7 +220,7 @@ export default {
       getDimensisnsList();
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       editDimensions,
       delDimensions,

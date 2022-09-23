@@ -1,11 +1,7 @@
 <template>
   <div class="inventory-log-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/inventory' }">库存盘点</el-breadcrumb-item>
-        <el-breadcrumb-item>盘点记录</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <!-- <el-radio-group v-model="Data.getInventoryLogListData.StorehouseID"
         @change="radioGroupChange">
@@ -123,7 +119,7 @@ import {
 import { useCommonStore } from '@/store/modules/common';
 import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 
 interface getInventoryLogListDataType {
   DateType:string
@@ -169,6 +165,7 @@ export default {
     SearchInputComp,
     MpPagination,
     LineDateSelectorComp,
+    MpBreadcrumb,
   },
   setup() {
     const CommonStore = useCommonStore();
@@ -209,7 +206,11 @@ export default {
       StaffID: '',
       StaffName: '不限',
     }, ...CommonStore.StaffSelectList]);
-
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialInventoryManage' }, name: '库存管理' },
+      { to: { path: '/inventory' }, name: '库存盘点' },
+      { name: '盘点记录' },
+    ]);
     function getInventoryLogList() {
       ClassType.setDate(Data.getInventoryLogListData, 'CheckTime');
       const _obj = ClassType.filter(Data.getInventoryLogListData, true);
@@ -272,7 +273,7 @@ export default {
     });
 
     return {
-      ArrowRight,
+      BreadcrumbList,
       setCondition4DataList,
       UserDefinedTimeIsActive,
       Data,

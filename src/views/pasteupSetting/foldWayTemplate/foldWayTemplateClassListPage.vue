@@ -1,10 +1,7 @@
 <template>
   <div class="foldWay-template-class-list-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/foldWayTemplate' }">折手模板</el-breadcrumb-item>
-        <el-breadcrumb-item>分类管理</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="addClass">+ 添加分类</mp-button>
       </div>
@@ -57,7 +54,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import {
   reactive, onMounted,
 } from 'vue';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
@@ -74,6 +71,7 @@ export default {
   components: {
     DialogContainerComp,
     MpPagination,
+    MpBreadcrumb,
   },
   setup() {
     const PasteupSettingStore = usePasteupSettingStore();
@@ -87,7 +85,10 @@ export default {
       },
       DataTotal: 0,
     });
-
+    const BreadcrumbList = [
+      { to: { path: '/foldWayTemplate' }, name: '折手模板' },
+      { name: '分类管理' },
+    ];
     function getClassList() {
       PasteupSettingStore.getFoldWayTemplateClassList((DataNumber) => {
         Data.DataTotal = DataNumber;
@@ -152,7 +153,7 @@ export default {
       getClassList();
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       PasteupSettingStore,
       addClass,

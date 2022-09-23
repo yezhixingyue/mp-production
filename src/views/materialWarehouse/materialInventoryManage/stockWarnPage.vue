@@ -2,10 +2,7 @@
   <div class="stock-warn-page">
     <header>
       <div class="header-top">
-        <el-breadcrumb :separator-icon="ArrowRight">
-          <el-breadcrumb-item :to="{ path: '/materialInventoryManage' }">库存管理</el-breadcrumb-item>
-          <el-breadcrumb-item>预警记录</el-breadcrumb-item>
-        </el-breadcrumb>
+        <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
         <SearchInputComp
           :word='Data.getStockWarnData.KeyWords'
           title="关键词搜索"
@@ -122,7 +119,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import {
   reactive, onMounted, computed, ComputedRef,
 } from 'vue';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api';
 import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
@@ -182,6 +179,7 @@ export default {
     RadioGroupComp,
     SearchInputComp,
     MpPagination,
+    MpBreadcrumb,
   },
   setup() {
     const MaterialWarehouseStore = useMaterialWarehouseStore();
@@ -211,6 +209,10 @@ export default {
       }
       return [noType];
     });
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialInventoryManage' }, name: '库存管理' },
+      { name: '预警记录' },
+    ]);
     function getStockWarnPageList() {
       api.getStockWarnList(Data.getStockWarnData).then(res => {
         if (res.data.Status === 1000) {
@@ -255,7 +257,7 @@ export default {
     });
 
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       CategoryList,
       MaterialTypeList,

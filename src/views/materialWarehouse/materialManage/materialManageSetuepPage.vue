@@ -1,10 +1,7 @@
 <template>
   <div class="material-manage-setuep-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialManage' }">物料管理</el-breadcrumb-item>
-        <el-breadcrumb-item>批量生成： {{materialManageName}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="generativeRuleClick">生成规则</mp-button>
       </div>
@@ -144,7 +141,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   reactive, onMounted, computed,
 } from 'vue';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -201,6 +198,7 @@ export default {
   name: 'materialManageSetuepPage',
   components: {
     DialogContainerComp,
+    MpBreadcrumb,
   },
   setup() {
     const route = useRoute();
@@ -253,6 +251,10 @@ export default {
         .find(res => res.TypeID === Data.TypeID);
       return `${CategoryTemp?.CategoryName}-${MaterialTypeTemp?.TypeName}`;
     });
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialManage' }, name: '物料管理' },
+      { name: `设置货位编号：${materialManageName.value}` },
+    ]);
     const getNumberValueList = (valueList) => {
       const reg = /\s|,|，/;
       return valueList.split(reg).filter(it => it);
@@ -535,7 +537,7 @@ export default {
       MaterialWarehouseStore.getMaterialTypeSizeAllByTypeID(Data.TypeID);
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       BatchAddData,
       getCustominp,

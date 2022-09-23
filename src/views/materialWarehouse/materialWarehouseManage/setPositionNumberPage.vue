@@ -1,10 +1,7 @@
 <template>
   <div class="set-position-number-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialWarehouseManage' }">仓库管理</el-breadcrumb-item>
-        <el-breadcrumb-item>设置货位编号：{{Data.StorehouseName}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary"
         :disabled="Data.LockStatus"
@@ -111,9 +108,9 @@
 </template>
 
 <script lang='ts'>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { ArrowRight } from '@element-plus/icons-vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import { useRoute } from 'vue-router';
@@ -147,6 +144,7 @@ export default {
   name: 'setPositionNumberPage',
   components: {
     DialogContainerComp,
+    MpBreadcrumb,
   },
   setup() {
     const route = useRoute();
@@ -170,7 +168,10 @@ export default {
       },
       PalletDimensionsList: [],
     });
-
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialWarehouseManage' }, name: '仓库管理' },
+      { name: `设置货位编号：${Data.StorehouseName}` },
+    ]);
     function getPalletDimensionsList() {
       api.getGoodsPositionDimensionList(Data.getPalletDimensionsListData).then(res => {
         if (res.data.Status === 1000) {
@@ -283,7 +284,7 @@ export default {
       getPalletDimensionsList();
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       MaterialWarehouseStore,
       seeImg,

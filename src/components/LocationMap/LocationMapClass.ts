@@ -274,13 +274,14 @@ export class LocationMapClass {
         if (set.goodsPositionStockDetails) {
           this.hoverHtml = set.goodsPositionStockDetails.map((res => {
             const msg:string[] = [];
-            res.MaterialRelationAttributes.forEach(res => {
-              if (res.NumericValue) {
-                msg.push(`${res.NumericValue || ''}${res.AttributeUnit || ''}`);
-              } else {
-                msg.push(String(res.InputSelectValue || res.SelectValue || ''));
-              }
-            });
+            msg.push(res.AttributeDescribe);
+            // res.MaterialRelationAttributes.forEach(res => {
+            //   if (res.NumericValue) {
+            //     msg.push(`${res.NumericValue || ''}${res.AttributeUnit || ''}`);
+            //   } else {
+            //     msg.push(String(res.InputSelectValue || res.SelectValue || ''));
+            //   }
+            // });
             msg.push(res.SizeDescribe || '');
             msg.push(`${res.Stock}${res.StockUnit || ''}`);
             return msg.join(' ');

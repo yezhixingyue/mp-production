@@ -1,10 +1,7 @@
 <template>
   <div class="material-classify-manage-list-page">
     <header>
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/materialClassifyManage' }">物料类型管理</el-breadcrumb-item>
-        <el-breadcrumb-item>管理物料分类</el-breadcrumb-item>
-      </el-breadcrumb>
+      <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="dialog = true">+ 添加物料分类</mp-button>
       </div>
@@ -57,12 +54,12 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, reactive, onMounted,
+  ref, reactive, onMounted, computed,
 } from 'vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { ArrowRight } from '@element-plus/icons-vue';
+import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 
 interface tableItem {
   CategoryID: number | undefined
@@ -83,6 +80,7 @@ export default {
   components: {
     MpPagination,
     DialogContainerComp,
+    MpBreadcrumb,
   },
   setup() {
     const dialog = ref(false);
@@ -99,7 +97,10 @@ export default {
         CategoryName: '',
       },
     });
-
+    const BreadcrumbList = computed(() => [
+      { to: { path: '/materialClassifyManage' }, name: '物料类型管理' },
+      { name: '管理物料分类' },
+    ]);
     function getMaterialCategoryList() {
       api.getMaterialCategoryList(Data.getMaterialCategoryData).then(res => {
         if (res.data.Status === 1000) {
@@ -161,7 +162,7 @@ export default {
       getMaterialCategoryList();
     });
     return {
-      ArrowRight,
+      BreadcrumbList,
       Data,
       dialog,
       PaginationChange,

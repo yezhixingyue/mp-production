@@ -14,6 +14,7 @@ export interface goodsPositionStockDetailsType {
   SizeDescribe:string
   Stock: number
   StockUnit: string
+  AttributeDescribe:string
 }
 export interface ILocationMapOriginPointData {
   LeftTopX: number

@@ -422,10 +422,10 @@ export default {
         value: 4,
         label: '成品',
       },
-      {
-        value: 5,
-        label: '盘库',
-      },
+      // {
+      //   value: 5,
+      //   label: '盘库',
+      // },
 
     ];
     const outStorageType = [

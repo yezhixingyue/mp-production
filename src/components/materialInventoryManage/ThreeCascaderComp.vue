@@ -1,6 +1,7 @@
 <template>
   <!-- 三级级联选择框 用于选择物料 -->
-  <el-cascader v-if="!reseta" no-data-text="无数据" :props="cascaderProps" @change="cascaderChange" filterable placeholder="请选择物料">
+  <el-cascader v-if="!reseta && MaterialWarehouseStore.MaterialTypeGroup.length"
+  no-data-text="无数据" :props="cascaderProps" @change="cascaderChange" filterable placeholder="请选择物料">
     <template #empty>
       <div style="color:#c0c4cc;line-height:30px">
         无数据
@@ -50,6 +51,7 @@ interface MaterialSelectsType {
   MaterialAttributes: MaterialAttributesType[],
   SizeSelects: SizeSelectsType[]
   key:string,
+  AttributeDescribe:string
 }
 interface MaterialDataItemType {
   StockUnit: string,
@@ -75,28 +77,30 @@ export default {
         const { level } = node;
         // 没有值时为第一层级
         if (level === 0) {
-          const callback = () => {
-            const nodes = MaterialWarehouseStore.CategoryList.map(res => ({
-              value: res.CategoryID,
-              label: res.CategoryName,
-            }));
-            resolve(nodes);
-          };
+          const nodes = MaterialWarehouseStore.MaterialTypeGroup.map(res => ({
+            value: res.CategoryID,
+            label: res.CategoryName,
+          }));
+          resolve(nodes);
+          // const callback = () => {
+          // };
+          // console.log(MaterialWarehouseStore.MaterialTypeGroup, 'aaaaaaaaa');
 
-          MaterialWarehouseStore.getMaterialCategoryList({}, callback);
+          // MaterialWarehouseStore.getMaterialCategoryList({}, callback);
         }
 
         // 第二层级
         if (level === 1) {
-          const callback = () => {
-            const nodes = MaterialWarehouseStore.MaterialTypeList.map(res => ({
-              value: res.TypeID,
-              label: res.TypeName,
-              disabled: node.loaded && node.chchildren === 0,
-            }));
-            resolve(nodes || []);
-          };
-          MaterialWarehouseStore.getMaterialTypeAll({ categoryID: node.value as number }, callback);
+          const CategoryGroup = MaterialWarehouseStore.MaterialTypeGroup.find(it => it.CategoryID === node.value);
+          const nodes = CategoryGroup?.MaterialTypes.map(res => ({
+            value: res.TypeID,
+            label: res.TypeName,
+            disabled: node.loaded && node.chchildren === 0,
+          }));
+          resolve(nodes || []);
+          // const callback = () => {
+          // };
+          // MaterialWarehouseStore.getMaterialTypeAll({ categoryID: node.value as number }, callback);
         }
         // 第三层级
         if (level === 2) {
@@ -110,25 +114,11 @@ export default {
                   });
                   MaterialData.push(temp);
                 }
-                resolve(temp.MaterialSelects.map(it => {
-                  let msg = '';
-                  it.MaterialAttributes.forEach((item, index) => {
-                    if (item.NumericValue) {
-                      msg += item.NumericValue || '';
-                      msg += item.AttributeUnit || '';
-                    } else {
-                      msg += item.InputSelectValue || item.SelectValue || '';
-                    }
-                    if (item.NumericValue || item.InputSelectValue || item.SelectValue) {
-                      msg += index === it.MaterialAttributes.length - 1 ? '' : ' ';
-                    }
-                  });
-                  return {
-                    value: it.key,
-                    label: msg,
-                    leaf: level >= 2,
-                  };
-                }));
+                resolve(temp.MaterialSelects.map(it => ({
+                  value: it.key,
+                  label: it.AttributeDescribe,
+                  leaf: level >= 2,
+                })));
               } else {
                 resolve([]);
               }
@@ -161,7 +151,9 @@ export default {
       }, 5);
     }
     onMounted(() => {
-      // currentInstance = getCurrentInstance() as ComponentInternalInstance;
+      if (!MaterialWarehouseStore.MaterialTypeGroup.length) {
+        MaterialWarehouseStore.getMaterialTypeGroup();
+      }
     });
 
     return {
@@ -169,6 +161,7 @@ export default {
       cascaderProps,
       cascaderChange,
       reset,
+      MaterialWarehouseStore,
     };
   },
 
