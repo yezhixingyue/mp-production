@@ -33,7 +33,7 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange" />
         </div>
-      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
     <DialogContainerComp
     :title="`${Data.classifyInfo.CategoryID ? '修改' : '添加'}物料分类`"
@@ -228,6 +228,10 @@ export default {
       display: flex;
       justify-items: center;
       justify-content: flex-start;
+      min-width: 639px;
+    }
+    .el-button{
+      width: 100px;
     }
     background-color: #fff;
     min-height: 50px;

@@ -15,11 +15,11 @@
          :total="total">
        </el-pagination>
     </el-config-provider>
-    <span class="count">共检索出 <i> {{total}} </i> 条记录</span>
+    <span class="count"><span>共检索出</span> <i> {{total}} </i> <span>条记录</span></span>
   </section>
 </template>
 
-<script>
+<script lang="ts">
 import { ElConfigProvider } from 'element-plus';
 import { computed } from 'vue';
 import zhCn from 'element-plus/lib/locale/lang/zh-cn';
@@ -75,6 +75,12 @@ export default {
     margin: 0 40px;
     line-height: 36px;
     color: #444;
+    >span:first-child{
+      min-width: 56px;
+    }
+    >span:last-child{
+      min-width: 42px;
+    }
     i{
       color: #26bcf9;
       font-weight: 700;

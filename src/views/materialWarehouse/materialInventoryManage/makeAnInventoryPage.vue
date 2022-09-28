@@ -202,7 +202,7 @@ interface InventoryDetailType {
   IsLastMaterial:boolean
   IsLastPosition:boolean
   DetailID:string
-  PrevDetailID:number|null
+  PrevDetailID:string|null
   PrevPositionMaterial:PrevPositionMaterialType[]
 }
 interface DataType {
@@ -254,8 +254,8 @@ export default {
 
     // 获取盘库详情
     function getInventoryDetail() {
-      const errorCb = () => {
-        messageBox.failSingleError('错误', '请重新打开此标签', () => {
+      const errorCb = (msg = '请重新打开此标签') => {
+        messageBox.failSingleError('错误', msg, () => {
           window.close();
         }, () => {
           window.close();
@@ -267,7 +267,7 @@ export default {
             Data.InventoryDetail = res.data.Data as InventoryDetailType;
             Data.InventoryDetail.DetailID = Data.DetailID as string;
           } else {
-            errorCb();
+            errorCb(res.data.Message as string);
           }
         });
       } else {
@@ -298,6 +298,8 @@ export default {
       messageBox.warnCancelBox('操作确认', '确定要重新盘点上一个', () => {
         api.getInventoryAgainPrev(Data.InventoryDetail?.DetailID).then(res => {
           if (res.data.Status === 1000) {
+            console.log(Data.InventoryDetail?.PrevDetailID, 'aaa Data.InventoryDetail?.PrevDetailID');
+
             setDetail(Data.InventoryDetail?.PrevDetailID);
             getInventoryDetail();
           }
@@ -347,10 +349,14 @@ export default {
       temp.PositionID = Data.InventoryDetail?.PositionID;
       api.getInventoryOmission(temp).then(res => {
         if (res.data.Status === 1000) {
-          // 补货成功
-          messageBox.successSingle('添加成功', () => {
+          const cb = () => {
             Data.addMaterialShow = false;
-          }, () => null);
+            if (Data.InventoryDetail) {
+              Data.InventoryDetail.PrevDetailID = Data.InventoryDetail.DetailID as string;
+            }
+          };
+          // 补货成功
+          messageBox.successSingle('添加成功', cb, cb);
         }
       });
     }

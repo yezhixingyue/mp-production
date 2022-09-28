@@ -50,7 +50,7 @@
         </p>
     </main>
     <footer>
-      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
     <DialogContainerComp
     :title="`${Data.addPalletDimensionsForm.DimensionID ? '修改': '添加'}货位维度`"
@@ -371,6 +371,9 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    .el-button{
+      width: 100px;
+    }
   }
   .add-pallet-dimensions-dialog{
     padding: 0 65px 0 110px;

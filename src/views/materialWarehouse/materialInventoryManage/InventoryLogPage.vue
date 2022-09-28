@@ -49,6 +49,7 @@
               label:'StaffName',
             }"
             :value='Data.getInventoryLogListData.Handler'
+            :showLine='true'
             @change="(ID) => Data.getInventoryLogListData.Handler = ID"
             @requestFunc='getInventoryLogList'
             ></OneLevelSelect>
@@ -96,7 +97,7 @@
         </el-table>
     </main>
     <footer>
-      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getInventoryLogListData.Page"
@@ -358,6 +359,10 @@ export default {
       justify-content: flex-end;
       display: flex;
       align-items: center;
+      min-width: 639px;
+    }
+    .el-button{
+      width: 100px;
     }
   }
 }

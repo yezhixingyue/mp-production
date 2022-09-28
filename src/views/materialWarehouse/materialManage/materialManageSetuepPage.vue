@@ -37,8 +37,8 @@
     </main>
     <footer>
       <mp-button :disabled="!Data.BatchAddList.length"
-      type="primary" @click="saveGenerativeRule">保存</mp-button>
-      <mp-button @click="$goback">返回</mp-button>
+      type="primary" class="gradient" @click="saveGenerativeRule">保存</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
     <DialogContainerComp
     :title="'批量生成'"
@@ -637,7 +637,7 @@ export default {
     justify-content: center;
     align-items: center;
     .el-button{
-      width: 100px;
+      width: 120px;
     }
     .el-button + .el-button{
       margin-left: 30px;

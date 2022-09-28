@@ -85,8 +85,8 @@
     </template>
     </DialogContainerComp>
     <footer>
-      <mp-button type="primary" @click="foldWayTemplateSave">保存</mp-button>
-      <mp-button @click="$goback">返回</mp-button>
+      <mp-button type="primary" class="gradient" @click="foldWayTemplateSave">保存</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
   </div>
 </template>
@@ -486,7 +486,7 @@ export default {
     align-items: center;
     padding-bottom: 50px;
     .el-button{
-      width: 100px;
+      width: 120px;
     }
     .el-button + .el-button{
       margin-left: 30px;

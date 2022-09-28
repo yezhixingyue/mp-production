@@ -526,7 +526,6 @@ export default {
         AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = temp as MaterialInfoType;
-      console.log(Data.checkedMaterial, 'Data.checkedMaterial');
       Data.outDeliveryForm.UnitID = '';
       Data.getMaterialData.SKUCode = '';
       GetGoodsAllocation(Data.checkedMaterial.MaterialID);

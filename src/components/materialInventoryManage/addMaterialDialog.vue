@@ -69,9 +69,9 @@
            {{Data.checkedMaterial?.Code}}
           </el-form-item>
 
-          <el-form-item :label="`入库数量：`" class="in-number">
-            <el-input-number style="margin-right:5px" placeholder="请输入入库数量" :controls="false"
-            v-model="Data.inDeliveryForm.Number" /> {{materialInfo.StockUnit}}
+          <el-form-item :label="`数量：`" class="in-number">
+            <el-input-number style="margin-right:5px" placeholder="请输入数量" :controls="false"
+            v-model="Data.inDeliveryForm.Number" /> {{Data.checkedMaterial?.StockUnit}}
           </el-form-item>
 
           <el-form-item :label="`备注：`" class="remark">
@@ -195,6 +195,17 @@ export default {
     }
     // 此货位还有物料时添加物料的弹框
     function addMaterialPrimaryClick() {
+      if (!Data.checkedMaterial) {
+        messageBox.failSingleError('保存失败', '请选择物料', () => null, () => null);
+      } else if (!Data.inDeliveryForm.Number) {
+        messageBox.failSingleError('保存失败', '请输入数量', () => null, () => null);
+      } else {
+        const temp = {
+          ...Data.inDeliveryForm,
+        };
+        temp.MaterialID = Data.checkedMaterial?.MaterialID as string;
+        props.dialogSaveMaterial(temp);
+      }
       // 组装 MaterialInfo 数据
 
       // const msg:string[] = [];
@@ -207,12 +218,6 @@ export default {
       // });
       // msg.push(Data.checkedMaterial?.SizeDescribe || '');
       // msg.push(`（${Data.checkedMaterial?.Code}）`);
-
-      const temp = {
-        ...Data.inDeliveryForm,
-      };
-      temp.MaterialID = Data.checkedMaterial?.MaterialID as string;
-      props.dialogSaveMaterial(temp);
     }
 
     // 选择物料

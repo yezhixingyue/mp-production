@@ -31,7 +31,7 @@
         </el-scrollbar>
     </main>
     <footer>
-      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
   </div>
 </template>
@@ -386,6 +386,9 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    .el-button{
+      width: 100px;
+    }
   }
   .add-material-manage-dialog{
     .el-form{

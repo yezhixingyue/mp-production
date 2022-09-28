@@ -57,9 +57,8 @@
           <el-table-column prop="Address" label="拼版方式" show-overflow-tooltip min-width="280" >
             <template #default="scope">
               <template v-if="!scope.row.IsSameSizeWithPrintingPlate">
-
-              <span v-if="scope.row.ModeSizeAttribute">
-                按模位（{{scope.row.ModeSizeAttribute.PlateInfo.AreaList.length}}条记录）
+              <span v-if="scope.row.ModeSizeAttribute && scope.row.ModeSizeAttribute.UseMode">
+                按模位（{{scope.row.ModeSizeAttribute.ModeItemList.length}}条记录）
               </span>
               </template>
             </template>

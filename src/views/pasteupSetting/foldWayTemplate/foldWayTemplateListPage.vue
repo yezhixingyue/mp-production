@@ -268,7 +268,6 @@ export default {
               EquipmentGroups,
             });
           });
-          console.log(Data.applyEquipmentList, temp);
         }
       });
     });

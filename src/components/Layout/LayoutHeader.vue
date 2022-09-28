@@ -57,26 +57,39 @@
       <div class="user">
         <el-dropdown trigger="click">
           <span class="el-dropdown-link">
-            <i class="el-icon-user"></i>
-            <mp-button>退出登录</mp-button>
+            <el-icon>
+              <User />
+            </el-icon>
+            <!-- <mp-button>退出登录</mp-button> -->
+            <span>
+              用户名
+            </span>
+            <el-icon>
+              <ArrowDown />
+            </el-icon>
           </span>
           <template #dropdown>
             <el-dropdown-menu class="mp-erp-user-drop-down-wrap">
-              <el-dropdown-item icon="el-icon-lock" command='changePwd'>修改密码</el-dropdown-item>
+              <el-dropdown-item
+              @click="changePwd"
+              :icon="Lock" command='changePwd'>修改密码</el-dropdown-item>
               <el-dropdown-item
               @click="handleLogoutClick"
-                icon="el-icon-switch-button"
+                :icon="SwitchButton"
                 command='logout'>退出登录
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
       </div>
-
+      <ChangePwdDialog v-model:visible="visible4ChangePassword"></ChangePwdDialog>
   </div>
 </template>
 
 <script lang='ts'>
+import {
+  SwitchButton, Lock, User, ArrowDown,
+} from '@element-plus/icons-vue';
 import { useLayoutStore } from '@/store/modules/layout/index';
 import {
   computed, ref, Ref, onMounted, onBeforeUnmount,
@@ -84,13 +97,18 @@ import {
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import { addBarType } from '@/store/modules/layout/addBarType';
+import ChangePwdDialog from './ChangePwdDialog.vue';
 
 export default {
+  components: {
+    ChangePwdDialog,
+  },
   setup() {
     const LayoutStore = useLayoutStore();
     const router = useRouter();
     const userStore = useUserStore();
     const oList:Ref = ref(null);
+    const visible4ChangePassword = ref(false);
     const localTabsValue = computed({
       get() {
         return LayoutStore.editableTabsValue;
@@ -117,6 +135,9 @@ export default {
     function handleLogoutClick() {
       userStore.token = '';
       router.replace('/login');
+    }
+    function changePwd() {
+      visible4ChangePassword.value = true;
     }
     function onCloseCurClick(name:string) {
       // 关闭;
@@ -183,12 +204,18 @@ export default {
       document.removeEventListener('click', onDocumentClick);
     });
     return {
+      SwitchButton,
+      Lock,
+      User,
+      ArrowDown,
+      visible4ChangePassword,
       oList,
       onContextmenuclick,
       showContextMenu,
       contextMenuLeft,
       contextMenuTop,
       handleLogoutClick,
+      changePwd,
       LayoutStore,
       localTabsValue,
       changeTab,
@@ -256,6 +283,12 @@ export default {
               background-color: $--color-primary;
               border-color: $--color-primary;
               color: #fff;
+              &:hover{
+                color: #fff;
+              }
+            }
+            &:hover{
+              color:  $--color-primary;
             }
             &.is-active::before{
               content: '';
@@ -337,6 +370,21 @@ export default {
   .user{
     margin-right: 50px;
     margin-left: 50px;
+    display: flex;
+    >div{
+      flex: 1;
+    }
+    &:hover{
+      cursor: pointer;
+    }
+    .el-dropdown-link{
+      display: flex;
+      align-items: center;
+      user-select: none;
+      span{
+        margin: 0 5px;
+      }
+    }
   }
 }
 </style>

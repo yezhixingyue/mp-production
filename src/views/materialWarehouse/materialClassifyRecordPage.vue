@@ -36,6 +36,7 @@
               :title='"出库类型"'
               :options='outStorageType'
               :value='Data.getRecordData.HandleType'
+              :showLine='true'
               @change="(ID) => Data.getRecordData.HandleType = ID"
               @requestFunc='getRecordList'
               ></OneLevelSelect>
@@ -45,6 +46,7 @@
               title='入库类型'
               :options='inStorageType'
               :value='Data.getRecordData.HandleType'
+              :showLine='true'
               @change="(ID) => Data.getRecordData.HandleType = ID"
               @requestFunc='getRecordList'
               ></OneLevelSelect>
@@ -56,6 +58,7 @@
                 label:'SupplierName',
               }"
               :value='Data.getRecordData.SupplierID'
+              :showLine='true'
               @change="(ID) => Data.getRecordData.SupplierID = ID"
               @requestFunc='getRecordList'
               ></OneLevelSelect>
@@ -68,6 +71,7 @@
               label:'StaffName',
             }"
             :value='Data.getRecordData.Handler'
+            :showLine='true'
             @change="(ID) => Data.getRecordData.Handler = ID"
             @requestFunc='getRecordList'
             ></OneLevelSelect>
@@ -79,6 +83,7 @@
               label:'StaffName',
             }"
             :value='Data.getRecordData.Operater'
+            :showLine='true'
             @change="(ID) => Data.getRecordData.Operater = ID"
             @requestFunc='getRecordList'
             ></OneLevelSelect>
@@ -560,8 +565,6 @@ export default {
       });
     }
     function LogTypeChange(Type) {
-      console.log(Type);
-
       Data.getRecordData.LogType = Type;
       Data.getRecordData.Handler = '';
       Data.getRecordData.Operater = '';

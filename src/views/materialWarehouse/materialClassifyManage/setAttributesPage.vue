@@ -44,7 +44,7 @@
 
     </main>
     <footer>
-      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getAttributesData.Page"
@@ -373,11 +373,15 @@ export default {
     .el-button{
       align-self: center;
     }
+    .el-button{
+      width: 100px;
+    }
     .bottom-count-box{
       min-width: calc((100% - 100px) / 2);
       justify-content: flex-end;
       display: flex;
       align-items: center;
+      min-width: 639px;
     }
   }
   .add-attributes-dialog{

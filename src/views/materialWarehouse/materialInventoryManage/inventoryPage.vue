@@ -48,7 +48,7 @@
     </main>
     <footer>
       <mp-button @click="removeEventListener" @keydown="() => null" style="padding:0;border:0">
-        <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+        <mp-button class="blue" @click="$goback">返回</mp-button>
       </mp-button>
       <div class="bottom-count-box">
         <MpPagination
@@ -221,6 +221,10 @@ export default {
       justify-content: flex-end;
       display: flex;
       align-items: center;
+      min-width: 639px;
+    }
+    .el-button{
+      width: 100px;
     }
   }
   .add-material-supplier-dialog{

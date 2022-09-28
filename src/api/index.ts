@@ -22,6 +22,10 @@ const api = {
   getUploadImage() {
     return request({ method: 'POST', url: '/Api/Upload/Image' });
   },
+  // 修改密码
+  getStaffChangePassword(data) {
+    return request({ method: 'POST', url: '/Api/Upload/Image', data });
+  },
   // 物料仓储 api
   ...MaterialStorage,
   // 生产资源 api

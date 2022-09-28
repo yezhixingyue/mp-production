@@ -13,7 +13,7 @@
     <li class="text" v-if="title">
       <span>{{title}}：</span>
     </li>
-    <li class="select-box first-select-box ">
+    <li class="select-box first-select-box" :class="{'show-line':showLine}">
       <el-select
         v-model="result"
         :placeholder="placeholder"
@@ -31,7 +31,7 @@
   </ul>
 </template>
 
-<script>
+<script lang="ts">
 import { computed } from 'vue';
 
 export default {
@@ -103,6 +103,24 @@ export default {
   >.text{
     font-weight: 600;
     text-align: right;
+  }
+  .show-line {
+    border-radius: 0;
+    .el-input__wrapper{
+      box-shadow: 0px 1px 0px var(--el-input-border-color)!important;
+      border-radius: 0;
+    }
+    .el-input__wrapper:hover {
+      box-shadow: none;
+      box-shadow: 0px 1px 0px var(--el-input-hover-border-color)!important;
+    }
+    .el-select .el-input.is-focus .el-input__wrapper{
+      box-shadow: 0px 1px 0px var(--el-select-input-focus-border-color) !important;
+    }
+    .el-select .el-input__wrapper.is-focus{
+      box-shadow: none !important;
+      box-shadow: 0px 1px 0px var(--el-select-input-focus-border-color)!important;
+    }
   }
   .el-select {
     box-sizing: border-box;

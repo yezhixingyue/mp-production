@@ -46,10 +46,10 @@ export default {
   // padding: 20px 30px;
   height: calc(100vh - 41px);
   max-height: calc(100vh - 41px);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto;
   background-color: #F5F5F5;
   >div{
+    min-width: 1000px;
     margin: 0 8px;
     height: 100%;
   }

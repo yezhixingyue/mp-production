@@ -43,7 +43,7 @@
           :total="Data.DataTotal"
           :handlePageChange="PaginationChange"/>
         </div>
-      <mp-button type="primary" class="is-goback-button" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
     <!-- 添加单位 -->
     <DialogContainerComp
@@ -331,6 +331,10 @@ export default {
       width: calc((100% - 100px) / 2);
       display: flex;
       height: 50px;
+      min-width: 639px;
+    }
+    .el-button{
+      width: 100px;
     }
   }
   .add-unit-dialog{

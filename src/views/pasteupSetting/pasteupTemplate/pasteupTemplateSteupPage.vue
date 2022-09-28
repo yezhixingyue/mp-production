@@ -164,8 +164,8 @@
       </el-scrollbar>
     </main>
     <footer>
-      <mp-button type="primary" @click="savePasteupTemplate">保存</mp-button>
-      <mp-button @click="$goback">返回</mp-button>
+      <mp-button type="primary" class="gradient" @click="savePasteupTemplate">保存</mp-button>
+      <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
   </div>
 </template>
@@ -341,8 +341,8 @@ export default {
               return false;
             }
             // 横轴结束点是否在可拼版区域
-            const xEndInclude = (Number(ModeItem.XCoordinate) + ModeItem.Length) * ModeItem.ColumnNumber <= Number(Area.XCoordinate) + Number(Area.Length);
-            const yEndInclude = (Number(ModeItem.YCoordinate) + ModeItem.Width) * ModeItem.RowNumber <= Number(Area.YCoordinate) + Number(Area.Width);
+            const xEndInclude = Number(ModeItem.XCoordinate) + ModeItem.Length * ModeItem.ColumnNumber <= Number(Area.XCoordinate) + Number(Area.Length);
+            const yEndInclude = Number(ModeItem.YCoordinate) + ModeItem.Width * ModeItem.RowNumber <= Number(Area.YCoordinate) + Number(Area.Width);
             if (!xEndInclude) {
               messageBox.failSingleError('保存失败', `第${index + 1}行数据长度超出可拼版区域`, () => null, () => null);
               return false;
@@ -649,7 +649,7 @@ export default {
     align-items: center;
     padding-bottom: 50px;
     .el-button{
-      width: 100px;
+      width: 120px;
     }
     .el-button + .el-button{
       margin-left: 30px;
