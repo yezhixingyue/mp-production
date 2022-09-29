@@ -21,7 +21,7 @@ import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrum
 import { useRoute } from 'vue-router';
 import { useResourceStore } from '@/store/modules/resource';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getGoBackFun } from '@/router';
@@ -31,13 +31,13 @@ const route = useRoute();
 const store = useResourceStore();
 const { resourceBundleList } = storeToRefs(store);
 
-const BreadcrumbList = [
-  { to: { path: '/resourceBundleManage' }, name: '物料资源包' },
-  { name: '添加资源包' },
-];
-
 const curEditItem = ref<null|ResourceBundleClass>(null);
 const inited = ref(false);
+
+const BreadcrumbList = computed(() => [
+  { to: { path: '/resourceBundleManage' }, name: '物料资源包' },
+  { name: curEditItem.value ? '编辑资源包' : '添加资源包' },
+]);
 
 const mainRef = ref<InstanceType<typeof resourceBundleSetupForm>>();
 

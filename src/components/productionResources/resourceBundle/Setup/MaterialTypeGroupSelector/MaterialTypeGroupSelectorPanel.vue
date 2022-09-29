@@ -27,6 +27,7 @@ const props = defineProps<{
   MaterialTypeGroup: IMaterialTypeGroupItemType[],
   modelValue: IMaterialTypeItemInBundle[],
   selectedIds: string[],
+  sort?: false
 }>();
 
 const emit = defineEmits(['update:modelValue']);
@@ -56,6 +57,11 @@ const getIndeterminate = (it: IMaterialTypeGroupItemType) => {
   return MaterialTypeIDS.length < allIds.length;
 };
 
+const setValue = (list: IMaterialTypeItemInBundle[]) => {
+  // 排序? - 暂不考虑
+  emit('update:modelValue', list);
+};
+
 const onGroupChange = (it: IMaterialTypeGroupItemType, val: boolean) => {
   const list = [...props.modelValue].filter(_it => _it.CategoryID !== it.CategoryID);
   if (val) {
@@ -63,7 +69,7 @@ const onGroupChange = (it: IMaterialTypeGroupItemType, val: boolean) => {
     const t = { CategoryID: it.CategoryID, MaterialTypeIDS };
     list.push(t);
   }
-  emit('update:modelValue', list);
+  setValue(list);
 };
 
 const getItemValue = (it: IMaterialTypeGroupItemType) => {
@@ -77,7 +83,7 @@ const onItemChange = (it: IMaterialTypeGroupItemType, MaterialTypeIDS: string[])
     const t = { CategoryID: it.CategoryID, MaterialTypeIDS };
     list.push(t);
   }
-  emit('update:modelValue', list);
+  setValue(list);
 };
 
 const init = () => {
@@ -94,7 +100,7 @@ const init = () => {
     }
     return null;
   }).filter(it => it) as IMaterialTypeItemInBundle[];
-  emit('update:modelValue', list);
+  setValue(list);
 };
 
 watch(() => props.MaterialTypeGroup, init, { immediate: true });

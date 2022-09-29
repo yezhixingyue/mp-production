@@ -1,6 +1,16 @@
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 
+export interface IMaterialConstraintsItem {
+  MaterialTypeID: string
+  LimitNumber: number
+}
+
+export interface IMaterialConstraintsItemWithName extends IMaterialConstraintsItem {
+  MaterialTypeName: string
+  CategoryName: string
+}
+
 export class EquipmentGroupItemClass {
   ID = ''
 
@@ -19,6 +29,8 @@ export class EquipmentGroupItemClass {
   MinLength: number|'' = ''
 
   MaxLength: number|'' = ''
+
+  MaterialConstraints: IMaterialConstraintsItem[] = []
 
   constructor(data) {
     if (data) {

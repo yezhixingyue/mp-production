@@ -27,8 +27,8 @@
 <script lang="ts" setup>
 import { useSlots } from 'vue';
 
-const slotDefault = !!useSlots().default; // 判断<slot/>是否有传值
-const slotHeader = !!useSlots().header; // 判断<slot/>是否有传值
+const slotDefault = !!useSlots().default; // 判断default是否有传值
+const slotHeader = !!useSlots().header; // 判断header是否有传值
 </script>
 <style scoped lang="scss">
 </style>

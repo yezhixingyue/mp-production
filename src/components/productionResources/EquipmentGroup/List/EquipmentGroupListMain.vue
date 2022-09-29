@@ -14,7 +14,7 @@
         <template #default="scope">{{formatSizeLimit(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column min-width="220px" label="物料限制（禁用条件）">
-        <!-- <template #default="scope">{{formatSizeLimit(scope.row)}}</template> -->
+        <template #default="scope">{{formatMaterialLimit(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column min-width="120px" prop="ColorLimitContent" label="印色数量限制" />
       <mp-table-column width="360px" label="操作">
@@ -36,9 +36,12 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpButton from '@/components/common/MpButton.vue';
 import { EquipmentGroupMenuEnumType, EquipmentGroupTypeClass } from '@/store/modules/resource/EquipmentGroupTypeClass';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
+import { getMaterialConstraintsListWithNames } from '@/store/modules/resource/utils/utils';
+import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
 
 const props = defineProps<{
   EquipmentGroupData: Required<EquipmentGroupTypeClass>
+  MaterialTypeGroup: IMaterialTypeGroupItemType[]
 }>();
 
 const emit = defineEmits(['menuClick']);
@@ -67,6 +70,10 @@ const formatSizeLimit = (it: EquipmentGroupItemType) => {
   }
 
   return str;
+};
+const formatMaterialLimit = (item: EquipmentGroupItemType) => {
+  const list = getMaterialConstraintsListWithNames(item.MaterialConstraints, props.MaterialTypeGroup);
+  return list.map(it => (it.LimitNumber ? `${it.MaterialTypeName}（${it.LimitNumber}条）` : `${it.MaterialTypeName}`)).join('、');
 };
 
 const onMenuClick = (it: EquipmentGroupItemType, type: EquipmentGroupMenuEnumType) => {

@@ -11,7 +11,7 @@
       :getMaterialTypeGroup="store.getMaterialTypeGroup"
       :Nullable="false"
       :autoCloseAfterClick="false"
-      :selectedIds="selectedIds"
+      :selectedIds="props.MaterialTypeLimitData.list.map(it => it.MaterialTypeID) || []"
       @submit="onDialogSubmit"
     />
   </header>
@@ -27,9 +27,11 @@ import { EquipmentGroupTypeClass } from '@/store/modules/resource/EquipmentGroup
 import { IMaterialTypeItemInBundle } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { useResourceStore } from '@/store/modules/resource';
 import { storeToRefs } from 'pinia';
+import { EquipmentGroupMaterialTypeLimitClass } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/EquipmentGroupMaterialTypeLimitClass';
 
 const props = defineProps<{
   EquipmentGroupData: Required<EquipmentGroupTypeClass>,
+  MaterialTypeLimitData: Required<EquipmentGroupMaterialTypeLimitClass>,
 }>();
 
 const emit = defineEmits(['submit']);
@@ -50,9 +52,8 @@ const store = useResourceStore();
 const { MaterialTypeGroup } = storeToRefs(store);
 
 const visible = ref(false);
-const selectedIds = computed(() => []); // 后续补充
 
-const onDialogSubmit = (e: IMaterialTypeItemInBundle[]) => {
+const onDialogSubmit = (e: IMaterialTypeItemInBundle[]) => { // 提交
   const GroupID = props.EquipmentGroupData.curEditItem?.ID || '';
   if (!GroupID) return;
   const MaterialTypeIDS = e.map(it => it.MaterialTypeIDS).reduce((prev, next) => [...prev, ...next], []);
@@ -68,11 +69,4 @@ const onDialogSubmit = (e: IMaterialTypeItemInBundle[]) => {
 </script>
 
 <style scoped lang='scss'>
-.mt-20 {
-  button {
-    height: 30px;
-    margin-right: 30px;
-    border-radius: 3px;
-  }
-}
 </style>

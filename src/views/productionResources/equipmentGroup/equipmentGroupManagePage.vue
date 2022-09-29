@@ -1,7 +1,7 @@
 <template>
   <section class="equipment-group-list-page-wrap">
     <Header @add="onItemSetupClick" />
-    <Main :EquipmentGroupData="EquipmentGroupData" @menuClick="onMenuClick" />
+    <Main :EquipmentGroupData="EquipmentGroupData" :MaterialTypeGroup="MaterialTypeGroup" @menuClick="onMenuClick" />
     <Footer :condition="EquipmentGroupData.condition" :total="EquipmentGroupData.DataNumber" :getList="getList" />
     <ItemSetupDialog v-model:visible="visible" :EquipmentGroupData="EquipmentGroupData" @submit="handleItemSetupSubmit" />
     <SizeLimitDialog v-model:visible="sizeLimitVisible" :EquipmentGroupData="EquipmentGroupData" @submit="handleSizeLimitSubmit" />
@@ -27,7 +27,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const store = useResourceStore();
-const { EquipmentGroupData } = storeToRefs(store);
+const { EquipmentGroupData, MaterialTypeGroup } = storeToRefs(store);
 
 /** 编辑|新增相关
 ---------------------------- */
@@ -101,6 +101,7 @@ const getList = (e) => EquipmentGroupData.value.getList(e);
 
 onMounted(() => {
   EquipmentGroupData.value.fetchRequiredData();
+  store.getMaterialTypeGroup();
 });
 
 </script>
