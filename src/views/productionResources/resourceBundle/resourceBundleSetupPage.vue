@@ -2,7 +2,7 @@
   <section class="resource-bundle-setup-page-wrap">
     <header>
       <MpBreadcrumb :list="BreadcrumbList" />
-      <p class="mp-common-title-wrap black">添加资源包</p>
+      <p class="mp-common-title-wrap black">{{title}}</p>
     </header>
     <main>
       <resourceBundleSetupForm :curEditItem="curEditItem" ref="mainRef" />
@@ -34,9 +34,11 @@ const { resourceBundleList } = storeToRefs(store);
 const curEditItem = ref<null|ResourceBundleClass>(null);
 const inited = ref(false);
 
+const title = computed(() => (curEditItem.value ? '编辑资源包' : '添加资源包'));
+
 const BreadcrumbList = computed(() => [
   { to: { path: '/resourceBundleManage' }, name: '物料资源包' },
-  { name: curEditItem.value ? '编辑资源包' : '添加资源包' },
+  { name: title.value },
 ]);
 
 const mainRef = ref<InstanceType<typeof resourceBundleSetupForm>>();

@@ -47,7 +47,6 @@ const mainList = computed(() => {
 
 const getPropertyList = (item: MaterialTypeLimitItemType) => {
   const list = props.allPropertyList.filter(it => it.MaterialType?.ID === item.MaterialTypeID);
-  console.log('1212212', list);
   return list;
 };
 

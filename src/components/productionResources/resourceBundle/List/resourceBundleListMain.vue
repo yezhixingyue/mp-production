@@ -39,7 +39,6 @@ const emit = defineEmits(['edit', 'remove']);
 const formatFeatureType = (Feature: localEnumValueIDType) => getEnumNameByIDAndEnums(Feature, resourceBundleFeatureEnum);
 const formatMatchType = (item: ResourceBundleClass) => {
   if (item.Feature === resourceBundleFeatureEnum.semifinished.ID) return '';
-  console.log(item.MatchType, resourceBundleMatchEnum);
   return getEnumNameByIDAndEnums(item.MatchType, resourceBundleMatchEnum);
 };
 const formatMaterialTypeGroups = (item: ResourceBundleClass) => {

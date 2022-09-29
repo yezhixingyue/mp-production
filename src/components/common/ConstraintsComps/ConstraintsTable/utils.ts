@@ -40,7 +40,6 @@ export const transformConstraintTableList = ({ tableList, PropertyList }: IOptio
     };
     return temp;
   });
-  console.log('transformConstraintTableList', tableList, PropertyList, list);
   return list;
 };
 
