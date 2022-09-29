@@ -80,14 +80,14 @@
   </div>
 </template>
 
-<script lang='ts'>
+<script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
   reactive, onMounted, computed, onActivated,
 } from 'vue';
 
 import SetApplyEquipmentDialog from '@/components/pasteupSetting/setApplyEquipmentDialog.vue';
-import { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
+import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
@@ -100,7 +100,7 @@ interface _EquipmentGroups{
   GroupName: string
 }
 
-export interface _UseClassEquipmentGroupType {
+interface _UseClassEquipmentGroupType {
   ClassID: 0,
   ClassName: string,
   EquipmentGroups: _EquipmentGroups[]
@@ -119,175 +119,152 @@ interface DataType {
   FoldWayTemplateList:FoldWayTemplateType[]
   DataTotal:number
 }
+const router = useRouter();
+const PasteupSettingStore = usePasteupSettingStore();
+const Data:DataType = reactive({
+  ApplyEquipment: null,
+  applyEquipmentList: [],
+  haveSetApplyEquipmentList: [],
+  ApplyEquipmentShow: false,
+  FoldWayTemplateList: [],
+  getFoldWayTemplateData: {
+    ClassID: '',
+    Page: 1,
+    PageSize: 20,
+  },
+  DataTotal: 0,
+});
+
+const FoldWayTemplateClassList = computed(() => [{
+  ID: '',
+  Name: '所有分类',
+}, ...PasteupSettingStore.FoldWayTemplateClassList]);
+const RadioGroupCompValue = computed(() => ({
+  level1Val: Data.getFoldWayTemplateData.ClassID,
+  level2Val: '',
+}));
+
+// 获取折手模板列表
+function getFoldWayTemplateList() {
+  api.getFoldWayTemplateList(Data.getFoldWayTemplateData).then(res => {
+    if (res.data.Status === 1000) {
+      Data.FoldWayTemplateList = res.data.Data as FoldWayTemplateType[];
+      Data.DataTotal = res.data.DataNumber;
+      //
+    }
+  });
+}
+function RadioGroupCompChange(levelData) {
+  const { level1Val } = levelData;
+  if (level1Val !== undefined) {
+    Data.getFoldWayTemplateData.ClassID = level1Val;
+    getFoldWayTemplateList();
+  }
+}
+
+function delFoldWayTemplate(item) {
+  messageBox.warnCancelBox('确定要删除此折手模板吗？', `${item.Name}`, () => {
+    api.getFoldWayTemplateRemove(item.ID).then(res => {
+      if (res.data.Status === 1000) {
+        // 删除成功
+        getFoldWayTemplateList();
+      }
+    });
+  }, () => undefined);
+}
+// 设置适用设备
+function setApplyEquipment(item) {
+  Data.ApplyEquipmentShow = true;
+  Data.ApplyEquipment = item;
+  Data.haveSetApplyEquipmentList = item.UseableEquipmentGroupList as EquipmentGroups[];
+}
+// 添加/编辑折手模板
+function TofoldWayTemplate(item = null) {
+  router.push({
+    name: 'foldWayTemplateSteup',
+    params: { Template: JSON.stringify(item) },
+  });
+}
+// 管理分类
+function ManagementClass() {
+  router.push({
+    name: 'foldWayTemplateClass',
+    // params: { TypeID: IDs.TypeID, CategoryID: IDs.CategoryID },
+  });
+}
+function getClassName(ClassID) {
+  const ClassItem = PasteupSettingStore.FoldWayTemplateClassList.find(it => it.ID === ClassID);
+  return ClassItem?.Name;
+}
+// 适用设备保存
+function saveEquipment(Equipments) {
+  console.log(Equipments, 'Equipments');
+  api.getFoldWayTemplateUseableEquipment({
+    ID: Data.ApplyEquipment?.ID,
+    UseableEquipmentGroupList: Equipments,
+  }).then(res => {
+    if (res.data.Status === 1000) {
+      const cb = () => {
+        Data.ApplyEquipmentShow = false;
+        getFoldWayTemplateList();
+      };
+      messageBox.successSingle('入库成功', cb, cb);
+    }
+  });
+}
+// 获取保存的适用设备文字
+function getUseableEquipmentText(Equipments) {
+  const tempGroup:UseClassEquipmentGroupType[] = [];
+  Data.applyEquipmentList.forEach(item => {
+    const EquipmentGroup = item.EquipmentGroups.filter(it => {
+      const Equipment = Equipments.find(Equipment => Equipment.ID === it.ID);
+      return Equipment;
+    });
+    if (EquipmentGroup.length) {
+      const _item = { ...item };
+      _item.EquipmentGroups = EquipmentGroup;
+      tempGroup.push(_item);
+    }
+  });
+  return tempGroup;
+}
+
+onActivated(() => {
+  const foldWayTemplateSteupPage = sessionStorage.getItem('foldWayTemplateSteupPage') === 'true';
+  if (foldWayTemplateSteupPage) {
+    getFoldWayTemplateList();
+    sessionStorage.removeItem('foldWayTemplateSteupPage');
+  }
+});
+onMounted(() => {
+  sessionStorage.removeItem('foldWayTemplateSteupPage');
+  getFoldWayTemplateList();
+  // 获取所有分类
+  PasteupSettingStore.getFoldWayTemplateClassList();
+  // 获取所有适用设备
+  api.getEquipmentGroup().then(res => {
+    if (res.data.Status === 1000) {
+      const temp = res.data.Data as _UseClassEquipmentGroupType[];
+      Data.applyEquipmentList = [];
+      temp.forEach(item => {
+        const EquipmentGroups = item.EquipmentGroups.map(it => ({
+          ID: it.GroupID,
+          Name: it.GroupName,
+        }));
+        Data.applyEquipmentList.push({
+          ClassID: item.ClassID,
+          ClassName: item.ClassName,
+          EquipmentGroups,
+        });
+      });
+    }
+  });
+});
+
+</script>
+<script lang="ts">
 export default {
   name: 'foldWayTemplateListPage',
-  components: {
-    MpPagination,
-    RadioGroupComp,
-    SetApplyEquipmentDialog,
-  },
-  setup() {
-    const router = useRouter();
-    const PasteupSettingStore = usePasteupSettingStore();
-    const Data:DataType = reactive({
-      ApplyEquipment: null,
-      applyEquipmentList: [],
-      haveSetApplyEquipmentList: [],
-      ApplyEquipmentShow: false,
-      FoldWayTemplateList: [],
-      getFoldWayTemplateData: {
-        ClassID: '',
-        Page: 1,
-        PageSize: 20,
-      },
-      DataTotal: 0,
-    });
-
-    const FoldWayTemplateClassList = computed(() => [{
-      ID: '',
-      Name: '所有分类',
-    }, ...PasteupSettingStore.FoldWayTemplateClassList]);
-    const RadioGroupCompValue = computed(() => ({
-      level1Val: Data.getFoldWayTemplateData.ClassID,
-      level2Val: '',
-    }));
-
-    // 获取折手模板列表
-    function getFoldWayTemplateList() {
-      api.getFoldWayTemplateList(Data.getFoldWayTemplateData).then(res => {
-        if (res.data.Status === 1000) {
-          Data.FoldWayTemplateList = res.data.Data as FoldWayTemplateType[];
-          Data.DataTotal = res.data.DataNumber;
-          //
-        }
-      });
-    }
-    function RadioGroupCompChange(levelData) {
-      const { level1Val } = levelData;
-      if (level1Val !== undefined) {
-        Data.getFoldWayTemplateData.ClassID = level1Val;
-        getFoldWayTemplateList();
-      }
-    }
-
-    function delFoldWayTemplate(item) {
-      messageBox.warnCancelBox('确定要删除此折手模板吗？', `${item.Name}`, () => {
-        api.getFoldWayTemplateRemove(item.ID).then(res => {
-          if (res.data.Status === 1000) {
-          // 删除成功
-            getFoldWayTemplateList();
-          }
-        });
-      }, () => undefined);
-    }
-    function ApplyEquipmentCloseClick() {
-      Data.ApplyEquipmentShow = false;
-    }
-    // 设置适用设备
-    function setApplyEquipment(item) {
-      Data.ApplyEquipmentShow = true;
-      Data.ApplyEquipment = item;
-      Data.haveSetApplyEquipmentList = item.UseableEquipmentGroupList as EquipmentGroups[];
-    }
-    // 添加/编辑折手模板
-    function TofoldWayTemplate(item = null) {
-      router.push({
-        name: 'foldWayTemplateSteup',
-        params: { Template: JSON.stringify(item) },
-      });
-    }
-    // 管理分类
-    function ManagementClass() {
-      router.push({
-        name: 'foldWayTemplateClass',
-        // params: { TypeID: IDs.TypeID, CategoryID: IDs.CategoryID },
-      });
-    }
-    function getClassName(ClassID) {
-      const ClassItem = PasteupSettingStore.FoldWayTemplateClassList.find(it => it.ID === ClassID);
-      return ClassItem?.Name;
-    }
-    // 适用设备保存
-    function saveEquipment(Equipments) {
-      console.log(Equipments, 'Equipments');
-      api.getFoldWayTemplateUseableEquipment({
-        ID: Data.ApplyEquipment?.ID,
-        UseableEquipmentGroupList: Equipments,
-      }).then(res => {
-        if (res.data.Status === 1000) {
-          const cb = () => {
-            Data.ApplyEquipmentShow = false;
-            getFoldWayTemplateList();
-          };
-          messageBox.successSingle('入库成功', cb, cb);
-        }
-      });
-    }
-    // 获取保存的适用设备文字
-    function getUseableEquipmentText(Equipments) {
-      const tempGroup:UseClassEquipmentGroupType[] = [];
-      Data.applyEquipmentList.forEach(item => {
-        const EquipmentGroup = item.EquipmentGroups.filter(it => {
-          const Equipment = Equipments.find(Equipment => Equipment.ID === it.ID);
-          return Equipment;
-        });
-        if (EquipmentGroup.length) {
-          const _item = { ...item };
-          _item.EquipmentGroups = EquipmentGroup;
-          tempGroup.push(_item);
-        }
-      });
-      return tempGroup;
-    }
-
-    onActivated(() => {
-      const foldWayTemplateSteupPage = sessionStorage.getItem('foldWayTemplateSteupPage') === 'true';
-      if (foldWayTemplateSteupPage) {
-        getFoldWayTemplateList();
-        sessionStorage.removeItem('foldWayTemplateSteupPage');
-      }
-    });
-    onMounted(() => {
-      sessionStorage.removeItem('foldWayTemplateSteupPage');
-      getFoldWayTemplateList();
-      // 获取所有分类
-      PasteupSettingStore.getFoldWayTemplateClassList();
-      // 获取所有适用设备
-      api.getEquipmentGroup().then(res => {
-        if (res.data.Status === 1000) {
-          const temp = res.data.Data as _UseClassEquipmentGroupType[];
-          Data.applyEquipmentList = [];
-          temp.forEach(item => {
-            const EquipmentGroups = item.EquipmentGroups.map(it => ({
-              ID: it.GroupID,
-              Name: it.GroupName,
-            }));
-            Data.applyEquipmentList.push({
-              ClassID: item.ClassID,
-              ClassName: item.ClassName,
-              EquipmentGroups,
-            });
-          });
-        }
-      });
-    });
-    return {
-      Data,
-      RadioGroupCompValue,
-      PasteupSettingStore,
-      FoldWayTemplateClassList,
-      saveEquipment,
-      getUseableEquipmentText,
-      getClassName,
-      RadioGroupCompChange,
-      ManagementClass,
-      TofoldWayTemplate,
-      setApplyEquipment,
-      delFoldWayTemplate,
-      ApplyEquipmentCloseClick,
-    };
-  },
-
 };
 </script>
 <style lang='scss'>

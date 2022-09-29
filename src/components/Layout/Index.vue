@@ -52,6 +52,7 @@ export default {
     min-width: 1000px;
     margin: 0 8px;
     height: 100%;
+    overflow: hidden;
   }
   &.no-padding{
     padding: 0;

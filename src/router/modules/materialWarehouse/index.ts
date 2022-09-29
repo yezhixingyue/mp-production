@@ -241,19 +241,6 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/materialWarehouse/materialWarehouseManage/goodsAllocationPage.vue'),
     },
-
-    {
-      path: '/testLayout',
-      name: 'testLayout',
-      meta: {
-        title: '出入库单位-测试',
-        requiresAuth: true,
-        hideMenu: true,
-        pageName: 'testLayoutPage',
-        prevPage: 'materialClassifyManage',
-      },
-      component: () => import(/* webpackChunkName: "materialClassify" */ '@/views/materialWarehouse/testLayout.vue'),
-    },
   ],
 };
 const routeTree:RouteTreeType = {

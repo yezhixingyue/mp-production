@@ -427,72 +427,6 @@ export default {
       }
       return ratio * Number(Data.inDeliveryForm.Number);
     });
-    function ToOutDelivery() {
-      const routeData = router.resolve({
-        name: 'outDelivery',
-      });
-      // let routeData = this.$router.resolve({
-      //   name: "searchGoods",
-      //   query: params,
-      //   params:{ catId:params.catId }
-      // });
-      window.open(routeData.href, '_blank');
-    }
-
-    // 入库
-    function inDelivery() {
-      const getMsgs = () => {
-        const Msgs:string[] = [];
-        Data.inStorehouseGoodsPosition.forEach(item => {
-          item.GoodsPositionList.forEach(it => {
-            if (!it.Number) {
-              Msgs.push(`${item.StorehouseName} ${it.LocationName} ${it.PositionName}`);
-            }
-          });
-        });
-        return Msgs;
-      };
-      if (!Data.checkedMaterial?.MaterialID) {
-        messageBox.failSingleError('入库失败', '请选择物料', () => null, () => null);
-      } else if (!Data.inDeliveryForm.Number) {
-        messageBox.failSingleError('入库失败', '请输入入库数量', () => null, () => null);
-      } else if (!Data.inDeliveryForm.UnitID) {
-        messageBox.failSingleError('入库失败', '请选择入库单位', () => null, () => null);
-      } else if ((Data.inDeliveryForm.InStockType === 1 || Data.inDeliveryForm.InStockType === 3) && !Data.inDeliveryForm.SupplierID) {
-        messageBox.failSingleError('入库失败', '请选择供应商', () => null, () => null);
-      } else if (Data.inDeliveryForm.InStockType === 1 && !Data.inDeliveryForm.Price) {
-        messageBox.failSingleError('入库失败', '请输入单价', () => null, () => null);
-      } else if ((Data.inDeliveryForm.InStockType === 2 || Data.inDeliveryForm.InStockType === 4) && !Data.inDeliveryForm.Handler) {
-        messageBox.failSingleError('入库失败', '请选择退料人', () => null, () => null);
-      } else if (getMsgs().length) {
-        messageBox.failSingleError('入库失败', `请输入${getMsgs().join('、')}的入库数量`, () => null, () => null);
-      } else {
-        if (Data.checkedMaterial) {
-          Data.inDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
-        }
-        const temp:GoodsPositionItemType[] = [];
-        Data.inStorehouseGoodsPosition.forEach(item => {
-          temp.push(...item.GoodsPositionList);
-        });
-        Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
-        api.getStockIn(Data.inDeliveryForm).then(res => {
-          if (res.data.Status === 1000) {
-            messageBox.successSingle('入库成功', () => {
-              clearFrom();
-            }, () => {
-              clearFrom();
-            });
-          }
-        });
-      }
-    }
-    function getGoodsPositionList() {
-      api.getGoodsPositionList({ StorehouseID: Data.StorehouseID }).then(res => {
-        if (res.data.Status === 1000) {
-          Data.GoodsPositionList = res.data.Data as GoodsPositionListType[];
-        }
-      });
-    }
     // 获取仓库的入库总数量
     function getStorehouseInNumber(list) {
       let num = 0;
@@ -524,6 +458,80 @@ export default {
       }
       return num / ratio;
     });
+    function ToOutDelivery() {
+      const routeData = router.resolve({
+        name: 'outDelivery',
+      });
+      // let routeData = this.$router.resolve({
+      //   name: "searchGoods",
+      //   query: params,
+      //   params:{ catId:params.catId }
+      // });
+      window.open(routeData.href, '_blank');
+    }
+
+    // 入库
+    function inDelivery() {
+      // 两位小数
+      const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
+      const getMsgs = () => {
+        const Msgs:string[] = [];
+        Data.inStorehouseGoodsPosition.forEach(item => {
+          item.GoodsPositionList.forEach(it => {
+            if (!it.Number) {
+              Msgs.push(`${item.StorehouseName} ${it.LocationName} ${it.PositionName}`);
+            }
+          });
+        });
+        return Msgs;
+      };
+      if (!Data.checkedMaterial?.MaterialID) {
+        messageBox.failSingleError('入库失败', '请选择物料', () => null, () => null);
+      } else if (!Data.inDeliveryForm.Number) {
+        messageBox.failSingleError('入库失败', '请输入入库数量', () => null, () => null);
+      } else if (!reg.test(String(Data.inDeliveryForm.Number))) {
+        messageBox.failSingleError('入库失败', '入库数量不能超过两位小数', () => null, () => null);
+      } else if (!Data.inDeliveryForm.UnitID) {
+        messageBox.failSingleError('入库失败', '请选择入库单位', () => null, () => null);
+      } else if ((Data.inDeliveryForm.InStockType === 1 || Data.inDeliveryForm.InStockType === 3) && !Data.inDeliveryForm.SupplierID) {
+        messageBox.failSingleError('入库失败', '请选择供应商', () => null, () => null);
+      } else if (Data.inDeliveryForm.InStockType === 1 && !Data.inDeliveryForm.Price) {
+        messageBox.failSingleError('入库失败', '请输入单价', () => null, () => null);
+      } else if (Data.inDeliveryForm.InStockType === 1 && !reg.test(String(Data.inDeliveryForm.Price))) {
+        messageBox.failSingleError('入库失败', '单价不能超过两位小数', () => null, () => null);
+      } else if ((Data.inDeliveryForm.InStockType === 2 || Data.inDeliveryForm.InStockType === 4) && !Data.inDeliveryForm.Handler) {
+        messageBox.failSingleError('入库失败', '请选择退料人', () => null, () => null);
+      } else if (getMsgs().length) {
+        messageBox.failSingleError('入库失败', `请输入${getMsgs().join('、')}的入库数量`, () => null, () => null);
+      } else if (Number(Data.inDeliveryForm.Number) !== Number(getInUnitNum.value)) {
+        messageBox.failSingleError('入库失败', '入库数量与合计入库数量不一致', () => null, () => null);
+      } else {
+        if (Data.checkedMaterial) {
+          Data.inDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
+        }
+        const temp:GoodsPositionItemType[] = [];
+        Data.inStorehouseGoodsPosition.forEach(item => {
+          temp.push(...item.GoodsPositionList);
+        });
+        Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
+        api.getStockIn(Data.inDeliveryForm).then(res => {
+          if (res.data.Status === 1000) {
+            messageBox.successSingle('入库成功', () => {
+              clearFrom();
+            }, () => {
+              clearFrom();
+            });
+          }
+        });
+      }
+    }
+    function getGoodsPositionList() {
+      api.getGoodsPositionList({ StorehouseID: Data.StorehouseID }).then(res => {
+        if (res.data.Status === 1000) {
+          Data.GoodsPositionList = res.data.Data as GoodsPositionListType[];
+        }
+      });
+    }
     // 出入库单位名;
     const inUnitName = computed(() => {
       const { UnitID } = Data.inDeliveryForm;

@@ -91,9 +91,9 @@
   </div>
 </template>
 
-<script lang='ts'>
+<script setup lang='ts'>
 import {
-  reactive, onMounted, computed,
+  reactive, onMounted, computed, getCurrentInstance,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -116,228 +116,210 @@ interface DataType {
   setPageShow:boolean
   setPageInp:number | ''
 }
-export default {
-  name: 'foldWayTemplateSteupPage',
-  components: {
-    OneLevelSelect,
-    DialogContainerComp,
-    MpBreadcrumb,
+const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
+const route = useRoute();
+const RouterStore = useRouterStore();
+const PasteupSettingStore = usePasteupSettingStore();
+const Data:DataType = reactive({
+  setPageShow: false,
+  setPageInp: '',
+  foldWayTemplateFrom: {
+    ClassID: '',
+    RowNumber: '',
+    ColumnNumber: '',
+    PositionList: [
+      // {
+      //   RowValue: 0,
+      //   ColumnValue: 0,
+      //   PageNumber: 0,
+      //   ShowType: 0,
+      // },
+    ],
+    CreateTime: '',
+    ID: '',
+    Name: '',
   },
-  setup() {
-    const route = useRoute();
-    const RouterStore = useRouterStore();
-    const PasteupSettingStore = usePasteupSettingStore();
-    const Data:DataType = reactive({
-      setPageShow: false,
-      setPageInp: '',
-      foldWayTemplateFrom: {
-        ClassID: '',
-        RowNumber: '',
-        ColumnNumber: '',
-        PositionList: [
-          // {
-          //   RowValue: 0,
-          //   ColumnValue: 0,
-          //   PageNumber: 0,
-          //   ShowType: 0,
-          // },
-        ],
-        CreateTime: '',
-        ID: '',
-        Name: '',
-      },
-      // 折手模板图的行列数组
-      FoldWayPositionList: [],
-      setPageObj: {
-        RowIndex: '',
-        ColIndex: '',
-      },
-    });
-    const BreadcrumbList = computed(() => [
-      { to: { path: '/foldWayTemplate' }, name: '折手模板' },
-      {
-        name: `${Data.foldWayTemplateFrom.ID ? '编辑' : '添加'}折手模板：
+  // 折手模板图的行列数组
+  FoldWayPositionList: [],
+  setPageObj: {
+    RowIndex: '',
+    ColIndex: '',
+  },
+});
+const BreadcrumbList = computed(() => [
+  { to: { path: '/foldWayTemplate' }, name: '折手模板' },
+  {
+    name: `${Data.foldWayTemplateFrom.ID ? '编辑' : '添加'}折手模板：
           ${Data.foldWayTemplateFrom.ID ? `${Data.foldWayTemplateFrom.Name}` : ''}`,
-      },
-    ]);
-    // 是否是双数
-    function isEven(num) {
-      return num % 2 === 0;
-    }
-    function createMap() {
-      if (!Data.foldWayTemplateFrom.RowNumber) {
-        messageBox.failSingleError('生成失败', '请输入行数', () => null, () => null);
-      } else if (!Data.foldWayTemplateFrom.ColumnNumber) {
-        messageBox.failSingleError('生成失败', '请输入列数', () => null, () => null);
-      } else if (Number(Data.foldWayTemplateFrom.ColumnNumber) === 1 && Number(Data.foldWayTemplateFrom.RowNumber) === 1) {
-        messageBox.failSingleError('生成失败', '行数列数不能同时为1', () => null, () => null);
-      } else if (Data.foldWayTemplateFrom.RowNumber > 100 || Data.foldWayTemplateFrom.ColumnNumber > 100) {
-        messageBox.failSingleError('生成失败', '请输入100以内的行数或列数', () => null, () => null);
-      } else {
-        let PageNumber = 1;
-        // 行
-        const Row:PositionListType[][] = [];
-        for (let Rowindex = 0; Rowindex < Data.foldWayTemplateFrom.RowNumber; Rowindex++) {
-          // 列
-          const Col:PositionListType[] = [];
-          for (let Colindex = 0; Colindex < Data.foldWayTemplateFrom.ColumnNumber; Colindex++) {
-            const PositionItem:PositionListType = {
-              RowValue: Rowindex + 1,
-              ColumnValue: Colindex + 1,
-              PageNumber,
-              ShowType: 0,
-            };
-            PageNumber += 2;
-            Col.push(PositionItem);
-          }
-          Row.push(Col);
-        }
-        Data.FoldWayPositionList = Row;
+  },
+]);
+// 是否是双数
+function isEven(num) {
+  return num % 2 === 0;
+}
+function createMap() {
+  if (!Data.foldWayTemplateFrom.RowNumber) {
+    messageBox.failSingleError('生成失败', '请输入行数', () => null, () => null);
+  } else if (!Data.foldWayTemplateFrom.ColumnNumber) {
+    messageBox.failSingleError('生成失败', '请输入列数', () => null, () => null);
+  } else if (Number(Data.foldWayTemplateFrom.ColumnNumber) === 1 && Number(Data.foldWayTemplateFrom.RowNumber) === 1) {
+    messageBox.failSingleError('生成失败', '行数列数不能同时为1', () => null, () => null);
+  } else if (Data.foldWayTemplateFrom.RowNumber > 100 || Data.foldWayTemplateFrom.ColumnNumber > 100) {
+    messageBox.failSingleError('生成失败', '请输入100以内的行数或列数', () => null, () => null);
+  } else {
+    let PageNumber = 1;
+    // 行
+    const Row:PositionListType[][] = [];
+    for (let Rowindex = 0; Rowindex < Data.foldWayTemplateFrom.RowNumber; Rowindex++) {
+      // 列
+      const Col:PositionListType[] = [];
+      for (let Colindex = 0; Colindex < Data.foldWayTemplateFrom.ColumnNumber; Colindex++) {
+        const PositionItem:PositionListType = {
+          RowValue: Rowindex + 1,
+          ColumnValue: Colindex + 1,
+          PageNumber,
+          ShowType: 0,
+        };
+        PageNumber += 2;
+        Col.push(PositionItem);
       }
+      Row.push(Col);
     }
-    // 旋转
-    function rotate(RowIndex, ColIndex) {
-      const ShowType = Data.FoldWayPositionList[RowIndex][ColIndex].ShowType ? 0 : 1;
-      Data.FoldWayPositionList[RowIndex][ColIndex].ShowType = ShowType;
-    }
-    // 设置页码
-    function setPage(RowIndex, ColIndex, PageNumber) {
-      Data.setPageInp = PageNumber;
-      Data.setPageObj = {
-        RowIndex,
-        ColIndex,
-      };
-      Data.setPageShow = true;
-    }
-    function setPageCloseClick() {
-      Data.setPageShow = false;
-    }
-    function setPageClosedClick() {
-      Data.setPageInp = '';
-      Data.setPageObj = {
-        RowIndex: '',
-        ColIndex: '',
-      };
-    }
-    function setStorage() { // 设置会话存储
-      sessionStorage.setItem('foldWayTemplateSteupPage', 'true');
-    }
-    function foldWayTemplateSave() {
-      if (!Data.foldWayTemplateFrom.ClassID) {
-        messageBox.failSingleError('保存失败', '请选择分类', () => null, () => null);
-      } else if (!Data.foldWayTemplateFrom.Name) {
-        messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
-      } else if (!Data.foldWayTemplateFrom.RowNumber) {
-        messageBox.failSingleError('保存失败', '请输入行数', () => null, () => null);
-      } else if (!Data.foldWayTemplateFrom.ColumnNumber) {
-        messageBox.failSingleError('保存失败', '请输入列数', () => null, () => null);
-      } else if (!Data.FoldWayPositionList.length) {
-        messageBox.failSingleError('保存失败', '请生成模板图', () => null, () => null);
-      } else {
-        Data.foldWayTemplateFrom.PositionList = [];
-        Data.FoldWayPositionList.forEach(res => {
-          Data.foldWayTemplateFrom.PositionList.push(...res);
-        });
-        api.getFoldWayTemplateSave(Data.foldWayTemplateFrom).then(res => {
-          if (res.data.Status === 1000) {
-            const cb = () => {
-              Data.foldWayTemplateFrom = {
-                ClassID: '',
-                RowNumber: '',
-                ColumnNumber: '',
-                PositionList: [],
-                CreateTime: '',
-                ID: '',
-                Name: '',
-              };
-              Data.FoldWayPositionList = [];
-              setStorage();
-              RouterStore.goBack();
-            };
-            // 保存成功
-            messageBox.successSingle('保存成功', cb, cb);
-          }
-        });
+    Data.FoldWayPositionList = Row;
+  }
+}
+// 旋转
+function rotate(RowIndex, ColIndex) {
+  const ShowType = Data.FoldWayPositionList[RowIndex][ColIndex].ShowType ? 0 : 1;
+  Data.FoldWayPositionList[RowIndex][ColIndex].ShowType = ShowType;
+}
+// 设置页码
+function setPage(RowIndex, ColIndex, PageNumber) {
+  Data.setPageInp = PageNumber;
+  Data.setPageObj = {
+    RowIndex,
+    ColIndex,
+  };
+  Data.setPageShow = true;
+}
+function setPageCloseClick() {
+  Data.setPageShow = false;
+}
+function setPageClosedClick() {
+  Data.setPageInp = '';
+  Data.setPageObj = {
+    RowIndex: '',
+    ColIndex: '',
+  };
+}
+function setStorage() { // 设置会话存储
+  sessionStorage.setItem('foldWayTemplateSteupPage', 'true');
+}
+function foldWayTemplateSave() {
+  if (!Data.foldWayTemplateFrom.ClassID) {
+    messageBox.failSingleError('保存失败', '请选择分类', () => null, () => null);
+  } else if (!Data.foldWayTemplateFrom.Name) {
+    messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
+  } else if (!Data.foldWayTemplateFrom.RowNumber) {
+    messageBox.failSingleError('保存失败', '请输入行数', () => null, () => null);
+  } else if (!Data.foldWayTemplateFrom.ColumnNumber) {
+    messageBox.failSingleError('保存失败', '请输入列数', () => null, () => null);
+  } else if (!Data.FoldWayPositionList.length) {
+    messageBox.failSingleError('保存失败', '请生成模板图', () => null, () => null);
+  } else {
+    Data.foldWayTemplateFrom.PositionList = [];
+    Data.FoldWayPositionList.forEach(res => {
+      Data.foldWayTemplateFrom.PositionList.push(...res);
+    });
+    api.getFoldWayTemplateSave(Data.foldWayTemplateFrom).then(res => {
+      if (res.data.Status === 1000) {
+        const cb = () => {
+          Data.foldWayTemplateFrom = {
+            ClassID: '',
+            RowNumber: '',
+            ColumnNumber: '',
+            PositionList: [],
+            CreateTime: '',
+            ID: '',
+            Name: '',
+          };
+          Data.FoldWayPositionList = [];
+          setStorage();
+          RouterStore.goBack();
+        };
+        // 保存成功
+        messageBox.successSingle('保存成功', cb, cb);
       }
-    }
-    function setPagePrimaryClick() {
-      // Number.isInteger(3)
-      if (!Data.setPageInp) {
-        messageBox.failSingleError('设置失败', '请输入页码', () => null, () => null);
-      } else if (Number(Data.setPageInp) < 1 || !Number.isInteger(3)) {
-        messageBox.failSingleError('设置失败', '请输入正整数的页码', () => null, () => null);
-      } else if (Data.setPageInp > Number(Data.foldWayTemplateFrom.RowNumber) * Number(Data.foldWayTemplateFrom.ColumnNumber) * 2) {
-        messageBox.failSingleError(
-          '设置失败',
-          `请输入小于等于${Number(Data.foldWayTemplateFrom.RowNumber) * Number(Data.foldWayTemplateFrom.ColumnNumber) * 2}的页码`,
-          () => null,
-          () => null,
-        );
-      } else {
-        Data.FoldWayPositionList.forEach((item, index) => {
-          item.forEach((it, i) => {
-            const tempNum = isEven(it.PageNumber) ? it.PageNumber - 1 : it.PageNumber + 1;
-            if (Data.setPageInp === it.PageNumber || Data.setPageInp === tempNum) {
-              // 当前设置页码格子的页码
-              const nowPageNum = Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].PageNumber;
-              // 和已经有此页码（组）交换页码
-              Data.FoldWayPositionList[index][i].PageNumber = nowPageNum;
-            }
-          });
-        });
-        Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].PageNumber = Data.setPageInp as number;
-        setPageCloseClick();
-      }
-    }
-
-    // 转换为显示的列表
-    function toFoldWayPositionList(PositionList:PositionListType[]) {
-      PositionList.forEach(res => {
-        const temp = Data.FoldWayPositionList.find(item => item[0].RowValue === res.RowValue);
-        if (!temp) {
-          const row = PositionList.filter(item => res.RowValue === item.RowValue);
-          row.sort((a, b) => a.ColumnValue - b.ColumnValue);
-          Data.FoldWayPositionList.push(row);
+    });
+  }
+}
+function setPagePrimaryClick() {
+  // Number.isInteger(3)
+  if (!Data.setPageInp) {
+    messageBox.failSingleError('设置失败', '请输入页码', () => null, () => null);
+  } else if (Number(Data.setPageInp) < 1 || !Number.isInteger(3)) {
+    messageBox.failSingleError('设置失败', '请输入正整数的页码', () => null, () => null);
+  } else if (Data.setPageInp > Number(Data.foldWayTemplateFrom.RowNumber) * Number(Data.foldWayTemplateFrom.ColumnNumber) * 2) {
+    messageBox.failSingleError(
+      '设置失败',
+      `请输入小于等于${Number(Data.foldWayTemplateFrom.RowNumber) * Number(Data.foldWayTemplateFrom.ColumnNumber) * 2}的页码`,
+      () => null,
+      () => null,
+    );
+  } else {
+    Data.FoldWayPositionList.forEach((item, index) => {
+      item.forEach((it, i) => {
+        const tempNum = isEven(it.PageNumber) ? it.PageNumber - 1 : it.PageNumber + 1;
+        if (Data.setPageInp === it.PageNumber || Data.setPageInp === tempNum) {
+          // 当前设置页码格子的页码
+          const nowPageNum = Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].PageNumber;
+          // 和已经有此页码（组）交换页码
+          Data.FoldWayPositionList[index][i].PageNumber = nowPageNum;
         }
       });
-    }
-    // 翻转印面
-    function rotatePage() {
-      Data.FoldWayPositionList.map((item, index) => item.reverse().map((res, i) => {
-        const temp = res;
-        temp.RowValue = index + 1;
-        temp.ColumnValue = i + 1;
-        temp.PageNumber = isEven(res.PageNumber) ? res.PageNumber - 1 : res.PageNumber + 1;
-        return temp;
-      }));
-    }
-    onMounted(() => {
-      const temp = JSON.parse(route.params.Template as string) as FoldWayTemplateType;
-      if (temp.ID) {
-        Data.foldWayTemplateFrom = temp;
-        Data.FoldWayPositionList = [];
-        toFoldWayPositionList(temp.PositionList);
-      }
-      if (!PasteupSettingStore.FoldWayTemplateClassList.length) {
-        PasteupSettingStore.getFoldWayTemplateClassList();
-      }
     });
-    return {
-      BreadcrumbList,
-      Data,
-      PasteupSettingStore,
-      createMap,
-      setPage,
-      rotate,
-      isEven,
-      rotatePage,
-      foldWayTemplateSave,
-      setPagePrimaryClick,
-      setPageCloseClick,
-      setPageClosedClick,
-    };
-  },
+    Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].PageNumber = Data.setPageInp as number;
+    setPageCloseClick();
+  }
+}
 
+// 转换为显示的列表
+function toFoldWayPositionList(PositionList:PositionListType[]) {
+  PositionList.forEach(res => {
+    const temp = Data.FoldWayPositionList.find(item => item[0].RowValue === res.RowValue);
+    if (!temp) {
+      const row = PositionList.filter(item => res.RowValue === item.RowValue);
+      row.sort((a, b) => a.ColumnValue - b.ColumnValue);
+      Data.FoldWayPositionList.push(row);
+    }
+  });
+}
+// 翻转印面
+function rotatePage() {
+  Data.FoldWayPositionList.map((item, index) => item.reverse().map((res, i) => {
+    const temp = res;
+    temp.RowValue = index + 1;
+    temp.ColumnValue = i + 1;
+    temp.PageNumber = isEven(res.PageNumber) ? res.PageNumber - 1 : res.PageNumber + 1;
+    return temp;
+  }));
+}
+onMounted(() => {
+  const temp = JSON.parse(route.params.Template as string) as FoldWayTemplateType;
+  if (temp.ID) {
+    Data.foldWayTemplateFrom = temp;
+    Data.FoldWayPositionList = [];
+    toFoldWayPositionList(temp.PositionList);
+  }
+  if (!PasteupSettingStore.FoldWayTemplateClassList.length) {
+    PasteupSettingStore.getFoldWayTemplateClassList();
+  }
+});
+
+</script>
+<script lang="ts">
+export default {
+  name: 'foldWayTemplateSteupPage',
 };
 </script>
 <style lang='scss'>

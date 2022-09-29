@@ -51,12 +51,12 @@
     </DialogContainerComp>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
   reactive, computed, watch,
 } from 'vue';
-import { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
+import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 
 interface applyEquipmentListFrom extends UseClassEquipmentGroupType{
   checkAll:boolean
@@ -71,136 +71,138 @@ interface DataType {
   applyEquipmentListFrom:applyEquipmentListFrom[]
   EquipmentGroupCheckDataList:EquipmentGroupCheckDataList[]
 }
-export default {
-  components: {
-    DialogContainerComp,
+interface Props {
+  visible: boolean
+  changeVisible?: (bol:boolean) => void
+  saveEquipment?: (list:EquipmentGroups[]) => void
+  // 已经设置的适用设备列表（一级）
+  haveSetApplyEquipmentList?: EquipmentGroups[]
+  applyEquipmentList?: UseClassEquipmentGroupType[]
+  foldWayName?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  visible: false,
+  changeVisible: () => null,
+  saveEquipment: () => null,
+  haveSetApplyEquipmentList: () => [],
+  applyEquipmentList: () => [],
+  foldWayName: '',
+});
+// props: {
+//     visible: {
+//       type: Boolean,
+//       default: false,
+//     },
+//     changeVisible: {
+//       type: Function,
+//       default: () => null,
+//     },
+//     saveEquipment: {
+//       type: Function,
+//       default: () => null,
+//     },
+//     // 已经设置的适用设备列表（一级）
+//     haveSetApplyEquipmentList: {
+//       type: Array,
+//       defalut: [],
+//     },
+//     // 适用设备列表（二级）
+//     applyEquipmentList: {
+//       type: Array,
+//       defalut: () => [],
+//     },
+//     // 折手名
+//     foldWayName: {
+//       type: String,
+//       defalut: '',
+//     },
+//   },
+const Data:DataType = reactive({
+  applyEquipmentListFrom: [],
+  EquipmentGroupCheckDataList: [],
+});
+const Dialog = computed({
+  get() {
+    return props.visible;
   },
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-    changeVisible: {
-      type: Function,
-      default: () => null,
-    },
-    saveEquipment: {
-      type: Function,
-      default: () => null,
-    },
-    // 已经设置的适用设备列表（一级）
-    haveSetApplyEquipmentList: {
-      type: Array,
-      defalut: [],
-    },
-    // 适用设备列表（二级）
-    applyEquipmentList: {
-      type: Array,
-      defalut: () => [],
-    },
-    // 折手名
-    foldWayName: {
-      type: String,
-      defalut: '',
-    },
+  set(newVal) {
+    props.changeVisible(newVal);
   },
-  setup(props) {
-    const Data:DataType = reactive({
-      applyEquipmentListFrom: [],
-      EquipmentGroupCheckDataList: [],
-    });
-    const Dialog = computed({
-      get() {
-        return props.visible;
-      },
-      set(newVal) {
-        props.changeVisible(newVal);
-      },
-    });
-    function setApplyEquipmentCloseClick() {
-      props.changeVisible(false);
-    }
-    function setApplyEquipmentClosed() {
-      // 清空表单
-      Data.applyEquipmentListFrom.map(res => {
-        const temp = res;
-        temp.checkAll = false;
-        temp.isIndeterminate = false;
-        temp.checks = [];
-        return temp;
-      });
-    }
-    function setApplyEquipmentPrimaryClick() {
-      // 所有设备
-      const allEquipment:EquipmentGroups[] = [];
-      Data.applyEquipmentListFrom.forEach(item => {
-        allEquipment.push(...item.EquipmentGroups);
-      });
-      // 选中的设备
-      const actionEquipment:EquipmentGroups[] = [];
-      Data.applyEquipmentListFrom.forEach(item => {
-        item.checks.forEach(it => {
-          const temp = allEquipment.find(Equipment => Equipment.ID === it);
-          if (temp) {
-            actionEquipment.push(temp);
-          }
-        });
-      });
-      props.saveEquipment(actionEquipment);
-    }
-    function handleCheckAllChange(val: boolean, index) {
-      if (val) {
-        const a = Data.applyEquipmentListFrom[index].EquipmentGroups.map(it => it.ID as string);
-        Data.applyEquipmentListFrom[index].checks = a;
-      } else {
-        Data.applyEquipmentListFrom[index].checks = [];
+});
+function setApplyEquipmentCloseClick() {
+  props.changeVisible(false);
+}
+function setApplyEquipmentClosed() {
+  // 清空表单
+  Data.applyEquipmentListFrom.map(res => {
+    const temp = res;
+    temp.checkAll = false;
+    temp.isIndeterminate = false;
+    temp.checks = [];
+    return temp;
+  });
+}
+function setApplyEquipmentPrimaryClick() {
+  // 所有设备
+  const allEquipment:EquipmentGroups[] = [];
+  Data.applyEquipmentListFrom.forEach(item => {
+    allEquipment.push(...item.EquipmentGroups);
+  });
+  // 选中的设备
+  const actionEquipment:EquipmentGroups[] = [];
+  Data.applyEquipmentListFrom.forEach(item => {
+    item.checks.forEach(it => {
+      const temp = allEquipment.find(Equipment => Equipment.ID === it);
+      if (temp) {
+        actionEquipment.push(temp);
       }
-      Data.applyEquipmentListFrom[index].isIndeterminate = false;
-    }
-    function handleCheckedCitiesChange(value:string[], index) {
-      const checkedCount = value.length;
-      Data.applyEquipmentListFrom[index].checkAll = checkedCount === Data.applyEquipmentListFrom[index].EquipmentGroups.length;
-      Data.applyEquipmentListFrom[index].isIndeterminate = checkedCount > 0
+    });
+  });
+  props.saveEquipment(actionEquipment);
+}
+function handleCheckAllChange(val: boolean, index) {
+  if (val) {
+    const a = Data.applyEquipmentListFrom[index].EquipmentGroups.map(it => it.ID as string);
+    Data.applyEquipmentListFrom[index].checks = a;
+  } else {
+    Data.applyEquipmentListFrom[index].checks = [];
+  }
+  Data.applyEquipmentListFrom[index].isIndeterminate = false;
+}
+function handleCheckedCitiesChange(value:string[], index) {
+  const checkedCount = value.length;
+  Data.applyEquipmentListFrom[index].checkAll = checkedCount === Data.applyEquipmentListFrom[index].EquipmentGroups.length;
+  Data.applyEquipmentListFrom[index].isIndeterminate = checkedCount > 0
        && checkedCount < Data.applyEquipmentListFrom[index].EquipmentGroups.length;
-    }
-    watch(() => props.applyEquipmentList, (newVal) => {
-      if (newVal) {
-        newVal.forEach((element) => {
-          Data.applyEquipmentListFrom.push({
-            ...element as UseClassEquipmentGroupType,
-            checkAll: false,
-            isIndeterminate: false,
-            checks: [],
-          });
-        });
-      }
+}
+watch(() => props.applyEquipmentList, (newVal) => {
+  if (newVal) {
+    newVal.forEach((element) => {
+      Data.applyEquipmentListFrom.push({
+        ...element as UseClassEquipmentGroupType,
+        checkAll: false,
+        isIndeterminate: false,
+        checks: [],
+      });
     });
-    watch(() => Dialog.value, (newVal) => {
-      if (newVal && props.haveSetApplyEquipmentList) {
-        const haveSetApplyEquipmentList = props.haveSetApplyEquipmentList as EquipmentGroups[];
-        console.log(props.haveSetApplyEquipmentList, 'Dialog');
-        Data.applyEquipmentListFrom.forEach((element, index) => {
-          element.EquipmentGroups.forEach(item => {
-            const temp = haveSetApplyEquipmentList.find(res => res.ID === item.ID);
-            if (temp) {
-              Data.applyEquipmentListFrom[index].checks.push(temp.ID);
-              handleCheckedCitiesChange(Data.applyEquipmentListFrom[index].checks, index);
-            }
-          });
-        });
-      }
+  }
+});
+watch(() => Dialog.value, (newVal) => {
+  if (newVal && props.haveSetApplyEquipmentList) {
+    const haveSetApplyEquipmentList = props.haveSetApplyEquipmentList as EquipmentGroups[];
+    console.log(props.haveSetApplyEquipmentList, 'Dialog');
+    Data.applyEquipmentListFrom.forEach((element, index) => {
+      element.EquipmentGroups.forEach(item => {
+        const temp = haveSetApplyEquipmentList.find(res => res.ID === item.ID);
+        if (temp) {
+          Data.applyEquipmentListFrom[index].checks.push(temp.ID);
+          handleCheckedCitiesChange(Data.applyEquipmentListFrom[index].checks, index);
+        }
+      });
     });
-    return {
-      Data,
-      Dialog,
-      handleCheckAllChange,
-      handleCheckedCitiesChange,
-      setApplyEquipmentCloseClick,
-      setApplyEquipmentClosed,
-      setApplyEquipmentPrimaryClick,
-    };
-  },
-};
+  }
+});
 </script>
 <style lang="scss">
   .set-apply-equipment-dialog{

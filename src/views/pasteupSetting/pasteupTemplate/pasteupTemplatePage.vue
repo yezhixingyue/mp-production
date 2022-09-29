@@ -86,7 +86,7 @@
   </div>
 </template>
 
-<script lang='ts'>
+<script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
   reactive, onMounted, onActivated, computed,
@@ -108,110 +108,93 @@ interface DataType {
   getImpositionTemmplateData:getImpositionTemmplateDataType,
   ImpositionTemmplateList:ImpositionTemmplate[],
 }
+const router = useRouter();
+const PasteupSettingStore = usePasteupSettingStore();
+const Data:DataType = reactive({
+  DataTotal: 0,
+  getImpositionTemmplateData: {
+    ClassID: '',
+    Page: 1,
+    PageSize: 20,
+  },
+  ImpositionTemmplateList: [],
+});
+const ImpositionTemmplateClassList = computed(() => [{
+  ID: '',
+  Name: '所有分类',
+}, ...PasteupSettingStore.ImpositionTemmplateClassList]);
+const RadioGroupCompValue = computed(() => ({
+  level1Val: Data.getImpositionTemmplateData.ClassID,
+  level2Val: '',
+}));
+
+function getImpositionTemmplateList() {
+  api.getImpositionTemmplateList(Data.getImpositionTemmplateData).then(res => {
+    if (res.data.Status === 1000) {
+      Data.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
+      Data.DataTotal = res.data.DataNumber as number;
+    }
+  });
+}
+function RadioGroupCompChange(levelData) {
+  const { level1Val } = levelData;
+  if (level1Val !== undefined) {
+    Data.getImpositionTemmplateData.ClassID = level1Val;
+    getImpositionTemmplateList();
+  }
+}
+// 管理分类
+function ManagementClass() {
+  router.push({
+    name: 'impositionTemmplateClass',
+  });
+}
+// 添加修改拼版模板
+function ToPasteupTemplateSteupPagePage(item = null) {
+  router.push({
+    name: 'pasteupTemplateSteup',
+    params: { Template: JSON.stringify(item) },
+  });
+}
+function PaginationChange(newVal) {
+  if (Data.getImpositionTemmplateData.Page === newVal) return;
+  Data.getImpositionTemmplateData.Page = newVal;
+  getImpositionTemmplateList();
+}
+
+function delImpositionTemmplate(item) {
+  messageBox.warnCancelBox('确定要删除此拼版模板吗？', `${item.Name}`, () => {
+    api.getImpositionTemmplateRemove(item.ID).then(res => {
+      if (res.data.Status === 1000) {
+        // 删除成功
+        getImpositionTemmplateList();
+      }
+    });
+  }, () => undefined);
+}
+function getClassName(ClassID) {
+  const ClassItem = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === ClassID);
+  return ClassItem?.Name;
+}
+
+onActivated(() => {
+  const pasteupTemplateSteupPage = sessionStorage.getItem('pasteupTemplateSteupPage') === 'true';
+  if (pasteupTemplateSteupPage) {
+    getImpositionTemmplateList();
+    sessionStorage.removeItem('pasteupTemplateSteupPage');
+  }
+});
+onMounted(() => {
+  sessionStorage.removeItem('pasteupTemplateSteupPage');
+  getImpositionTemmplateList();
+  // 获取所有分类
+  PasteupSettingStore.getImpositionTemmplateClassList();
+});
+
+</script>
+<script lang="ts">
 export default {
   name: 'pasteupTemplatePage',
-  components: {
-    MpPagination,
-    RadioGroupComp,
-  },
-  setup() {
-    const router = useRouter();
-    const PasteupSettingStore = usePasteupSettingStore();
-    const Data:DataType = reactive({
-      DataTotal: 0,
-      getImpositionTemmplateData: {
-        ClassID: '',
-        Page: 1,
-        PageSize: 20,
-      },
-      ImpositionTemmplateList: [],
-    });
-    const ImpositionTemmplateClassList = computed(() => [{
-      ID: '',
-      Name: '所有分类',
-    }, ...PasteupSettingStore.ImpositionTemmplateClassList]);
-    const RadioGroupCompValue = computed(() => ({
-      level1Val: Data.getImpositionTemmplateData.ClassID,
-      level2Val: '',
-    }));
-
-    function getImpositionTemmplateList() {
-      api.getImpositionTemmplateList(Data.getImpositionTemmplateData).then(res => {
-        if (res.data.Status === 1000) {
-          Data.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
-          Data.DataTotal = res.data.DataNumber as number;
-        }
-      });
-    }
-    function RadioGroupCompChange(levelData) {
-      const { level1Val } = levelData;
-      if (level1Val !== undefined) {
-        Data.getImpositionTemmplateData.ClassID = level1Val;
-        getImpositionTemmplateList();
-      }
-    }
-    // 管理分类
-    function ManagementClass() {
-      router.push({
-        name: 'impositionTemmplateClass',
-      });
-    }
-    // 添加修改拼版模板
-    function ToPasteupTemplateSteupPagePage(item = null) {
-      router.push({
-        name: 'pasteupTemplateSteup',
-        params: { Template: JSON.stringify(item) },
-      });
-    }
-    function PaginationChange(newVal) {
-      if (Data.getImpositionTemmplateData.Page === newVal) return;
-      Data.getImpositionTemmplateData.Page = newVal;
-      getImpositionTemmplateList();
-    }
-
-    function delImpositionTemmplate(item) {
-      messageBox.warnCancelBox('确定要删除此拼版模板吗？', `${item.Name}`, () => {
-        api.getImpositionTemmplateRemove(item.ID).then(res => {
-          if (res.data.Status === 1000) {
-          // 删除成功
-            getImpositionTemmplateList();
-          }
-        });
-      }, () => undefined);
-    }
-    function getClassName(ClassID) {
-      const ClassItem = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === ClassID);
-      return ClassItem?.Name;
-    }
-
-    onActivated(() => {
-      const pasteupTemplateSteupPage = sessionStorage.getItem('pasteupTemplateSteupPage') === 'true';
-      if (pasteupTemplateSteupPage) {
-        getImpositionTemmplateList();
-        sessionStorage.removeItem('pasteupTemplateSteupPage');
-      }
-    });
-    onMounted(() => {
-      sessionStorage.removeItem('pasteupTemplateSteupPage');
-      getImpositionTemmplateList();
-      // 获取所有分类
-      PasteupSettingStore.getImpositionTemmplateClassList();
-    });
-    return {
-      Data,
-      ImpositionTemmplateClassList,
-      PasteupSettingStore,
-      RadioGroupCompValue,
-      getClassName,
-      ManagementClass,
-      RadioGroupCompChange,
-      getImpositionTemmplateList,
-      PaginationChange,
-      delImpositionTemmplate,
-      ToPasteupTemplateSteupPagePage,
-    };
-  },
-
 };
 </script>
 <style lang='scss'>

@@ -49,10 +49,10 @@
   </div>
 </template>
 
-<script lang='ts'>
+<script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  reactive, onMounted,
+  reactive, onMounted, getCurrentInstance,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -66,98 +66,83 @@ interface DataType {
   addClassFrom:FoldWayTemplateClassType
   DataTotal:number
 }
+const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
+const PasteupSettingStore = usePasteupSettingStore();
+const Data:DataType = reactive({
+  addClassShow: false,
+  addClassFrom: {
+    Type: 0,
+    CreateTime: '',
+    ID: 0,
+    Name: '',
+  },
+  DataTotal: 0,
+});
+const BreadcrumbList = [
+  { to: { path: '/pasteupTemplate' }, name: '拼版模板' },
+  { name: '分类管理' },
+];
+function getClassList() {
+  PasteupSettingStore.getImpositionTemmplateClassList((DataNumber) => {
+    Data.DataTotal = DataNumber;
+  });
+}
+function addClassCloseClick() {
+  Data.addClassShow = false;
+}
+function addClassPrimaryClick() {
+  if (!Data.addClassFrom.Name) {
+    messageBox.failSingleError('保存失败', '请输入分类名称', () => null, () => null);
+  } else {
+    api.getImpositionTemmplateClassSave(Data.addClassFrom).then(res => {
+      if (res.data.Status === 1000) {
+        const cb = () => {
+          addClassCloseClick();
+          getClassList();
+        };
+        messageBox.successSingle(`${Data.addClassFrom.ID ? '修改' : '添加'}成功`, cb, cb);
+      }
+    });
+  }
+}
+
+function editClass(item:FoldWayTemplateClassType) {
+  Data.addClassFrom = { ...item };
+  Data.addClassShow = true;
+  //
+}
+function delClass(item) {
+  messageBox.warnCancelBox('确定要删除此分类吗？', `${item.Name}`, () => {
+    api.getImpositionTemmplateClassRemove(item.ID).then(res => {
+      if (res.data.Status === 1000) {
+        // 删除成功
+        getClassList();
+      }
+    });
+  }, () => undefined);
+}
+
+function addClassClosedClick() {
+  Data.addClassFrom = {
+    Type: 0,
+    CreateTime: '',
+    ID: 0,
+    Name: '',
+  };
+}
+// 添加印色
+async function addClass() {
+  Data.addClassShow = true;
+}
+
+onMounted(() => {
+  getClassList();
+});
+
+</script>
+<script lang="ts">
 export default {
   name: 'impositionTemmplateClassListPage',
-  components: {
-    DialogContainerComp,
-    MpPagination,
-    MpBreadcrumb,
-  },
-  setup() {
-    const PasteupSettingStore = usePasteupSettingStore();
-    const Data:DataType = reactive({
-      addClassShow: false,
-      addClassFrom: {
-        Type: 0,
-        CreateTime: '',
-        ID: 0,
-        Name: '',
-      },
-      DataTotal: 0,
-    });
-    const BreadcrumbList = [
-      { to: { path: '/pasteupTemplate' }, name: '拼版模板' },
-      { name: '分类管理' },
-    ];
-    function getClassList() {
-      PasteupSettingStore.getImpositionTemmplateClassList((DataNumber) => {
-        Data.DataTotal = DataNumber;
-      });
-    }
-    function addClassCloseClick() {
-      Data.addClassShow = false;
-    }
-    function addClassPrimaryClick() {
-      if (!Data.addClassFrom.Name) {
-        messageBox.failSingleError('保存失败', '请输入分类名称', () => null, () => null);
-      } else {
-        api.getImpositionTemmplateClassSave(Data.addClassFrom).then(res => {
-          if (res.data.Status === 1000) {
-            const cb = () => {
-              addClassCloseClick();
-              getClassList();
-            };
-            messageBox.successSingle(`${Data.addClassFrom.ID ? '修改' : '添加'}成功`, cb, cb);
-          }
-        });
-      }
-    }
-
-    function editClass(item:FoldWayTemplateClassType) {
-      Data.addClassFrom = { ...item };
-      Data.addClassShow = true;
-      //
-    }
-    function delClass(item) {
-      messageBox.warnCancelBox('确定要删除此分类吗？', `${item.Name}`, () => {
-        api.getImpositionTemmplateClassRemove(item.ID).then(res => {
-          if (res.data.Status === 1000) {
-          // 删除成功
-            getClassList();
-          }
-        });
-      }, () => undefined);
-    }
-
-    function addClassClosedClick() {
-      Data.addClassFrom = {
-        Type: 0,
-        CreateTime: '',
-        ID: 0,
-        Name: '',
-      };
-    }
-    // 添加印色
-    async function addClass() {
-      Data.addClassShow = true;
-    }
-
-    onMounted(() => {
-      getClassList();
-    });
-    return {
-      BreadcrumbList,
-      Data,
-      PasteupSettingStore,
-      addClass,
-      addClassPrimaryClick,
-      addClassCloseClick,
-      addClassClosedClick,
-      editClass,
-      delClass,
-    };
-  },
-
 };
 </script>
 <style lang='scss'>

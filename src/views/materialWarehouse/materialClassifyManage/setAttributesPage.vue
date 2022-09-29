@@ -377,7 +377,7 @@ export default {
       width: 100px;
     }
     .bottom-count-box{
-      min-width: calc((100% - 100px) / 2);
+      width: calc((100% - 100px) / 2);
       justify-content: flex-end;
       display: flex;
       align-items: center;

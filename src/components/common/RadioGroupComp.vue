@@ -90,7 +90,7 @@ export default {
         level2Val: props.isAssociated ? '' : Data.level2,
       });
     }
-    function lv2SelectChange(params:number) {
+    function lv2SelectChange(params) {
       emitChange({
         level1Val: Data.level1,
         level2Val: params,

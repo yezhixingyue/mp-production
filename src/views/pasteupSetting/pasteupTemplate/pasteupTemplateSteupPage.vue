@@ -170,9 +170,9 @@
   </div>
 </template>
 
-<script lang='ts'>
+<script setup lang='ts'>
 import {
-  reactive, onMounted, computed,
+  reactive, onMounted, computed, getCurrentInstance,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute } from 'vue-router';
@@ -187,274 +187,262 @@ interface DataType {
   uploadBtnLoading: boolean
   addPasteupTemplateFrom: ImpositionTemmplate
 }
-export default {
-  name: 'pasteupTemplateSteupPage',
-  components: {
-    OneLevelSelect,
-    MpBreadcrumb,
-  },
-  setup() {
-    const route = useRoute();
-    const RouterStore = useRouterStore();
-    const PasteupSettingStore = usePasteupSettingStore();
-    const Data: DataType = reactive({
-      uploadBtnLoading: false,
-      addPasteupTemplateFrom: {
-        ClassID: '',
-        // 印刷版
-        IsPrintingPlate: false,
-        // 和印刷版保持一致
-        IsSameSizeWithPrintingPlate: false,
-        // 翻版方式
-        ReproductionType: 0,
-        // 尺寸
-        SizeType: 0,
-        ModeSizeAttribute: {
-          PlateInfo: {
-            FilePath: '',
-            Length: 0,
-            Width: 0,
-            AreaList: [
-              // {
-              //   XCoordinate: 0,
-              //   YCoordinate: 0,
-              //   Length: 0,
-              //   Width: 0,
-              // },
-            ],
-          },
-          // 是否按模位
-          UseMode: false,
-          ModeItemList: [
-            {
-              XCoordinate: null,
-              YCoordinate: null,
-              Length: null,
-              Width: null,
-              RowNumber: null,
-              ColumnNumber: null,
-              key: '1',
-            },
-          ],
-        },
-        ActualSizeAttribute: {
-          BleedTop: null,
-          BleedBottom: null,
-          BleedLeft: null,
-          BleedRight: null,
-        },
-        CreateTime: '',
-        ID: '',
-        Name: '',
-      },
-    });
-    const BreadcrumbList = computed(() => [
-      { to: { path: '/pasteupTemplate' }, name: '拼版模板' },
-      {
-        name: `${Data.addPasteupTemplateFrom.ID ? '编辑' : '添加'}拼版模板：
-          ${Data.addPasteupTemplateFrom.ID ? `${Data.addPasteupTemplateFrom.Name}` : ''}`,
-      },
-    ]);
-    function addModeItem() {
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.push({
-        XCoordinate: null,
-        YCoordinate: null,
-        Length: null,
-        Width: null,
-        RowNumber: null,
-        ColumnNumber: null,
-        key: Math.random().toString(16).slice(-10),
-      });
-    }
-    function delModeItem(i) {
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.splice(i, 1);
-    }
-    function verification() {
-      if (!Data.addPasteupTemplateFrom.ClassID) {
-        messageBox.failSingleError('保存失败', '请选择分类', () => null, () => null);
-        return false;
-      }
-      if (!Data.addPasteupTemplateFrom.Name) {
-        messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
-        return false;
-      }
 
-      // 不和印刷版保持一致
-      if (!Data.addPasteupTemplateFrom.IsSameSizeWithPrintingPlate) {
-        // 按实际拼版尺寸 上
-        if (Data.addPasteupTemplateFrom.SizeType === 1) {
-          if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop === null
+const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
+const route = useRoute();
+const RouterStore = useRouterStore();
+const PasteupSettingStore = usePasteupSettingStore();
+const Data: DataType = reactive({
+  uploadBtnLoading: false,
+  addPasteupTemplateFrom: {
+    ClassID: '',
+    // 印刷版
+    IsPrintingPlate: false,
+    // 和印刷版保持一致
+    IsSameSizeWithPrintingPlate: false,
+    // 翻版方式
+    ReproductionType: 0,
+    // 尺寸
+    SizeType: 0,
+    ModeSizeAttribute: {
+      PlateInfo: {
+        FilePath: '',
+        Length: 0,
+        Width: 0,
+        AreaList: [
+          // {
+          //   XCoordinate: 0,
+          //   YCoordinate: 0,
+          //   Length: 0,
+          //   Width: 0,
+          // },
+        ],
+      },
+      // 是否按模位
+      UseMode: false,
+      ModeItemList: [
+        {
+          XCoordinate: null,
+          YCoordinate: null,
+          Length: null,
+          Width: null,
+          RowNumber: null,
+          ColumnNumber: null,
+          key: '1',
+        },
+      ],
+    },
+    ActualSizeAttribute: {
+      BleedTop: null,
+      BleedBottom: null,
+      BleedLeft: null,
+      BleedRight: null,
+    },
+    CreateTime: '',
+    ID: '',
+    Name: '',
+  },
+});
+const BreadcrumbList = computed(() => [
+  { to: { path: '/pasteupTemplate' }, name: '拼版模板' },
+  {
+    name: `${Data.addPasteupTemplateFrom.ID ? '编辑' : '添加'}拼版模板：
+          ${Data.addPasteupTemplateFrom.ID ? `${Data.addPasteupTemplateFrom.Name}` : ''}`,
+  },
+]);
+function addModeItem() {
+  Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.push({
+    XCoordinate: null,
+    YCoordinate: null,
+    Length: null,
+    Width: null,
+    RowNumber: null,
+    ColumnNumber: null,
+    key: Math.random().toString(16).slice(-10),
+  });
+}
+function delModeItem(i) {
+  Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.splice(i, 1);
+}
+function verification() {
+  if (!Data.addPasteupTemplateFrom.ClassID) {
+    messageBox.failSingleError('保存失败', '请选择分类', () => null, () => null);
+    return false;
+  }
+  if (!Data.addPasteupTemplateFrom.Name) {
+    messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
+    return false;
+  }
+
+  // 不和印刷版保持一致
+  if (!Data.addPasteupTemplateFrom.IsSameSizeWithPrintingPlate) {
+    // 按实际拼版尺寸 上
+    if (Data.addPasteupTemplateFrom.SizeType === 1) {
+      if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop === null
           || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop === '') {
-            messageBox.failSingleError('保存失败', '请输入上白边', () => null, () => null);
-          } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft === null
+        messageBox.failSingleError('保存失败', '请输入上白边', () => null, () => null);
+      } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft === null
           || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft === '') {
-            messageBox.failSingleError('保存失败', '请输入左白边', () => null, () => null);
-          } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight === null
+        messageBox.failSingleError('保存失败', '请输入左白边', () => null, () => null);
+      } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight === null
           || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight === '') {
-            messageBox.failSingleError('保存失败', '请输入右白边', () => null, () => null);
-          } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom === null
+        messageBox.failSingleError('保存失败', '请输入右白边', () => null, () => null);
+      } else if (Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom === null
           || Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom === '') {
-            messageBox.failSingleError('保存失败', '请输入下白边', () => null, () => null);
-          } else {
-            return true;
-          }
-          return false;
-        }
-        // 按模板尺寸 没有上传模板
-        if (Data.addPasteupTemplateFrom.SizeType === 0 && !Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath) {
-          messageBox.failSingleError('保存失败', '请上传模板文件', () => null, () => null);
-          return false;
-        }
-        // 按模板尺寸 并且按模位
-        if (Data.addPasteupTemplateFrom.SizeType === 0 && Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode) {
-          // 验证模位合法性
-          for (let index = 0; index < Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.length; index++) {
-            const ModeItem = Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList[index];
-            if (
-              ModeItem.XCoordinate === null
+        messageBox.failSingleError('保存失败', '请输入下白边', () => null, () => null);
+      } else {
+        return true;
+      }
+      return false;
+    }
+    // 按模板尺寸 没有上传模板
+    if (Data.addPasteupTemplateFrom.SizeType === 0 && !Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath) {
+      messageBox.failSingleError('保存失败', '请上传模板文件', () => null, () => null);
+      return false;
+    }
+    // 按模板尺寸 并且按模位
+    if (Data.addPasteupTemplateFrom.SizeType === 0 && Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode) {
+      // 验证模位合法性
+      for (let index = 0; index < Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.length; index++) {
+        const ModeItem = Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList[index];
+        if (
+          ModeItem.XCoordinate === null
             || ModeItem.YCoordinate === null
             || !ModeItem.Length
             || !ModeItem.Width
             || !ModeItem.RowNumber
             || !ModeItem.ColumnNumber
-            ) {
-              messageBox.failSingleError('保存失败', `请输入第${index + 1}行的数据`, () => null, () => null);
-              console.log('messageBoxmessageBoxmessageBox');
-              return false;
-            }
+        ) {
+          messageBox.failSingleError('保存失败', `请输入第${index + 1}行的数据`, () => null, () => null);
+          console.log('messageBoxmessageBoxmessageBox');
+          return false;
+        }
 
-            const { AreaList } = Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo;
-            // 当前模位起点所在可拼版区域
-            const Area = AreaList.find(res => {
-              // 分别找到横轴和竖轴的起点是否都在此可拼版区域
-              const xinclude = Number(ModeItem.XCoordinate)
+        const { AreaList } = Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo;
+        // 当前模位起点所在可拼版区域
+        const Area = AreaList.find(res => {
+          // 分别找到横轴和竖轴的起点是否都在此可拼版区域
+          const xinclude = Number(ModeItem.XCoordinate)
               >= Number(res.XCoordinate) && Number(ModeItem.XCoordinate)
               <= Number(res.XCoordinate) + Number(res.Length);
-              const yinclude = Number(ModeItem.YCoordinate)
+          const yinclude = Number(ModeItem.YCoordinate)
               >= Number(res.YCoordinate) && Number(ModeItem.YCoordinate)
               <= Number(res.YCoordinate) + Number(res.Width);
-              return xinclude && yinclude;
-            });
-            // 没找到说明起点不在可拼版区域
-            if (!Area) {
-              messageBox.failSingleError('保存失败', `第${index + 1}行数据起始坐标不在可拼版区域`, () => null, () => null);
-              return false;
-            }
-            // 横轴结束点是否在可拼版区域
-            const xEndInclude = Number(ModeItem.XCoordinate) + ModeItem.Length * ModeItem.ColumnNumber <= Number(Area.XCoordinate) + Number(Area.Length);
-            const yEndInclude = Number(ModeItem.YCoordinate) + ModeItem.Width * ModeItem.RowNumber <= Number(Area.YCoordinate) + Number(Area.Width);
-            if (!xEndInclude) {
-              messageBox.failSingleError('保存失败', `第${index + 1}行数据长度超出可拼版区域`, () => null, () => null);
-              return false;
-            }
-            if (!yEndInclude) {
-              messageBox.failSingleError('保存失败', `第${index + 1}行数据宽度超出可拼版区域`, () => null, () => null);
-              return false;
-            }
-          }
+          return xinclude && yinclude;
+        });
+        // 没找到说明起点不在可拼版区域
+        if (!Area) {
+          messageBox.failSingleError('保存失败', `第${index + 1}行数据起始坐标不在可拼版区域`, () => null, () => null);
+          return false;
+        }
+        // 横轴结束点是否在可拼版区域
+        const xEndInclude = Number(ModeItem.XCoordinate) + ModeItem.Length * ModeItem.ColumnNumber <= Number(Area.XCoordinate) + Number(Area.Length);
+        const yEndInclude = Number(ModeItem.YCoordinate) + ModeItem.Width * ModeItem.RowNumber <= Number(Area.YCoordinate) + Number(Area.Width);
+        if (!xEndInclude) {
+          messageBox.failSingleError('保存失败', `第${index + 1}行数据长度超出可拼版区域`, () => null, () => null);
+          return false;
+        }
+        if (!yEndInclude) {
+          messageBox.failSingleError('保存失败', `第${index + 1}行数据宽度超出可拼版区域`, () => null, () => null);
+          return false;
         }
       }
-      return true;
     }
-    function setStorage() { // 设置会话存储
-      sessionStorage.setItem('pasteupTemplateSteupPage', 'true');
-    }
-    function savePasteupTemplate() {
-      if (verification()) {
-        api.getImpositionTemmplateSave(Data.addPasteupTemplateFrom).then(res => {
-          if (res.data.Status === 1000) {
-            const cb = () => {
-              setStorage();
-              RouterStore.goBack();
-            };
-            // 保存成功
-            messageBox.successSingle('保存成功', cb, cb);
-          }
-        });
-      }
-    }
-    function handlleUploaded(e) {
-      if (e.Status === 1000) {
-        Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath = e.Data.FilePath;
-        Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList = e.Data.AreaList;
-        Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length = e.Data.Length;
-        Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width = e.Data.Width;
-      } else {
-        messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
-      }
-      Data.uploadBtnLoading = false;
-    }
-    function beforeUpload(file) {
-      const isLt15M = file.size / 1024 / 1024 < 15;
-      if (!isLt15M) {
-        // 文件过大上传失败
-        messageBox.failSingleError('上传失败', '上传文件过大，请上传小于20M的文件', () => null, () => null);
-      } else {
-        Data.uploadBtnLoading = true;
-      }
-      return isLt15M;
-    }
-
-    onMounted(() => {
-      const temp = JSON.parse(route.params.Template as string) as ImpositionTemmplate;
-      if (!temp.ModeSizeAttribute) {
-        temp.ModeSizeAttribute = {
-          PlateInfo: {
-            FilePath: '',
-            Length: 0,
-            Width: 0,
-            AreaList: [
-              {
-                XCoordinate: 0,
-                YCoordinate: 0,
-                Length: 0,
-                Width: 0,
-              },
-            ],
-          },
-          // 是否按模位
-          UseMode: false,
-          ModeItemList: [
-            {
-              XCoordinate: null,
-              YCoordinate: null,
-              Length: null,
-              Width: null,
-              RowNumber: null,
-              ColumnNumber: null,
-              key: '1',
-            },
-          ],
+  }
+  return true;
+}
+function setStorage() { // 设置会话存储
+  sessionStorage.setItem('pasteupTemplateSteupPage', 'true');
+}
+function savePasteupTemplate() {
+  if (verification()) {
+    api.getImpositionTemmplateSave(Data.addPasteupTemplateFrom).then(res => {
+      if (res.data.Status === 1000) {
+        const cb = () => {
+          setStorage();
+          RouterStore.goBack();
         };
-      }
-      if (!temp.ActualSizeAttribute) {
-        temp.ActualSizeAttribute = {
-          BleedTop: null,
-          BleedBottom: null,
-          BleedLeft: null,
-          BleedRight: null,
-        };
-      }
-      if (temp.ClassID) {
-        Data.addPasteupTemplateFrom = temp;
-      }
-      // 获取所有分类
-      if (!PasteupSettingStore.ImpositionTemmplateClassList.length) {
-        PasteupSettingStore.getImpositionTemmplateClassList();
+        // 保存成功
+        messageBox.successSingle('保存成功', cb, cb);
       }
     });
-    return {
-      BreadcrumbList,
-      Data,
-      PasteupSettingStore,
-      addModeItem,
-      delModeItem,
-      savePasteupTemplate,
-      handlleUploaded,
-      beforeUpload,
-    };
-  },
+  }
+}
+function handlleUploaded(e) {
+  if (e.Status === 1000) {
+    Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath = e.Data.FilePath;
+    Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList = e.Data.AreaList;
+    Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length = e.Data.Length;
+    Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width = e.Data.Width;
+  } else {
+    messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
+  }
+  Data.uploadBtnLoading = false;
+}
+function beforeUpload(file) {
+  const isLt15M = file.size / 1024 / 1024 < 15;
+  if (!isLt15M) {
+    // 文件过大上传失败
+    messageBox.failSingleError('上传失败', '上传文件过大，请上传小于20M的文件', () => null, () => null);
+  } else {
+    Data.uploadBtnLoading = true;
+  }
+  return isLt15M;
+}
 
+onMounted(() => {
+  const temp = JSON.parse(route.params.Template as string) as ImpositionTemmplate;
+  if (!temp.ModeSizeAttribute) {
+    temp.ModeSizeAttribute = {
+      PlateInfo: {
+        FilePath: '',
+        Length: 0,
+        Width: 0,
+        AreaList: [
+          {
+            XCoordinate: 0,
+            YCoordinate: 0,
+            Length: 0,
+            Width: 0,
+          },
+        ],
+      },
+      // 是否按模位
+      UseMode: false,
+      ModeItemList: [
+        {
+          XCoordinate: null,
+          YCoordinate: null,
+          Length: null,
+          Width: null,
+          RowNumber: null,
+          ColumnNumber: null,
+          key: '1',
+        },
+      ],
+    };
+  }
+  if (!temp.ActualSizeAttribute) {
+    temp.ActualSizeAttribute = {
+      BleedTop: null,
+      BleedBottom: null,
+      BleedLeft: null,
+      BleedRight: null,
+    };
+  }
+  if (temp.ClassID) {
+    Data.addPasteupTemplateFrom = temp;
+  }
+  // 获取所有分类
+  if (!PasteupSettingStore.ImpositionTemmplateClassList.length) {
+    PasteupSettingStore.getImpositionTemmplateClassList();
+  }
+});
+
+</script>
+<script lang="ts">
+export default {
+  name: 'pasteupTemplateSteupPage',
 };
 </script>
 <style lang='scss'>

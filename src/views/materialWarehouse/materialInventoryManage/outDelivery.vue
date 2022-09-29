@@ -650,6 +650,8 @@ export default {
       });
     }
     function outDelvery() {
+      // 两位小数
+      const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
       const inventory = () => {
         const inventoryMsgs:string[] = [];
         Data.StorehouseStockInfo.forEach(item => {
@@ -665,6 +667,8 @@ export default {
         messageBox.failSingleError('出库失败', '请选择物料', () => null, () => null);
       } else if (!Data.outDeliveryForm.Number) {
         messageBox.failSingleError('出库失败', '请输入出库数量', () => null, () => null);
+      } else if (!reg.test(String(Data.outDeliveryForm.Number))) {
+        messageBox.failSingleError('出库失败', '出库数量不能超过两位小数', () => null, () => null);
       } else if (!Data.outDeliveryForm.UnitID) {
         messageBox.failSingleError('出库失败', '请选择出库单位', () => null, () => null);
       } else if (!Data.outDeliveryForm.Handler) {
