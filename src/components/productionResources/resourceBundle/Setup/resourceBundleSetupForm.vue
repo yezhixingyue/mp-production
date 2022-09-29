@@ -8,10 +8,10 @@
         <el-radio v-for="it in FeatureMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="包含物料类型：" prop="MaterialTypeGroups">
+    <el-form-item label="包含物料类型：" prop="MaterialTypeGroups" v-if="ruleForm.Feature!==resourceBundleFeatureEnum.semifinished.ID">
       <MaterialTypeGroupSelector v-model="ruleForm.MaterialTypeGroups" />
     </el-form-item>
-    <el-form-item label="满足方式：" prop="MatchType">
+    <el-form-item label="满足方式：" prop="MatchType" v-if="ruleForm.Feature!==resourceBundleFeatureEnum.semifinished.ID">
       <el-radio-group v-model="ruleForm.MatchType">
         <el-radio v-for="it in MatchTypeMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
       </el-radio-group>
@@ -73,6 +73,15 @@ const getFormData = () => new Promise((resolve) => { // 校验 + 获取表单内
   }
   ruleFormRef.value.validate((valid) => {
     if (valid) {
+      if (ruleForm.value.Feature === resourceBundleFeatureEnum.semifinished.ID) {
+        const temp = {
+          ID: ruleForm.value.ID,
+          Name: ruleForm.value.Name,
+          Feature: ruleForm.value.Feature,
+        };
+        resolve(temp);
+        return;
+      }
       resolve(ruleForm.value);
     } else {
       resolve(null);

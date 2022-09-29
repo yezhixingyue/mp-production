@@ -100,6 +100,7 @@ export default {
   overflow: hidden;
   user-select: none;
   width: 100%;
+  pointer-events: none;
 }
 
 .fade-transform-enter {

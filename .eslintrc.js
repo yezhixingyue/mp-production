@@ -24,6 +24,7 @@ module.exports = {
     'no-plusplus': 'off',
     'no-shadow': 'off',
     'max-len': ['error', { code: 160 }],
+    'vuejs-accessibility/click-events-have-key-events': 'off',
   },
   overrides: [
     {

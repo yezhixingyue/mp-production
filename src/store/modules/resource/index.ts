@@ -5,6 +5,7 @@ import { ResourceBundleListCondition } from '@/views/productionResources/resourc
 import { getMaterialTypeGroup, IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
 import CommonClassType from '../formattingTime/CommonClassType';
 import { EquipmentGroupTypeClass } from './EquipmentGroupTypeClass';
+import { EquipmentGroupMaterialTypeLimitClass } from './EquipmentGroupMaterialTypeLimitClass/EquipmentGroupMaterialTypeLimitClass';
 
 interface IState {
   resourceBundleCondition: ResourceBundleListCondition
@@ -12,6 +13,7 @@ interface IState {
   resourceBundleListNumber: number
   MaterialTypeGroup: IMaterialTypeGroupItemType[]
   EquipmentGroupData: EquipmentGroupTypeClass
+  MaterialTypeLimitData: EquipmentGroupMaterialTypeLimitClass
 }
 
 type IGetters = Record<string, never>;
@@ -30,10 +32,13 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
     resourceBundleCondition: new ResourceBundleListCondition(),
     resourceBundleList: [],
     resourceBundleListNumber: 0,
-    MaterialTypeGroup: [], // 按分类返回的物料类型列表
     /** 设备组相关
      -------------------------------------*/
     EquipmentGroupData: new EquipmentGroupTypeClass(),
+    MaterialTypeLimitData: new EquipmentGroupMaterialTypeLimitClass(),
+    /** 公共部分 - 后期或可提取到公共仓库
+     -------------------------------------*/
+    MaterialTypeGroup: [], // 按分类返回的物料类型列表
   }),
   getters: {
   },

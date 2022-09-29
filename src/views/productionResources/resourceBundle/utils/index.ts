@@ -9,6 +9,7 @@ export interface IMaterialTypeGroupItemType {
   CategoryID: number
   CategoryName: string
   MaterialTypes: IMaterialType[]
+  innerIds?: string[]
 }
 
 export const getMaterialTypeGroup = async () => {

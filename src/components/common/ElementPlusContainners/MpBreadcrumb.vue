@@ -1,6 +1,11 @@
 <template>
   <el-breadcrumb :separator-icon="ArrowRight" class="mp-breadcrumb">
-    <el-breadcrumb-item v-for="it in props.list" :key="it.name" :to="it.to" :replace="typeof it.replace === 'boolean' ? it.replace : true">
+    <el-breadcrumb-item
+      v-for="it in props.list"
+      :key="it.name"
+      :to="it.to"
+      :replace="typeof it.replace === 'boolean' ? it.replace : true"
+      >
       {{it.name}}
     </el-breadcrumb-item>
   </el-breadcrumb>
@@ -13,10 +18,10 @@ import { RouteLocationRaw } from 'vue-router';
 const props = defineProps<{
   list: { to?: RouteLocationRaw, name: string, replace?: boolean }[]
 }>();
+
 </script>
 
 <style lang='scss'>
-
 .mp-breadcrumb {
   .el-breadcrumb__item {
     font-size: 12px;
@@ -24,9 +29,11 @@ const props = defineProps<{
     .el-breadcrumb__inner {
       color: #444 !important;
       font-weight: 700 !important;
+      font-size: 13px;
       &.is-link {
         color: #26BCF9 !important;
         font-weight: 400 !important;
+        font-size: 12px;
         &:hover {
           text-decoration: underline;
         }

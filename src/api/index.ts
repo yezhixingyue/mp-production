@@ -1,6 +1,7 @@
 import { IDistrictItem } from '@/assets/Types/common';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import { resourceApis } from './modules/resourceApis';
+import { propertyApis } from './modules/propertyApis';
 import MaterialStorage from './modules/materialStorageApis';
 import PasteupSetting from './modules/pasteupSettingApis';
 import request from './request/request';
@@ -32,6 +33,8 @@ const api = {
   ...resourceApis,
   // 拼版设置 api
   ...PasteupSetting,
+  // 属性相关 api
+  propertyApis,
 };
 
 export default api;

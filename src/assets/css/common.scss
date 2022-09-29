@@ -164,3 +164,73 @@ input[type='number'] {
   appearance: textfield;
   text-align: center;
 }
+
+.is-blue-span {
+  color: $--color-primary;
+  cursor: pointer;
+  transition: color 0.05s ease-in-out;
+  user-select: none;
+  &:hover {
+    color: $--color-blue-light;
+  }
+  &:active {
+    color: $--color-primary-light;
+  }
+  &:disabled, &.disabled {
+    color: #cbcbcb;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.is-pink-span {
+  color: $--color-pink;
+  cursor: pointer;
+  transition: color 0.05s ease-in-out;
+  user-select: none;
+  &:hover {
+    color: lighten($color: $--color-pink, $amount: 10);
+  }
+  &:active {
+    color: darken($color: $--color-pink, $amount: 15);
+  }
+  &:disabled, &.disabled {
+    color: #cbcbcb;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.el-button--info.mp-button.menu {
+  .iconfont {
+    font-size: 14px;
+    margin-right: 6px;
+    &.icon-bianji {
+      color: $--color-primary;
+    }
+    &.icon-delete {
+      color: $--color-pink;
+    }
+  }
+  font-size: 12px;
+  &:hover {
+    .iconfont {
+      &.icon-bianji {
+        color: lighten($color: $--color-primary, $amount: 15);
+      }
+      &.icon-delete {
+        color: lighten($color: $--color-pink, $amount: 15);
+      }
+    }
+  }
+  &:active {
+    .iconfont {
+      &.icon-bianji {
+        color: darken($color: $--color-primary, $amount: 15);
+      }
+      &.icon-delete {
+        color: darken($color: $--color-pink, $amount: 15);
+      }
+    }
+  }
+}

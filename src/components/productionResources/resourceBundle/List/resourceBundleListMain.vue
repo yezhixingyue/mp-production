@@ -6,10 +6,10 @@
         <template #default="scope">{{formatFeatureType(scope.row.Feature)}}</template>
       </mp-table-column>
       <mp-table-column min-width="320px" prop="MaterialTypeGroups" label="包含物料类型">
-        <template #default="scope">{{formatMaterialTypeGroups(scope.row.MaterialTypeGroups)}}</template>
+        <template #default="scope">{{formatMaterialTypeGroups(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column min-width="170px" prop="MatchType" label="满足方式">
-        <template #default="scope">{{formatMatchType(scope.row.MatchType)}}</template>
+        <template #default="scope">{{formatMatchType(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column min-width="220px" label="操作">
         <template #default="scope">
@@ -25,9 +25,7 @@
 import { getEnumNameByIDAndEnums, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpButton from '@/components/common/MpButton.vue';
-import {
-  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnum, resourceBundleMatchEnum,
-} from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
+import { ResourceBundleClass, resourceBundleFeatureEnum, resourceBundleMatchEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
 import { getTableDiaplayContent } from '../Setup/MaterialTypeGroupSelector/utils';
 
@@ -39,8 +37,15 @@ const props = defineProps<{
 const emit = defineEmits(['edit', 'remove']);
 
 const formatFeatureType = (Feature: localEnumValueIDType) => getEnumNameByIDAndEnums(Feature, resourceBundleFeatureEnum);
-const formatMatchType = (MatchType: localEnumValueIDType) => getEnumNameByIDAndEnums(MatchType, resourceBundleMatchEnum);
-const formatMaterialTypeGroups = (MaterialTypeGroups: IMaterialTypeItemInBundle[]) => getTableDiaplayContent(MaterialTypeGroups, props.MaterialTypeGroup);
+const formatMatchType = (item: ResourceBundleClass) => {
+  if (item.Feature === resourceBundleFeatureEnum.semifinished.ID) return '';
+  console.log(item.MatchType, resourceBundleMatchEnum);
+  return getEnumNameByIDAndEnums(item.MatchType, resourceBundleMatchEnum);
+};
+const formatMaterialTypeGroups = (item: ResourceBundleClass) => {
+  if (item.Feature === resourceBundleFeatureEnum.semifinished.ID) return '';
+  return getTableDiaplayContent(item.MaterialTypeGroups, props.MaterialTypeGroup);
+};
 
 const onEditClick = (it: ResourceBundleClass) => {
   emit('edit', it);

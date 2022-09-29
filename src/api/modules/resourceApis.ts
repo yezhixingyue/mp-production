@@ -3,6 +3,7 @@ import { EquipmentClassificationListItem } from '@/views/productionResources/equ
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
 import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/TypeClass/Equipment';
+import { MaterialTypeLimitItemType } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
 import request from '../request/request';
 
 export const resourceApis = {
@@ -61,8 +62,8 @@ export const resourceApis = {
   getEquipmentGroupList(conditon) { // POST /Api/EquipmentGroup/List   设备组查询
     return request<unknown, EquipmentGroupItemType[]>({ method: 'POST', url: '/Api/EquipmentGroup/List', data: conditon });
   },
-  getEquipmentGroupRemove(groupID) { // DELETE /Api/EquipmentGroup/Remove   设备组删除
-    return request({ method: 'DELETE', url: '/Api/EquipmentGroup/Remove', params: { groupID } });
+  getEquipmentGroupRemove(id) { // DELETE /Api/EquipmentGroup/Remove   设备组删除
+    return request({ method: 'DELETE', url: '/Api/EquipmentGroup/Remove', params: { id } });
   },
   getEquipmentGroupSizeLimit(data) { // POST /Api/EquipmentGroup/SizeLimit   尺寸限制
     return request({ method: 'POST', url: '/Api/EquipmentGroup/SizeLimit', data });
@@ -91,6 +92,15 @@ export const resourceApis = {
     return request({ method: 'POST', url: '/Api/EquipmentGroupMaterialType/Save', data });
   },
   getEquipmentGroupMaterialTypeList(groupID) { // GET /Api/EquipmentGroupMaterialType/List   设备组物料类型限制列表
-    return request({ method: 'GET', url: '/Api/EquipmentGroupMaterialType/List', params: { groupID } });
+    return request<string, MaterialTypeLimitItemType[]>({ method: 'GET', url: '/Api/EquipmentGroupMaterialType/List', params: { groupID } });
+  },
+  getEquipmentGroupMaterialTypeRemove(id) { // DELETE /Api/EquipmentGroupMaterialType/Remove   设备组物料类型删除
+    return request({ method: 'DELETE', url: '/Api/EquipmentGroupMaterialType/Remove', params: { id } });
+  },
+  getEquipmentGroupMaterialTypeConditionLimitSave(data) { // POST /Api/EquipmentGroupMaterialTypeLimit/Save    设备组物料类型条件编辑
+    return request<unknown, number>({ method: 'POST', url: '/Api/EquipmentGroupMaterialTypeLimit/Save', data });
+  },
+  getEquipmentGroupMaterialTypeLimitRemove(id) { // DELETE /Api/EquipmentGroupMaterialTypeLimit/Remove   设备组物料类型删除
+    return request({ method: 'DELETE', url: '/Api/EquipmentGroupMaterialTypeLimit/Remove', params: { id } });
   },
 };

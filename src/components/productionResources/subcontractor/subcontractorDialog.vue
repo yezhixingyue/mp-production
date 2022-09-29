@@ -16,7 +16,7 @@
       <el-form-item label="联系电话：" prop="Mobile">
         <el-input v-model.trim="ruleForm.Mobile" maxlength="13" show-word-limit />
       </el-form-item>
-      <el-form-item label="适用于设备分类：" prop="ClassIDS">
+      <el-form-item label="适用于设备分类：" prop="">
         <el-checkbox-group v-model="ruleForm.ClassIDS" v-if="props.EquipmentClassList.length > 0">
           <el-checkbox v-for="it in props.EquipmentClassList" :key="it.ID" :label="it.ID">{{it.Name}}</el-checkbox>
         </el-checkbox-group>

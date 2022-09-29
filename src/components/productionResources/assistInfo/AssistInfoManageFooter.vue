@@ -1,6 +1,7 @@
 <template>
   <footer>
-    <MpPagination countInLeft center :nowPage="props.condition.Page" :pageSize="props.condition.PageSize" :total="total" :handlePageChange="props.getList" />
+    <MpPagination style="width:100%" countInLeft center
+     :nowPage="props.condition.Page" :pageSize="props.condition.PageSize" :total="total" :handlePageChange="props.getList" />
   </footer>
 </template>
 

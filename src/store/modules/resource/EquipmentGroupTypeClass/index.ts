@@ -15,12 +15,6 @@ export enum EquipmentGroupMenuEnumType {
   edit,
   remove,
 }
-
-export interface IMaterialTypeLimitSaveParams {
-  GroupID: string,
-  MaterialTypeIDS: string[],
-}
-
 export class EquipmentGroupTypeClass {
   condition = new GroupListConditionClass()
 
@@ -118,17 +112,17 @@ export class EquipmentGroupTypeClass {
   }
   // 其它方法： 设置物料限制、设置印色数量限制等  api.getEquipmentGroupSave
 
-  public async submitMaterialTypeLimitSave(data: IMaterialTypeLimitSaveParams, cb: () => void) {
-    const resp = await api.getEquipmentGroupMaterialTypeSave(data).catch(() => null);
-    if (resp?.data.isSuccess) {
-      const callback = () => {
-        console.log(resp, this.curEditItem, cb);
-        // 处理数据变动
-        if (cb) cb();
-      };
-      MpMessage.success({ title: '添加成功', onOk: callback, onCancel: callback });
-    }
-  }
+  // public async submitMaterialTypeLimitSave(data: IMaterialTypeLimitSaveParams, cb: () => void) { // 后面改成仅修改列表项数据 curEditItem 或者通过curEditItem直接在另外一个类中修改
+  //   const resp = await api.getEquipmentGroupMaterialTypeSave(data).catch(() => null);
+  //   if (resp?.data.isSuccess) {
+  //     const callback = () => {
+  //       console.log(resp, this.curEditItem, cb);
+  //       // 处理数据变动
+  //       if (cb) cb();
+  //     };
+  //     MpMessage.success({ title: '添加成功', onOk: callback, onCancel: callback });
+  //   }
+  // }
 
   EquipmentClassList: EquipmentClassificationListItem[] = [] // 设备分类列表
 
