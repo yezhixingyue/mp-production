@@ -40,8 +40,11 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="Address" label="地址"
-          show-overflow-tooltip min-width="551" />
+          <el-table-column prop="Address" label="地址" show-overflow-tooltip min-width="551" >
+            <template #default="scope">
+              {{formatAddress(scope.row)}}
+            </template>
+          </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope">
               <mp-button type="info" link @click="editMaterialSupplier(scope.row)">
@@ -229,6 +232,18 @@ export default {
       const actionProvince = ProvinceList.value.find(res => res.ID === Data.MaterialSupplierForm.ProvinceID);
       return actionProvince?.children || [];
     });
+    const formatAddress = (row) => {
+      if (DistrictTreeList.value.length > 0) {
+        const province = DistrictTreeList.value.find(it => it.ID === row.ProvinceID);
+        if (province && province.children) {
+          const city = province.children.find(it => it.ID === row.CityID);
+          if (city) {
+            return `${province.Name}${city.Name}${row.Address}`;
+          }
+        }
+      }
+      return '';
+    };
     const useIdGetMaterialTypeName = (ID) => {
       // MaterialWarehouseStore.MaterialTypeList.find;
       // console.log(IDS, 'useIdGetMaterialTypeName');
@@ -369,6 +384,7 @@ export default {
       commonStore,
       twoSelecValue,
       MaterialWarehouseStore,
+      formatAddress,
       useIdGetMaterialTypeName,
       clearCondition,
       getMaterialSupplierList,

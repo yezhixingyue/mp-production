@@ -198,7 +198,6 @@ function getClassName(ClassID) {
 }
 // 适用设备保存
 function saveEquipment(Equipments) {
-  console.log(Equipments, 'Equipments');
   api.getFoldWayTemplateUseableEquipment({
     ID: Data.ApplyEquipment?.ID,
     UseableEquipmentGroupList: Equipments,
@@ -208,7 +207,7 @@ function saveEquipment(Equipments) {
         Data.ApplyEquipmentShow = false;
         getFoldWayTemplateList();
       };
-      messageBox.successSingle('入库成功', cb, cb);
+      messageBox.successSingle('保存成功', cb, cb);
     }
   });
 }
