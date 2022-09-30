@@ -29,7 +29,6 @@ export class Constraints {
   ItemList: ConstraintsItemClass[] = []
 
   constructor(data: Constraints | null, PropertyList: PropertyListItemType[]) {
-    console.log(data);
     if (data) restoreInitDataByOrigin(this, data);
     // 转换ItemList 为ConstraintsItemClass类 ?
     if (data) {

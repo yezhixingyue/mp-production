@@ -50,7 +50,6 @@ const getPanelConstraintData = () => {
   for (let i = 0; i < ruleForm.value.Constraint.ItemList.length; i += 1) {
     const item = ruleForm.value.Constraint.ItemList[i];
     const res = item.validate();
-    console.log(res);
     if (res !== true) return null;
   }
   return ruleForm.value;
