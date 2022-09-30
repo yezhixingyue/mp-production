@@ -13,7 +13,7 @@
       </div>
     </header>
     <ul>
-      <li v-for="(it, i) in localTableList" :key="it.ID" class="item">
+      <li v-for="(it, i) in localTableList" :key="it.ID" class="item" @click="onRowClick(it)" :class="{active: props.activeId === it.ID}">
         <div class="content">
           <i class="index">{{i + 1}}. </i>
           <ConditionTextDisplayComp :conditionObj="it.Constraint" />
@@ -50,11 +50,16 @@ const props = defineProps<{
   operateTitle?: string // 不传值则不展示操作按钮
   removeTitle?: string // 不传值则不展示操作按钮
   headerIntroText?: string
+  activeId?: number | string
 }>();
 
-const emit = defineEmits(['removeTable', 'removeCondition', 'saveCondition']);
+const emit = defineEmits(['removeTable', 'removeCondition', 'saveCondition', 'update:activeId']);
 
 const localTableList = computed(() => transformConstraintTableList({ tableList: props.tableList, PropertyList: props.PropertyList }));
+
+const onRowClick = (it: ConditionItemClass) => {
+  emit('update:activeId', it.ID);
+};
 
 const onConditionEditClick = (e) => {
   emit('saveCondition', e);
@@ -76,6 +81,11 @@ const onConditionRemoveClick = (it, i) => {
 </script>
 
 <style scoped lang='scss'>
+$row-hover-bg-color: lighten($color: #d8effc, $amount: 6);
+$row-hover-border-color: #d6effc;
+$row-active-bg-color: lighten($color: #d8effc, $amount: 6);
+$row-active-border-color: darken($color: #d8effc, $amount: 15);
+
 .constraints-table-wrap {
   > header {
     display: flex;
@@ -135,13 +145,23 @@ const onConditionRemoveClick = (it, i) => {
           width: 220px;
           min-width: 150px;
         }
-        transition: 0.05s ease-in-out;
+        transition: 0.1s ease-in-out;
         &:hover {
           cursor: pointer;
-          background-color: #f5f5f5;
-          border-color: #ccc;
+          background-color: $row-hover-bg-color;
+          border-color: $row-hover-border-color;
           & + li {
-            border-top-color: #ccc;
+            border-top-color: $row-hover-border-color;
+          }
+          & + li.active {
+            border-top-color: $row-active-border-color;
+          }
+        }
+        &.active {
+          background-color: $row-active-bg-color;
+          border-color: $row-active-border-color;
+          & + li {
+            border-top-color: $row-active-border-color;
           }
         }
       }

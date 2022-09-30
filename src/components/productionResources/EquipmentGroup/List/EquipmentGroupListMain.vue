@@ -5,12 +5,12 @@
         <template #default="scope">{{formatListName(scope.row.ClassID, props.EquipmentGroupData.EquipmentClassList)}}</template>
       </mp-table-column>
       <mp-table-column min-width="180px" prop="Name" label="组名称" />
-      <mp-table-column min-width="180px" prop="Feature" label="可以外协工厂">
+      <mp-table-column min-width="170px" prop="Feature" label="可以外协工厂">
         <template #default="scope">
           {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}
         </template>
       </mp-table-column>
-      <mp-table-column min-width="180px" label="尺寸限制">
+      <mp-table-column min-width="200px" label="尺寸限制">
         <template #default="scope">{{formatSizeLimit(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column min-width="220px" label="物料限制（禁用条件）">
@@ -52,24 +52,29 @@ const formatSizeLimit = (it: EquipmentGroupItemType) => {
     MinWidth, MaxWidth, MinLength, MaxLength,
   } = it;
 
-  let str = '';
+  const arr: string[] = [];
 
+  let str1 = '';
   if (typeof MinWidth === 'number' && typeof MinLength === 'number') {
     if (MinWidth === -1 || MinLength === -1) {
-      str += `最小：${MinLength === -1 ? '无限大' : `${MinLength}mm`}×${MinWidth === -1 ? '无限大' : `${MinWidth}mm`}，`;
+      str1 += `最小：${MinLength === -1 ? '无限大' : `${MinLength}mm`}×${MinWidth === -1 ? '无限大' : `${MinWidth}mm`}`;
     } else {
-      str += `最小：${MinLength}×${MinWidth}mm，`;
+      str1 += `最小：${MinLength}×${MinWidth}mm`;
     }
   }
+  arr.push(str1);
+
+  let str2 = '';
   if (typeof MaxWidth === 'number' && typeof MaxLength === 'number') {
     if (MaxWidth === -1 || MaxLength === -1) {
-      str += `最大：${MaxLength === -1 ? '无限大' : `${MaxLength}mm`}×${MaxWidth === -1 ? '无限大' : `${MaxWidth}mm`}，`;
+      str2 += `最大：${MaxLength === -1 ? '无限大' : `${MaxLength}mm`}×${MaxWidth === -1 ? '无限大' : `${MaxWidth}mm`}`;
     } else {
-      str += `最大：${MaxLength}×${MaxWidth}mm，`;
+      str2 += `最大：${MaxLength}×${MaxWidth}mm`;
     }
   }
+  arr.push(str2);
 
-  return str;
+  return arr.filter(it => it).join('；');
 };
 const formatMaterialLimit = (item: EquipmentGroupItemType) => {
   const list = getMaterialConstraintsListWithNames(item.MaterialConstraints, props.MaterialTypeGroup);

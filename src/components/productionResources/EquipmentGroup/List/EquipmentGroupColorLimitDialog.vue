@@ -3,7 +3,7 @@
     <div v-if="ruleForm" class="content-wrap">
       <div class="box">
         <span class="label">印色数量限制：</span>
-        <el-input v-model.trim="ruleForm.ColorLimitContent" maxlength="20" show-word-limit></el-input>
+        <el-input v-model.trim="ruleForm.ColorLimitContent" maxlength="16" show-word-limit></el-input>
         <i>色</i>
       </div>
       <div class="tips-box is-orange">

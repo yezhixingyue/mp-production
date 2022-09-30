@@ -19,10 +19,12 @@ const props = defineProps<{
 const className = getNameByIDAndList(props.EquipmentGroupData.curEditItem?.ClassID, props.EquipmentGroupData.EquipmentClassList);
 const groupName = computed(() => props.EquipmentGroupData.curEditItem?.Name);
 
+const type = props.MaterialTypeLimitData.curConditionItem ? '编辑' : '添加';
+
 const breadcrumbList = [
   { to: { path: '/equipmentGroup' }, name: '设备组' },
   { to: '/equipmentGroupMaterialLimitList', name: `物料限制：${className} - ${groupName.value}` },
-  { name: `添加禁用条件：${props.MaterialTypeLimitData.curMaterialTypeLimitItemTable?.title || ''}` },
+  { name: `${type}禁用条件：${props.MaterialTypeLimitData.curMaterialTypeLimitItemTable?.title || ''}` },
 ];
 </script>
 

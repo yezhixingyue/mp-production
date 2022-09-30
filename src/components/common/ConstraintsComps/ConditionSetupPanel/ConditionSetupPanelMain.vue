@@ -10,7 +10,7 @@
           <ValueSelectorComp :item="it" v-model="it.ValueList" />
         </div>
         <!-- <span class="del is-pink-span" @click="remove(i)">删除</span> -->
-        <mp-button type="info" class="del" link @click="remove(i)">
+        <mp-button type="info" class="del menu" link @click="remove(i)">
           <i class="iconfont icon-delete"></i>删除
         </mp-button>
       </li>
@@ -92,9 +92,7 @@ const remove = (i: number) => {
         align-items: flex-end;
         line-height: 28px;
         padding: 0;
-        i {
-          color: #26bcf9;
-          font-size: 15px;
+        i.iconfont {
           margin-right: 8px;
         }
       }

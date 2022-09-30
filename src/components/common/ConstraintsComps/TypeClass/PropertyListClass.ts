@@ -93,7 +93,7 @@ export class PropertyListClass {
       if (!Property) return null;
       let _operator = getNameByIDAndList(Operator, OperatorMpEnumList); // 获取到关系类型名称
       const {
-        DisplayContent, OptionList, ValueType,
+        DisplayContent, OptionList, ValueType, Unit,
       } = Property;
       if (ValueType === PropertyValueTypeEnum.radio) _operator += '下面任一选项时：';
       if (ValueType === PropertyValueTypeEnum.multiple) {
@@ -109,6 +109,9 @@ export class PropertyListClass {
               if (Property.DisplayContent && Array.isArray(OptionList)) {
                 const t = OptionList.find(_it => _it.First === _val);
                 if (t) _val = t.Second;
+              }
+              if (_val && Unit) {
+                _val += Unit;
               }
             }
           }

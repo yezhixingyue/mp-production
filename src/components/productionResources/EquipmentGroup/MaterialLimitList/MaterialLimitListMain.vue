@@ -9,6 +9,7 @@
       :table-list="it.LimitConstraints"
       :PropertyList="getPropertyList(it)"
       :header-intro-text="'符合如下任意一条时禁止加工，如列表为空，则此类物料均可加工'"
+      v-model:activeId="activeId"
       @removeTable="onTableRemoveClick(it)"
       @saveCondition="(e) => onSaveClick(it, e)"
       @removeCondition="(e) => onRemoveClick(it, e)"
@@ -26,7 +27,7 @@ import {
 } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
 import { getMaterialConstraintsListWithNames } from '@/store/modules/resource/utils/utils';
 import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
   loading: boolean,
@@ -44,6 +45,8 @@ const mainList = computed(() => {
     title: `${it.CategoryName} - ${it.MaterialTypeName}`,
   }));
 });
+
+const activeId = ref<number | string>('');
 
 const getPropertyList = (item: MaterialTypeLimitItemType) => {
   const list = props.allPropertyList.filter(it => it.MaterialType?.ID === item.MaterialTypeID);
