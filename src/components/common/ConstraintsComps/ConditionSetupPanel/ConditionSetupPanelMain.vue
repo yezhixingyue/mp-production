@@ -3,7 +3,10 @@
     <ul>
       <li v-for="(it, i) in props.constraint.ItemList" :key="it.ConstraintID || it._key">
         <span class="title" :title="it._errMsg">
-          <el-icon v-if="it._errMsg" class="is-pink" ><CircleCloseFilled /></el-icon>{{it.Property?.DisplayContent?.replace(/\[|\]/g, '')}}</span>
+          <el-icon v-if="it._errMsg" class="is-pink" ><Warning /></el-icon>
+          <!-- <i v-if="it._errMsg" class="icon-tubiaozhizuomoban iconfont"></i> -->
+          {{it.Property?.DisplayContent?.replace(/\[|\]/g, '')}}
+        </span>
         <div class="box">
           <OperatorComp :item="it" v-model="it.Operator" v-model:valueList="it.ValueList" />
           <!-- 值组件目前仅下面类型才显示： 值类型 -->
@@ -68,8 +71,12 @@ const remove = (i: number) => {
           color: #444;
         }
         > i {
-          vertical-align: -2px;
-          margin-right: 3px;
+          margin-right: 4px;
+          font-size: 20px;
+          vertical-align: middle;
+          position: relative;
+          top: -2px;
+          cursor: pointer;
         }
         &.is-pink {
           cursor: pointer;
