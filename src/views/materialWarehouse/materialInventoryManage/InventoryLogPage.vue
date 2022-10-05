@@ -53,16 +53,6 @@
             @change="(ID) => Data.getInventoryLogListData.Handler = ID"
             @requestFunc='getInventoryLogList'
             ></OneLevelSelect>
-            <SearchInputComp
-              :word='Data.getInventoryLogListData.KeyWords'
-              title="关键词搜索"
-              placeholder="请输入搜索关键词"
-              resetWords="清空所有筛选条件"
-              :changePropsFunc="(words) => Data.getInventoryLogListData.KeyWords = words"
-              :requestFunc='getInventoryLogList'
-              @reset='clearCondition'
-              >
-            </SearchInputComp>
         </div>
     </header>
     <main>
@@ -111,7 +101,6 @@
 
 <script lang='ts'>
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
-import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
@@ -163,7 +152,6 @@ export default {
   name: 'InventoryLogPage',
   components: {
     OneLevelSelect,
-    SearchInputComp,
     MpPagination,
     LineDateSelectorComp,
     MpBreadcrumb,
@@ -314,7 +302,6 @@ export default {
         display: flex;
         flex-wrap: wrap;
         &.flex-between{
-          justify-content: space-between;
           align-items: flex-start;
           .mp-line-date-selector-wrap{
             margin-bottom: 18px;
