@@ -4,7 +4,7 @@
       <el-input v-model.trim="ruleForm.Name" maxlength="20" show-word-limit />
     </el-form-item>
     <el-form-item label="资源包性质：" prop="Feature">
-      <el-radio-group v-model="ruleForm.Feature">
+      <el-radio-group v-model="ruleForm.Feature" @change="onFeatureChange">
         <el-radio v-for="it in FeatureMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
@@ -13,7 +13,8 @@
     </el-form-item>
     <el-form-item label="满足方式：" prop="MatchType" v-if="ruleForm.Feature!==resourceBundleFeatureEnum.semifinished.ID">
       <el-radio-group v-model="ruleForm.MatchType">
-        <el-radio v-for="it in MatchTypeMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
+        <el-radio v-for="it in MatchTypeMenuList" :key="it.ID" :label="it.ID"
+         :disabled="ruleForm.Feature===resourceBundleFeatureEnum.main.ID && it.ID===resourceBundleMatchEnum.every.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
       <!-- <span class="is-gray-light"><el-icon><WarningFilled /></el-icon>暂无数据，请先添加</span> -->
@@ -65,6 +66,12 @@ const rules = reactive<FormRules>({
     { validator: checkMaterialTypeGroups, trigger: 'change' },
   ],
 });
+
+const onFeatureChange = (e: number | string) => {
+  if (e === resourceBundleFeatureEnum.main.ID && ruleForm.value.MatchType === resourceBundleMatchEnum.every.ID) {
+    ruleForm.value.MatchType = '';
+  }
+};
 
 const getFormData = () => new Promise((resolve) => { // 校验 + 获取表单内容
   if (!ruleFormRef.value) {

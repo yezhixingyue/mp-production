@@ -38,7 +38,7 @@ export class ResourceBundleClass {
 
   Feature = resourceBundleFeatureEnum.main.ID
 
-  MatchType = resourceBundleMatchEnum.any.ID
+  MatchType: number | '' = resourceBundleMatchEnum.any.ID
 
   MaterialTypeGroups: IMaterialTypeItemInBundle[] = [] // 资源包中包含的物料类型列表
 
