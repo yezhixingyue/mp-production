@@ -4,6 +4,7 @@ import { resourceApis } from './modules/resourceApis';
 import { propertyApis } from './modules/propertyApis';
 import MaterialStorage from './modules/materialStorageApis';
 import PasteupSetting from './modules/pasteupSettingApis';
+import productionSetting from './modules/productionSettingApis';
 import request from './request/request';
 
 const api = {
@@ -33,6 +34,8 @@ const api = {
   ...resourceApis,
   // 拼版设置 api
   ...PasteupSetting,
+  // 生产设置 api
+  ...productionSetting,
   // 属性相关 api
   propertyApis,
 };

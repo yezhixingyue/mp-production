@@ -18,6 +18,9 @@ export const resourceApis = {
   getResourceNoteRemove(id) { // POST /Api/Note/Remove  辅助信息删除
     return request({ method: 'DELETE', url: '/Api/Note/Remove', params: { id } });
   },
+  getResourceNoteGroup() { // POST /Api/Note/Group  所有辅助信息分类查询
+    return request({ method: 'GET', url: '/Api/Note/Group' });
+  },
   /** 生产资源 - 设备分类相关 EquipmentClassification
    -------------------------------------------- */
   getEquipmentClassificationSave(data) { // POST /Api/EquipmentClass/Save  设备分类编辑
@@ -53,6 +56,9 @@ export const resourceApis = {
   },
   getMaterialTypeGroup() { // GET /Api/MaterialType/Group  根据类别分组查询返回物料类型数据
     return request({ method: 'GET', url: '/Api/MaterialType/Group' });
+  },
+  getMaterialTypeGroupAll() { // GET /Api/MaterialGroup/All  所有物料资源
+    return request({ method: 'GET', url: '/Api/MaterialGroup/All' });
   },
   /** 生产资源 - 设备组相关 EquipmentGroup
   --------------------------------------------- */

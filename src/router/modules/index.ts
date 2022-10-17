@@ -5,6 +5,7 @@ import { RouteTreeType } from '@/router/modules/routerTypes';
 import materialWarehouseRouteRoot from './materialWarehouse';
 import productionResources from './productionResources';
 import pasteupSettingRouteRoot from './pasteupSetting';
+import productionRouteRoot from './productionSetting';
 
 export const moduleRoutes: RouteRecordRaw[] = [
   {
@@ -25,6 +26,7 @@ export const moduleRoutes: RouteRecordRaw[] = [
     },
     component: LoginView,
   },
+  productionRouteRoot.routes,
   productionResources.routes,
   pasteupSettingRouteRoot.routes,
   materialWarehouseRouteRoot.routes,
@@ -43,6 +45,7 @@ const routeTree:RouteTreeType[] = [
   materialWarehouseRouteRoot.routeTree,
   productionResources.routeTree,
   pasteupSettingRouteRoot.routeTree,
+  productionRouteRoot.routeTree,
 ];
 
 export default {
