@@ -79,6 +79,10 @@ export default {
       type: Function,
       default: () => null,
     },
+    delClick: {
+      type: Function,
+      default: () => null,
+    },
     closeClick: {
       type: Function,
       default: () => null,

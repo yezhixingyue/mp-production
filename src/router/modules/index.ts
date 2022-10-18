@@ -5,6 +5,7 @@ import { RouteTreeType } from '@/router/modules/routerTypes';
 import materialWarehouseRouteRoot from './materialWarehouse';
 import productionResources from './productionResources';
 import pasteupSettingRouteRoot from './pasteupSetting';
+import otherSettingRouteRoot from './other';
 
 export const moduleRoutes: RouteRecordRaw[] = [
   {
@@ -28,6 +29,7 @@ export const moduleRoutes: RouteRecordRaw[] = [
   productionResources.routes,
   pasteupSettingRouteRoot.routes,
   materialWarehouseRouteRoot.routes,
+  otherSettingRouteRoot.routes,
   { // 无权限页
     path: '/notauth',
     name: 'notauth',
@@ -43,6 +45,7 @@ const routeTree:RouteTreeType[] = [
   materialWarehouseRouteRoot.routeTree,
   productionResources.routeTree,
   pasteupSettingRouteRoot.routeTree,
+  otherSettingRouteRoot.routeTree,
 ];
 
 export default {

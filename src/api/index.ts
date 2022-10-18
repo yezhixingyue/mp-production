@@ -4,6 +4,7 @@ import { resourceApis } from './modules/resourceApis';
 import { propertyApis } from './modules/propertyApis';
 import MaterialStorage from './modules/materialStorageApis';
 import PasteupSetting from './modules/pasteupSettingApis';
+import { otherSettingApis } from './modules/otherApis';
 import request from './request/request';
 
 const api = {
@@ -35,6 +36,8 @@ const api = {
   ...PasteupSetting,
   // 属性相关 api
   propertyApis,
+  // 其它设置 api
+  ...otherSettingApis,
 };
 
 export default api;
