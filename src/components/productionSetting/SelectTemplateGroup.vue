@@ -1,7 +1,7 @@
 <template>
   <div>
     <DialogContainerComp
-    title="选择设备"
+    title="选择大版文件"
     :visible='Dialog'
     :width="660"
     :primaryClick="PrimaryClick"
@@ -12,20 +12,20 @@
     <template #default>
       <div class="set-apply-equipment-dialog">
         <el-scrollbar max-height="350px">
-        <div class="material-type" v-for="(item, index) in Data.applyEquipmentListFrom" :key="index">
+        <div class="material-type" v-for="(item, index) in Data.TemplateGroupFrom" :key="index">
           <p>
             <el-checkbox
               v-model="item.checkAll"
               :indeterminate="item.isIndeterminate"
               @change="handleCheckAllChange(item.checkAll, index)"
-            >{{item.ClassName}}</el-checkbox>
+            >{{item.Name}}</el-checkbox>
           </p>
           <el-checkbox-group
             v-model="item.checks"
             @change="handleCheckedCitiesChange(item.checks, index)"
           >
             <el-checkbox
-            v-for="EquipmentItem in item.EquipmentGroups"
+            v-for="EquipmentItem in item.children"
             :key="EquipmentItem.ID" :label="EquipmentItem.ID">
               <el-tooltip
                 class="box-item"
@@ -50,12 +50,15 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   reactive, computed, watch,
 } from 'vue';
-import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
+import type {
+  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType, ImpositionTemmplateListGroupType,
+  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType,
+} from '@/store/modules/productionSetting/types';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 
 const productionSettingStore = useProductionSettingStore();
 
-interface applyEquipmentListFrom extends UseClassEquipmentGroupType{
+interface TemplateGroupFrom extends ImpositionTemmplateListGroupType{
   checkAll:boolean
   isIndeterminate:boolean
   checks:string[]
@@ -65,27 +68,27 @@ interface EquipmentGroupCheckDataList{
   isIndeterminate:boolean
 }
 interface DataType {
-  applyEquipmentListFrom:applyEquipmentListFrom[]
+  TemplateGroupFrom:TemplateGroupFrom[]
   EquipmentGroupCheckDataList:EquipmentGroupCheckDataList[]
 }
 interface Props {
   visible: boolean
   changeVisible?: (bol:boolean) => void
-  saveEquipment?: (list:EquipmentGroups[]) => void
-  activeEquipmentList?: string[]
-  EquipmentListGroup?: UseClassEquipmentGroupType[]
+  saveTemplate?: (list:ImpositionTemmplateListType[]) => void
+  activeTemplateList?: string[]
+  TemplateGroup?: ImpositionTemmplateListGroupType[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   visible: false,
   changeVisible: () => null,
-  saveEquipment: () => null,
-  activeEquipmentList: () => [],
-  EquipmentListGroup: () => [],
+  saveTemplate: () => null,
+  activeTemplateList: () => [],
+  TemplateGroup: () => [],
 });
 
 const Data:DataType = reactive({
-  applyEquipmentListFrom: [],
+  TemplateGroupFrom: [],
   EquipmentGroupCheckDataList: [],
 });
 const Dialog = computed({
@@ -101,7 +104,7 @@ function CloseClick() {
 }
 function Closed() {
   // 清空表单
-  Data.applyEquipmentListFrom.map(res => {
+  Data.TemplateGroupFrom.map(res => {
     const temp = res;
     temp.checkAll = false;
     temp.isIndeterminate = false;
@@ -111,57 +114,60 @@ function Closed() {
 }
 function PrimaryClick() {
   // 所有设备
-  const allEquipment:EquipmentGroups[] = [];
-  Data.applyEquipmentListFrom.forEach(item => {
-    allEquipment.push(...item.EquipmentGroups);
+  const allTemplate:ImpositionTemmplateListType[] = [];
+  Data.TemplateGroupFrom.forEach(item => {
+    allTemplate.push(...item.children);
   });
   // 选中的设备
-  const actionEquipment:EquipmentGroups[] = [];
-  Data.applyEquipmentListFrom.forEach(item => {
+  const actionTemplate:ImpositionTemmplateListType[] = [];
+  Data.TemplateGroupFrom.forEach(item => {
     item.checks.forEach(it => {
-      const temp = allEquipment.find(Equipment => Equipment.ID === it);
+      const temp = allTemplate.find(Template => Template.ID === it);
       if (temp) {
-        actionEquipment.push(temp);
+        actionTemplate.push(temp);
       }
     });
   });
-  props.saveEquipment(actionEquipment);
+  props.saveTemplate(actionTemplate);
 }
 function handleCheckAllChange(val: boolean, index) {
   if (val) {
-    const a = Data.applyEquipmentListFrom[index].EquipmentGroups.map(it => it.ID as string);
-    Data.applyEquipmentListFrom[index].checks = a;
+    const a = Data.TemplateGroupFrom[index].children.map(it => it.ID as string);
+    Data.TemplateGroupFrom[index].checks = a;
   } else {
-    Data.applyEquipmentListFrom[index].checks = [];
+    Data.TemplateGroupFrom[index].checks = [];
   }
-  Data.applyEquipmentListFrom[index].isIndeterminate = false;
+  Data.TemplateGroupFrom[index].isIndeterminate = false;
 }
 function handleCheckedCitiesChange(value:string[], index) {
   const checkedCount = value.length;
-  Data.applyEquipmentListFrom[index].checkAll = checkedCount === Data.applyEquipmentListFrom[index].EquipmentGroups.length;
-  Data.applyEquipmentListFrom[index].isIndeterminate = checkedCount > 0
-       && checkedCount < Data.applyEquipmentListFrom[index].EquipmentGroups.length;
+  Data.TemplateGroupFrom[index].checkAll = checkedCount === Data.TemplateGroupFrom[index].children.length;
+  Data.TemplateGroupFrom[index].isIndeterminate = checkedCount > 0
+       && checkedCount < Data.TemplateGroupFrom[index].children.length;
 }
 
 watch(() => Dialog.value, (newVal) => {
   // 格式化显示数据
-  Data.applyEquipmentListFrom = [];
-  props.EquipmentListGroup.forEach((element) => {
-    Data.applyEquipmentListFrom.push({
-      ...element as UseClassEquipmentGroupType,
+  Data.TemplateGroupFrom = [];
+  props.TemplateGroup.forEach((element) => {
+    Data.TemplateGroupFrom.push({
+      ...element as ImpositionTemmplateListGroupType,
       checkAll: false,
       isIndeterminate: false,
       checks: [],
     });
   });
-  if (newVal && props.activeEquipmentList) {
-    const activeEquipmentList = props.activeEquipmentList as string[];
-    Data.applyEquipmentListFrom.forEach((element, index) => {
-      element.EquipmentGroups.forEach(item => {
-        const temp = activeEquipmentList.find(res => res === item.ID);
+  console.log(props.TemplateGroup, 'props.TemplateGroup');
+  console.log(Data.TemplateGroupFrom, 'Data.TemplateGroupFrom');
+
+  if (newVal && props.activeTemplateList) {
+    const activeTemplateList = props.activeTemplateList as string[];
+    Data.TemplateGroupFrom.forEach((element, index) => {
+      element.children.forEach(item => {
+        const temp = activeTemplateList.find(res => res === item.ID);
         if (temp) {
-          Data.applyEquipmentListFrom[index].checks.push(temp);
-          handleCheckedCitiesChange(Data.applyEquipmentListFrom[index].checks, index);
+          Data.TemplateGroupFrom[index].checks.push(temp);
+          handleCheckedCitiesChange(Data.TemplateGroupFrom[index].checks, index);
         }
       });
     });

@@ -134,22 +134,18 @@ function handleCheckedCitiesChange(value:string[], index) {
   Data.ListFrom[index].isIndeterminate = checkedCount > 0
        && checkedCount < Data.ListFrom[index].Notes.length;
 }
-watch(() => props.ListGroup, (newVal) => {
-  if (newVal) {
-    newVal.forEach((element) => {
-      Data.ListFrom.push({
-        ...element as SelectAssistInfoGroup,
-        checkAll: false,
-        isIndeterminate: false,
-        checks: [],
-      });
-    });
-  }
-});
 watch(() => Dialog.value, (newVal) => {
+  Data.ListFrom = [];
+  props.ListGroup.forEach((element) => {
+    Data.ListFrom.push({
+      ...element as SelectAssistInfoGroup,
+      checkAll: false,
+      isIndeterminate: false,
+      checks: [],
+    });
+  });
   if (newVal && props.activeInfoList) {
     const activeInfoList = props.activeInfoList as string[];
-    console.log(props.activeInfoList, 'Dialog');
     Data.ListFrom.forEach((element, index) => {
       element.Notes.forEach(item => {
         const temp = activeInfoList.find(res => res === item.ID);

@@ -22,8 +22,14 @@ const api = {
   getProductionLineRemove(ID) { // POST /Api/ProductionLine/Remove  生产线删除
     return request({ method: 'DELETE', url: `/Api/ProductionLine/Remove?id=${ID}` });
   },
-  getProductionLineAddWorkingProcedure(data) { // POST /Api/ProductionLine/AddWorkingProcedure  生产线添加工序
-    return request({ method: 'POST', url: '/Api/ProductionLine/AddWorkingProcedure', data });
+  getProductionLineWorkingProcedureAdd(data) { // POST /Api/ProductionLine/WorkingProcedure/Add  生产线添加工序
+    return request({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/Add', data });
+  },
+  getProductionLineWorkingProcedureList(data) { // POST /Api/ProductionLine/WorkingProcedure/List  生产线添加工序
+    return request({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/List', data });
+  },
+  getProductionLinetMaterialSourceList(ID) { // POST /Api/ProductionLine/MaterialSource/List  生产线添加工序
+    return request({ method: 'GET', url: `/Api/ProductionLine/MaterialSource/List?lineWorkID=${ID}` });
   },
 
   //

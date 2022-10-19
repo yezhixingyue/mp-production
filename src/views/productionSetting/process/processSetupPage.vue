@@ -7,7 +7,7 @@
       <el-scrollbar min-width="1400px">
         <div class="process-setup-page-main">
           <div class="left">
-            <el-form :model="Data.processDataFrom.Name" label-width="100px">
+            <el-form :model="Data.processDataFrom" label-width="100px">
               <p class="title">工序设置：</p>
               <el-form-item :label="`工序名称：`" class="form-item-required">
                 <el-input v-model="Data.processDataFrom.Name" placeholder="请输入" style="width:270px"></el-input>
@@ -56,7 +56,7 @@
               <ul class="equipment-groups">
                 <el-scrollbar max-height="170px">
                   <li v-for="equipment, index in Data.processDataFrom.EquipmentGroups" :key="equipment.GroupID">
-                    <div class="equipment">{{equipment.GroupName}}</div>
+                    <div class="equipment">{{getEquipmentNameByID(equipment.GroupID)}}</div>
                     <div class="state-percent">权重：<el-input v-model="equipment.Weight" placeholder="请输入"></el-input></div>
                     <div class="whether"><el-checkbox v-model="equipment.OneTimeTwoSide" label="可一次印双面" /></div>
                     <div class="del">
@@ -110,8 +110,8 @@
               </p>
               <div style="height:32px">
                 <template v-if="Data.processDataFrom.TemplateType === 2">
-                  ==验证大阪模板数量==
-                  <mp-button type="primary" link @click="selectDeviceGroupShow = true">选择大版模板</mp-button>
+                  <mp-button type="primary" link @click="selectTemplateGroupShow = true">选择大版模板</mp-button>
+                  {{showTemplate.map(item => item.Name).join('、')}}
                 </template>
               </div>
               <p class="info-text">
@@ -127,15 +127,15 @@
     :visible='selectDeviceGroupShow'
     :changeVisible='(visble) => selectDeviceGroupShow = visble'
     :activeEquipmentList="activeEquipmentList"
-    :EquipmentListGroup="EquipmentListGroup"
+    :EquipmentListGroup="productionSettingStore.EquipmentListGroup"
     :saveEquipment="saveEquipment"
     />
     <!-- 辅助信息 -->
     <SelectAssistInfo
     :visible='SelectAssistInfoShow'
     :changeVisible='(visble) => SelectAssistInfoShow = visble'
-    :activeEquipmentList="saveInfoActive"
-    :ListGroup="SelectAssistInfoList"
+    :activeInfoList="saveInfoActive"
+    :ListGroup="productionSettingStore.ResourceNoteGroup"
     :saveInfo="saveInfo"
     />
     <!-- 物料资源包 -->
@@ -143,8 +143,15 @@
     :visible='materialResourceShow'
     :changeVisible='(visble) => materialResourceShow = visble'
     :activeMaterialList="saveMaterialActive"
-    :MaterialListGroup="MaterialTypeGroup"
+    :MaterialListGroup="productionSettingStore.MaterialTypeGroup"
     :saveEquipment="saveMaterial"
+    />
+    <SelectTemplateGroup
+    :visible='selectTemplateGroupShow'
+    :changeVisible='(visble) => selectTemplateGroupShow = visble'
+    :activeTemplateList="activeTemplateList"
+    :TemplateGroup="ImpositionTemmplateListGroup"
+    :saveTemplate="saveTemplate"
     />
     <footer>
       <mp-button type="primary" class="gradient" @click="saveProcess">保存</mp-button>
@@ -162,16 +169,21 @@ import { useRoute } from 'vue-router';
 import SelectDeviceGroup from '@/components/productionSetting/selectDeviceGroup.vue';
 import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vue';
 import materialResource from '@/components/productionSetting/materialResource.vue';
+import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
 import api from '@/api';
 import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import type {
   NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
-  MaterialTypeGroupType, ProcessListType,
+  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType, ImpositionTemmplateListGroupType,
 } from '@/store/modules/productionSetting/types';
 import { useRouterStore } from '@/store/modules/routerStore';
+import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
+import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 
+const PasteupSettingStore = usePasteupSettingStore();
 const RouterStore = useRouterStore();
+const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
 
@@ -218,11 +230,9 @@ interface DataType {
 }
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 const selectDeviceGroupShow = ref(false);
+const selectTemplateGroupShow = ref(false);
 const SelectAssistInfoShow = ref(false);
 const materialResourceShow = ref(false);
-const EquipmentListGroup:Ref<UseClassEquipmentGroupType[]> = ref([]);
-const SelectAssistInfoList:Ref<SelectAssistInfoGroup[]> = ref([]);
-const MaterialTypeGroup:Ref<MaterialTypeGroupType[]> = ref([]);
 const Data:DataType = reactive({
   processDataFrom: {
     ID: '',
@@ -247,19 +257,31 @@ const BreadcrumbList = computed(() => [
     name: '添加工序',
   },
 ]);
+const ImpositionTemmplateListGroup = computed(() => {
+  const returnData:ImpositionTemmplateListGroupType[] = [];
+  productionSettingStore.ImpositionTemmplateList.forEach(item => {
+    const temp = returnData.find(it => it.ClassID === item.ClassID);
+    // 找到此条数据对应的分类及该分类下的所有模板
+    if (!temp) {
+      const TemmplateClass = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === item.ClassID);
+      const TemmplateList = productionSettingStore.ImpositionTemmplateList.filter(it => it.ClassID === item.ClassID);
+      console.log(TemmplateClass);
+
+      returnData.push({ Name: TemmplateClass?.Name || '', children: TemmplateList, ClassID: TemmplateClass?.ID || 0 });
+    }
+  });
+  console.log(returnData, 'returnDatareturnDatareturnData');
+
+  return returnData;
+});
+
 // 辅助信息的默认选中
-const saveInfoActive = computed(() => {
-  console.log(Data.processDataFrom.Relations.filter(item => item.Type === 0).map(res => res.RelationID));
-  return Data.processDataFrom.Relations.filter(item => item.Type === 0).map(res => res.RelationID);
-});
+const saveInfoActive = computed(() => Data.processDataFrom.Relations.filter(item => item.Type === 0).map(res => res.RelationID));
 // 物料资源的默认选中
-const saveMaterialActive = computed(() => {
-  console.log(Data.processDataFrom.Relations.filter(item => item.Type === 1).map(res => res.RelationID));
-  return Data.processDataFrom.Relations.filter(item => item.Type === 1).map(res => res.RelationID);
-});
+const saveMaterialActive = computed(() => Data.processDataFrom.Relations.filter(item => item.Type === 1).map(res => res.RelationID));
 // 显示的辅助信息
 const showInfoActive = computed(() => {
-  const temp = Data.processDataFrom.Relations.filter(item => item.Type === 0);
+  const Infos = Data.processDataFrom.Relations.filter(item => item.Type === 0);
   interface returnType {
     file:RelationsType[]
     text:RelationsType[]
@@ -273,18 +295,67 @@ const showInfoActive = computed(() => {
     // 数字
     number: [],
   };
-  returnData.file = temp.filter(res => res.PID === 0);
-  returnData.text = temp.filter(res => res.PID === 1);
-  returnData.number = temp.filter(res => res.PID === 2);
-
+  const getType = (Type) => {
+    let list:RelationsType[] = [];
+    productionSettingStore.ResourceNoteGroup.forEach(item => {
+      if (item.Type === Type) {
+        const temp = item.Notes.filter(res => Infos.find(el => el.RelationID === res.ID));
+        if (temp.length) {
+          list = temp.map(it => ({
+            RelationID: it.ID,
+            Name: it.Name,
+            PID: Type,
+            PName: '',
+            Type: 0,
+          }));
+        }
+      }
+    });
+    return list;
+  };
+  returnData.file = getType(0);
+  returnData.text = getType(1);
+  returnData.number = getType(2);
   return returnData;
 });
 // 显示的物料资源
 const showInfoMaterial = computed(() => {
+  const returnData: RelationsType[] = [];
   const temp = Data.processDataFrom.Relations.filter(item => item.Type === 1);
-  return temp;
+  temp.forEach(item => {
+    const Material = productionSettingStore.MaterialTypeGroup.find(it => it.ID === item.RelationID);
+    if (Material) {
+      returnData.push({
+        RelationID: Material.ID,
+        Name: Material.Name,
+        PID: 0,
+        PName: '',
+        Type: 1,
+      });
+    }
+  });
+  return returnData;
 });
-
+// 显示的物料资源
+const showTemplate = computed(() => {
+  const returnData: RelationsType[] = [];
+  const temp = Data.processDataFrom.Relations.filter(item => item.Type === 2);
+  temp.forEach(item => {
+    const Material = productionSettingStore.ImpositionTemmplateList.find(it => it.ID === item.RelationID);
+    if (Material) {
+      returnData.push({
+        RelationID: Material.ID,
+        Name: Material.Name,
+        PID: 0,
+        PName: '',
+        Type: 1,
+      });
+    }
+  });
+  return returnData;
+});
+// 选中的大版文件
+const activeTemplateList = computed(() => Data.processDataFrom.Relations.filter(item => item.Type === 2).map(it => it.RelationID));
 const activeEquipmentList = computed(() => Data.processDataFrom.EquipmentGroups.map(it => it.GroupID));
 const EquipmentGroupsSum = computed(() => {
   let sum = 0;
@@ -296,6 +367,7 @@ const EquipmentGroupsSum = computed(() => {
   }
   return 0;
 });
+
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('processSetupPage', 'true');
 }
@@ -308,6 +380,15 @@ const saveEquipment = (Equipments) => {
   }));
   selectDeviceGroupShow.value = false;
 };
+const saveTemplate = (infoList) => {
+  console.log(infoList, 'infoListinfoList');
+  // 去除掉已经选中的数据
+  const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== 2);
+  Data.processDataFrom.Relations = [...elseData, ...infoList.map(res => ({
+    RelationID: res.ID, Name: res.Name, Type: 2, PID: res.Type,
+  }))];
+  selectTemplateGroupShow.value = false;
+};
 const saveInfo = (infoList) => {
   // 去除掉已经选中的数据
   const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== 0);
@@ -317,8 +398,6 @@ const saveInfo = (infoList) => {
   SelectAssistInfoShow.value = false;
 };
 const saveMaterial = (infoList) => {
-  console.log(infoList, 'saveMaterial --- LIST');
-
   // 去除掉已经选中的数据
   const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== 1);
   Data.processDataFrom.Relations = [...elseData, ...infoList.map(res => ({
@@ -328,12 +407,21 @@ const saveMaterial = (infoList) => {
   materialResourceShow.value = false;
 };
 const EquipmentGroupsRemove = (index) => {
-  // Data.addAttributesForm.AttributeSelects.splice(i, 1);
   Data.processDataFrom.EquipmentGroups.splice(index, 1);
 };
+const getEquipmentNameByID = (ID) => {
+  console.log(productionSettingStore.EquipmentListGroup, 'productionSettingStore.EquipmentListGroup');
+  let str = '';
+  productionSettingStore.EquipmentListGroup.forEach(item => {
+    item.EquipmentGroups.forEach(it => {
+      if (it.ID === ID) {
+        str = it.Name;
+      }
+    });
+  });
+  return str;
+};
 const saveProcess = () => {
-  console.log(Data.processDataFrom, 'Data.processDataFrom.EquipmentGroups');
-
   if (Data.processDataFrom.Type === 1 && Data.processDataFrom.isRestrict && !Data.processDataFrom.MaxProduceNumber) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '请输入每套版最大可加工数量', () => null, () => null);
@@ -346,7 +434,7 @@ const saveProcess = () => {
   } else if (EquipmentGroupsSum.value !== 100) {
     // 弹框提 权重之和不等于100
     messageBox.failSingleError('保存失败', '权重之和不等于100', () => null, () => null);
-  } else if (Data.processDataFrom.TemplateType === 2) {
+  } else if (Data.processDataFrom.TemplateType === 2 && !showTemplate.value.length) {
     messageBox.failSingleError('保存失败', '请选择大版模板', () => null, () => null);
     // 弹框提 其他时 大阪模板为空
   } else {
@@ -364,44 +452,8 @@ const saveProcess = () => {
 };
 onMounted(() => {
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  // 获取所有设备组
-  api.getEquipmentGroup().then(res => {
-    if (res.data.Status === 1000) {
-      const temp = res.data.Data as _UseClassEquipmentGroupType[];
-      EquipmentListGroup.value = [];
-      temp.forEach(item => {
-        const EquipmentGroups = item.EquipmentGroups.map(it => ({
-          ID: it.GroupID,
-          Name: it.GroupName,
-        }));
-        EquipmentListGroup.value.push({
-          ClassID: item.ClassID,
-          ClassName: item.ClassName,
-          EquipmentGroups,
-        });
-      });
-    }
-  });
-  // 获取所有辅助信息
-  api.getResourceNoteGroup().then(res => {
-    if (res.data.Status === 1000) {
-      const temp = res.data.Data as SelectAssistInfoGroup[];
-      temp.forEach((item, i) => {
-        temp[i].Notes = item.Notes.map(it => ({ ...it, Type: item.Type }));
-      });
-      SelectAssistInfoList.value = temp;
-      console.log(SelectAssistInfoList.value, ' SelectAssistInfoList.value');
-    }
-  });
-  // 获取所有物料资源包
-  api.getMaterialTypeGroupAll().then(res => {
-    if (res.data.Status === 1000) {
-      MaterialTypeGroup.value = res.data.Data as MaterialTypeGroupType[];
-    }
-  });
   const temp = JSON.parse(route.params.process as string) as processDataFromType;
 
-  console.log(Data.processDataFrom, 'aaaaaaaaaaaaaaaaa');
   if (temp) {
     Data.processDataFrom = { ...temp, isRestrict: !!temp.MaxProduceNumber };
   }

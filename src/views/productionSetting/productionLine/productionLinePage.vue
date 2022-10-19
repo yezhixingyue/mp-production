@@ -26,14 +26,14 @@
               <span class="operate">操作</span>
             </div>
           </li>
-          <li class="table-main">
+          <li class="table-main" v-for="item in ProductionLineData.ProductionLineWorkings" :key="item">
             <!-- 工序 -->
             <div class="process-item">
               <span class="process">工序</span>
               <span class="equipment">设备/外协工厂</span>
               <span class="operate">
-                <mp-button type="primary" link>选择设备/工厂</mp-button>
-                <mp-button type="primary" link>物料来源</mp-button>
+                <mp-button type="primary" link @click="ToEquipment">选择设备/工厂</mp-button>
+                <mp-button type="primary" link @click="ToMaterialSource">物料来源</mp-button>
                 <mp-button type="primary" link>删除</mp-button>
               </span>
             </div>
@@ -99,7 +99,8 @@
         <p class="templates">
           <span class="label">可用拼版模板：</span>
           <span>
-            正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版...
+            {{getTemplatesName().map(it => it.Name).join('、')}}
+            <!-- 正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版... -->
           </span>
         </p>
       </div>
@@ -164,7 +165,9 @@ import api from '@/api';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import messageBox from '@/assets/js/utils/message';
 import { ProcessListType } from '@/store/modules/productionSetting/types';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const PasteupSettingStore = usePasteupSettingStore();
 interface ImpositionTemmplateListType {
   ClassID:number,
@@ -172,7 +175,7 @@ interface ImpositionTemmplateListType {
   Name:string,
 }
 interface getMaxDataType {
-  Page: number,
+    Page: number,
     PageSize: number,
     OnlyShowName: boolean,
 }
@@ -189,7 +192,7 @@ interface addPrcessFromType {
   WordIDS: string[],
 }
 interface getPocessFromType {
-  ClassID: string,
+  LineID: string,
 }
 interface ProductionLineListType {
     SplitWordID: string,
@@ -214,6 +217,8 @@ const addLineShow = ref(false);
 const addPrcessShow = ref(false);
 const ProductionLineList:Ref<ProductionLineListType[]> = ref([]);
 const PrcessList:Ref<ProcessListType[]> = ref([]);
+// 生产线工序列表
+const ProductionLineData: any = ref([]);
 const Data:DataType = reactive({
   ImpositionTemmplateList: [],
   getMaxData: {
@@ -235,15 +240,15 @@ const Data:DataType = reactive({
   },
   // 根据生产线获取工序
   getPocessFrom: {
-    ClassID: 'string',
+    LineID: 'string',
   },
 });
 const RadioGroupCompValue = computed(() => ({
-  level1Val: Data.getPocessFrom.ClassID,
+  level1Val: Data.getPocessFrom.LineID,
   level2Val: '',
 }));
 // 选中的生产线
-const actionLine = computed(() => ProductionLineList.value.find(item => item.ID === Data.getPocessFrom.ClassID));
+const actionLine = computed(() => ProductionLineList.value.find(item => item.ID === Data.getPocessFrom.LineID));
 const computedImpositionTemmplate = computed(() => {
   interface returnDataType {
     ClassID:number,
@@ -262,12 +267,50 @@ const computedImpositionTemmplate = computed(() => {
   });
   return returnData;
 });
+// 跳转物料来源
+const ToMaterialSource = () => {
+  router.push({
+    name: 'materialSource',
+    // params: { process: JSON.stringify(item) },
+  });
+};
+// 跳转生产设备
+const ToEquipment = () => {
+  router.push({
+    name: 'equipment',
+    // params: { process: JSON.stringify(item) },
+  });
+};
+// 获取生产线工序列表
+const getProductionLineWorkingProcedureList = () => {
+  api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
+    if (res.data.Status === 1000) {
+      console.log(res.data.Data);
+      ProductionLineData.value = res.data.Data as any;
+    }
+  });
+};
 const RadioGroupCompChange = (levelData) => {
   const { level1Val } = levelData;
   if (level1Val !== undefined) {
-    Data.getPocessFrom.ClassID = level1Val as string;
+    Data.getPocessFrom.LineID = level1Val as string;
     // 获取当前生产线的所有工序();
+    getProductionLineWorkingProcedureList();
   }
+};
+// 可用拼版模板显示
+const getTemplatesName = () => {
+  const returnData:ImpositionTemmplateListType[] = [];
+  console.log(ProductionLineData.value.TemplateIDS, 'TemplateIDSTemplateIDSTemplateIDS');
+  if (!ProductionLineData.value.TemplateIDS) return [];
+  ProductionLineData.value.TemplateIDS.forEach(item => {
+    const temp = Data.ImpositionTemmplateList.find(it => it.ID === item);
+    if (temp) {
+      returnData.push(temp);
+    }
+  });
+  console.log(returnData, 'returnDatareturnDatareturnData');
+  return returnData;
 };
 // 获取生产线列表
 const getProductionLineList = () => {
@@ -275,7 +318,8 @@ const getProductionLineList = () => {
     if (res.data.Status === 1000) {
       ProductionLineList.value = res.data.Data as ProductionLineListType[];
       // 默认选中第一条生产线
-      Data.getPocessFrom.ClassID = ProductionLineList.value[0].ID || '';
+      Data.getPocessFrom.LineID = ProductionLineList.value[0].ID || '';
+      getProductionLineWorkingProcedureList();
     }
   });
 };
@@ -369,7 +413,7 @@ const addPrcessPrimaryClick = () => {
   if (!Data.addPrcessFrom.WordIDS.length) {
     messageBox.failSingleError('保存失败', '请选择工序', () => null, () => null);
   } else {
-    api.getProductionLineAddWorkingProcedure(Data.addPrcessFrom).then(res => {
+    api.getProductionLineWorkingProcedureAdd(Data.addPrcessFrom).then(res => {
       if (res.data.Status === 1000) {
         const cb = () => {
           addLineCloseClick();

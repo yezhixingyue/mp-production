@@ -30,32 +30,23 @@
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="333">
           <template #default="scope">
-            ========
-            <span v-if="scope.row.EquipmentGroups === 0">普通工序</span>
-            <span v-if="scope.row.Type === 1">印刷工序</span>
-            <span v-if="scope.row.Type === 2">制版工序</span>
-            <span v-if="scope.row.Type === 3">组合工序</span>
-            <span v-if="scope.row.Type === 4">拆分工序</span>
+            {{getEquipmentGroupsNames(scope.row.EquipmentGroups)}}
           </template>
 
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="198">
           <template #default="scope">
-            ===
-            {{scope.row.Relations.filter(it => it.Type === 0).map(it=>it.Type).join('/')}}
+            {{getInfoName(scope.row.Relations, 0)}}
           </template>
-
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="196">
           <template #default="scope">
-            ===
-            {{scope.row.Relations.filter(it => it.Type === 0).map(it=>it.Type).join('/')}}
+            {{getInfoName(scope.row.Relations,1)}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="170">
           <template #default="scope">
-            ===
-            {{scope.row.Relations.filter(it => it.Type === 1).map(it=>it.Type).join('/')}}
+            {{getMaterialName(scope.row.Relations)}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="需要大版文件" min-width="204">
@@ -65,8 +56,7 @@
               印刷版
             </template>
             <template v-if="scope.row.TemplateType === 2">
-              === 其他
-              {{scope.row.Relations.filter(it => it.Type === 1).map(it=>it.Type).join('/')}}
+              {{getTemplateName(scope.row.Relations)}}
             </template>
 
           </template>
@@ -107,6 +97,12 @@ import {
 import api from '@/api';
 import { ProcessListType } from '@/store/modules/productionSetting/types';
 import messageBox from '@/assets/js/utils/message';
+import { useProductionSettingStore } from '@/store/modules/productionSetting';
+import type { RelationsType } from '@/store/modules/productionSetting/types';
+import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
+
+const PasteupSettingStore = usePasteupSettingStore();
+const productionSettingStore = useProductionSettingStore();
 
 interface DataType{
   processList: ProcessListType[],
@@ -130,7 +126,6 @@ const ToProcess = (item) => {
 const getProcessList = () => {
   api.getWorkingProcedureList(getProcessListData.value).then(res => {
     if (res.data.Status === 1000) {
-      console.log(res);
       Data.processList = res.data.Data as ProcessListType[];
       getProcessListData.value.DataTotal = res.data.DataNumber as number;
     }
@@ -142,6 +137,69 @@ function PaginationChange(newVal) {
   getProcessListData.value.Page = newVal as number;
   getProcessList();
 }
+// 获取设备工厂
+// 格式化设备工厂
+const getEquipmentGroupsNames = (EquipmentGroups) => {
+  const returnStr:string[] = [];
+  const allEquipmentGroups:any = [];
+  // 所有设备组
+  productionSettingStore.EquipmentListGroup.forEach(item => {
+    allEquipmentGroups.push(...item.EquipmentGroups);
+  });
+  EquipmentGroups.forEach(item => {
+    const group = allEquipmentGroups.find(it => it.ID === item.GroupID);
+    if (group) {
+      returnStr.push(group.Name as string);
+    }
+  });
+  return returnStr.join('、');
+};
+// 格式化辅助信息
+const getInfoName = (Relations:RelationsType[], Type) => {
+  const returnStr:string[] = [];
+  Relations.forEach(item => {
+    if (item.Type === 0) {
+      productionSettingStore.ResourceNoteGroup.forEach(it => {
+        if (it.Type === Type) {
+          const temp = it.Notes.find(res => res.ID === item.RelationID);
+          if (temp) {
+            returnStr.push(temp.Name);
+          }
+        }
+      });
+    }
+  });
+
+  return returnStr.join('、');
+};
+// 格式化物料资源
+const getMaterialName = (Relations:RelationsType[]) => {
+  const returnStr:string[] = [];
+  Relations.forEach(item => {
+    if (item.Type === 1) {
+      const temp = productionSettingStore.MaterialTypeGroup.find(res => res.ID === item.RelationID);
+      if (temp) {
+        returnStr.push(temp.Name);
+      }
+    }
+  });
+
+  return returnStr.join('、');
+};
+// 格式化大阪模板
+const getTemplateName = (Relations:RelationsType[]) => {
+  const returnStr:string[] = [];
+  Relations.forEach(item => {
+    if (item.Type === 2) {
+      const temp = productionSettingStore.ImpositionTemmplateList.find(res => res.ID === item.RelationID);
+      if (temp) {
+        returnStr.push(temp.Name);
+      }
+    }
+  });
+
+  return returnStr.join('、');
+};
 const delProcess = (item) => {
   messageBox.warnCancelBox('确定要删除此工序吗？', `${item.Name}`, () => {
     api.getWorkingProcedureRemove(item.ID).then(res => {
@@ -152,7 +210,6 @@ const delProcess = (item) => {
     });
   }, () => undefined);
   // api.getWorkingProcedureRemove(e.ID);
-  console.log('delProcess');
 };
 onActivated(() => {
   const processSetupPage = sessionStorage.getItem('processSetupPage') === 'true';
@@ -160,11 +217,24 @@ onActivated(() => {
     getProcessList();
     sessionStorage.removeItem('processSetupPage');
   }
+  if (!PasteupSettingStore.ImpositionTemmplateClassList.length) {
+    PasteupSettingStore.getImpositionTemmplateClassList();
+  }
+  productionSettingStore.getEquipmentGroup();
+  productionSettingStore.getResourceNoteGroup();
+  productionSettingStore.getMaterialTypeGroupAll();
+  productionSettingStore.getImpositionTemmplateList({
+    Page: 1,
+    PageSize: 999,
+    OnlyShowName: true,
+  });
+  setTimeout(() => {
+    console.log(productionSettingStore.ImpositionTemmplateList, 'productionSettingStoreproductionSettingStoreproductionSettingStore');
+  }, 1000);
 });
 onMounted(() => {
   sessionStorage.removeItem('processSetupPage');
   getProcessList();
-  console.log('aaa');
 });
 </script>
 <script lang="ts">

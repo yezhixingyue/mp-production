@@ -25,6 +25,30 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionSetting/productionLine/productionLinePage.vue'),
     },
+    {
+      path: '/materialSource',
+      name: 'materialSource',
+      meta: {
+        title: '物料来源',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'materialSourcePage',
+      },
+      component: () => import('@/views/productionSetting/productionLine/materialSourcePage.vue'),
+    },
+    {
+      path: '/equipment',
+      name: 'equipment',
+      meta: {
+        title: '生产设备',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'equipmentPage',
+      },
+      component: () => import('@/views/productionSetting/productionLine/equipmentPage.vue'),
+    },
     /* 组合生产线模块
     -------------------------------------- */
     {
@@ -112,6 +136,21 @@ const routeTree:RouteTreeType = {
       children: [
         {
           name: 'processSetup',
+          children: [],
+        },
+      ],
+    },
+    /* 生产线
+    -------------------------------------- */
+    {
+      name: 'productionLine',
+      children: [
+        {
+          name: 'materialSource',
+          children: [],
+        },
+        {
+          name: 'equipment',
           children: [],
         },
       ],

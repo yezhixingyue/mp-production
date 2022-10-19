@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  ref, computed, watch,
+  ref, Ref, computed, watch,
 } from 'vue';
 import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import type {
@@ -61,7 +61,7 @@ const props = withDefaults(defineProps<Props>(), {
   activeMaterialList: () => [],
   MaterialListGroup: () => [],
 });
-const checkList = ref([]);
+const checkList:Ref<string[]> = ref([]);
 const Dialog = computed({
   get() {
     return props.visible;
@@ -80,20 +80,19 @@ function Closed() {
 function PrimaryClick() {
   const returnData = props.MaterialListGroup.filter(res => checkList.value.find(it => it === res.ID));
   props.MaterialListGroup.map(res => checkList.value.find(it => it === res.ID));
-  console.log(returnData, 'checkList');
 
   props.saveEquipment(returnData || []);
 }
 watch(() => props.MaterialListGroup, (newVal) => {
   if (newVal) {
     newVal.forEach((element) => {
-      console.log(element);
+      // console.log(element);
     });
   }
 });
 watch(() => Dialog.value, (newVal) => {
   if (newVal && props.activeMaterialList) {
-    const activeMaterialList = props.activeMaterialList as string[];
+    checkList.value = props.activeMaterialList as string[];
   }
 });
 </script>

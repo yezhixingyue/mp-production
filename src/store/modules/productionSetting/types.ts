@@ -1,3 +1,5 @@
+import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
+
 // 辅助信息
 export interface NotesType{
   ID: string,
@@ -7,6 +9,16 @@ export interface NotesType{
 export interface SelectAssistInfoGroup{
   Type: number,
   Notes: NotesType[]
+}
+interface _EquipmentGroups{
+  GroupID: string,
+  GroupName: string
+}
+
+export interface _UseClassEquipmentGroupType {
+  ClassID: 0,
+  ClassName: string,
+  EquipmentGroups: _EquipmentGroups[]
 }
 // 所有物料资源
 export interface MaterialTypeGroupsType{
@@ -20,6 +32,20 @@ export interface MaterialTypeGroupType{
   ID: string,
   Name: string
 }
+
+export interface ImpositionTemmplateListType {
+  ClassID:number,
+  ID:string,
+  Name:string,
+}
+
+export interface IState {
+  EquipmentListGroup:UseClassEquipmentGroupType[],
+  ResourceNoteGroup:SelectAssistInfoGroup[],
+  MaterialTypeGroup:MaterialTypeGroupType[],
+  ImpositionTemmplateList:ImpositionTemmplateListType[],
+}
+
 // g工序列表
 export interface EquipmentGroupsType{
   GroupID: string,
@@ -44,4 +70,9 @@ export interface ProcessListType{
   Relations: RelationsType[],
   ID: string,
   Name: string,
+}
+export interface ImpositionTemmplateListGroupType {
+  ClassID:number,
+  Name:string,
+  children:ImpositionTemmplateListType[],
 }
