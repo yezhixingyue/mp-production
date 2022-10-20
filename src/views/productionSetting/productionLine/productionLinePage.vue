@@ -32,8 +32,8 @@
               <span class="process">工序</span>
               <span class="equipment">设备/外协工厂</span>
               <span class="operate">
-                <mp-button type="primary" link @click="ToEquipment">选择设备/工厂</mp-button>
-                <mp-button type="primary" link @click="ToMaterialSource">物料来源</mp-button>
+                <mp-button type="primary" link @click="ToEquipment(item)">选择设备/工厂</mp-button>
+                <mp-button type="primary" link @click="ToMaterialSource(item)">物料来源</mp-button>
                 <mp-button type="primary" link>删除</mp-button>
               </span>
             </div>
@@ -268,17 +268,17 @@ const computedImpositionTemmplate = computed(() => {
   return returnData;
 });
 // 跳转物料来源
-const ToMaterialSource = () => {
+const ToMaterialSource = (item) => {
   router.push({
     name: 'materialSource',
-    // params: { process: JSON.stringify(item) },
+    params: { processInfo: JSON.stringify(item) },
   });
 };
 // 跳转生产设备
-const ToEquipment = () => {
+const ToEquipment = (item) => {
   router.push({
     name: 'equipment',
-    // params: { process: JSON.stringify(item) },
+    params: { processInfo: JSON.stringify(item) },
   });
 };
 // 获取生产线工序列表

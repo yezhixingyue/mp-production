@@ -70,6 +70,7 @@ interface processDataFromType{
 
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
+const processInfo = ref({});
 const BreadcrumbList = computed(() => [
   { to: { path: '/productionLine' }, name: '生产线' },
   {
@@ -112,11 +113,15 @@ const saveProcess = () => {
 };
 onMounted(() => {
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  // const temp = JSON.parse(route.params.process as string) as processDataFromType;
-
-  // if (temp) {
-  //   // Data.processDataFrom = { ...temp, isRestrict: !!temp.MaxProduceNumber };
-  // }
+  const temp = JSON.parse(route.params.processInfo as string) as any;
+  if (temp) {
+    processInfo.value = temp;
+  }
+  api.getProductionLinetMaterialSourceList(temp.LineWorkID).then(res => {
+    if (res.data.Status === 1000) {
+      console.log(res.data.Data);
+    }
+  });
 });
 </script>
 <script lang="ts">

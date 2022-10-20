@@ -70,6 +70,10 @@ interface processDataFromType{
 
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
+const processInfo = ref({});
+const EquipmentClass = ref([]);
+const EquipmentGroup = ref([]);
+const Equipment = ref([]);
 const BreadcrumbList = computed(() => [
   { to: { path: '/productionLine' }, name: '生产线' },
   {
@@ -112,11 +116,40 @@ const saveProcess = () => {
 };
 onMounted(() => {
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  // const temp = JSON.parse(route.params.process as string) as processDataFromType;
-
-  // if (temp) {
-  //   // Data.processDataFrom = { ...temp, isRestrict: !!temp.MaxProduceNumber };
-  // }
+  const temp = JSON.parse(route.params.processInfo as string) as any;
+  if (temp) {
+    processInfo.value = temp;
+  }
+  // 获取设备列表
+  api.getProductionLinetEquipmentList(temp.LineWorkID).then(res => {
+    if (res.data.Status === 1000) {
+      console.log(res.data.Data);
+    }
+  });
+  const PostData = {
+    Page: 1,
+    PageSize: 9999,
+  };
+  // 设备
+  api.getEquipmentList(PostData).then(res => {
+    if (res.data.Status === 1000) {
+      console.log(res.data.Data);
+      Equipment.value = res.data.Data as any;
+    }
+  });
+  // 设备组
+  api.getEquipmentGroupList(PostData).then(res => {
+    if (res.data.Status === 1000) {
+      console.log(res.data.Data);
+      EquipmentGroup.value = res.data.Data as any;
+    }
+  });
+  // 设备分类
+  api.getEquipmentClassificationList().then(res => {
+    if (res.data.Status === 1000) {
+      EquipmentClass.value = res.data.Data as any;
+    }
+  });
 });
 </script>
 <script lang="ts">

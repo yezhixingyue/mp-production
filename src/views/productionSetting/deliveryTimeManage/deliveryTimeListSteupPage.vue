@@ -18,28 +18,29 @@
           <div>
             <mp-button link type="primary" @click="onAreaSelectClick">选择区域</mp-button>
             <!-- 区域展示文字 -->
-            <span class="remark" :title="Data.DeliveryTimeForm.AreaDescribe">{{Data.DeliveryTimeForm.AreaDescribe.replaceAll('\r\n', '、')}}</span>
+            <span class="remark" :title="Data.DeliveryTimeForm.AreaDescribe">{{Data.DeliveryTimeForm.AreaDescribe}}</span>
           </div>
         </li>
         <li>
           <span class="title">配送方式：</span>
-          <!-- <div class="content-item" v-if="subExpressList.length > 0">
+          <div class="content-item" v-if="commonStore.ExpressList.length > 0">
             <p>
               <el-checkbox
                 v-model="ExpressCheckAll"
                 :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange(ExpressCheckAll)"
                 >全选</el-checkbox
               >
             </p>
-            <el-checkbox-group v-model="ExpressCheckList">
+            <el-checkbox-group v-model="ExpressList">
               <el-checkbox
-                v-for="it in subExpressList"
+                v-for="it in commonStore.ExpressList"
                 :key="it.ID"
                 :label="it.ID"
                 >{{ it.Name }}</el-checkbox
               >
             </el-checkbox-group>
-          </div> -->
+          </div>
         </li>
         <li>
           <span class="title">发货班次：</span>
@@ -48,8 +49,8 @@
             <ul class='list'>
               <li v-for="(it, i) in Data.DeliveryTimeForm.Shift" :key="it.key">
                 <el-time-picker
-                  :value="getFormatValue(it.S)"
-                  @input="e => onShiftTimeItemInput(e, i)"
+                  v-model="it.date"
+                  @change="e => onShiftTimeItemInput(e, i)"
                   :clearable='false'
                   value-format="HH:mm"
                   format="HH:mm"
@@ -64,7 +65,7 @@
                 <span class="remark">天</span>
                 <el-input v-model="it.H" maxlength="2" size="small" style="width:100px"></el-input>
                 <span class="remark">小时</span>
-                <mp-button v-show="i > 0" @click="onShiftRemoveClick(i)"></mp-button>
+                <mp-button v-show="i > 0" @click="onShiftRemoveClick(i)" link>删除</mp-button>
               </li>
             </ul>
           </div>
@@ -86,7 +87,7 @@
 
 <script setup lang='ts'>
 import {
-  reactive, ref, Ref, computed, getCurrentInstance,
+  reactive, ref, Ref, computed, getCurrentInstance, onMounted,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -102,11 +103,12 @@ import { IDistrictTreeListItemType } from '@/store/modules/common/types';
 import { setPageObjType } from './types';
 
 interface SType {
-  F: number,
-  S: number,
+  F: string,
+  S: string,
 }
 interface ShiftType {
   key?: string,
+  date?: string,
   S: SType,
   D: number,
   H: number,
@@ -133,23 +135,53 @@ interface DeliveryTimeFormType {
 interface DataType {
   DeliveryTimeForm:DeliveryTimeFormType
 }
+const route = useRoute();
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 const RouterStore = useRouterStore();
 const PasteupSettingStore = usePasteupSettingStore();
 const visible = ref(false);
-const defaultCheckedKeys:Ref<number[]> = ref([]);
+const ExpressCheckAll = ref(false);
+const isIndeterminate = ref(false);
 const commonStore = useCommonStore();
 const Data:DataType = reactive({
   DeliveryTimeForm: {
     ItemID: '',
     ItemName: '',
-    Shift: [],
+    Shift: [
+      {
+        key: Math.random().toString(16).slice(-10),
+        date: '',
+        S: {
+          F: '',
+          S: '',
+        },
+        D: 0,
+        H: 0,
+      },
+    ],
     AreaDescribe: '',
     AreaList: [],
     ExpressList: [],
   },
 });
 const defaultBeginTime = computed(() => new Date(new Date(new Date(new Date().setHours(20)).setMinutes(0)).setSeconds(0)));
+const defaultCheckedKeys = computed(() => Data.DeliveryTimeForm.AreaList.map(item => item.CountyID));
+
+const ExpressList = computed({
+  get() {
+    return Data.DeliveryTimeForm.ExpressList.map(item => commonStore.ExpressList.find(it => it.ID === item.ID)?.ID);
+  },
+  set(list) {
+    Data.DeliveryTimeForm.ExpressList = commonStore.ExpressList.filter(item => list.find(it => it === item.ID)) || [];
+    if (commonStore.ExpressList.length === list.length) {
+      isIndeterminate.value = false;
+      ExpressCheckAll.value = true;
+    } else {
+      ExpressCheckAll.value = false;
+      isIndeterminate.value = !!list.length;
+    }
+  },
+});
 const saveType = () => {
   if (Data.DeliveryTimeForm && Data.DeliveryTimeForm.ItemID) return '编辑';
   return '添加';
@@ -171,48 +203,156 @@ const allStateItem = computed(() => {
   });
   return _arr;
 });
-const getFormatValue = (a) => {
-  // if (DeliveryTimeItemClass.submitChecker(this.DeliveryTimeForm)) {
-  //   this.$store.dispatch('periodManage/getDeliveryTimeItemSave', [this.DeliveryTimeForm, this.onGoBackClick]);
+// 选中区域文字展示
+const getAreaDescribe = () => {
+  let returnStr = '';
+  // 所有选择的 省市区
+  const allSelect = commonStore.DistrictList.filter(item => Data.DeliveryTimeForm.AreaList.find(it => {
+    if (item.ID === it.CityID || it.CountyID || it.ProvinceID) {
+      return true;
+    }
+    return false;
+  }));
+  // 所有选择的 省
+  const allProvince = allSelect.filter(item => Data.DeliveryTimeForm.AreaList.find(it => item.ID === it.ProvinceID));
+  // 所有选择的 市
+  const allCity = allSelect.filter(item => Data.DeliveryTimeForm.AreaList.find(it => item.ID === it.CityID));
+  // 所有选择的 区
+  const allCounty = allSelect.filter(item => Data.DeliveryTimeForm.AreaList.find(it => item.ID === it.CountyID));
+  console.log(allProvince, allCity, allCounty, 'allCityallCityallCity');
+  // 全部区域
+  console.log(allProvince.length, commonStore.DistrictTreeList.length);
+
+  returnStr = '全部区域';
+  // if (allProvince.length === commonStore.DistrictTreeList.length) {
   // }
+  // 省
+  // allProvince.forEach(Province => {
+  //   const ProvinceStr = '';
+  //   allCity.forEach(City => {
+  //     // 当前市所有区
+  //     allCounty.filter(item => item.ParentID === City.ID).map(it => it.Name).join('、');
+  //     allCounty.forEach(County => {
+  //       console.log(County);
+  //     });
+  //   });
+  // });
+  Data.DeliveryTimeForm.AreaDescribe = returnStr;
+  // return returnStr;
 };
-const onShiftTimeItemInput = (a, b) => {
-  // if (DeliveryTimeItemClass.submitChecker(this.DeliveryTimeForm)) {
-  //   this.$store.dispatch('periodManage/getDeliveryTimeItemSave', [this.DeliveryTimeForm, this.onGoBackClick]);
-  // }
+function handleCheckAllChange(val: boolean) {
+  if (val) {
+    const a = commonStore.ExpressList.map(it => it);
+    Data.DeliveryTimeForm.ExpressList = a;
+  } else {
+    Data.DeliveryTimeForm.ExpressList = [];
+  }
+  isIndeterminate.value = false;
+}
+function setStorage() { // 设置会话存储
+  sessionStorage.setItem('deliveryTimeListSteupPage', 'true');
+}
+const getFormatValue = (shiftItem) => {
+  if (!shiftItem) return '';
+  const { F, S } = shiftItem;
+  if ((!F && F !== 0) || (!S && S !== 0)) return '';
+  const _f = `0${F}`.slice(-2);
+  const _s = `0${S}`.slice(-2);
+  return `${_f}:${_s}`;
+};
+const onShiftTimeItemInput = (data, index) => {
+  if (!data) return;
+  const [F, S] = data.split(':');
+  Data.DeliveryTimeForm.Shift[index].S.F = F;
+  Data.DeliveryTimeForm.Shift[index].S.S = S;
 };
 const onAreaSelectClick = () => {
   visible.value = true;
-  // if (DeliveryTimeItemClass.submitChecker(this.DeliveryTimeForm)) {
-  //   this.$store.dispatch('periodManage/getDeliveryTimeItemSave', [this.DeliveryTimeForm, this.onGoBackClick]);
-  // }
+};
+const verificationShift = () => {
+  let num = 0;
+  if (!Data.DeliveryTimeForm.Shift.length) {
+    num++;
+  }
+  Data.DeliveryTimeForm.Shift.forEach(item => {
+    if (!item.D || !item.H || !item.S.F || !item.S.S) {
+      num++;
+    }
+  });
+  // num 有数据 验证不通过
+  return !!num;
 };
 const onShiftAddClick = () => {
-  // if (DeliveryTimeItemClass.submitChecker(this.DeliveryTimeForm)) {
-  //   this.$store.dispatch('periodManage/getDeliveryTimeItemSave', [this.DeliveryTimeForm, this.onGoBackClick]);
-  // }
+  Data.DeliveryTimeForm.Shift.push({
+    key: Math.random().toString(16).slice(-10),
+    date: '',
+    S: {
+      F: '',
+      S: '',
+    },
+    D: 0,
+    H: 0,
+  });
 };
 const onSubmitClick = () => {
-  // if (DeliveryTimeItemClass.submitChecker(this.DeliveryTimeForm)) {
-  //   this.$store.dispatch('periodManage/getDeliveryTimeItemSave', [this.DeliveryTimeForm, this.onGoBackClick]);
+  Data.DeliveryTimeForm.Shift.forEach((item, index) => {
+    onShiftTimeItemInput(item.date, index);
+  });
+  if (!Data.DeliveryTimeForm.ItemName) {
+    messageBox.failSingleError('保存失败', '请填写名称', () => null, () => null);
+  } else if (!Data.DeliveryTimeForm.AreaList.length) {
+    messageBox.failSingleError('保存失败', '请选择区域', () => null, () => null);
+  } else if (!Data.DeliveryTimeForm.ExpressList.length) {
+    messageBox.failSingleError('保存失败', '请选择配送方式', () => null, () => null);
+  } else if (verificationShift()) {
+    messageBox.failSingleError('保存失败', '发货班次信息不完整，请检查', () => null, () => null);
+  } else {
+    api.getShiftTimeSave(Data.DeliveryTimeForm).then(res => {
+      if (res.data.Status === 1000) {
+        const cb = () => {
+          setStorage();
+          RouterStore.goBack();
+        };
+        // 保存成功
+        messageBox.successSingle('保存成功', cb, cb);
+      }
+    });
+  }
+};
+const onShiftRemoveClick = (index) => {
+  Data.DeliveryTimeForm.Shift.splice(index, 1);
+};
+const handleChangeFunc = (list:AreaListType[]) => {
+  Data.DeliveryTimeForm.AreaList = list;
+  getAreaDescribe();
+  // if (checkedNodes.length === 0) {
+  //   defaultCheckedKeys.value = [];
+  //   return;
+  // }
+  // if (isAll) {
+  //   defaultCheckedKeys.value = allStateItem.value.map(it => it.ID);
+  //   return;
   // }
 };
-const onShiftRemoveClick = (i) => {
-  // if (DeliveryTimeItemClass.submitChecker(this.DeliveryTimeForm)) {
-  //   this.$store.dispatch('periodManage/getDeliveryTimeItemSave', [this.DeliveryTimeForm, this.onGoBackClick]);
-  // }
-};
-const handleChangeFunc = (checkedNodes, checkedKeys, isAll) => {
-  if (checkedNodes.length === 0) {
-    defaultCheckedKeys.value = [];
-    return;
+onMounted(() => {
+  const temp = route.params.deliveryTimeID;
+  if (temp) {
+    api.getShiftTimeDetail(temp).then(res => {
+      if (res.data.Status === 1000) {
+        const resp = res.data.Data as DeliveryTimeFormType;
+        resp.Shift = resp.Shift.map(it => ({
+          key: Math.random().toString(16).slice(-10),
+          date: getFormatValue(it.S),
+          ...it,
+        }));
+        Data.DeliveryTimeForm = resp;
+      }
+    });
   }
-  if (isAll) {
-    defaultCheckedKeys.value = allStateItem.value.map(it => it.ID);
-    return;
+  if (!commonStore.ExpressList.length) {
+    commonStore.getExpressList();
   }
-  defaultCheckedKeys.value = [558];
-};
+});
 </script>
 
 <script lang="ts">

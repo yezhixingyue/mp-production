@@ -1,40 +1,43 @@
 <template>
   <section class="mp-erp-period-manage-delivery-time-manage-list-page">
     <header>
-      <mp-button type="primary" sizi='small' @click="onItemSetupClick(null)">添加发货班次</mp-button>
+      <mp-button type="primary" sizi='small' @click="onItemSetupClick('')">添加发货班次</mp-button>
       <CascaderByArea/>
       <OneLevelSelect
       :title='"出库类型"'
-      :options='[]'
-      :value='getRecordData.areaList'
+      :options='ExpressList'
+      :value='getShiftTimeLisData.CompanyID'
       :defaultProps="{
-        value:'SupplierID',
-        label:'SupplierName',
+        value:'ID',
+        label:'Name',
       }"
       :showLine='true'
-      @change="(ID) => getRecordData.way = ID"
-      @requestFunc='() => null'
+      @change="(ID) => getShiftTimeLisData.CompanyID = ID"
+      @requestFunc='getTableDataList'
       ></OneLevelSelect>
     </header>
     <main>
-      <el-table fit stripe style="width: 100%">
+      <el-table fit stripe style="width: 100%" :data="ShiftTimeList">
         <el-table-column
-        show-overflow-tooltip prop="Name" label="名称" min-width="260" />
+        show-overflow-tooltip prop="ItemName" label="名称" min-width="260" />
         <el-table-column
-        show-overflow-tooltip prop="Linkman" label="区域" min-width="220">
+        show-overflow-tooltip prop="AreaDescribe" label="区域" min-width="220"/>
+        <el-table-column
+        show-overflow-tooltip prop="ExpressList" label="配送方式" min-width="220" >
           <template #default="scope">
-            <span v-if="!scope.row.IsSpecialColor">专色</span>
-            <span v-else>四色</span>
+            {{scope.row.ExpressList.map(it => it.ID).join('、')}}
           </template>
         </el-table-column>
-        <el-table-column
-        show-overflow-tooltip prop="ShowColor" label="配送方式" min-width="220" />
-        <el-table-column
-        show-overflow-tooltip prop="ShowColor" label="发货班次" min-width="260" />
+        <el-table-column show-overflow-tooltip prop="Shift" label="发货班次" min-width="260">
+        <template #default="scope">
+            {{JSON.parse(scope.row.Shift).map(item => `${item.S.F}:${item.S.S} 运输时长：${item.D}天${item.H}小时`).join('|')}}
+          </template>
+        </el-table-column>
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
+            <!-- {{JSON.parse(scope.row.Shift)}} -->
             <template v-if="!scope.row.IsSpecialColor">
-              <mp-button type="info" link @click="onItemSetupClick(scope.row)">
+              <mp-button type="info" link @click="onItemSetupClick(scope.row.ItemID)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link
                 @click="onRemoveClick(scope.row)">
@@ -58,37 +61,85 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { reactive } from 'vue';
+import {
+  reactive, onActivated, onMounted, computed, ref, Ref,
+} from 'vue';
 import CascaderByArea from '@/components/common/SelectComps/CascaderByArea.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
+import api from '@/api';
+import { useCommonStore } from '@/store/modules/common/index';
 
 interface getRecordDataType {
-  areaList: undefined|number,
-  way:string
+  ProvinceName: string,
+  CityName:string,
+  CountyName: string,
+  CompanyID: number,
+  Page: number,
+  PageSize: number,
+}
+interface ExpressListType {
+  ID: number,
+  Name: string,
+}
+interface ShiftTimeListType {
+  ItemID: string,
+  ItemName: string,
+  AreaDescribe: string,
+  Shift: string,
+  ExpressList: ExpressListType[],
 }
 
+const commonStore = useCommonStore();
 const router = useRouter();
-const getRecordData:getRecordDataType = reactive({
-  areaList: undefined,
-  way: '',
+const ShiftTimeList:Ref<ShiftTimeListType[]> = ref([]);
+const getShiftTimeLisData:getRecordDataType = reactive({
+  ProvinceName: 'string',
+  CityName: 'string',
+  CountyName: 'string',
+  CompanyID: 0,
+  Page: 0,
+  PageSize: 0,
 });
-const onItemSetupClick = (item) => {
-  console.log('aaa');
+const ExpressList = computed(() => ([{
+  Name: '不限',
+  ID: 0,
+}, ...commonStore.ExpressList]));
+const onItemSetupClick = (ItemID) => {
+  console.log(ItemID, 'aaa');
   router.push({
     name: 'deliveryTimeListSteup',
-    // params: { TypeID: IDs.TypeID, CategoryID: IDs.CategoryID },
+    params: { deliveryTimeID: ItemID || '' },
   });
 };
 const onRemoveClick = (item) => {
   console.log('aaa');
 };
 const getTableDataList = (Page = 1) => {
+  api.getShiftTimeList(getShiftTimeLisData).then(res => {
+    if (res.data.Status === 1000) {
+      console.log(res.data.Data);
+      ShiftTimeList.value = res.data.Data as ShiftTimeListType[];
+    }
+  });
   console.log('aaa');
 };
 const setCondition2ListData = (e) => {
   console.log('aaa');
 };
-
+onActivated(() => {
+  const deliveryTimeListSteupPage = sessionStorage.getItem('deliveryTimeListSteupPage') === 'true';
+  if (deliveryTimeListSteupPage) {
+    getTableDataList();
+    sessionStorage.removeItem('deliveryTimeListSteupPage');
+  }
+});
+onMounted(() => {
+  getTableDataList();
+  sessionStorage.removeItem('deliveryTimeListSteupPage');
+  if (!commonStore.ExpressList.length) {
+    commonStore.getExpressList();
+  }
+});
 </script>
 <script lang="ts">
 export default {

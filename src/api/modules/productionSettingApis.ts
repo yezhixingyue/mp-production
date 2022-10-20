@@ -1,6 +1,21 @@
 import request from '../request/request';
 
 const api = {
+  // 配送方式 ------------------------ Express
+  getExpressList() { // POST /Api/Express/List  配送方式列表
+    return request({ method: 'GET', url: '/Api/Express/List' });
+  },
+  // 发货班次 ------------------------ ShiftTime
+  getShiftTimeList(data) { // POST /Api/ShiftTime/List  发货班次列表
+    return request({ method: 'POST', url: '/Api/ShiftTime/List', data });
+  },
+  getShiftTimeSave(data) { // POST /Api/ShiftTime/Save  发货班次保存
+    return request({ method: 'POST', url: '/Api/ShiftTime/Save', data });
+  },
+  getShiftTimeDetail(id) { // GET /Api/ShiftTime/Detail  发货班次保存
+    return request({ method: 'GET', url: `/Api/ShiftTime/Detail?id=${id}` });
+  },
+
   // 工序 ------------------------ WorkingProcedure
   getWorkingProcedureList(data) { // POST /Api/WorkingProcedure/List  工序列表
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
@@ -28,8 +43,11 @@ const api = {
   getProductionLineWorkingProcedureList(data) { // POST /Api/ProductionLine/WorkingProcedure/List  生产线添加工序
     return request({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/List', data });
   },
-  getProductionLinetMaterialSourceList(ID) { // POST /Api/ProductionLine/MaterialSource/List  生产线添加工序
+  getProductionLinetMaterialSourceList(ID) { // POST /Api/ProductionLine/MaterialSource/List  生产线物料来源列表
     return request({ method: 'GET', url: `/Api/ProductionLine/MaterialSource/List?lineWorkID=${ID}` });
+  },
+  getProductionLinetEquipmentList(ID) { // POST /Api/ProductionLine/Equipment/List  生产线生产工序列表
+    return request({ method: 'GET', url: `/Api/ProductionLine/Equipment/List?lineWorkID=${ID}` });
   },
 
   //

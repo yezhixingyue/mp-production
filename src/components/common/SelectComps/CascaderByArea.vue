@@ -23,10 +23,14 @@ const value = ref([]);
 const props = {
   expandTrigger: 'hover',
   label: 'Name',
-  value: 'ID',
+  value: 'Name',
+  checkStrictly: true,
+  // checkStrictly: true,
 };
 
 const handleChange = (value) => {
+  console.log(DistrictTreeList, 'DistrictTreeList');
+
   console.log(value);
 };
 

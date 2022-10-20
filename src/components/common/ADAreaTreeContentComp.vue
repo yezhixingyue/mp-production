@@ -33,7 +33,7 @@
         icon-class
         :node-key="'ID'"
         :default-expanded-keys="defaultExpandedKeys()"
-        :default-checked-keys="[]"
+        :default-checked-keys="defaultCheckedKeys"
         :props="defaultProps"
         :auto-expand-parent="false"
         ref="treeComp"
@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
 import {
-  ref, Ref, onMounted, computed,
+  ref, Ref, onMounted, computed, watch,
 } from 'vue';
 import { useCommonStore } from '@/store/modules/common/index';
 
@@ -66,6 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
   defaultCheckedKeys: () => [],
   handleChangeFunc: () => null,
 });
+console.log(props.defaultCheckedKeys, 'props.defaultCheckedKeys');
 
 // 所有thee的key
 const AllKeys = computed(() => {
@@ -109,10 +110,8 @@ const checkAllTitle = ref('所有地区');
 const checkAllComputed = computed({
   get() {
     // return this.checkAll;
-    console.log(props.defaultCheckedKeys, 'defaultCheckedKeysdefaultCheckedKeys');
-    console.log(props.defaultCheckedKeys.length, threeLevelKeys.value.length);
-
-    return props.defaultCheckedKeys.length === threeLevelKeys.value.length;
+    console.log(props.defaultCheckedKeys, 'props.defaultCheckedKeys');
+    return checkAll.value;
   },
   set(newVal) {
     // console.log(newVal, 'newVal checkAllComputed');
@@ -126,8 +125,15 @@ const checkAllComputed = computed({
     }
   },
 });
+watch(() => props.defaultCheckedKeys, (newVal) => {
+  if (newVal.length === threeLevelKeys.value.length) {
+    checkAll.value = true;
+  } else {
+    checkAllIndeterminate.value = false;
+  }
+  console.log(newVal, 'newValnewValnewVal');
+});
 const setCheckAllListAndStatus = (checkedKeys) => {
-  console.log(checkedKeys, 'checkedKeys');
   // checkAllIndeterminate.value = true;
   selectKeys.value = checkedKeys;
   if (selectKeys.value.length === AllKeys.value.length) {
@@ -142,8 +148,6 @@ const check = (curItem, { checkedNodes, checkedKeys }) => {
 };
 // this.handleChangeFunc(checkedNodes, checkedKeys, checkedKeys.length === this.AllKeys.length);
 const handleCheckAllChange = () => {
-  console.log(checkAll.value, 'ssss');
-
   if (checkAll.value) {
     treeComp.value.setCheckedNodes(commonStore.DistrictTreeList);
     selectKeys.value = AllKeys.value;
@@ -170,6 +174,8 @@ const defaultExpandedKeys = () => {
       _list.push(level2.ID);
     });
   });
+  console.log(_list, '_list_list');
+
   return _list;
 };
 const renderContent = (h, { node, data }) => {
