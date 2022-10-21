@@ -8,7 +8,9 @@ export default class AdapterClass {
 
   Url = '' // 服务器地址
 
-  Key = '' // 密钥
+  PrivateKey = '' // 密钥
+
+  PublicKey = '' // 公钥
 
   RelationNumber = '' // 关联工厂数量
 
