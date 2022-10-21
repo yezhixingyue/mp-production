@@ -1,12 +1,72 @@
 <template>
-  <div class="process-setup-page" >
+  <div class="equipment-page" >
     <header>
       <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
+      <div class="header-top">
+        <mp-button type="primary" @click="addEquipment">+ 添加设备/工厂</mp-button>
+      </div>
     </header>
     <main>
+      <el-table fit stripe border
+      :data="EquipmentList" style="width: 755px">
+        <el-table-column
+        show-overflow-tooltip prop="ClassName" label="设备分类" min-width="154" />
+        <el-table-column
+        show-overflow-tooltip prop="GroupName" label="设备组" min-width="144">
+        </el-table-column>
+        <el-table-column
+        show-overflow-tooltip prop="Name" label="设备" min-width="158" />
+        <el-table-column prop="name" label="操作" min-width="240">
+          <template #default="scope">
+            <template v-if="!scope.row.IsSpecialColor">
+              <mp-button type="info" link @click="editPrintColor(scope.row)">申放</mp-button>
+              <mp-button type="info" link @click="editPrintColor(scope.row)">设备产能</mp-button>
+              <mp-button type="info" link
+                @click="delPrintColor(scope.row)">删除</mp-button>
+            </template>
+          </template>
+        </el-table-column>
+      </el-table>
     </main>
+    <DialogContainerComp
+    :title="`添加设备工厂`"
+    :visible='addEquipmentShow'
+    :width="660"
+    :primaryClick="addColorPrimaryClick"
+    :closeClick="addColorCloseClick"
+    :closed="addColorCloseedClick"
+    >
+    <template #default>
+      <div class="add-equipment-dialog">
+        <el-scrollbar max-height="450px">
+          <!-- <el-checkbox-group
+            v-model="EquipmentSaveData.EquipmentIDS"
+          > -->
+          <ul class="one-list">
+            <template  v-for="ClassIt in processInfo.ClassEquipmentGroups" :key="ClassIt.ClassID">
+              <li v-if="ClassIt.EquipmentGroups && ClassIt.EquipmentGroups.length">
+                <p class="one">{{ClassIt.ClassName}}:</p>
+                <ul class="tow-list">
+                  <template v-for="GroupIt in ClassIt.EquipmentGroups" :key="GroupIt.GroupID">
+                    <li v-if="GroupIt.Equipments && GroupIt.Equipments.length">
+                      <p class="tow">{{GroupIt.GroupName}}:</p>
+                      <div class="checkbox">
+                        <el-checkbox @change="bool => addEquipmentChange(it.ID)"
+                          :checked="EquipmentSaveData.EquipmentIDS.some(id => it.ID === id)"
+                          v-for="it in GroupIt.Equipments" :key="it.ID" :label="it.ID">{{it.Name}}</el-checkbox>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </li>
+            </template>
+          </ul>
+          <!-- </el-checkbox-group> -->
+        </el-scrollbar>
+      </div>
+    </template>
+    </DialogContainerComp>
     <footer>
-      <mp-button type="primary" class="gradient" @click="saveProcess">保存</mp-button>
       <mp-button class="blue" @click="$goback">返回</mp-button>
     </footer>
   </div>
@@ -14,7 +74,7 @@
 
 <script lang="ts" setup>
 import {
-  reactive, onMounted, computed, getCurrentInstance, ref, Ref,
+  reactive, onMounted, computed, getCurrentInstance, ref, Ref, watch,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute } from 'vue-router';
@@ -22,6 +82,7 @@ import SelectDeviceGroup from '@/components/productionSetting/selectDeviceGroup.
 import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vue';
 import materialResource from '@/components/productionSetting/materialResource.vue';
 import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
+import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import type {
@@ -33,124 +94,118 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 
+interface EquipmentListType {
+  ClassID:number
+  ClassName:string
+  GroupID:string
+  GroupName:string
+  ID:string
+  Name:string
+}
 const PasteupSettingStore = usePasteupSettingStore();
 const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
 
-interface EquipmentGroupsType{
-  GroupID: string,
-  GroupName: string,
-  Weight: number|string,
-  OneTimeTwoSide: boolean,
-}
-interface RelationsType{
-  RelationID: string,
-  Name?: string,
-  PID?: string|number,
-  PName?: string,
-  Type: number,
-}
-interface processDataFromType{
-  ID: string,
-  Name: string
-  // 是否限制每套版加工数量 自加字段回显需要添加
-  isRestrict: boolean,
-  ReportMode: number,
-  Type: number,
-  MaxProduceNumber: number|string,
-  AllowPartReport: boolean,
-  MinPartReportNumber: number|string,
-  AllowBatchReport: boolean,
-  TemplateType: number,
-  EquipmentGroups: EquipmentGroupsType[],
-  Relations: RelationsType[],
-}
-
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
-const processInfo = ref({});
-const EquipmentClass = ref([]);
-const EquipmentGroup = ref([]);
-const Equipment = ref([]);
+const processInfo:any = ref({});
+const addEquipmentShow = ref(false);
+
+const EquipmentSaveData = ref({
+  LineWorkID: '',
+  EquipmentIDS: [],
+});
 const BreadcrumbList = computed(() => [
   { to: { path: '/productionLine' }, name: '生产线' },
   {
     name: '设备工厂',
   },
 ]);
+const EquipmentList = computed(() => {
+  const returnData:EquipmentListType[] = [];
+  processInfo.value.ClassEquipmentGroups?.forEach(ClassIt => {
+    ClassIt.EquipmentGroups.forEach(GroupIt => {
+      GroupIt.Equipments.forEach(it => {
+        if (it.LineEquipmentID) {
+          returnData.push({
+            ClassID: ClassIt.ClassID as number,
+            ClassName: ClassIt.ClassName as string,
+            GroupID: GroupIt.GroupID as string,
+            GroupName: GroupIt.GroupName as string,
+            ID: it.ID as string,
+            Name: it.Name as string,
+          });
+        }
+      });
+    });
+  });
 
+  return returnData;
+});
+// const isChecked = computed(() => returnData);
+watch(() => EquipmentList.value, (newVal) => {
+  EquipmentSaveData.value.EquipmentIDS = newVal.map(it => it.ID) as never[];
+});
+const setEquipment = (list) => {
+  processInfo.value.ClassEquipmentGroups?.forEach((ClassIt, index) => {
+    ClassIt.EquipmentGroups.forEach((GroupIt, i) => {
+      GroupIt.Equipments.forEach((it, num) => {
+        const temp = list.find(id => id === it.ID);
+        if (temp) {
+          processInfo.value.ClassEquipmentGroups[index].EquipmentGroups[i].Equipments[num].LineEquipmentID = it.ID;
+        }
+      });
+    });
+  });
+};
 function setStorage() { // 设置会话存储
-  sessionStorage.setItem('processSetupPage', 'true');
+  sessionStorage.setItem('productionLinePage', 'true');
+}
+function addEquipment() { // 添加设备工厂点击
+  addEquipmentShow.value = true;
 }
 
-const saveProcess = () => {
-  // if (Data.processDataFrom.Type === 1 && Data.processDataFrom.isRestrict && !Data.processDataFrom.MaxProduceNumber) {
-  //   // 弹框提醒
-  //   messageBox.failSingleError('保存失败', '请输入每套版最大可加工数量', () => null, () => null);
-  // } else if (Data.processDataFrom.AllowPartReport && !Data.processDataFrom.MinPartReportNumber) {
-  //   // 弹框提醒 允许部分报工 最大数量
-  //   messageBox.failSingleError('保存失败', '请输入允许部分报工时最大数量', () => null, () => null);
-  // } else if (!Data.processDataFrom.EquipmentGroups.length) {
-  //   // 弹框提 请选择设备组
-  //   messageBox.failSingleError('保存失败', '请选择设备组', () => null, () => null);
-  // } else if (EquipmentGroupsSum.value !== 100) {
-  //   // 弹框提 权重之和不等于100
-  //   messageBox.failSingleError('保存失败', '权重之和不等于100', () => null, () => null);
-  // } else if (Data.processDataFrom.TemplateType === 2 && !showTemplate.value.length) {
-  //   messageBox.failSingleError('保存失败', '请选择大版模板', () => null, () => null);
-  //   // 弹框提 其他时 大阪模板为空
-  // } else {
-  //   api.getWorkingProcedureSave(Data.processDataFrom).then(res => {
-  //     if (res.data.Status === 1000) {
-  //       const cb = () => {
-  //         setStorage();
-  //         RouterStore.goBack();
-  //       };
-  //       // 保存成功
-  //       messageBox.successSingle('保存成功', cb, cb);
-  //     }
-  //   });
-  // }
+const addEquipmentChange = (value) => {
+  const clickItem = EquipmentSaveData.value.EquipmentIDS.find(it => it === value);
+  if (clickItem) {
+    EquipmentSaveData.value.EquipmentIDS = EquipmentSaveData.value.EquipmentIDS.filter(it => it !== value);
+  } else {
+    EquipmentSaveData.value.EquipmentIDS.push(value as never);
+  }
+};
+const addColorCloseedClick = () => {
+  EquipmentSaveData.value.LineWorkID = '';
+  EquipmentSaveData.value.EquipmentIDS = [];
+};
+const addColorCloseClick = () => {
+  addEquipmentShow.value = false;
+};
+const addColorPrimaryClick = () => {
+  EquipmentSaveData.value.LineWorkID = processInfo.value.LineWorkID;
+  api.getProductionLinetEquipmentSave(EquipmentSaveData.value).then(res => {
+    if (res.data.Status === 1000) {
+      const cb = () => {
+        setEquipment([...EquipmentSaveData.value.EquipmentIDS]);
+        setStorage();
+        addColorCloseClick();
+      };
+        // 保存成功
+      messageBox.successSingle('保存成功', cb, cb);
+    }
+  });
+//
 };
 onMounted(() => {
-  // sessionStorage.removeItem('foldWayTemplateSteupPage');
+// sessionStorage.removeItem('foldWayTemplateSteupPage');
   const temp = JSON.parse(route.params.processInfo as string) as any;
   if (temp) {
-    processInfo.value = temp;
+    processInfo.value = { ...temp };
+    console.log(processInfo.value.ClassEquipmentGroups, 'processInfo.value');
   }
-  // 获取设备列表
-  api.getProductionLinetEquipmentList(temp.LineWorkID).then(res => {
-    if (res.data.Status === 1000) {
-      console.log(res.data.Data);
-    }
-  });
-  const PostData = {
-    Page: 1,
-    PageSize: 9999,
-  };
-  // 设备
-  api.getEquipmentList(PostData).then(res => {
-    if (res.data.Status === 1000) {
-      console.log(res.data.Data);
-      Equipment.value = res.data.Data as any;
-    }
-  });
-  // 设备组
-  api.getEquipmentGroupList(PostData).then(res => {
-    if (res.data.Status === 1000) {
-      console.log(res.data.Data);
-      EquipmentGroup.value = res.data.Data as any;
-    }
-  });
-  // 设备分类
-  api.getEquipmentClassificationList().then(res => {
-    if (res.data.Status === 1000) {
-      EquipmentClass.value = res.data.Data as any;
-    }
-  });
 });
+
 </script>
 <script lang="ts">
 export default {
@@ -159,7 +214,7 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
-.process-setup-page{
+.equipment-page{
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -168,136 +223,19 @@ export default {
   >header{
     padding: 20px;
     padding-bottom: 0;
+    .header-top{
+      margin-top: 20px;
+    }
   }
   >main{
     flex: 1;
     margin-top: 20px;
     overflow-x: auto;
     padding-left: 20px;
-    padding-top: 20px;
+    // padding-top: 20px;
     box-sizing: border-box;
-    .title{
-      font-size: 14px;
-      color: #444444;
-      font-weight: 600;
-      border-left: 3px solid #05C1FF;
-      padding-left: 13px;
-      line-height: 14px;
-      margin-bottom: 36px;
-      height: 14px;
-      >span{
-        font-size: 12px;
-        color: #888888;
-        font-weight: 400;
-      }
-    }
-    .el-scrollbar__view{
+    .el-table{
       height: 100%;
-    }
-    .process-setup-page-main{
-      height: 100%;
-      display: flex;
-      padding-bottom: 70px;
-      box-sizing: border-box;
-      min-width: 1450px;
-      >.left{
-        width: 700px;
-      }
-      >.line{
-        // height: 100%;
-        width: 1px;
-        background-color: #D9D9D9;
-        margin: 0 25px;
-      }
-      >.right{
-        min-width: 650px;
-        width: 650px;
-        .min-height-radio{
-          height: 14px;
-          line-height: 14px;
-          .el-radio{
-            height:14px;
-          }
-        }
-        >div{
-          >.info{
-            margin: -16px 0 36px 8px;
-            min-height: 32px;
-            line-height: 32px;
-          }
-        }
-      }
-    }
-    .el-form{
-      .el-form-item__content{
-        font-size: 12px;
-        .type-conent{
-          line-height: 32px;
-          display: flex;
-          .el-checkbox{
-            margin-right: 20px;
-          }
-          .el-input{
-            width: 60px;
-            margin: 0 10px;
-          }
-        }
-      }
-      .equipment-groups{
-        margin-bottom: 20px;
-        width: 660px;
-        li+li{
-          margin-top: 25px;
-        }
-        li{
-          display: flex;
-          line-height: 32px;
-          width: 500px;
-          justify-content: flex-end;
-          padding-left: 80px;
-          >div{
-            height: 32px;
-            display: flex;
-            align-items: center;
-            margin-left: 10px;
-          }
-          div{
-          }
-          .state-percent{
-            .el-input{
-              width: 140px;
-            }
-          }
-          .equipment{
-            flex: 1;
-          }
-          .del{
-            .iconfont.icon-delete{
-              color: $--color-primary;
-            }
-          }
-        }
-      }
-      .info-text{
-        line-height: 32px;
-        padding-left: 90px;
-        // width: 760px;
-        display: flex;
-        .label{
-          min-width: 60px;
-        }
-        .content::before{
-          content: '';
-          display: inline-block;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background-color: #444;
-          position: relative;
-          top: -2px;
-          margin-right: 2px;
-        }
-      }
     }
   }
   >footer{
@@ -312,6 +250,25 @@ export default {
     }
     .el-button + .el-button{
       margin-left: 30px;
+    }
+  }
+  .add-equipment-dialog{
+    .one-list{
+      min-height: 350px;
+      p{
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px 0;
+      }
+      .one{
+        padding-left: 1em;
+      }
+      .tow{
+        padding-left: 2em;
+      }
+      .checkbox{
+        padding-left: 3em;
+      }
     }
   }
 }

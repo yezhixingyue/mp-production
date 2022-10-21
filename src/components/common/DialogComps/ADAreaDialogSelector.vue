@@ -10,19 +10,22 @@
     :primaryClick="onSubmit"
     :closeClick="() => localVisible = false"
     :closed="onClosed"
-  >
+    >
+    <!-- @open="onOpen" -->
     <ADAreaTreeContentComp
       ref="oTreeWrap"
-      v-if="localVisible"
-      :defaultCheckedKeys="props.defaultCheckedKeys"
-      :handleChangeFunc="selectChangeFunc"
+      :value="localAreaList"
+      @change="(list) => localAreaList = list"
+      :treeType='treeType'
+      :displayLevel2='displayLevel2'
+      :productClassifyType='productClassifyType'
      />
   </DialogContainerComp>
 </template>
 
 <script lang="ts" setup>
 import {
-  ref, reactive, onMounted, computed, Ref,
+  ref, reactive, onMounted, computed, Ref, nextTick, watch,
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 
@@ -30,20 +33,39 @@ import { IDistrictTreeListItemType } from '@/store/modules/common/types';
 import { useCommonStore } from '@/store/modules/common/index';
 import ADAreaTreeContentComp from '../ADAreaTreeContentComp.vue';
 
+interface AreaListType {
+  CountryID: number,
+  ProvinceID: number,
+  CityID: number,
+  CountyID: number,
+}
+
 interface Props {
   visible: boolean
-  handleChangeFunc: (list) => void
-  defaultCheckedKeys: number[]
+  value:AreaListType[]
+  treeType?:string
+  AreaDescribe:string
+  productClassifyType?:number
+  displayLevel2?:boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   visible: false,
-  handleChangeFunc: () => null,
-  defaultCheckedKeys: () => [],
+  value: () => [],
+  treeType: 'area',
+  AreaDescribe: '',
+  productClassifyType: 0,
+  displayLevel2: false,
 });
-const emit = defineEmits(['update:visible', 'input']);
+
+const emit = defineEmits(['update:visible', 'change', 'update:AreaDescribe']);
 const commonStore = useCommonStore();
-const localAreaList: Ref<IDistrictTreeListItemType[]> = ref([]);
+
+// const oTreeWrap:Ref = ref(null);
+const oTreeWrap = ref<InstanceType<typeof ADAreaTreeContentComp>>();
+
+const localAreaList: Ref<AreaListType[]> = ref([]);
+
 const localVisible = computed({
   get() {
     return props.visible;
@@ -52,44 +74,24 @@ const localVisible = computed({
     emit('update:visible', val);
   },
 });
-const selectChangeFunc = (list, b, c) => {
-  console.log(list, b, c, 'a,b,c');
-  localAreaList.value = list;
-  // if (this.$refs.oTreeWrap && this.$refs.oTreeWrap.$refs.TreeComp) {
-  //   this.$refs.oTreeWrap.$refs.TreeComp.clearTreeData();
-  // }
-};
 const onClosed = () => {
-  // if (this.$refs.oTreeWrap && this.$refs.oTreeWrap.$refs.TreeComp) {
-  //   this.$refs.oTreeWrap.$refs.TreeComp.clearTreeData();
-  // }
+  if (oTreeWrap.value && oTreeWrap.value?.TreeCompRef) {
+    oTreeWrap.value?.TreeCompRef.clearTreeData();
+  }
 };
 
 const onSubmit = () => {
- interface AreaListType {
-  CountryID: number,
-  ProvinceID: number,
-  CityID: number,
-  CountyID: number,
-}
- const AreaList:AreaListType[] = [];
- localAreaList.value.forEach(item => {
-   const AreaItem = {
-     CountryID: 1,
-     ProvinceID: 0,
-     CityID: 0,
-     CountyID: 0,
-   };
-   AreaItem.CountyID = item.ID;
-   // 城市ID
-   AreaItem.CityID = commonStore.DistrictList.find(it => it.ParentID === item.ParentID)?.ParentID as number;
-   AreaItem.ProvinceID = commonStore.DistrictList.find(it => it.ID === AreaItem.CityID)?.ParentID as number;
-   AreaList.push(AreaItem);
- });
- props.handleChangeFunc(AreaList);
- localVisible.value = false;
+  emit('change', [...localAreaList.value]);
+  emit('update:AreaDescribe', oTreeWrap.value?.getTextDisplayContent());
+  localVisible.value = false;
 };
+watch(() => localVisible.value, (newVal) => {
+  if (newVal) {
+    localAreaList.value = [...props.value];
+  }
+});
 onMounted(() => {
+  console.log(oTreeWrap.value, 'oTreeWrap.value');
   if (!commonStore.DistrictTreeList.length) {
     commonStore.getDistrictList();
   }

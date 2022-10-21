@@ -228,9 +228,6 @@ onActivated(() => {
     PageSize: 999,
     OnlyShowName: true,
   });
-  setTimeout(() => {
-    console.log(productionSettingStore.ImpositionTemmplateList, 'productionSettingStoreproductionSettingStoreproductionSettingStore');
-  }, 1000);
 });
 onMounted(() => {
   sessionStorage.removeItem('processSetupPage');

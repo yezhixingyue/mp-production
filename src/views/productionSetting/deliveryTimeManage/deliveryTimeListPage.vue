@@ -25,7 +25,8 @@
         <el-table-column
         show-overflow-tooltip prop="ExpressList" label="配送方式" min-width="220" >
           <template #default="scope">
-            {{scope.row.ExpressList.map(it => it.ID).join('、')}}
+            {{}}
+            {{scope.row.ExpressList.map(item => commonStore.ExpressList.find(it => it.ID === item.ID)?.Name).join('、')}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="Shift" label="发货班次" min-width="260">
@@ -93,9 +94,9 @@ const commonStore = useCommonStore();
 const router = useRouter();
 const ShiftTimeList:Ref<ShiftTimeListType[]> = ref([]);
 const getShiftTimeLisData:getRecordDataType = reactive({
-  ProvinceName: 'string',
-  CityName: 'string',
-  CountyName: 'string',
+  ProvinceName: '',
+  CityName: '',
+  CountyName: '',
   CompanyID: 0,
   Page: 0,
   PageSize: 0,
@@ -105,7 +106,6 @@ const ExpressList = computed(() => ([{
   ID: 0,
 }, ...commonStore.ExpressList]));
 const onItemSetupClick = (ItemID) => {
-  console.log(ItemID, 'aaa');
   router.push({
     name: 'deliveryTimeListSteup',
     params: { deliveryTimeID: ItemID || '' },

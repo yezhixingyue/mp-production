@@ -1,218 +1,268 @@
 <template>
-  <section
-   class="mp-common-comps-tree-comp-wrap"
-   :class="isProduct?'isProduct':''">
-    <div class="content mp-scroll-wrap">
-      <p>行政区域：</p>
-      <el-checkbox
-        v-model="checkAllComputed"
-        :disabled='isCheckAllDisabled'
-        :indeterminate='checkAllIndeterminate'
-        @change="handleCheckAllChange">
-        {{checkAllTitle}}
-      </el-checkbox>
-      <!-- <el-tree
-        ref="treeComp"
-        class="mp-scroll-wrap"
-        icon-class
-        :data="DistrictTreeList"
-        :default-expanded-keys="[]"
-        :default-checked-keys="[]"
-        :auto-expand-parent="false"
-        :expand-on-click-node="false"
-        :check-on-click-node="true"
-        show-checkbox
-        node-key="ID"
-        highlight-current
-        :props="defaultProps"
-        :render-content="renderContent"
-      /> -->
-      <el-tree
-        :data="DistrictTreeList"
-        show-checkbox
-        icon-class
-        :node-key="'ID'"
-        :default-expanded-keys="defaultExpandedKeys()"
-        :default-checked-keys="defaultCheckedKeys"
-        :props="defaultProps"
-        :auto-expand-parent="false"
-        ref="treeComp"
-        @check="check"
-        class="mp-scroll-wrap"
-        :expand-on-click-node="false"
-        :check-on-click-node="true"
-        :render-content="renderContent"
-        render-after-expand
-      ></el-tree>
-    </div>
-  </section>
+  <TreeComp
+    class="mp-erp-ad-area-content-selector-comp-for-new-wrap"
+    :class="`${treeType} ${displayLevel2?'displayLevel2':''}`"
+    :title="`${treeType==='area' ? '行政区域' : '产品'}`"
+    :treeList="allLevelList"
+    :defaultCheckedKeys="defaultCheckedKeys"
+    :handleChangeFunc="handleAreaChangeFunc"
+    :watchValue="'sss'"
+    :shouldDisabledList="[]"
+    :showDisabled="false"
+    :checkAllTitle="`所有${treeType==='area' ? '地区' : '产品'}`"
+    :defaultProps="defaultProps"
+    ref="TreeCompRef"
+  />
 </template>
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
 import {
-  ref, Ref, onMounted, computed, watch,
+  ref, Ref, onMounted, computed, watch, defineExpose,
 } from 'vue';
+import TreeComp from '@/components/common/TreeComp.vue';
 import { useCommonStore } from '@/store/modules/common/index';
+import { IDistrictTreeListItemType } from '@/store/modules/common/types';
 
 const commonStore = useCommonStore();
 const { DistrictTreeList } = storeToRefs(commonStore);
-interface Props {
-  defaultCheckedKeys: number[]
-  handleChangeFunc: (checkedNodes:number[], checkedKeys:number[], bool?:boolean) => void
+interface AreaListType {
+  CountryID: number,
+  ProvinceID: number,
+  CityID: number,
+  CountyID: number,
 }
-
+interface Props {
+  value:AreaListType[]
+  treeType?:string
+  productClassifyType?:number
+  displayLevel2?:boolean
+  defaultLabels?:boolean
+}
+console.log(commonStore.DistrictList, 'DistrictList');
+const emit = defineEmits(['change']);
+const TreeCompRef = ref<InstanceType<typeof TreeComp>>();
 const props = withDefaults(defineProps<Props>(), {
-  defaultCheckedKeys: () => [],
-  handleChangeFunc: () => null,
+  value: () => [],
+  treeType: 'area',
+  productClassifyType: 0,
+  displayLevel2: false,
 });
-console.log(props.defaultCheckedKeys, 'props.defaultCheckedKeys');
-
-// 所有thee的key
-const AllKeys = computed(() => {
-  const _arr:number[] = [];
-  commonStore.DistrictTreeList.forEach(l1 => {
-    _arr.push(l1.ID);
-    l1.children?.forEach(l2 => {
-      _arr.push(l2.ID);
-      l2.children?.forEach(l3 => {
-        _arr.push(l3.ID);
-      });
-    });
-  });
-  return _arr;
+const defaultPropKeys = computed(() => {
+  // if (props.defaultLabels) {
+  //   return props.defaultLabels;
+  // }
+  if (props.treeType === 'area') {
+    return {
+      rootKey: 'CountryID',
+      lv1Key: 'ProvinceID',
+      lv2Key: 'CityID',
+      lv3Key: 'CountyID',
+    };
+  }
+  return {
+    rootKey: '',
+    lv1Key: 'FirstLevelID',
+    lv2Key: 'SecondLevelID',
+    lv3Key: 'ProductID',
+  };
 });
-const threeLevelKeys = computed(() => {
-  const _arr:number[] = [];
-  commonStore.DistrictTreeList.forEach(l1 => {
-    l1.children?.forEach(l2 => {
-      l2.children?.forEach(l3 => {
-        _arr.push(l3.ID);
-      });
-    });
-  });
-  return _arr;
+const allLevelList = computed(() => commonStore.DistrictTreeList);
+const spreadList = computed(() => commonStore.DistrictList);
+const lv3KeyEmptyValue = computed(() => (props.treeType === 'product' ? '00000000-0000-0000-0000-000000000000' : 0));
+const AllLevel3AreaKeysList = computed(() => {
+  if (spreadList.value.length === 0) return [];
+  return spreadList.value.filter((it) => it.Level === 3).map(it => it.ID);
 });
 
-const treeComp:Ref = ref(null);
-
-const checkAll = ref(false);
-const localDisabled2CheckAll = ref(true);
-const canFalse = ref(true);
-const selectKeys:Ref<number[]> = ref([]);
-const isProduct = ref(true);
-// const checkAllComputed = ref(false);
-const isCheckAllDisabled = ref(false);
-const checkAllIndeterminate = ref(false);
-const checkAllTitle = ref('所有地区');
-
-// 是否全选
-const checkAllComputed = computed({
-  get() {
-    // return this.checkAll;
-    console.log(props.defaultCheckedKeys, 'props.defaultCheckedKeys');
-    return checkAll.value;
-  },
-  set(newVal) {
-    // console.log(newVal, 'newVal checkAllComputed');
-    if (!newVal && canFalse) checkAll.value = false;
-    else if (checkAllIndeterminate.value) {
-      checkAll.value = false;
-      canFalse.value = false;
-    } else {
-      checkAll.value = true;
-      canFalse.value = true;
+const getDefaultCheckedKeys = (value) => {
+  const list:any[] = [];
+  if (Array.isArray(value) && value.length > 0) {
+    if (value.length === 1) {
+      if (value[0][defaultPropKeys.value.lv1Key] === 0) return AllLevel3AreaKeysList.value;
     }
-  },
-});
-watch(() => props.defaultCheckedKeys, (newVal) => {
-  if (newVal.length === threeLevelKeys.value.length) {
-    checkAll.value = true;
-  } else {
-    checkAllIndeterminate.value = false;
-  }
-  console.log(newVal, 'newValnewValnewVal');
-});
-const setCheckAllListAndStatus = (checkedKeys) => {
-  // checkAllIndeterminate.value = true;
-  selectKeys.value = checkedKeys;
-  if (selectKeys.value.length === AllKeys.value.length) {
-    checkAll.value = true;
-  } else if (checkAll.value === true) {
-    checkAll.value = false;
-  }
-};
-const check = (curItem, { checkedNodes, checkedKeys }) => {
-  props.handleChangeFunc(checkedNodes, checkedKeys, checkedKeys.length === AllKeys.value.length);
-  setCheckAllListAndStatus(checkedKeys);
-};
-// this.handleChangeFunc(checkedNodes, checkedKeys, checkedKeys.length === this.AllKeys.length);
-const handleCheckAllChange = () => {
-  if (checkAll.value) {
-    treeComp.value.setCheckedNodes(commonStore.DistrictTreeList);
-    selectKeys.value = AllKeys.value;
-    const checkedNodes = treeComp.value.getCheckedNodes();
-    const checkedKeys = treeComp.value.getCheckedKeys();
-    props.handleChangeFunc(checkedNodes, checkedKeys, true); // 第三个代表全部选中
-  } else {
-    treeComp.value.setCheckedKeys([]);
-    selectKeys.value = [];
-    props.handleChangeFunc([], []);
-  }
-};
-const expandLevel1 = (node, data, text, e) => {
-  e.stopPropagation();
-  // eslint-disable-next-line no-param-reassign
-  node.expanded = !node.expanded;
-};
-
-const defaultExpandedKeys = () => {
-  if (commonStore.DistrictTreeList.length === 0 || !commonStore.DistrictTreeList) return [];
-  const _list:number[] = [];
-  commonStore.DistrictTreeList.forEach(level1 => {
-    level1?.children?.forEach(level2 => {
-      _list.push(level2.ID);
+    value.forEach(it => { // 可能为省全部、市全部 也可能为单个城区
+      if (it[defaultPropKeys.value.lv2Key] === 0) { // 全省
+        const lv1 = allLevelList.value.find(_it => _it.ID === it[defaultPropKeys.value.lv1Key]);
+        if (lv1) {
+          lv1.children?.forEach(lv2 => {
+            list.push(...lv2.children?.map(lv3 => lv3.ID) as any);
+          });
+        }
+      } else if (it[defaultPropKeys.value.lv3Key] === lv3KeyEmptyValue.value) { // 全市
+        const lv1 = allLevelList.value.find(_it => _it.ID === it[defaultPropKeys.value.lv1Key]);
+        if (lv1) {
+          const lv2 = lv1.children?.find(_it => _it.ID === it[defaultPropKeys.value.lv2Key]);
+          if (lv2) {
+            if (lv2.children) {
+              list.push(...lv2.children.map(lv3 => lv3.ID));
+            }
+          }
+        }
+      } else { // 单个城区
+        list.push(it[defaultPropKeys.value.lv3Key]);
+      }
     });
-  });
-  console.log(_list, '_list_list');
-
-  return _list;
-};
-const renderContent = (h, { node, data }) => {
-  if (node.level > 1) {
-    if (node.label.length > 5) {
-      return h(
-        'el-tooltip',
-        {
-          class: 'el-tree-node__label',
-          effect: 'dark',
-          content: node.label,
-          placement: 'top-start',
-        },
-        h('span', null, node.label),
-      );
-    }
-    return h('span', { class: 'el-tree-node__label' }, node.label);
   }
-  const text = !node.expanded ? '展开' : '收起';
-  const classIcon = !node.expanded
-    ? 'el-icon-caret-bottom'
-    : 'close el-icon-caret-bottom';
-  return h(
-    'span',
-    { class: 'el-tree-node__label' },
-    h('span', { class: 'title' }, node.label),
-    h('em', {
-      class: 'mp-el-tree-node-collapse-btn',
-      onClick: (e) => expandLevel1(node, data, text, e),
-    }, text),
-    h('span', {
-      class: 'icon-box',
-      onClick: (e) => e.stopPropagation(),
-    }, h('em', { onClick: (e) => expandLevel1(node, data, text, e) }, h('i', { class: classIcon }))),
-  );
+  return list;
+};
+const createItem = (rootVal, lv1Val, lv2Val, lv3Val) => {
+  const temp = {
+    [defaultPropKeys.value.lv1Key]: lv1Val,
+    [defaultPropKeys.value.lv2Key]: lv2Val,
+    [defaultPropKeys.value.lv3Key]: lv3Val,
+  };
+  if (defaultPropKeys.value.rootKey) {
+    temp[defaultPropKeys.value.rootKey] = rootVal;
+  }
+  return temp;
+};
+const allStateItem = computed(() => createItem(1, 0, 0, lv3KeyEmptyValue.value));
+
+const defaultCheckedKeys = computed(() => getDefaultCheckedKeys(props.value)); // 差还原keys 还原后该组件即可使用
+const Level1AreaList = computed(() => {
+  if (spreadList.value.length === 0) return [];
+  return spreadList.value.filter((it) => it.Level === 1);
+});
+const Level2AreaList = computed(() => {
+  if (spreadList.value.length === 0) return [];
+  return spreadList.value.filter((it) => it.Level === 2);
+});
+
+const handleAreaChangeFunc = (checkedNodes, checkedKeys, isAll) => {
+  console.log(checkedNodes, checkedKeys, isAll, 'checkedNodes, checkedKeys, isAll');
+
+  if (checkedNodes.length === 0) {
+    emit('change', []);
+    return;
+  }
+  if (isAll) {
+    emit('change', [{ ...allStateItem.value }]);
+    return;
+  }
+  const _lv1List:any[] = [];
+  const _lv2List:any[] = [];
+  const _lv3List:any[] = [];
+  const _level1List = checkedNodes.filter((it) => it.Level === 1); // 已选全部城市的省份列表
+  _level1List.forEach(lv1 => {
+    _lv1List.push(createItem(1, lv1.ID, 0, lv3KeyEmptyValue.value));
+  });
+  if (Level1AreaList.value.length === _lv1List.length && _lv1List.length > 0) {
+    emit('change', [{ ...allStateItem.value }]);
+    return;
+  }
+  const _level1IDList = _level1List.map(it => it.ID);
+  const _level2List = checkedNodes.filter((it) => it.Level === 2); // 已选全部城区的城市列表
+  _level2List.forEach(lv2 => {
+    if (!_level1IDList.includes(lv2.ParentID)) {
+      _lv2List.push(createItem(1, lv2.ParentID, lv2.ID, lv3KeyEmptyValue.value));
+    }
+  });
+  const _level2IDList = _level2List.map(it => it.ID);
+  const _level3list = checkedNodes.filter((it) => it.Level === 3 && !_level2IDList.includes(it.ParentID));
+  // 生成3级目录并加入
+  _level3list.forEach(lv3 => {
+    const t = Level2AreaList.value.find(it => it.ID === lv3.ParentID);
+    if (t) {
+      _lv3List.push(createItem(1, t.ParentID, lv3.ParentID, lv3.ID));
+    }
+  });
+  const list = [..._lv1List, ..._lv2List, ..._lv3List];
+  console.log(list, 'listlistlist');
+
+  emit('change', list);
+};
+const getTreeTextDisplayContent = (value, allAdAreaTreeList, type, defaultLabels) => {
+  let defaultPropKeys = {
+    rootKey: 'CountryID',
+    lv1Key: 'ProvinceID',
+    lv2Key: 'CityID',
+    lv3Key: 'CountyID',
+  };
+  if (type === 'product') {
+    defaultPropKeys = {
+      rootKey: 'root',
+      lv1Key: 'FirstLevelID',
+      lv2Key: 'SecondLevelID',
+      lv3Key: 'ProductID',
+    };
+  }
+  if (defaultLabels) {
+    defaultPropKeys = defaultLabels;
+  }
+  let title = '全部';
+  if (type === 'area') title = '全部区域';
+  if (type === 'product') title = '全部产品';
+  const labelName = type === 'product' ? 'ClassName' : 'Name';
+  const list:any[] = [];
+  if (Array.isArray(value) && value.length > 0) {
+    value.forEach(it => { // 可能为省全部、市全部 也可能为单个城区
+      if (it[defaultPropKeys.lv1Key] === 0) { // 全部区域
+        list.push(title);
+      } else if (it[defaultPropKeys.lv2Key] === 0) { // 全省
+        const lv1 = allAdAreaTreeList.find(_it => _it.ID === it[defaultPropKeys.lv1Key]);
+        if (lv1) list.push(lv1[labelName]);
+      } else if (it[defaultPropKeys.lv3Key] === 0 || it[defaultPropKeys.lv3Key] === '00000000-0000-0000-0000-000000000000') { // 全市
+        const lv1 = allAdAreaTreeList.find(_it => _it.ID === it[defaultPropKeys.lv1Key]);
+        if (lv1) {
+          const lv2 = lv1.children.find(_it => _it.ID === it[defaultPropKeys.lv2Key]);
+          if (lv2) {
+            const item = { [labelName]: lv2[labelName], CountyList: [] };
+            const t = list.find(_item => _item.Province === lv1[labelName]);
+            if (t) {
+              t.CityList.push(item);
+            } else {
+              const temp = {
+                Province: lv1[labelName],
+                CityList: [item],
+              };
+              list.push(temp);
+            }
+          }
+        }
+      } else { // 单个城区
+        const lv1 = allAdAreaTreeList.find(_it => _it.ID === it[defaultPropKeys.lv1Key]);
+        if (lv1) {
+          const lv2 = lv1.children.find(_it => _it.ID === it[defaultPropKeys.lv2Key]);
+          if (lv2) {
+            const lv3 = lv2.children.find(_it => _it.ID === it[defaultPropKeys.lv3Key]);
+            if (lv3) {
+              const _ProvinceItem = list.find(_item => _item.Province === lv1[labelName]);
+              if (_ProvinceItem) {
+                const _CityItem = _ProvinceItem.CityList.find(city => city[labelName] === lv2[labelName]);
+                if (_CityItem) {
+                  _CityItem.CountyList.push(lv3[labelName]);
+                } else {
+                  _ProvinceItem.CityList.push({ [labelName]: lv2[labelName], CountyList: [lv3[labelName]] });
+                }
+              } else {
+                const temp = {
+                  Province: lv1[labelName],
+                  CityList: [{ [labelName]: lv2[labelName], CountyList: [lv3[labelName]] }],
+                };
+                list.push(temp);
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  return list.map(it => {
+    if (typeof it === 'string') return it;
+    const { Province, CityList } = it;
+    return `${Province}：[${CityList.map(city => {
+      const { CountyList } = city;
+      if (CountyList.length === 0) return `${city[labelName]}${title}`;
+      const _Name = city[labelName] === Province ? '' : `${city[labelName]}：`;
+      const CountyListContent = CountyList.join('、');
+      return `${_Name}${CountyListContent}`;
+    }).join('、')}]`;
+  }).join('\r\n');
 };
 
+const getTextDisplayContent = () => getTreeTextDisplayContent(props.value, allLevelList.value, props.treeType, defaultPropKeys.value);// 获取选中区域文字展示
+defineExpose({ getTextDisplayContent, TreeCompRef });
 onMounted(() => {
   if (!commonStore.DistrictTreeList.length) {
     commonStore.getDistrictList();

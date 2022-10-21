@@ -1,10 +1,62 @@
 <template>
-  <div class="process-setup-page" >
+  <div class="material-source-page" >
     <header>
       <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
     </header>
     <main>
+      <el-table border fit stripe
+        :data="processInfo.MaterialSources" style="width: 100%">
+          <el-table-column show-overflow-tooltip prop="MaterialTypeID" label="资源包" width="316">
+            <template #default="scope">
+            {{getMaterialName(scope.row.MaterialTypeID)}}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+          show-overflow-tooltip prop="ContactWay" label="来源" min-width="308">
+            <template #default="scope">
+              <span class="source">
+                <el-radio-group v-model="scope.row.SourceType">
+                  <el-radio :label="1">预出库</el-radio>
+                  <el-radio :label="2">领料</el-radio>
+                  <el-radio :label="3">其他工序</el-radio>
+                </el-radio-group>
+                <template v-if="scope.row.SourceType === 3">
+                  <div class="Process-list" v-if="scope.row.SourceWorkIDS && scope.row.SourceWorkIDS.length">
+                    <template v-for="(item,i) in scope.row.SourceWorkIDS" :key="item">
+                      {{i === 0 ? '': ' 或 '}}
+                      <span>
+                        {{getProcessName(item)}}
+                      </span>
+                    </template>
+                  </div>
+                  <mp-button link type="primary" @click="selectProcess(scope.row, scope.$index)">
+                    选择工序
+                  </mp-button>
+                </template>
+              </span>
+            </template>
+          </el-table-column>
+        </el-table>
     </main>
+    <DialogContainerComp
+    title="添加工序"
+    :visible='addPrcessShow'
+    :width="660"
+    :primaryClick="addPrcessPrimaryClick"
+    :closeClick="addPrcessCloseClick"
+    :closed="addPrcessCloseedClick"
+    >
+    <template #default>
+      <div class="add-line-dialog">
+          <el-checkbox-group v-model="setWordIDS">
+            <template v-for="item in PrcessList" :key="item.ClassID" >
+              <el-checkbox :label="item.ID">{{item.Name}}</el-checkbox>
+            </template>
+          </el-checkbox-group>
+      </div>
+    </template>
+    </DialogContainerComp>
     <footer>
       <mp-button type="primary" class="gradient" @click="saveProcess">保存</mp-button>
       <mp-button class="blue" @click="$goback">返回</mp-button>
@@ -13,6 +65,7 @@
 </template>
 
 <script lang="ts" setup>
+import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
   reactive, onMounted, computed, getCurrentInstance, ref, Ref,
 } from 'vue';
@@ -39,6 +92,10 @@ const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
 
+interface rowDataType{
+  data: any,
+  index: string|number,
+}
 interface EquipmentGroupsType{
   GroupID: string,
   GroupName: string,
@@ -70,7 +127,15 @@ interface processDataFromType{
 
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
-const processInfo = ref({});
+const setWordIDS = ref([]);
+const processInfo:any = ref({});
+const addPrcessShow = ref(false);
+const PrcessList: Ref<ProcessListType[]> = ref([]);
+const rowData:rowDataType = reactive({
+  data: null,
+  index: '',
+});
+
 const BreadcrumbList = computed(() => [
   { to: { path: '/productionLine' }, name: '生产线' },
   {
@@ -83,45 +148,69 @@ function setStorage() { // 设置会话存储
 }
 
 const saveProcess = () => {
-  // if (Data.processDataFrom.Type === 1 && Data.processDataFrom.isRestrict && !Data.processDataFrom.MaxProduceNumber) {
-  //   // 弹框提醒
-  //   messageBox.failSingleError('保存失败', '请输入每套版最大可加工数量', () => null, () => null);
-  // } else if (Data.processDataFrom.AllowPartReport && !Data.processDataFrom.MinPartReportNumber) {
-  //   // 弹框提醒 允许部分报工 最大数量
-  //   messageBox.failSingleError('保存失败', '请输入允许部分报工时最大数量', () => null, () => null);
-  // } else if (!Data.processDataFrom.EquipmentGroups.length) {
-  //   // 弹框提 请选择设备组
-  //   messageBox.failSingleError('保存失败', '请选择设备组', () => null, () => null);
-  // } else if (EquipmentGroupsSum.value !== 100) {
-  //   // 弹框提 权重之和不等于100
-  //   messageBox.failSingleError('保存失败', '权重之和不等于100', () => null, () => null);
-  // } else if (Data.processDataFrom.TemplateType === 2 && !showTemplate.value.length) {
-  //   messageBox.failSingleError('保存失败', '请选择大版模板', () => null, () => null);
-  //   // 弹框提 其他时 大阪模板为空
-  // } else {
-  //   api.getWorkingProcedureSave(Data.processDataFrom).then(res => {
-  //     if (res.data.Status === 1000) {
-  //       const cb = () => {
-  //         setStorage();
-  //         RouterStore.goBack();
-  //       };
-  //       // 保存成功
-  //       messageBox.successSingle('保存成功', cb, cb);
-  //     }
-  //   });
-  // }
+  const data = {
+    LineWorkID: processInfo.value.LineWorkID,
+    Materials: processInfo.value.MaterialSources,
+  };
+  api.getProductionLinetMaterialSourceSave(data).then(res => {
+    if (res.data.Status === 1000) {
+      console.log(res.data.Data);
+    }
+  });
+//
+};
+const getProcessName = (ID) => PrcessList.value.find(it => it.ID === ID)?.Name;
+
+const getMaterialName = (ID) => productionSettingStore.MaterialTypeGroup.find(it => it.ID === ID)?.Name;
+const selectProcess = (item, index) => {
+  const temp = item;
+  if (!temp.SourceWorkIDS) {
+    temp.SourceWorkIDS = [];
+  }
+  rowData.data = temp;
+  rowData.index = index;
+  setWordIDS.value = rowData.data.SourceWorkIDS;
+  addPrcessShow.value = true;
+};
+const addPrcessCloseedClick = () => {
+  setWordIDS.value = [];
+  rowData.data = null;
+  rowData.index = '';
+};
+const addPrcessCloseClick = () => {
+  addPrcessShow.value = false;
+};
+const addPrcessPrimaryClick = () => {
+  if (!setWordIDS.value.length) {
+    messageBox.failSingleError('失败', '请选择工序', () => null, () => null);
+  } else {
+    processInfo.value.MaterialSources[rowData.index].SourceWorkIDS = setWordIDS.value;
+    addPrcessCloseClick();
+  }
 };
 onMounted(() => {
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
   const temp = JSON.parse(route.params.processInfo as string) as any;
   if (temp) {
+    console.log(temp, 'temp');
+    if (temp.MaterialSources) {
+      temp.MaterialSources.forEach((it, i) => {
+        // 有争议 it.SourceType可能是0 （组合生产线的情况）但在生产线不会
+        if (!it.SourceType) {
+          temp.MaterialSources[i].SourceType = 1;
+        }
+      });
+    }
     processInfo.value = temp;
   }
-  api.getProductionLinetMaterialSourceList(temp.LineWorkID).then(res => {
+  api.getWorkingProcedureList({ Page: 1, PageSize: 999 }).then(res => {
     if (res.data.Status === 1000) {
-      console.log(res.data.Data);
+      PrcessList.value = res.data.Data as ProcessListType[];
     }
   });
+  if (!productionSettingStore.MaterialTypeGroup.length) {
+    productionSettingStore.getMaterialTypeGroupAll();
+  }
 });
 </script>
 <script lang="ts">
@@ -131,7 +220,7 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
-.process-setup-page{
+.material-source-page{
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -148,126 +237,38 @@ export default {
     padding-left: 20px;
     padding-top: 20px;
     box-sizing: border-box;
-    .title{
-      font-size: 14px;
-      color: #444444;
-      font-weight: 600;
-      border-left: 3px solid #05C1FF;
-      padding-left: 13px;
-      line-height: 14px;
-      margin-bottom: 36px;
-      height: 14px;
-      >span{
-        font-size: 12px;
-        color: #888888;
-        font-weight: 400;
-      }
-    }
-    .el-scrollbar__view{
+    .el-table{
       height: 100%;
-    }
-    .process-setup-page-main{
-      height: 100%;
-      display: flex;
-      padding-bottom: 70px;
-      box-sizing: border-box;
-      min-width: 1450px;
-      >.left{
-        width: 700px;
-      }
-      >.line{
-        // height: 100%;
-        width: 1px;
-        background-color: #D9D9D9;
-        margin: 0 25px;
-      }
-      >.right{
-        min-width: 650px;
-        width: 650px;
-        .min-height-radio{
-          height: 14px;
-          line-height: 14px;
-          .el-radio{
-            height:14px;
-          }
-        }
-        >div{
-          >.info{
-            margin: -16px 0 36px 8px;
-            min-height: 32px;
-            line-height: 32px;
-          }
-        }
-      }
-    }
-    .el-form{
-      .el-form-item__content{
-        font-size: 12px;
-        .type-conent{
-          line-height: 32px;
-          display: flex;
-          .el-checkbox{
-            margin-right: 20px;
-          }
-          .el-input{
-            width: 60px;
-            margin: 0 10px;
-          }
-        }
-      }
-      .equipment-groups{
-        margin-bottom: 20px;
-        width: 660px;
-        li+li{
-          margin-top: 25px;
-        }
-        li{
-          display: flex;
-          line-height: 32px;
-          width: 500px;
-          justify-content: flex-end;
-          padding-left: 80px;
-          >div{
-            height: 32px;
-            display: flex;
-            align-items: center;
-            margin-left: 10px;
-          }
-          div{
-          }
-          .state-percent{
-            .el-input{
-              width: 140px;
-            }
-          }
-          .equipment{
-            flex: 1;
-          }
-          .del{
-            .iconfont.icon-delete{
-              color: $--color-primary;
-            }
-          }
-        }
-      }
-      .info-text{
-        line-height: 32px;
-        padding-left: 90px;
-        // width: 760px;
+      .source{
         display: flex;
-        .label{
-          min-width: 60px;
+        line-height: 32px;
+        .Process-list{
+          padding: 0 20px;
+          padding-right: 0;
+          max-width: calc(100% - 63px - 238px);
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          height: 32px;
+          color: #F4A307;
+          span{
+            color: #444;
+          }
         }
-        .content::before{
-          content: '';
-          display: inline-block;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background-color: #444;
-          position: relative;
-          top: -2px;
-          margin-right: 2px;
+        .el-button{
+          margin-left: 20px;
+        }
+      }
+      .el-table__header-wrapper, .el-table__body-wrapper{
+        tr{
+          th:nth-child(2)>.cell{
+            padding-left: 150px !important;
+          }
+          .el-table__cell:nth-child(2)>.cell{
+            box-sizing: border-box;
+            text-align: left;
+            padding-left: 50px;
+          }
         }
       }
     }

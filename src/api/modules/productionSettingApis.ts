@@ -49,6 +49,12 @@ const api = {
   getProductionLinetEquipmentList(ID) { // POST /Api/ProductionLine/Equipment/List  生产线生产工序列表
     return request({ method: 'GET', url: `/Api/ProductionLine/Equipment/List?lineWorkID=${ID}` });
   },
+  getProductionLinetMaterialSourceSave(data) { // POST /Api/ProductionLine/MaterialSource/Save  生产线物料来源保存
+    return request({ method: 'POST', url: '/Api/ProductionLine/MaterialSource/Save', data });
+  },
+  getProductionLinetEquipmentSave(data) { // POST /Api/ProductionLine/Equipment/Save  生产线设备保存
+    return request({ method: 'POST', url: '/Api/ProductionLine/Equipment/Save', data });
+  },
 
   //
 

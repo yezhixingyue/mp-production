@@ -30,7 +30,7 @@
                     <el-radio :label="4" :disabled="Data.processDataFrom.AllowBatchReport">拆分工序</el-radio>
                   </el-radio-group>
                   <div style="height:32px" class="type-conent">
-                    <template v-if="Data.processDataFrom.Type === 1">
+                    <template v-if="Data.processDataFrom.Type === 2">
                       <el-checkbox v-model="Data.processDataFrom.isRestrict" label="限制每套版加工数量" />
                       <span v-if="Data.processDataFrom.isRestrict">
                         每套版最大可加工<el-input v-model.number="Data.processDataFrom.MaxProduceNumber"></el-input>次

@@ -74,10 +74,8 @@
     </main>
     <ADAreaDialogSelector
     v-model:visible="visible"
-    :defaultCheckedKeys="defaultCheckedKeys"
-    :handleChangeFunc="handleChangeFunc"
+    :value="Data.DeliveryTimeForm.AreaList" @change="(list) => Data.DeliveryTimeForm.AreaList = list" v-model:AreaDescribe='Data.DeliveryTimeForm.AreaDescribe'
     ></ADAreaDialogSelector>
-
     <footer>
       <el-button type='primary' class="is-blue-button" @click="onSubmitClick">保存</el-button>
       <el-button class="cancel-blue-btn" @click="$goback()"><i></i> 返回</el-button>
@@ -166,20 +164,22 @@ const Data:DataType = reactive({
 });
 const defaultBeginTime = computed(() => new Date(new Date(new Date(new Date().setHours(20)).setMinutes(0)).setSeconds(0)));
 const defaultCheckedKeys = computed(() => Data.DeliveryTimeForm.AreaList.map(item => item.CountyID));
-
+const setCheck = (list) => {
+  Data.DeliveryTimeForm.ExpressList = commonStore.ExpressList.filter(item => list.find(it => it === item.ID)) || [];
+  if (commonStore.ExpressList.length === list.length) {
+    isIndeterminate.value = false;
+    ExpressCheckAll.value = true;
+  } else {
+    ExpressCheckAll.value = false;
+    isIndeterminate.value = !!list.length;
+  }
+};
 const ExpressList = computed({
   get() {
     return Data.DeliveryTimeForm.ExpressList.map(item => commonStore.ExpressList.find(it => it.ID === item.ID)?.ID);
   },
   set(list) {
-    Data.DeliveryTimeForm.ExpressList = commonStore.ExpressList.filter(item => list.find(it => it === item.ID)) || [];
-    if (commonStore.ExpressList.length === list.length) {
-      isIndeterminate.value = false;
-      ExpressCheckAll.value = true;
-    } else {
-      ExpressCheckAll.value = false;
-      isIndeterminate.value = !!list.length;
-    }
+    setCheck(list);
   },
 });
 const saveType = () => {
@@ -346,6 +346,7 @@ onMounted(() => {
           ...it,
         }));
         Data.DeliveryTimeForm = resp;
+        setCheck(resp.ExpressList.map(it => it.ID));
       }
     });
   }

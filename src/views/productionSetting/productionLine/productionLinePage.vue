@@ -29,8 +29,10 @@
           <li class="table-main" v-for="item in ProductionLineData.ProductionLineWorkings" :key="item">
             <!-- 工序 -->
             <div class="process-item">
-              <span class="process">工序</span>
-              <span class="equipment">设备/外协工厂</span>
+              <span class="process">{{PrcessList.find(it => it.ID === item.WorkID)?.Name}}</span>
+              <span class="equipment">
+                {{getEquipmentText(item)}}
+              </span>
               <span class="operate">
                 <mp-button type="primary" link @click="ToEquipment(item)">选择设备/工厂</mp-button>
                 <mp-button type="primary" link @click="ToMaterialSource(item)">物料来源</mp-button>
@@ -38,27 +40,23 @@
               </span>
             </div>
             <!-- 物料来源 -->
-            <div class="material-source">
-              <p>纸张：
-                <span>
-                  来自  裁切、压点线、打 码、压痕、压凹、激凸、打孔、划线、喷码、写磁、圆角
-                </span>
-              </p>
-              <p>纸张：
-                <span>
-                  来自  裁切、压点线、打 码、压痕、压凹、激凸、打孔、划线、喷码、写磁、圆角
-                </span>
-              </p>
+            <div class="material-source" v-if="item.MaterialSources && item.MaterialSources.length">
+              <!-- {{item.MaterialSources}} -->
+              <template v-for="material in item.MaterialSources" :key="material.MaterialTypeID">
+                <p>{{getMaterialName(material.MaterialTypeID)}}：
+                  <span>
+                    来自  {{getSourceWork(material).join('、')}}
+                  </span>
+                </p>
+              </template>
             </div>
           </li>
-          <li class="table-main">
-            <!-- 工序 -->
+          <!-- <li class="table-main">
             <div class="process-item">
               <span class="process">工序</span>
               <span class="equipment">设备/外协工厂</span>
               <span class="operate">操作</span>
             </div>
-            <!-- 物料来源 -->
             <div class="material-source">
               <p>纸张：
                 <span>
@@ -66,7 +64,7 @@
                 </span>
               </p>
             </div>
-          </li>
+          </li> -->
         </ul>
         <div class="matters-need-attention">
           <span>注意事项：</span>
@@ -89,7 +87,7 @@
         </p>
         <p class="line-info">
           <span>
-            {{actionLine?.Name}}<span class="fold-the-hand">需要折手</span>
+            {{actionLine?.Name}}<span class="fold-the-hand" v-if="actionLine?.NeedFoldWay">需要折手</span>
           </span>
           <span class="btn">
             <mp-button type="primary" link @click="editLine">编辑</mp-button>
@@ -157,7 +155,7 @@
 
 <script lang="ts" setup>
 import {
-  reactive, ref, Ref, computed, onMounted, toRaw,
+  reactive, ref, Ref, computed, onMounted, toRaw, onActivated,
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
@@ -166,6 +164,7 @@ import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import messageBox from '@/assets/js/utils/message';
 import { ProcessListType } from '@/store/modules/productionSetting/types';
 import { useRouter } from 'vue-router';
+import { useProductionSettingStore } from '@/store/modules/productionSetting';
 
 const router = useRouter();
 const PasteupSettingStore = usePasteupSettingStore();
@@ -212,7 +211,7 @@ interface DataType {
   addPrcessFrom:addPrcessFromType,
   getPocessFrom:getPocessFromType,
 }
-
+const productionSettingStore = useProductionSettingStore();
 const addLineShow = ref(false);
 const addPrcessShow = ref(false);
 const ProductionLineList:Ref<ProductionLineListType[]> = ref([]);
@@ -281,6 +280,39 @@ const ToEquipment = (item) => {
     params: { processInfo: JSON.stringify(item) },
   });
 };
+// 获取设备文字
+const getEquipmentText = (item) => {
+  let returnStr = '';
+  item.ClassEquipmentGroups.forEach(ClassIt => {
+    ClassIt.EquipmentGroups.forEach(GroupIt => {
+      if (GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).length) {
+        returnStr += `${GroupIt.GroupName}：${GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).join('、')}`;
+      }
+    });
+  });
+  return returnStr;
+};
+// 获取物料名
+const getMaterialName = (ID) => productionSettingStore.MaterialTypeGroup.find(it => it.ID === ID)?.Name;
+// 获取物料工序来源
+const getSourceWork = (material) => {
+  const IDS = material.SourceWorkIDS;
+  const returnStr:string[] = [];
+  if (material.SourceType === 1) {
+    returnStr.push('预出库');
+  } else if (material.SourceType === 2) {
+    returnStr.push('领料');
+  } else if (material.SourceType === 3) {
+    IDS.forEach(ID => {
+      if (PrcessList.value.find(it => it.ID === ID)) {
+        returnStr.push(PrcessList.value.find(it => it.ID === ID)?.Name || '');
+      }
+    });
+  } else {
+    returnStr.push('其他');
+  }
+  return returnStr;
+};
 // 获取生产线工序列表
 const getProductionLineWorkingProcedureList = () => {
   api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
@@ -346,6 +378,7 @@ const AddLine = () => {
 // 添加工序
 const addPrcess = () => {
   Data.addPrcessFrom.ID = actionLine.value?.ID || '';
+  Data.addPrcessFrom.WordIDS = ProductionLineData.value.ProductionLineWorkings.map(it => it.WorkID);
   // 格式化已经添加的工序
   addPrcessShow.value = true;
 };
@@ -353,8 +386,7 @@ const editLine = () => {
   addLineShow.value = true;
   if (actionLine.value) {
     const temp = toRaw(actionLine.value);
-    console.log(temp, 'actionLine.value');
-    temp.TemplateIDS = temp.TemplateIDS || [];
+    temp.TemplateIDS = ProductionLineData.value.TemplateIDS || [];
     Data.addLineFrom = toRaw(actionLine.value);
   }
 };
@@ -424,10 +456,20 @@ const addPrcessPrimaryClick = () => {
     });
   }
 };
-
+onActivated(() => {
+  const processSetupPage = sessionStorage.getItem('productionLinePage') === 'true';
+  if (processSetupPage) {
+    getProductionLineWorkingProcedureList();
+    sessionStorage.removeItem('productionLinePage');
+  }
+});
 onMounted(() => {
+  sessionStorage.removeItem('productionLinePage');
   if (!PasteupSettingStore.ImpositionTemmplateClassList.length) {
     PasteupSettingStore.getImpositionTemmplateClassList();
+  }
+  if (!productionSettingStore.MaterialTypeGroup.length) {
+    productionSettingStore.getMaterialTypeGroupAll();
   }
   getImpositionTemmplateList();
   getProductionLineList();
