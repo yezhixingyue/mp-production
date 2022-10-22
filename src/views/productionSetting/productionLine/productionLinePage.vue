@@ -79,7 +79,7 @@
       <div class="right">
         <mp-button type="primary" @click="addPrcess">+ 添加工序</mp-button>
         <p class="set-slit">
-          <mp-button type="primary" link>设置分切工序</mp-button>
+          <mp-button type="primary" link @click="setSplit">设置分切工序</mp-button>
         </p>
         <p class="status">
           当前状态：<span>不可用</span>
@@ -150,12 +150,30 @@
       </div>
     </template>
     </DialogContainerComp>
+    <DialogContainerComp
+    title="添加工序"
+    :visible='setSplitShow'
+    :width="660"
+    :primaryClick="setSplitPrimaryClick"
+    :closeClick="setSplitCloseClick"
+    :closed="setSplitCloseedClick"
+    >
+    <template #default>
+      <div class="add-line-dialog">
+          <el-radio-group v-model="Data.setSplitFrom.SplitWordID">
+            <template v-for="item in splitPrcessList" :key="item.ClassID" >
+              <el-radio :label="item.ID">{{item.Name}}</el-radio>
+            </template>
+          </el-radio-group>
+      </div>
+    </template>
+    </DialogContainerComp>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {
-  reactive, ref, Ref, computed, onMounted, toRaw, onActivated,
+  reactive, ref, Ref, computed, onMounted, toRaw, onActivated, watch,
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
@@ -190,6 +208,10 @@ interface addPrcessFromType {
   ID: string,
   WordIDS: string[],
 }
+interface setSplitFromType {
+  ID: string,
+  SplitWordID: string,
+}
 interface getPocessFromType {
   LineID: string,
 }
@@ -209,11 +231,13 @@ interface DataType {
   getMaxData:getMaxDataType,
   addLineFrom:addLineFromType,
   addPrcessFrom:addPrcessFromType,
+  setSplitFrom:setSplitFromType,
   getPocessFrom:getPocessFromType,
 }
 const productionSettingStore = useProductionSettingStore();
 const addLineShow = ref(false);
 const addPrcessShow = ref(false);
+const setSplitShow = ref(false);
 const ProductionLineList:Ref<ProductionLineListType[]> = ref([]);
 const PrcessList:Ref<ProcessListType[]> = ref([]);
 // 生产线工序列表
@@ -237,11 +261,16 @@ const Data:DataType = reactive({
     ID: '',
     WordIDS: [],
   },
+  setSplitFrom: {
+    ID: '',
+    SplitWordID: '',
+  },
   // 根据生产线获取工序
   getPocessFrom: {
     LineID: 'string',
   },
 });
+const splitPrcessList = computed(() => PrcessList.value.filter(it => it.Type === 4));
 const RadioGroupCompValue = computed(() => ({
   level1Val: Data.getPocessFrom.LineID,
   level2Val: '',
@@ -317,7 +346,6 @@ const getSourceWork = (material) => {
 const getProductionLineWorkingProcedureList = () => {
   api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
     if (res.data.Status === 1000) {
-      console.log(res.data.Data);
       ProductionLineData.value = res.data.Data as any;
     }
   });
@@ -333,7 +361,6 @@ const RadioGroupCompChange = (levelData) => {
 // 可用拼版模板显示
 const getTemplatesName = () => {
   const returnData:ImpositionTemmplateListType[] = [];
-  console.log(ProductionLineData.value.TemplateIDS, 'TemplateIDSTemplateIDSTemplateIDS');
   if (!ProductionLineData.value.TemplateIDS) return [];
   ProductionLineData.value.TemplateIDS.forEach(item => {
     const temp = Data.ImpositionTemmplateList.find(it => it.ID === item);
@@ -341,12 +368,11 @@ const getTemplatesName = () => {
       returnData.push(temp);
     }
   });
-  console.log(returnData, 'returnDatareturnDatareturnData');
   return returnData;
 };
 // 获取生产线列表
 const getProductionLineList = () => {
-  api.getProductionLineList().then(res => {
+  api.getProductionLineList({ Type: 0 }).then(res => {
     if (res.data.Status === 1000) {
       ProductionLineList.value = res.data.Data as ProductionLineListType[];
       // 默认选中第一条生产线
@@ -381,6 +407,16 @@ const addPrcess = () => {
   Data.addPrcessFrom.WordIDS = ProductionLineData.value.ProductionLineWorkings.map(it => it.WorkID);
   // 格式化已经添加的工序
   addPrcessShow.value = true;
+};
+const setSplit = () => {
+  if (actionLine.value?.SplitWordID) {
+    Data.setSplitFrom.SplitWordID = actionLine.value?.SplitWordID;
+  } else {
+    Data.setSplitFrom.SplitWordID = '';
+  }
+  Data.setSplitFrom.ID = actionLine.value?.ID || '';
+  // 格式化已经添加的工序
+  setSplitShow.value = true;
 };
 const editLine = () => {
   addLineShow.value = true;
@@ -449,6 +485,32 @@ const addPrcessPrimaryClick = () => {
       if (res.data.Status === 1000) {
         const cb = () => {
           addLineCloseClick();
+        };
+        // 保存成功
+        messageBox.successSingle('保存成功', cb, cb);
+      }
+    });
+  }
+};
+// 设置分切工序
+const setSplitCloseedClick = () => {
+  Data.setSplitFrom = {
+    ID: '',
+    SplitWordID: '',
+  };
+};
+const setSplitCloseClick = () => {
+  setSplitShow.value = false;
+};
+const setSplitPrimaryClick = () => {
+  if (!Data.setSplitFrom.SplitWordID) {
+    messageBox.failSingleError('保存失败', '请选择分切工序', () => null, () => null);
+  } else {
+    api.getProductionLineSetSplit(Data.setSplitFrom).then(res => {
+      if (res.data.Status === 1000) {
+        const cb = () => {
+          setSplitCloseClick();
+          getProductionLineWorkingProcedureList();
         };
         // 保存成功
         messageBox.successSingle('保存成功', cb, cb);

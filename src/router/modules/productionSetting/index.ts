@@ -49,6 +49,54 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionSetting/productionLine/equipmentPage.vue'),
     },
+    {
+      path: '/putOut',
+      name: 'putOut',
+      meta: {
+        title: '申放',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'putOutPage',
+      },
+      component: () => import('@/views/productionSetting/productionLine/putOutPage.vue'),
+    },
+    {
+      path: '/putOutSetup',
+      name: 'putOutSetup',
+      meta: {
+        title: '设置申放',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'putOutSetupPage',
+      },
+      component: () => import('@/views/productionSetting/productionLine/putOutSetupPage.vue'),
+    },
+    {
+      path: '/capacity',
+      name: 'capacity',
+      meta: {
+        title: '生产设备',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'capacityPage',
+      },
+      component: () => import('@/views/productionSetting/productionLine/capacityPage.vue'),
+    },
+    {
+      path: '/capacitySetup',
+      name: 'capacitySetup',
+      meta: {
+        title: '生产设备',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'capacitySetupPage',
+      },
+      component: () => import('@/views/productionSetting/productionLine/capacitySetupPage.vue'),
+    },
     /* 组合生产线模块
     -------------------------------------- */
     {
@@ -151,7 +199,26 @@ const routeTree:RouteTreeType = {
         },
         {
           name: 'equipment',
-          children: [],
+          children: [
+            {
+              name: 'putOut',
+              children: [
+                {
+                  name: 'putOutSetup',
+                  children: [],
+                },
+              ],
+            },
+            {
+              name: 'capacity',
+              children: [
+                {
+                  name: 'capacitySetup',
+                  children: [],
+                },
+              ],
+            },
+          ],
         },
       ],
     },

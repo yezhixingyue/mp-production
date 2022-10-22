@@ -19,7 +19,7 @@
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
             <template v-if="!scope.row.IsSpecialColor">
-              <mp-button type="info" link @click="editPrintColor(scope.row)">申放</mp-button>
+              <mp-button type="info" link @click="ToPutOutPage(scope.row)">申放</mp-button>
               <mp-button type="info" link @click="editPrintColor(scope.row)">设备产能</mp-button>
               <mp-button type="info" link
                 @click="delPrintColor(scope.row)">删除</mp-button>
@@ -77,7 +77,7 @@ import {
   reactive, onMounted, computed, getCurrentInstance, ref, Ref, watch,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import SelectDeviceGroup from '@/components/productionSetting/selectDeviceGroup.vue';
 import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vue';
 import materialResource from '@/components/productionSetting/materialResource.vue';
@@ -101,12 +101,14 @@ interface EquipmentListType {
   GroupName:string
   ID:string
   Name:string
+  LineEquipmentID?:string
 }
 const PasteupSettingStore = usePasteupSettingStore();
 const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
+const router = useRouter();
 
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
@@ -136,6 +138,7 @@ const EquipmentList = computed(() => {
             GroupName: GroupIt.GroupName as string,
             ID: it.ID as string,
             Name: it.Name as string,
+            LineEquipmentID: it.LineEquipmentID,
           });
         }
       });
@@ -144,6 +147,12 @@ const EquipmentList = computed(() => {
 
   return returnData;
 });
+const ToPutOutPage = (item) => {
+  router.push({
+    name: 'putOut',
+    params: { LineEquipmentID: item.LineEquipmentID, ReportMode: 0 },
+  });
+};
 // const isChecked = computed(() => returnData);
 watch(() => EquipmentList.value, (newVal) => {
   EquipmentSaveData.value.EquipmentIDS = newVal.map(it => it.ID) as never[];
@@ -202,7 +211,6 @@ onMounted(() => {
   const temp = JSON.parse(route.params.processInfo as string) as any;
   if (temp) {
     processInfo.value = { ...temp };
-    console.log(processInfo.value.ClassEquipmentGroups, 'processInfo.value');
   }
 });
 

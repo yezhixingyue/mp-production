@@ -43,7 +43,9 @@ const props = withDefaults(defineProps<{
 }>(), {
   leftWidth: '45%',
 });
-
+setTimeout(() => {
+  console.log(props.condition, 'conditionconditioncondition');
+}, 3000);
 const emit = defineEmits(['submit']);
 
 const slotDefault = !!useSlots().default;

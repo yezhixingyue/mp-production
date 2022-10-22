@@ -192,7 +192,6 @@ onMounted(() => {
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
   const temp = JSON.parse(route.params.processInfo as string) as any;
   if (temp) {
-    console.log(temp, 'temp');
     if (temp.MaterialSources) {
       temp.MaterialSources.forEach((it, i) => {
         // 有争议 it.SourceType可能是0 （组合生产线的情况）但在生产线不会

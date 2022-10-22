@@ -4,13 +4,15 @@ import type {
   NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
   MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType,
 } from '@/store/modules/productionSetting/types';
-import { IState, _UseClassEquipmentGroupType } from './types';
+
+import { IState, _UseClassEquipmentGroupType, getPropertyListType } from './types';
 
 export interface IActions {
   getEquipmentGroup:(callback?)=>void,
   getResourceNoteGroup:(callback?)=>void,
   getMaterialTypeGroupAll:(callback?)=>void,
   getImpositionTemmplateList:(callback?)=>void,
+  getPropertyList:(data:getPropertyListType)=>void,
 }
 type IGetters = Record<string, never>;
 
@@ -21,6 +23,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     ResourceNoteGroup: [],
     MaterialTypeGroup: [],
     ImpositionTemmplateList: [],
+    PropertyList: [],
   }),
   getters: {},
   actions: {
@@ -71,6 +74,12 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
           this.ImpositionTemmplateList = res.data.Data as ImpositionTemmplateListType[];
         }
       });
+    },
+    async getPropertyList(data) {
+      const resp = await api.propertyApis.getPropertyList(data).catch(() => null);
+      if (resp?.data.isSuccess) {
+        this.PropertyList = resp.data.Data || [];
+      }
     },
   },
 };

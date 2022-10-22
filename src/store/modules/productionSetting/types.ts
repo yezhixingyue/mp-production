@@ -1,5 +1,5 @@
 import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
-
+import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 // 辅助信息
 export interface NotesType{
   ID: string,
@@ -44,6 +44,7 @@ export interface IState {
   ResourceNoteGroup:SelectAssistInfoGroup[],
   MaterialTypeGroup:MaterialTypeGroupType[],
   ImpositionTemmplateList:ImpositionTemmplateListType[],
+  PropertyList:PropertyListItemType[]
 }
 
 // g工序列表
@@ -75,4 +76,8 @@ export interface ImpositionTemmplateListGroupType {
   ClassID:number,
   Name:string,
   children:ImpositionTemmplateListType[],
+}
+export interface getPropertyListType {
+  UseModule: number,
+  MaterialTypeList: string[]
 }
