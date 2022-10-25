@@ -1,5 +1,5 @@
 <template>
-  <div class="group-material-limit-setup-page">
+  <div class="put-out-setup" v-if="LineEquipmentID">
     <ConstraintSetupPageComp
     leftWidth="800px"
     :PropertyList="productionSettingStore.PropertyList"
@@ -7,7 +7,7 @@
       <template #header>
         <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
         <div class="header-top">
-          优先级：<el-input v-model="Data.Priority"></el-input> <span>注：数字越小优先级越高</span>
+          优先级：<el-input v-model="Data.Priority"></el-input> <span class="hint">注：数字越小优先级越高</span>
         </div>
       </template>
       <template #default>
@@ -61,6 +61,9 @@ const Data = reactive({
   Value: 0,
   Type: 0,
 });
+function setStorage() { // 设置会话存储
+  sessionStorage.setItem('putOutPage', 'true');
+}
 const submit = async (e: ConditionItemClass) => {
   Data.LineEquipmentID = LineEquipmentID.value;
   const temp = { ...e, ...Data };
@@ -68,6 +71,7 @@ const submit = async (e: ConditionItemClass) => {
   if (resp?.data.isSuccess) {
     const isEdit = !!temp.ID;
     const cb = () => {
+      setStorage();
       // 处理数据变动
       getGoBackFun();
     };
@@ -100,7 +104,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.group-material-limit-setup-page {
+.put-out-setup {
   header{
     .el-breadcrumb{
       margin-bottom: 20px;
@@ -112,6 +116,25 @@ export default {
       .el-input{
         width: 110px;
         margin-right: 20px;
+      }
+      .hint{
+        font-size: 12px;
+        line-height: 30px;
+        color: #F4A307;
+        position: relative;
+        padding-left: 33px;
+        &::before{
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
+          width: 13px;
+          height: 13px;
+          margin: 0 10px;
+          position: absolute;
+          left: 0;
+          top: 9px;
+        }
       }
     }
   }

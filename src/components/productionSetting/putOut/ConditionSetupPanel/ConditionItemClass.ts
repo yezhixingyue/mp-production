@@ -12,6 +12,8 @@ export class ConditionItemClass {
 
   Type = 0
 
+  MumberPropertyID? = ''
+
   Constraint: null | Constraints = null
 
   constructor(data: ConditionItemClass | null, PropertyList: PropertyListItemType[]) {

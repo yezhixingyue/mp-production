@@ -100,15 +100,87 @@ const routes: RouteRecordRaw = {
     /* 组合生产线模块
     -------------------------------------- */
     {
-      path: '/assemblyLine',
-      name: 'assemblyLine',
+      path: '/combinationProductionLine',
+      name: 'combinationProductionLine',
       meta: {
         title: '组合生产线',
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
-        pageName: 'assemblyLinePage',
+        pageName: 'combinationProductionLinePage',
       },
-      component: () => import('@/views/productionSetting/assemblyLine/assemblyLinePage.vue'),
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationProductionLinePage.vue'),
+    },
+    {
+      path: '/combinationMaterialSource',
+      name: 'combinationMaterialSource',
+      meta: {
+        title: '物料来源',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'combinationMaterialSourcePage',
+      },
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationMaterialSourcePage.vue'),
+    },
+    {
+      path: '/combinationEquipment',
+      name: 'combinationEquipment',
+      meta: {
+        title: '生产设备',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'combinationEquipmentPage',
+      },
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationEquipmentPage.vue'),
+    },
+    {
+      path: '/combinationPutOut',
+      name: 'combinationPutOut',
+      meta: {
+        title: '申放',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'combinationPutOutPage',
+      },
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationPutOutPage.vue'),
+    },
+    {
+      path: '/combinationPutOutSetup',
+      name: 'combinationPutOutSetup',
+      meta: {
+        title: '设置申放',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'combinationPutOutSetupPage',
+      },
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationPutOutSetupPage.vue'),
+    },
+    {
+      path: '/combinationCapacity',
+      name: 'combinationCapacity',
+      meta: {
+        title: '生产设备',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'combinationCapacityPage',
+      },
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationCapacityPage.vue'),
+    },
+    {
+      path: '/combinationCapacitySetup',
+      name: 'combinationCapacitySetup',
+      meta: {
+        title: '生产设备',
+        hideMenu: true,
+        requiresAuth: true,
+        icon: 'iconfont icon-xinxi',
+        pageName: 'combinationCapacitySetupPage',
+      },
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationCapacitySetupPage.vue'),
     },
     /* 工序模块
     -------------------------------------- */
@@ -214,6 +286,40 @@ const routeTree:RouteTreeType = {
               children: [
                 {
                   name: 'capacitySetup',
+                  children: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    /* 组合生产线
+    -------------------------------------- */
+    {
+      name: 'combinationProductionLine',
+      children: [
+        {
+          name: 'combinationMaterialSource',
+          children: [],
+        },
+        {
+          name: 'combinationEquipment',
+          children: [
+            {
+              name: 'combinationPutOut',
+              children: [
+                {
+                  name: 'combinationPutOutSetup',
+                  children: [],
+                },
+              ],
+            },
+            {
+              name: 'combinationCapacity',
+              children: [
+                {
+                  name: 'combinationCapacitySetup',
                   children: [],
                 },
               ],

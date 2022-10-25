@@ -1,5 +1,5 @@
 <template>
-  <section class="mp-erp-period-manage-delivery-time-manage-list-page">
+  <section class="delivery-time-list-page">
     <header>
       <mp-button type="primary" sizi='small' @click="onItemSetupClick('')">添加发货班次</mp-button>
       <CascaderByArea/>
@@ -147,7 +147,7 @@ export default {
 };
 </script>
 <style lang='scss'>
-.mp-erp-period-manage-delivery-time-manage-list-page {
+.delivery-time-list-page {
   display: flex;
   flex-direction: column;
   height: 100%;

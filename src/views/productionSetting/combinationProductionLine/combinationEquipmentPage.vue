@@ -149,13 +149,13 @@ const EquipmentList = computed(() => {
 });
 const ToPutOutPage = (item) => {
   router.push({
-    name: 'putOut',
+    name: 'combinationPutOut',
     params: { LineEquipmentID: item.LineEquipmentID, ReportMode: 0 },
   });
 };
 const TocCpacityPage = (item) => {
   router.push({
-    name: 'capacity',
+    name: 'combinationCapacity',
     params: { LineEquipmentID: item.LineEquipmentID, ReportMode: 0 },
   });
 };
@@ -243,7 +243,7 @@ onMounted(() => {
 </script>
 <script lang="ts">
 export default {
-  name: 'equipmentPage',
+  name: 'combinationEquipmentPage',
 };
 </script>
 <style lang='scss'>

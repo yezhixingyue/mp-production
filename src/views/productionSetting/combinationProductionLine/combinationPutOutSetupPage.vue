@@ -1,59 +1,33 @@
 <template>
-  <div class="put-out-setup">
+  <div class="put-out-setup" v-if="LineEquipmentID">
     <ConstraintSetupPageComp
-    v-if="LineEquipmentID"
     leftWidth="800px"
     :PropertyList="productionSettingStore.PropertyList"
     :condition="curConditionItem" @submit="submit">
       <template #header>
         <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
         <div class="header-top">
-          优先级：<el-input v-model="Data.Priority"></el-input> <span>注：数字越小优先级越高</span>
+          优先级：<el-input v-model="Data.Priority"></el-input> <span class="hint">注：数字越小优先级越高</span>
         </div>
       </template>
       <template #default>
         <div class="right-class">
-          <p class="title">
-            <span v-if="Data.Type === 0">
-              则准备时间为：
-            </span>
-            <span v-if="Data.Type === 1">
-              则产能设为：
-            </span>
-            <span v-if="Data.Type === 2">
-              则干燥时间为：
-            </span>
-          </p>
+          <p class="title">则申放为：</p>
           <p class="conent">
-            <span v-if="Data.Type !== 1">
-              每次作业需要
-            </span>
-            <el-input :class="{marginleft: Data.Type !== 1}" v-model="Data.Value"></el-input>
-            <span v-if="Data.Type !== 1">
-              分钟准备
-            </span>
-            <span v-if="Data.Type === 1">
-              /每小时
-            </span>
-          </p>
-          <p class="conent" v-if="Data.Type === 1">
-            计算数量：
-            <span class="calculate">{{calculateNum.Name}}</span>
-            <el-button link type="primary" @click="() => visible = true">选择计算数量</el-button>
-          </p>
-          <p class="conent" v-if="Data.Type !== 1">
-            说明：作业次数是通过转换器转换而来
+            <el-input v-model="Data.Value"></el-input>
+            <el-select v-model="Data.Type" class="m-2" placeholder="Select">
+              <el-option label="张" :value="0"/>
+              <el-option label="%" :value="1"/>
+            </el-select>
           </p>
         </div>
       </template>
     </ConstraintSetupPageComp>
-    <Dialog v-model:visible="visible" :propertyList="productionSettingStore.PropertyList" @select="onPropSelect" />
   </div>
 </template>
 
 <script setup lang='ts'>
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
-import Dialog from '@/components/common/ConstraintsComps/ConditionPropSelectDialog/ConditionPropSelectDialog.vue';
 
 import Header from '@/components/productionResources/EquipmentGroup/Constraint/ConstraintHeader.vue';
 import ConstraintSetupPageComp from '@/components/common/ConstraintsComps/ConstraintSetupPageComp.vue';
@@ -72,17 +46,11 @@ import { ConditionItemClass } from '@/components/productionSetting/putOut/Condit
 const productionSettingStore = useProductionSettingStore();
 const route = useRoute();
 const store = useResourceStore();
-const visible = ref(false);
-// 计算出量弹框选择值
-const calculateNum = reactive({
-  ID: '',
-  Name: '',
-});
 const { EquipmentGroupData, MaterialTypeLimitData } = storeToRefs(store);
 const BreadcrumbList = computed(() => [
   { to: { path: '/deliveryTimeList' }, name: '发货班次' },
   {
-    name: '产能条件',
+    name: '申放条件',
   },
 ]);
 const LineEquipmentID = ref();
@@ -92,20 +60,14 @@ const Data = reactive({
   Priority: 0,
   Value: 0,
   Type: 0,
-  MumberPropertyID: '',
 });
 function setStorage() { // 设置会话存储
-  sessionStorage.setItem('capacityPage', 'true');
-}
-function onPropSelect(item) { //
-  calculateNum.ID = item.Property.ID;
-  calculateNum.Name = item.Property.Name;
-  Data.MumberPropertyID = calculateNum.ID;
+  sessionStorage.setItem('putOutPage', 'true');
 }
 const submit = async (e: ConditionItemClass) => {
   Data.LineEquipmentID = LineEquipmentID.value;
   const temp = { ...e, ...Data };
-  const resp = await api.getProductionLineCapacitySave(temp).catch(() => null);
+  const resp = await api.getProductionLinePutOutSave(temp).catch(() => null);
   if (resp?.data.isSuccess) {
     const isEdit = !!temp.ID;
     const cb = () => {
@@ -123,21 +85,13 @@ const submit = async (e: ConditionItemClass) => {
 };
 onMounted(() => {
 // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  const temp = JSON.parse(route.params.capacityInfo as string) as ConditionItemClass;
-  const TempType = Number(route.params.Type) as number;
-  Data.Type = TempType;
+  const temp = JSON.parse(route.params.putOutInfo as string) as ConditionItemClass;
   if (temp) {
     curConditionItem.value = { ...temp };
     Data.LineEquipmentID = temp.LineEquipmentID;
     Data.Priority = temp.Priority;
     Data.Value = temp.Value;
     Data.Type = temp.Type;
-    Data.MumberPropertyID = temp.MumberPropertyID || '';
-    productionSettingStore.PropertyList.forEach(item => {
-      if (item.Property.ID === Data.MumberPropertyID) {
-        onPropSelect(item);
-      }
-    });
   }
   LineEquipmentID.value = route.params.LineEquipmentID as string;
 });
@@ -145,7 +99,7 @@ onMounted(() => {
 
 <script lang='ts'>
 export default {
-  name: 'capacitySetupPage',
+  name: 'combinationPutOutSetupPage',
 };
 </script>
 
@@ -163,30 +117,41 @@ export default {
         width: 110px;
         margin-right: 20px;
       }
+      .hint{
+        font-size: 12px;
+        line-height: 30px;
+        color: #F4A307;
+        position: relative;
+        padding-left: 33px;
+        &::before{
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
+          width: 13px;
+          height: 13px;
+          margin: 0 10px;
+          position: absolute;
+          left: 0;
+          top: 9px;
+        }
+      }
     }
   }
   .right-class{
-    width: 300px;
+    width: 200px;
     margin-left: 100px;
     margin-top: 50px;
     .conent{
       display: flex;
       margin-left: 10px;
       margin-top: 20px;
-      align-items: center;
-      font-weight: 300;
-      >.calculate{
-        font-weight: 700;
-        padding: 0 10px;
-        min-width: 60px;
-
-      }
       >.el-input{
         width: 120px;
-        margin-right: 10px;
       }
-      .marginleft{
+      >.el-select{
         margin-left: 10px;
+        width: 63px;
       }
     }
   }

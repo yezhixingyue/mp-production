@@ -193,7 +193,7 @@ const getProductionLineCapacityList = () => {
 };
 const ToSetup = (item, Type?) => {
   router.push({
-    name: 'capacitySetup',
+    name: 'combinationCapacitySetup',
     params: {
       LineEquipmentID: LineEquipmentID.value,
       ReportMode: ReportMode.value,
@@ -252,7 +252,7 @@ onMounted(() => {
 </script>
 <script lang="ts">
 export default {
-  name: 'capacityPage',
+  name: 'combinationCapacityPage',
 };
 </script>
 <style lang='scss'>

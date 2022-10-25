@@ -3,110 +3,38 @@
     <header>
       <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
+        <mp-button type="primary" @click="ToSetup(null)">+ 添加条件</mp-button>
       </div>
     </header>
     <main>
-      <p class="title">
-        <span>准备时间：</span>
-        <mp-button type="primary" link @click="ToSetup(null, 0)">+ 添加条件</mp-button>
-        <span class="hint">仅匹配一条</span>
-      </p>
       <ul>
         <li class="item header">
           <div class="content">
             条件
           </div>
-          <div class="pot-out">每次作业准备时间</div>
+          <div class="pot-out">伸放</div>
           <div class="priority">优先级</div>
           <div class="ctrl">
             操作
           </div>
         </li>
-        <li v-for="(it, i) in setUpTimeDataTableList" :key="it.ID" class="item" :class="{active: activeId === it.ID}">
+        <li v-for="(it, i) in localTableList" :key="it.ID" class="item" :class="{active: activeId === it.ID}">
           <div class="content">
             <i class="index">{{i + 1}}. </i>
             <ConditionTextDisplayComp :conditionObj="it.Constraint" />
           </div>
-          <div class="pot-out">{{it.Value}}分钟</div>
+          <div class="pot-out">{{it.Value}}{{it.Type === 0 ? '张' : '%'}}</div>
           <div class="priority">{{it.Priority}}</div>
           <div class="ctrl">
             <mp-button type="info" class="menu" link @click="ToSetup(it)">
               <i class="iconfont icon-bianji"></i>编辑
             </mp-button>
-            <mp-button type="info" class="menu" link @click="onCapacityRemoveClick(it,0, i)">
+            <mp-button type="info" class="menu" link @click="onPutOutRemoveClick(it,i)">
               <i class="iconfont icon-delete"></i>删除
             </mp-button>
           </div>
         </li>
-        <li class="empty" v-if="!setUpTimeDataTableList || setUpTimeDataTableList.length === 0">暂无数据</li>
-      </ul>
-      <p class="title">
-        <span>产能：</span>
-        <mp-button type="primary" link @click="ToSetup(null, 1)">+ 添加条件</mp-button>
-        <span class="hint">仅匹配一条</span>
-      </p>
-      <ul>
-        <li class="item header">
-          <div class="content">
-            条件
-          </div>
-          <div class="pot-out">产能</div>
-          <div class="priority">优先级</div>
-          <div class="ctrl">
-            操作
-          </div>
-        </li>
-        <li v-for="(it, i) in capacityDataTableList" :key="it.ID" class="item" :class="{active: activeId === it.ID}">
-          <div class="content">
-            <i class="index">{{i + 1}}. </i>
-            <ConditionTextDisplayComp :conditionObj="it.Constraint" />
-          </div>
-          <div class="pot-out">{{it.Value}}/每小时</div>
-          <div class="priority">{{it.Priority}}</div>
-          <div class="ctrl">
-            <mp-button type="info" class="menu" link @click="ToSetup(it)">
-              <i class="iconfont icon-bianji"></i>编辑
-            </mp-button>
-            <mp-button type="info" class="menu" link @click="onCapacityRemoveClick(it,1,i)">
-              <i class="iconfont icon-delete"></i>删除
-            </mp-button>
-          </div>
-        </li>
-        <li class="empty" v-if="!capacityDataTableList || capacityDataTableList.length === 0">暂无数据</li>
-      </ul>
-      <p class="title">
-        <span>干燥时间：</span>
-        <mp-button type="primary" link @click="ToSetup(null, 2)">+ 添加条件</mp-button>
-        <span class="hint">仅匹配一条</span>
-      </p>
-      <ul>
-        <li class="item header">
-          <div class="content">
-            条件
-          </div>
-          <div class="pot-out">下次作业前干燥时间</div>
-          <div class="priority">优先级</div>
-          <div class="ctrl">
-            操作
-          </div>
-        </li>
-        <li v-for="(it, i) in dryingTimeDataTableList" :key="it.ID" class="item" :class="{active: activeId === it.ID}">
-          <div class="content">
-            <i class="index">{{i + 1}}. </i>
-            <ConditionTextDisplayComp :conditionObj="it.Constraint" />
-          </div>
-          <div class="pot-out">{{it.Value}}分钟</div>
-          <div class="priority">{{it.Priority}}</div>
-          <div class="ctrl">
-            <mp-button type="info" class="menu" link @click="ToSetup(it)">
-              <i class="iconfont icon-bianji"></i>编辑
-            </mp-button>
-            <mp-button type="info" class="menu" link @click="onCapacityRemoveClick(it,2,i)">
-              <i class="iconfont icon-delete"></i>删除
-            </mp-button>
-          </div>
-        </li>
-        <li class="empty" v-if="!dryingTimeDataTableList || dryingTimeDataTableList.length === 0">暂无数据</li>
+        <li class="empty" v-if="!localTableList || localTableList.length === 0">暂无数据</li>
       </ul>
     </main>
     <footer>
@@ -155,25 +83,10 @@ const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || 
 
 const LineEquipmentID = ref('');
 const ReportMode = ref();
-const CapacityList:Ref<ConditionItemClass[]> = ref([]);
+const PutOutList:Ref<ConditionItemClass[]> = ref([]);
 
-// 准备时间
-const setUpTimeData = computed(() => CapacityList.value.filter(it => it.Type === 0));
-// 准备时间
-const capacityData = computed(() => CapacityList.value.filter(it => it.Type === 1));
-// 准备时间
-const dryingTimeData = computed(() => CapacityList.value.filter(it => it.Type === 2));
-
-const setUpTimeDataTableList = computed(() => transformConstraintTableList({
-  tableList: setUpTimeData.value,
-  PropertyList: productionSettingStore.PropertyList,
-}));
-const capacityDataTableList = computed(() => transformConstraintTableList({
-  tableList: capacityData.value,
-  PropertyList: productionSettingStore.PropertyList,
-}));
-const dryingTimeDataTableList = computed(() => transformConstraintTableList({
-  tableList: dryingTimeData.value,
+const localTableList = computed(() => transformConstraintTableList({
+  tableList: PutOutList.value,
   PropertyList: productionSettingStore.PropertyList,
 }));
 
@@ -181,55 +94,42 @@ const BreadcrumbList = computed(() => [
   { to: { path: '/productionLine' }, name: '生产线' },
   { to: { path: '/equipmentPage' }, name: '生产线' },
   {
-    name: '产能',
+    name: '申放',
   },
 ]);
-const getProductionLineCapacityList = () => {
-  api.getProductionLineCapacityList(LineEquipmentID.value).then(res => {
+const getProductionLinePutOutList = () => {
+  console.log(LineEquipmentID.value, 'LineEquipmentID.value)');
+
+  api.getProductionLinePutOutList(LineEquipmentID.value).then(res => {
     if (res.data.Status === 1000) {
-      CapacityList.value = res.data.Data as ConditionItemClass[];
+      PutOutList.value = res.data.Data as ConditionItemClass[];
     }
   });
 };
-const ToSetup = (item, Type?) => {
+const ToSetup = (item) => {
   router.push({
-    name: 'capacitySetup',
+    name: 'combinationPutOutSetup',
     params: {
       LineEquipmentID: LineEquipmentID.value,
       ReportMode: ReportMode.value,
-      capacityInfo: JSON.stringify(item),
-      Type: item ? item.Type : Type,
+      putOutInfo: JSON.stringify(item),
     },
   });
 };
 onActivated(() => {
-  const bool = sessionStorage.getItem('capacityPage') === 'true';
+  const bool = sessionStorage.getItem('putOutPage') === 'true';
   if (bool) {
-    getProductionLineCapacityList();
-    sessionStorage.removeItem('capacityPage');
+    getProductionLinePutOutList();
+    sessionStorage.removeItem('putOutPage');
   }
 });
-const onCapacityRemoveClick = (item, Type, i) => {
-  let str = '';
-  switch (Type) {
-    case 0:
-      str = '准备时间';
-      break;
-    case 1:
-      str = '产能';
-      break;
-    case 2:
-      str = '干燥时间';
-      break;
-    default:
-      break;
-  }
+const onPutOutRemoveClick = (item, i) => {
   activeId.value = item.ID;
-  messageBox.warnCancelBox('确定要删除此条件吗吗？', `${str}的第${i + 1}个条件`, () => {
-    api.getProductionLineCapacityRemove(item.ID).then(res => {
+  messageBox.warnCancelBox('确定要删除此伸放吗？', `第${i + 1}个条件`, () => {
+    api.getProductionLinePutOutRemove(item.ID).then(res => {
       if (res.data.Status === 1000) {
         activeId.value = 0;
-        getProductionLineCapacityList();
+        getProductionLinePutOutList();
       }
     });
   }, () => {
@@ -237,11 +137,11 @@ const onCapacityRemoveClick = (item, Type, i) => {
   });
 };
 onMounted(() => {
-  sessionStorage.removeItem('capacityPage');
+  sessionStorage.removeItem('putOutPage');
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
   LineEquipmentID.value = route.params.LineEquipmentID as string;
   ReportMode.value = route.params.ReportMode;
-  getProductionLineCapacityList();
+  getProductionLinePutOutList();
   // productionSettingStore.getPropertyList({ UseModule: 1 });
   productionSettingStore.getPropertyList({
     UseModule: 0,
@@ -252,7 +152,7 @@ onMounted(() => {
 </script>
 <script lang="ts">
 export default {
-  name: 'capacityPage',
+  name: 'combinationPutOutPage',
 };
 </script>
 <style lang='scss'>
@@ -277,46 +177,11 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
   }
   >main{
     flex: 1;
-    // margin-top: 20px;
+    margin-top: 20px;
     overflow-x: auto;
     padding-left: 20px;
     // padding-top: 20px;
     box-sizing: border-box;
-    > .title{
-      font-size: 14px;
-      color: #444444;
-      font-weight: 600;
-      border-left: 3px solid #05C1FF;
-      padding-left: 13px;
-      line-height: 14px;
-      margin: 20px 0;
-      height: 16px;
-      display: flex;
-      align-items: center;
-      >span{
-        width: 100px;
-        &.hint{
-        font-size: 12px;
-        line-height: 30px;
-        color: #F4A307;
-        position: relative;
-        padding-left: 33px;
-        margin-left: 20px;
-        &::before{
-          content: '';
-          background-image: url('@/assets/images/warn.png');
-          display: inline-block;
-          background-size: 13px 13px;
-          width: 13px;
-          height: 13px;
-          margin: 0 10px;
-          position: absolute;
-          left: 0;
-          top: 8px;
-        }
-      }
-      }
-    }
     > ul {
       > li {
         border: 1px solid #eee;
@@ -372,10 +237,6 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
           color: #444;
           font-weight: 700;
           font-size: 14px;
-          background-color: #F5F5F5;
-          &:hover{
-            background-color: #F5F5F5;
-          }
           > .content{
             justify-content: center;
             font-size: 14px;

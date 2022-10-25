@@ -1,5 +1,5 @@
 <template>
-  <section class="mp-erp-period-manage-delivery-time-manage-setup-page" v-if="Data.DeliveryTimeForm">
+  <section class="delivery-time-list-setup-page" v-if="Data.DeliveryTimeForm">
     <header>
       <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
 
@@ -363,7 +363,7 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
-.mp-erp-period-manage-delivery-time-manage-setup-page {
+.delivery-time-list-setup-page {
   display: flex;
   flex-direction: column;
   min-height: 100%;

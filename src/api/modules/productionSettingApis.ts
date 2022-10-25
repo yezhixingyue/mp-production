@@ -20,6 +20,9 @@ const api = {
   getWorkingProcedureList(data) { // POST /Api/WorkingProcedure/List  工序列表
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
   },
+  getWorkingProcedureSearch(searchType) { // POST /Api/WorkingProcedure/Search  工序查询
+    return request({ method: 'GET', url: `/Api/WorkingProcedure/Search?searchType=${searchType}` });
+  },
   getWorkingProcedureSave(data) { // POST /Api/WorkingProcedure/Save  工序保存
     return request({ method: 'POST', url: '/Api/WorkingProcedure/Save', data });
   },
@@ -40,8 +43,11 @@ const api = {
   getProductionLineWorkingProcedureAdd(data) { // POST /Api/ProductionLine/WorkingProcedure/Add  生产线添加工序
     return request({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/Add', data });
   },
-  getProductionLineWorkingProcedureList(data) { // POST /Api/ProductionLine/WorkingProcedure/List  生产线添加工序
+  getProductionLineWorkingProcedureList(data) { // POST /Api/ProductionLine/WorkingProcedure/List  生产线工序列表
     return request({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/List', data });
+  },
+  getProductionLineWorkingProcedureRemove(lineWorkID) { // POST /Api/ProductionLine/WorkingProcedure/Remove  生产线工序删除
+    return request({ method: 'DELETE', url: `/Api/ProductionLine/WorkingProcedure/Remove?lineWorkID=${lineWorkID}` });
   },
   getProductionLinetMaterialSourceList(ID) { // POST /Api/ProductionLine/MaterialSource/List  生产线物料来源列表
     return request({ method: 'GET', url: `/Api/ProductionLine/MaterialSource/List?lineWorkID=${ID}` });
@@ -55,14 +61,29 @@ const api = {
   getProductionLinetEquipmentSave(data) { // POST /Api/ProductionLine/Equipment/Save  生产线设备保存
     return request({ method: 'POST', url: '/Api/ProductionLine/Equipment/Save', data });
   },
+  getProductionLinetEquipmentRemove(id) { // POST /Api/ProductionLine/Equipment/Remove  生产线设备删除
+    return request({ method: 'DELETE', url: `/Api/ProductionLine/Equipment/Remove?id=${id}` });
+  },
   getProductionLineSetSplit(data) { // POST /Api/ProductionLine/SetSplit  工序删除
     return request({ method: 'POST', url: '/Api/ProductionLine/SetSplit', data });
   },
   getProductionLinePutOutList(lineEquipmentID) { // POST /Api/ProductionLine/PutOut/List  生产线申放列表
     return request({ method: 'GET', url: `/Api/ProductionLine/PutOut/List?lineEquipmentID=${lineEquipmentID}` });
   },
-  getProductionLinePutOutSave(data) { // POST /Api/ProductionLine/PutOut/Save  生产线申放列表
+  getProductionLinePutOutSave(data) { // POST /Api/ProductionLine/PutOut/Save  生产线申放保存
     return request({ method: 'POST', url: '/Api/ProductionLine/PutOut/Save', data });
+  },
+  getProductionLinePutOutRemove(id) { // POST /Api/ProductionLine/PutOut/Remove  生产线申放删除
+    return request({ method: 'DELETE', url: `/Api/ProductionLine/PutOut/Remove?id=${id}` });
+  },
+  getProductionLineCapacityList(lineEquipmentID) { // POST /Api/ProductionLine/Capacity/List  生产线设备产能列表
+    return request({ method: 'GET', url: `/Api/ProductionLine/Capacity/List?lineEquipmentID=${lineEquipmentID}` });
+  },
+  getProductionLineCapacityRemove(id) { // POST /Api/ProductionLine/Capacity/Remove  生产线设备产能删除
+    return request({ method: 'DELETE', url: `/Api/ProductionLine/Capacity/Remove?id=${id}` });
+  },
+  getProductionLineCapacitySave(data) { // POST /Api/ProductionLine/Capacity/Save  生产线设备产能编辑
+    return request({ method: 'POST', url: '/Api/ProductionLine/Capacity/Save', data });
   },
   //
 

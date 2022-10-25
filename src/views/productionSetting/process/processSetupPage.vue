@@ -265,13 +265,9 @@ const ImpositionTemmplateListGroup = computed(() => {
     if (!temp) {
       const TemmplateClass = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === item.ClassID);
       const TemmplateList = productionSettingStore.ImpositionTemmplateList.filter(it => it.ClassID === item.ClassID);
-      console.log(TemmplateClass);
-
       returnData.push({ Name: TemmplateClass?.Name || '', children: TemmplateList, ClassID: TemmplateClass?.ID || 0 });
     }
   });
-  console.log(returnData, 'returnDatareturnDatareturnData');
-
   return returnData;
 });
 
@@ -381,7 +377,6 @@ const saveEquipment = (Equipments) => {
   selectDeviceGroupShow.value = false;
 };
 const saveTemplate = (infoList) => {
-  console.log(infoList, 'infoListinfoList');
   // 去除掉已经选中的数据
   const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== 2);
   Data.processDataFrom.Relations = [...elseData, ...infoList.map(res => ({
@@ -410,7 +405,6 @@ const EquipmentGroupsRemove = (index) => {
   Data.processDataFrom.EquipmentGroups.splice(index, 1);
 };
 const getEquipmentNameByID = (ID) => {
-  console.log(productionSettingStore.EquipmentListGroup, 'productionSettingStore.EquipmentListGroup');
   let str = '';
   productionSettingStore.EquipmentListGroup.forEach(item => {
     item.EquipmentGroups.forEach(it => {

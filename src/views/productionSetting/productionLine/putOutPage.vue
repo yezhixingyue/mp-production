@@ -8,7 +8,17 @@
     </header>
     <main>
       <ul>
-        <li v-for="(it, i) in localTableList" :key="it.ID" class="item">
+        <li class="item header">
+          <div class="content">
+            条件
+          </div>
+          <div class="pot-out">伸放</div>
+          <div class="priority">优先级</div>
+          <div class="ctrl">
+            操作
+          </div>
+        </li>
+        <li v-for="(it, i) in localTableList" :key="it.ID" class="item" :class="{active: activeId === it.ID}">
           <div class="content">
             <i class="index">{{i + 1}}. </i>
             <ConditionTextDisplayComp :conditionObj="it.Constraint" />
@@ -19,7 +29,7 @@
             <mp-button type="info" class="menu" link @click="ToSetup(it)">
               <i class="iconfont icon-bianji"></i>编辑
             </mp-button>
-            <mp-button type="info" class="menu" link @click="onConditionRemoveClick(it, i)">
+            <mp-button type="info" class="menu" link @click="onPutOutRemoveClick(it,i)">
               <i class="iconfont icon-delete"></i>删除
             </mp-button>
           </div>
@@ -36,7 +46,7 @@
 <script lang="ts" setup>
 import ConditionTextDisplayComp from '@/components/productionSetting/putOut/ConditionTextDisplayComp.vue';
 import {
-  reactive, onMounted, computed, getCurrentInstance, ref, Ref, watch,
+  reactive, onMounted, computed, getCurrentInstance, ref, Ref, onActivated,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -68,22 +78,13 @@ const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
 const router = useRouter();
+const activeId = ref(0);
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
 const LineEquipmentID = ref('');
 const ReportMode = ref();
 const PutOutList:Ref<ConditionItemClass[]> = ref([]);
 
-// const localTableList = computed(() => {
-//   const returnList:localTableListType[] = [];
-//   PutOutList.value.forEach(element => {
-//     const msg = '';
-//     console.log(element, 'elementelement');
-
-//     returnList.push({ ...element, msg });
-//   });
-//   return returnList;
-// });
 const localTableList = computed(() => transformConstraintTableList({
   tableList: PutOutList.value,
   PropertyList: productionSettingStore.PropertyList,
@@ -113,12 +114,29 @@ const ToSetup = (item) => {
     },
   });
 };
-function setStorage() { // 设置会话存储
-  sessionStorage.setItem('productionLinePage', 'true');
-}
-
+onActivated(() => {
+  const bool = sessionStorage.getItem('putOutPage') === 'true';
+  if (bool) {
+    getProductionLinePutOutList();
+    sessionStorage.removeItem('putOutPage');
+  }
+});
+const onPutOutRemoveClick = (item, i) => {
+  activeId.value = item.ID;
+  messageBox.warnCancelBox('确定要删除此伸放吗？', `第${i + 1}个条件`, () => {
+    api.getProductionLinePutOutRemove(item.ID).then(res => {
+      if (res.data.Status === 1000) {
+        activeId.value = 0;
+        getProductionLinePutOutList();
+      }
+    });
+  }, () => {
+    activeId.value = 0;
+  });
+};
 onMounted(() => {
-// sessionStorage.removeItem('foldWayTemplateSteupPage');
+  sessionStorage.removeItem('putOutPage');
+  // sessionStorage.removeItem('foldWayTemplateSteupPage');
   LineEquipmentID.value = route.params.LineEquipmentID as string;
   ReportMode.value = route.params.ReportMode;
   getProductionLinePutOutList();
@@ -211,6 +229,15 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
             & + li {
               border-top-color: $row-active-border-color;
             }
+          }
+        }
+        &.header{
+          color: #444;
+          font-weight: 700;
+          font-size: 14px;
+          > .content{
+            justify-content: center;
+            font-size: 14px;
           }
         }
         &:last-of-type {
