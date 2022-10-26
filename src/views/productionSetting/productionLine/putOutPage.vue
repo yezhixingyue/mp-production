@@ -46,34 +46,16 @@
 <script lang="ts" setup>
 import ConditionTextDisplayComp from '@/components/productionSetting/putOut/ConditionTextDisplayComp.vue';
 import {
-  reactive, onMounted, computed, getCurrentInstance, ref, Ref, onActivated,
+  onMounted, computed, getCurrentInstance, ref, Ref, onActivated,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute, useRouter } from 'vue-router';
-import SelectDeviceGroup from '@/components/productionSetting/selectDeviceGroup.vue';
-import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vue';
-import materialResource from '@/components/productionSetting/materialResource.vue';
-import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
-import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
-import type {
-  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
-  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType, ImpositionTemmplateListGroupType,
-} from '@/store/modules/productionSetting/types';
-import { useRouterStore } from '@/store/modules/routerStore';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
-import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
-import type {
-  PutOutType,
-} from '@/store/modules/productionSetting/PutOutType';
-import ConstraintsTable from '@/components/common/ConstraintsComps/ConstraintsTable/ConstraintsTable.vue';
 import { transformConstraintTableList } from '@/components/productionSetting/putOut/utils';
 import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
 
-const PasteupSettingStore = usePasteupSettingStore();
-const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
@@ -136,11 +118,9 @@ const onPutOutRemoveClick = (item, i) => {
 };
 onMounted(() => {
   sessionStorage.removeItem('putOutPage');
-  // sessionStorage.removeItem('foldWayTemplateSteupPage');
   LineEquipmentID.value = route.params.LineEquipmentID as string;
   ReportMode.value = route.params.ReportMode;
   getProductionLinePutOutList();
-  // productionSettingStore.getPropertyList({ UseModule: 1 });
   productionSettingStore.getPropertyList({
     UseModule: 0,
     MaterialTypeList: ['ed2ffb32-dc19-499b-9d3a-af1001115aac', '20cacdac-737d-4ecc-b4a3-af1001116f3c'],

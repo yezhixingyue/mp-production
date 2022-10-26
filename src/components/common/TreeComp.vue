@@ -35,8 +35,9 @@
 <script lang="ts" setup>
 import { IDistrictTreeListItemType } from '@/store/modules/common/types';
 import {
-  ref, Ref, onMounted, computed, watch,
+  ref, Ref, computed, watch,
 } from 'vue';
+import { IDistrictItem } from '@/assets/Types/common';
 
 interface defaultPropsType {
     children:string,
@@ -47,7 +48,7 @@ interface Props {
   treeList: IDistrictTreeListItemType[]
   defaultProps: defaultPropsType,
   defaultCheckedKeys: string[] | number[],
-  handleChangeFunc: (checkedNodes: any, checkedKeys: any, isAll: any) => void,
+  handleChangeFunc: (checkedNodes: IDistrictItem[], checkedKeys: number[], isAll: boolean) => void,
   shouldDisabledList: string[],
   showDisabled: boolean,
   checkAllTitle: string,

@@ -5,7 +5,7 @@
     </header>
     <main>
       <el-table border fit stripe
-        :data="processInfo.MaterialSources" style="width: 100%">
+        :data="processInfo?.MaterialSources" style="width: 100%">
           <el-table-column show-overflow-tooltip prop="MaterialTypeID" label="资源包" width="316">
             <template #default="scope">
             {{getMaterialName(scope.row.MaterialTypeID)}}
@@ -71,64 +71,27 @@ import {
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute } from 'vue-router';
-import SelectDeviceGroup from '@/components/productionSetting/selectDeviceGroup.vue';
-import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vue';
-import materialResource from '@/components/productionSetting/materialResource.vue';
-import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
 import api from '@/api';
-import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
-import type {
-  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
-  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType, ImpositionTemmplateListGroupType,
-} from '@/store/modules/productionSetting/types';
-import { useRouterStore } from '@/store/modules/routerStore';
+import type { ProcessListType } from '@/store/modules/productionSetting/types';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
-import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
+import { IProductionLineWorkings, IMaterialSources } from '@/store/modules/productionSetting/types';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { getGoBackFun } from '@/router';
 
-const PasteupSettingStore = usePasteupSettingStore();
-const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
 
 interface rowDataType{
-  data: any,
+  data: IMaterialSources | null,
   index: string|number,
-}
-interface EquipmentGroupsType{
-  GroupID: string,
-  GroupName: string,
-  Weight: number|string,
-  OneTimeTwoSide: boolean,
-}
-interface RelationsType{
-  RelationID: string,
-  Name?: string,
-  PID?: string|number,
-  PName?: string,
-  Type: number,
-}
-interface processDataFromType{
-  ID: string,
-  Name: string
-  // 是否限制每套版加工数量 自加字段回显需要添加
-  isRestrict: boolean,
-  ReportMode: number,
-  Type: number,
-  MaxProduceNumber: number|string,
-  AllowPartReport: boolean,
-  MinPartReportNumber: number|string,
-  AllowBatchReport: boolean,
-  TemplateType: number,
-  EquipmentGroups: EquipmentGroupsType[],
-  Relations: RelationsType[],
 }
 
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
-const setWordIDS = ref([]);
-const processInfo:any = ref({});
+const setWordIDS:Ref<string[]> = ref([]);
+const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
 const addPrcessShow = ref(false);
 const PrcessList: Ref<ProcessListType[]> = ref([]);
 const rowData:rowDataType = reactive({
@@ -142,19 +105,27 @@ const BreadcrumbList = computed(() => [
     name: '物料来源',
   },
 ]);
-
 function setStorage() { // 设置会话存储
-  sessionStorage.setItem('processSetupPage', 'true');
+  sessionStorage.setItem('productionLinePage', 'true');
 }
-
 const saveProcess = () => {
   const data = {
-    LineWorkID: processInfo.value.LineWorkID,
-    Materials: processInfo.value.MaterialSources,
+    LineWorkID: processInfo.value?.LineWorkID,
+    Materials: processInfo.value?.MaterialSources,
   };
   api.getProductionLinetMaterialSourceSave(data).then(res => {
     if (res.data.Status === 1000) {
-      console.log(res.data.Data);
+      const cb = () => {
+        // 处理数据变动
+        setStorage();
+        getGoBackFun();
+      };
+
+      MpMessage.success({
+        title: '保存成功',
+        onOk: cb,
+        onCancel: cb,
+      });
     }
   });
 //
@@ -169,7 +140,7 @@ const selectProcess = (item, index) => {
   }
   rowData.data = temp;
   rowData.index = index;
-  setWordIDS.value = rowData.data.SourceWorkIDS;
+  setWordIDS.value = rowData.data?.SourceWorkIDS || [];
   addPrcessShow.value = true;
 };
 const addPrcessCloseedClick = () => {
@@ -184,13 +155,15 @@ const addPrcessPrimaryClick = () => {
   if (!setWordIDS.value.length) {
     messageBox.failSingleError('失败', '请选择工序', () => null, () => null);
   } else {
-    processInfo.value.MaterialSources[rowData.index].SourceWorkIDS = setWordIDS.value;
+    if (processInfo.value) {
+      processInfo.value.MaterialSources[rowData.index].SourceWorkIDS = setWordIDS.value;
+    }
     addPrcessCloseClick();
   }
 };
 onMounted(() => {
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  const temp = JSON.parse(route.params.processInfo as string) as any;
+  const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;
   if (temp) {
     if (temp.MaterialSources) {
       temp.MaterialSources.forEach((it, i) => {

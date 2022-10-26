@@ -12,8 +12,11 @@ const api = {
   getShiftTimeSave(data) { // POST /Api/ShiftTime/Save  发货班次保存
     return request({ method: 'POST', url: '/Api/ShiftTime/Save', data });
   },
-  getShiftTimeDetail(id) { // GET /Api/ShiftTime/Detail  发货班次保存
+  getShiftTimeDetail(id) { // GET /Api/ShiftTime/Detail  发货班次详情
     return request({ method: 'GET', url: `/Api/ShiftTime/Detail?id=${id}` });
+  },
+  getShiftTimeRemove(id) { // GET /Api/ShiftTime/Remove  发货班次删除
+    return request({ method: 'DELETE', url: `/Api/ShiftTime/Remove?id=${id}` });
   },
 
   // 工序 ------------------------ WorkingProcedure
@@ -31,6 +34,9 @@ const api = {
   },
 
   // 生产线 ------------------------ ProductionLine
+  getProductionLinOpen(id) { // POST /Api/ProductionLine/Open  生产线设为可用
+    return request({ method: 'GET', url: `/Api/ProductionLine/Open?id=${id}` });
+  },
   getProductionLineSave(data) { // POST /Api/ProductionLine/Save  生产线保存
     return request({ method: 'POST', url: '/Api/ProductionLine/Save', data });
   },

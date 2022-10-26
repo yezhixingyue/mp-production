@@ -36,7 +36,6 @@
         </el-table-column>
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
-            <!-- {{JSON.parse(scope.row.Shift)}} -->
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="onItemSetupClick(scope.row.ItemID)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
@@ -69,6 +68,7 @@ import CascaderByArea from '@/components/common/SelectComps/CascaderByArea.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import api from '@/api';
 import { useCommonStore } from '@/store/modules/common/index';
+import messageBox from '@/assets/js/utils/message';
 
 interface getRecordDataType {
   ProvinceName: string,
@@ -111,9 +111,7 @@ const onItemSetupClick = (ItemID) => {
     params: { deliveryTimeID: ItemID || '' },
   });
 };
-const onRemoveClick = (item) => {
-  console.log('aaa');
-};
+
 const getTableDataList = (Page = 1) => {
   api.getShiftTimeList(getShiftTimeLisData).then(res => {
     if (res.data.Status === 1000) {
@@ -123,8 +121,15 @@ const getTableDataList = (Page = 1) => {
   });
   console.log('aaa');
 };
-const setCondition2ListData = (e) => {
-  console.log('aaa');
+const onRemoveClick = (item) => {
+  messageBox.warnCancelBox('确定要删除此发货班次吗？', `${item.ItemName}`, () => {
+    api.getShiftTimeRemove(item.ItemID).then(res => {
+      if (res.data.Status === 1000) {
+        // 删除成功
+        getTableDataList();
+      }
+    });
+  }, () => undefined);
 };
 onActivated(() => {
   const deliveryTimeListSteupPage = sessionStorage.getItem('deliveryTimeListSteupPage') === 'true';

@@ -51,9 +51,6 @@ import {
   reactive, computed, watch,
 } from 'vue';
 import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
-import { useProductionSettingStore } from '@/store/modules/productionSetting';
-
-const productionSettingStore = useProductionSettingStore();
 
 interface applyEquipmentListFrom extends UseClassEquipmentGroupType{
   checkAll:boolean

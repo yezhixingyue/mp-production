@@ -1,8 +1,8 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
 import api from '@/api';
 import type {
-  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
-  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType,
+  SelectAssistInfoGroup,
+  MaterialTypeGroupType, ImpositionTemmplateListType,
 } from '@/store/modules/productionSetting/types';
 
 import { IState, _UseClassEquipmentGroupType, getPropertyListType } from './types';
@@ -60,8 +60,8 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       });
     },
     // 获取所有物料资源包
-    getMaterialTypeGroupAll() {
-      api.getMaterialTypeGroupAll().then(res => {
+    getMaterialTypeGroupAll(feature) {
+      api.getMaterialTypeGroupAll(feature).then(res => {
         if (res.data.Status === 1000) {
           this.MaterialTypeGroup = res.data.Data as MaterialTypeGroupType[];
         }

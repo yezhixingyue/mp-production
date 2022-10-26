@@ -26,7 +26,7 @@
               <span class="operate">操作</span>
             </div>
           </li>
-          <li class="table-main" v-for="item in ProductionLineData.ProductionLineWorkings" :key="item">
+          <li class="table-main" v-for="item in ProductionLineData?.ProductionLineWorkings" :key="item.LineID">
             <div class="process-item">
               <span class="process">{{[...PrcessList,...splitPrcessList].find(it => it.ID === item.WorkID)?.Name}}</span>
               <span class="equipment">
@@ -82,7 +82,7 @@
         </p>
         <p class="status">
           当前状态：<span>不可用</span>
-          <mp-button type="primary" link>设为可用</mp-button>
+          <mp-button type="primary" link @click="lineOpen">设为可用</mp-button>
         </p>
         <p class="line-info">
           <span>
@@ -150,7 +150,7 @@
     </template>
     </DialogContainerComp>
     <DialogContainerComp
-    title="添加工序"
+    title="设置分切工序"
     :visible='setSplitShow'
     :width="660"
     :primaryClick="setSplitPrimaryClick"
@@ -172,7 +172,7 @@
 
 <script lang="ts" setup>
 import {
-  reactive, ref, Ref, computed, onMounted, toRaw, onActivated, watch,
+  reactive, ref, Ref, computed, onMounted, toRaw, onActivated,
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
@@ -181,6 +181,8 @@ import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
+import { IWorkingProcedureList } from '@/store/modules/productionSetting/types';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface ProcessListType {
   ID: string,
@@ -247,7 +249,7 @@ const PrcessList:Ref<ProcessListType[]> = ref([]);
 // 拆分工序
 const splitPrcessList:Ref<ProcessListType[]> = ref([]);
 // 生产线工序列表
-const ProductionLineData: any = ref([]);
+const ProductionLineData:Ref<IWorkingProcedureList|null> = ref(null);
 const Data:DataType = reactive({
   ImpositionTemmplateList: [],
   getMaxData: {
@@ -363,7 +365,7 @@ const getSourceWork = (material) => {
 const getProductionLineWorkingProcedureList = () => {
   api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
     if (res.data.Status === 1000) {
-      ProductionLineData.value = res.data.Data as any;
+      ProductionLineData.value = res.data.Data as IWorkingProcedureList;
     }
   });
 };
@@ -378,7 +380,7 @@ const RadioGroupCompChange = (levelData) => {
 // 可用拼版模板显示
 const getTemplatesName = () => {
   const returnData:ImpositionTemmplateListType[] = [];
-  if (!ProductionLineData.value.TemplateIDS) return [];
+  if (!ProductionLineData.value?.TemplateIDS) return [];
   ProductionLineData.value.TemplateIDS.forEach(item => {
     const temp = Data.ImpositionTemmplateList.find(it => it.ID === item);
     if (temp) {
@@ -431,7 +433,7 @@ const AddLine = () => {
 // 添加工序
 const addPrcess = () => {
   Data.addPrcessFrom.ID = actionLine.value?.ID || '';
-  Data.addPrcessFrom.WordIDS = ProductionLineData.value.ProductionLineWorkings.map(it => it.WorkID);
+  Data.addPrcessFrom.WordIDS = ProductionLineData.value?.ProductionLineWorkings.map(it => it.WorkID) || [];
   // 格式化已经添加的工序
   addPrcessShow.value = true;
 };
@@ -445,11 +447,27 @@ const setSplit = () => {
   // 格式化已经添加的工序
   setSplitShow.value = true;
 };
+const lineOpen = () => {
+  api.getProductionLinOpen(actionLine.value?.ID).then(res => {
+    if (res.data.Status === 1000) {
+      const cb = () => {
+        getProductionLineList();
+        // 处理数据变动
+      };
+
+      MpMessage.success({
+        title: '设置成功',
+        onOk: cb,
+        onCancel: cb,
+      });
+    }
+  });
+};
 const editLine = () => {
   addLineShow.value = true;
   if (actionLine.value) {
     const temp = toRaw(actionLine.value);
-    temp.TemplateIDS = ProductionLineData.value.TemplateIDS || [];
+    temp.TemplateIDS = ProductionLineData.value?.TemplateIDS || [];
     Data.addLineFrom = toRaw(actionLine.value);
   }
 };
@@ -487,6 +505,7 @@ const addLinePrimaryClick = () => {
       if (res.data.Status === 1000) {
         const cb = () => {
           addLineCloseClick();
+          getProductionLineList();
         };
         // 保存成功
         messageBox.successSingle('保存成功', cb, cb);
@@ -512,6 +531,7 @@ const addPrcessPrimaryClick = () => {
       if (res.data.Status === 1000) {
         const cb = () => {
           addLineCloseClick();
+          getProductionLineWorkingProcedureList();
         };
         // 保存成功
         messageBox.successSingle('保存成功', cb, cb);

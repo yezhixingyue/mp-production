@@ -16,16 +16,13 @@
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
 import {
-  ref, Ref, onMounted, computed, watch, defineExpose,
+  ref, onMounted, computed, defineExpose,
 } from 'vue';
 import TreeComp from '@/components/common/TreeComp.vue';
 import { useCommonStore } from '@/store/modules/common/index';
-import { IDistrictTreeListItemType } from '@/store/modules/common/types';
 
 const commonStore = useCommonStore();
-const { DistrictTreeList } = storeToRefs(commonStore);
 interface AreaListType {
   CountryID: number,
   ProvinceID: number,
@@ -76,7 +73,7 @@ const AllLevel3AreaKeysList = computed(() => {
 });
 
 const getDefaultCheckedKeys = (value) => {
-  const list:any[] = [];
+  const list:number[] = [];
   if (Array.isArray(value) && value.length > 0) {
     if (value.length === 1) {
       if (value[0][defaultPropKeys.value.lv1Key] === 0) return AllLevel3AreaKeysList.value;
@@ -86,7 +83,7 @@ const getDefaultCheckedKeys = (value) => {
         const lv1 = allLevelList.value.find(_it => _it.ID === it[defaultPropKeys.value.lv1Key]);
         if (lv1) {
           lv1.children?.forEach(lv2 => {
-            list.push(...lv2.children?.map(lv3 => lv3.ID) as any);
+            list.push(...lv2.children?.map(lv3 => lv3.ID) as number[]);
           });
         }
       } else if (it[defaultPropKeys.value.lv3Key] === lv3KeyEmptyValue.value) { // 全市
@@ -95,7 +92,7 @@ const getDefaultCheckedKeys = (value) => {
           const lv2 = lv1.children?.find(_it => _it.ID === it[defaultPropKeys.value.lv2Key]);
           if (lv2) {
             if (lv2.children) {
-              list.push(...lv2.children.map(lv3 => lv3.ID));
+              list.push(...lv2.children.map(lv3 => lv3.ID) as number[]);
             }
           }
         }
@@ -140,9 +137,12 @@ const handleAreaChangeFunc = (checkedNodes, checkedKeys, isAll) => {
     emit('change', [{ ...allStateItem.value }]);
     return;
   }
-  const _lv1List:any[] = [];
-  const _lv2List:any[] = [];
-  const _lv3List:any[] = [];
+  interface _lvList {
+    [a:string]: number | string
+  }
+  const _lv1List:_lvList[] = [];
+  const _lv2List:_lvList[] = [];
+  const _lv3List:_lvList[] = [];
   const _level1List = checkedNodes.filter((it) => it.Level === 1); // 已选全部城市的省份列表
   _level1List.forEach(lv1 => {
     _lv1List.push(createItem(1, lv1.ID, 0, lv3KeyEmptyValue.value));
@@ -168,8 +168,6 @@ const handleAreaChangeFunc = (checkedNodes, checkedKeys, isAll) => {
     }
   });
   const list = [..._lv1List, ..._lv2List, ..._lv3List];
-  console.log(list, 'listlistlist');
-
   emit('change', list);
 };
 const getTreeTextDisplayContent = (value, allAdAreaTreeList, type, defaultLabels) => {

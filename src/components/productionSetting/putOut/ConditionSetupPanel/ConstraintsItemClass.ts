@@ -1,8 +1,5 @@
 import { localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import type {
-  PutOutType, ConstraintType,
-} from '@/store/modules/productionSetting/PutOutType';
 import { PropertyValueTypeEnum } from '../TypeClass/enum';
 import { PropertyListItemType } from '../TypeClass/Property';
 import { PropertyListClass } from '../TypeClass/PropertyListClass';

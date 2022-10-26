@@ -35,8 +35,7 @@
 import { computed } from 'vue';
 
 interface defaultPropsType {
-  label:string,
-  value:string,
+  [a:string]:string|number,
 }
 
 interface Props {
@@ -44,7 +43,7 @@ interface Props {
   placeholder?: string
   title?: string
   width?: number
-  options?: defaultPropsType[] | any[]
+  options?: defaultPropsType[]
   defaultProps?: defaultPropsType
   filterable?: boolean
   showLine?: boolean

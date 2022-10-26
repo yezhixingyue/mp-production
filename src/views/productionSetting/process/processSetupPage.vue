@@ -162,7 +162,7 @@
 
 <script lang="ts" setup>
 import {
-  reactive, onMounted, computed, getCurrentInstance, ref, Ref,
+  reactive, onMounted, computed, getCurrentInstance, ref,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute } from 'vue-router';
@@ -171,11 +171,7 @@ import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vu
 import materialResource from '@/components/productionSetting/materialResource.vue';
 import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
 import api from '@/api';
-import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
-import type {
-  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
-  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType, ImpositionTemmplateListGroupType,
-} from '@/store/modules/productionSetting/types';
+import type { ImpositionTemmplateListGroupType } from '@/store/modules/productionSetting/types';
 import { useRouterStore } from '@/store/modules/routerStore';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
@@ -215,16 +211,7 @@ interface processDataFromType{
   EquipmentGroups: EquipmentGroupsType[],
   Relations: RelationsType[],
 }
-interface _EquipmentGroups{
-  GroupID: string,
-  GroupName: string
-}
 
-interface _UseClassEquipmentGroupType {
-  ClassID: 0,
-  ClassName: string,
-  EquipmentGroups: _EquipmentGroups[]
-}
 interface DataType {
   processDataFrom: processDataFromType,
 }
@@ -416,7 +403,10 @@ const getEquipmentNameByID = (ID) => {
   return str;
 };
 const saveProcess = () => {
-  if (Data.processDataFrom.Type === 1 && Data.processDataFrom.isRestrict && !Data.processDataFrom.MaxProduceNumber) {
+  if (!Data.processDataFrom.Name) {
+    // 弹框提醒
+    messageBox.failSingleError('保存失败', '请输入工序名称', () => null, () => null);
+  } else if (Data.processDataFrom.Type === 2 && Data.processDataFrom.isRestrict && !Data.processDataFrom.MaxProduceNumber) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '请输入每套版最大可加工数量', () => null, () => null);
   } else if (Data.processDataFrom.AllowPartReport && !Data.processDataFrom.MinPartReportNumber) {
@@ -561,8 +551,6 @@ export default {
             display: flex;
             align-items: center;
             margin-left: 10px;
-          }
-          div{
           }
           .state-percent{
             .el-input{

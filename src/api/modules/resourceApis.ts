@@ -57,8 +57,8 @@ export const resourceApis = {
   getMaterialTypeGroup() { // GET /Api/MaterialType/Group  根据类别分组查询返回物料类型数据
     return request({ method: 'GET', url: '/Api/MaterialType/Group' });
   },
-  getMaterialTypeGroupAll() { // GET /Api/MaterialGroup/All  所有物料资源
-    return request({ method: 'GET', url: '/Api/MaterialGroup/All' });
+  getMaterialTypeGroupAll(feature) { // GET /Api/MaterialGroup/All  所有物料资源
+    return request({ method: 'GET', url: `/Api/MaterialGroup/All?feature=${feature}` });
   },
   /** 生产资源 - 设备组相关 EquipmentGroup
   --------------------------------------------- */

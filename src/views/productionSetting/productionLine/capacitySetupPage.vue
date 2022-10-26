@@ -55,10 +55,7 @@
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import Dialog from '@/components/common/ConstraintsComps/ConditionPropSelectDialog/ConditionPropSelectDialog.vue';
 
-import Header from '@/components/productionResources/EquipmentGroup/Constraint/ConstraintHeader.vue';
 import ConstraintSetupPageComp from '@/components/common/ConstraintsComps/ConstraintSetupPageComp.vue';
-import { useResourceStore } from '@/store/modules/resource';
-import { storeToRefs } from 'pinia';
 import api from '@/api';
 import {
   computed, reactive, onMounted, ref, Ref,
@@ -66,19 +63,17 @@ import {
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getGoBackFun } from '@/router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();
 const route = useRoute();
-const store = useResourceStore();
 const visible = ref(false);
 // 计算出量弹框选择值
 const calculateNum = reactive({
   ID: '',
   Name: '',
 });
-const { EquipmentGroupData, MaterialTypeLimitData } = storeToRefs(store);
 const BreadcrumbList = computed(() => [
   { to: { path: '/deliveryTimeList' }, name: '发货班次' },
   {

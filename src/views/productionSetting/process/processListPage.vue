@@ -100,6 +100,7 @@ import messageBox from '@/assets/js/utils/message';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import type { RelationsType } from '@/store/modules/productionSetting/types';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
+import type { EquipmentGroups } from '@/components/pasteupSetting/types';
 
 const PasteupSettingStore = usePasteupSettingStore();
 const productionSettingStore = useProductionSettingStore();
@@ -141,7 +142,7 @@ function PaginationChange(newVal) {
 // 格式化设备工厂
 const getEquipmentGroupsNames = (EquipmentGroups) => {
   const returnStr:string[] = [];
-  const allEquipmentGroups:any = [];
+  const allEquipmentGroups:EquipmentGroups[] = [];
   // 所有设备组
   productionSettingStore.EquipmentListGroup.forEach(item => {
     allEquipmentGroups.push(...item.EquipmentGroups);

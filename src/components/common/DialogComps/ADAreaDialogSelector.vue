@@ -25,11 +25,10 @@
 
 <script lang="ts" setup>
 import {
-  ref, reactive, onMounted, computed, Ref, nextTick, watch,
+  ref, onMounted, computed, Ref, watch,
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 
-import { IDistrictTreeListItemType } from '@/store/modules/common/types';
 import { useCommonStore } from '@/store/modules/common/index';
 import ADAreaTreeContentComp from '../ADAreaTreeContentComp.vue';
 

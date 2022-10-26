@@ -50,13 +50,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   reactive, computed, watch,
 } from 'vue';
-import type {
-  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType, ImpositionTemmplateListGroupType,
-  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType,
-} from '@/store/modules/productionSetting/types';
-import { useProductionSettingStore } from '@/store/modules/productionSetting';
-
-const productionSettingStore = useProductionSettingStore();
+import type { ImpositionTemmplateListGroupType, ImpositionTemmplateListType } from '@/store/modules/productionSetting/types';
 
 interface TemplateGroupFrom extends ImpositionTemmplateListGroupType{
   checkAll:boolean

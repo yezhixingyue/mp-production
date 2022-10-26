@@ -40,9 +40,8 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   ref, Ref, computed, watch,
 } from 'vue';
-import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
+import type { EquipmentGroups } from '@/components/pasteupSetting/types';
 import type {
-  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
   MaterialTypeGroupType,
 } from '@/store/modules/productionSetting/types';
 
@@ -83,13 +82,6 @@ function PrimaryClick() {
 
   props.saveEquipment(returnData || []);
 }
-watch(() => props.MaterialListGroup, (newVal) => {
-  if (newVal) {
-    newVal.forEach((element) => {
-      // console.log(element);
-    });
-  }
-});
 watch(() => Dialog.value, (newVal) => {
   if (newVal && props.activeMaterialList) {
     checkList.value = props.activeMaterialList as string[];

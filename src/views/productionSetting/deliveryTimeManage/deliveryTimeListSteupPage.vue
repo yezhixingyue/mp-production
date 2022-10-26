@@ -85,20 +85,15 @@
 
 <script setup lang='ts'>
 import {
-  reactive, ref, Ref, computed, getCurrentInstance, onMounted,
+  reactive, ref, computed, getCurrentInstance, onMounted,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useRouterStore } from '@/store/modules/routerStore';
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import ADAreaDialogSelector from '@/components/common/DialogComps/ADAreaDialogSelector.vue';
-import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { useCommonStore } from '@/store/modules/common/index';
-import { IDistrictTreeListItemType } from '@/store/modules/common/types';
-import { setPageObjType } from './types';
 
 interface SType {
   F: string,
@@ -136,7 +131,6 @@ interface DataType {
 const route = useRoute();
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 const RouterStore = useRouterStore();
-const PasteupSettingStore = usePasteupSettingStore();
 const visible = ref(false);
 const ExpressCheckAll = ref(false);
 const isIndeterminate = ref(false);
@@ -163,7 +157,6 @@ const Data:DataType = reactive({
   },
 });
 const defaultBeginTime = computed(() => new Date(new Date(new Date(new Date().setHours(20)).setMinutes(0)).setSeconds(0)));
-const defaultCheckedKeys = computed(() => Data.DeliveryTimeForm.AreaList.map(item => item.CountyID));
 const setCheck = (list) => {
   Data.DeliveryTimeForm.ExpressList = commonStore.ExpressList.filter(item => list.find(it => it === item.ID)) || [];
   if (commonStore.ExpressList.length === list.length) {
@@ -192,54 +185,7 @@ const BreadcrumbList = computed(() => [
     name: `${Data.DeliveryTimeForm.ItemID ? '编辑' : '添加'}发货班次`,
   },
 ]);
-const allStateItem = computed(() => {
-  const _arr:IDistrictTreeListItemType[] = [];
-  commonStore.DistrictTreeList.forEach(l1 => {
-    l1.children?.forEach(l2 => {
-      l2.children?.forEach(l3 => {
-        _arr.push(l3);
-      });
-    });
-  });
-  return _arr;
-});
-// 选中区域文字展示
-const getAreaDescribe = () => {
-  let returnStr = '';
-  // 所有选择的 省市区
-  const allSelect = commonStore.DistrictList.filter(item => Data.DeliveryTimeForm.AreaList.find(it => {
-    if (item.ID === it.CityID || it.CountyID || it.ProvinceID) {
-      return true;
-    }
-    return false;
-  }));
-  // 所有选择的 省
-  const allProvince = allSelect.filter(item => Data.DeliveryTimeForm.AreaList.find(it => item.ID === it.ProvinceID));
-  // 所有选择的 市
-  const allCity = allSelect.filter(item => Data.DeliveryTimeForm.AreaList.find(it => item.ID === it.CityID));
-  // 所有选择的 区
-  const allCounty = allSelect.filter(item => Data.DeliveryTimeForm.AreaList.find(it => item.ID === it.CountyID));
-  console.log(allProvince, allCity, allCounty, 'allCityallCityallCity');
-  // 全部区域
-  console.log(allProvince.length, commonStore.DistrictTreeList.length);
 
-  returnStr = '全部区域';
-  // if (allProvince.length === commonStore.DistrictTreeList.length) {
-  // }
-  // 省
-  // allProvince.forEach(Province => {
-  //   const ProvinceStr = '';
-  //   allCity.forEach(City => {
-  //     // 当前市所有区
-  //     allCounty.filter(item => item.ParentID === City.ID).map(it => it.Name).join('、');
-  //     allCounty.forEach(County => {
-  //       console.log(County);
-  //     });
-  //   });
-  // });
-  Data.DeliveryTimeForm.AreaDescribe = returnStr;
-  // return returnStr;
-};
 function handleCheckAllChange(val: boolean) {
   if (val) {
     const a = commonStore.ExpressList.map(it => it);
@@ -322,18 +268,7 @@ const onSubmitClick = () => {
 const onShiftRemoveClick = (index) => {
   Data.DeliveryTimeForm.Shift.splice(index, 1);
 };
-const handleChangeFunc = (list:AreaListType[]) => {
-  Data.DeliveryTimeForm.AreaList = list;
-  getAreaDescribe();
-  // if (checkedNodes.length === 0) {
-  //   defaultCheckedKeys.value = [];
-  //   return;
-  // }
-  // if (isAll) {
-  //   defaultCheckedKeys.value = allStateItem.value.map(it => it.ID);
-  //   return;
-  // }
-};
+
 onMounted(() => {
   const temp = route.params.deliveryTimeID;
   if (temp) {
@@ -375,7 +310,6 @@ export default {
     .mp-common-title-wrap{
       margin-top: 50px;
       margin-left: 20px;
-      color: red;
     }
   }
   > main {
@@ -433,7 +367,7 @@ export default {
             padding-top: 5px;
             > li {
               margin-bottom: 15px;
-              > label {
+              > .label {
                 color: #585858;
                 margin-left: 25px;
                 margin-right: 5px;

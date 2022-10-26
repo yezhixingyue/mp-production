@@ -43,7 +43,7 @@
             v-model="EquipmentSaveData.EquipmentIDS"
           > -->
           <ul class="one-list">
-            <template  v-for="ClassIt in processInfo.ClassEquipmentGroups" :key="ClassIt.ClassID">
+            <template  v-for="ClassIt in processInfo?.ClassEquipmentGroups" :key="ClassIt.ClassID">
               <li v-if="ClassIt.EquipmentGroups && ClassIt.EquipmentGroups.length">
                 <p class="one">{{ClassIt.ClassName}}:</p>
                 <ul class="tow-list">
@@ -74,25 +74,14 @@
 
 <script lang="ts" setup>
 import {
-  reactive, onMounted, computed, getCurrentInstance, ref, Ref, watch,
+  onMounted, computed, getCurrentInstance, ref, Ref, watch,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute, useRouter } from 'vue-router';
-import SelectDeviceGroup from '@/components/productionSetting/selectDeviceGroup.vue';
-import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vue';
-import materialResource from '@/components/productionSetting/materialResource.vue';
-import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
-import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
-import type {
-  NotesType, SelectAssistInfoGroup, MaterialTypeGroupsType,
-  MaterialTypeGroupType, ProcessListType, ImpositionTemmplateListType, ImpositionTemmplateListGroupType,
-} from '@/store/modules/productionSetting/types';
-import { useRouterStore } from '@/store/modules/routerStore';
-import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
-import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
+import { IProductionLineWorkings } from '@/store/modules/productionSetting/types';
 
 interface EquipmentListType {
   ClassID:number
@@ -103,16 +92,14 @@ interface EquipmentListType {
   Name:string
   LineEquipmentID?:string
 }
-const PasteupSettingStore = usePasteupSettingStore();
-const RouterStore = useRouterStore();
-const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
 const router = useRouter();
 
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 
-const processInfo:any = ref({});
+const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
+
 const addEquipmentShow = ref(false);
 
 const EquipmentSaveData = ref({
@@ -127,7 +114,7 @@ const BreadcrumbList = computed(() => [
 ]);
 const EquipmentList = computed(() => {
   const returnData:EquipmentListType[] = [];
-  processInfo.value.ClassEquipmentGroups?.forEach(ClassIt => {
+  processInfo.value?.ClassEquipmentGroups?.forEach(ClassIt => {
     ClassIt.EquipmentGroups.forEach(GroupIt => {
       GroupIt.Equipments.forEach(it => {
         if (it.LineEquipmentID) {
@@ -160,11 +147,11 @@ const TocCpacityPage = (item) => {
   });
 };
 const removeEquipment = (ID) => {
-  processInfo.value.ClassEquipmentGroups?.forEach((ClassIt, ClassIti) => {
+  processInfo.value?.ClassEquipmentGroups?.forEach((ClassIt, ClassIti) => {
     ClassIt.EquipmentGroups.forEach((GroupIt, GroupIti) => {
       GroupIt.Equipments.forEach((it, iti) => {
         if (it.ID === ID) {
-          processInfo.value.ClassEquipmentGroups[ClassIti].EquipmentGroups[GroupIti].Equipments.splice(iti, 1);
+          processInfo.value?.ClassEquipmentGroups[ClassIti].EquipmentGroups[GroupIti].Equipments.splice(iti, 1);
         }
       });
     });
@@ -184,12 +171,14 @@ watch(() => EquipmentList.value, (newVal) => {
   EquipmentSaveData.value.EquipmentIDS = newVal.map(it => it.ID) as never[];
 });
 const setEquipment = (list) => {
-  processInfo.value.ClassEquipmentGroups?.forEach((ClassIt, index) => {
+  processInfo.value?.ClassEquipmentGroups?.forEach((ClassIt, index) => {
     ClassIt.EquipmentGroups.forEach((GroupIt, i) => {
       GroupIt.Equipments.forEach((it, num) => {
         const temp = list.find(id => id === it.ID);
         if (temp) {
-          processInfo.value.ClassEquipmentGroups[index].EquipmentGroups[i].Equipments[num].LineEquipmentID = it.ID;
+          if (processInfo.value) {
+            processInfo.value.ClassEquipmentGroups[index].EquipmentGroups[i].Equipments[num].LineEquipmentID = it.ID;
+          }
         }
       });
     });
@@ -218,7 +207,7 @@ const addColorCloseClick = () => {
   addEquipmentShow.value = false;
 };
 const addColorPrimaryClick = () => {
-  EquipmentSaveData.value.LineWorkID = processInfo.value.LineWorkID;
+  EquipmentSaveData.value.LineWorkID = processInfo.value?.LineWorkID || '';
   api.getProductionLinetEquipmentSave(EquipmentSaveData.value).then(res => {
     if (res.data.Status === 1000) {
       const cb = () => {
@@ -234,7 +223,7 @@ const addColorPrimaryClick = () => {
 };
 onMounted(() => {
 // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  const temp = JSON.parse(route.params.processInfo as string) as any;
+  const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;
   if (temp) {
     processInfo.value = { ...temp };
   }

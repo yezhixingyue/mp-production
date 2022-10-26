@@ -28,7 +28,7 @@
               <span class="operate">操作</span>
             </div>
           </li>
-          <li class="table-main" v-for="item in ProductionLineData.ProductionLineWorkings" :key="item">
+          <li class="table-main" v-for="item in ProductionLineData?.ProductionLineWorkings" :key="item.LineID">
             <div class="process-item">
               <span class="process">{{[...PrcessList,...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name}}</span>
               <span class="equipment">
@@ -68,7 +68,7 @@
         <mp-button type="primary" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
         <p class="status">
           当前状态：<span>不可用</span>
-          <mp-button type="primary" link>设为可用</mp-button>
+          <mp-button type="primary" link @click="lineOpen">设为可用</mp-button>
         </p>
       </div>
     </main>
@@ -127,7 +127,7 @@
 
 <script lang="ts" setup>
 import {
-  reactive, ref, Ref, computed, onMounted, toRaw, onActivated, watch,
+  reactive, ref, Ref, computed, onMounted, toRaw, onActivated,
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
@@ -135,25 +135,16 @@ import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
+import { IWorkingProcedureList } from '@/store/modules/productionSetting/types';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface ProcessListType {
   ID: string,
   Name: string
 }
 
-const router = useRouter();
-interface ImpositionTemmplateListType {
-  ClassID:number,
-  ID:string,
-  Name:string,
-}
-interface getMaxDataType {
-    Page: number,
-    PageSize: number,
-    OnlyShowName: boolean,
-}
 interface addLineFromType {
-    Type: number,
+  Type: number,
     NeedFoldWay: boolean,
     TemplateIDS: string[],
     CombinationWordIDS: string[],
@@ -172,9 +163,9 @@ interface getPocessFromType {
   LineID: string,
 }
 interface ProductionLineListType {
-    SplitWordID: string,
-    CreateTime: string,
-    Status: number,
+  SplitWordID: string,
+  CreateTime: string,
+  Status: number,
     Type: number,
     NeedFoldWay: boolean,
     TemplateIDS: string[],
@@ -183,13 +174,12 @@ interface ProductionLineListType {
     Name: string,
 }
 interface DataType {
-  ImpositionTemmplateList:ImpositionTemmplateListType[],
-  getMaxData:getMaxDataType,
   addLineFrom:addLineFromType,
   addPrcessFrom:addPrcessFromType,
   setSplitFrom:setSplitFromType,
   getPocessFrom:getPocessFromType,
 }
+const router = useRouter();
 const productionSettingStore = useProductionSettingStore();
 const addLineShow = ref(false);
 const addPrcessShow = ref(false);
@@ -199,14 +189,10 @@ const PrcessList:Ref<ProcessListType[]> = ref([]);
 // 拆分工序
 const combinationPrcessList:Ref<ProcessListType[]> = ref([]);
 // 生产线工序列表
-const ProductionLineData: any = ref([]);
+const ProductionLineData:Ref<IWorkingProcedureList|null> = ref(null);
+
 const Data:DataType = reactive({
-  ImpositionTemmplateList: [],
-  getMaxData: {
-    Page: 1,
-    PageSize: 999,
-    OnlyShowName: true,
-  },
+
   addLineFrom: {
     Type: 1,
     NeedFoldWay: false,
@@ -298,7 +284,7 @@ const getSourceWork = (material) => {
 const getProductionLineWorkingProcedureList = () => {
   api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
     if (res.data.Status === 1000) {
-      ProductionLineData.value = res.data.Data as any;
+      ProductionLineData.value = res.data.Data as IWorkingProcedureList;
     }
   });
 };
@@ -339,14 +325,7 @@ const getCombinationPrcessList = () => {
     }
   });
 };
-// 获取拼版模板列表
-function getImpositionTemmplateList() {
-  api.getImpositionTemmplateList(Data.getMaxData).then(res => {
-    if (res.data.Status === 1000) {
-      Data.ImpositionTemmplateList = res.data.Data as ImpositionTemmplateListType[];
-    }
-  });
-}
+
 // 添加生产线
 const AddLine = () => {
   addLineShow.value = true;
@@ -354,20 +333,21 @@ const AddLine = () => {
 // 添加工序
 const addPrcess = () => {
   Data.addPrcessFrom.ID = actionLine.value?.ID || '';
-  console.log(ProductionLineData.value.ProductionLineWorkings, 'ProductionLineData.value.ProductionLineWorkings');
-
-  Data.addPrcessFrom.WordIDS = ProductionLineData.value.ProductionLineWorkings.map(it => it.WorkID);
+  if (ProductionLineData.value) {
+    Data.addPrcessFrom.WordIDS = ProductionLineData.value.ProductionLineWorkings
+      .filter(it => PrcessList.value.find(item => item.ID === it.WorkID)).map(it => it.WorkID);
+  }
   // 格式化已经添加的工序
   addPrcessShow.value = true;
 };
 
 const editLine = () => {
-  console.log(actionLine.value, 'actionLine');
-
   if (actionLine.value) {
+    const CombinationWordIDS = ProductionLineData.value?.ProductionLineWorkings
+      .filter(item => combinationPrcessList.value.find(it => it.ID === item.WorkID)).map(it => it.WorkID);
     const temp = toRaw(actionLine.value);
-    temp.CombinationWordIDS = temp.CombinationWordIDS || [];
-    Data.addLineFrom = toRaw(actionLine.value);
+    temp.CombinationWordIDS = CombinationWordIDS || [];
+    Data.addLineFrom = temp;
   }
   addLineShow.value = true;
 };
@@ -383,6 +363,22 @@ const delLine = () => {
       }
     });
   }, () => undefined);
+};
+const lineOpen = () => {
+  api.getProductionLinOpen(actionLine.value?.ID).then(res => {
+    if (res.data.Status === 1000) {
+      const cb = () => {
+        getProductionLineList();
+        // 处理数据变动
+      };
+
+      MpMessage.success({
+        title: '设置成功',
+        onOk: cb,
+        onCancel: cb,
+      });
+    }
+  });
 };
 const addLineCloseedClick = () => {
   Data.addLineFrom = {
@@ -442,18 +438,17 @@ const addPrcessPrimaryClick = () => {
 };
 
 onActivated(() => {
-  const processSetupPage = sessionStorage.getItem('productionLinePage') === 'true';
+  const processSetupPage = sessionStorage.getItem('combinationProductionLinePage') === 'true';
   if (processSetupPage) {
     getProductionLineWorkingProcedureList();
-    sessionStorage.removeItem('productionLinePage');
+    sessionStorage.removeItem('combinationProductionLinePage');
   }
 });
 onMounted(() => {
-  sessionStorage.removeItem('productionLinePage');
+  sessionStorage.removeItem('combinationProductionLinePage');
   if (!productionSettingStore.MaterialTypeGroup.length) {
     productionSettingStore.getMaterialTypeGroupAll();
   }
-  getImpositionTemmplateList();
   getProductionLineList();
   getPrcessList();
   getCombinationPrcessList();

@@ -1,4 +1,4 @@
-import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
+import type { UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 // 辅助信息
 export interface NotesType{
@@ -80,4 +80,39 @@ export interface ImpositionTemmplateListGroupType {
 export interface getPropertyListType {
   UseModule: number,
   MaterialTypeList: string[]
+}
+// 生产线工序列表
+
+export interface IEquipments {
+  LineEquipmentID: string,
+  ID: string,
+  Name: string,
+}
+export interface IEquipmentGroups {
+  GroupID: string,
+  GroupName: string,
+  Equipments: IEquipments[],
+}
+export interface IClassEquipmentGroups {
+  ClassID: number,
+  ClassName: string,
+  EquipmentGroups: IEquipmentGroups[],
+}
+export interface IMaterialSources {
+  MaterialTypeID: string,
+  SourceType: number,
+  SourceWorkIDS: string[],
+  NeedSource: boolean,
+}
+export interface IProductionLineWorkings {
+  LineID: string,
+  WorkID: string,
+  LineWorkID: string,
+  ClassEquipmentGroups: IClassEquipmentGroups[],
+  MaterialSources: IMaterialSources[],
+}
+export interface IWorkingProcedureList {
+  LineType: number,
+  TemplateIDS: string[],
+  ProductionLineWorkings: IProductionLineWorkings[],
 }
