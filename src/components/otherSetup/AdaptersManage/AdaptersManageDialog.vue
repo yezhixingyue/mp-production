@@ -20,11 +20,11 @@
       <el-form-item label="公钥：" prop="PublicKey">
         <el-input v-model.trim="ruleForm.PublicKey" maxlength="60"></el-input>
       </el-form-item>
-      <el-form-item label="密钥：" prop="PrivateKey">
+      <el-form-item label="私钥：" prop="PrivateKey">
         <el-input v-model.trim="ruleForm.PrivateKey" maxlength="60"></el-input>
       </el-form-item>
     </el-form>
-    <p class="tips-box is-orange ft-12"> <el-icon class="ft-14"><WarningFilled /></el-icon> 说明：公钥和密钥需要在服务器管理后台生成，请联系该服务器后台管理员</p>
+    <p class="tips-box is-orange ft-12"> <el-icon class="ft-14"><WarningFilled /></el-icon> 说明：公钥和私钥需要在服务器管理后台生成，请联系该服务器后台管理员</p>
   </DialogContainerComp>
 </template>
 
@@ -100,8 +100,8 @@ export default {
           // { validator: (...args) => validateRepeat('PublicKey', '公钥', ...args), trigger: 'change' },
         ],
         PrivateKey: [
-          { required: true, message: '请输入密钥', trigger: 'change' },
-          // { validator: (...args) => validateRepeat('PrivateKey', '密钥', ...args), trigger: 'change' },
+          { required: true, message: '请输入私钥', trigger: 'change' },
+          // { validator: (...args) => validateRepeat('PrivateKey', '私钥', ...args), trigger: 'change' },
         ],
       },
     };

@@ -10,7 +10,7 @@
     <el-table-column width="280px" prop="Name" show-overflow-tooltip label="名称"></el-table-column>
     <el-table-column min-width="150px" prop="Url" show-overflow-tooltip label="服务器地址"></el-table-column>
     <el-table-column min-width="150px" prop="PublicKey" show-overflow-tooltip label="公钥"></el-table-column>
-    <el-table-column min-width="150px" prop="PrivateKey" show-overflow-tooltip label="密钥"></el-table-column>
+    <el-table-column min-width="150px" prop="PrivateKey" show-overflow-tooltip label="私钥"></el-table-column>
     <!-- <el-table-column width="160px" prop="Name" show-overflow-tooltip label="关联工厂数量">
       <template #default="scope">{{scope.row.RelationNumber}}个</template>
     </el-table-column> -->

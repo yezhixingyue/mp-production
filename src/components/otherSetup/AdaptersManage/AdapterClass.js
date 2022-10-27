@@ -8,7 +8,7 @@ export default class AdapterClass {
 
   Url = '' // 服务器地址
 
-  PrivateKey = '' // 密钥
+  PrivateKey = '' // 私钥
 
   PublicKey = '' // 公钥
 
