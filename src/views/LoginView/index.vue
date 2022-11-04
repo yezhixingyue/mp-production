@@ -19,7 +19,9 @@
               :model="loginForm"
               @submit.prevent
               hide-required-asterisk
-              ref="ruleForm" label-width="0px" class="demo-ruleForm">
+              ref="ruleForm"
+              label-width="0px"
+              class="demo-ruleForm">
               <el-form-item prop="Mobile" :rules="[
                 { required: true, message: '请输入账号(手机号码)', trigger: 'blur' },
                 { pattern: /1[3456789]\d{9}/, message: '手机号码格式不正确', trigger: 'blur' },
@@ -57,12 +59,13 @@
 </template>
 
 <script lang='ts'>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { Base64 } from 'js-base64';
 import { ILoginSubmitForm } from '@/store/modules/user/types';
 import { useUserStore } from '@/store/modules/user';
 import { useLayoutStore } from '@/store/modules/layout';
 import { useRouter } from 'vue-router';
+import { FormInstance } from 'element-plus';
 
 export default {
   name: 'LoginPage',
@@ -72,20 +75,29 @@ export default {
     const userStore = useUserStore();
     const LayoutStore = useLayoutStore();
 
-    const submitForm = async () => {
-      // 省略校验
-      const temp = { ...loginForm, Password: Base64.encode(loginForm.Password) };
-      const res = await userStore.getLogin(temp);
+    const ruleForm = ref<FormInstance>();
 
-      if (res) {
-        LayoutStore.setEditableTabsValue('/');
-        LayoutStore.setLeftMenuDefaultActive('0');
-        // 登录成功
-        router.replace('/');
+    const submitForm = () => {
+      if (ruleForm.value) {
+        ruleForm.value.validate(async (valid) => {
+          if (valid) {
+            // 省略校验
+            const temp = { ...loginForm, Password: Base64.encode(loginForm.Password) };
+            const res = await userStore.getLogin(temp);
+
+            if (res) {
+              LayoutStore.setEditableTabsValue('/');
+              LayoutStore.setLeftMenuDefaultActive('0');
+              // 登录成功
+              router.replace('/');
+            }
+          }
+        });
       }
     };
 
     return {
+      ruleForm,
       loginForm,
       submitForm,
     };
@@ -173,8 +185,19 @@ export default {
             margin: 0 auto;
             > div > div {
               .el-input {
+                .el-input__wrapper {
+                  background-color: transparent;
+                  border-radius: 0;
+                  border-top: none;
+                  border-left: none;
+                  border-right: none;
+                  box-shadow: none;
+                  border-bottom: 1px solid #dcdfe6;
+                  transition: 0.3s !important;
+                }
                 input {
                   background-color: rgba($color: #000, $alpha: 0);
+                  background-color: transparent;
                   border-radius: 0;
                   border-top: none;
                   border-left: none;
@@ -188,7 +211,7 @@ export default {
                 }
                 .el-input__prefix {
                   align-items: center;
-                  > i {
+                  i {
                     width: 23px;
                     height: 23px;
                     display: inline-block;
@@ -196,6 +219,7 @@ export default {
                     > img {
                       width: 23px;
                       height: 23px;
+                      vertical-align: baseline;
                     }
                   }
                   &::after {
@@ -225,6 +249,11 @@ export default {
                 &:active {
                   background-color: #cbcbcb;
                 }
+              }
+            }
+            .is-error {
+              .el-input__wrapper {
+                border-color:  #ff3769 !important;
               }
             }
           }

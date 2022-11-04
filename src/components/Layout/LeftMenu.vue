@@ -7,17 +7,18 @@
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu :default-active="defaultActive" :default-openeds='defaultOpeneds' background-color="#222B3A" :collapse="isCollapse"
         :collapse-transition='true' text-color="#fff" class="el-menu-vertical-demo" active-text-color="#26bcf9">
-        <el-sub-menu v-for="(routeWrap, index) in menuList" :key="routeWrap.path" :index='`${index + 1}`' v-show="routeWrap.children.length > 0">
+        <el-sub-menu v-for="(routeWrap, index) in menuList" :key="routeWrap.path" :index='`${index + 1}`'
+          v-show="routeWrap.children&&routeWrap.children.length > 0">
           <template v-slot:title>
-            <i :class="routeWrap.meta.icon" class="title-icon" v-show="isCollapse"></i>
-            <span>{{routeWrap.meta.title}}</span>
+            <i :class="routeWrap.meta?.icon" class="title-icon" v-show="isCollapse"></i>
+            <span>{{routeWrap.meta?.title}}</span>
           </template>
           <el-menu-item
            :index="`${index + 1}-${i + 1}`"
            @click="onMenuItemClick(route, `${index + 1}-${i + 1}`)"
             v-for="(route, i) in routeWrap.children"
            :key="route.path"
-           :class="{hidden: route.meta.hiddenItem}">
+           :class="{hidden: route.meta?.hiddenItem}">
             <i v-if="route.meta" :class="route.meta.icon"></i>
             <span v-if="route.meta">{{route.meta.title}}</span>
           </el-menu-item>
@@ -171,7 +172,16 @@ export default {
     }, { immediate: true, deep: true });
     // 动态改变活动菜单索引 ----- 只刷新初始化时执行一次
 
+    const homeRouteInfo: RouteRecordRaw = { // 用于logo点击使用
+      meta: {
+        title: '首页',
+      },
+      path: '/',
+      redirect: '/',
+    };
+
     return {
+      homeRouteInfo,
       defaultOpeneds,
       menuList,
       isCollapse,
@@ -206,6 +216,9 @@ export default {
       text-align: center;
       line-height: 47px;
       padding: 6px;
+      img {
+        vertical-align: -5px;
+      }
     }
     .el-menu {
       border: none;
@@ -265,7 +278,6 @@ export default {
         user-select: none;
         > i {
           margin-right: 5px;
-          margin-top: -2px;
           &.iconfont {
             font-size: 15px;
             margin-left: 4px;

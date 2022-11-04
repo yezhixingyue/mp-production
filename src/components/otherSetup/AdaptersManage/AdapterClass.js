@@ -12,7 +12,7 @@ export default class AdapterClass {
 
   PublicKey = '' // 公钥
 
-  RelationNumber = '' // 关联工厂数量
+  RelationNumber = 0 // 关联工厂数量
 
   constructor(data) {
     if (data) restoreInitDataByOrigin(this, data);

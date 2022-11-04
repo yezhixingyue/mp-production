@@ -57,12 +57,12 @@
       <div class="user">
         <el-dropdown trigger="click">
           <span class="el-dropdown-link">
-            <el-icon>
+            <el-icon class="ft-16 is-bold">
               <User />
             </el-icon>
             <!-- <mp-button>退出登录</mp-button> -->
             <span>
-              用户名
+              {{user ? user.StaffName : ''}}
             </span>
             <el-icon>
               <ArrowDown />
@@ -94,6 +94,7 @@ import { useLayoutStore } from '@/store/modules/layout/index';
 import {
   computed, ref, Ref, onMounted, onBeforeUnmount,
 } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import { addBarType } from '@/store/modules/layout/addBarType';
@@ -109,6 +110,7 @@ export default {
     const userStore = useUserStore();
     const oList:Ref = ref(null);
     const visible4ChangePassword = ref(false);
+    const { user } = storeToRefs(userStore);
     const localTabsValue = computed({
       get() {
         return LayoutStore.editableTabsValue;
@@ -139,7 +141,7 @@ export default {
     function changePwd() {
       visible4ChangePassword.value = true;
     }
-    function onCloseCurClick(name:string) {
+    function onCloseCurClick(name?:string) {
       // 关闭;
       if ((!contextmenuItemData.value && !name)
          || (contextmenuItemData.value && contextmenuItemData.value.title === '首页')) return;
@@ -222,6 +224,7 @@ export default {
       onCloseAllClick,
       onCloseCurClick,
       onCloseOtherClick,
+      user,
     };
   },
 };
@@ -248,7 +251,7 @@ export default {
   }
   .centre{
     flex: 1;
-    max-width: calc(100% - 188px - 51px);
+    overflow: hidden;
     display: flex;
     align-items: center;
     position: relative;
@@ -368,12 +371,11 @@ export default {
     }
   }
   .user{
-    margin-right: 50px;
-    margin-left: 50px;
+    width: 188px;
+    padding-right: 25px;
+    box-sizing: border-box;
     display: flex;
-    >div{
-      flex: 1;
-    }
+    justify-content: flex-end;
     &:hover{
       cursor: pointer;
     }
@@ -383,6 +385,10 @@ export default {
       user-select: none;
       span{
         margin: 0 5px;
+      }
+      color: #888e99;
+      &:hover {
+        color: #26bcf9;
       }
     }
   }

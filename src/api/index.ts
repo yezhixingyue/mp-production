@@ -12,7 +12,7 @@ const api = {
     return request<ILoginSubmitForm, null|string>({ method: 'POST', url: '/Api/Staff/Login', data });
   },
   getUser() {
-    return request<null, IUser>({ method: 'get', url: '/Api/Customer/Detail' });
+    return request<null, IUser>({ method: 'post', url: '/Api/Staff/Detail' });
   },
   getDistrictList(ID?:number) {
     return request<number, IDistrictItem[]>({ method: 'get', url: '/Api/District/List', params: { parentID: ID } });

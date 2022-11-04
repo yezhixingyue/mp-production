@@ -5,9 +5,11 @@ export interface ILoginSubmitForm {
 }
 
 export interface IUser {
-  ID: string,
-  Name: string,
+  StaffID: string,
+  StaffName: string,
   Account: {
     Token: string
   },
+  Token: string,
+  PermissionList: object
 }

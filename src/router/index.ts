@@ -49,7 +49,7 @@ const routes: Array<RouteRecordRaw> = [
   ...moduleRoutes,
 ];
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });

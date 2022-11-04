@@ -4,7 +4,9 @@ import { useRouterStore } from '@/store/modules/routerStore';
 // import messageBox from '../assets/js/utils/message';
 import { useUserStore } from '@/store/modules/user';
 // import { RouterType } from '@/router/modules/routerTypes';
-import { Router, RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
+import {
+  Router, RouteLocationNormalized, NavigationGuardNext,
+} from 'vue-router';
 // import routerData from '@/router';
 import { getLastRouteInfoByName } from './getLastRouteInfoByName';
 
@@ -51,57 +53,57 @@ let isInit = true;
   *
   * @param {*} to
   * @param {*} next
-  * @param {*} Permission 权限信息列表
+  * @param {*} PermissionList 权限信息列表
   */
-// function handlePermission(
-//   to:RouteLocationNormalized,
-//   next:NavigationGuardNext,
-//   Permission:string,
-//   from:RouteLocationNormalized,
-// ) {
-//   let key = Permission;
-//   if (!to.meta.PermissionInfo) { // 如果没有设定则予以通过
-//     key = '';
-//   } else {
-//     try {
-//       to.meta.PermissionInfo.forEach((item:any) => { // 2.5 获取到当前页面所需要的权限信息，看是否满足权限要求
-//         key = key[item];
-//       });
-//     } catch (error) {
-//       if (process.env.NODE_ENV === 'development'
-//          && to.meta.PermissionInfo
-//          && to.meta.PermissionInfo[0]
-//          && to.meta.PermissionInfo[0] === 'Developing') {
-//         key = '';
-//       } else {
-//         // messageBox.failSingleError(undefined, '[ 权限信息读取失败 ]');
-//       }
-//     }
-//   }
-//   if (key) {
-//     if (isInit) { // 初始根页面跳转
-//       if (to.matched.length >= 2) {
-//         if (to.name) {
-//           const t = getLastRouteInfoByName(to.name, 'root');
-//           if (t) next({ name: t });
-//         }
-//       }
-//       isInit = false;
-//     }
-//     // if (from.name !== to.name) NProgress.start();
-//     NextHandler(from, to, next); // 2.6 如果满足权限要求则允许跳转， 否则跳转提示页面
-//   } else next({ path: '/notauth' });
-// }
+function handlePermission(
+  to:RouteLocationNormalized,
+  next:NavigationGuardNext,
+  PermissionList: object,
+  from:RouteLocationNormalized,
+) {
+  let key: object | '' | boolean = PermissionList;
+  if (!to.meta.PermissionInfo || to.meta.PermissionInfo.length === 0) { // 如果没有设定则予以通过
+    key = true;
+  } else {
+    try {
+      if (process.env.NODE_ENV === 'development' && to.meta.PermissionInfo && to.meta.PermissionInfo[0] && to.meta.PermissionInfo[0] === 'Developing') {
+        key = true;
+      } else {
+        to.meta.PermissionInfo.forEach(item => { // 2.5 获取到当前页面所需要的权限信息，看是否满足权限要求
+          key = key[item];
+        });
+      }
+    } catch (error) {
+      // messageBox.failSingleError(undefined, '[ 权限信息读取失败 ]');
+    }
+  }
+  if (key) {
+    if (isInit) { // 初始根页面跳转
+      if (to.matched.length >= 2) {
+        if (to.name) {
+          const t = getLastRouteInfoByName(to.name, 'root');
+          if (t) next({ name: t });
+        }
+      }
+      isInit = false;
+    }
+    // if (from.name !== to.name) NProgress.start();
+    NextHandler(from, to, next); // 2.6 如果满足权限要求则允许跳转， 否则跳转提示页面
+  } else next({ path: '/notauth' });
+}
 
 /**
    * @description:  用于替代系统回退的方法
    * @param {*}
    * @return {*}
    */
-export const goBackLastPage = (router:Router) => {
+export const goBackLastPage = (router:Router, route?: RouteLocationNormalized) => {
   const RouterStore = useRouterStore();
   if (!router || !router.currentRoute) return;
-  const curRouteName = router.currentRoute.value.name;
+  let curRouteName = router.currentRoute.value.name;
+  console.log(curRouteName, 0);
+  if (route) curRouteName = route.name;
+  console.log(curRouteName, 1);
   if (!curRouteName) return;
   // 1 首先找到其上一级的路由name名称
   const lastRouteName = getLastRouteInfoByName(curRouteName);
@@ -144,23 +146,22 @@ export const handleRouterEach = (router:Router) => {
             NextHandler(from, to, next);
           }
         } else if (token) { // 2.4 如果有token信息，获取到当前用户权限信息
-        // const permission = store.state.common.Permission;
-        // if (!permission || permission.Token !== token) {
-        //   TokenClass.getPermission(token).then(res => {
-        //     if (res && Object.prototype.toString.call(res)
-        //       === '[object Object]' && res.Token && res.Token === token) {
-        //       store.commit('common/setPermission', res);
-        //       handlePermission(to, next, res.PermissionList, from);
-        //     }
-        //   });
-        // } else if (permission.Token === token) {
-        //   handlePermission(to, next, permission.PermissionList, from);
-        // } else {
-        //   TokenClass.removeToken();
-        //   next({
-        //     path: '/login',
-        //   });
-        // }
+          const permission = userStore.user;
+          if (!permission || permission.Token !== token) {
+            userStore.getUser().then(res => {
+              if (res && Object.prototype.toString.call(res)
+                === '[object Object]' && res.Token && res.Token === token) {
+                handlePermission(to, next, res.PermissionList, from);
+              }
+            });
+          } else if (permission.Token === token) {
+            handlePermission(to, next, permission.PermissionList, from);
+          } else {
+            userStore.token = '';
+            next({
+              path: '/login',
+            });
+          }
           // 看是否第一次调用，如果第一次找出根路由跳转
           if (isInit) { // 初始根页面跳转
             if (to.matched.length >= 2) {
@@ -211,19 +212,11 @@ export const handleRouterEach = (router:Router) => {
    * @return {*}
    */
 
-  // window.addEventListener('popstate', (e) => {
-  //   // e.preventDefault();
-  //   // return false;
-  //   // let url = '/';
-  //   // if (router && router.currentRoute.value && router.currentRoute.value.fullPath) {
-  //   //   url = `${router.currentRoute.value.fullPath}`;
-  //   // }
-  //   // console.log(e.state.forward, 'aaaaaaaaaaa');
-
-  //   // eslint-disable-next-line no-restricted-globals
-  //   // history.pushState(null, '', `#${e.state.forward}`);
-  //   routerData.getGoBackFun();
-  // });
+  window.addEventListener('popstate', async () => {
+    // eslint-disable-next-line no-restricted-globals
+    history.go(1);
+    goBackLastPage(router);
+  });
 };
 
 export default handleRouterEach;
