@@ -1,6 +1,6 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
 import { RouteLocationNormalized } from 'vue-router';
-import router, { getGoBackFun } from '@/router';
+import { getGoBackFun, router } from '@/router';
 
 interface IState {
   lastPagePaths:RouteLocationNormalized[],
@@ -34,7 +34,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
 
     replace(routerUrl) { // 回转页面信息后删除掉回转前的路由信息,
-      router.router.replace(routerUrl);
+      router.replace(routerUrl);
     },
     goBack() { // 返回
       getGoBackFun();

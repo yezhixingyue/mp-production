@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const { defineConfig } = require('@vue/cli-service');
 
-const publicPath = process.env.NODE_ENV === 'development' ? '' : '/PD/';
+const publicPath = process.env.NODE_ENV === 'development' ? '' : '/Web/';
 
 // const proxyUrl = 'http://192.168.1.92:8052'; // 测试
 const proxyUrl = 'http://192.168.3.68:8052'; // 强哥

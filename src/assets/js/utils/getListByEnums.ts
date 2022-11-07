@@ -1,6 +1,6 @@
 export type localEnumValueIDType = '' | number;
 
-interface ILocalEnumValue {
+export interface ILocalEnumValue {
   ID: localEnumValueIDType,
   Name: string,
 }

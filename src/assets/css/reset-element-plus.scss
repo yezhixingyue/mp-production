@@ -95,3 +95,55 @@
   background: linear-gradient(45deg, #428dfa, #26bcf9);
   right: 0;
 }
+
+.mp-select.el-select {
+  line-height: 25px;
+  .el-input {
+    height: 25px;
+    width: 110px;
+    font-size: 13px;
+    .el-input__wrapper {
+      border-radius: 0;
+      padding-left: 5px;
+      padding-right: 16px;
+      box-shadow: none !important;
+      box-sizing: border-box;
+      border-bottom: 1px solid #DCDFE6;
+      transition: border-color 0.2s ease-in-out;
+      position: relative;
+      &::after {
+        content: "";
+        position: absolute;
+        top: 6px;
+        right: 4px;
+        background: none;
+        border: 5px solid #eee;
+        width: 0;
+        height: 0;
+        border-top-width: 6px;
+        border-bottom-width: 0;
+        border-color: transparent;
+        border-top-color: rgba(0,0,0,.3);
+        border-radius: 2px;
+      }
+      input {
+        line-height: 25px;
+        height: 25px;
+        position: relative;
+        top: -1px;
+        color: #444;
+      }
+      .el-input__suffix {
+        display: none;
+      }
+    }
+    &.is-focus {
+      .el-input__wrapper {
+        border-color: #26BCF9;
+      }
+    }
+  }
+  & + .mp-select.el-select {
+    margin-left: 10px;
+  }
+}

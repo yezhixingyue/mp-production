@@ -8,9 +8,9 @@
       transition="el-zoom-in-top"
       :visible="visible">
       <template #reference>
-        <el-button :style="`width:${fiexdWidth ? fiexdWidth + 'px' : ''}`"
+        <el-button :style="`width:${fiexdWidth ? fiexdWidth + 'px' : ''}`" ref="oBtn"
           size="small" class="btn" @click="onClick" :class="{active:visible,none:label.length===0&&!withEmpty}"
-          >{{label.join(' / ')||(withEmpty?'不限':'请选择')}}<el-icon><ArrowDown /></el-icon></el-button>
+          >{{label.join(' / ')||(withEmpty?'不限':'请选择')}}<el-icon v-if="!showLine"><ArrowDown /></el-icon></el-button>
       </template>
       <div class="display-content" v-clickoutside="close">
         <ListComp
@@ -136,16 +136,15 @@ export default {
       }
     },
     getInitialLeft() {
-      const oBtn = document.querySelector('.mp-common-comps-ep-cascader-comp-wrap .btn');
-      if (!oBtn) return;
-      const result = oBtn.getBoundingClientRect();
+      if (!this.$refs.oBtn || !this.$refs.oBtn.$el) return;
+      const result = this.$refs.oBtn.$el.getBoundingClientRect();
       if (result) {
         this.initialLeft = result.left;
       }
     },
     async handleLeftChange() { // 处理左右位置的变化
       if (!this.popWrap) {
-        this.popWrap = document.querySelector('.mp-common-comps-ep-cascader-comp-popper-wrap');
+        this.popWrap = this.$refs.oPop.$refs.popper;
       }
       if (!this.popWrap) return;
       await this.$nextTick();
@@ -262,8 +261,8 @@ export default {
     margin-right: 10px;
   }
   .btn {
-    font-size: 12px;
-    color: #606266;
+    font-size: 13px;
+    color: #444;
     min-width: 114px;
     text-align: left;
     border-radius: 4px;
@@ -341,10 +340,28 @@ export default {
       .el-icon {
         top: 3px;
       }
+      &::after {
+        content: "";
+        position: absolute;
+        background-size: 100% 100%;
+        height: 9px;
+        width: 11px;
+        right: 4px;
+        top: 7px;
+        background: none;
+        border: 5px solid #eee;
+        width: 0;
+        height: 0;
+        border-top-width: 6px;
+        border-bottom-width: 0px;
+        border-color: rgba($color: #000000, $alpha: 0);
+        border-top-color: rgba($color: #000000, $alpha: 0.3);
+        border-radius: 2px;
+      }
     }
   }
 }
-.mp-common-comps-ep-cascader-comp-popper-wrap {
+.el-popover.mp-common-comps-ep-cascader-comp-popper-wrap {
   padding: 0;
   border: 1px solid #e4e7ed;
   width: unset !important;

@@ -15,6 +15,7 @@
 <script setup lang='ts'>
 import MpButton from '@/components/common/MpButton.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
+import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { SubcontractorListCondition } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorListCondition';
 
 const props = defineProps<{
@@ -22,7 +23,7 @@ const props = defineProps<{
   setKeywords(words: string): void,
   clearCondition(): void,
   getList(): void,
-  list: unknown[],
+  list: ISubcontractorFactoryListItemType[],
 }>();
 
 const emit = defineEmits(['add']);

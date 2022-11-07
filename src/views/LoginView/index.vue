@@ -48,7 +48,7 @@
                   </el-input>
               </el-form-item>
               <el-form-item>
-                  <el-button type="info" @click="submitForm">登录</el-button>
+                  <el-button type="info" @click="submitForm">{{logining ? '登录中...' : '登录'}}</el-button>
               </el-form-item>
             </el-form>
           </div>
@@ -63,33 +63,39 @@ import { reactive, ref } from 'vue';
 import { Base64 } from 'js-base64';
 import { ILoginSubmitForm } from '@/store/modules/user/types';
 import { useUserStore } from '@/store/modules/user';
-import { useLayoutStore } from '@/store/modules/layout';
-import { useRouter } from 'vue-router';
+// import { useLayoutStore } from '@/store/modules/layout';
+// import { useRouter } from 'vue-router';
 import { FormInstance } from 'element-plus';
 
 export default {
   name: 'LoginPage',
   setup() {
-    const router = useRouter();
+    // const router = useRouter();
     const loginForm: ILoginSubmitForm = reactive({ Mobile: '', Password: '', Terminal: 1 });
     const userStore = useUserStore();
-    const LayoutStore = useLayoutStore();
+    // const LayoutStore = useLayoutStore();
 
     const ruleForm = ref<FormInstance>();
+    const logining = ref(false);
 
     const submitForm = () => {
       if (ruleForm.value) {
         ruleForm.value.validate(async (valid) => {
           if (valid) {
-            // 省略校验
+            // 校验通过
+
             const temp = { ...loginForm, Password: Base64.encode(loginForm.Password) };
+
+            logining.value = true;
             const res = await userStore.getLogin(temp);
 
             if (res) {
-              LayoutStore.setEditableTabsValue('/');
-              LayoutStore.setLeftMenuDefaultActive('0');
-              // 登录成功
-              router.replace('/');
+              // LayoutStore.setEditableTabsValue('/');
+              // LayoutStore.setLeftMenuDefaultActive('0');
+              // // 登录成功
+              // router.replace('/');
+              window.location.reload();
+              // window.location = window.location.pathname;
             }
           }
         });
@@ -97,6 +103,7 @@ export default {
     };
 
     return {
+      logining,
       ruleForm,
       loginForm,
       submitForm,

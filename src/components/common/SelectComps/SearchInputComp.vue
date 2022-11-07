@@ -15,6 +15,7 @@
       </button>
     </template>
     </el-input>
+    <i class="space-between" v-if="spaceBetween"></i>
     <mp-button link class="order-header-reset-btn" v-if="showResetBtn" @click="onResetBtn">{{resetWords}}</mp-button>
   </section>
 </template>
@@ -53,9 +54,12 @@ export default {
       type: String,
     },
     searchWatchKey: {
-      default: 0,
     },
     typeList: {},
+    spaceBetween: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const inpVal = ref('');
@@ -141,23 +145,28 @@ export default {
     font-size: 12px;
     width: auto;
     font-weight: 400;
-    line-height: 28px;
+    line-height: 30px;
     box-sizing: border-box;
     padding: 0 20px;
     border-radius: 1px;
     white-space: nowrap;
     color: $--color-primary;
+    border: 1px solid $--color-primary;
+    margin-left: 20px;
     &:hover, &:focus {
       color: lighten($color: $--color-primary, $amount: 13);
+      border-color: lighten($color: $--color-primary, $amount: 13) !important;
+      box-shadow: 0 0px 1px 1px rgba(38, 188, 249, 0.2);
     }
     &:active {
       color: darken($color: $--color-primary, $amount: 15) !important;
+      border-color: darken($color: $--color-primary, $amount: 15) !important;
     }
-    height: 28px;
+    height: 30px;
     cursor: pointer;
   }
   > .el-button.order-header-reset-btn {
-    line-height: 26px !important;
+    line-height: 28px !important;
   }
   > .space-between {
     flex: 1;

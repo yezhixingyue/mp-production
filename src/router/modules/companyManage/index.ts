@@ -25,6 +25,17 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/companyManage/StaffManage/StaffManageListPage.vue'),
     },
+    {
+      path: '/StaffSetup',
+      name: 'StaffSetup',
+      meta: {
+        title: '员工设置',
+        requiresAuth: true,
+        hideMenu: true,
+        pageName: 'StaffManageSetupPage',
+      },
+      component: () => import('@/views/companyManage/StaffManage/StaffManageSetupPage.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {
@@ -35,7 +46,9 @@ const routeTree:RouteTreeType = {
     -------------------------------------- */
     {
       name: 'StaffList',
-      children: [],
+      children: [
+        { name: 'StaffSetup', children: [] },
+      ],
     },
   ],
 };

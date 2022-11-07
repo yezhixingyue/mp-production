@@ -2,6 +2,9 @@ import { useTimeSelectModuleStore } from './timeSelectModule';
 
 const store = useTimeSelectModuleStore();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ISetConditionParams = [[string, string | undefined], any];
+
 export default class CommonClassType {
   static setDate(obj, key = 'Date', defalutProps = { First: 'First', Second: 'Second' }) {
     const _obj = obj;
@@ -78,7 +81,7 @@ export default class CommonClassType {
     return _tempObj;
   }
 
-  static setCondition([[key1, key2], val], condition) { // 设置条件值
+  static setCondition([[key1, key2], val]: ISetConditionParams, condition: object) { // 设置条件值
     if (!condition || typeof condition !== 'object') {
       throw new Error('condition is an invalid parameter');
     }
@@ -87,7 +90,7 @@ export default class CommonClassType {
       throw new Error('key1 is an invalid parameter');
     }
 
-    if (key2 && !Object.hasOwnProperty.call(condition, key2)) {
+    if (key2 && !Object.hasOwnProperty.call(condition[key1], key2)) {
       throw new Error('key2 is an invalid parameter');
     }
 

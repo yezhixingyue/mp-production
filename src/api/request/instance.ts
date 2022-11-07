@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { useUserStore } from '@/store/modules/user';
-import router from '@/router';
+import { router } from '@/router';
 import messageBox from '@/assets/js/utils/message';
 import { ElLoading } from 'element-plus';
 import Axios from './axios';
@@ -60,7 +60,7 @@ const instance = new Axios({
       const { token } = userStore;
 
       if (!token && !apiListByNotNeedToken.includes(curConfig.url || '')) {
-        router.router.replace('/login');
+        router.replace('/login');
 
         throw new Error('请重新登录');
       }
