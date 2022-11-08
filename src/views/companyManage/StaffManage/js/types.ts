@@ -31,7 +31,7 @@ export interface IStaff {
   /** 身份证 */
   IDCard: string
   /** 省市 */
-  LinkArea: {
+  Area: {
     RegionalID: number
     CityID: number
   }

@@ -47,3 +47,8 @@ export const getEnumNameByIDAndEnums = (id: localEnumValueIDType, enums: IEnumsT
   const t = Object.values(enums).find(it => it.ID === id);
   return t ? t.Name : '';
 };
+
+export const getEnumNameByIDAndEnumList = (id: localEnumValueIDType, list: ILocalEnumValue[]) => {
+  const t = list.find(it => it.ID === id);
+  return t ? t.Name : '';
+};

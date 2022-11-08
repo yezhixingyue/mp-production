@@ -1,43 +1,54 @@
 <template>
   <main>
-    <el-table :data="localList" stripe border class="row-ft-12" empty-text="暂无数据">
+    <el-table :data="localList" stripe border class="row-ft-12">
       <mp-table-column width="100px" prop="StaffName" label="姓名"></mp-table-column>
       <mp-table-column width="120px" prop="Mobile" label="手机号"></mp-table-column>
       <mp-table-column width="160px" prop='IDCard' label="身份证号"></mp-table-column>
       <mp-table-column width="70px" prop="_gender" label="性别"></mp-table-column>
       <mp-table-column width="85px" prop="_EducationText" label="学历"></mp-table-column>
-      <mp-table-column min-width="120px" prop="_address" label="籍贯"></mp-table-column>
+      <mp-table-column width="140px" prop="_address" label="籍贯"></mp-table-column>
       <mp-table-column width="100px" prop="_Birthday" label="出生日期"></mp-table-column>
       <mp-table-column width="100px" prop="_JoinDate" label="入职日期"></mp-table-column>
       <!-- <mp-table-column min-width="160px" prop="_department" label="部门岗位">
         <span slot-scope="scope" :title="scope.row._department.replaceAll(' | ', '\r\n')">{{scope.row._department}}</span>
       </mp-table-column> -->
-      <mp-table-column width="80px" prop="_statusText" label="状态">
-        <!-- <span slot-scope="scope" :class="scope.row._class">{{scope.row._statusText}}</span> -->
-      </mp-table-column>
+      <mp-table-column width="80px" prop="_statusText" label="状态"></mp-table-column>
       <mp-table-column width="80px" prop="CheckUser.StaffName" label="审核人"></mp-table-column>
-      <mp-table-column width="260px" label="操作">
+      <el-table-column width="320px" label="操作">
         <template #default="scope">
-          <mp-button type="info" link @click="onEditClick(scope.row)">
-            <i class="iconfont icon-bianji"></i>编辑
-          </mp-button>
-          <mp-button type="info" link @click="onRemoveClick(scope.row)">
-            <i class="iconfont icon-delete"></i>删除
-          </mp-button>
+          <div class="menus">
+            <DetailMenu @click="onDetailClick(scope.row, scope.$index)" />
+            <Menu title="离职" icon="icon-lizhi iconfont" isPink
+               v-if="scope.row.Status===StaffStatusEnum.approved" @click="onChangeStatusClick(scope.row, scope.$index)" />
+            <Menu title="取消离职" icon="icon-fanhui iconfont" isSuccess
+               v-if="scope.row.Status===StaffStatusEnum.leaved" @click="onChangeStatusClick(scope.row, scope.$index)"/>
+            <Menu title="审核" icon="icon-shenhe iconfont" isSuccess
+               v-if="scope.row.Status===StaffStatusEnum.pending" @click="onChangeStatusClick(scope.row, scope.$index)"/>
+            <EditMenu @click="onEditClick(scope.row)" />
+            <RemoveMenu :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)" />
+          </div>
         </template>
-      </mp-table-column>
+      </el-table-column>
+      <template #empty>
+        <span v-show="!props.StaffManagePageData.loading">暂无数据</span>
+      </template>
     </el-table>
   </main>
 </template>
 
 <script setup lang='ts'>
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import MpButton from '@/components/common/MpButton.vue';
+import Menu from '@/components/common/menus/Menu.vue';
+import EditMenu from '@/components/common/menus/EditMenu.vue';
+import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
+import DetailMenu from '@/components/common/menus/DetailMenu.vue';
 import { computed } from 'vue';
 import { useCommonStore } from '@/store/modules/common';
 import { storeToRefs } from 'pinia';
-import { ILocalEnumValue } from '@/assets/js/utils/getListByEnums';
-import { EducationEnumList, SexEnum, StaffStatusEnumList } from '../js/enums';
+import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import {
+  EducationEnumList, SexEnumList, StaffStatusEnumList, StaffStatusEnum,
+} from '../js/enums';
 import { StaffManageClass } from '../js/StaffManageClass';
 import { IStaff } from '../js/types';
 
@@ -48,12 +59,7 @@ const props = defineProps<{
   StaffManagePageData: StaffManageClass
 }>();
 
-const emit = defineEmits(['edit', 'remove']);
-
-const formatEnumName = (id: number, list: ILocalEnumValue[]) => {
-  const t = list.find(it => it.ID === id);
-  return t ? t.Name : '';
-};
+const emit = defineEmits(['edit', 'remove', 'dimission', 'check', 'detail']);
 
 const getAddressContent = ({ RegionalID, CityID }, list) => {
   const Regional = list.find(it => it.ID === RegionalID);
@@ -64,12 +70,7 @@ const getAddressContent = ({ RegionalID, CityID }, list) => {
   return '';
 };
 
-const formatDate = (date: string) => {
-  if (date && date.includes('T')) {
-    return date.split('T')[0];
-  }
-  return '';
-};
+const formatDate = (date: string) => (date && date.includes('T') ? date.split('T')[0] : '');
 
 const formatDepartment = ({ PositionList }, departmentLevelList) => {
   if (Array.isArray(PositionList) && PositionList.length > 0) {
@@ -103,27 +104,63 @@ const formatDepartment = ({ PositionList }, departmentLevelList) => {
 
 const localList = computed(() => props.StaffManagePageData.dataList.map(it => ({
   ...it,
-  _gender: it.Sex === SexEnum.male ? '男' : '女',
-  _EducationText: formatEnumName(it.Education, EducationEnumList),
+  _gender: getEnumNameByIDAndEnumList(it.Sex, SexEnumList),
+  _EducationText: getEnumNameByIDAndEnumList(it.Education, EducationEnumList),
   _IntranetContent: it.UseIntranet ? '仅限内部网络' : '不限',
-  _address: getAddressContent(it.LinkArea, DistrictTreeList.value),
+  _address: getAddressContent(it.Area, DistrictTreeList.value),
   _Birthday: formatDate(it.TimeRecord?.Birthday),
   _JoinDate: formatDate(it.TimeRecord?.JoinDate),
   _department: formatDepartment(it, []),
   // _department: formatDepartment(it, this.departmentLevelList),
-  _statusText: formatEnumName(it.Status, StaffStatusEnumList),
+  _statusText: getEnumNameByIDAndEnumList(it.Status, StaffStatusEnumList),
 })));
 
-const onEditClick = (it: IStaff) => {
-  emit('edit', it);
+const onDetailClick = (item: IStaff, index: number) => {
+  emit('detail', { item, index });
 };
 
-const onRemoveClick = (it: IStaff) => {
+const onEditClick = (item: IStaff) => {
+  emit('edit', { item, id: item.StaffID });
+};
+
+const onChangeStatusClick = (item: IStaff, index: number) => { // 审核|离职|取消离职
+  switch (item.Status) {
+    case StaffStatusEnum.pending:
+      // 要审核
+      emit('check', { item, index });
+      break;
+    case StaffStatusEnum.approved:
+      // 要离职
+      MpMessage.warn({
+        title: '确定设为离职状态吗 ?',
+        msg: `员工离职：[ ${item.StaffName} ]`,
+        onOk: () => {
+          emit('dimission', { item, expectStatus: StaffStatusEnum.leaved, index });
+        },
+      });
+      break;
+    case StaffStatusEnum.leaved:
+      // 要取消离职
+      MpMessage.warn({
+        title: '确定要取消离职吗 ?',
+        msg: `取消离职：[ ${item.StaffName} ]`,
+        onOk: () => {
+          emit('dimission', { item, expectStatus: StaffStatusEnum.approved, index });
+        },
+      });
+      break;
+
+    default:
+      break;
+  }
+};
+
+const onRemoveClick = (item: IStaff, index: number) => {
   MpMessage.warn({
     title: '确定删除该员工吗 ?',
-    msg: `员工名称：[ ${it.StaffName} ]`,
+    msg: `删除员工：[ ${item.StaffName} ]`,
     onOk: () => {
-      emit('remove', it);
+      emit('remove', { item, index });
     },
   });
 };
@@ -131,4 +168,20 @@ const onRemoveClick = (it: IStaff) => {
 </script>
 
 <style scoped lang='scss'>
+.menus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: -22px;
+  :deep(.menu-box) {
+    flex: none;
+    margin: 0;
+    margin-right: 8px;
+    > span {
+      display: inline-block;
+      width: 4em;
+      text-align: left;
+    }
+  }
+}
 </style>

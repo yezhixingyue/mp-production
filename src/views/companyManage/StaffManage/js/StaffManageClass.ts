@@ -22,6 +22,8 @@ export class StaffManageClass {
 
   loading = false
 
+  curEditStaff: IStaff | null = null
+
   /** 岗位列表 */
   jobPostList: IJobPost[] = []
 

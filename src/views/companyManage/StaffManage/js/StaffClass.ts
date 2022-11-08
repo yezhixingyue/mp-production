@@ -28,7 +28,7 @@ export class Staff implements IStaff {
 
   IDCard = '';
 
-  LinkArea = {
+  Area = {
     RegionalID: 1497,
     CityID: 1498,
   };

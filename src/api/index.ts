@@ -22,12 +22,20 @@ const api = {
   getStaffSelect() {
     return request({ method: 'GET', url: '/Api/Staff/Select' });
   },
-  getUploadImage() {
-    return request({ method: 'POST', url: '/Api/Upload/Image' });
+  getImageUpload(data, type = 1) {
+    const formData = new FormData();
+    formData.append('file', data);
+    const headers = {
+      'Content-Type': 'multipart/form-data',
+    };
+    const params = { type };
+    return request({
+      method: 'POST', url: '/Api/Upload/Image', data: formData, params, headers,
+    });
   },
   // 修改密码
   getStaffChangePassword(data) {
-    return request({ method: 'POST', url: '/Api/Upload/Image', data });
+    return request({ method: 'POST', url: '/Api/Staff/ChangePassword', data });
   },
   // 物料仓储 api
   ...MaterialStorage,

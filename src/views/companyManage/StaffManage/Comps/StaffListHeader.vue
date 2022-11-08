@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="mb-8">
-      <MpButton type="primary">+ 添加员工</MpButton>
+      <MpButton type="primary" @click="onAddClick">+ 添加员工</MpButton>
       <span class="is-blue-span ml-21">设置内部网络IP</span>
     </div>
     <div class="select-box">
@@ -65,6 +65,8 @@ const props = defineProps<{
   StaffManagePageData: StaffManageClass
 }>();
 
+const emit = defineEmits(['add']);
+
 const localSexEnumList = [{ ID: '', Name: '性别不限' }, ...SexEnumList];
 const localEducationEnumList = [{ ID: '', Name: '学历不限' }, ...EducationEnumList];
 const localStaffStatusEnumList = [{ ID: '', Name: '状态不限' }, ...StaffStatusEnumList];
@@ -109,6 +111,10 @@ const jobPostFilterVal = computed({
     props.StaffManagePageData.getDataList();
   },
 });
+
+const onAddClick = () => {
+  emit('add', null);
+};
 
 onMounted(() => {
   commonStore.getDistrictList();

@@ -25,6 +25,7 @@ module.exports = {
     'no-shadow': 'off',
     'max-len': ['error', { code: 160 }],
     'vuejs-accessibility/click-events-have-key-events': 'off',
+    'vuejs-accessibility/label-has-for': 'off',
   },
   overrides: [
     {
