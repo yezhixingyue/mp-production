@@ -108,7 +108,7 @@ export default {
       default: false,
     },
   },
-  emits: ['closed', 'open', 'opened', 'submit', 'cancel', 'update:visible'],
+  emits: ['closed', 'open', 'opened', 'submit', 'cancel', 'update:visible', 'danger'],
   setup(props, context) {
     const dialogVisible = computed({
       get() {
@@ -125,6 +125,7 @@ export default {
     }
     function Del() {
       props.delClick();
+      context.emit('danger');
     }
     function Close() {
       props.closeClick();

@@ -21,6 +21,10 @@
         <img v-if="!props.disabled" src="@/assets/images/menu/detail.png" alt="">
         <img v-else src="@/assets/images/menu/detail-disabled.png" alt="">
       </template>
+      <!-- 添加 -->
+      <template v-if="props.type === 'add'">
+        <img :class="props.disabled ? 'img-gray' : ''" src="@/assets/images/menu/add.png" alt="">
+      </template>
     </template>
     <!-- icon模式 -->
     <i v-if="displayType==='icon'" :class="props.icon"></i>
@@ -48,7 +52,7 @@ const props = withDefaults(defineProps<{
   title: string,
   disabled?: boolean
   // 上面为共用属性  下面为3种类型
-  type?: 'edit' | 'del' | 'detail'
+  type?: 'edit' | 'del' | 'detail' | 'add'
   icon?: string
   isPink?: boolean // 仅icon模式生效
   isSuccess?: boolean // 仅icon模式生效
@@ -163,6 +167,10 @@ const onClick = () => {
     > i {
       color: #cbcbcb !important;
     }
+  }
+  .img-gray {
+    filter: grayscale(1);
+    opacity: 0.8;
   }
 }
 </style>

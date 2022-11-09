@@ -79,7 +79,7 @@
         >
           <el-date-picker class="mp-line-input" v-model="localDate" value-format="YYYY-MM-DD" placeholder="入职日期"></el-date-picker>
         </el-form-item>
-        <el-form-item label="网络限制：" prop="UseIntranet">
+        <el-form-item label="网络限制：" prop="UseIntranet" v-if="StaffManagePageData.showIntranet">
           <el-checkbox v-model="ruleForm.UseIntranet">仅限内部网络</el-checkbox>
         </el-form-item>
       </el-form>
@@ -91,6 +91,7 @@
 import { computed, ref } from 'vue';
 import { ElForm } from 'element-plus';
 import { useCommonStore } from '@/store/modules/common';
+import { useCompanyStore } from '@/store/modules/companyManage';
 import { storeToRefs } from 'pinia';
 import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
 import { Staff } from '../js/StaffClass';
@@ -99,6 +100,9 @@ import { validateIdCard } from '../js/IdCardvalidator';
 
 const commonStore = useCommonStore();
 const { DistrictTreeList } = storeToRefs(commonStore);
+
+const companyStore = useCompanyStore();
+const { StaffManagePageData } = storeToRefs(companyStore);
 
 const props = defineProps<{
   staffForm: Staff

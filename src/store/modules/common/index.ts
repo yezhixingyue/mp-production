@@ -57,6 +57,11 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
       }
     },
   },
+  persist: {
+    key: 'my_prod_common', // 自定义缓存中的key键名
+    storage: sessionStorage, // 自定义缓存类型，默认sessionStorage，
+    paths: ['DistrictList'], // 自定义指定持久化的字段，默认为全部
+  },
 };
 
 export const useCommonStore = defineStore(options);

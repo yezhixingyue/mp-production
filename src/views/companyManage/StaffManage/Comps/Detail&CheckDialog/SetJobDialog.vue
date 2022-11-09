@@ -1,11 +1,11 @@
 <template>
   <DialogContainerComp
-    width="560px"
+    :width="560"
     top="18vh"
     title="设置员工岗位/所属部门"
     v-model:visible="visible"
     @submit="onSubmit"
-    @cancle="visible = false"
+    @cancel="visible = false"
     @open="onOpen"
     @closed="onClosed"
     class="staff-set-job-dialog-wrap"
@@ -13,36 +13,27 @@
     <!-- 内容区 -->
     <ul class="content-list">
       <li v-for="(it, i) in PositionList" :key="it.key">
-        <AreaSelector
-          title='部门'
-          hasNullOption
-          :hasNoLimitItem='false'
-          :changePropsFunc='e => handleSelect(e, i)'
-          :propList='departmentList'
-          :RegionalID='it.First.FirstDepartmentID'
-          :CityID='it.First.SecondDepartmentID'
-          :CountyID='it.First.ThirdDepartmentID'
+        <EpCascaderWithLevel3
+          :setCondition='e => handleSelect(e, i)'
+          :levelTreeList='departmentLevelList'
+          :First='it.First.FirstDepartmentID'
+          :Second='it.First.SecondDepartmentID'
+          :Third='it.First.ThirdDepartmentID'
+          :withEmpty="false"
+          :fiexdWidth="0"
+          onlyLastValid
+          title="部门"
           :typeList="[['First', 'FirstDepartmentID'],['First', 'SecondDepartmentID'],['First', 'ThirdDepartmentID']]"
         />
         <div class="bt">
-          <OrderChannelSelector
-            initSelect
-            :options='jobPermissionsList'
-            :changePropsFunc='e => handleSelect(e, i)'
-            :typeList="[['Second', 'PositionID']]"
-            :value='it.Second.PositionID'
-            :defaultProps='{label: "PositionName", value: "PositionID"}'
-            label='岗位'
-          />
-          <CtrlMenus
-            addText='添加'
-            addBefore
-            :showList="['add','del']"
-            :canRemove='PositionList.length > 1'
-            :canAdd='PositionList.length < 3'
-            @remove="() => PositionList.splice(i, 1)"
-            @add="add"
-           />
+          <div>
+            <span class="title">岗位：</span>
+            <el-select v-model="it.Second.PositionID" class="mp-select mr-60">
+              <el-option v-for="item in jobPermissionsList" :key="item.PositionID" :label="item.PositionName" :value="item.PositionID" />
+            </el-select>
+          </div>
+          <AddMenu @click="add" :disabled="PositionList.length >= 3" />
+          <RemoveMenu @click="() => PositionList.splice(i, 1)" :disabled="PositionList.length <= 1" />
         </div>
       </li>
     </ul>
@@ -51,13 +42,15 @@
 
 <script>
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import AreaSelector from '@/components/common/SelectorComps/AreaSelectorIndex.vue';
-import OrderChannelSelector from '@/components/common/SelectorComps/OrderChannelSelector.vue';
-import CtrlMenus from '@/components/common/NewComps/CtrlMenus';
+import AddMenu from '@/components/common/menus/AddMenu.vue';
+import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
+import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
+import { scrollToBottom } from '@/assets/js/utils';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 export default {
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: false,
     },
@@ -65,7 +58,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    departmentList: {
+    departmentLevelList: {
       type: Array,
       default: () => [],
     },
@@ -76,17 +69,17 @@ export default {
   },
   components: {
     DialogContainerComp,
-    AreaSelector,
-    OrderChannelSelector,
-    CtrlMenus,
+    EpCascaderWithLevel3,
+    AddMenu,
+    RemoveMenu,
   },
   computed: {
     visible: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(val) {
-        this.$emit('input', val);
+        this.$emit('update:modelValue', val);
       },
     },
   },
@@ -122,7 +115,7 @@ export default {
       if (this.PositionList.length < 3) return;
       await this.$nextTick();
       const el = document.querySelector('.staff-set-job-dialog-wrap .el-dialog__body .content-list');
-      if (el) this.$utils.scrollToBottom(el);
+      if (el) scrollToBottom(el);
     },
     handleSelect([[key1, key2], value], i) {
       if (!key1 || !this.PositionList[i]) return;
@@ -137,25 +130,25 @@ export default {
       }
     },
     check() {
+      const t = this.PositionList.find(it => !it.Second.PositionID);
+      if (t) {
+        MpMessage.error({ title: '保存失败', msg: '有岗位未设置，请检查' });
+        return false;
+      }
       const getStringifyList = _list => _list.map(it => {
         const { FirstDepartmentID, SecondDepartmentID, ThirdDepartmentID } = it.First;
         return `${FirstDepartmentID}${SecondDepartmentID}${ThirdDepartmentID}${it.Second.PositionID}`;
       });
       const curStrList = getStringifyList(this.PositionList);
       if (curStrList.length > [...new Set(curStrList)].length) {
-        this.messageBox.failSingleError('保存失败', '存在重复设置');
-        return false;
-      }
-      const lastStrList = getStringifyList(this.list);
-      if (JSON.stringify(lastStrList) === JSON.stringify(curStrList)) {
-        this.messageBox.failSingleError('保存失败', '未发生更改');
+        MpMessage.error({ title: '保存失败', msg: '存在重复设置' });
         return false;
       }
       return true;
     },
     onSubmit() {
       if (!this.check()) return;
-      this.$emit('submit', this.PositionList);
+      this.$emit('submitData', this.PositionList);
     },
   },
 };

@@ -5,7 +5,7 @@
       <div class="department">
         <span class="t">岗位：</span>
         <div class="list">
-          <p v-for="(it, i) in departmentList" :key="it + i" :title="it">{{ it }}</p>
+          <p v-for="(it, i) in localDepartmentList" :key="it + i" :title="it">{{ it }}</p>
         </div>
       </div>
     </div>
@@ -23,15 +23,21 @@
 </template>
 
 <script>
+import { format2MiddleLangTypeDateFunc2, formatOnlyDate } from '@/assets/js/filters/dateFilters';
+
 export default {
   props: {
     detailData: {
       type: Object,
       default: null,
     },
+    showIntranet: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
-    departmentList() { // 岗位列表
+    localDepartmentList() { // 岗位列表
       if (this.detailData && this.detailData._department) {
         return this.detailData._department.split(' | ');
       }
@@ -42,25 +48,32 @@ export default {
       const {
         StaffName, _gender, Mobile, _Birthday, IDCard, _EducationText, _IntranetContent, TimeRecord, _JoinDate, _address, DetailAddress, LastLoginRecord,
       } = this.detailData;
-      const _RegTime = TimeRecord?.RegTime ? this.$utils.getDateFormat(TimeRecord.RegTime) : '';
-      const _CheckTime = TimeRecord?.CheckTime ? this.$utils.getDateFormat(TimeRecord.CheckTime) : '';
-      const _OutTime = TimeRecord?.OutTime ? this.$utils.getDateFormat2Date(TimeRecord.OutTime) : '';
+      const _RegTime = TimeRecord?.RegTime ? format2MiddleLangTypeDateFunc2(TimeRecord.RegTime) : '';
+      const _CheckTime = TimeRecord?.CheckTime ? format2MiddleLangTypeDateFunc2(TimeRecord.CheckTime) : '';
+      const _OutTime = TimeRecord?.OutTime ? formatOnlyDate(TimeRecord.OutTime) : '';
       let _lastLoginTime = '';
       let _lastLoginIP = '';
       if (LastLoginRecord) {
         const { First, Second } = LastLoginRecord;
-        if (First) _lastLoginTime = this.$utils.getDateFormat(First);
+        if (First) _lastLoginTime = format2MiddleLangTypeDateFunc2(First);
         if (Second) _lastLoginIP = Second;
       }
 
-      return [
+      const list = [
         { label: '姓名', content: StaffName, class: 'name' },
         { label: '性别', content: _gender },
         { label: '手机号', content: Mobile },
         { label: '出生日期', content: _Birthday },
         { label: '身份证号', content: IDCard },
         { label: '学历', content: _EducationText },
-        { label: '网络限制', content: _IntranetContent },
+      ];
+
+      if (this.showIntranet) {
+        list.push({ label: '网络限制', content: _IntranetContent });
+      }
+
+      return [
+        ...list,
         { label: '注册(添加)时间', content: _RegTime },
         { label: '审核时间', content: _CheckTime },
         { label: '入职日期', content: _JoinDate },

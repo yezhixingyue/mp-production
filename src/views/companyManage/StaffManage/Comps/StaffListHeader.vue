@@ -2,7 +2,7 @@
   <header class="header">
     <div class="mb-8">
       <MpButton type="primary" @click="onAddClick">+ 添加员工</MpButton>
-      <span class="is-blue-span ml-21">设置内部网络IP</span>
+      <span class="is-blue-span ml-21" v-if="props.StaffManagePageData.showIntranet" @click="onNetWorkClick">设置内部网络IP</span>
     </div>
     <div class="select-box">
       <div class="mr-10">
@@ -28,6 +28,16 @@
         :list="DistrictTreeList"
         @getList="() => props.StaffManagePageData.getDataList()"
         @setCondition="(e) => props.StaffManagePageData.setCondition(e)"
+      />
+      <EpCascaderWithLevel3
+        title="管理部门"
+        :setCondition='(e) => props.StaffManagePageData.setCondition(e)'
+        :levelTreeList='props.StaffManagePageData.departmentLevelList'
+        :First='props.StaffManagePageData.condition.Department.FirstDepartmentID'
+        :Second='props.StaffManagePageData.condition.Department.SecondDepartmentID'
+        :Third='props.StaffManagePageData.condition.Department.ThirdDepartmentID'
+        :getList="() => props.StaffManagePageData.getDataList()"
+        :typeList="[['Department', 'FirstDepartmentID'],['Department', 'SecondDepartmentID'],['Department', 'ThirdDepartmentID']]"
       />
       <div>
         <span class="title">岗位：</span>
@@ -55,6 +65,7 @@ import { useCommonStore } from '@/store/modules/common';
 import { storeToRefs } from 'pinia';
 import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
+import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
 import { StaffManageClass } from '../js/StaffManageClass';
 import { SexEnumList, EducationEnumList, StaffStatusEnumList } from '../js/enums';
 
@@ -65,7 +76,7 @@ const props = defineProps<{
   StaffManagePageData: StaffManageClass
 }>();
 
-const emit = defineEmits(['add']);
+const emit = defineEmits(['add', 'network']);
 
 const localSexEnumList = [{ ID: '', Name: '性别不限' }, ...SexEnumList];
 const localEducationEnumList = [{ ID: '', Name: '学历不限' }, ...EducationEnumList];
@@ -114,6 +125,10 @@ const jobPostFilterVal = computed({
 
 const onAddClick = () => {
   emit('add', null);
+};
+
+const onNetWorkClick = () => {
+  emit('network');
 };
 
 onMounted(() => {

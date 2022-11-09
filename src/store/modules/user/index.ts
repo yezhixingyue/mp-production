@@ -50,7 +50,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
   },
   persist: {
-    key: 'my_user', // 自定义缓存中的key键名
+    key: 'my_prod_user', // 自定义缓存中的key键名
     storage: localStorage, // 自定义缓存类型，默认sessionStorage，
     paths: ['user', 'token', 'loginTime', 'getUserTime'], // 自定义指定持久化的字段，默认为全部
     serializer: {

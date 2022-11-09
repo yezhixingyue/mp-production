@@ -1,32 +1,32 @@
 <template>
   <div class="mp-erp-staff-manage-detail-and-check-dialog-comp-wrap">
     <DialogContainerComp
-      width="700px"
+      :width="700"
       top="12vh"
       :title="title"
       v-model:visible="visible"
-      :showDanger="showRemove"
-      :submitText='submitText'
-      :showSubmit='!disabled'
-      dangerText="删除"
-      cancelText='关闭'
+      :showDel="showRemove"
+      :primaryText='submitText'
+      :showPrimary='!disabled'
+      delBtnText="删除"
+      closeBtnText='关闭'
       @submit="onSetJobClick"
       @danger="onRemove"
-      @cancle="visible = false"
+      @cancel="visible = false"
       @open="onOpen"
       @closed="onClosed"
       @close='onClose'
       class="detail-and-check-dialog-wrap"
     >
       <!-- 内容区 -->
-      <DetailDisplayComp :detailData='editData' />
+      <DetailDisplayComp :detailData='editData' :showIntranet="showIntranet" />
     </DialogContainerComp>
     <SetJobDialog
       v-model="setJobVisible"
       :list="editData ? editData.PositionList : []"
-      :departmentList='departmentList'
+      :departmentLevelList='departmentLevelList'
       :jobPermissionsList='jobPermissionsList'
-      @submit="submit"
+      @submitData="submit"
      />
   </div>
 </template>
@@ -53,13 +53,17 @@ export default {
       type: Number,
       default: -1,
     },
-    departmentList: {
+    departmentLevelList: {
       type: Array,
       default: () => [],
     },
     jobPermissionsList: {
       type: Array,
       default: () => [],
+    },
+    showIntranet: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -169,7 +173,7 @@ export default {
             > li {
               margin-right: 20px;
               &.first-select-box .el-input__inner {
-                width: 120px;
+                width: 110px;
               }
               &.text {
                 margin-right: 5px;
@@ -182,20 +186,16 @@ export default {
             display: flex;
             align-items: center;
             margin-top: 16px;
-            .ctrl-menus-container {
-              margin-left: 20px;
-              position: relative;
-              top: -1px;
+            .title {
+              margin-left: 2em;
+              margin-right: 10px;
+              font-weight: 700;
             }
-            .mp-common-comps-order-channel-selector-wrap > header {
-              margin-right: 5px;
-              position: relative;
-              top: -3px;
+            .mp-select.el-select .el-input {
+              width: 114px;
             }
           }
           .el-input__inner {
-            border-radius: 0;
-            width: 120px;
             font-size: 12px;
           }
         }

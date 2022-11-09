@@ -1,7 +1,9 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
+import { IUser } from '@/store/modules/user/types';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
+import { IDepartment, IDepartmentLevelItem } from '../../DepartmentManage/js/types';
 import { IJobPost } from '../../JobPostManage/js/types';
 import { StaffStatusEnum } from './enums';
 import { StaffListCondition } from './StaffListCondition';
@@ -24,13 +26,55 @@ export class StaffManageClass {
 
   curEditStaff: IStaff | null = null
 
+  curEditIndex = -1
+
+  /** 是否展示网络设置相关 */
+  showIntranet = false
+
   /** 岗位列表 */
   jobPostList: IJobPost[] = []
+
+  /** 部门列表 暂时没有用到 */
+  departmentList: IDepartment[] = []
+
+  /** 部门分级列表 */
+  departmentLevelList: IDepartmentLevelItem[] = []
 
   async getJobPostList() {
     const resp = await api.getJobPermissionsList().catch(() => null);
     if (resp?.data.isSuccess) {
       this.jobPostList = resp.data.Data as IJobPost[];
+    }
+  }
+
+  async getDepartmentList() {
+    const resp = await api.getDepartmentList().catch(() => null);
+    if (resp?.data.isSuccess) {
+      const _list = resp.data.Data as IDepartment[];
+      this.departmentList = _list;
+      const level1List = _list.filter(item => item.Level === 1).map(i => ({ ...i, children: [] }));
+      level1List.unshift({
+        ID: -666, Name: '无', children: [], Level: 1, ParentID: -1,
+      });
+      const list = level1List.map(level1 => {
+        const _level1: IDepartmentLevelItem = { ...level1, children: [] };
+        const _level2list = _list.filter(item => item.Level === 2 && item.ParentID === level1.ID)
+          .map(item => ({ ...item, children: [] }));
+        _level2list.unshift({
+          ID: -666, Name: '无', children: [], Level: 2, ParentID: -666,
+        });
+        _level1.children = _level2list;
+        _level1.children.forEach(level2 => {
+          const _level3list = _list.filter(item => item.Level === 3 && item.ParentID === level2.ID);
+          _level3list.unshift({
+            ID: -666, Name: '无', Level: 3, ParentID: -666,
+          });
+          // eslint-disable-next-line no-param-reassign
+          level2.children = _level3list;
+        });
+        return _level1;
+      });
+      this.departmentLevelList = list;
     }
   }
 
@@ -110,7 +154,7 @@ export class StaffManageClass {
    * @returns
    * @memberof StaffManageClass
    */
-  async checkOrSetJobSubmit(item, index, Permission, callback) {
+  async checkOrSetJobSubmit(item: IStaff, index: number, Permission: IUser, callback) {
     if (!item || !item.StaffID || typeof index !== 'number') return;
 
     const resp = await api.getCheckStaffPassed(item).catch(() => null);
@@ -126,11 +170,7 @@ export class StaffManageClass {
         // 如果之前未审核，则修改审核状态为通过 并 补充审核时间为当前时间
         if (temp.Status === StaffStatusEnum.pending) {
           temp.Status = StaffStatusEnum.approved;
-          if (!temp.TimeRecord) {
-            temp.TimeRecord = { CheckTime: getTimeConvertFormat({ withHMS: true }) };
-          } else {
-            temp.TimeRecord.CheckTime = getTimeConvertFormat({ withHMS: true });
-          }
+          temp.TimeRecord.CheckTime = getTimeConvertFormat({ withHMS: true });
         }
 
         if (callback) callback();

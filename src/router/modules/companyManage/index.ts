@@ -36,6 +36,43 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/companyManage/StaffManage/StaffManageSetupPage.vue'),
     },
+    /* 部门管理
+    -------------------------------------- */
+    // {
+    //   path: '/DepartmentManage',
+    //   name: 'DepartmentManage',
+    //   meta: {
+    //     title: '部门管理',
+    //     requiresAuth: true,
+    //     icon: 'icon-yuangongliebiao iconfont',
+    //     pageName: 'DepartmentManagePage',
+    //   },
+    //   component: () => import('@/views/companyManage/DepartmentManage/DepartmentManagePage.vue'),
+    // },
+    /* 岗位管理
+    -------------------------------------- */
+    {
+      path: '/PostManageList',
+      name: 'PostManageList',
+      meta: {
+        title: '岗位管理',
+        requiresAuth: true,
+        icon: 'icon-yuangongliebiao iconfont',
+        pageName: 'PostManageListPage',
+      },
+      component: () => import('@/views/companyManage/JobPostManage/PostManageListPage.vue'),
+    },
+    {
+      path: '/PostManageSetup/:PositionID',
+      name: 'PostManageSetup',
+      meta: {
+        title: '岗位权限设置',
+        requiresAuth: true,
+        hideMenu: true,
+        pageName: 'PostManageSetupPage',
+      },
+      component: () => import('@/views/companyManage/JobPostManage/PostManageSetupPage.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {
@@ -48,6 +85,20 @@ const routeTree:RouteTreeType = {
       name: 'StaffList',
       children: [
         { name: 'StaffSetup', children: [] },
+      ],
+    },
+    /* 部门管理
+    -------------------------------------- */
+    {
+      name: 'DepartmentManage',
+      children: [],
+    },
+    /* 岗位管理
+    -------------------------------------- */
+    {
+      name: 'PostManageList',
+      children: [
+        { name: 'PostManageSetup', children: [] },
       ],
     },
   ],

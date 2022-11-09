@@ -31,6 +31,7 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import StaffSetupLeftComp from './Comps/StaffSetupLeftComp.vue';
 import { Staff } from './js/StaffClass';
+import { IStaff } from './js/types';
 
 const router = useRouter();
 const companyStore = useCompanyStore();
@@ -79,10 +80,13 @@ const submit = async () => {
     }
     result.HeadPic = staffForm.value.HeadPic;
     // 信息提取转换(性别、出生日期)
-    const temp = result.getSubmitData();
+    const temp: Partial<IStaff | null> = result.getSubmitData();
     if (!temp) {
       MpMessage.error({ title: '保存失败', msg: '身份证号解析失败' });
       return;
+    }
+    if (!StaffManagePageData.value.showIntranet) {
+      delete temp.UseIntranet;
     }
     // 提交
     const resp = await api.getStaffBaseInfoSave(temp).catch(() => null);

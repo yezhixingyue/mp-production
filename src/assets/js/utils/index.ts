@@ -28,3 +28,17 @@ export const getNameByIDAndList = (ids: IdType|IdType[], list: IListItem[], opti
   const t = list.find(it => it[options.value] === id);
   return t && typeof t[options.key] === 'string' ? t[options.key] : '';
 };
+
+/**
+ * 滚动到顶部
+ *
+ * @param {*} element
+ */
+export const scrollToTop = element => element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+/**
+  * 滚动到底部
+  *
+  * @param {*} element
+  */
+export const scrollToBottom = element => element.scrollIntoView({ behavior: 'smooth', block: 'end' });

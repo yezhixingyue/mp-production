@@ -7,4 +7,5 @@
 export interface IJobPost {
   PositionID: string
   PositionName: string
+  key?: string
 }
