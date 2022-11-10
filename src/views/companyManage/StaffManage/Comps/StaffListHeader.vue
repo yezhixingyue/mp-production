@@ -31,6 +31,7 @@
       />
       <EpCascaderWithLevel3
         title="管理部门"
+        withNullValue
         :setCondition='(e) => props.StaffManagePageData.setCondition(e)'
         :levelTreeList='props.StaffManagePageData.departmentLevelList'
         :First='props.StaffManagePageData.condition.Department.FirstDepartmentID'

@@ -9,10 +9,13 @@
          @keydown="onClick(it)"
          @focus="() => {}"
          :class="{
-          active: activeIds.includes(it[defaultProps.ID]) || (activeIds.length===0&&it[defaultProps.ID]===''&&withEmpty),
-          selected: selectedIds.includes(it[defaultProps.ID])||(selectedIds.length===0&&it[defaultProps.ID]===''&&withEmpty)
+          active: (curLvActiveID===it[defaultProps.ID]) || (activeIds.length===0&&it[defaultProps.ID]===''&&withEmpty),
+          selected: (curLvSelectID===it[defaultProps.ID]&&(activePathString===selectPathString||rowIndex===0))
+          || (selectedIds.length===0&&it[defaultProps.ID]===''&&withEmpty),
         }">
-         <el-icon class="el-icon-check" v-show="(selectedIds.includes(it[defaultProps.ID]) && selectedIds[selectedIds.length - 1] === it[defaultProps.ID])
+         <el-icon class="el-icon-check"
+         v-show="((curLvSelectID===it[defaultProps.ID] && selectedIds[selectedIds.length - 1] === it[defaultProps.ID])
+          && isLast && activePathString === selectPathString)
            || (selectedIds.length === 0 && it[defaultProps.ID] === ''&&withEmpty)"><Check /></el-icon>
         <span class="label">{{it[defaultProps.Name]}}</span>
         <el-icon class="el-icon-arrow-right" v-show="it.children && it.children.length > 0 && !isLast"><ArrowRight /></el-icon>
@@ -36,6 +39,7 @@ export default {
       type: Array,
       default: () => [],
     },
+    rowIndex: {},
     withEmpty: {
       type: Boolean,
       default: false,
@@ -49,8 +53,28 @@ export default {
       type: Boolean,
       default: false,
     },
+    withNullValue: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['hoverItem', 'itemClick'],
+  computed: {
+    curLvActiveID() {
+      return this.activeIds[this.rowIndex] || '';
+    },
+    curLvSelectID() {
+      return this.selectedIds[this.rowIndex] || '';
+    },
+    selectPathString() {
+      const list = this.selectedIds.slice(0, this.rowIndex);
+      return JSON.stringify(list);
+    },
+    activePathString() {
+      const list = this.activeIds.slice(0, this.rowIndex);
+      return JSON.stringify(list);
+    },
+  },
   methods: {
     onmouseenter(it) {
       this.$emit('hoverItem', it);

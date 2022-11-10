@@ -20,6 +20,7 @@
           :Second='it.First.SecondDepartmentID'
           :Third='it.First.ThirdDepartmentID'
           :withEmpty="false"
+          withNullValue
           :fiexdWidth="0"
           onlyLastValid
           title="部门"

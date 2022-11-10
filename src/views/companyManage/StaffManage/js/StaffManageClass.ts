@@ -61,13 +61,13 @@ export class StaffManageClass {
         const _level2list = _list.filter(item => item.Level === 2 && item.ParentID === level1.ID)
           .map(item => ({ ...item, children: [] }));
         _level2list.unshift({
-          ID: -666, Name: '无', children: [], Level: 2, ParentID: -666,
+          ID: -666, Name: '无', children: [], Level: 2, ParentID: level1.ID,
         });
         _level1.children = _level2list;
         _level1.children.forEach(level2 => {
           const _level3list = _list.filter(item => item.Level === 3 && item.ParentID === level2.ID);
           _level3list.unshift({
-            ID: -666, Name: '无', Level: 3, ParentID: -666,
+            ID: -666, Name: '无', Level: 3, ParentID: level2.ID,
           });
           // eslint-disable-next-line no-param-reassign
           level2.children = _level3list;
@@ -213,6 +213,7 @@ export class StaffManageClass {
           // 如果是离职应更新离职时间
           if (expectStatus === StaffStatusEnum.leaved) {
             this.dataList[index].TimeRecord.OutTime = getTimeConvertFormat({ withHMS: true });
+            this.dataList[index].PositionList = [];
           } else if (expectStatus === StaffStatusEnum.approved) {
             this.dataList[index].TimeRecord.OutTime = '';
           }

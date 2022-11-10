@@ -8,6 +8,7 @@
     :withEmpty="withEmpty && !onlyLastValid"
     :title="title"
     :level="level"
+    :withNullValue="withNullValue"
     :defaultProps="defaultProps"
     v-model="EpCascaderAreaValue"
    />
@@ -57,7 +58,7 @@ export default {
     },
     level: {
       type: Number,
-      default: undefined,
+      default: 3,
     },
     onlyLastValid: {
       type: Boolean,
@@ -74,6 +75,10 @@ export default {
         Name: 'Name',
         children: 'children',
       }),
+    },
+    withNullValue: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -93,10 +98,10 @@ export default {
         const [_First, _Second, _Third] = ids;
         const First = _First || _First === 0 ? _First : '';
         // eslint-disable-next-line no-nested-ternary
-        const Second = _Second || _Second === 0 ? _Second : (First === -666 ? -666 : '');
+        const Second = _Second || _Second === 0 ? _Second : (First === -666 && this.withNullValue ? -666 : '');
         // eslint-disable-next-line no-nested-ternary
-        const Third = _Third || _Third === 0 ? _Third : (Second === -666 ? -666 : '');
-        if (Third === -666 && this.First === First && this.Second === Second && this.Third === Third) return;
+        const Third = _Third || _Third === 0 ? _Third : (Second === -666 && this.withNullValue ? -666 : '');
+        if (this.First === First && this.Second === Second && this.Third === Third) return;
         if (this.typeList[0]) this.setCondition([this.typeList[0], First]);
         if (this.typeList[1]) this.setCondition([this.typeList[1], Second]);
         if (this.typeList[2]) this.setCondition([this.typeList[2], Third]);

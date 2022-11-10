@@ -40,6 +40,9 @@ export const companyApis = {
   getDepartmentSave(data) { //  部门保存
     return request({ method: 'POST', url: '/Api/Department/Save', data });
   },
+  getDepartmentRemove(data) { //  部门删除 POST /Api/Department/Remove
+    return request({ method: 'POST', url: '/Api/Department/Remove', data });
+  },
   getDepartmentOrder(data) { //  部门排序保存
     return request({ method: 'POST', url: '/Api/Department/Order', data });
   },

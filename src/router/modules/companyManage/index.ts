@@ -38,17 +38,17 @@ const routes: RouteRecordRaw = {
     },
     /* 部门管理
     -------------------------------------- */
-    // {
-    //   path: '/DepartmentManage',
-    //   name: 'DepartmentManage',
-    //   meta: {
-    //     title: '部门管理',
-    //     requiresAuth: true,
-    //     icon: 'icon-yuangongliebiao iconfont',
-    //     pageName: 'DepartmentManagePage',
-    //   },
-    //   component: () => import('@/views/companyManage/DepartmentManage/DepartmentManagePage.vue'),
-    // },
+    {
+      path: '/DepartmentManage',
+      name: 'DepartmentManage',
+      meta: {
+        title: '部门管理',
+        requiresAuth: true,
+        icon: 'icon-yuangongliebiao iconfont',
+        pageName: 'DepartmentManagePage',
+      },
+      component: () => import('@/views/companyManage/DepartmentManage/DepartmentManagePage.vue'),
+    },
     /* 岗位管理
     -------------------------------------- */
     {

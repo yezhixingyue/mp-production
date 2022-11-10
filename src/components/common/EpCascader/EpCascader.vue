@@ -19,7 +19,11 @@
           :list="it.list"
           :activeIds="activeIds"
           :selectedIds="modelValue"
+          :rowIndex="i"
+          :curLvActiveID="activeIds[i]"
+          :curLvSelectID="modelValue[i]"
           :withEmpty="withEmpty"
+          :withNullValue="withNullValue"
           :onlyLastValid="onlyLastValid"
           :defaultProps="defaultProps"
           :isLast="level ? i >= (level - 1) : false"
@@ -87,6 +91,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    withNullValue: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     ListComp,
@@ -126,6 +134,7 @@ export default {
     },
     open() {
       this.visible = true;
+      this.activeIds = [];
       this.setInitState();
     },
     onClick() {
@@ -144,7 +153,7 @@ export default {
     },
     async handleLeftChange() { // 处理左右位置的变化
       if (!this.popWrap) {
-        this.popWrap = this.$refs.oPop.$refs.popper;
+        this.popWrap = this.$refs.oPop.popperRef.contentRef;
       }
       if (!this.popWrap) return;
       await this.$nextTick();
@@ -177,9 +186,9 @@ export default {
               }
             }
           });
-          // 此处处理left值的变化
-          this.handleLeftChange();
         }
+        // 此处处理left值的变化
+        this.handleLeftChange();
       }
     },
     onItemHover(index, it) {
