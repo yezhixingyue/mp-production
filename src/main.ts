@@ -5,6 +5,7 @@ import './assets/css/element-variarbles.scss';
 import print from 'vue3-print-nb';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import api from './api';
+import './api/mock';
 import App from './App.vue';
 import { getGoBackFun, router } from './router';
 import format from './assets/js/filters/dateFilters';

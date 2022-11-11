@@ -278,12 +278,12 @@ export default {
         user-select: none;
         > i {
           margin-right: 5px;
-          &.iconfont {
+        }
+        .iconfont {
             font-size: 15px;
             margin-left: 4px;
             margin-right: 10px;
           }
-        }
         > i, > span {
           color: #fff;
         }
@@ -350,9 +350,6 @@ export default {
         transform: rotateZ(0deg) !important;
       }
     }
-    .el-menu--collapse {
-      width: 55px;
-    }
     &.collapsed {
       width: 55px;
     }
@@ -380,5 +377,12 @@ export default {
   .el-menu--vertical > .el-menu .el-menu-item > i.el-icon {
     text-align: left;
     margin-left: 5px;
+  }
+  .el-menu--popup-container {
+    .el-menu-item {
+      i {
+        margin-right: 10px;
+      }
+    }
   }
 </style>

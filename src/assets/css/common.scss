@@ -6,6 +6,12 @@
   }
 }
 
+@for $num from 1 through 30 {
+  .scale-#{$num} {
+    transform: scale(#{$num / 10});
+  };
+}
+
 @for $num from 0 through 100 {
   .ml-#{$num} {
     margin-left: #{$num}px
@@ -33,6 +39,9 @@
   };
   .ft-#{$num} {
     font-size: #{$num}px;
+  }
+  .ft-f-#{$num} {
+    font-size: #{$num}px !important;
   }
 }
 

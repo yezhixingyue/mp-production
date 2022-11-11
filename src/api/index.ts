@@ -6,6 +6,7 @@ import MaterialStorage from './modules/materialStorageApis';
 import PasteupSetting from './modules/pasteupSettingApis';
 import { companyApis } from './modules/companyApis';
 import { otherSettingApis } from './modules/otherApis';
+import { productionManageApis } from './modules/productionManageApis';
 import request from './request/request';
 
 const api = {
@@ -49,6 +50,8 @@ const api = {
   ...otherSettingApis,
   // 公司管理 api
   ...companyApis,
+  // 生产管理 api
+  ...productionManageApis,
 };
 
 export default api;

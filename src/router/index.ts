@@ -51,6 +51,10 @@ const routes: Array<RouteRecordRaw> = [
 
 export const router = createRouter({
   history: createWebHashHistory(process.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) { // 记录页面滚动位置
+    // console.log(to, from);
+    return savedPosition || { top: 0 };
+  },
   routes,
 });
 

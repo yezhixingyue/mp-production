@@ -7,6 +7,7 @@ import productionResources from './productionResources';
 import pasteupSettingRouteRoot from './pasteupSetting';
 import otherSettingRouteRoot from './other';
 import companyManageRouteRoot from './companyManage';
+import productionManageRouteRoot from './productionManage';
 
 export const moduleRoutes: RouteRecordRaw[] = [
   {
@@ -27,6 +28,7 @@ export const moduleRoutes: RouteRecordRaw[] = [
     },
     component: LoginView,
   },
+  productionManageRouteRoot.routes,
   productionResources.routes,
   pasteupSettingRouteRoot.routes,
   materialWarehouseRouteRoot.routes,
@@ -49,6 +51,7 @@ const routeTree:RouteTreeType[] = [
   pasteupSettingRouteRoot.routeTree,
   otherSettingRouteRoot.routeTree,
   companyManageRouteRoot.routeTree,
+  productionManageRouteRoot.routeTree,
 ];
 
 export default {

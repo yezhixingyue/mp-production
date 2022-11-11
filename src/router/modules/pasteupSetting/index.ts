@@ -9,7 +9,7 @@ const routes: RouteRecordRaw = {
   meta: {
     title: '拼版设置',
     requiresAuth: true,
-    icon: 'iconfont icon-wuliaocangchu',
+    icon: 'iconfont icon-wuliaoziyuanbao',
   },
   children: [
     // 拼版模板

@@ -44,7 +44,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '部门管理',
         requiresAuth: true,
-        icon: 'icon-yuangongliebiao iconfont',
+        icon: 'icon-bumenguanli iconfont scale-11',
         pageName: 'DepartmentManagePage',
       },
       component: () => import('@/views/companyManage/DepartmentManage/DepartmentManagePage.vue'),
@@ -57,7 +57,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '岗位管理',
         requiresAuth: true,
-        icon: 'icon-yuangongliebiao iconfont',
+        icon: 'icon-gangwei scale-9 iconfont',
         pageName: 'PostManageListPage',
       },
       component: () => import('@/views/companyManage/JobPostManage/PostManageListPage.vue'),

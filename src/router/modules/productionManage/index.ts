@@ -3,38 +3,38 @@ import CommonNullView from '@/components/Layout/CommonNullView.vue';
 import { RouteTreeType } from '@/router/modules/routerTypes';
 
 const routes: RouteRecordRaw = {
-  path: '/otherSetup',
-  name: 'otherSetup',
+  path: '/productionManage',
+  name: 'productionManage',
   component: CommonNullView,
   meta: {
-    title: '其它设置',
+    title: '生产管理',
     requiresAuth: true,
-    icon: 'iconfont icon-guanli',
+    icon: 'iconfont icon-shengchanguanli scale-9',
   },
   children: [
     /* 转换器
     -------------------------------------- */
     {
-      path: '/adapters',
-      name: 'adapters',
+      path: '/EquipmentStatus',
+      name: 'EquipmentStatus',
       meta: {
-        title: '转换服务器',
+        title: '设备状态',
         requiresAuth: true,
-        icon: 'icon-zhuanhuanqi scale-13 iconfont',
-        pageName: 'AdaptersManagePage',
+        icon: 'icon-shebeizhuangtai iconfont scale-9',
+        pageName: 'EquipmentStatusListPage',
       },
-      component: () => import('@/views/otherSetup/AdaptersManage/AdaptersManagePage.vue'),
+      component: () => import('@/views/productionManage/EquipmentStatus/EquipmentStatusListPage.vue'),
     },
   ],
 };
 const routeTree:RouteTreeType = {
-  name: 'otherSetup',
+  name: 'productionManage',
   isModuleRoot: true,
   children: [
     /* 转换器
     -------------------------------------- */
     {
-      name: 'adapter',
+      name: 'EquipmentStatus',
       children: [],
     },
   ],

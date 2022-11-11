@@ -3,14 +3,14 @@ $pink: #ff3769;
 $origin: #f4a307;
 $green: #80c269;
 $gray: #989898;
+$--color-primary: #26bcf9;
 
-$primary: $blue !default;
+$primary: $--color-primary !default;
 $danger: $pink !default;
 $warning: $origin !default;
 $success: $green !default;
 
 
- $--color-primary: #26bcf9;
  $--color-white: #ffffff;
  $--color-primary-light: #35dff9;
  $--color-primary-lighter: #63f9d5;

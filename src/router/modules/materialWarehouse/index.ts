@@ -11,7 +11,7 @@ const routes: RouteRecordRaw = {
   meta: {
     title: '物料仓储',
     requiresAuth: true,
-    icon: 'iconfont icon-wuliaocangchu',
+    icon: 'iconfont icon-kucunguanli',
   },
   children: [
     {
@@ -213,7 +213,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '仓库管理',
         requiresAuth: true,
-        icon: 'iconfont icon-cangku_kucunxiangqing',
+        icon: 'iconfont icon-cangku_kucunxiangqing scale-12',
         pageName: 'materialWarehouseManagePage',
         prevPage: 'materialClassifyManage',
       },

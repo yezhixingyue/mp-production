@@ -69,7 +69,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '设备组',
         requiresAuth: true,
-        icon: 'iconfont icon-shebeizuhe',
+        icon: 'iconfont icon-shebeizuhe scale-14',
         pageName: 'equipmentGroupManagePage',
       },
       component: () => import('@/views/productionResources/equipmentGroup/equipmentGroupManagePage.vue'),
