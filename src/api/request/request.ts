@@ -29,7 +29,7 @@ const setAuthorization = <D>(config: IDataRequestConfig<D>) => {
  * @param {IDataRequestConfig} config
  * @returns {Promise}
  */
-const request = <D, T = unknown>(config: IDataRequestConfig<D>): Promise<AxiosResponse<IResponse<T>>> => {
+const request = <T = unknown, D = unknown>(config: IDataRequestConfig<D>): Promise<AxiosResponse<IResponse<T>>> => {
   const _configWithAuth = setAuthorization<D>(config);
   return instance.request<IResponse<T>>(_configWithAuth);
 };

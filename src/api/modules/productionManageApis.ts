@@ -1,9 +1,10 @@
+import { IEquipmentStatusItem } from '@/views/productionManage/EquipmentStatus/js/types';
 import request from '../request/request';
 
 export const productionManageApis = {
   /* 生产管理
   --------------------------------- */
-  getEquipmentStatusList(data) { // POST 设备状态列表
-    return request({ method: 'POST', url: '/Api/EquipmentStatus/List', data });
+  getEquipmentStatusList(data: { ClassID: number | '' }) { // POST 设备状态列表
+    return request<IEquipmentStatusItem[]>({ method: 'POST', url: '/Api/EquipmentStatus/List', data });
   },
 };

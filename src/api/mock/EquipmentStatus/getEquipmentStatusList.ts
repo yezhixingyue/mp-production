@@ -1,39 +1,58 @@
+import { EquipmentTaskStatusEnum } from '@/views/productionManage/EquipmentStatus/js/enums';
+import { ITask } from '@/views/productionManage/EquipmentStatus/js/types';
 import Mock from 'mockjs';
 
-export default (e) => {
-  const DataNumber = 112;
-  const condition = JSON.parse(e.body);
-  let count = 10;
-  let InvoiceID = 100385916;
-  if (condition) {
-    const { Page, PageSize } = condition;
-    if (Page && PageSize) {
-      count = PageSize;
-      if (Math.ceil(DataNumber / PageSize) <= Page) {
-        count = (DataNumber % PageSize > 0) ? DataNumber % PageSize : PageSize;
-      }
-      InvoiceID += Page * 10;
+export default () => {
+  const TaskList: ITask[] = [];
+
+  for (let i = 0; i < 12; i += 1) {
+    const h = new Date().getHours() + i * 2 + 8;
+
+    const BeginTime = `${new Date(new Date().setHours(h)).toISOString().slice(0, 14)}05:00`;
+    const EndTime = `${new Date(new Date().setHours(h + 2)).toISOString().slice(0, 14)}00:00`;
+
+    let Status = EquipmentTaskStatusEnum.inWorking;
+
+    if (i > 0) {
+      Status = EquipmentTaskStatusEnum.canWorking;
     }
+
+    if (i > 3) {
+      Status = EquipmentTaskStatusEnum.needMaterial;
+    }
+
+    TaskList.push({
+      ID: 102536221 + i,
+      ProductName: '铜版纸200克 5000张',
+      Status,
+      BeginTime,
+      EndTime,
+      Duration: 2,
+    });
   }
-  const label = `Data|${count}`;
-  const temp = Mock.mock({
+
+  const result = Mock.mock({
     Status: 1000,
     Message: '',
-    DataNumber,
+    DataNumber: 20,
     VersionCode: 0,
-    [label]: [
+    'Data|20': [
       {
-        'InvoiceID|+1': InvoiceID,
-        InvoiceCategoryName: '宣传印刷品',
-        'InvoiceTitle|1': ['三河湾信息科技', '个人', '影印设计', '郑州名片之家电子商务有限公司'],
-        'InvoiceType|1-2': 1,
-        'InvoiceAmount|1-2000': 0,
-        CreateTime: '2022-06-07T07:43:16.968Z',
-        OperateTime: '2022-06-07T07:43:16.968Z',
-        'InvoiceStatus|0-4': 10,
+        ID: Mock.mock('@guid'),
+        'Name|+1': ['1号机', '2号机', '3号机', '4号机', '5号机', '6号机', '7号机', '8号机', '9号机', '10号机', '11号机', '12号机', '13号机'],
+        ClassName: '印刷机',
+        'GroupName|1': ['G37', 'G46', 'CD102', 'SM74', 'XL145', 'CD74', 'LS40', '紫名'],
+        'Status|1-4': 1,
+        Operater: {
+          ID: '1223',
+          Name: '王大锤',
+        },
+        'TaskNumber|30-150': 40,
+        TaskList,
+        Error: '报告:机器成了变形金刚！', // 仅在错误状态显示
       },
     ],
   });
 
-  return temp;
+  return result;
 };

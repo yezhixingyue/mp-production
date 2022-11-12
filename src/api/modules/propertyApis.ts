@@ -3,7 +3,7 @@ import { IGetPropOptions } from '@/components/common/ConstraintsComps/TypeClass/
 import request from '../request/request';
 
 export const propertyApis = {
-  getPropertyList(data) {
-    return request<IGetPropOptions, PropertyListItemType[]>({ method: 'POST', url: '/Api/Property/List', data });
+  getPropertyList(data: IGetPropOptions) {
+    return request<PropertyListItemType[]>({ method: 'POST', url: '/Api/Property/List', data });
   },
 };
