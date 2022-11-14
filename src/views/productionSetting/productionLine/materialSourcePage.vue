@@ -12,8 +12,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column
-          show-overflow-tooltip prop="ContactWay" label="来源" min-width="308">
+          <el-table-column prop="ContactWay" label="来源" min-width="308">
             <template #default="scope">
               <span class="source">
                 <el-radio-group v-model="scope.row.SourceType">
@@ -22,7 +21,11 @@
                   <el-radio :label="3">其他工序</el-radio>
                 </el-radio-group>
                 <template v-if="scope.row.SourceType === 3">
-                  <div class="Process-list" v-if="scope.row.SourceWorkIDS && scope.row.SourceWorkIDS.length">
+                  <div
+                    class="Process-list"
+                    v-if="scope.row.SourceWorkIDS && scope.row.SourceWorkIDS.length"
+                    :title="scope.row.SourceWorkIDS.map(it => getProcessName(it)).join('\r\n或 ')"
+                  >
                     <template v-for="(item,i) in scope.row.SourceWorkIDS" :key="item">
                       {{i === 0 ? '': ' 或 '}}
                       <span>
@@ -168,9 +171,9 @@ onMounted(() => {
     if (temp.MaterialSources) {
       temp.MaterialSources.forEach((it, i) => {
         // 有争议 it.SourceType可能是0 （组合生产线的情况）但在生产线不会
-        if (!it.SourceType) {
-          temp.MaterialSources[i].SourceType = 1;
-        }
+        // if (!it.SourceType) {
+        //   temp.MaterialSources[i].SourceType = 1;
+        // }
       });
     }
     processInfo.value = temp;
@@ -214,6 +217,9 @@ export default {
       .source{
         display: flex;
         line-height: 32px;
+        .el-radio-group {
+          flex-wrap: nowrap;
+        }
         .Process-list{
           padding: 0 20px;
           padding-right: 0;

@@ -114,5 +114,5 @@ export interface IProductionLineWorkings {
 export interface IWorkingProcedureList {
   LineType: number,
   TemplateIDS: string[],
-  ProductionLineWorkings: IProductionLineWorkings[],
+  ProductionLineWorkings: IProductionLineWorkings[] | null,
 }

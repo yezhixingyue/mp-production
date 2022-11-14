@@ -20,7 +20,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '生产线',
         requiresAuth: true,
-        icon: 'iconfont icon-xinxi',
+        icon: 'iconfont icon-shengchanxian',
         pageName: 'productionLinePage',
       },
       component: () => import('@/views/productionSetting/productionLine/productionLinePage.vue'),
@@ -105,7 +105,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '组合生产线',
         requiresAuth: true,
-        icon: 'iconfont icon-xinxi',
+        icon: 'iconfont icon-zuheshengchanxian',
         pageName: 'combinationProductionLinePage',
       },
       component: () => import('@/views/productionSetting/combinationProductionLine/combinationProductionLinePage.vue'),
@@ -190,7 +190,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '工序',
         requiresAuth: true,
-        icon: 'iconfont icon-xinxi',
+        icon: 'iconfont icon-gongxu',
         pageName: 'processListPage',
       },
       component: () => import('@/views/productionSetting/process/processListPage.vue'),
@@ -215,7 +215,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '发货班次',
         requiresAuth: true,
-        icon: 'iconfont icon-xinxi',
+        icon: 'iconfont icon-fahuobanci',
         pageName: 'deliveryTimeListPage',
       },
       component: () => import('@/views/productionSetting/deliveryTimeManage/deliveryTimeListPage.vue'),

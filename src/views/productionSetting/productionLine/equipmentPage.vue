@@ -19,9 +19,9 @@
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
             <template v-if="!scope.row.IsSpecialColor">
-              <mp-button type="info" link @click="ToPutOutPage(scope.row)">申放</mp-button>
-              <mp-button type="info" link @click="TocCpacityPage(scope.row)">设备产能</mp-button>
-              <mp-button type="info" link
+              <mp-button type="primary" class="ft-12" link @click="ToPutOutPage(scope.row)">申放</mp-button>
+              <mp-button type="primary" class="ft-12" link @click="TocCpacityPage(scope.row)">设备产能</mp-button>
+              <mp-button type="danger" class="ft-12" link
                 @click="delEquipment(scope.row)">删除</mp-button>
             </template>
           </template>
@@ -151,7 +151,8 @@ const removeEquipment = (ID) => {
     ClassIt.EquipmentGroups.forEach((GroupIt, GroupIti) => {
       GroupIt.Equipments.forEach((it, iti) => {
         if (it.ID === ID) {
-          processInfo.value?.ClassEquipmentGroups[ClassIti].EquipmentGroups[GroupIti].Equipments.splice(iti, 1);
+          const _it = it;
+          _it.LineEquipmentID = '';
         }
       });
     });
@@ -161,6 +162,7 @@ const delEquipment = (item) => {
   messageBox.warnCancelBox('确定要删除此生产设备吗？', `${item.Name}`, () => {
     api.getProductionLinetEquipmentRemove(item.LineEquipmentID).then(res => {
       if (res.data.Status === 1000) {
+        setStorage();
         removeEquipment(item.ID);
       }
     });
@@ -266,7 +268,7 @@ export default {
     height: 50px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
     padding-bottom: 50px;
     .el-button{
       width: 120px;

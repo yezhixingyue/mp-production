@@ -192,6 +192,7 @@ const getTreeTextDisplayContent = (value, allAdAreaTreeList, type, defaultLabels
   if (type === 'area') title = '全部区域';
   if (type === 'product') title = '全部产品';
   const labelName = type === 'product' ? 'ClassName' : 'Name';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const list:any[] = [];
   if (Array.isArray(value) && value.length > 0) {
     value.forEach(it => { // 可能为省全部、市全部 也可能为单个城区

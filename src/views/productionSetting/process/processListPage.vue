@@ -10,16 +10,16 @@
       <el-table fit stripe :data="Data.processList"
        style="width: 100%">
         <el-table-column
-        show-overflow-tooltip prop="Name" label="工序" min-width="128" />
+        show-overflow-tooltip prop="Name" label="工序" min-width="160" />
         <el-table-column
-        show-overflow-tooltip prop="ReportMode" label="报工方式" min-width="136">
+        show-overflow-tooltip prop="ReportMode" label="报工方式" min-width="130">
           <template #default="scope">
             <span v-if="scope.row.ReportMode === 0">块报工</span>
             <span v-if="scope.row.ReportMode === 1">大版报工</span>
             <span v-if="scope.row.ReportMode === 2">订单报工</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="工序类型" min-width="156">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="工序类型" min-width="130">
           <template #default="scope">
             <span v-if="scope.row.Type === 0">普通工序</span>
             <span v-if="scope.row.Type === 1">印刷工序</span>
@@ -28,28 +28,28 @@
             <span v-if="scope.row.Type === 4">拆分工序</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="333">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="310">
           <template #default="scope">
             {{getEquipmentGroupsNames(scope.row.EquipmentGroups)}}
           </template>
 
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="198">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="200">
           <template #default="scope">
             {{getInfoName(scope.row.Relations, 0)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="196">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="200">
           <template #default="scope">
             {{getInfoName(scope.row.Relations,1)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="170">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="200">
           <template #default="scope">
             {{getMaterialName(scope.row.Relations)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="需要大版文件" min-width="204">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="需要大版文件" min-width="200">
           <template #default="scope">
             <template v-if="scope.row.TemplateType === 0"> </template>
             <template v-if="scope.row.TemplateType === 1">
@@ -62,7 +62,7 @@
           </template>
 
         </el-table-column>
-        <el-table-column prop="name" label="操作" min-width="240">
+        <el-table-column prop="name" label="操作" min-width="186">
           <template #default="scope">
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="ToProcess(scope.row)">

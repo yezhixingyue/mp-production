@@ -2,7 +2,7 @@
   <div class="cascader-by-area">
     <span class="cascader-by-area-label">区域：</span>
     <el-cascader
-    class="show-line"
+      class="show-line"
       v-model="value"
       :options="DistrictTreeList"
       :props="props"

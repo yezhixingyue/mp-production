@@ -178,6 +178,9 @@ const onBlur = () => {
           margin-bottom: 30px;
         }
       }
+      .el-form-item__label {
+        line-height: 30px;
+      }
     }
   }
 }

@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import ConditionTextDisplayComp from '@/components/productionSetting/putOut/ConditionTextDisplayComp.vue';
+import ConditionTextDisplayComp from '@/components/common/ConstraintsComps/ConstraintsTable/ConditionTextDisplayComp.vue';
 import {
   onMounted, computed, getCurrentInstance, ref, Ref, onActivated,
 } from 'vue';
@@ -53,7 +53,7 @@ import { useRoute, useRouter } from 'vue-router';
 import api from '@/api';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
-import { transformConstraintTableList } from '@/components/productionSetting/putOut/utils';
+import { transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
 import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();

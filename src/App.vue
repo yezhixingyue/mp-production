@@ -36,7 +36,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   // text-align: center;
-  color: #2c3e50;
+  color: #444;
   display: flex;
   width: 100%;
   height: 100%;
@@ -67,7 +67,7 @@ nav {
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #444;
 
     &.router-link-exact-active {
       color: #42b983;

@@ -334,8 +334,8 @@ const AddLine = () => {
 const addPrcess = () => {
   Data.addPrcessFrom.ID = actionLine.value?.ID || '';
   if (ProductionLineData.value) {
-    Data.addPrcessFrom.WordIDS = ProductionLineData.value.ProductionLineWorkings
-      .filter(it => PrcessList.value.find(item => item.ID === it.WorkID)).map(it => it.WorkID);
+    const _list = ProductionLineData.value.ProductionLineWorkings || [];
+    Data.addPrcessFrom.WordIDS = _list.filter(it => PrcessList.value.find(item => item.ID === it.WorkID)).map(it => it.WorkID);
   }
   // 格式化已经添加的工序
   addPrcessShow.value = true;
@@ -343,8 +343,8 @@ const addPrcess = () => {
 
 const editLine = () => {
   if (actionLine.value) {
-    const CombinationWordIDS = ProductionLineData.value?.ProductionLineWorkings
-      .filter(item => combinationPrcessList.value.find(it => it.ID === item.WorkID)).map(it => it.WorkID);
+    const _list = ProductionLineData.value?.ProductionLineWorkings || [];
+    const CombinationWordIDS = _list.filter(item => combinationPrcessList.value.find(it => it.ID === item.WorkID)).map(it => it.WorkID);
     const temp = toRaw(actionLine.value);
     temp.CombinationWordIDS = CombinationWordIDS || [];
     Data.addLineFrom = temp;

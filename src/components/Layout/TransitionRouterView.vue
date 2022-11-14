@@ -101,6 +101,8 @@ export default {
   user-select: none;
   width: 100%;
   pointer-events: none;
+  max-width: none;
+  box-sizing: border-box;
 }
 
 .fade-transform-enter {

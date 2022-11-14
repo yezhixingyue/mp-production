@@ -33,37 +33,27 @@
                 {{getEquipmentText(item)}}
               </span>
               <span class="operate">
-                <mp-button type="primary" link @click="ToEquipment(item)">选择设备/工厂</mp-button>
-                <mp-button type="primary" link @click="ToMaterialSource(item)">物料来源</mp-button>
-                <mp-button type="primary" link @click="delLineWorking(item)">删除</mp-button>
+                <mp-button type="primary" class="ft-12" link @click="ToEquipment(item)">选择设备/工厂</mp-button>
+                <mp-button type="primary" class="ft-12" link :disabled="item.MaterialSources.length===0" @click="ToMaterialSource(item)">物料来源</mp-button>
+                <mp-button type="danger" class="ft-12" link @click="delLineWorking(item)">删除</mp-button>
               </span>
             </div>
             <!-- 物料来源 -->
-            <div class="material-source" v-if="item.MaterialSources && item.MaterialSources.length">
+            <div class="material-source" v-if="item.MaterialSources">
               <!-- {{item.MaterialSources}} -->
               <template v-for="material in item.MaterialSources" :key="material.MaterialTypeID">
                 <p>{{getMaterialName(material.MaterialTypeID)}}：
                   <span>
-                    来自  {{getSourceWork(material).join('、')}}
+                    {{getSourceWork(material)}}
+                    <i v-if="!getSourceWork(material)" class="is-gray">物料来源未设置</i>
                   </span>
                 </p>
               </template>
-            </div>
-          </li>
-          <!-- <li class="table-main">
-            <div class="process-item">
-              <span class="process">工序</span>
-              <span class="equipment">设备/外协工厂</span>
-              <span class="operate">操作</span>
-            </div>
-            <div class="material-source">
-              <p>纸张：
-                <span>
-                  来自  裁切、压点线、打 码、压痕、压凹、激凸、打孔、划线、喷码、写磁、圆角
-                </span>
+              <p v-if="item.MaterialSources.length === 0">
+                <span class="is-gray">暂无物料</span>
               </p>
             </div>
-          </li> -->
+          </li>
         </ul>
         <div class="matters-need-attention">
           <span>注意事项：</span>
@@ -78,24 +68,27 @@
       <div class="right">
         <mp-button type="primary" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
         <p class="set-slit">
-          <mp-button type="primary" link @click="setSplit">设置分切工序</mp-button>
+          <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-14"></i>设置分切工序</mp-button>
         </p>
         <p class="status">
           当前状态：<span>不可用</span>
-          <mp-button type="primary" link @click="lineOpen">设为可用</mp-button>
+          <mp-button type="primary" link @click="lineOpen">
+            <el-icon class="mr-5" style="transform: rotate(90deg)"><Operation /></el-icon>
+            设为可用
+          </mp-button>
         </p>
         <p class="line-info">
           <span>
             {{actionLine?.Name}}<span class="fold-the-hand" v-if="actionLine?.NeedFoldWay">需要折手</span>
           </span>
           <span class="btn">
-            <mp-button type="primary" link @click="editLine">编辑</mp-button>
-            <mp-button type="primary" link @click="delLine">删除</mp-button>
+            <EditMenu @click="editLine">编辑</EditMenu>
+            <RemoveMenu @click="delLine">删除</RemoveMenu>
           </span>
         </p>
         <p class="templates">
           <span class="label">可用拼版模板：</span>
-          <span>
+          <span class="ft-12">
             {{getTemplatesName().map(it => it.Name).join('、')}}
             <!-- 正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版（四开/对开/全开)、正反版... -->
           </span>
@@ -111,7 +104,7 @@
     :closed="addLineCloseedClick"
     >
     <template #default>
-      <div class="add-line-dialog">
+      <div class="add-line-dialog line">
         <el-form :model="Data.addLineFrom" label-width="112px">
           <el-form-item label="名称：" class="form-item-required">
             <div class="name">
@@ -119,11 +112,17 @@
               <el-checkbox v-model="Data.addLineFrom.NeedFoldWay" label="需要折手" />
             </div>
           </el-form-item>
-          <div class="text">
+          <div class="text bold">
             可用拼版模板
           </div>
           <el-checkbox-group v-model="Data.addLineFrom.TemplateIDS">
-            <el-form-item v-for="item in computedImpositionTemmplate" :key="item.ClassID" :label="`${item.Name}：`" class="form-item-required">
+            <el-form-item v-for="item in computedImpositionTemmplate" :key="item.ClassID" class="form-item-required">
+              <template #label>
+                <span class="temp-label" :title="item.Name">
+                  <em>{{item.Name}}</em>
+                  <i>：</i>
+                </span>
+              </template>
               <el-checkbox :label="it.ID" v-for="it in item.children" :key="it.ClassID">{{it.Name}}</el-checkbox>
             </el-form-item>
           </el-checkbox-group>
@@ -183,6 +182,8 @@ import { useRouter } from 'vue-router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { IWorkingProcedureList } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import EditMenu from '@/components/common/menus/EditMenu.vue';
+import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 
 interface ProcessListType {
   ID: string,
@@ -356,15 +357,14 @@ const getSourceWork = (material) => {
         returnStr.push(PrcessList.value.find(it => it.ID === ID)?.Name || '');
       }
     });
-  } else {
-    returnStr.push('其他');
   }
-  return returnStr;
+  return returnStr.length > 0 ? `来自 ${returnStr.join('、')}` : '';
 };
 // 获取生产线工序列表
 const getProductionLineWorkingProcedureList = () => {
   api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
     if (res.data.Status === 1000) {
+      console.log(res.data.Data);
       ProductionLineData.value = res.data.Data as IWorkingProcedureList;
     }
   });
@@ -432,8 +432,10 @@ const AddLine = () => {
 };
 // 添加工序
 const addPrcess = () => {
+  console.log(ProductionLineData);
   Data.addPrcessFrom.ID = actionLine.value?.ID || '';
-  Data.addPrcessFrom.WordIDS = ProductionLineData.value?.ProductionLineWorkings.map(it => it.WorkID) || [];
+  const _list = ProductionLineData.value?.ProductionLineWorkings || [];
+  Data.addPrcessFrom.WordIDS = _list.map(it => it.WorkID);
   // 格式化已经添加的工序
   addPrcessShow.value = true;
 };
@@ -530,7 +532,7 @@ const addPrcessPrimaryClick = () => {
     api.getProductionLineWorkingProcedureAdd(Data.addPrcessFrom).then(res => {
       if (res.data.Status === 1000) {
         const cb = () => {
-          addLineCloseClick();
+          addPrcessCloseClick();
           getProductionLineWorkingProcedureList();
         };
         // 保存成功
@@ -556,6 +558,10 @@ const setSplitPrimaryClick = () => {
     api.getProductionLineSetSplit(Data.setSplitFrom).then(res => {
       if (res.data.Status === 1000) {
         const cb = () => {
+          const t = ProductionLineList.value.find(it => it.ID === Data.getPocessFrom.LineID);
+          if (t) {
+            t.SplitWordID = Data.setSplitFrom.SplitWordID;
+          }
           setSplitCloseClick();
           getProductionLineWorkingProcedureList();
         };
@@ -620,8 +626,11 @@ export default {
       flex: 1;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
       >ul{
         flex: 1;
+        overflow: auto;
+        overflow: overlay;
         border: 1px solid #D0D0D0;
         >li{
           >.process-item{
@@ -645,6 +654,9 @@ export default {
           }
         }
         .table-title{
+          position: sticky;
+          top: 0;
+          background-color: #fff;
           .process-item{
             height: 37px;
             align-items: center;
@@ -760,7 +772,11 @@ export default {
           margin-left: 10px;
         }
         .btn{
-          margin-top: 4px;
+          margin-top: 5px;
+          font-weight: 400;
+          .menu-box + .menu-box {
+            margin-left: 30px;
+          }
         }
       }
       .templates{
@@ -797,6 +813,24 @@ export default {
         .el-input{
           margin-right: 32px;
           flex: 1;
+        }
+      }
+    }
+    &.line {
+      .el-form-item__label {
+        font-weight: 700;
+        .temp-label {
+          display: flex;
+          justify-content: flex-end;
+          overflow: hidden;
+          > em {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+        &::before {
+          display: none;
         }
       }
     }

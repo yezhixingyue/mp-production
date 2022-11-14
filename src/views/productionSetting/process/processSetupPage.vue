@@ -241,7 +241,7 @@ const Data:DataType = reactive({
 const BreadcrumbList = computed(() => [
   { to: { path: '/processList' }, name: '工序' },
   {
-    name: '添加工序',
+    name: `${Data.processDataFrom.ID ? '编辑' : '添加'}工序`,
   },
 ]);
 const ImpositionTemmplateListGroup = computed(() => {

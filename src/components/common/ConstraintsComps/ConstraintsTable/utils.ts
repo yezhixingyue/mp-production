@@ -4,8 +4,8 @@ import { ConstraintsItemClass } from '../ConditionSetupPanel/ConstraintsItemClas
 import { PropertyListItemType } from '../TypeClass/Property';
 import { PropertyListClass } from '../TypeClass/PropertyListClass';
 
-interface IOptions {
-  tableList: ConditionItemClass[] | null
+interface IOptions<T> {
+  tableList: T[] | null
   PropertyList: PropertyListItemType[]
 }
 
@@ -30,7 +30,7 @@ const formatConstraint = (Constraint: Constraints | null, PropertyList: Property
  * @param {*} tableList
  * @returns
  */
-export const transformConstraintTableList = ({ tableList, PropertyList }: IOptions) => {
+export const transformConstraintTableList = <T extends ConditionItemClass = ConditionItemClass>({ tableList, PropertyList }: IOptions<T>) => {
   if (!tableList) return [];
   const list = tableList.map(it => {
     const Constraint = formatConstraint(it.Constraint, PropertyList);

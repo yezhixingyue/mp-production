@@ -1,7 +1,12 @@
 import { PropertyListItemType } from '../TypeClass/Property';
 import { Constraints } from './Constraints';
 
-export class ConditionItemClass {
+interface ITemp {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
+}
+
+export class ConditionItemClass implements ITemp {
   ID: number | '' = ''
 
   Constraint: null | Constraints = null
