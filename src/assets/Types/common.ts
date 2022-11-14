@@ -43,3 +43,7 @@ export interface StaffSelectListType {
   StaffID: string,
   StaffName: string
 }
+export interface ExpressListType {
+  ID: number,
+  Name: string
+}

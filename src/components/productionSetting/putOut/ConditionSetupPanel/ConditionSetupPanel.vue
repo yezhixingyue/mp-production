@@ -26,6 +26,7 @@ const props = defineProps<{
 }>();
 
 const ruleForm = ref(new ConditionItemClass(props.condition || null, props.PropertyListClassData.PropertyList));
+
 const oWrap = ref<InstanceType<typeof Main>>();
 
 const onPropSelect = async (prop: PropertyListItemType) => {

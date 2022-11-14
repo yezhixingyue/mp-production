@@ -1,13 +1,23 @@
 <template>
-  <LayoutComp />
+  <el-config-provider :locale="zhCn">
+    <LayoutComp />
+  </el-config-provider>
 </template>
 
 <script lang='ts'>
 import LayoutComp from '@/components/Layout/Index.vue';
+import { ElConfigProvider } from 'element-plus';
+import zhCn from 'element-plus/lib/locale/lang/zh-cn';
 
 export default {
   components: {
     LayoutComp,
+    ElConfigProvider,
+  },
+  setup() {
+    return {
+      zhCn,
+    };
   },
 };
 </script>

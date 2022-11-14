@@ -1,11 +1,12 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
 import api from '@/api';
-import { IDistrictItem, StaffSelectListType } from '@/assets/Types/common';
+import { IDistrictItem, StaffSelectListType, ExpressListType } from '@/assets/Types/common';
 import { IDistrictTreeListItemType } from './types';
 
 interface IState {
   DistrictList: IDistrictItem[]
   StaffSelectList:StaffSelectListType[],
+  ExpressList:ExpressListType[],
 }
 
 type IGetters = {
@@ -15,6 +16,7 @@ type IGetters = {
 interface IActions {
   getDistrictList: () => void,
   getStaffSelect:()=>void,
+  getExpressList:()=>void,
 }
 
 const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存放公共数据的模块
@@ -22,6 +24,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
   state: () => ({
     DistrictList: [],
     StaffSelectList: [],
+    ExpressList: [],
   }),
   getters: {
     DistrictTreeList(state: IState) { // 行政地区树形列表数据
@@ -55,6 +58,13 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
       if (resp?.data.Status === 1000) {
         this.StaffSelectList = resp.data.Data as StaffSelectListType[];
       }
+    },
+    async getExpressList() { // 配送方式列表
+      api.getExpressList().then(res => {
+        if (res.data.Status === 1000) {
+          this.ExpressList = res.data.Data as ExpressListType[];
+        }
+      });
     },
   },
   persist: {

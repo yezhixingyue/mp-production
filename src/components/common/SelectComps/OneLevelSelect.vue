@@ -31,68 +31,72 @@
   </ul>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { computed } from 'vue';
 
-export default {
-  props: {
-    value: {
-      default: '',
-    },
-    placeholder: {
-      default: '请选择',
-    },
-    title: {
-      type: String,
-      default: '',
-    },
-    width: {
-      type: Number,
-      default: 100,
-    },
-    options: {
-      type: Array,
-      default: () => [{
-        value: '',
-        label: '不限',
-      }],
-    },
-    defaultProps: {
-      type: Object,
-      default: () => ({
-        label: 'label',
-        value: 'value',
-      }),
-    },
-    filterable: {
-      type: Boolean,
-      default: false,
-    },
-    showLine: {
-      type: Boolean,
-      default: false,
-    },
+interface defaultPropsType {
+  [a:string]:string|number,
+}
+
+interface Props {
+  value: string|number|null|undefined
+  placeholder?: string
+  title?: string
+  width?: number
+  options?: defaultPropsType[]
+  defaultProps?: defaultPropsType
+  filterable?: boolean
+  showLine?: boolean
+}
+const emit = defineEmits(['change', 'requestFunc']);
+
+const props = withDefaults(defineProps<Props>(), {
+  value: undefined,
+  placeholder: '请选择',
+  title: '',
+  width: 100,
+  options: () => [{
+    label: '',
+    value: '不限',
+  }],
+  defaultProps: () => ({
+    label: 'label',
+    value: 'value',
+  }),
+  filterable: false,
+  showLine: false,
+});
+const result = computed({
+  get() {
+    return props.value;
   },
-  model: {
-    prop: 'value',
-    event: 'change',
+  set(newVal) {
+    if (newVal === props.value) return;
+    emit('change', newVal);
+    emit('requestFunc', newVal);
   },
-  setup(props, context) {
-    const result = computed({
-      get() {
-        return props.value;
-      },
-      set(newVal) {
-        if (newVal === props.value) return;
-        context.emit('change', newVal);
-        context.emit('requestFunc', newVal);
-      },
-    });
-    return {
-      result,
-    };
-  },
-};
+});
+
+// export default {
+//   props: {
+//     defaultProps: {
+//       type: Object,
+//       default: () => ({
+//         label: 'label',
+//         value: 'value',
+//       }),
+//     },
+//   },
+//   model: {
+//     prop: 'value',
+//     event: 'change',
+//   },
+//   setup(props, context) {
+//     return {
+//       result,
+//     };
+//   },
+// };
 </script>
 
 <style lang='scss'>

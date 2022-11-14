@@ -7,6 +7,7 @@ import PasteupSetting from './modules/pasteupSettingApis';
 import { companyApis } from './modules/companyApis';
 import { otherSettingApis } from './modules/otherApis';
 import { productionManageApis } from './modules/productionManageApis';
+import productionSetting from './modules/productionSettingApis';
 import request from './request/request';
 
 const api = {
@@ -44,6 +45,8 @@ const api = {
   ...resourceApis,
   // 拼版设置 api
   ...PasteupSetting,
+  // 生产设置 api
+  ...productionSetting,
   // 属性相关 api
   propertyApis,
   // 其它设置 api

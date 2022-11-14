@@ -43,7 +43,6 @@ const props = withDefaults(defineProps<{
 }>(), {
   leftWidth: '45%',
 });
-
 const emit = defineEmits(['submit']);
 
 const slotDefault = !!useSlots().default;
