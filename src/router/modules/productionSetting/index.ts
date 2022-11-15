@@ -77,7 +77,7 @@ const routes: RouteRecordRaw = {
       path: '/capacity',
       name: 'capacity',
       meta: {
-        title: '生产设备',
+        title: '设备产能',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
@@ -89,7 +89,7 @@ const routes: RouteRecordRaw = {
       path: '/capacitySetup',
       name: 'capacitySetup',
       meta: {
-        title: '生产设备',
+        title: '设置设备产能',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',

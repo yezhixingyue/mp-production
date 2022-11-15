@@ -4,12 +4,9 @@
     v-if="LineEquipmentID"
     leftWidth="800px"
     :PropertyList="productionSettingStore.PropertyList"
-    :condition="curConditionItem" @submit="submit">
+    :condition="curConditionItem" @submit="submit" show-priority>
       <template #header>
         <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
-        <div class="header-top">
-          优先级：<el-input v-model="Data.Priority"></el-input> <span>注：数字越小优先级越高</span>
-        </div>
       </template>
       <template #default>
         <div class="right-class">
@@ -64,7 +61,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getGoBackFun } from '@/router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { useRoute } from 'vue-router';
-import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
+import { PutOutConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/PutOutConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();
 const route = useRoute();
@@ -81,13 +78,12 @@ const BreadcrumbList = computed(() => [
   },
 ]);
 const LineEquipmentID = ref();
-const curConditionItem:Ref<ConditionItemClass|null> = ref(null);
+const curConditionItem:Ref<PutOutConditionItemClass|null> = ref(null);
 const Data = reactive({
   LineEquipmentID: '',
-  Priority: 0,
   Value: 0,
   Type: 0,
-  MumberPropertyID: '',
+  NumberPropertyID: '',
 });
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('capacityPage', 'true');
@@ -95,9 +91,9 @@ function setStorage() { // 设置会话存储
 function onPropSelect(item) { //
   calculateNum.ID = item.Property.ID;
   calculateNum.Name = item.Property.Name;
-  Data.MumberPropertyID = calculateNum.ID;
+  Data.NumberPropertyID = calculateNum.ID;
 }
-const submit = async (e: ConditionItemClass) => {
+const submit = async (e: PutOutConditionItemClass) => {
   Data.LineEquipmentID = LineEquipmentID.value;
   const temp = { ...e, ...Data };
   const resp = await api.getProductionLineCapacitySave(temp).catch(() => null);
@@ -116,20 +112,22 @@ const submit = async (e: ConditionItemClass) => {
     });
   }
 };
+
+const assistList = ref([]);
+
 onMounted(() => {
 // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  const temp = JSON.parse(route.params.capacityInfo as string) as ConditionItemClass;
+  const temp = JSON.parse(route.params.capacityInfo as string) as PutOutConditionItemClass;
   const TempType = Number(route.params.Type) as number;
   Data.Type = TempType;
   if (temp) {
     curConditionItem.value = { ...temp };
     Data.LineEquipmentID = temp.LineEquipmentID;
-    Data.Priority = temp.Priority;
     Data.Value = temp.Value;
     Data.Type = temp.Type;
-    Data.MumberPropertyID = temp.MumberPropertyID || '';
+    Data.NumberPropertyID = temp.NumberPropertyID || '';
     productionSettingStore.PropertyList.forEach(item => {
-      if (item.Property.ID === Data.MumberPropertyID) {
+      if (item.Property.ID === Data.NumberPropertyID) {
         onPropSelect(item);
       }
     });

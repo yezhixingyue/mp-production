@@ -37,7 +37,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getGoBackFun } from '@/router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { useRoute } from 'vue-router';
-import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
+import { PutOutConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/PutOutConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();
 const route = useRoute();
@@ -48,7 +48,7 @@ const BreadcrumbList = computed(() => [
   },
 ]);
 const LineEquipmentID = ref();
-const curConditionItem:Ref<ConditionItemClass|null> = ref(null);
+const curConditionItem:Ref<PutOutConditionItemClass|null> = ref(null);
 const Data = reactive({
   LineEquipmentID: '',
   Priority: 0,
@@ -58,7 +58,7 @@ const Data = reactive({
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('putOutPage', 'true');
 }
-const submit = async (e: ConditionItemClass) => {
+const submit = async (e: PutOutConditionItemClass) => {
   Data.LineEquipmentID = LineEquipmentID.value;
   const temp = { ...e, ...Data };
   const resp = await api.getProductionLinePutOutSave(temp).catch(() => null);
@@ -79,7 +79,7 @@ const submit = async (e: ConditionItemClass) => {
 };
 onMounted(() => {
 // sessionStorage.removeItem('foldWayTemplateSteupPage');
-  const temp = JSON.parse(route.params.putOutInfo as string) as ConditionItemClass;
+  const temp = JSON.parse(route.params.putOutInfo as string) as PutOutConditionItemClass;
   if (temp) {
     curConditionItem.value = { ...temp };
     Data.LineEquipmentID = temp.LineEquipmentID;

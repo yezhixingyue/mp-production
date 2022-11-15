@@ -7,6 +7,7 @@ import { PropertyListClass } from '../TypeClass/PropertyListClass';
 interface IOptions<T> {
   tableList: T[] | null
   PropertyList: PropertyListItemType[]
+  getRowContent?: (it: T) => string
 }
 
 const formatConstraint = (Constraint: Constraints | null, PropertyList: PropertyListItemType[]) => {
@@ -30,12 +31,14 @@ const formatConstraint = (Constraint: Constraints | null, PropertyList: Property
  * @param {*} tableList
  * @returns
  */
-export const transformConstraintTableList = <T extends ConditionItemClass = ConditionItemClass>({ tableList, PropertyList }: IOptions<T>) => {
+export const transformConstraintTableList = <T extends ConditionItemClass = ConditionItemClass>({ tableList, PropertyList, getRowContent }: IOptions<T>) => {
   if (!tableList) return [];
   const list = tableList.map(it => {
     const Constraint = formatConstraint(it.Constraint, PropertyList);
+    const _Content = getRowContent ? getRowContent(it) : '';
     const temp = {
       ...it,
+      _Content,
       Constraint,
     };
     return temp;

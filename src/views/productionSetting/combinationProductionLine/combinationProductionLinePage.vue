@@ -67,8 +67,10 @@
       <div class="right">
         <mp-button type="primary" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
         <p class="status">
-          当前状态：<span>不可用</span>
-          <mp-button type="primary" link @click="lineOpen">设为可用</mp-button>
+          当前状态：<span v-show="ProductionLineData" :class="ProductionLineData?.Status === LineStatusEnum.usable ? 'is-success' : 'is-pink'"
+          >{{ProductionLineData?.Status === LineStatusEnum.usable ? '可用' : '不可用'}}</span>
+          <mp-button type="primary" link @click="lineOpen">
+            <el-icon class="mr-5" style="transform: rotate(90deg)"><Operation /></el-icon>设为可用</mp-button>
         </p>
       </div>
     </main>
@@ -137,6 +139,7 @@ import { useRouter } from 'vue-router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { IWorkingProcedureList } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { LineStatusEnum } from '@/store/modules/productionSetting/enums';
 
 interface ProcessListType {
   ID: string,
@@ -606,7 +609,6 @@ export default {
         align-items: center;
         font-weight: 700;
         >span{
-          color: #E42A2A;
           margin-left: 10px;
         }
         .el-button{

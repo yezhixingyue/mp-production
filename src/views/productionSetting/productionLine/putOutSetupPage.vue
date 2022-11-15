@@ -3,12 +3,9 @@
     <ConstraintSetupPageComp
     leftWidth="800px"
     :PropertyList="productionSettingStore.PropertyList"
-    :condition="curConditionItem" @submit="submit">
+    :condition="curConditionItem" @submit="submit" showPriority>
       <template #header>
         <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
-        <div class="header-top">
-          优先级：<el-input v-model="Data.Priority"></el-input> <span class="hint">注：数字越小优先级越高</span>
-        </div>
       </template>
       <template #default>
         <div class="right-class">
@@ -38,7 +35,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getGoBackFun } from '@/router';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { useRoute } from 'vue-router';
-import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
+import { PutOutConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/PutOutConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();
 const route = useRoute();
@@ -49,17 +46,16 @@ const BreadcrumbList = computed(() => [
   },
 ]);
 const LineEquipmentID = ref();
-const curConditionItem:Ref<ConditionItemClass|null> = ref(null);
-const Data = reactive({
+const curConditionItem:Ref<PutOutConditionItemClass|null> = ref(null);
+const Data = reactive<Partial<PutOutConditionItemClass>>({
   LineEquipmentID: '',
-  Priority: 0,
   Value: 0,
   Type: 0,
 });
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('putOutPage', 'true');
 }
-const submit = async (e: ConditionItemClass) => {
+const submit = async (e: PutOutConditionItemClass) => {
   Data.LineEquipmentID = LineEquipmentID.value;
   const temp = { ...e, ...Data };
   const resp = await api.getProductionLinePutOutSave(temp).catch(() => null);
@@ -79,11 +75,10 @@ const submit = async (e: ConditionItemClass) => {
   }
 };
 onMounted(() => {
-  const temp = JSON.parse(route.params.putOutInfo as string) as ConditionItemClass;
+  const temp = JSON.parse(route.params.putOutInfo as string) as PutOutConditionItemClass;
   if (temp) {
     curConditionItem.value = { ...temp };
     Data.LineEquipmentID = temp.LineEquipmentID;
-    Data.Priority = temp.Priority;
     Data.Value = temp.Value;
     Data.Type = temp.Type;
   }
@@ -99,37 +94,9 @@ export default {
 
 <style scoped lang='scss'>
 .put-out-setup {
-  header{
+  .constraint-setup-page-comp-wrap > header{
     .el-breadcrumb{
-      margin-bottom: 20px;
-    }
-    >.header-top{
-      // line-height: 32px;
-      display: flex;
-      align-items: center;
-      .el-input{
-        width: 110px;
-        margin-right: 20px;
-      }
-      .hint{
-        font-size: 12px;
-        line-height: 30px;
-        color: #F4A307;
-        position: relative;
-        padding-left: 33px;
-        &::before{
-          content: '';
-          background-image: url('@/assets/images/warn.png');
-          display: inline-block;
-          background-size: 13px 13px;
-          width: 13px;
-          height: 13px;
-          margin: 0 10px;
-          position: absolute;
-          left: 0;
-          top: 9px;
-        }
-      }
+      margin-bottom: 0px;
     }
   }
   .right-class{

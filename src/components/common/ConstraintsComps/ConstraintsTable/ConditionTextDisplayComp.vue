@@ -15,7 +15,7 @@
         </template>
         <p v-else>{{props.conditionObj._contentTextList}}</p>
         <p class="if-box" style="margin-right:5px">
-          <span class="is-orange">则 生效。</span>
+          <span class="is-orange">{{props.content || '则 生效。'}}</span>
         </p>
       </div>
     </template>
@@ -32,7 +32,7 @@
       </template>
       <p v-else>{{props.conditionObj._contentTextList}}</p>
       <p class="if-box" style="margin-left:10px;margin-right:5px">
-        <span class="is-orange">则 生效。</span>
+        <span class="is-orange">{{props.content || '则 生效。'}}</span>
       </p>
     </div>
   </el-tooltip>
@@ -41,9 +41,12 @@
 <script lang="ts" setup>
 import { IConditionDisplayItemObj } from './utils';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   conditionObj: IConditionDisplayItemObj | null,
-}>();
+  content?: string
+}>(), {
+  content: '',
+});
 
 </script>
 <style lang='scss'>

@@ -54,7 +54,8 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
 import ConditionTextDisplayComp from '@/components/common/ConstraintsComps/ConstraintsTable/ConditionTextDisplayComp.vue';
 import { transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
-import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
+import { PutOutConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/PutOutConditionItemClass';
+import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 
 const productionSettingStore = useProductionSettingStore();
 
@@ -65,7 +66,7 @@ const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || 
 
 const LineEquipmentID = ref('');
 const ReportMode = ref();
-const PutOutList:Ref<ConditionItemClass[]> = ref([]);
+const PutOutList:Ref<PutOutConditionItemClass[]> = ref([]);
 
 const localTableList = computed(() => transformConstraintTableList({
   tableList: PutOutList.value,
@@ -84,7 +85,7 @@ const getProductionLinePutOutList = () => {
 
   api.getProductionLinePutOutList(LineEquipmentID.value).then(res => {
     if (res.data.Status === 1000) {
-      PutOutList.value = res.data.Data as ConditionItemClass[];
+      PutOutList.value = res.data.Data as PutOutConditionItemClass[];
     }
   });
 };
@@ -126,7 +127,7 @@ onMounted(() => {
   getProductionLinePutOutList();
   // productionSettingStore.getPropertyList({ UseModule: 1 });
   productionSettingStore.getPropertyList({
-    UseModule: 0,
+    UseModule: UseModuleEnum.EquipmentGroupMaterialTypeLimit,
     MaterialTypeList: ['ed2ffb32-dc19-499b-9d3a-af1001115aac', '20cacdac-737d-4ecc-b4a3-af1001116f3c'],
   });
 });

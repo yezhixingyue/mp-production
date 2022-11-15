@@ -126,7 +126,8 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
 import ConditionTextDisplayComp from '@/components/common/ConstraintsComps/ConstraintsTable/ConditionTextDisplayComp.vue';
 import { transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
-import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
+import { PutOutConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/PutOutConditionItemClass';
+import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 
 const productionSettingStore = useProductionSettingStore();
 
@@ -137,13 +138,13 @@ const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || 
 
 const LineEquipmentID = ref('');
 const ReportMode = ref();
-const CapacityList:Ref<ConditionItemClass[]> = ref([]);
+const CapacityList:Ref<PutOutConditionItemClass[]> = ref([]);
 
 // 准备时间
 const setUpTimeData = computed(() => CapacityList.value.filter(it => it.Type === 0));
-// 准备时间
+// 产能
 const capacityData = computed(() => CapacityList.value.filter(it => it.Type === 1));
-// 准备时间
+// 干燥时间
 const dryingTimeData = computed(() => CapacityList.value.filter(it => it.Type === 2));
 
 const setUpTimeDataTableList = computed(() => transformConstraintTableList({
@@ -169,7 +170,7 @@ const BreadcrumbList = computed(() => [
 const getProductionLineCapacityList = () => {
   api.getProductionLineCapacityList(LineEquipmentID.value).then(res => {
     if (res.data.Status === 1000) {
-      CapacityList.value = res.data.Data as ConditionItemClass[];
+      CapacityList.value = res.data.Data as PutOutConditionItemClass[];
     }
   });
 };
@@ -224,7 +225,7 @@ onMounted(() => {
   ReportMode.value = route.params.ReportMode;
   getProductionLineCapacityList();
   productionSettingStore.getPropertyList({
-    UseModule: 0,
+    UseModule: UseModuleEnum.EquipmentGroupMaterialTypeLimit,
     MaterialTypeList: ['ed2ffb32-dc19-499b-9d3a-af1001115aac', '20cacdac-737d-4ecc-b4a3-af1001116f3c'],
   });
 });

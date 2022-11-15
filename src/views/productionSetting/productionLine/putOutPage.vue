@@ -21,7 +21,7 @@
         <li v-for="(it, i) in localTableList" :key="it.ID" class="item" :class="{active: activeId === it.ID}">
           <div class="content">
             <i class="index">{{i + 1}}. </i>
-            <ConditionTextDisplayComp :conditionObj="it.Constraint" />
+            <ConditionTextDisplayComp :conditionObj="it.Constraint" :content="it._Content" />
           </div>
           <div class="pot-out">{{it.Value}}{{it.Type === 0 ? '张' : '%'}}</div>
           <div class="priority">{{it.Priority}}</div>
@@ -54,7 +54,8 @@ import api from '@/api';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
 import { transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
-import { ConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/ConditionItemClass';
+import { PutOutConditionItemClass } from '@/components/productionSetting/putOut/ConditionSetupPanel/PutOutConditionItemClass';
+import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 
 const productionSettingStore = useProductionSettingStore();
 
@@ -65,7 +66,7 @@ const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || 
 
 const LineEquipmentID = ref('');
 const ReportMode = ref();
-const PutOutList:Ref<ConditionItemClass[]> = ref([]);
+const PutOutList:Ref<PutOutConditionItemClass[]> = ref([]);
 
 const localTableList = computed(() => transformConstraintTableList({
   tableList: PutOutList.value,
@@ -82,7 +83,7 @@ const BreadcrumbList = computed(() => [
 const getProductionLinePutOutList = () => {
   api.getProductionLinePutOutList(LineEquipmentID.value).then(res => {
     if (res.data.Status === 1000) {
-      PutOutList.value = res.data.Data as ConditionItemClass[];
+      PutOutList.value = res.data.Data as PutOutConditionItemClass[];
     }
   });
 };
@@ -122,7 +123,7 @@ onMounted(() => {
   ReportMode.value = route.params.ReportMode;
   getProductionLinePutOutList();
   productionSettingStore.getPropertyList({
-    UseModule: 0,
+    UseModule: UseModuleEnum.EquipmentGroupMaterialTypeLimit,
     MaterialTypeList: ['ed2ffb32-dc19-499b-9d3a-af1001115aac', '20cacdac-737d-4ecc-b4a3-af1001116f3c'],
   });
 });
@@ -215,6 +216,8 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
           color: #444;
           font-weight: 700;
           font-size: 14px;
+          background-color: #f8f8f8 !important;
+          border-color: #eee!important;
           > .content{
             justify-content: center;
             font-size: 14px;

@@ -1,20 +1,16 @@
+import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { PropertyListItemType } from '../TypeClass/Property';
 import { Constraints } from './Constraints';
 
-interface ITemp {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any
-}
-
-export class ConditionItemClass implements ITemp {
+export class ConditionItemClass {
   ID: number | '' = ''
+
+  Priority: number | '' = ''
 
   Constraint: null | Constraints = null
 
   constructor(data: ConditionItemClass | null, PropertyList: PropertyListItemType[]) {
-    if (data) {
-      this.ID = data.ID || '';
-    }
+    if (data) restoreInitDataByOrigin(this, data);
     this.ID = data && data.ID ? data.ID : '';
     this.Constraint = new Constraints(data?.Constraint || null, PropertyList);
   }

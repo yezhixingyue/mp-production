@@ -71,7 +71,8 @@
           <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-14"></i>设置分切工序</mp-button>
         </p>
         <p class="status">
-          当前状态：<span>不可用</span>
+          当前状态：<span :class="ProductionLineData?.Status === LineStatusEnum.usable ? 'is-success' : 'is-pink'"
+          >{{ProductionLineData?.Status === LineStatusEnum.usable ? '可用' : '不可用'}}</span>
           <mp-button type="primary" link @click="lineOpen">
             <el-icon class="mr-5" style="transform: rotate(90deg)"><Operation /></el-icon>
             设为可用
@@ -184,6 +185,7 @@ import { IWorkingProcedureList } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
+import { LineStatusEnum } from '@/store/modules/productionSetting/enums';
 
 interface ProcessListType {
   ID: string,
@@ -753,7 +755,7 @@ export default {
         align-items: center;
         font-weight: 700;
         >span{
-          color: #E42A2A;
+          // color: #E42A2A;
           margin-left: 10px;
         }
         .el-button{

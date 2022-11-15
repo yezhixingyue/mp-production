@@ -1,6 +1,6 @@
 <template>
   <section class="condition-setup-panel-wrap" v-if="ruleForm.Constraint">
-    <Header @click="visible = true" />
+    <Header @click="visible = true" v-model:Priority='ruleForm.Priority' :showPriority="props.showPriority" />
     <Main :constraint="ruleForm.Constraint" @remove="onItemRemove" ref="oWrap" />
     <Footer v-model="ruleForm.Constraint.FilterType" />
     <Dialog v-model:visible="visible" :propertyList="props.PropertyListClassData.PropertyList" @select="onPropSelect" />
@@ -9,6 +9,7 @@
 
 <script setup lang='ts'>
 import { nextTick, ref } from 'vue';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import Header from './ConditionSetupPanelHeader.vue';
 import Main from './ConditionSetupPanelMain.vue';
 import Footer from './ConditionSetupPanelFooter.vue';
@@ -20,10 +21,13 @@ import { ConditionItemClass } from './ConditionItemClass';
 
 const visible = ref(false);
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   PropertyListClassData: PropertyListClass
   condition: ConditionItemClass | null
-}>();
+  showPriority?: boolean
+}>(), {
+  showPriority: false,
+});
 
 const ruleForm = ref(new ConditionItemClass(props.condition || null, props.PropertyListClassData.PropertyList));
 const oWrap = ref<InstanceType<typeof Main>>();
@@ -42,6 +46,20 @@ const onItemRemove = (i: number) => {
 
 const getPanelConstraintData = () => {
   if (!ruleForm.value.Constraint) return null;
+  if (props.showPriority) {
+    if (!ruleForm.value.Priority && ruleForm.value.Priority !== 0) {
+      MpMessage.error({
+        title: '保存失败', msg: '请设置优先级',
+      });
+      return null;
+    }
+    if (!(/^\d+$/.test(`${ruleForm.value.Priority}`))) {
+      MpMessage.error({
+        title: '保存失败', msg: '优先级不正确，请输入整数类型且不能小于0',
+      });
+      return null;
+    }
+  }
   ruleForm.value.Constraint.ItemList.forEach((it) => {
     const _it = it;
     _it._errMsg = '';
@@ -50,6 +68,10 @@ const getPanelConstraintData = () => {
     const item = ruleForm.value.Constraint.ItemList[i];
     const res = item.validate();
     if (res !== true) return null;
+  }
+  const temp: Partial<ConditionItemClass> = { ...ruleForm.value };
+  if (!props.showPriority) {
+    delete temp.Priority;
   }
   return ruleForm.value;
 };

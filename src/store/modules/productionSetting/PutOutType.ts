@@ -1,3 +1,5 @@
+import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
+
 interface MaterialType {
   ID: string,
   Name: string,
@@ -20,7 +22,7 @@ interface OptionList{
 }
 interface PropertyType {
   ID: string,
-  PositionID: string,
+  PositionID: UseModuleEnum,
   Type: number,
   UseModule: number,
   MaterialType: MaterialType,

@@ -35,13 +35,11 @@
     :primaryClick="addColorPrimaryClick"
     :closeClick="addColorCloseClick"
     :closed="addColorCloseedClick"
+    :open="onDialogOpen"
     >
     <template #default>
       <div class="add-equipment-dialog">
         <el-scrollbar max-height="450px">
-          <!-- <el-checkbox-group
-            v-model="EquipmentSaveData.EquipmentIDS"
-          > -->
           <ul class="one-list">
             <template  v-for="ClassIt in processInfo?.ClassEquipmentGroups" :key="ClassIt.ClassID">
               <li v-if="ClassIt.EquipmentGroups && ClassIt.EquipmentGroups.length">
@@ -52,7 +50,7 @@
                       <p class="tow">{{GroupIt.GroupName}}:</p>
                       <div class="checkbox">
                         <el-checkbox @change="bool => addEquipmentChange(it.ID)"
-                          :checked="EquipmentSaveData.EquipmentIDS.some(id => it.ID === id)"
+                          :modelValue="EquipmentSaveData.EquipmentIDS.includes(it.ID)"
                           v-for="it in GroupIt.Equipments" :key="it.ID" :label="it.ID">{{it.Name}}</el-checkbox>
                       </div>
                     </li>
@@ -74,7 +72,7 @@
 
 <script lang="ts" setup>
 import {
-  onMounted, computed, getCurrentInstance, ref, Ref, watch,
+  onMounted, computed, getCurrentInstance, ref, Ref,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -93,6 +91,12 @@ interface EquipmentListType {
   LineEquipmentID?:string
 }
 
+interface ISaveResult {
+  EquipmentID: string
+  IsRemove: boolean
+  LineEquipmentID: string
+}
+
 const route = useRoute();
 const router = useRouter();
 
@@ -102,7 +106,7 @@ const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
 
 const addEquipmentShow = ref(false);
 
-const EquipmentSaveData = ref({
+const EquipmentSaveData = ref<{ LineWorkID: string, EquipmentIDS: string[] }>({
   LineWorkID: '',
   EquipmentIDS: [],
 });
@@ -168,18 +172,18 @@ const delEquipment = (item) => {
     });
   }, () => undefined);
 };
-// const isChecked = computed(() => returnData);
-watch(() => EquipmentList.value, (newVal) => {
-  EquipmentSaveData.value.EquipmentIDS = newVal.map(it => it.ID) as never[];
-});
-const setEquipment = (list) => {
+const setEquipment = (list, resultArr: ISaveResult[]) => {
+  if (!processInfo.value?.ClassEquipmentGroups) return;
   processInfo.value?.ClassEquipmentGroups?.forEach((ClassIt, index) => {
     ClassIt.EquipmentGroups.forEach((GroupIt, i) => {
       GroupIt.Equipments.forEach((it, num) => {
+        const _it = it;
+        _it.LineEquipmentID = '';
         const temp = list.find(id => id === it.ID);
         if (temp) {
-          if (processInfo.value) {
-            processInfo.value.ClassEquipmentGroups[index].EquipmentGroups[i].Equipments[num].LineEquipmentID = it.ID;
+          const t = resultArr.find(r => r.EquipmentID === it.ID);
+          if (t) {
+            _it.LineEquipmentID = t.LineEquipmentID;
           }
         }
       });
@@ -205,6 +209,9 @@ const addColorCloseedClick = () => {
   EquipmentSaveData.value.LineWorkID = '';
   EquipmentSaveData.value.EquipmentIDS = [];
 };
+const onDialogOpen = () => {
+  EquipmentSaveData.value.EquipmentIDS = EquipmentList.value.map(it => it.ID);
+};
 const addColorCloseClick = () => {
   addEquipmentShow.value = false;
 };
@@ -213,7 +220,7 @@ const addColorPrimaryClick = () => {
   api.getProductionLinetEquipmentSave(EquipmentSaveData.value).then(res => {
     if (res.data.Status === 1000) {
       const cb = () => {
-        setEquipment([...EquipmentSaveData.value.EquipmentIDS]);
+        setEquipment([...EquipmentSaveData.value.EquipmentIDS], res.data.Data as ISaveResult[]);
         setStorage();
         addColorCloseClick();
       };
