@@ -1,5 +1,5 @@
 <template>
-  <productionLinePage type="normal" />
+  <productionLinePage type="combine" />
 </template>
 
 <script lang="ts" setup>
@@ -7,7 +7,7 @@ import productionLinePage from './productionLinePageView.vue';
 </script>
 <script lang="ts">
 export default {
-  name: 'productionLinePage',
+  name: 'combinationProductionLinePage',
 };
 </script>
 <style lang='scss'>

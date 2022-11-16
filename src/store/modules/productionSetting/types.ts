@@ -1,7 +1,7 @@
 import type { UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
-import { LineStatusEnum } from './enums';
+import { LineStatusEnum } from '../../../views/productionSetting/js/enums';
 // 辅助信息
 export interface NotesType{
   ID: string,
@@ -81,12 +81,12 @@ export interface ImpositionTemmplateListGroupType {
 }
 export interface getPropertyListType {
   UseModule: UseModuleEnum,
-  MaterialTypeList: string[]
+  EquipmentGroupID: string
 }
 // 生产线工序列表
 
 export interface IEquipments {
-  LineEquipmentID: string,
+  LineEquipmentID: string | null,
   ID: string,
   Name: string,
 }

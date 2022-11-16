@@ -99,6 +99,17 @@ const routes: RouteRecordRaw = {
     },
     /* 组合生产线模块
     -------------------------------------- */
+    // {
+    //   path: '/combinationProductionLine2',
+    //   name: 'combinationProductionLine2',
+    //   meta: {
+    //     title: '组合生产线2',
+    //     requiresAuth: true,
+    //     icon: 'iconfont icon-zuheshengchanxian',
+    //     pageName: 'combinationProductionLinePage',
+    //   },
+    //   component: () => import('@/views/productionSetting/combinationProductionLine/combinationProductionLinePage.vue'),
+    // },
     {
       path: '/combinationProductionLine',
       name: 'combinationProductionLine',
@@ -108,7 +119,7 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-zuheshengchanxian',
         pageName: 'combinationProductionLinePage',
       },
-      component: () => import('@/views/productionSetting/combinationProductionLine/combinationProductionLinePage.vue'),
+      component: () => import('@/views/productionSetting/productionLine/combinationProductionLinePage.vue'),
     },
     {
       path: '/combinationMaterialSource',

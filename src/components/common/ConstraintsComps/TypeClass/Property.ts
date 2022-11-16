@@ -12,7 +12,12 @@ export class Property {
 
   UseModule: UseModuleEnum = UseModuleEnum.EquipmentGroupMaterialTypeLimit
 
-  Property = {
+  Property: null | { ID: string, Name: string } = {
+    ID: '',
+    Name: '',
+  }
+
+  Assist: null | { ID: string, Name: string } = {
     ID: '',
     Name: '',
   }

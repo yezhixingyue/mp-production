@@ -12,11 +12,11 @@
 </template>
 
 <script setup lang='ts'>
+import { IMpBreadcrumbItem } from '@/assets/Types/common';
 import { ArrowRight } from '@element-plus/icons-vue';
-import { RouteLocationRaw } from 'vue-router';
 
 const props = defineProps<{
-  list: { to?: RouteLocationRaw, name: string, replace?: boolean }[]
+  list: IMpBreadcrumbItem[]
 }>();
 
 </script>

@@ -2,6 +2,12 @@ import { getEnumList } from '@/assets/js/utils/getListByEnums';
 
 export enum PropertyDisplayTypeEnum {
   Attribute = 0, // 属性
+  /** 数值 */
+  Numberic = 1,
+  /** 物料 */
+  Material = 2,
+  /** 其它 */
+  Other = 3,
 }
 
 export const PropertyDisplayTypeMpEnums = {
@@ -9,12 +15,30 @@ export const PropertyDisplayTypeMpEnums = {
     ID: PropertyDisplayTypeEnum.Attribute,
     Name: '属性',
   },
+  Numberic: {
+    ID: PropertyDisplayTypeEnum.Numberic,
+    Name: '数值',
+  },
+  Material: {
+    ID: PropertyDisplayTypeEnum.Material,
+    Name: '物料',
+  },
+  Other: {
+    ID: PropertyDisplayTypeEnum.Other,
+    Name: '其它',
+  },
 };
 
 export const PropertyDisplayTypeMpEnumList = getEnumList(PropertyDisplayTypeMpEnums);
 
 export enum UseModuleEnum {
+  /** 获取设备组物料类型限制条件属性 */
   EquipmentGroupMaterialTypeLimit = 0, // 获取设备组物料类型限制条件属性
+  /** 设置伸放条件 */
+  PutOutLimit = 1,
+  /** 设置产能条件 */
+  CapacityLimit = 2,
+  /** 全部 */
   all = 255
 }
 

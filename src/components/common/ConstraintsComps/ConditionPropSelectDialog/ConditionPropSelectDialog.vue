@@ -40,7 +40,7 @@ const onPropClick = (prop: PropertyListItemType) => {
 };
 
 const onOpen = () => {
-  // console.log('onOpen', propertyTreeData);
+  // console.log('onOpen', propertyTreeData, props.propertyList);
 };
 
 </script>

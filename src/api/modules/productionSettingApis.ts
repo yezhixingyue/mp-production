@@ -24,7 +24,7 @@ const api = {
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
   },
   getWorkingProcedureSearch(searchType) { // POST /Api/WorkingProcedure/Search  工序查询
-    return request({ method: 'GET', url: `/Api/WorkingProcedure/Search?searchType=${searchType}` });
+    return request({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType } });
   },
   getWorkingProcedureSave(data) { // POST /Api/WorkingProcedure/Save  工序保存
     return request({ method: 'POST', url: '/Api/WorkingProcedure/Save', data });
