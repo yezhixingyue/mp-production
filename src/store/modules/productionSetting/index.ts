@@ -5,6 +5,9 @@ import type {
   MaterialTypeGroupType, ImpositionTemmplateListType,
 } from '@/store/modules/productionSetting/types';
 
+import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/LinePutOutClass';
+import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
+import { EquipmentListType } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import { IState, _UseClassEquipmentGroupType, getPropertyListType } from './types';
 
 export interface IActions {
@@ -13,6 +16,10 @@ export interface IActions {
   getMaterialTypeGroupAll:(callback?)=>void,
   getImpositionTemmplateList:(callback?)=>void,
   getPropertyList:(data:getPropertyListType)=>void,
+  setLinePutOutPageData: (data: EquipmentListType) => void,
+  setLineCapacityPageData: (data: EquipmentListType) => void,
+  setCombineLinePutOutPageData: (data: EquipmentListType) => void,
+  setCombineLineCapacityPageData: (data: EquipmentListType) => void,
 }
 type IGetters = Record<string, never>;
 
@@ -24,6 +31,10 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     MaterialTypeGroup: [],
     ImpositionTemmplateList: [],
     PropertyList: [],
+    LinePutOutPageData: null,
+    LineCapacityPageData: null,
+    CombineLinePutOutPageData: null,
+    CombineLineCapacityPageData: null,
   }),
   getters: {},
   actions: {
@@ -60,12 +71,11 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       });
     },
     // 获取所有物料资源包
-    getMaterialTypeGroupAll(feature) {
-      api.getMaterialTypeGroupAll(feature).then(res => {
-        if (res.data.Status === 1000) {
-          this.MaterialTypeGroup = res.data.Data as MaterialTypeGroupType[];
-        }
-      });
+    async getMaterialTypeGroupAll(feature) {
+      const resp = await api.getMaterialTypeGroupAll(feature).catch(() => null);
+      if (resp?.data.isSuccess) {
+        this.MaterialTypeGroup = resp.data.Data as MaterialTypeGroupType[];
+      }
     },
     // 获取拼版模板列表
     getImpositionTemmplateList(Data) {
@@ -80,6 +90,19 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       if (resp?.data.isSuccess) {
         this.PropertyList = resp.data.Data || [];
       }
+    },
+    /** 设置申放相关数据 */
+    setLinePutOutPageData(LineEquipment) {
+      this.LinePutOutPageData = new LinePutOutClass(LineEquipment);
+    },
+    setLineCapacityPageData(LineEquipment) {
+      this.LineCapacityPageData = new LineCapacityClass(LineEquipment);
+    },
+    setCombineLinePutOutPageData(LineEquipment) {
+      this.CombineLinePutOutPageData = new LinePutOutClass(LineEquipment);
+    },
+    setCombineLineCapacityPageData(LineEquipment) {
+      this.CombineLineCapacityPageData = new LineCapacityClass(LineEquipment);
     },
   },
 };

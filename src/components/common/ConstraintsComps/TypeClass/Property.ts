@@ -43,6 +43,25 @@ export class Property {
   constructor(data) {
     if (data) restoreInitDataByOrigin(this, data);
   }
+
+  // eslint-disable-next-line no-use-before-define
+  static getPropertyName(it: PropertyListItemType) {
+    let name = '';
+    switch (it.Type) {
+      case PropertyDisplayTypeEnum.Attribute:
+        name = it.Property?.Name || '';
+        break;
+      case PropertyDisplayTypeEnum.Numberic:
+        name = it.Assist?.Name || '';
+        break;
+      default:
+        break;
+    }
+    if (!name && it.DisplayContent) {
+      name = it.DisplayContent.replace('[', '').replace(']', '');
+    }
+    return name;
+  }
 }
 
-export type PropertyListItemType = Omit<Property, ''>;
+export type PropertyListItemType = Omit<Property, 'getPropertyName'>;

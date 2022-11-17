@@ -1,13 +1,14 @@
 <template>
-  <section class="put-out-page" >
+  <section class="capacity-list-page" >
     <header>
       <MpBreadcrumb :list="props.BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
-        <mp-button type="primary" @click="onSaveClick(null)">+ 添加条件</mp-button>
       </div>
     </header>
     <main>
-      <ListTable :tableList="localTableList" @rowRemove="onRemoveClick" @rowSave="onSaveClick" />
+      <template v-for="it in Object.values(CapacityTypeEnum)" :key="it">
+        <ListTable v-if="typeof it === 'number'" :tableList="localTableList" :Type="it" @rowRemove="onRemoveClick" @rowSave="onSaveClick" />
+      </template>
     </main>
     <footer>
       <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
@@ -22,12 +23,13 @@ import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrum
 import { computed } from 'vue';
 import { TransformConstraintTableItemType, transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
+import { CapacityTypeEnum } from './enum';
 import ListTable from './ListTable.vue';
-import { PutOutConditionItemClass } from '../js/PutOutConditionItemClass';
+import { CapacityConditionItemClass } from '../js/CapacityConditionItemClass';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
-  list: PutOutConditionItemClass[],
+  list: CapacityConditionItemClass[],
   PropertyList: PropertyListItemType[]
 }>();
 
@@ -38,23 +40,24 @@ const localTableList = computed(() => transformConstraintTableList({
   PropertyList: props.PropertyList,
 }));
 
-const onSaveClick = (it: TransformConstraintTableItemType<PutOutConditionItemClass> | null) => {
-  emit('save', it);
+const onSaveClick = (it: TransformConstraintTableItemType<CapacityConditionItemClass> | null, type: CapacityTypeEnum) => {
+  emit('save', it, type);
 };
 
-const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemClass> | null) => {
+const onRemoveClick = (it: TransformConstraintTableItemType<CapacityConditionItemClass> | null) => {
   emit('remove', it);
 };
 </script>
 
 <style lang='scss'>
+
 @import '@/assets/css/var.scss';
 $row-hover-bg-color: lighten($color: #d8effc, $amount: 6);
 $row-hover-border-color: #d6effc;
 $row-active-bg-color: lighten($color: #d8effc, $amount: 6);
 $row-active-border-color: darken($color: #d8effc, $amount: 15);
 
-.put-out-page{
+.capacity-list-page{
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -69,11 +72,46 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
   }
   >main{
     flex: 1;
-    margin-top: 20px;
+    // margin-top: 20px;
     overflow-x: auto;
     padding-left: 20px;
     // padding-top: 20px;
     box-sizing: border-box;
+    > .title{
+      font-size: 14px;
+      color: #444444;
+      font-weight: 600;
+      border-left: 3px solid #05C1FF;
+      padding-left: 13px;
+      line-height: 14px;
+      margin: 20px 0;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      >span{
+        width: 100px;
+        &.hint{
+        font-size: 12px;
+        line-height: 30px;
+        color: #F4A307;
+        position: relative;
+        padding-left: 33px;
+        margin-left: 20px;
+        &::before{
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
+          width: 13px;
+          height: 13px;
+          margin: 0 10px;
+          position: absolute;
+          left: 0;
+          top: 8px;
+        }
+      }
+      }
+    }
     > ul {
       > li {
         border: 1px solid #eee;
@@ -129,8 +167,10 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
           color: #444;
           font-weight: 700;
           font-size: 14px;
-          background-color: #f8f8f8 !important;
-          border-color: #eee!important;
+          background-color: #F5F5F5;
+          &:hover{
+            background-color: #F5F5F5;
+          }
           > .content{
             justify-content: center;
             font-size: 14px;

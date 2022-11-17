@@ -23,7 +23,7 @@ const api = {
   getWorkingProcedureList(data) { // POST /Api/WorkingProcedure/List  工序列表
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
   },
-  getWorkingProcedureSearch(searchType) { // POST /Api/WorkingProcedure/Search  工序查询
+  getWorkingProcedureSearch(searchType?) { // POST /Api/WorkingProcedure/Search  工序查询
     return request({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType } });
   },
   getWorkingProcedureSave(data) { // POST /Api/WorkingProcedure/Save  工序保存
@@ -77,7 +77,7 @@ const api = {
     return request({ method: 'GET', url: `/Api/ProductionLine/PutOut/List?lineEquipmentID=${lineEquipmentID}` });
   },
   getProductionLinePutOutSave(data) { // POST /Api/ProductionLine/PutOut/Save  生产线申放保存
-    return request({ method: 'POST', url: '/Api/ProductionLine/PutOut/Save', data });
+    return request<string>({ method: 'POST', url: '/Api/ProductionLine/PutOut/Save', data });
   },
   getProductionLinePutOutRemove(id) { // POST /Api/ProductionLine/PutOut/Remove  生产线申放删除
     return request({ method: 'DELETE', url: `/Api/ProductionLine/PutOut/Remove?id=${id}` });
@@ -89,7 +89,7 @@ const api = {
     return request({ method: 'DELETE', url: `/Api/ProductionLine/Capacity/Remove?id=${id}` });
   },
   getProductionLineCapacitySave(data) { // POST /Api/ProductionLine/Capacity/Save  生产线设备产能编辑
-    return request({ method: 'POST', url: '/Api/ProductionLine/Capacity/Save', data });
+    return request<string>({ method: 'POST', url: '/Api/ProductionLine/Capacity/Save', data });
   },
   //
 

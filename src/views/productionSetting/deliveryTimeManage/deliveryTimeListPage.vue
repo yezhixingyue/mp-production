@@ -2,19 +2,28 @@
   <section class="delivery-time-list-page">
     <header>
       <mp-button type="primary" sizi='small' @click="onItemSetupClick('')">添加发货班次</mp-button>
-      <CascaderByArea/>
-      <OneLevelSelect
-      :title='"出库类型"'
-      :options='ExpressList'
-      :value='getShiftTimeLisData.CompanyID'
-      :defaultProps="{
-        value:'ID',
-        label:'Name',
-      }"
-      :showLine='true'
-      @change="(ID) => getShiftTimeLisData.CompanyID = ID"
-      @requestFunc='getTableDataList'
-      ></OneLevelSelect>
+      <EpCascaderWithLevel3
+        title="区域"
+        :setCondition='setCondition'
+        :levelTreeList='DistrictTreeList'
+        :First='getShiftTimeLisData.ProvinceName'
+        :Second='getShiftTimeLisData.CityName'
+        :Third='getShiftTimeLisData.CountyName'
+        :getList="() => getTableDataList()"
+        :typeList="[['ProvinceName', ''],['CityName', ''],['CountyName', '']]"
+        :defaultProps="{
+          ID: 'Name',
+          Name: 'Name',
+          children: 'children',
+        }"
+        class="mr-20"
+      />
+      <div>
+        <span class="title bold mr-10">出库类型：</span>
+        <el-select v-model="ExpressVal" class="mp-select">
+          <el-option v-for="item in ExpressList" :key="item.ID" :label="item.Name" :value="item.ID" />
+        </el-select>
+      </div>
     </header>
     <main>
       <el-table fit stripe style="width: 100%" :data="ShiftTimeList">
@@ -64,11 +73,12 @@ import { useRouter } from 'vue-router';
 import {
   reactive, onActivated, onMounted, computed, ref, Ref,
 } from 'vue';
-import CascaderByArea from '@/components/common/SelectComps/CascaderByArea.vue';
-import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import api from '@/api';
 import { useCommonStore } from '@/store/modules/common/index';
 import messageBox from '@/assets/js/utils/message';
+import { storeToRefs } from 'pinia';
+import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
+import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
 
 interface getRecordDataType {
   ProvinceName: string,
@@ -111,6 +121,22 @@ const onItemSetupClick = (ItemID) => {
     params: { deliveryTimeID: ItemID || '' },
   });
 };
+
+const { DistrictTreeList } = storeToRefs(commonStore);
+
+const setCondition = ([[key1, key2], value]: ISetConditionParams) => {
+  CommonClassType.setCondition([[key1, key2], value], getShiftTimeLisData);
+};
+
+const ExpressVal = computed({
+  get() {
+    return getShiftTimeLisData.CompanyID;
+  },
+  set(val) {
+    getShiftTimeLisData.CompanyID = val;
+    getTableDataList();
+  },
+});
 
 const getTableDataList = (Page = 1) => {
   api.getShiftTimeList(getShiftTimeLisData).then(res => {

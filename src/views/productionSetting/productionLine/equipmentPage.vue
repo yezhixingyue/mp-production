@@ -43,13 +43,13 @@ const BreadcrumbList = computed(() => [
 const ToPutOutPage = (item) => {
   router.push({
     name: 'putOut',
-    params: { LineEquipmentID: item.LineEquipmentID, LineEquipment: JSON.stringify(item), ReportMode: 0 },
+    params: { LineEquipment: JSON.stringify(item) },
   });
 };
 const TocCpacityPage = (item) => {
   router.push({
     name: 'capacity',
-    params: { LineEquipmentID: item.LineEquipmentID, ReportMode: 0 },
+    params: { LineEquipment: JSON.stringify(item) },
   });
 };
 const afterRemove = (ID) => {

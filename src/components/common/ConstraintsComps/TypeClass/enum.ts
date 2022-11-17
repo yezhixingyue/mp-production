@@ -17,7 +17,7 @@ export const PropertyDisplayTypeMpEnums = {
   },
   Numberic: {
     ID: PropertyDisplayTypeEnum.Numberic,
-    Name: '数值',
+    Name: '辅助信息',
   },
   Material: {
     ID: PropertyDisplayTypeEnum.Material,
@@ -38,6 +38,8 @@ export enum UseModuleEnum {
   PutOutLimit = 1,
   /** 设置产能条件 */
   CapacityLimit = 2,
+  /** 设置产能计算数量 */
+  CapacityNumber = 21,
   /** 全部 */
   all = 255
 }

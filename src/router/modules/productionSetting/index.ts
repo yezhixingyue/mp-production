@@ -59,7 +59,7 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-xinxi',
         pageName: 'putOutPage',
       },
-      component: () => import('@/views/productionSetting/productionLine/putOutPage.vue'),
+      component: () => import('@/views/productionSetting/productionLine/LinePutOutPage/putOutPage.vue'),
     },
     {
       path: '/putOutSetup',
@@ -71,7 +71,7 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-xinxi',
         pageName: 'putOutSetupPage',
       },
-      component: () => import('@/views/productionSetting/productionLine/putOutSetupPage.vue'),
+      component: () => import('@/views/productionSetting/productionLine/LinePutOutPage/putOutSetupPage.vue'),
     },
     {
       path: '/capacity',
@@ -83,7 +83,7 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-xinxi',
         pageName: 'capacityPage',
       },
-      component: () => import('@/views/productionSetting/productionLine/capacityPage.vue'),
+      component: () => import('@/views/productionSetting/productionLine/LineCapacityPage/capacityPage.vue'),
     },
     {
       path: '/capacitySetup',
@@ -95,21 +95,10 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-xinxi',
         pageName: 'capacitySetupPage',
       },
-      component: () => import('@/views/productionSetting/productionLine/capacitySetupPage.vue'),
+      component: () => import('@/views/productionSetting/productionLine/LineCapacityPage/capacitySetupPage.vue'),
     },
     /* 组合生产线模块
     -------------------------------------- */
-    // {
-    //   path: '/combinationProductionLine2',
-    //   name: 'combinationProductionLine2',
-    //   meta: {
-    //     title: '组合生产线2',
-    //     requiresAuth: true,
-    //     icon: 'iconfont icon-zuheshengchanxian',
-    //     pageName: 'combinationProductionLinePage',
-    //   },
-    //   component: () => import('@/views/productionSetting/combinationProductionLine/combinationProductionLinePage.vue'),
-    // },
     {
       path: '/combinationProductionLine',
       name: 'combinationProductionLine',
@@ -119,7 +108,7 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-zuheshengchanxian',
         pageName: 'combinationProductionLinePage',
       },
-      component: () => import('@/views/productionSetting/productionLine/combinationProductionLinePage.vue'),
+      component: () => import('@/views/productionSetting/combinationProductionLine/combinationProductionLinePage.vue'),
     },
     {
       path: '/combinationMaterialSource',
@@ -155,7 +144,7 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-xinxi',
         pageName: 'combinationPutOutPage',
       },
-      component: () => import('@/views/productionSetting/combinationProductionLine/combinationPutOutPage.vue'),
+      component: () => import('@/views/productionSetting/combinationProductionLine/CombineLinePutOutPage/combinationPutOutPage.vue'),
     },
     {
       path: '/combinationPutOutSetup',
@@ -167,31 +156,31 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-xinxi',
         pageName: 'combinationPutOutSetupPage',
       },
-      component: () => import('@/views/productionSetting/combinationProductionLine/combinationPutOutSetupPage.vue'),
+      component: () => import('@/views/productionSetting/combinationProductionLine/CombineLinePutOutPage/combinationPutOutSetupPage.vue'),
     },
     {
       path: '/combinationCapacity',
       name: 'combinationCapacity',
       meta: {
-        title: '生产设备',
+        title: '生产设备产能',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
         pageName: 'combinationCapacityPage',
       },
-      component: () => import('@/views/productionSetting/combinationProductionLine/combinationCapacityPage.vue'),
+      component: () => import('@/views/productionSetting/combinationProductionLine/CombineLineCapacityPage/combinationCapacityPage.vue'),
     },
     {
       path: '/combinationCapacitySetup',
       name: 'combinationCapacitySetup',
       meta: {
-        title: '生产设备',
+        title: '设置生产设备产能',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
         pageName: 'combinationCapacitySetupPage',
       },
-      component: () => import('@/views/productionSetting/combinationProductionLine/combinationCapacitySetupPage.vue'),
+      component: () => import('@/views/productionSetting/combinationProductionLine/CombineLineCapacityPage/combinationCapacitySetupPage.vue'),
     },
     /* 工序模块
     -------------------------------------- */

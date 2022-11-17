@@ -617,11 +617,13 @@ const setSplitPrimaryClick = () => {
     });
   }
 };
+
 onActivated(() => {
-  const processSetupPage = sessionStorage.getItem('productionLinePage') === 'true';
+  const sessionKey = props.type === 'normal' ? 'productionLinePage' : 'combinationProductionLinePage';
+  const processSetupPage = sessionStorage.getItem(sessionKey) === 'true';
   if (processSetupPage) {
     getProductionLineWorkingProcedureList();
-    sessionStorage.removeItem('productionLinePage');
+    sessionStorage.removeItem(sessionKey);
   }
 });
 onMounted(() => {

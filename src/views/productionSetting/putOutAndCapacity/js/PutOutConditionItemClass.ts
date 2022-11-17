@@ -3,9 +3,7 @@ import { ConditionItemClass } from '@/components/common/ConstraintsComps/Conditi
 export class PutOutConditionItemClass extends ConditionItemClass {
   LineEquipmentID = ''
 
-  Value = 0
+  Value: '' | number = 0
 
-  Type = 0
-
-  NumberPropertyID? = ''
+  Type: 0 | 1 = 0 // 后续设置该枚举类型
 }

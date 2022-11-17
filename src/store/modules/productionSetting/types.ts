@@ -1,6 +1,8 @@
 import type { UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
+import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/LinePutOutClass';
+import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
 import { LineStatusEnum } from '../../../views/productionSetting/js/enums';
 // 辅助信息
 export interface NotesType{
@@ -47,6 +49,10 @@ export interface IState {
   MaterialTypeGroup:MaterialTypeGroupType[],
   ImpositionTemmplateList:ImpositionTemmplateListType[],
   PropertyList:PropertyListItemType[]
+  LinePutOutPageData: null | LinePutOutClass
+  LineCapacityPageData: null | LineCapacityClass
+  CombineLinePutOutPageData: null | LinePutOutClass
+  CombineLineCapacityPageData: null | LineCapacityClass
 }
 
 // g工序列表

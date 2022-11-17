@@ -12,8 +12,7 @@
 </template>
 
 <script setup lang='ts'>
-import { PropertyDisplayTypeEnum } from '../TypeClass/enum';
-import { PropertyListItemType } from '../TypeClass/Property';
+import { Property, PropertyListItemType } from '../TypeClass/Property';
 import { IGroupedPropertyListItem } from '../TypeClass/types';
 
 const props = defineProps<{
@@ -28,23 +27,7 @@ const onClick = (p: PropertyListItemType) => {
   emit('itemClick', p);
 };
 
-const getName = (it: PropertyListItemType) => {
-  let name = '';
-  switch (it.Type) {
-    case PropertyDisplayTypeEnum.Attribute:
-      name = it.Property?.Name || '';
-      break;
-    case PropertyDisplayTypeEnum.Numberic:
-      name = it.Assist?.Name || '';
-      break;
-    default:
-      break;
-  }
-  if (!name && it.DisplayContent) {
-    name = it.DisplayContent.replace('[', '').replace(']', '');
-  }
-  return name;
-};
+const getName = (it: PropertyListItemType) => Property.getPropertyName(it);
 
 </script>
 
