@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import {
-  ref, onMounted, computed, defineExpose,
+  ref, onMounted, computed,
 } from 'vue';
 import TreeComp from '@/components/common/TreeComp.vue';
 import { useCommonStore } from '@/store/modules/common/index';

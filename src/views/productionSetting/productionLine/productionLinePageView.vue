@@ -356,7 +356,7 @@ const ToMaterialSource = (item) => {
   const name = isCombine.value ? 'combinationMaterialSource' : 'materialSource';
   router.push({
     name,
-    params: { processInfo: JSON.stringify(item) },
+    params: { processInfo: JSON.stringify(item), lineData: JSON.stringify(ProductionLineData.value) },
   });
 };
 // 跳转生产设备

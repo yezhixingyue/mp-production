@@ -139,7 +139,9 @@ const ExpressVal = computed({
 });
 
 const getTableDataList = (Page = 1) => {
-  api.getShiftTimeList(getShiftTimeLisData).then(res => {
+  const temp = { ...getShiftTimeLisData };
+  if (getShiftTimeLisData.ProvinceName === '不限') temp.ProvinceName = '';
+  api.getShiftTimeList(temp).then(res => {
     if (res.data.Status === 1000) {
       console.log(res.data.Data);
       ShiftTimeList.value = res.data.Data as ShiftTimeListType[];

@@ -5,7 +5,11 @@
     </header>
     <main>
       <div v-for="p in props.item.PropertyList" :key="p.StoredContent">
-        <span class="is-element" @click="onClick(p)">{{getName(p)}}</span>
+        <span :class="getClass(p)" @click="onClick(p)">{{getName(p)}}</span>
+        <span v-if="p._FixedTypeList && p._FixedTypeList.length > 0" class="fix-list"> (
+          <span v-for="fixedProp in p._FixedTypeList" :key="fixedProp.StoredContent"
+           :class="getClass(fixedProp)" @click="onClick(fixedProp)">{{getName(fixedProp)}}</span>
+         )</span>
       </div>
     </main>
   </section>
@@ -19,12 +23,17 @@ const props = defineProps<{
   item: IGroupedPropertyListItem
 }>();
 
-console.log(props.item);
-
 const emit = defineEmits(['itemClick']);
 
 const onClick = (p: PropertyListItemType) => {
+  if (!p.StoredContent) return;
   emit('itemClick', p);
+};
+
+const getClass = (it: PropertyListItemType) => {
+  if (!it.StoredContent) return 'ft-13';
+  if (typeof it.FixedType === 'number') return 'is-pink-span ft-12';
+  return 'is-element';
 };
 
 const getName = (it: PropertyListItemType) => Property.getPropertyName(it);
@@ -55,6 +64,11 @@ const getName = (it: PropertyListItemType) => Property.getPropertyName(it);
         }
         &.disabled {
           color: #cbcbcb;
+        }
+      }
+      .fix-list {
+        > span + span {
+          margin-left: 12px;
         }
       }
     }

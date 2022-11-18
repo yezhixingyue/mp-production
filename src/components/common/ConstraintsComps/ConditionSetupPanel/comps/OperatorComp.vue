@@ -12,11 +12,11 @@
         />
     </el-select>
     <!-- 为选项类型时的特定展示文字 -->
-    <span class="t" v-if="operatContent">{{operatContent}}</span>
+    <span class="t ml-10" v-if="operatContent">{{operatContent}}</span>
     <!-- 为选项类型时 弹窗选择 -->
     <div v-if="operatContent && OptionList.length > 4" class="op-d-box">
       <span class="is-blue-span mr-10" @click="visible = true">选择</span>
-      <span class="d-content" :title="localValueListContent">{{localValueListContent}}</span>
+      <span class="d-content" :title="localValueListContent.replaceAll('、', '\r\n')">{{localValueListContent}}</span>
       <OptionSelectDialog v-model:visible="visible" v-model="localValueList" :OptionList="OptionList" />
     </div>
     <!-- 为选项类型时 复选框选择 -->

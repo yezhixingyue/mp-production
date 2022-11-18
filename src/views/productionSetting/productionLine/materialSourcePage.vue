@@ -1,5 +1,5 @@
 <template>
-  <PageContent v-if="processInfo" :BreadcrumbList="BreadcrumbList" :cur-edit-item="processInfo" @saved="setStorage" />
+  <PageContent v-if="processInfo" :BreadcrumbList="BreadcrumbList" :cur-edit-item="processInfo" :workListRange="workListRange" @saved="setStorage" />
 </template>
 
 <script lang="ts" setup>
@@ -24,10 +24,14 @@ function setStorage() { // 设置会话存储
   sessionStorage.setItem('productionLinePage', 'true');
 }
 
+const workListRange = ref<string[]>([]);
+
 onMounted(() => {
   const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;
   if (temp) {
     processInfo.value = temp;
+    const lineData = JSON.parse(route.params.lineData as string);
+    workListRange.value = lineData?.ProductionLineWorkings?.filter(it => it.LineWorkID !== temp.LineWorkID).map(it => it.WorkID) || [];
   }
 });
 </script>
@@ -37,79 +41,4 @@ export default {
 };
 </script>
 <style lang='scss'>
-@import '@/assets/css/var.scss';
-.material-source-page{
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: #fff;
-  font-size: 12px;
-  >header{
-    padding: 20px;
-    padding-bottom: 0;
-  }
-  >main{
-    flex: 1;
-    margin-top: 20px;
-    overflow-x: auto;
-    padding-left: 20px;
-    padding-top: 20px;
-    box-sizing: border-box;
-    .el-table{
-      height: 100%;
-      .source{
-        display: flex;
-        line-height: 32px;
-        .el-radio-group{
-          margin-left: 16px;
-        }
-        .max-margin-left{
-          margin-left: 200px;
-        }
-        .Process-list{
-          padding: 0 20px;
-          padding-right: 0;
-          max-width: calc(100% - 63px - 238px);
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          height: 32px;
-          color: #F4A307;
-          span{
-            color: #444;
-          }
-        }
-        .el-button{
-          margin-left: 20px;
-        }
-      }
-      .el-table__header-wrapper, .el-table__body-wrapper{
-        tr{
-          th:nth-child(2)>.cell{
-            padding-left: 150px !important;
-          }
-          .el-table__cell:nth-child(2)>.cell{
-            box-sizing: border-box;
-            text-align: left;
-            padding-left: 50px;
-          }
-        }
-      }
-    }
-  }
-  >footer{
-    min-height: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 50px;
-    .el-button{
-      width: 120px;
-    }
-    .el-button + .el-button{
-      margin-left: 30px;
-    }
-  }
-}
 </style>

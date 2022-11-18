@@ -20,13 +20,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import messageBox from '@/assets/js/utils/message';
 import { IProductionLineWorkings } from '@/store/modules/productionSetting/types';
 import EquipmentListPage from '../putOutAndCapacity/EquipmentListPage.vue';
-import { ILineEquipmentSaveParams } from '../putOutAndCapacity/js/types';
-
-interface ISaveResult {
-  EquipmentID: string
-  IsRemove: boolean
-  LineEquipmentID: string
-}
+import { ILineEquipmentSaveParams, IEquipmentGroupSaveResult } from '../putOutAndCapacity/js/types';
 
 const route = useRoute();
 const router = useRouter();
@@ -76,7 +70,7 @@ const handleRemove = (item) => {
     }
   });
 };
-const setEquipment = (list, resultArr: ISaveResult[]) => {
+const setEquipment = (list, resultArr: IEquipmentGroupSaveResult[]) => {
   if (!processInfo.value?.ClassEquipmentGroups) return;
   processInfo.value?.ClassEquipmentGroups?.forEach((ClassIt, index) => {
     ClassIt.EquipmentGroups.forEach((GroupIt, i) => {
@@ -101,7 +95,7 @@ const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () =>
   api.getProductionLinetEquipmentSave(params).then(res => {
     if (res.data.Status === 1000) {
       const cb = () => {
-        setEquipment([...params.EquipmentIDS], res.data.Data as ISaveResult[]);
+        setEquipment([...params.EquipmentIDS], res.data.Data as IEquipmentGroupSaveResult[]);
         setStorage();
         callback();
       };

@@ -182,6 +182,19 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionSetting/combinationProductionLine/CombineLineCapacityPage/combinationCapacitySetupPage.vue'),
     },
+    /* 制版组模块
+    -------------------------------------- */
+    {
+      path: '/PlateMakingGroupList',
+      name: 'PlateMakingGroupList',
+      meta: {
+        title: '制版组',
+        requiresAuth: true,
+        icon: 'iconfont icon-zuheshengchanxian',
+        pageName: 'PlateMakingGroupListPage',
+      },
+      component: () => import('@/views/productionSetting/PlateMakingGroup/PlateMakingGroupListPage/PlateMakingGroupListPage.vue'),
+    },
     /* 工序模块
     -------------------------------------- */
     {
@@ -258,6 +271,17 @@ const routeTree:RouteTreeType = {
           name: 'processSetup',
           children: [],
         },
+      ],
+    },
+    /* 制版组
+    -------------------------------------- */
+    {
+      name: 'PlateMakingGroupList',
+      children: [
+        // {
+        //   name: 'processSetup',
+        //   children: [],
+        // },
       ],
     },
     /* 生产线

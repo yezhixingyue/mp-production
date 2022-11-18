@@ -1,3 +1,5 @@
+import { IPlateMakingGroup, IPlateMakingGroupMaterialSourceSaveData, ISavePlateMakingGroupParams } from '@/views/productionSetting/PlateMakingGroup/js/types';
+import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import request from '../request/request';
 
 const api = {
@@ -91,7 +93,30 @@ const api = {
   getProductionLineCapacitySave(data) { // POST /Api/ProductionLine/Capacity/Save  生产线设备产能编辑
     return request<string>({ method: 'POST', url: '/Api/ProductionLine/Capacity/Save', data });
   },
-  //
-
+  // 制版组 ------------------------ PlateMakingGroup
+  /** POST /Api/PlateMakingGroup/Save  制版组保存 */
+  getPlateMakingGroupSave(data: ISavePlateMakingGroupParams) {
+    return request<string>({ method: 'POST', url: '/Api/PlateMakingGroup/Save', data });
+  },
+  /** POST /Api/PlateMakingGroup/List  获取制版组列表 */
+  getPlateMakingGroupList() {
+    return request<IPlateMakingGroup[]>({ method: 'POST', url: '/Api/PlateMakingGroup/List', data: { Page: 1, PageSize: 9999 } });
+  },
+  /** DELETE /Api/PlateMakingGroup/Remove  制版组删除 */
+  getPlateMakingGroupRemove(id: string) {
+    return request({ method: 'DELETE', url: '/Api/PlateMakingGroup/Remove', params: { id } });
+  },
+  /** POST /Api/PlateMakingGroup/MaterialSource/Save  制版组物料来源保 */
+  getPlateMakingGroupMaterialSourceSave(data: IPlateMakingGroupMaterialSourceSaveData) {
+    return request<string>({ method: 'POST', url: '/Api/PlateMakingGroup/MaterialSource/Save', data });
+  },
+  /** POST /Api/PlateMakingGroup/Equipment/Save  制版组设备保存 */
+  getPlateMakingGroupEquipmentSave(data: IPlateMakingGroupMaterialSourceSaveData) {
+    return request<IEquipmentGroupSaveResult[]>({ method: 'POST', url: '/Api/PlateMakingGroup/Equipment/Save', data });
+  },
+  /** DELETE /Api/PlateMakingGroup/Equipment/Remove  制版组设备删除 */
+  getPlateMakingGroupEquipmentRemove(id: string) {
+    return request({ method: 'DELETE', url: '/Api/PlateMakingGroup/Equipment/Remove', params: { id } });
+  },
 };
 export default api;

@@ -8,6 +8,7 @@ export interface IGetPropOptions {
 
 export interface IPropertyObjectMember {
   ID: string
+  Name: string,
 }
 
 export interface IPropertyValueRange {
@@ -20,10 +21,14 @@ export interface IPropertyOptionListItem {
   Second: string
 }
 
+export interface IPropertyListItemTypeWithFixedTypeChildren extends PropertyListItemType {
+  _FixedTypeList?: PropertyListItemType[]
+}
+
 export interface IGroupedPropertyListItem {
   ID: localEnumValueIDType,
   Name: string,
-  PropertyList: PropertyListItemType[], // 后面可能会修改
+  PropertyList: IPropertyListItemTypeWithFixedTypeChildren[], // 后面可能会修改
 }
 
 export interface IValueListItem {

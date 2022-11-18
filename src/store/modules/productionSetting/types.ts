@@ -109,8 +109,9 @@ export interface IClassEquipmentGroups {
 export interface IMaterialSources {
   MaterialTypeID: string,
   SourceType: number,
-  SourceWorkIDS: string[],
+  SourceWorkIDS: string[] | null,
   NeedSource: boolean,
+  FactoryProvide: boolean,
 }
 export interface IProductionLineWorkings {
   LineID: string,

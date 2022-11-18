@@ -90,7 +90,7 @@ const props = withDefaults(defineProps<{
       }
       &.type {
         color: #f4a307;
-        margin: 0 10px;
+        margin: 0 6px;
       }
     }
     &.if-box {

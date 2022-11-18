@@ -2,7 +2,7 @@
   <main class="condition-display-list" ref="oBox">
     <ul>
       <li v-for="(it, i) in props.constraint.ItemList" :key="it.ConstraintID || it._key">
-        <span class="title" :title="it._errMsg">
+        <span class="title" :title="it._errMsg || it.Property?.DisplayContent?.replace(/\[|\]/g, '')">
           <el-icon v-if="it._errMsg" class="is-pink" ><Warning /></el-icon>
           <!-- <i v-if="it._errMsg" class="icon-tubiaozhizuomoban iconfont"></i> -->
           {{it.Property?.DisplayContent?.replace(/\[|\]/g, '')}}
@@ -59,14 +59,21 @@ const remove = (i: number) => {
       display: flex;
       > .title {
         display: inline-block;
-        min-width: 210px;
+        width: 228px;
         text-align: right;
-        margin-right: 28px;
+        margin-right: 20px;
         height: 30px;
+        position: relative;
+        top: 1px;
         flex: none;
+        max-width: 360px;
+        flex-grow: 1;
         transition: color 0.2s ease-in-out;
         font-size: 12px;
         letter-spacing: 0.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         &:not(.is-pink) {
           color: #444;
         }
@@ -89,6 +96,7 @@ const remove = (i: number) => {
         width: 280px;
         flex: 1 0 auto;
         display: flex;
+        flex-grow: 100;
         max-width: 380px;
       }
       > .del {

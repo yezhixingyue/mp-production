@@ -44,18 +44,21 @@ export enum UseModuleEnum {
   all = 255
 }
 
+/**
+ * 属性常量类型枚举
+ *
+ * @export
+ * @enum {number}
+ */
 export enum FixedTypeEnum {
-  CheckedNumber = 0, // 已选项数
-  Sum = 1, // 和
-  MinValue = 2, // 最小值
-  MaxValue = 3, // 最大值
-  UseTimes = 4, // 使用次数
-  ShortestEdge = 5, // 最短边
-  LongestEdge = 6, // 最长边
-  GeneralSize = 7, // 常规尺寸
-  Length = 8, // 长
-  Width = 9, // 宽
-  Option = 10, // 选项
+  ProcessNumber = 0, // 加工数量
+  ProcessLength = 1, // 加工尺寸:长
+  ProcessWidth = 2, // 加工尺寸:宽
+  Length = 3, // 长度
+  Width = 4, // 宽度
+  LongestSide = 5, // 最长边
+  ShortestSide = 6, // 最短边
+  Material = 7, // 物料
   Const = 255, // 常数
 }
 

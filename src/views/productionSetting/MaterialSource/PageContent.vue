@@ -16,6 +16,7 @@
             <span class="source">
               <el-checkbox v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnum.semifinished.ID"
                 v-model="scope.row.NeedSource" label="必须资源"></el-checkbox>
+              <el-checkbox v-model="scope.row.FactoryProvide" label="如外协则外协厂自备"></el-checkbox>
               <el-radio-group :class="{'max-margin-left':scope.row._MaterialTypeGroup?.Feature !== resourceBundleFeatureEnum.semifinished.ID}"
                v-model="scope.row.SourceType">
                 <el-radio :label="MaterialSourceTypeEnum.otherLine"
@@ -34,7 +35,7 @@
                     </span>
                   </template>
                 </div>
-                <mp-button link type="primary" @click="selectProcess(scope.row)">
+                <mp-button link type="primary" class="ft-13" @click="selectProcess(scope.row)">
                   选择工序
                 </mp-button>
               </template>
@@ -47,7 +48,7 @@
       <mp-button type="primary" class="gradient" @click="saveProcess">保存</mp-button>
       <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
     </footer>
-    <Dialog v-model:visible="visible" :WorkingProcedureList="WorkingProcedureList" :originList="curRowData?.SourceWorkIDS||[]" @save="onDialogSave" />
+    <Dialog v-model:visible="visible" :WorkingProcedureList="localWorkingProcedureList" :originList="curRowData?.SourceWorkIDS||[]" @save="onDialogSave" />
   </section>
 </template>
 
@@ -58,7 +59,9 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import {
   IMaterialSources, IProductionLineWorkings, MaterialTypeGroupType, ProcessListType,
 } from '@/store/modules/productionSetting/types';
-import { onMounted, ref, nextTick } from 'vue';
+import {
+  onMounted, ref, nextTick, computed,
+} from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { getGoBackFun } from '@/router';
 import { resourceBundleFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
@@ -71,6 +74,7 @@ const productionSettingStore = useProductionSettingStore();
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
   curEditItem: IProductionLineWorkings
+  workListRange?: string[] | undefined
 }>();
 
 const emit = defineEmits(['saved']);
@@ -91,6 +95,13 @@ const onDialogSave = (ids: string[]) => {
   visible.value = false;
 };
 
+const localWorkingProcedureList = computed(() => {
+  if (Array.isArray(props.workListRange)) {
+    return WorkingProcedureList.value.filter(it => props.workListRange?.includes(it.ID));
+  }
+  return WorkingProcedureList.value;
+});
+
 const getProcessName = (ID) => WorkingProcedureList.value.find(it => it.ID === ID)?.Name;
 
 const selectProcess = (item: ITableItem) => {
@@ -99,6 +110,24 @@ const selectProcess = (item: ITableItem) => {
 };
 
 const saveProcess = async () => {
+  let t = tableList.value?.find(it => !it.SourceType && it.SourceType !== 0);
+  if (t) {
+    MpMessage.error({
+      title: '保存失败',
+      msg: `<span class='ft-12'><i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> 未设置来源</span>`,
+      dangerouslyUseHTMLString: true,
+    });
+    return;
+  }
+  t = tableList.value?.find(it => it.SourceType === MaterialSourceTypeEnum.otherPrcess && (!it.SourceWorkIDS || it.SourceWorkIDS.length === 0));
+  if (t) {
+    MpMessage.error({
+      title: '保存失败',
+      msg: `<span class='ft-12'><i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> 未设置来源工序</span>`,
+      dangerouslyUseHTMLString: true,
+    });
+    return;
+  }
   const temp = {
     LineWorkID: props.curEditItem.LineWorkID,
     Materials: tableList.value,
@@ -140,6 +169,7 @@ onMounted(async () => {
     const t = productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.MaterialTypeID);
     return {
       ...it,
+      SourceWorkIDS: it.SourceWorkIDS || [],
       _MaterialTypeGroup: t, // 物料资源包
     };
   });
@@ -174,6 +204,7 @@ onMounted(async () => {
         line-height: 32px;
         .el-radio-group{
           margin-left: 16px;
+          flex-wrap: nowrap;
         }
         .max-margin-left{
           margin-left: 200px;
