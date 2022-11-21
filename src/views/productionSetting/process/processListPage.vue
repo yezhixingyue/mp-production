@@ -11,8 +11,7 @@
        style="width: 100%">
         <el-table-column
         show-overflow-tooltip prop="Name" label="工序" min-width="160" />
-        <el-table-column
-        show-overflow-tooltip prop="ReportMode" label="报工方式" min-width="130">
+        <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" min-width="130">
           <template #default="scope">
             <span v-if="scope.row.ReportMode === 0">块报工</span>
             <span v-if="scope.row.ReportMode === 1">大版报工</span>
@@ -32,7 +31,6 @@
           <template #default="scope">
             {{getEquipmentGroupsNames(scope.row.EquipmentGroups)}}
           </template>
-
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="200">
           <template #default="scope">

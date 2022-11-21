@@ -19,7 +19,7 @@
         class="mr-20"
       />
       <div>
-        <span class="title bold mr-10">出库类型：</span>
+        <span class="title bold mr-10">配送方式：</span>
         <el-select v-model="ExpressVal" class="mp-select">
           <el-option v-for="item in ExpressList" :key="item.ID" :label="item.Name" :value="item.ID" />
         </el-select>
@@ -57,13 +57,8 @@
       </el-table>
     </main>
     <footer>
-      <!-- <CountComp
-        :count='DeliveryTimeDataNumber'
-        :watchPage='Condition4DeliveryTimeList.Page'
-        :handlePageChange='getTableDataList'
-        :pageSize='20'
-        center
-      /> -->
+      <MpPagination center
+        :nowPage="getShiftTimeLisData.Page" :pageSize="getShiftTimeLisData.PageSize" :total="ShiftTimeListNumber" :handlePageChange="getTableDataList" />
     </footer>
   </section>
 </template>
@@ -79,6 +74,7 @@ import messageBox from '@/assets/js/utils/message';
 import { storeToRefs } from 'pinia';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
+import MpPagination from '@/components/common/MpPagination.vue';
 
 interface getRecordDataType {
   ProvinceName: string,
@@ -103,13 +99,14 @@ interface ShiftTimeListType {
 const commonStore = useCommonStore();
 const router = useRouter();
 const ShiftTimeList:Ref<ShiftTimeListType[]> = ref([]);
+const ShiftTimeListNumber = ref(0);
 const getShiftTimeLisData:getRecordDataType = reactive({
-  ProvinceName: '',
+  ProvinceName: '不限',
   CityName: '',
   CountyName: '',
   CompanyID: 0,
-  Page: 0,
-  PageSize: 0,
+  Page: 1,
+  PageSize: 20,
 });
 const ExpressList = computed(() => ([{
   Name: '不限',
@@ -139,15 +136,15 @@ const ExpressVal = computed({
 });
 
 const getTableDataList = (Page = 1) => {
+  getShiftTimeLisData.Page = Page;
   const temp = { ...getShiftTimeLisData };
   if (getShiftTimeLisData.ProvinceName === '不限') temp.ProvinceName = '';
   api.getShiftTimeList(temp).then(res => {
     if (res.data.Status === 1000) {
-      console.log(res.data.Data);
       ShiftTimeList.value = res.data.Data as ShiftTimeListType[];
+      ShiftTimeListNumber.value = res.data.DataNumber;
     }
   });
-  console.log('aaa');
 };
 const onRemoveClick = (item) => {
   messageBox.warnCancelBox('确定要删除此发货班次吗？', `${item.ItemName}`, () => {
@@ -169,6 +166,7 @@ onActivated(() => {
 onMounted(() => {
   getTableDataList();
   sessionStorage.removeItem('deliveryTimeListSteupPage');
+  commonStore.getDistrictList();
   if (!commonStore.ExpressList.length) {
     commonStore.getExpressList();
   }
@@ -224,6 +222,8 @@ export default {
     height: 50px;
     text-align: right;
     color: #585858;
+    box-sizing: border-box;
+    padding-top: 6px;
     .blue {
       color: #26BCF9;
       margin: 0 3px;

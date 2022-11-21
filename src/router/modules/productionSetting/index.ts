@@ -193,7 +193,7 @@ const routes: RouteRecordRaw = {
         icon: 'iconfont icon-zuheshengchanxian',
         pageName: 'PlateMakingGroupListPage',
       },
-      component: () => import('@/views/productionSetting/PlateMakingGroup/PlateMakingGroupListPage/PlateMakingGroupListPage.vue'),
+      component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupListPage/PlateMakingGroupListPage.vue'),
     },
     /* 工序模块
     -------------------------------------- */

@@ -1,4 +1,6 @@
-import { IPlateMakingGroup, IPlateMakingGroupMaterialSourceSaveData, ISavePlateMakingGroupParams } from '@/views/productionSetting/PlateMakingGroup/js/types';
+import {
+  IPlateMakingGroup, IPlateMakingGroupMaterialSourceSaveData, ISavePlateMakingGroupParams,
+} from '@/views/productionSetting/PlateMakingGroupView/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import request from '../request/request';
 

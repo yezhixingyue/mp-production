@@ -9,7 +9,7 @@ import { IMaterialSources } from '@/store/modules/productionSetting/types';
 export interface ISavePlateMakingGroupParams {
   ID: string
   Name: string
-  TemplateID: string
+  WorkingID: string
 }
 
 /**
@@ -21,7 +21,7 @@ export interface ISavePlateMakingGroupParams {
 export interface IPlateMakingGroup {
   ID: string
   Name: string
-  TemplateID: string
+  WorkingID: string
   // 欠缺其它数据？
 }
 
