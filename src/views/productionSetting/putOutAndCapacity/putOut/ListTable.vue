@@ -34,7 +34,7 @@
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import ConditionTextDisplayComp from '@/components/common/ConstraintsComps/ConstraintsTable/ConditionTextDisplayComp.vue';
 import { TransformConstraintTableItemType } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
-import { PutOutConditionItemClass } from '../../productionLine/LinePutOutPage/PutOutConditionItemClass';
+import { PutOutConditionItemClass } from '../js/PutOutConditionItemClass';
 
 const props = defineProps<{
   tableList: TransformConstraintTableItemType<PutOutConditionItemClass>[]
