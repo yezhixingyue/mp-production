@@ -3,20 +3,55 @@
 
     <main>
       <!-- <MpCardContainer> -->
+        <div class="title">
+          <p>当前盘点仓库：
+            <span>
+              {{Data.StorehouseName}}
+            </span>
+          </p>
+        </div>
 
-          <div class="delivery-info" v-if="Data.InventoryDetail">
-            <div class="current">
-              <div class="title">
-                <p>当前盘点仓库：
+        <div class="delivery-info" v-if="Data.InventoryDetail">
+          <div class="last" v-if="Data.InventoryDetail?.PrevPositionMaterial">
+            <mp-button type="danger" @click="ForcedEnd">X 强制完成</mp-button>
+
+            <ul>
+              <li class="position-name">
+                <p class="dot">上一个：
                   <span>
-                    {{Data.StorehouseName}}
+                    {{Data.InventoryDetail.PrevUpperDimension}}
+                    {{Data.InventoryDetail.PrevPositionName}}
                   </span>
                 </p>
-                <mp-button type="danger" @click="ForcedEnd">强制完成</mp-button>
-              </div>
+              </li>
+              <el-scrollbar v-if="Data.InventoryDetail?.PrevPositionMaterial.length">
+                <li v-for="(PrevItem,index) in Data.InventoryDetail.PrevPositionMaterial"
+                :key="index" class="position-item">
+                  <!-- 物料 -->
+                  <div class="attribute">
+                    <span class="delivery">
+                      {{PrevItem.AttributeDescribe}}&nbsp;
+                    </span>
+                    <span class="size">{{PrevItem.SizeDescribe}}</span>
+                  </div>
+                  <div class="code">
+                    <span class="code">{{PrevItem.Code}}</span> <br>
+                    <span class="number is-red">{{PrevItem.Stock}}{{PrevItem.StockUnit}}</span>
+                  </div>
+                </li>
+
+              </el-scrollbar>
+            </ul>
+            <div class="last-button-box">
+              <mp-button link type="primary" :disabled="!Data.InventoryDetail?.PrevDetailID"
+                @click="anewLast">重新盘点上一个 ></mp-button>
+            </div>
+          </div>
+            <el-divider direction="vertical" />
+            <div class="current">
               <div class="current-material">
-                <p>
-                  <span class="label">当前货位：</span>
+                <p class="dot big">
+                  <!-- <span class="label">当前货位：</span> -->
                   <span class="value">{{Data.InventoryDetail.CurrentUpperDimension}}
                     {{Data.InventoryDetail.CurrentPositionName}}</span>
                 </p>
@@ -26,83 +61,25 @@
                 </p>
                 <template v-else>
                   <p>
-                    <span class="label">SKU编码：</span>
-                    <span class="value">{{Data.InventoryDetail.Code}}</span>
-                  </p>
-                  <p>
-                    <span class="label">物料：</span>
                     <span class="value">
-                      {{Data.InventoryDetail.AttributeDescribe}} &nbsp;
-                      <!-- <template v-for="(item,index) in Data.InventoryDetail.MaterialAttributes"
-                      :key="item.AttributeID">
-                        <template v-if="item.NumericValue">
-                          <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                        </template>
-                        <template v-else>
-                          <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                        </template>
-                        <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                          {{index ===  Data.InventoryDetail.MaterialAttributes.length-1 ? '' : ' ' }}
-                        </template>
-                      </template> -->
+                      {{Data.InventoryDetail.AttributeDescribe}}&nbsp;
                       {{Data.InventoryDetail.SizeDescribe}}
                     </span>
                   </p>
-                  <p>
-                    <span class="label">数量：</span>
-                    <span class="value is-red" v-if="Data.InventoryDetail?.Code">
+                  <p class="code-num">
+                    <span class="value code">{{Data.InventoryDetail.Code}}</span><br>
+                    <span class="value num is-red" v-if="Data.InventoryDetail?.Code">
                       {{Data.InventoryDetail.Stock}}{{Data.InventoryDetail.StockUnit}}
                     </span>
                   </p>
                 </template>
               </div>
             </div>
-            <div class="last" v-if="Data.InventoryDetail?.PrevPositionMaterial">
-              <div class="title">
-                <p>上一货位：
-                  <span>
-                    {{Data.InventoryDetail.PrevUpperDimension}}
-                    {{Data.InventoryDetail.PrevPositionName}}
-                  </span>
-                </p>
-                <mp-button link type="primary" :disabled="!Data.InventoryDetail?.PrevDetailID"
-                @click="anewLast">重新盘点上一个 ></mp-button>
-              </div>
-              <ul v-if="Data.InventoryDetail?.PrevPositionMaterial.length"
-              :style="`height: ${Data.InventoryDetail.PrevPositionMaterial.length*51}px;`">
-              <el-scrollbar>
-                <li v-for="(PrevItem,index) in Data.InventoryDetail.PrevPositionMaterial"
-                :key="index">
-                <!-- 物料 -->
-                  <span class="delivery">
-                    {{PrevItem.AttributeDescribe}}&nbsp;
-                    <!-- <template v-for="(item) in PrevItem.MaterialAttributes"
-                    :key="item.AttributeID">
-                      <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                      </template>
-                      <template v-else>
-                        <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                      </template>
-                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                        {{index === PrevItem.MaterialAttributes.length-1 ? '' : ' ' }}
-                      </template>
-                    </template> -->
-                  </span>
-                  <span class="size">{{PrevItem.SizeDescribe}}</span>
-                  <span class="code">{{PrevItem.Code}}</span>
-                  <span class="number is-red">{{PrevItem.Stock}}{{PrevItem.StockUnit}}</span>
-                </li>
-
-              </el-scrollbar>
-              </ul>
-            </div>
           </div>
           <div class="btn">
             <mp-button type="primary" @click="inventoryCorrect">正确</mp-button>
             <mp-button @click="inventoryError" :disabled="!Data.InventoryDetail?.Code">错误</mp-button>
           </div>
-      <!-- </MpCardContainer> -->
     </main>
 
     <!-- 此货位还有物料时添加物料的弹框 -->
@@ -120,27 +97,26 @@
       :dialogSaveInventoryError="dialogSaveInventoryError"
       ></MakeAnInventoryErrorDialog>
 
-      <el-dialog
-      custom-class='inventory-correct-dialog'
-      :width="308"
-      v-model='Data.inventoryCorrectDialog'
-      @close="() => Data.inventoryCorrectDialog = false"
-      @closed="() => Data.inventoryCorrectDialog = false"
+      <DialogContainerComp
+      title="修改盘点库存"
+      :visible='Data.inventoryCorrectDialog'
+      :width="660"
+      :closeClick="() => Data.inventoryCorrectDialog = false"
+      :closed="() => Data.inventoryCorrectDialog = false"
+      :appendToBody="true"
+      class="inventory-correct-dialog"
       >
-
-      <template #header>
-        <p class="inventory-correct-title">
-          <template v-if="Data.InventoryDetail?.IsLastMaterial && Data.InventoryDetail?.IsLastPosition">
-            是否结束盘库
-          </template>
-          <template v-else>
-            是否跳转到下一货位
-          </template>
-        </p>
-      </template>
       <template #default>
         <div class="inventory-correct-main">
           <p>当前货位: <span>{{Data.InventoryDetail.CurrentPositionName}}</span></p>
+          <p class="inventory-correct-title">
+            <template v-if="Data.InventoryDetail?.IsLastMaterial && Data.InventoryDetail?.IsLastPosition">
+              是否结束盘库
+            </template>
+            <template v-else>
+              是否跳转到下一货位
+            </template>
+          </p>
           <p v-if="!Data.InventoryDetail.IsLastMaterial || !Data.InventoryDetail.IsLastPosition">
             下一货位: <span>{{Data.InventoryDetail.NextPositionName}}</span></p>
         </div>
@@ -156,12 +132,13 @@
         </mp-button>
         <mp-button  @click="Data.addMaterialShow = true ">此货位还有物料</mp-button>
       </template>
-      </el-dialog>
+      </DialogContainerComp>
 
   </div>
 </template>
 
 <script lang='ts'>
+import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import AddMaterialDialog from '@/components/materialInventoryManage/addMaterialDialog.vue';
 import MakeAnInventoryErrorDialog from '@/components/materialInventoryManage/makeAnInventoryErrorDialog.vue';
 
@@ -220,7 +197,7 @@ export default {
     // MpCardContainer,
     AddMaterialDialog,
     MakeAnInventoryErrorDialog,
-    // DialogContainerComp,
+    DialogContainerComp,
   },
   setup() {
     // const h = ref(0);
@@ -411,7 +388,8 @@ export default {
 .mp-erp-layout-page-content-comp-wrap{
   margin: 0;
   background-color: #F5F5F5;
-  padding: 50px;
+  // padding: 50px;
+  max-height: 100vh;
   >div{
     margin: 0;
   }
@@ -419,136 +397,193 @@ export default {
 .makeAn-inventory-page{
   height: 100%;
   main{
-      // height: 100%;
-      overflow-x: auto;
-      background-color: #fff;
-      border-radius: 20px;
-      padding: 40px;
-      box-sizing: border-box;
+    height: 100%;
+    overflow-x: auto;
+    background-color: #fff;
+    // padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    >.title{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 70px;
+      background-color: #222B3A;
+      font-weight: 600;
+      >p{
+        line-height: 70px;
+        font-size: 20px;
+        color: #fff;
+      }
+    }
       .delivery-info{
-        // max-height: calc(100% - 90px);
+        display: flex;
         color: #7A8B9C;
         font-weight: 600;
-        >div{
-          >.title{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            >p{
-              border-left: 3px solid #428DFA;
-              padding-left: 10px;
-              line-height: 14px;
-              font-size: 14px;
-              // color: #7A8B9C;
-              >span{
-                color: #566176;
-              }
+        flex: 1;
+        padding: 30px 50px;
+        padding-bottom: 50px;
+        justify-content: center;
+        // width: 1024px;
+        margin: 0 auto;
+
+        // background-color: #f8d9d9;
+        .el-divider{
+          height: 100%;
+          margin: 0 30px;
+        }
+        .dot{
+          padding-left: 1em;
+          position: relative;
+          &::before{
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #444444;
+            border-radius: 50%;
+            position: absolute;
+            top: calc(50% - 4px);
+            left: 0;
+          }
+          &.big{
+            &::before{
+              width: 14px;
+              height: 14px;
+              top: calc(50% - 7px);
             }
           }
         }
         .current{
-          font-size: 16px;
+          font-size: 35px;
+          width: 540px;
+          padding-top: 20px;
           .current-material{
             p{
               display: flex;
-              line-height: 32px;
+              line-height: 56px;
               .label{
                 width: 45%;
                 text-align: right;
               }
               .value{
-                color: #566176;
+                color: #444;
               }
               .is-red{
                 color: #FF3769;
               }
+            }
+            .code-num{
+              display: block;
+              .code{
+                font-weight: 400;
+              }
+              .num{
+                font-size: 45px;
+              }
+            }
+            p+p{
+              margin-top: 50px;
             }
           }
         }
         .last{
+          width: 325px;
+          padding-top: 20px;
+          >.el-button{
+            width: 120px;
+            height: 35px;
+            margin-bottom: 30PX;
+          }
+          .last-button-box{
+            text-align: right;
+            margin-top: 10px;
+          }
           ul{
             // 最大高度为 100vh - 页面内边距（100px）-main内边距高度（80px）-下方按钮（90）-物料（160）-上一货位（20）外边距（24）
             max-height: calc(100vh - 100px - 80px - 90px - 160px - 20px - 24px);
             overflow-y: auto;
-            border: 1px solid #A6B6C6;
-            border-radius: 8px;
-            margin-top: 24px;
-            .el-scrollbar__view{
-              padding: 0 40px;
-            }
+            font-size: 14px;
+            color: #444444;
+            font-weight: 600;
             li{
+              border: 1px solid #E5E5E5;
+              line-height: 25px;
               display: flex;
+              padding: 13px 10px;
               justify-content: space-between;
-              line-height: 50px;
-              .delivery{
-                width: 33%;
-              }
-              .size,.code,.number{
-                width: 22%;
-                text-align: center;
+              &.position-item{
+                height: 8;
               }
               .is-red{
                 color: #FF3769;
               }
+              >div{
+                &.attribute{
+                  width: calc(100% - 110px);
+                }
+                &.code{
+                  text-align: right;
+                  font-weight: 400;
+                  width: 110px;
+                }
+              }
               border-bottom: 1px solid #F2F6FC;
             }
-            li:last-child{
+            // li:last-child{
+            //   border: none;
+            // }
+            .position-name,.position-item:nth-child(even){
+              background-color: #F5F5F5;
+            }
+            .position-item:nth-child(even){
               border: none;
             }
           }
         }
       }
       .btn{
-        padding: 40px;
-        padding-bottom: 20px;
         text-align: center;
+        margin-bottom: 48px;
         .el-button{
-          width: 100px;
-          height: 30px;
-          font-size: 14px;
+          width: 270px;
+          height: 85px;
+          font-size: 45px;
+          border-radius: 10px;
+        }
+        .el-button+.el-button{
+          margin-left: 150px;
         }
       }
   }
-  .inventory-correct-dialog{
-    .el-dialog__body{
-      padding: 20px;
+}
+.inventory-correct-dialog{
+  .el-dialog__body{
+    padding: 20px;
+  }
+  .el-dialog__footer{
+    text-align: center;
+    .el-button{
+      width: 240px;
+      height: 60px;
+      font-size: 30px;
     }
-    .el-dialog__footer{
-      text-align: center;
-      .el-button{
-        width: 100px;
-        font-size: 12px;
-      }
-    }
-    .inventory-correct-title{
-      line-height: 30px;
+  }
+  .inventory-correct-main{
+    p{
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #566176;
-      padding-top: 20px;
-      &::before{
-        content: '';
-        width: 30px;
-        height: 30px;
-        background-image: url('@/assets/images/warn.png') !important;
-        background-size: 30px 30px;
-        display: inline-block !important;
-        margin-right: 25px;
-      }
+      line-height: 38px;
+      color: #444444;
+      font-size: 30px;
     }
-    .inventory-correct-main{
-      p{
-        text-indent: 4em;
-        line-height: 28px;
-        font-weight: 600;
-        color: #7A8B9C;
-        span{
-          color: #566176;
-        }
-      }
+    .inventory-correct-title{
+      font-weight: 600;
+      font-size: 50px;
+      margin-top: 8px;
+      line-height: 86px;
     }
   }
 }

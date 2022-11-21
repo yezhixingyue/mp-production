@@ -31,6 +31,10 @@ interface ActualSizeAttribute {
   BleedLeft: number|null|'',
   BleedRight: number|null|'',
 }
+interface RangeType {
+  MinValue: number|null|'',
+  MaxValue: number|null|'',
+}
 export interface ImpositionTemmplate{
   ClassID: number | string,
   // 印刷版
@@ -46,4 +50,6 @@ export interface ImpositionTemmplate{
   CreateTime: string,
   ID: string,
   Name: string,
+  LengthErrorRange: RangeType,
+  WidthErrorRange: RangeType,
 }

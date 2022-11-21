@@ -1,82 +1,57 @@
 <template>
   <div>
     <DialogContainerComp
-    title="库存错误"
+    title="修改盘点库存"
     :visible='Dialog'
     :width="660"
     :primaryClick="errorSavePrimaryClick"
     :closeClick="errorSaveCloseClick"
     :closed="errorSaveClosed"
     :appendToBody="true"
+    class="common-make-an-inventory-error-dialog"
     >
     <template #default>
       <div class="make-an-inventory-error-dialog">
-        <el-form label-width="120px">
-          <el-form-item :label="`当前货位：`" class="in-number">
-            {{materialInfo.CurrentPositionName}}
-          </el-form-item>
-          <el-form-item :label="`物料：`" class="in-number">
-            <div class="between">
-              <span class="value">
-                {{materialInfo.AttributeDescribe}}&nbsp;
-               <!-- <template v-for="(item, index) in materialInfo.MaterialAttributes"
-               :key="item.AttributeID">
-                 <template v-if="item.NumericValue">
-                   <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                 </template>
-                 <template v-else>
-                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                 </template>
-                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                  {{index === materialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
-                </template>
-               </template> -->
-               {{materialInfo.SizeDescribe}}
-              </span>
-              <mp-button
-              type="primary" @click="Data.editMaterialShow = true" link>修改物料</mp-button>
-            </div>
-          </el-form-item>
-          <el-form-item :label="`SKU编码：`" class="in-number">
-            {{materialInfo.Code}}
-          </el-form-item>
-          <el-form-item :label="`数量：`" class="in-number">
-            {{`${materialInfo.Stock}${materialInfo.StockUnit}`}}
-          </el-form-item>
-
-          <el-form-item :label="`新物料：`" class="red">
-            <!-- <div class="between"> -->
-            <p v-if="Data.newMaterialInfo" class="between">
+        <div>{{materialInfo.CurrentPositionName}}</div>
+        <div>
+          <div class="between">
+            <span class="value">
+            {{materialInfo.AttributeDescribe}}&nbsp;
+             {{materialInfo.SizeDescribe}}
+            </span>
+          </div>
+        </div>
+        <div>
+          {{materialInfo.Code}}&nbsp; &nbsp;
+          {{`${materialInfo.Stock}${materialInfo.StockUnit}`}}&nbsp;&nbsp;
+          <mp-button
+          type="primary" @click="Data.editMaterialShow = true" link>修改物料</mp-button>
+        </div>
+        <div>
+          正确物料：
+          <template v-if="Data.newMaterialInfo">
              <span class="value">
               {{Data.newMaterialInfo.AttributeDescribe}}&nbsp;
-               <!-- <template v-for="(item,index) in Data.newMaterialInfo.MaterialAttributes"
-               :key="item.AttributeID">
-                 <template v-if="item.NumericValue">
-                   <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                 </template>
-                 <template v-else>
-                   <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                 </template>
-                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                  {{index === Data.newMaterialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
-                </template>
-               </template> -->
                {{Data.newMaterialInfo.SizeDescribe}}
              </span>
+             &nbsp;&nbsp;
               <mp-button @click="Data.newMaterialInfo = null" link type="danger">删除</mp-button>
-            </p>
-          </el-form-item>
-
-          <el-form-item :label="`正确数量：`" class="in-number">
-            <el-input-number style="margin-right:5px" placeholder="请输入正确数量"
+            </template>
+        </div>
+        <div>
+          <span class="label">
+            正确数量：
+          </span>
+          <el-input-number style="margin-right:5px" placeholder="请输入正确数量"
             :controls="false" v-model="Data.editDeliveryForm.Number" />
             {{materialInfo.StockUnit}}
-          </el-form-item>
-
-          <el-form-item :label="`备注：`" class="remark">
-            <el-input v-model="Data.editDeliveryForm.Remark" placeholder="请输入备注"/> (选填)
-          </el-form-item>
-        </el-form>
+        </div>
+        <div style="margin-top:20px;align-items: flex-start;">
+          <span class="label">
+            备注(选填)：
+          </span>
+          <el-input type="textarea" v-model="Data.editDeliveryForm.Remark" placeholder="请输入备注"/>
+        </div>
 
           <DialogContainerComp
           title="修改物料"
@@ -87,93 +62,77 @@
           :closed="editMaterialClosed"
           primaryText="确定"
           :appendToBody="true"
+          class="common-select-material-dialog"
           >
           <template #default>
             <div class="select-material-dialog">
-              <el-form label-width="120px">
-                <el-form-item :label="`当前货位：`" class="">
-                  {{materialInfo.CurrentPositionName}}
-                </el-form-item>
-                <el-form-item :label="`当前物料：`" class="">
+              <div>{{materialInfo.CurrentPositionName}}</div>
+              <div>
+                <div class="between">
                   <span class="value">
-                    {{materialInfo.AttributeDescribe}}&nbsp;
-                    <!-- <template v-for="(item,index) in materialInfo.MaterialAttributes"
-                    :key="item.AttributeID">
-                      <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                      </template>
-                      <template v-else>
-                        <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                      </template>
-                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                        {{index === materialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
-                      </template>
-                    </template> -->
-                    {{materialInfo.SizeDescribe}}
+                  {{materialInfo.AttributeDescribe}}&nbsp;
+                  {{materialInfo.SizeDescribe}}
                   </span>
-                </el-form-item>
-                <el-form-item :label="`SKU编码：`" class="">
-                  {{materialInfo.Code}}
-                </el-form-item>
-                <el-form-item :label="`数量：`" class="in-number">
-                  {{`${materialInfo.Stock}${materialInfo.StockUnit}`}}
-                </el-form-item>
-
-                <el-form-item :label="`新物料：`" class="red">
-                  <span class="value" >
+                </div>
+              </div>
+              <div>
+                {{materialInfo.Code}}&nbsp; &nbsp;
+                {{`${materialInfo.Stock}${materialInfo.StockUnit}`}}&nbsp;&nbsp;
+              </div>
+              <div>
+                新物料：
+                  <span class="value red" >
                     {{Data.tempMaterialInfo?.AttributeDescribe}}&nbsp;
-                    <!-- <template v-for="(item,index) in Data.tempMaterialInfo?.MaterialAttributes"
-                    :key="item.AttributeID">
-                      <template v-if="item.NumericValue">
-                        <span>{{item.NumericValue}}</span>{{item.AttributeUnit}}
-                      </template>
-                      <template v-else>
-                        <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                      </template>
-                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                        {{index === Data.tempMaterialInfo.MaterialAttributes.length-1 ? '' : ' ' }}
-                      </template>
-                    </template> -->
                     {{Data.tempMaterialInfo?.SizeDescribe}}
                   </span>
-                </el-form-item>
+              </div>
 
-                <el-form-item :label="`SKU编码：`" class="sku">
-                  <p>
+              <div>
+                <span class="label">
+                  SKU编码：
+                </span>
+                  <p class="sku-code">
                     <el-input @keyup.enter="getMaterial(false)"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
                     v-model.trim="Data.getMaterialData.SKUCode"/>
                     <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
                   </p>
-                  <span>或者</span>
-                </el-form-item>
-
-                <el-form-item :label="`选择物料：`" class="select-material">
+              </div>
+              <div>
+                <el-divider>
+                  <span class="maybe">或者</span>
+                </el-divider>
+              </div>
+              <div class="material" style="align-items: flex-start;">
+                <span class="label">
+                  选择物料：
+                </span>
+                <div>
                   <ThreeCascaderComp
-                  v-if="Data.editMaterialShow"
-                  ref="ThreeCascaderComp"
-                  :change="ThreeCascaderCompChange"
-                  ></ThreeCascaderComp>
-                  <OneLevelSelect
-                  v-if="Data.itemSelectTempMaterial"
-                    :options='Data.itemSelectTempMaterial.SizeSelects'
-                    :defaultProps="{
-                      value:'SizeID',
-                      label:'SizeDescribe',
-                    }"
-                    :value='Data.SizeSelects'
-                    @change="SizeSelectChange"
-                    :width="140"
-                    :placeholder="'请选择物料尺寸'"
-                    ></OneLevelSelect>
-                  <OneLevelSelect
-                    v-else
-                    :options='[]'
-                    :width="140"
-                    :placeholder="'请选择物料尺寸'"
-                    ></OneLevelSelect>
-                </el-form-item>
-              </el-form>
+                    v-if="Data.editMaterialShow"
+                    ref="ThreeCascaderComp"
+                    :change="ThreeCascaderCompChange"
+                    ></ThreeCascaderComp>
+                    <OneLevelSelect
+                    v-if="Data.itemSelectTempMaterial"
+                      :options='Data.itemSelectTempMaterial.SizeSelects'
+                      :defaultProps="{
+                        value:'SizeID',
+                        label:'SizeDescribe',
+                      }"
+                      :value='Data.SizeSelects'
+                      @change="SizeSelectChange"
+                      :width="328"
+                      :placeholder="'请选择物料尺寸'"
+                      ></OneLevelSelect>
+                    <OneLevelSelect
+                      v-else
+                      :options='[]'
+                      :width="328"
+                      :placeholder="'请选择物料尺寸'"
+                      ></OneLevelSelect>
+                </div>
+              </div>
             </div>
           </template>
           </DialogContainerComp>
@@ -394,20 +353,45 @@ export default {
 };
 </script>
 <style lang="scss">
+.common-make-an-inventory-error-dialog, .common-select-material-dialog{
+  .el-dialog__body{
+    padding-top: 20px;
+  }
+  .el-dialog__footer{
+    .el-button{
+      width: 200px;
+      height: 60px;
+      font-size: 30px;
+    }
+  }
+}
   .make-an-inventory-error-dialog{
-    .el-form-item{
-      &.remark{
+    padding: 0 14px;
+    font-size: 16px;
+    line-height: 30px;
+    >div{
+      display: flex;
+      align-items: center;
+      .label{
+        width:96px;
+        font-weight: 600;
+        text-align: right;
+      }
+      .el-input-number{
+        margin-top: 10px;
+        width: 204px;
         .el-input{
-          width: 300px;
-          margin-right: 10px;
+          // width: 204px;
+          height: 54px;
+          font-size: 16px;
+          font-size: 16px;
         }
       }
-      .between{
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        .el-button{
-          margin-right: 50px;
+      .el-textarea{
+        flex: 1;
+        .el-textarea__inner{
+          height: 158px;
+          font-size: 16px;
         }
       }
     }
@@ -420,26 +404,47 @@ export default {
     }
   }
   .select-material-dialog{
-    .sku{
-      margin-bottom: 0;
-      .el-form-item__content{
-        flex-direction: column;
-        align-items: flex-start;
-        font-size: 14px;
-
-        >p{
-          display: flex;
+    padding: 0 52px;
+    font-size: 16px;
+    line-height: 30px;
+    >div{
+      display: flex;
+      align-items: center;
+      .label{
+        // width:96px;
+        font-weight: 600;
+        text-align: right;
+      }
+      .sku-code{
+        flex: 1;
+        display: flex;
+        .el-input{
+          height: 54px;
+          font-size: 16px;
+        }
+      }
+      .maybe{
+        color: #F4A307;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      &.material{
+        .el-cascader{
+          width: 414px;
           .el-input{
-            width: 300px;
-            margin-right: 20px;
-          }
-          .el-button{
-            // font-size: 20px;
-            font-weight: 400;
+            height: 54px;
+            font-size: 16px;
           }
         }
-        >span{
-          margin: 10px 0;
+        .mp-one-level-select{
+          .el-select{
+            width: 328px;
+            margin-top: 15px;
+            .select-trigger, .el-input, &.el-select{
+              height: 54px;
+              font-size: 16px;
+            }
+          }
         }
       }
     }
