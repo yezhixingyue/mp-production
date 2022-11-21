@@ -40,8 +40,11 @@ const value = computed({
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
+  top: 1px;
   :deep(.el-input) {
     width: 110px;
+    height: 30px;
     input {
       text-align: left;
     }

@@ -10,16 +10,16 @@
           {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}
         </template>
       </mp-table-column>
-      <mp-table-column min-width="200px" label="尺寸限制">
+      <!-- <mp-table-column min-width="200px" label="尺寸限制">
         <template #default="scope">{{formatSizeLimit(scope.row)}}</template>
-      </mp-table-column>
-      <mp-table-column min-width="220px" label="物料限制（禁用条件）">
+      </mp-table-column> -->
+      <mp-table-column min-width="260px" label="物料限制（禁用条件）">
         <template #default="scope">{{formatMaterialLimit(scope.row)}}</template>
       </mp-table-column>
-      <mp-table-column min-width="120px" prop="ColorLimitContent" label="印色数量限制" />
-      <mp-table-column width="360px" label="操作">
+      <mp-table-column width="140px" prop="ColorLimitContent" label="印色数量限制" />
+      <mp-table-column width="340px" label="操作">
         <template #default="scope">
-          <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.size)">尺寸限制</mp-button>
+          <!-- <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.size)">尺寸限制</mp-button> -->
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.material)">物料限制</mp-button>
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.color)">印色数量限制</mp-button>
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)">编辑</mp-button>
@@ -47,35 +47,35 @@ const props = defineProps<{
 const emit = defineEmits(['menuClick']);
 
 const formatListName = (id, list, options = { key: 'Name', value: 'ID' }) => getNameByIDAndList(id, list, options);
-const formatSizeLimit = (it: EquipmentGroupItemType) => {
-  const {
-    MinWidth, MaxWidth, MinLength, MaxLength,
-  } = it;
+// const formatSizeLimit = (it: EquipmentGroupItemType) => {
+//   const {
+//     MinWidth, MaxWidth, MinLength, MaxLength,
+//   } = it;
 
-  const arr: string[] = [];
+//   const arr: string[] = [];
 
-  let str1 = '';
-  if (typeof MinWidth === 'number' && typeof MinLength === 'number') {
-    if (MinWidth === -1 || MinLength === -1) {
-      str1 += `最小：${MinLength === -1 ? '无限大' : `${MinLength}mm`}×${MinWidth === -1 ? '无限大' : `${MinWidth}mm`}`;
-    } else {
-      str1 += `最小：${MinLength}×${MinWidth}mm`;
-    }
-  }
-  arr.push(str1);
+//   let str1 = '';
+//   if (typeof MinWidth === 'number' && typeof MinLength === 'number') {
+//     if (MinWidth === -1 || MinLength === -1) {
+//       str1 += `最小：${MinLength === -1 ? '无限大' : `${MinLength}mm`}×${MinWidth === -1 ? '无限大' : `${MinWidth}mm`}`;
+//     } else {
+//       str1 += `最小：${MinLength}×${MinWidth}mm`;
+//     }
+//   }
+//   arr.push(str1);
 
-  let str2 = '';
-  if (typeof MaxWidth === 'number' && typeof MaxLength === 'number') {
-    if (MaxWidth === -1 || MaxLength === -1) {
-      str2 += `最大：${MaxLength === -1 ? '无限大' : `${MaxLength}mm`}×${MaxWidth === -1 ? '无限大' : `${MaxWidth}mm`}`;
-    } else {
-      str2 += `最大：${MaxLength}×${MaxWidth}mm`;
-    }
-  }
-  arr.push(str2);
+//   let str2 = '';
+//   if (typeof MaxWidth === 'number' && typeof MaxLength === 'number') {
+//     if (MaxWidth === -1 || MaxLength === -1) {
+//       str2 += `最大：${MaxLength === -1 ? '无限大' : `${MaxLength}mm`}×${MaxWidth === -1 ? '无限大' : `${MaxWidth}mm`}`;
+//     } else {
+//       str2 += `最大：${MaxLength}×${MaxWidth}mm`;
+//     }
+//   }
+//   arr.push(str2);
 
-  return arr.filter(it => it).join('；');
-};
+//   return arr.filter(it => it).join('；');
+// };
 const formatMaterialLimit = (item: EquipmentGroupItemType) => {
   const list = getMaterialConstraintsListWithNames(item.MaterialConstraints, props.MaterialTypeGroup);
   return list.map(it => (it.LimitNumber ? `${it.MaterialTypeName}（${it.LimitNumber}条）` : `${it.MaterialTypeName}`)).join('、');

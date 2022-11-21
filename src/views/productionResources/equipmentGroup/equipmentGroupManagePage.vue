@@ -137,6 +137,9 @@ export default {
       .el-button.is-link {
         font-size: 12px;
       }
+      .el-button + .el-button {
+        margin-left: 15px;
+      }
     }
   }
   > footer {

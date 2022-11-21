@@ -1,0 +1,46 @@
+<template>
+  <PageContent v-if="processInfo" :BreadcrumbList="BreadcrumbList" :cur-edit-item="processInfo" :workListRange="workListRange" @saved="setStorage" />
+</template>
+
+<script lang="ts" setup>
+import {
+  onMounted, computed, ref, Ref,
+} from 'vue';
+import { useRoute } from 'vue-router';
+import { IProductionLineWorkings } from '@/store/modules/productionSetting/types';
+import PageContent from '../MaterialSource/PageContent.vue';
+
+const route = useRoute();
+const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
+
+const BreadcrumbList = computed(() => [
+  { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
+  // { to: { path: '/productionLine' }, name: '生产线' },
+  {
+    name: '物料来源',
+  },
+]);
+
+function setStorage() { // 设置会话存储
+  sessionStorage.setItem('combinationProductionLinePage', 'true');
+  // sessionStorage.setItem('productionLinePage', 'true');
+}
+
+const workListRange = ref<string[]>([]);
+
+onMounted(() => {
+  const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;
+  if (temp) {
+    processInfo.value = temp;
+    const lineData = JSON.parse(route.params.lineData as string);
+    workListRange.value = lineData?.ProductionLineWorkings?.filter(it => it.LineWorkID !== temp.LineWorkID).map(it => it.WorkID) || [];
+  }
+});
+</script>
+<script lang="ts">
+export default {
+  name: 'combinationMaterialSourcePage',
+};
+</script>
+<style lang='scss'>
+</style>

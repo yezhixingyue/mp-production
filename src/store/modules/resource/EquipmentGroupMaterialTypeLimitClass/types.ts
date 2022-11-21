@@ -7,6 +7,7 @@ export interface IMaterialTypeLimitSaveParams {
 
 export interface ILimitConstraintsItem {
   ID: '' | number
+  Priority: '' | number
   GroupMaterialTypeID: string
   Constraint: null | Constraints
 }

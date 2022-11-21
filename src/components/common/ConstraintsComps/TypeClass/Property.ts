@@ -12,7 +12,12 @@ export class Property {
 
   UseModule: UseModuleEnum = UseModuleEnum.EquipmentGroupMaterialTypeLimit
 
-  Property = {
+  Property: null | IPropertyObjectMember = {
+    ID: '',
+    Name: '',
+  }
+
+  Assist: null | IPropertyObjectMember = {
     ID: '',
     Name: '',
   }
@@ -33,11 +38,37 @@ export class Property {
 
   ValueType: PropertyValueTypeEnum = PropertyValueTypeEnum.numerical
 
-  MaterialType: null | IPropertyObjectMember = null // 所属物料类型 后面可能会添加多种其它类型
+  MaterialType: null | IPropertyObjectMember = { // 所属物料类型 后面可能会添加多种其它类型
+    ID: '',
+    Name: '',
+  }
 
   constructor(data) {
     if (data) restoreInitDataByOrigin(this, data);
+    console.log(data, this);
+  }
+
+  // eslint-disable-next-line no-use-before-define
+  static getPropertyName(it: PropertyListItemType) {
+    let name = '';
+    switch (it.Type) {
+      case PropertyDisplayTypeEnum.Attribute:
+        name = it.Property?.Name || '';
+        break;
+      case PropertyDisplayTypeEnum.Numberic:
+        name = it.Assist?.Name || '';
+        break;
+      case PropertyDisplayTypeEnum.Material:
+        name = it.MaterialType?.Name || '';
+        break;
+      default:
+        break;
+    }
+    if ((!name || typeof it.FixedType === 'number') && it.DisplayContent) {
+      name = it.DisplayContent.replace('[', '').replace(']', '');
+    }
+    return name;
   }
 }
 
-export type PropertyListItemType = Omit<Property, ''>;
+export type PropertyListItemType = Omit<Property, 'getPropertyName'>;

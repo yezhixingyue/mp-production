@@ -63,8 +63,6 @@ const onConditionRemoveClick = async (item: IMaterialTypeLimitTableItemType, con
   }
 };
 
-console.log(MaterialTypeLimitData.value);
-
 </script>
 
 <script lang='ts'> // 声明页面name

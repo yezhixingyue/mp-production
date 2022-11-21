@@ -1,10 +1,15 @@
 /* eslint-disable max-len */
 import api from '@/api';
 import { getNameByIDAndList } from '@/assets/js/utils';
+import { localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { ConstraintsItemClass } from '../ConditionSetupPanel/ConstraintsItemClass';
-import { OperatorMpEnumList, PropertyDisplayTypeMpEnumList, PropertyValueTypeEnum } from './enum';
-import { PropertyListItemType } from './Property';
-import { IGetPropOptions, IGroupedPropertyListItem } from './types';
+import {
+  OperatorMpEnumList, PropertyDisplayTypeEnum, PropertyDisplayTypeMpEnumList, PropertyValueTypeEnum,
+} from './enum';
+import { Property, PropertyListItemType } from './Property';
+import {
+  IGetPropOptions, IGroupedPropertyListItem, IPropertyListItemTypeWithFixedTypeChildren, IPropertyObjectMember,
+} from './types';
 
 export class PropertyListClass {
   PropertyList: PropertyListItemType[] = []
@@ -37,10 +42,63 @@ export class PropertyListClass {
   }
 
   private static getListGroupByType(PropertyList: PropertyListItemType[]): IGroupedPropertyListItem[] { // { Type: { ID, Name }, PropertyList: [] } 按类型对属性列表进行分组
+    const formatTypePropertyList = (PropertyList: PropertyListItemType[], ID: localEnumValueIDType) => {
+      const arr = PropertyList.filter(p => p.Type === ID);
+      const _list: IPropertyListItemTypeWithFixedTypeChildren[] = arr.filter(it => typeof it.FixedType !== 'number');
+
+      let target: undefined | IPropertyListItemTypeWithFixedTypeChildren;
+
+      arr.filter(it => typeof it.FixedType === 'number').forEach(prop => {
+        target = undefined;
+        let key: keyof Property | '' = '';
+        switch (ID) {
+          case PropertyDisplayTypeEnum.Attribute:
+            // 稍后看情况
+            key = 'Property';
+            break;
+
+          case PropertyDisplayTypeEnum.Material:
+            // 物料类型 --- 暂不合并
+            // key = 'MaterialType';
+            break;
+
+          case PropertyDisplayTypeEnum.Numberic:
+            // 数值(辅助信息)类型
+            key = 'Assist';
+
+            break;
+          default:
+            break;
+        }
+        console.log(key);
+        if (key) {
+          target = _list.find(it => {
+            const left = it[key] as IPropertyObjectMember | null;
+            const right = prop[key] as IPropertyObjectMember | null;
+            return left && right && left.ID === right.ID;
+          });
+          if (!target && prop[key]) {
+            target = new Property({ [key]: { ...prop[key] }, Type: ID });
+            _list.push(target);
+          }
+          if (target) {
+            if (!target._FixedTypeList) target._FixedTypeList = [];
+            target._FixedTypeList.push(prop);
+          }
+        } else {
+          _list.push(prop);
+        }
+      });
+
+      return _list;
+    };
+
     const list = PropertyDisplayTypeMpEnumList.map(it => ({
       ...it,
-      PropertyList: PropertyList.filter(p => p.Type === it.ID), // 后续可再继续细分
+      PropertyList: formatTypePropertyList(PropertyList, it.ID), // 后续可再继续细分
     })).filter(it => it.PropertyList.length > 0);
+
+    console.log(PropertyList, list);
 
     return list;
   }

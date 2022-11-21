@@ -4,15 +4,19 @@
       <p class="mp-common-title-wrap black">{{props.item.Name}}</p>
     </header>
     <main>
-      <div v-for="p in props.item.PropertyList" :key="p.Property.ID">
-        <span class="is-element" @click="onClick(p)">{{p.Property.Name}}</span>
+      <div v-for="p in props.item.PropertyList" :key="p.StoredContent">
+        <span :class="getClass(p)" @click="onClick(p)">{{getName(p)}}</span>
+        <span v-if="p._FixedTypeList && p._FixedTypeList.length > 0" class="fix-list"> (
+          <span v-for="fixedProp in p._FixedTypeList" :key="fixedProp.StoredContent"
+           :class="getClass(fixedProp)" @click="onClick(fixedProp)">{{getName(fixedProp)}}</span>
+         )</span>
       </div>
     </main>
   </section>
 </template>
 
 <script setup lang='ts'>
-import { PropertyListItemType } from '../TypeClass/Property';
+import { Property, PropertyListItemType } from '../TypeClass/Property';
 import { IGroupedPropertyListItem } from '../TypeClass/types';
 
 const props = defineProps<{
@@ -22,8 +26,17 @@ const props = defineProps<{
 const emit = defineEmits(['itemClick']);
 
 const onClick = (p: PropertyListItemType) => {
+  if (!p.StoredContent) return;
   emit('itemClick', p);
 };
+
+const getClass = (it: PropertyListItemType) => {
+  if (!it.StoredContent) return 'ft-13';
+  if (typeof it.FixedType === 'number') return 'is-pink-span ft-12';
+  return 'is-element';
+};
+
+const getName = (it: PropertyListItemType) => Property.getPropertyName(it);
 
 </script>
 
@@ -51,6 +64,11 @@ const onClick = (p: PropertyListItemType) => {
         }
         &.disabled {
           color: #cbcbcb;
+        }
+      }
+      .fix-list {
+        > span + span {
+          margin-left: 12px;
         }
       }
     }

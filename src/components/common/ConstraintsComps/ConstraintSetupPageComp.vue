@@ -10,6 +10,7 @@
             ref="oLeftPanel"
             v-if="PropertyListClassData.loaded"
             :condition="props.condition"
+            :showPriority="props.showPriority"
             :PropertyListClassData="PropertyListClassData"
           />
         </template>
@@ -40,10 +41,11 @@ const props = withDefaults(defineProps<{
   PropertyList?: PropertyListItemType[], // options 和 PropertyList 应必传一个  传options时会自动获取属性列表
   condition: ConditionItemClass | null,
   leftWidth?: string,
+  showPriority?: boolean
 }>(), {
   leftWidth: '45%',
+  showPriority: false,
 });
-
 const emit = defineEmits(['submit']);
 
 const slotDefault = !!useSlots().default;
@@ -75,6 +77,7 @@ const submit = () => {
   padding: 0 20px;
   > header {
     padding: 13px 0;
+    padding-bottom: 8px;
   }
   > main {
     flex: 1;

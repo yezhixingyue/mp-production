@@ -1,3 +1,5 @@
+import { RouteLocationRaw } from 'vue-router';
+
 interface UnitSelectsType {
   UnitID: string,
   Unit: string,
@@ -42,4 +44,14 @@ export interface IDistrictItem {
 export interface StaffSelectListType {
   StaffID: string,
   StaffName: string
+}
+export interface ExpressListType {
+  ID: number,
+  Name: string
+}
+
+export interface IMpBreadcrumbItem {
+  to?: RouteLocationRaw,
+  name: string,
+  replace?: boolean
 }

@@ -2,6 +2,12 @@ import { getEnumList } from '@/assets/js/utils/getListByEnums';
 
 export enum PropertyDisplayTypeEnum {
   Attribute = 0, // 属性
+  /** 数值 */
+  Numberic = 1,
+  /** 物料 */
+  Material = 2,
+  /** 其它 */
+  Other = 3,
 }
 
 export const PropertyDisplayTypeMpEnums = {
@@ -9,27 +15,50 @@ export const PropertyDisplayTypeMpEnums = {
     ID: PropertyDisplayTypeEnum.Attribute,
     Name: '属性',
   },
+  Numberic: {
+    ID: PropertyDisplayTypeEnum.Numberic,
+    Name: '辅助信息',
+  },
+  Material: {
+    ID: PropertyDisplayTypeEnum.Material,
+    Name: '物料',
+  },
+  Other: {
+    ID: PropertyDisplayTypeEnum.Other,
+    Name: '其它',
+  },
 };
 
 export const PropertyDisplayTypeMpEnumList = getEnumList(PropertyDisplayTypeMpEnums);
 
 export enum UseModuleEnum {
+  /** 获取设备组物料类型限制条件属性 */
   EquipmentGroupMaterialTypeLimit = 0, // 获取设备组物料类型限制条件属性
+  /** 设置伸放条件 */
+  PutOutLimit = 1,
+  /** 设置产能条件 */
+  CapacityLimit = 2,
+  /** 设置产能计算数量 */
+  CapacityNumber = 21,
+  /** 全部 */
   all = 255
 }
 
+/**
+ * 属性常量类型枚举
+ *
+ * @export
+ * @enum {number}
+ */
 export enum FixedTypeEnum {
-  CheckedNumber = 0, // 已选项数
-  Sum = 1, // 和
-  MinValue = 2, // 最小值
-  MaxValue = 3, // 最大值
-  UseTimes = 4, // 使用次数
-  ShortestEdge = 5, // 最短边
-  LongestEdge = 6, // 最长边
-  GeneralSize = 7, // 常规尺寸
-  Length = 8, // 长
-  Width = 9, // 宽
-  Option = 10, // 选项
+  ProcessNumber = 0, // 加工数量
+  ProcessLength = 1, // 加工尺寸:长
+  ProcessWidth = 2, // 加工尺寸:宽
+  Length = 3, // 长度
+  Width = 4, // 宽度
+  LongestSide = 5, // 最长边
+  ShortestSide = 6, // 最短边
+  Material = 7, // 物料
   Const = 255, // 常数
 }
 

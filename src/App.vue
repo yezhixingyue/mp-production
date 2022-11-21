@@ -1,13 +1,23 @@
 <template>
-  <LayoutComp />
+  <el-config-provider :locale="zhCn">
+    <LayoutComp />
+  </el-config-provider>
 </template>
 
 <script lang='ts'>
 import LayoutComp from '@/components/Layout/Index.vue';
+import { ElConfigProvider } from 'element-plus';
+import zhCn from 'element-plus/lib/locale/lang/zh-cn';
 
 export default {
   components: {
     LayoutComp,
+    ElConfigProvider,
+  },
+  setup() {
+    return {
+      zhCn,
+    };
   },
 };
 </script>
@@ -26,7 +36,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   // text-align: center;
-  color: #2c3e50;
+  color: #444;
   display: flex;
   width: 100%;
   height: 100%;
@@ -57,7 +67,7 @@ nav {
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #444;
 
     &.router-link-exact-active {
       color: #42b983;

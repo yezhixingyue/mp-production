@@ -4,9 +4,10 @@ import { ConstraintsItemClass } from '../ConditionSetupPanel/ConstraintsItemClas
 import { PropertyListItemType } from '../TypeClass/Property';
 import { PropertyListClass } from '../TypeClass/PropertyListClass';
 
-interface IOptions {
-  tableList: ConditionItemClass[] | null
+interface IOptions<T> {
+  tableList: T[] | null
   PropertyList: PropertyListItemType[]
+  getRowContent?: (it: T) => string
 }
 
 const formatConstraint = (Constraint: Constraints | null, PropertyList: PropertyListItemType[]) => {
@@ -24,18 +25,29 @@ const formatConstraint = (Constraint: Constraints | null, PropertyList: Property
   return temp;
 };
 
+export type TransformConstraintTableItemType<T> = T & {
+  _Content: string
+  Constraint: ReturnType<typeof formatConstraint>
+}
+
 /**
  * 转换添加列表数据为可用数据
  * 1. 补充Property完整信息   2. 添加条件文字说明
  * @param {*} tableList
  * @returns
  */
-export const transformConstraintTableList = ({ tableList, PropertyList }: IOptions) => {
+export const transformConstraintTableList = <T extends ConditionItemClass = ConditionItemClass>({
+  tableList,
+  PropertyList,
+  getRowContent,
+}: IOptions<T>): TransformConstraintTableItemType<T>[] => {
   if (!tableList) return [];
   const list = tableList.map(it => {
     const Constraint = formatConstraint(it.Constraint, PropertyList);
+    const _Content = getRowContent ? getRowContent(it) : '';
     const temp = {
       ...it,
+      _Content,
       Constraint,
     };
     return temp;

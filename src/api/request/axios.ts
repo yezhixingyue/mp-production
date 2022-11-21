@@ -114,7 +114,8 @@ class AxiosClass {
   }
 
   /**
-   * @description: 删除 requestUrlList和 cancelRequestSourceList   * @param {string} _fullUrl
+   * @description: 删除 requestUrlList和 cancelRequestSourceList
+   * @param {string} _fullUrl
    * @returns {*}
    */
   private delUrl(_fullUrl?: string): void {
