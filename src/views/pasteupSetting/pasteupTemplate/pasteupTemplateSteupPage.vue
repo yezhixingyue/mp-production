@@ -83,6 +83,19 @@
               <p class="hint">
                 模板制作说明：版芯使用 PANTONE 804C 标记
               </p>
+              <div class="error-range">
+                <p>
+                  长允许误差：
+                  + <el-input v-model.number="Data.addPasteupTemplateFrom.LengthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
+                  - <el-input v-model.number="Data.addPasteupTemplateFrom.LengthErrorRange.MinValue"/> mm
+                </p>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <p>
+                  宽允许误差：
+                  + <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
+                  - <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MinValue"/> mm
+                </p>
+              </div>
               <p class="template-info" v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath">
                 <ul>
                   <li>模板：<span>长:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length}}mm</span>
@@ -237,6 +250,14 @@ const Data: DataType = reactive({
       BleedBottom: null,
       BleedLeft: null,
       BleedRight: null,
+    },
+    LengthErrorRange: {
+      MinValue: null,
+      MaxValue: null,
+    },
+    WidthErrorRange: {
+      MinValue: null,
+      MaxValue: null,
     },
     CreateTime: '',
     ID: '',
@@ -531,19 +552,28 @@ export default {
               margin-left: 20px;
             }
           }
-            .template-info{
-              color: #606266;
-              ul{
-                li{
-                  display: flex;
-                  line-height: 2em;
-                  span{
-                    width: 70px;
-                    margin: 0 5px;
-                  }
+          .template-info{
+            color: #606266;
+            ul{
+              li{
+                display: flex;
+                line-height: 2em;
+                span{
+                  width: 70px;
+                  margin: 0 5px;
                 }
               }
             }
+          }
+          .error-range{
+            .el-input{
+              width: 60px;
+              height: 28px;
+              input{
+                height: 28px;
+              }
+            }
+          }
         }
       }
       .white-edge{

@@ -8,76 +8,83 @@
     :closeClick="addMaterialCloseClick"
     :closed="addMaterialClosed"
     :appendToBody="true"
+    class="common-add-material-dialog"
     >
     <template #default>
       <div class="add-material-dialog">
-        <el-form label-width="120px">
-          <el-form-item :label="`当前货位：`">
-            {{materialInfo.CurrentPositionName}}
-          </el-form-item>
-          <el-form-item :label="`SKU编码：`" class="sku">
-            <p>
-              <el-input  @keyup.enter="getMaterial(false)" placeholder="请输入完整SKU编码，包括尺寸编码" v-model.trim="Data.getMaterialData.SKUCode"/>
+        <div style="font-size: 18px;font-weight: 600;margin-top: -10px;margin-bottom: 10px;">
+          {{materialInfo.CurrentPositionName}}
+        </div>
+        <div>
+          <span class="label">
+            SKU编码：
+          </span>
+            <p class="sku-code">
+              <el-input @keyup.enter="getMaterial(false)"
+              placeholder="请输入完整SKU编码，包括尺寸编码"
+              v-model.trim="Data.getMaterialData.SKUCode"/>
               <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
             </p>
-            <span>或者</span>
-          </el-form-item>
-          <el-form-item :label="`选择物料：`" class="select-material">
-                  <ThreeCascaderComp
-                  v-if="Dialog"
-                  ref="ThreeCascaderComp"
-                  :change="ThreeCascaderCompChange"
-                  ></ThreeCascaderComp>
-                  <OneLevelSelect
-                  v-if="Data.itemSelectTempMaterial"
-                    :options='Data.itemSelectTempMaterial.SizeSelects || []'
-                    :defaultProps="{
-                      value:'SizeID',
-                      label:'SizeDescribe',
-                    }"
-                    :value='Data.SizeSelects'
-                    @change="SizeSelectChange"
-                    :width="140"
-                    :placeholder="'请选择物料尺寸'"
-                    ></OneLevelSelect>
-                  <OneLevelSelect
-                    v-else
-                    :options='[]'
-                    :width="140"
-                    :placeholder="'请选择物料尺寸'"
-                    ></OneLevelSelect>
-          </el-form-item>
-          <el-form-item :label="`物料：`" class="red">
-            <template v-if="Data.checkedMaterial">
+        </div>
+        <div>
+          <el-divider>
+            <span class="maybe">或者</span>
+          </el-divider>
+        </div>
+        <div class="material" style="align-items: flex-start;">
+          <span class="label">
+            选择物料：
+          </span>
+          <div>
+            <ThreeCascaderComp
+              v-if="Dialog"
+              ref="ThreeCascaderComp"
+              :change="ThreeCascaderCompChange"
+              ></ThreeCascaderComp>
+              <OneLevelSelect
+              v-if="Data.itemSelectTempMaterial"
+                :options='Data.itemSelectTempMaterial.SizeSelects || []'
+                :defaultProps="{
+                  value:'SizeID',
+                  label:'SizeDescribe',
+                }"
+                :value='Data.SizeSelects'
+                @change="SizeSelectChange"
+                :width="328"
+                :placeholder="'请选择物料尺寸'"
+                ></OneLevelSelect>
+              <OneLevelSelect
+                v-else
+                :options='[]'
+                :width="328"
+                :placeholder="'请选择物料尺寸'"
+                ></OneLevelSelect>
+          </div>
+        </div>
+        <div style="margin: 10px 0;">
+          <span class="label">
+            新物料：
+          </span>
+            <span style="color:#FF0000;" v-if="Data.checkedMaterial">
               {{Data.checkedMaterial.AttributeDescribe}}
-              <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
-              :key="item.AttributeID">
-                <template v-if="item.NumericValue">
-                  <span style="margin-right:5px">{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                </template>
-                <template v-else>
-                  <span style="margin-right:5px">{{item.InputSelectValue || item.SelectValue}}</span>
-                </template>
-                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                  {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
-                </template>
-              </template> -->
-            </template>
-            {{Data.checkedMaterial?.SizeDescribe}}
-          </el-form-item>
-          <el-form-item :label="`物料编码：`" class="red">
-           {{Data.checkedMaterial?.Code}}
-          </el-form-item>
-
-          <el-form-item :label="`数量：`" class="in-number">
-            <el-input-number style="margin-right:5px" placeholder="请输入数量" :controls="false"
-            v-model="Data.inDeliveryForm.Number" /> {{Data.checkedMaterial?.StockUnit}}
-          </el-form-item>
-
-          <el-form-item :label="`备注：`" class="remark">
-            <el-input placeholder="请输入备注" v-model="Data.inDeliveryForm.Remark"/> (选填)
-          </el-form-item>
-        </el-form>
+              {{Data.checkedMaterial?.SizeDescribe}}
+              {{Data.checkedMaterial?.Code}}
+            </span>
+        </div>
+        <div style="margin-top: 10px;">
+          <span class="label">
+            正确数量：
+          </span>
+          <el-input-number style="margin-right:5px" placeholder="请输入正确数量"
+            :controls="false" v-model="Data.inDeliveryForm.Number" />
+            {{Data.checkedMaterial?.StockUnit}}
+        </div>
+        <div style="margin-top:20px;align-items: flex-start;">
+          <span class="label">
+            备注(选填)：
+          </span>
+          <el-input type="textarea" v-model="Data.inDeliveryForm.Remark" placeholder="请输入备注"/>
+        </div>
       </div>
     </template>
     </DialogContainerComp>
@@ -276,26 +283,75 @@ export default {
 };
 </script>
 <style lang="scss">
+.common-add-material-dialog{
+  .el-dialog__body{
+    padding-top: 20px;
+  }
+  .el-dialog__footer{
+    .el-button{
+      width: 200px;
+      height: 60px;
+      font-size: 30px;
+    }
+  }
+}
   .add-material-dialog{
-    .sku{
-      margin-bottom: 0;
-      .el-form-item__content{
-        flex-direction: column;
-        align-items: flex-start;
-        font-size: 14px;
-        >p{
-          display: flex;
+    padding: 0 25px;
+    font-size: 16px;
+    line-height: 30px;
+    >div{
+      display: flex;
+      align-items: center;
+      .label{
+        width:96px;
+        font-weight: 600;
+        text-align: right;
+      }
+      .sku-code{
+        flex: 1;
+        display: flex;
+        .el-input{
+          height: 40px;
+          font-size: 16px;
+        }
+      }
+      .maybe{
+        color: #F4A307;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      &.material{
+        .el-cascader{
+          width: 414px;
           .el-input{
-            width: 300px;
-            margin-right: 20px;
-          }
-          .el-button{
-            // font-size: 20px;
-            font-weight: 400;
+            height: 40px;
+            font-size: 16px;
           }
         }
-        >span{
-          margin: 10px 0;
+        .mp-one-level-select{
+          .el-select{
+            width: 328px;
+            margin-top: 15px;
+            .select-trigger, .el-input, &.el-select{
+              height: 40px;
+              font-size: 16px;
+            }
+          }
+        }
+      }
+      .el-input-number{
+        width: 328px;
+        .el-input{
+          height: 40px;
+          font-size: 16px;
+          font-size: 16px;
+        }
+      }
+      .el-textarea{
+        flex: 1;
+        .el-textarea__inner{
+          height: 60px;
+          font-size: 16px;
         }
       }
     }
