@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
@@ -27,11 +27,14 @@ const router = useRouter();
 const curLineEquipment = JSON.parse(route.params.LineEquipment as string);
 productionSettingStore.setLinePutOutPageData(curLineEquipment);
 
-const BreadcrumbList = [
+const BreadcrumbList = computed(() => ([
   { to: { path: '/productionLine' }, name: '生产线' },
-  { to: { path: '/equipment' }, name: '设备工厂' },
-  { name: '申放' },
-];
+  {
+    to: { path: '/equipment' },
+    name: `选择设备/工厂：${LinePutOutPageData.value?.curWorkName}`,
+  },
+  { name: `设置申放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
+]));
 
 const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
   LinePutOutPageData.value?.setCurConditionRow(item);
@@ -43,7 +46,7 @@ const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>
 };
 
 onMounted(() => {
-  LinePutOutPageData.value?.getInitData();
+  LinePutOutPageData.value?.getInitData(route.params.WorkName as string);
 });
 
 </script>

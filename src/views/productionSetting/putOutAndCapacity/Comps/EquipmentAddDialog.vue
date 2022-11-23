@@ -5,7 +5,7 @@
       <div class="add-equipment-dialog">
         <el-scrollbar max-height="450px">
           <ul class="one-list">
-            <template v-for="ClassIt in props.ClassEquipmentGroups" :key="ClassIt.ClassID">
+            <template v-for="ClassIt in localClassEquipmentGroups" :key="ClassIt.ClassID">
               <li v-if="ClassIt.EquipmentGroups && ClassIt.EquipmentGroups.length">
                 <p class="one">{{ ClassIt.ClassName }}:</p>
                 <ul class="tow-list">
@@ -34,6 +34,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IClassEquipmentGroups } from '@/store/modules/productionSetting/types';
 import { computed, reactive } from 'vue';
+import { filterClassEquipmentGroups } from '../../PlateMakingGroupView/js/utils';
 import { ILineEquipmentSaveParams } from '../js/types';
 
 const props = defineProps<{
@@ -49,11 +50,13 @@ const ruleForm = reactive<ILineEquipmentSaveParams>({
   EquipmentIDS: [],
 });
 
+const localClassEquipmentGroups = computed(() => filterClassEquipmentGroups(props.ClassEquipmentGroups));
+
 const onOpen = () => {
   ruleForm.LineWorkID = props.curEditItem?.LineWorkID || '';
   const list = props.curEditItem ? [...props.curEditItem.EquipmentIDS] : [];
   const ids: string[] = [];
-  props.ClassEquipmentGroups.forEach(lv1 => {
+  localClassEquipmentGroups.value.forEach(lv1 => {
     lv1.EquipmentGroups.forEach(lv2 => {
       lv2.Equipments.forEach(lv3 => {
         ids.push(lv3.ID);

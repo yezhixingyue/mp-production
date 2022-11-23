@@ -18,11 +18,14 @@ const productionSettingStore = useProductionSettingStore();
 const { CombineLinePutOutPageData } = storeToRefs(productionSettingStore);
 
 const BreadcrumbList = [
-  { to: { path: '/combinationProductionLine' }, name: '生产线' },
-  { to: { path: '/combinationEquipment' }, name: '设备工厂' },
-  { to: { path: '/combinationPutOut' }, name: '申放' },
+  { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
   {
-    name: '申放条件',
+    to: { path: '/combinationEquipment' },
+    name: `选择设备/工厂：${CombineLinePutOutPageData.value?.curWorkName}`,
+  },
+  { name: `设置申放：${CombineLinePutOutPageData.value?.curLineEquipment?.Name}`, to: { path: '/combinationPutOut' } },
+  {
+    name: `${CombineLinePutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}申放`,
   },
 ];
 

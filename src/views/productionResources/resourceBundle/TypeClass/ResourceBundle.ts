@@ -1,16 +1,31 @@
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 
-export const resourceBundleFeatureEnum = {
+/**
+ * 物料资源类型枚举：主料 辅料 半成品
+ *
+ * @export
+ * @enum {number}
+ */
+export enum MakingGroupTypeEnum {
+  /** 主料 */
+  main = 0,
+  /** 辅料 */
+  sup = 1,
+  /** 半成品 */
+  semifinished = 2,
+}
+
+export const resourceBundleFeatureEnumObj = {
   main: {
-    ID: 0,
+    ID: MakingGroupTypeEnum.main,
     Name: '主料',
   },
   sup: {
-    ID: 1,
+    ID: MakingGroupTypeEnum.sup,
     Name: '辅料',
   },
   semifinished: {
-    ID: 2,
+    ID: MakingGroupTypeEnum.semifinished,
     Name: '半成品',
   },
 };
@@ -36,7 +51,7 @@ export class ResourceBundleClass {
 
   Name = ''
 
-  Feature = resourceBundleFeatureEnum.main.ID
+  Feature = resourceBundleFeatureEnumObj.main.ID
 
   MatchType: number | '' = resourceBundleMatchEnum.any.ID
 

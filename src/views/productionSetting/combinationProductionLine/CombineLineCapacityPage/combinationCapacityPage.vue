@@ -4,6 +4,7 @@
     :BreadcrumbList="BreadcrumbList"
     :list="CombineLineCapacityPageData.list"
     :PropertyList="CombineLineCapacityPageData.PropertyList"
+    :rightPropertyList="CombineLineCapacityPageData.rightPropertyList"
     @remove="remove"
     @save="ToSetup"
   />
@@ -29,11 +30,12 @@ const curLineEquipment = JSON.parse(route.params.LineEquipment as string);
 productionSettingStore.setCombineLineCapacityPageData(curLineEquipment);
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/combinationProductionLine' }, name: '生产线' },
-  { to: { path: '/combinationEquipment' }, name: '设备工厂' },
+  { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
   {
-    name: '产能',
+    to: { path: '/combinationEquipment' },
+    name: `选择设备/工厂：${CombineLineCapacityPageData.value?.curWorkName}`,
   },
+  { name: `设置产能：${CombineLineCapacityPageData.value?.curLineEquipment?.Name}` },
 ]);
 
 const ToSetup = (item, type: CapacityTypeEnum) => {
@@ -47,7 +49,7 @@ const remove = (item) => {
 };
 
 onMounted(() => {
-  CombineLineCapacityPageData.value?.getInitData();
+  CombineLineCapacityPageData.value?.getInitData(route.params.WorkName as string);
   CombineLineCapacityPageData.value?.getRightPropertyList();
 });
 

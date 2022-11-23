@@ -44,7 +44,7 @@
 
     </main>
     <footer>
-      <mp-button class="blue" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getAttributesData.Page"
@@ -68,7 +68,7 @@
             <el-input v-model="Data.addAttributesForm.AttributeName" />
           </el-form-item>
           <el-form-item label="显示顺序：">
-            <el-input v-model="Data.addAttributesForm.Sort" style="width:100px"/>
+            <el-input v-model="Data.addAttributesForm.Sort" style="width:100px" maxlength="9"/>
             <span class="hint">数字越小显示越靠前</span>
           </el-form-item>
           <el-form-item label="类型：">
@@ -141,6 +141,7 @@ import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrum
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { getGoBackFun } from '@/router';
 
 interface AttributeSelectsType {
     SelectID: string | number,
@@ -336,6 +337,7 @@ export default {
       editAttributes,
       delAttributes,
       PaginationChange,
+      getGoBackFun,
     };
   },
 };

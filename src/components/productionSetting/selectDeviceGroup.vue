@@ -165,24 +165,31 @@ watch(() => Dialog.value, (newVal) => {
   }
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .set-apply-equipment-dialog{
-    padding: 0 22px;
+    padding-left: 18px;
+    padding-right: 0;
     .material-type{
       &.material-type+.material-type{
         margin-top: 20px;
       }
       p{
-        font-weight: 600;
-        .el-checkbox__label{
+        :deep(.el-checkbox__label) {
           font-weight: 600;
+          font-size: 13px;
         }
       }
     }
     .el-checkbox-group{
       .el-checkbox{
-        width: calc(25% - 10px);
-        margin-right: 10px;
+        margin-right: 8px;
+        :deep(.el-checkbox__label) {
+          display: inline-block;
+          width: 10em;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
       }
     }
   }

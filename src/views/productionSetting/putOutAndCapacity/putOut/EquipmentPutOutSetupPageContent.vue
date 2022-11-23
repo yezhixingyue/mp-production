@@ -74,7 +74,8 @@ onMounted(() => {
 
 <style scoped lang='scss'>
 .put-out-setup {
-  .constraint-setup-page-comp-wrap > header{
+  :deep(.constraint-setup-page-comp-wrap) > header{
+    padding-top: 20px;
     .el-breadcrumb{
       margin-bottom: 0px;
     }

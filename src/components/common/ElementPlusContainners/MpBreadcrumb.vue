@@ -32,7 +32,7 @@ const props = defineProps<{
       font-size: 13px;
       &.is-link {
         color: #26BCF9 !important;
-        font-weight: 400 !important;
+        font-weight: 700 !important;
         font-size: 12px;
         &:hover {
           text-decoration: underline;

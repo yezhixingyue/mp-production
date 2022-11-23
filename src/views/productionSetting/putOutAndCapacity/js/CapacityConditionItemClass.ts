@@ -16,5 +16,5 @@ export class CapacityConditionItemClass extends ConditionItemClass {
 
   Type: CapacityTypeEnum = 0
 
-  NumberPropertyID: PropertyListItemType | null = null
+  Property: PropertyListItemType | null = null
 }

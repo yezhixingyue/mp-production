@@ -8,6 +8,7 @@ import type {
 import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/LinePutOutClass';
 import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
 import { EquipmentListType } from '@/views/productionSetting/putOutAndCapacity/js/types';
+import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMakingGroupView/js/PlateMakingGroupManageClass';
 import { IState, _UseClassEquipmentGroupType, getPropertyListType } from './types';
 
 export interface IActions {
@@ -20,6 +21,9 @@ export interface IActions {
   setLineCapacityPageData: (data: EquipmentListType) => void,
   setCombineLinePutOutPageData: (data: EquipmentListType) => void,
   setCombineLineCapacityPageData: (data: EquipmentListType) => void,
+  initPlateMakingGroupManageData: () => void,
+  setPlateMakingGroupPutOutPageData: (data: EquipmentListType) => void,
+  setPlateMakingGroupCapacityPageData: (data: EquipmentListType) => void,
 }
 type IGetters = Record<string, never>;
 
@@ -35,6 +39,10 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     LineCapacityPageData: null,
     CombineLinePutOutPageData: null,
     CombineLineCapacityPageData: null,
+    /** 制版组 */
+    PlateMakingGroupManageData: new PlateMakingGroupManageClass(),
+    PlateMakingGroupPutOutPageData: null,
+    PlateMakingGroupCapacityPageData: null,
   }),
   getters: {},
   actions: {
@@ -103,6 +111,15 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
     setCombineLineCapacityPageData(LineEquipment) {
       this.CombineLineCapacityPageData = new LineCapacityClass(LineEquipment);
+    },
+    initPlateMakingGroupManageData() {
+      this.PlateMakingGroupManageData.getWorkingList();
+    },
+    setPlateMakingGroupPutOutPageData(LineEquipment) {
+      this.PlateMakingGroupPutOutPageData = new LinePutOutClass(LineEquipment);
+    },
+    setPlateMakingGroupCapacityPageData(LineEquipment) {
+      this.PlateMakingGroupCapacityPageData = new LineCapacityClass(LineEquipment);
     },
   },
 };

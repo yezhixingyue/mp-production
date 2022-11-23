@@ -22,4 +22,7 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.is-disabled.mp-button.is-link {
+  color: #cbcbcb !important;
+}
 </style>

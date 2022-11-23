@@ -34,12 +34,19 @@
           <li class="table-main" v-for="item in ProductionLineData?.ProductionLineWorkings" :key="item.WorkID">
             <div class="process-item">
               <span class="process">{{[...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name}}</span>
-              <span class="equipment">
+              <span class="equipment ft-f-12" :title="getEquipmentText(item).replaceAll('；', '；\r\n')">
                 {{getEquipmentText(item)}}
               </span>
               <span class="operate">
-                <mp-button type="primary" class="ft-12" link @click="ToEquipment(item)">选择设备/工厂</mp-button>
-                <mp-button type="primary" class="ft-12" link :disabled="item.MaterialSources.length===0" @click="ToMaterialSource(item)">物料来源</mp-button>
+                <mp-button type="primary" class="ft-12" link @click="delLineWorking(item)">设置制版工序</mp-button>
+                <mp-button type="primary" class="ft-12" link @click="ToEquipment(
+                  item,
+                  [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name
+                  )">选择设备/工厂</mp-button>
+                <mp-button type="primary" class="ft-12" link :disabled="item.MaterialSources.length===0" @click="ToMaterialSource(
+                  item,
+                  [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name
+                  )">物料来源</mp-button>
                 <mp-button type="danger" class="ft-12" link @click="delLineWorking(item)">删除</mp-button>
               </span>
             </div>
@@ -352,19 +359,19 @@ const computedImpositionTemmplate = computed(() => {
   return returnData;
 });
 // 跳转物料来源
-const ToMaterialSource = (item) => {
+const ToMaterialSource = (item, WorkName) => {
   const name = isCombine.value ? 'combinationMaterialSource' : 'materialSource';
   router.push({
     name,
-    params: { processInfo: JSON.stringify(item), lineData: JSON.stringify(ProductionLineData.value) },
+    params: { processInfo: JSON.stringify(item), lineData: JSON.stringify(ProductionLineData.value), WorkName },
   });
 };
 // 跳转生产设备
-const ToEquipment = (item) => {
+const ToEquipment = (item, WorkName) => {
   const name = isCombine.value ? 'combinationEquipment' : 'equipment';
   router.push({
     name,
-    params: { processInfo: JSON.stringify(item) },
+    params: { processInfo: JSON.stringify(item), WorkName },
   });
 };
 // 获取生产线工序列表
@@ -391,15 +398,15 @@ const delLineWorking = (item) => {
 };
 // 获取设备文字
 const getEquipmentText = (item) => {
-  let returnStr = '';
+  const returnStr: string[] = [];
   item.ClassEquipmentGroups.forEach(ClassIt => {
     ClassIt.EquipmentGroups.forEach(GroupIt => {
       if (GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).length) {
-        returnStr += `${GroupIt.GroupName}：${GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).join('、')}`;
+        returnStr.push(`${GroupIt.GroupName}：${GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).join('/')}`);
       }
     });
   });
-  return returnStr;
+  return returnStr.join('；');
 };
 // 获取物料名
 const getMaterialName = (ID) => productionSettingStore.MaterialTypeGroup.find(it => it.ID === ID)?.Name;
@@ -456,7 +463,7 @@ const getsplitPrcessList = () => {
 };
 // 获取组合工序列表
 const getCombinationPrcessList = () => {
-  api.getWorkingProcedureSearch(0).then(res => {
+  api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.Combination).then(res => {
     if (res.data.Status === 1000) {
       combinationPrcessList.value = res.data.Data as ProcessListType[];
     }
@@ -696,7 +703,7 @@ onMounted(() => {
               width: 155px;
             }
             .operate{
-              width: 300px;
+              width: 340px;
             }
             // border: 1px solid red;
             border-bottom: 1px solid #D0D0D0;
@@ -736,6 +743,10 @@ onMounted(() => {
             }
             .equipment{
               padding-left: 4em;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              vertical-align: top;
             }
             .operate{
               display: flex;

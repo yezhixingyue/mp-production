@@ -90,15 +90,17 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import { useRouter } from 'vue-router';
 import {
-  onMounted, ref, reactive, onActivated,
+  onMounted, ref, reactive, onActivated, computed,
 } from 'vue';
 import api from '@/api';
-import { ProcessListType } from '@/store/modules/productionSetting/types';
+import { ImpositionTemmplateListGroupType, ProcessListType } from '@/store/modules/productionSetting/types';
 import messageBox from '@/assets/js/utils/message';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import type { RelationsType } from '@/store/modules/productionSetting/types';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import type { EquipmentGroups } from '@/components/pasteupSetting/types';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { WorkingProcedureRelationEnum } from './enums';
 
 const PasteupSettingStore = usePasteupSettingStore();
 const productionSettingStore = useProductionSettingStore();
@@ -185,26 +187,42 @@ const getMaterialName = (Relations:RelationsType[]) => {
 
   return returnStr.join('、');
 };
-// 格式化大阪模板
-const getTemplateName = (Relations:RelationsType[]) => {
-  const returnStr:string[] = [];
-  Relations.forEach(item => {
-    if (item.Type === 2) {
-      const temp = productionSettingStore.ImpositionTemmplateList.find(res => res.ID === item.RelationID);
-      if (temp) {
-        returnStr.push(temp.Name);
-      }
+const ImpositionTemmplateListGroup = computed(() => {
+  const returnData:ImpositionTemmplateListGroupType[] = [];
+  productionSettingStore.ImpositionTemmplateList.forEach(item => {
+    const temp = returnData.find(it => it.ClassID === item.ClassID);
+    // 找到此条数据对应的分类及该分类下的所有模板
+    if (!temp) {
+      const TemmplateClass = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === item.ClassID);
+      const TemmplateList = productionSettingStore.ImpositionTemmplateList.filter(it => it.ClassID === item.ClassID);
+      returnData.push({ Name: TemmplateClass?.Name || '', children: TemmplateList, ClassID: TemmplateClass?.ID || 0 });
     }
   });
-
-  return returnStr.join('、');
+  return returnData;
+});
+// 格式化大阪模板
+const getTemplateName = (Relations:RelationsType[]) => {
+  const temp = Relations.filter(item => item.Type === WorkingProcedureRelationEnum.otherBoard);
+  const ids = temp.map(it => it.RelationID);
+  const list = ImpositionTemmplateListGroup.value.map(it => ({
+    Name: it.Name,
+    content: it.children.filter(c => ids.includes(c.ID)).map(c => c.Name).join('、'),
+  })).filter(it => it.content).map(it => `${it.Name}：${it.content}`);
+  return list.join('；');
 };
 const delProcess = (item) => {
   messageBox.warnCancelBox('确定要删除此工序吗？', `${item.Name}`, () => {
     api.getWorkingProcedureRemove(item.ID).then(res => {
       if (res.data.Status === 1000) {
         // 删除成功
-        getProcessList();
+        const cb = () => {
+          getProcessList();
+        };
+        MpMessage.success({
+          title: '删除成功',
+          onOk: cb,
+          onCancel: cb,
+        });
       }
     });
   }, () => undefined);

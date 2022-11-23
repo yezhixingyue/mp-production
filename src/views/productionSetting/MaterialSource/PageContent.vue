@@ -4,51 +4,22 @@
       <MpBreadcrumb :list="props.BreadcrumbList"></MpBreadcrumb>
     </header>
     <main>
-      <el-table border fit stripe :data="tableList" style="width: 100%" v-if="tableList">
-        <el-table-column show-overflow-tooltip prop="MaterialTypeID" label="资源包" width="316">
-          <template #default="scope">
-          {{scope.row._MaterialTypeGroup?.Name}}
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="ContactWay" label="来源" min-width="308">
-          <template #default="scope">
-            <span class="source">
-              <el-checkbox v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnum.semifinished.ID"
-                v-model="scope.row.NeedSource" label="必须资源"></el-checkbox>
-              <el-checkbox v-model="scope.row.FactoryProvide" label="如外协则外协厂自备"></el-checkbox>
-              <el-radio-group :class="{'max-margin-left':scope.row._MaterialTypeGroup?.Feature !== resourceBundleFeatureEnum.semifinished.ID}"
-               v-model="scope.row.SourceType">
-                <el-radio :label="MaterialSourceTypeEnum.otherLine"
-                 v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnum.semifinished.ID">其他生产线</el-radio>
-                <el-radio :label="MaterialSourceTypeEnum.outOfStorage">预出库</el-radio>
-                <el-radio :label="MaterialSourceTypeEnum.picking">领料</el-radio>
-                <el-radio :label="MaterialSourceTypeEnum.otherPrcess">其他工序</el-radio>
-              </el-radio-group>
-              <template v-if="scope.row.SourceType === 3">
-                <div class="Process-list" v-if="scope.row.SourceWorkIDS && scope.row.SourceWorkIDS.length"
-                  :title="scope.row.SourceWorkIDS.map(it => getProcessName(it)).join('\r\n或 ')">
-                  <template v-for="(item,i) in scope.row.SourceWorkIDS" :key="item">
-                    {{i === 0 ? '': ' 或 '}}
-                    <span>
-                      {{getProcessName(item)}}
-                    </span>
-                  </template>
-                </div>
-                <mp-button link type="primary" class="ft-13" @click="selectProcess(scope.row)">
-                  选择工序
-                </mp-button>
-              </template>
-            </span>
-          </template>
-        </el-table-column>
-      </el-table>
+      <PageContentTable v-if="tableList" :tableList="tableList" :withoutOtherPrcess="props.withoutOtherPrcess"
+       :title="props.title" :WorkingProcedureList="WorkingProcedureList" @select="selectProcess" />
+      <ul class="intro">
+        <li v-if="type==='combine'">如果物料资源来源于其他生产线，则必须等待其完工，当前工序才可以开始；</li>
+        <li v-if="type==='line' || type==='combine'">如果一种物料资源包来源于其他某个工序，则必须等待其完工，当前工序才可开始；</li>
+        <li v-if="type==='line' || type==='combine'">如果一种物料资源包来源于多个工序，指其中任意一个工序完工，便可开始当前工序；</li>
+        <li>如果来源于领料，则须等待仓库出库后才可开始；</li>
+        <li>预出库不需等待。</li>
+      </ul>
     </main>
     <footer>
       <mp-button type="primary" class="gradient" @click="saveProcess">保存</mp-button>
       <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
     </footer>
-    <Dialog v-model:visible="visible" :WorkingProcedureList="localWorkingProcedureList" :originList="curRowData?.SourceWorkIDS||[]" @save="onDialogSave" />
+    <Dialog v-if="!props.withoutOtherPrcess"
+     v-model:visible="visible" :WorkingProcedureList="localWorkingProcedureList" :originList="curRowData?.SourceWorkIDS||[]" @save="onDialogSave" />
   </section>
 </template>
 
@@ -57,31 +28,35 @@ import api from '@/api';
 import { IMpBreadcrumbItem } from '@/assets/Types/common';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import {
-  IMaterialSources, IProductionLineWorkings, MaterialTypeGroupType, ProcessListType,
+  IMaterialSources, IProductionLineWorkings, ProcessListType,
 } from '@/store/modules/productionSetting/types';
 import {
   onMounted, ref, nextTick, computed,
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { getGoBackFun } from '@/router';
-import { resourceBundleFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
+import { AxiosResponse } from 'axios';
+import { IResponse } from '@/api/request/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import Dialog from './WorkingProcedureSelectDialog.vue';
 import { MaterialSourceTypeEnum } from '../js/enums';
+import PageContentTable, { ITableItem } from './PageContentTable.vue';
 
 const productionSettingStore = useProductionSettingStore();
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
-  curEditItem: IProductionLineWorkings
+  curEditItem?: IProductionLineWorkings
   workListRange?: string[] | undefined
+  originMaterialSources?: IMaterialSources[]
+  saveApiFunc?:(data: { Materials: ITableItem[] | null }) => Promise<AxiosResponse<IResponse<string>, unknown>>
+  params?: object
+  withoutOtherPrcess?: boolean
+  title: string
+  type: 'combine' | 'line' | 'PlateMakingGroup'
 }>();
 
 const emit = defineEmits(['saved']);
-
-interface ITableItem extends IMaterialSources {
-  _MaterialTypeGroup?: MaterialTypeGroupType
-}
 
 const tableList = ref<null | ITableItem[]>(null);
 
@@ -101,8 +76,6 @@ const localWorkingProcedureList = computed(() => {
   }
   return WorkingProcedureList.value;
 });
-
-const getProcessName = (ID) => WorkingProcedureList.value.find(it => it.ID === ID)?.Name;
 
 const selectProcess = (item: ITableItem) => {
   curRowData.value = item;
@@ -128,16 +101,20 @@ const saveProcess = async () => {
     });
     return;
   }
-  const temp = {
-    LineWorkID: props.curEditItem.LineWorkID,
-    Materials: tableList.value,
-  };
-  const resp = await api.getProductionLinetMaterialSourceSave(temp).catch(() => null);
+
+  const Materials = tableList.value?.map(it => {
+    const _it = { ...it };
+    delete _it._MaterialTypeGroup;
+    return _it;
+  }) || [];
+  const temp = props.params ? { ...props.params, Materials } : { LineWorkID: props.curEditItem?.LineWorkID || '', Materials };
+  const fetchFunc = props.saveApiFunc || api.getProductionLinetMaterialSourceSave;
+
+  const resp = await fetchFunc(temp).catch(() => null);
 
   if (resp?.data.isSuccess) {
-    const cb = async () => {
-      // 处理数据变动
-      emit('saved');
+    const cb = async () => { // 处理数据变动
+      emit('saved', Materials);
       await nextTick();
       getGoBackFun();
     };
@@ -151,6 +128,7 @@ const saveProcess = async () => {
 };
 
 const getWorkingProcedureList = async () => {
+  if (props.withoutOtherPrcess) return;
   const resp = await api.getWorkingProcedureSearch().catch(() => null);
   if (resp?.data.isSuccess) {
     WorkingProcedureList.value = resp.data.Data as ProcessListType[];
@@ -165,7 +143,7 @@ const getMaterialTypeGroupAll = async () => {
 
 onMounted(async () => {
   await Promise.all([getWorkingProcedureList(), getMaterialTypeGroupAll()]);
-  tableList.value = JSON.parse(JSON.stringify(props.curEditItem.MaterialSources)).map((it: IMaterialSources) => {
+  tableList.value = JSON.parse(JSON.stringify(props.originMaterialSources || props.curEditItem?.MaterialSources)).map((it: IMaterialSources) => {
     const t = productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.MaterialTypeID);
     return {
       ...it,
@@ -192,51 +170,24 @@ onMounted(async () => {
   }
   >main{
     flex: 1;
-    margin-top: 20px;
-    overflow-x: auto;
-    padding-left: 20px;
+    overflow: auto;
+    overflow: overlay;
     padding-top: 20px;
     box-sizing: border-box;
-    .el-table{
-      height: 100%;
-      .source{
-        display: flex;
-        line-height: 32px;
-        .el-radio-group{
-          margin-left: 16px;
-          flex-wrap: nowrap;
-        }
-        .max-margin-left{
-          margin-left: 200px;
-        }
-        .Process-list{
-          padding: 0 20px;
-          padding-right: 0;
-          max-width: calc(100% - 63px - 238px);
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          height: 32px;
-          color: #F4A307;
-          span{
-            color: #444;
-          }
-        }
-        .el-button{
-          margin-left: 20px;
-        }
+    padding-left: 20px;
+    .intro {
+      margin-top: 10px;
+      padding-left: 60px;
+      position: relative;
+      letter-spacing: 1px;
+      &::before {
+        content: '说明：';
+        position: absolute;
+        left: 0;
+        top: 0;
       }
-      .el-table__header-wrapper, .el-table__body-wrapper{
-        tr{
-          th:nth-child(2)>.cell{
-            padding-left: 150px !important;
-          }
-          .el-table__cell:nth-child(2)>.cell{
-            box-sizing: border-box;
-            text-align: left;
-            padding-left: 50px;
-          }
-        }
+      li {
+        list-style: disc;
       }
     }
   }

@@ -20,16 +20,22 @@ import { CapacityTypeEnum } from '../../putOutAndCapacity/capacity/enum';
 const productionSettingStore = useProductionSettingStore();
 const { CombineLineCapacityPageData } = storeToRefs(productionSettingStore);
 
-let name = '设置产能';
-if (CombineLineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.dry) name = '设置干燥时间';
-if (CombineLineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.preparation) name = '设置准备时间';
+let name = '产能';
+if (CombineLineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.dry) name = '干燥时间';
+if (CombineLineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.preparation) name = '准备时间';
 
 const BreadcrumbList = [
-  { to: { path: '/combinationProductionLine' }, name: '生产线' },
-  { to: { path: '/combinationEquipment' }, name: '设备工厂' },
-  { to: { path: '/combinationCapacity' }, name: '产能' },
+  { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
   {
-    name,
+    to: { path: '/combinationEquipment' },
+    name: `选择设备/工厂：${CombineLineCapacityPageData.value?.curWorkName}`,
+  },
+  {
+    name: `设置产能：${CombineLineCapacityPageData.value?.curLineEquipment?.Name}`,
+    to: { path: '/combinationCapacity' },
+  },
+  {
+    name: `${CombineLineCapacityPageData?.value?.curConditionRow ? '编辑' : '添加'}${name}`,
   },
 ];
 

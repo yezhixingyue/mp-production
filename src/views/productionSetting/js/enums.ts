@@ -41,6 +41,25 @@ export enum MaterialSourceTypeEnum {
   otherPrcess = 3,
 }
 
+export const MaterialSourceTypeEnumObj = {
+  otherLine: {
+    ID: MaterialSourceTypeEnum.otherLine,
+    Name: '其它生产线',
+  },
+  outOfStorage: {
+    ID: MaterialSourceTypeEnum.outOfStorage,
+    Name: '预出库',
+  },
+  picking: {
+    ID: MaterialSourceTypeEnum.picking,
+    Name: '领料',
+  },
+  otherPrcess: {
+    ID: MaterialSourceTypeEnum.otherPrcess,
+    Name: '其它工序',
+  },
+};
+
 /**
  * 获取工序列表的类型枚举
  *
@@ -55,5 +74,7 @@ export enum FetchWorkingProcedureSearchEnum {
   /** 拆分工序 */
   Split = 2,
   /** 订单报工的非组合工序 */
-  OrderReportNotCombination = 3
+  OrderReportNotCombination = 3,
+  /** 制版工序 */
+  PlateMaking = 4
 }

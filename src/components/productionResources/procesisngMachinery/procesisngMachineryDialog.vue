@@ -21,7 +21,7 @@
       </li>
       <li>
         <span class="label">显示顺序：</span>
-        <el-input type="number" class="num" v-model.number="ruleForm.Index" maxlength="3"></el-input>
+        <el-input class="num" v-model.number="ruleForm.Index" maxlength="9"></el-input>
         <span class="tip is-orange"><el-icon><WarningFilled /></el-icon>数字越小显示越靠前</span>
       </li>
     </ul>
@@ -61,7 +61,7 @@ const onOpen = () => { // 初始化
 };
 
 const setConditon = (e) => {
-  CommonClassType.setCondition(e, ruleForm.value);
+  if (ruleForm.value) CommonClassType.setCondition(e, ruleForm.value);
 };
 
 const submit = () => {

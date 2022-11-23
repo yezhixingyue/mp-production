@@ -19,10 +19,13 @@ const { LinePutOutPageData } = storeToRefs(productionSettingStore);
 
 const BreadcrumbList = [
   { to: { path: '/productionLine' }, name: '生产线' },
-  { to: { path: '/equipment' }, name: '设备工厂' },
-  { to: { path: '/putOut' }, name: '申放' },
   {
-    name: '申放条件',
+    to: { path: '/equipment' },
+    name: `选择设备/工厂：${LinePutOutPageData.value?.curWorkName}`,
+  },
+  { to: { path: '/putOut' }, name: `设置申放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
+  {
+    name: `${LinePutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}申放`,
   },
 ];
 

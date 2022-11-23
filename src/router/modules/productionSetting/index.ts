@@ -195,6 +195,73 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupListPage/PlateMakingGroupListPage.vue'),
     },
+    {
+      path: '/PlateMakingGroupEquipmentList',
+      name: 'PlateMakingGroupEquipmentList',
+      meta: {
+        title: '选择设备/工厂',
+        requiresAuth: true,
+        hideMenu: true,
+        pageName: 'PlateMakingGroupEquipmentListPage',
+      },
+      component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupEquipment/PlateMakingGroupEquipmentListPage.vue'),
+    },
+    {
+      path: '/plateMakingGroupEquipmentPutOut',
+      name: 'plateMakingGroupEquipmentPutOut',
+      meta: {
+        title: '申放',
+        hideMenu: true,
+        requiresAuth: true,
+        pageName: 'PlateMakingGroupEquipmentPutOutPage',
+      },
+      component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupEquipment/PutOut/PlateMakingGroupEquipmentPutOutPage.vue'),
+    },
+    {
+      path: '/plateMakingGroupEquipmentPutOutSetup',
+      name: 'plateMakingGroupEquipmentPutOutSetup',
+      meta: {
+        title: '设置申放',
+        hideMenu: true,
+        requiresAuth: true,
+        pageName: 'PlateMakingGroupEquipmentPutOutSetupPage',
+      },
+      component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupEquipment/PutOut/PlateMakingGroupEquipmentPutOutSetupPage.vue'),
+    },
+    {
+      path: '/plateMakingGroupEquipmentCapacity',
+      name: 'plateMakingGroupEquipmentCapacity',
+      meta: {
+        title: '产能',
+        hideMenu: true,
+        requiresAuth: true,
+        pageName: 'PlateMakingGroupEquipmentCapacityPage',
+      },
+      component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupEquipment/Capacity/PlateMakingGroupEquipmentCapacityPage.vue'),
+    },
+    {
+      path: '/plateMakingGroupEquipmentCapacitySetup',
+      name: 'plateMakingGroupEquipmentCapacitySetup',
+      meta: {
+        title: '设置产能',
+        hideMenu: true,
+        requiresAuth: true,
+        pageName: 'PlateMakingGroupEquipmentCapacitySetupPage',
+      },
+      // eslint-disable-next-line max-len
+      component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupEquipment/Capacity/PlateMakingGroupEquipmentCapacitySetupPage.vue'),
+    },
+    {
+      path: '/plateMakingGroupMakingGroupSource',
+      name: 'plateMakingGroupMakingGroupSource',
+      meta: {
+        title: '物料来源设置',
+        hideMenu: true,
+        requiresAuth: true,
+        pageName: 'PlateMakingGroupMakingGroupSourcePage',
+      },
+      component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupMakingGroupSourcePage.vue'),
+    },
     /* 工序模块
     -------------------------------------- */
     {
@@ -278,10 +345,24 @@ const routeTree:RouteTreeType = {
     {
       name: 'PlateMakingGroupList',
       children: [
-        // {
-        //   name: 'processSetup',
-        //   children: [],
-        // },
+        {
+          name: 'PlateMakingGroupEquipmentList', // 选择设备/工厂页面
+          children: [
+            {
+              name: 'plateMakingGroupEquipmentPutOut',
+              children: [
+                { name: 'plateMakingGroupEquipmentPutOutSetup', children: [] },
+              ],
+            },
+            {
+              name: 'plateMakingGroupEquipmentCapacity',
+              children: [
+                { name: 'plateMakingGroupEquipmentCapacitySetup', children: [] },
+              ],
+            },
+          ],
+        },
+        { name: 'plateMakingGroupMakingGroupSource', children: [] },
       ],
     },
     /* 生产线

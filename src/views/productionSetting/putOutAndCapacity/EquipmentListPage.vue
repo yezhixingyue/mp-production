@@ -40,22 +40,30 @@ import { EquipmentListType, ILineEquipmentSaveParams } from './js/types';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[]
-  LineWorkID: string
+  LineWorkID?: string
   ClassEquipmentGroups: IClassEquipmentGroups[]
+  Equipments?: { ID: string, LineEquipmentID: string }[]
 }>();
 
 const emit = defineEmits(['ToPutOut', 'TocCpacity', 'remove', 'save']);
+
+const EquipmentIDS = computed(() => (props.Equipments ? props.Equipments.map(it => it.ID) : []));
 
 const EquipmentList = computed(() => {
   const list:EquipmentListType[] = [];
   props.ClassEquipmentGroups?.forEach(lv1 => {
     lv1.EquipmentGroups.forEach(lv2 => {
       lv2.Equipments.forEach(it => {
-        if (it.LineEquipmentID) {
+        if (it.LineEquipmentID || EquipmentIDS.value.includes(it.ID)) {
+          let LineEquipmentID = it.LineEquipmentID || '';
+          if (props.Equipments) {
+            const t = props.Equipments.find(e => e.ID === it.ID);
+            LineEquipmentID = t?.LineEquipmentID || '';
+          }
           list.push({
             ID: it.ID,
             Name: it.Name,
-            LineEquipmentID: it.LineEquipmentID,
+            LineEquipmentID,
             ClassID: lv1.ClassID,
             ClassName: lv1.ClassName,
             GroupID: lv2.GroupID,
@@ -70,7 +78,7 @@ const EquipmentList = computed(() => {
 
 const visible = ref(false);
 const curEditItem = computed(() => ({
-  LineWorkID: props.LineWorkID,
+  LineWorkID: props.LineWorkID || '',
   EquipmentIDS: EquipmentList.value.map(it => it.ID),
 }));
 

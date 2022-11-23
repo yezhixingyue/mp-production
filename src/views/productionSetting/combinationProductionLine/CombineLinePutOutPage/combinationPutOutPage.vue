@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
@@ -27,11 +27,14 @@ const router = useRouter();
 const curLineEquipment = JSON.parse(route.params.LineEquipment as string);
 productionSettingStore.setCombineLinePutOutPageData(curLineEquipment);
 
-const BreadcrumbList = [
+const BreadcrumbList = computed(() => [
   { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
-  { to: { path: '/combinationEquipment' }, name: '设备工厂' },
-  { name: '申放' },
-];
+  {
+    to: { path: '/combinationEquipment' },
+    name: `选择设备/工厂：${CombineLinePutOutPageData.value?.curWorkName}`,
+  },
+  { name: `设置申放：${CombineLinePutOutPageData.value?.curLineEquipment?.Name}` },
+]);
 
 const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
   CombineLinePutOutPageData.value?.setCurConditionRow(item);
@@ -43,7 +46,7 @@ const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>
 };
 
 onMounted(() => {
-  CombineLinePutOutPageData.value?.getInitData();
+  CombineLinePutOutPageData.value?.getInitData(route.params.WorkName as string);
 });
 
 </script>

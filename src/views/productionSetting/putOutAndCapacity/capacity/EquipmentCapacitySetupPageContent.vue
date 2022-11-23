@@ -21,7 +21,7 @@
           </p>
           <p class="conent" v-if="rightPanelData.Type === CapacityTypeEnum.capacity">
             计算数量：
-            <span class="calculate">{{rightPanelData.NumberPropertyID ? getName(rightPanelData.NumberPropertyID) : ''}}</span>
+            <span class="calculate">{{rightPanelData.Property ? getName(rightPanelData.Property) : ''}}</span>
             <mp-button link type="primary" class="ml-8" @click="() => visible = true">选择计算数量</mp-button>
           </p>
           <p class="conent is-gray" v-else>
@@ -100,7 +100,7 @@ const visible = ref(false);
 
 const onPropSelect = (e) => {
   console.log('onPropSelect', e);
-  if (rightPanelData.value) rightPanelData.value.NumberPropertyID = e;
+  if (rightPanelData.value) rightPanelData.value.Property = e;
 };
 
 const submit = (e: CapacityConditionItemClass) => {
@@ -112,7 +112,7 @@ const submit = (e: CapacityConditionItemClass) => {
     MpMessage.error({ title: '保存失败', msg: `${options.value.simpleTitle}设置不正确，请检查` });
     return;
   }
-  if (props.curCapacityType === CapacityTypeEnum.capacity && !rightPanelData.value.NumberPropertyID) {
+  if (props.curCapacityType === CapacityTypeEnum.capacity && !rightPanelData.value.Property) {
     MpMessage.error({ title: '保存失败', msg: '请设置计算数量' });
     return;
   }
@@ -125,14 +125,15 @@ onMounted(() => {
     LineEquipmentID: props.curLineEquipment?.LineEquipmentID || '',
     Value: props.curConditionRow?.Value || '',
     Type: props.curConditionRow?.Type || props.curCapacityType,
-    NumberPropertyID: props.curConditionRow?.NumberPropertyID || null,
+    Property: props.curConditionRow?.Property || null,
   };
 });
 </script>
 
 <style scoped lang='scss'>
 .capacity-setup {
-  .constraint-setup-page-comp-wrap > header{
+  :deep(.constraint-setup-page-comp-wrap) > header{
+    padding-top: 20px;
     .el-breadcrumb{
       margin-bottom: 0px;
     }

@@ -27,23 +27,25 @@ const router = useRouter();
 
 const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
 
+const curWorkName = ref('');
+
 const BreadcrumbList = computed(() => [
   { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
   {
-    name: '设备工厂',
+    name: `选择设备/工厂：${curWorkName.value}`,
   },
 ]);
 
 const ToPutOutPage = (item) => {
   router.push({
     name: 'combinationPutOut',
-    params: { LineEquipment: JSON.stringify(item) },
+    params: { LineEquipment: JSON.stringify(item), WorkName: curWorkName.value },
   });
 };
 const TocCpacityPage = (item) => {
   router.push({
     name: 'combinationCapacity',
-    params: { LineEquipment: JSON.stringify(item) },
+    params: { LineEquipment: JSON.stringify(item), WorkName: curWorkName.value },
   });
 };
 const afterRemove = (ID) => {
@@ -110,6 +112,7 @@ onMounted(() => {
   const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;
   if (temp) {
     processInfo.value = { ...temp };
+    curWorkName.value = route.params.WorkName as string;
   }
 });
 

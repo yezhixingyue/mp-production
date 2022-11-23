@@ -3,7 +3,9 @@ import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeC
 import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/LinePutOutClass';
 import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
+import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMakingGroupView/js/PlateMakingGroupManageClass';
 import { LineStatusEnum } from '../../../views/productionSetting/js/enums';
+
 // 辅助信息
 export interface NotesType{
   ID: string,
@@ -42,19 +44,6 @@ export interface ImpositionTemmplateListType {
   ID:string,
   Name:string,
 }
-
-export interface IState {
-  EquipmentListGroup:UseClassEquipmentGroupType[],
-  ResourceNoteGroup:SelectAssistInfoGroup[],
-  MaterialTypeGroup:MaterialTypeGroupType[],
-  ImpositionTemmplateList:ImpositionTemmplateListType[],
-  PropertyList:PropertyListItemType[]
-  LinePutOutPageData: null | LinePutOutClass
-  LineCapacityPageData: null | LineCapacityClass
-  CombineLinePutOutPageData: null | LinePutOutClass
-  CombineLineCapacityPageData: null | LineCapacityClass
-}
-
 // g工序列表
 export interface EquipmentGroupsType{
   GroupID: string,
@@ -80,6 +69,22 @@ export interface ProcessListType{
   ID: string,
   Name: string,
 }
+
+export interface IState {
+  EquipmentListGroup:UseClassEquipmentGroupType[],
+  ResourceNoteGroup:SelectAssistInfoGroup[],
+  MaterialTypeGroup:MaterialTypeGroupType[],
+  ImpositionTemmplateList:ImpositionTemmplateListType[],
+  PropertyList:PropertyListItemType[]
+  LinePutOutPageData: null | LinePutOutClass
+  LineCapacityPageData: null | LineCapacityClass
+  CombineLinePutOutPageData: null | LinePutOutClass
+  CombineLineCapacityPageData: null | LineCapacityClass
+  PlateMakingGroupManageData: PlateMakingGroupManageClass
+  PlateMakingGroupPutOutPageData: null | LinePutOutClass,
+  PlateMakingGroupCapacityPageData: null | LineCapacityClass,
+}
+
 export interface ImpositionTemmplateListGroupType {
   ClassID:number,
   Name:string,
@@ -92,23 +97,33 @@ export interface getPropertyListType {
 // 生产线工序列表
 
 export interface IEquipments {
+  /** 为空表示没有使用 */
   LineEquipmentID: string | null,
+  /** 设备ID */
   ID: string,
+  /** 设备名称 */
   Name: string,
 }
 export interface IEquipmentGroups {
+  /** 设备组ID  */
   GroupID: string,
+  /** 设备组名称  */
   GroupName: string,
+  /** 设备列表 */
   Equipments: IEquipments[],
 }
 export interface IClassEquipmentGroups {
+  /** 设备分类ID  */
   ClassID: number,
+  /** 设备分类名称  */
   ClassName: string,
+  /** 设备组列表 */
   EquipmentGroups: IEquipmentGroups[],
 }
 export interface IMaterialSources {
   MaterialTypeID: string,
-  SourceType: number,
+  MaterialTypeName: string
+  SourceType: number | '',
   SourceWorkIDS: string[] | null,
   NeedSource: boolean,
   FactoryProvide: boolean,

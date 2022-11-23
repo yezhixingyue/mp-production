@@ -20,16 +20,19 @@ import { CapacityTypeEnum } from '../../putOutAndCapacity/capacity/enum';
 const productionSettingStore = useProductionSettingStore();
 const { LineCapacityPageData } = storeToRefs(productionSettingStore);
 
-let name = '设置产能';
-if (LineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.dry) name = '设置干燥时间';
-if (LineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.preparation) name = '设置准备时间';
+let name = '产能';
+if (LineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.dry) name = '干燥时间';
+if (LineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.preparation) name = '准备时间';
 
 const BreadcrumbList = [
   { to: { path: '/productionLine' }, name: '生产线' },
-  { to: { path: '/equipment' }, name: '设备工厂' },
-  { to: { path: '/capacity' }, name: '产能' },
   {
-    name,
+    to: { path: '/equipment' },
+    name: `选择设备/工厂：${LineCapacityPageData.value?.curWorkName}`,
+  },
+  { to: { path: '/capacity' }, name: `设置产能：${LineCapacityPageData.value?.curLineEquipment?.Name}` },
+  {
+    name: `${LineCapacityPageData?.value?.curConditionRow ? '编辑' : '添加'}${name}`,
   },
 ];
 

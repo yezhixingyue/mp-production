@@ -23,6 +23,7 @@ import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrum
 import { computed } from 'vue';
 import { TransformConstraintTableItemType, transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
+import { PropertyListClass } from '@/components/common/ConstraintsComps/TypeClass/PropertyListClass';
 import { CapacityTypeEnum } from './enum';
 import ListTable from './ListTable.vue';
 import { CapacityConditionItemClass } from '../js/CapacityConditionItemClass';
@@ -31,6 +32,7 @@ const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
   list: CapacityConditionItemClass[],
   PropertyList: PropertyListItemType[]
+  rightPropertyList: PropertyListItemType[]
 }>();
 
 const emit = defineEmits(['save', 'remove']);
@@ -38,7 +40,7 @@ const emit = defineEmits(['save', 'remove']);
 const localTableList = computed(() => transformConstraintTableList({
   tableList: props.list,
   PropertyList: props.PropertyList,
-}));
+}).map(it => ({ ...it, Property: PropertyListClass.getPerfectPropertyByImperfectProperty(it.Property, props.rightPropertyList || []) })));
 
 const onSaveClick = (it: TransformConstraintTableItemType<CapacityConditionItemClass> | null, type: CapacityTypeEnum) => {
   emit('save', it, type);

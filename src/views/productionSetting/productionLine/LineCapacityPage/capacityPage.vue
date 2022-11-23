@@ -4,6 +4,7 @@
     :BreadcrumbList="BreadcrumbList"
     :list="LineCapacityPageData.list"
     :PropertyList="LineCapacityPageData.PropertyList"
+    :rightPropertyList="LineCapacityPageData.rightPropertyList"
     @remove="remove"
     @save="ToSetup"
   />
@@ -30,10 +31,11 @@ productionSettingStore.setLineCapacityPageData(curLineEquipment);
 
 const BreadcrumbList = computed(() => [
   { to: { path: '/productionLine' }, name: '生产线' },
-  { to: { path: '/equipmentPage' }, name: '设备工厂' },
   {
-    name: '产能',
+    to: { path: '/equipment' },
+    name: `选择设备/工厂：${LineCapacityPageData.value?.curWorkName}`,
   },
+  { name: `设置产能：${LineCapacityPageData.value?.curLineEquipment?.Name}` },
 ]);
 
 const ToSetup = (item, type: CapacityTypeEnum) => {
@@ -47,7 +49,7 @@ const remove = (item) => {
 };
 
 onMounted(() => {
-  LineCapacityPageData.value?.getInitData();
+  LineCapacityPageData.value?.getInitData(route.params.WorkName as string);
   LineCapacityPageData.value?.getRightPropertyList();
 });
 

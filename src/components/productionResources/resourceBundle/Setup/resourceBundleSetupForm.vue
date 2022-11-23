@@ -8,13 +8,13 @@
         <el-radio v-for="it in FeatureMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="包含物料类型：" prop="MaterialTypeGroups" v-if="ruleForm.Feature!==resourceBundleFeatureEnum.semifinished.ID">
+    <el-form-item label="包含物料类型：" prop="MaterialTypeGroups" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID">
       <MaterialTypeGroupSelector v-model="ruleForm.MaterialTypeGroups" />
     </el-form-item>
-    <el-form-item label="满足方式：" prop="MatchType" v-if="ruleForm.Feature!==resourceBundleFeatureEnum.semifinished.ID">
+    <el-form-item label="满足方式：" prop="MatchType" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID">
       <el-radio-group v-model="ruleForm.MatchType">
         <el-radio v-for="it in MatchTypeMenuList" :key="it.ID" :label="it.ID"
-         :disabled="ruleForm.Feature===resourceBundleFeatureEnum.main.ID && it.ID===resourceBundleMatchEnum.every.ID">{{it.Name}}</el-radio>
+         :disabled="ruleForm.Feature===resourceBundleFeatureEnumObj.main.ID && it.ID===resourceBundleMatchEnum.every.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
       <!-- <span class="is-gray-light"><el-icon><WarningFilled /></el-icon>暂无数据，请先添加</span> -->
@@ -23,7 +23,7 @@
 
 <script setup lang='ts'>
 import {
-  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnum, resourceBundleMatchEnum,
+  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnum,
 } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
@@ -44,7 +44,7 @@ const checkMaterialTypeGroups = (rule, value, callback) => {
   }
 };
 
-const FeatureMenuList = getEnumList(resourceBundleFeatureEnum);
+const FeatureMenuList = getEnumList(resourceBundleFeatureEnumObj);
 const MatchTypeMenuList = getEnumList(resourceBundleMatchEnum);
 
 const ruleFormRef = ref<FormInstance>();
@@ -68,7 +68,7 @@ const rules = reactive<FormRules>({
 });
 
 const onFeatureChange = (e: number | string) => {
-  if (e === resourceBundleFeatureEnum.main.ID && ruleForm.value.MatchType === resourceBundleMatchEnum.every.ID) {
+  if (e === resourceBundleFeatureEnumObj.main.ID && ruleForm.value.MatchType === resourceBundleMatchEnum.every.ID) {
     ruleForm.value.MatchType = '';
   }
 };
@@ -80,7 +80,7 @@ const getFormData = () => new Promise((resolve) => { // 校验 + 获取表单内
   }
   ruleFormRef.value.validate((valid) => {
     if (valid) {
-      if (ruleForm.value.Feature === resourceBundleFeatureEnum.semifinished.ID) {
+      if (ruleForm.value.Feature === resourceBundleFeatureEnumObj.semifinished.ID) {
         const temp = {
           ID: ruleForm.value.ID,
           Name: ruleForm.value.Name,

@@ -1,5 +1,7 @@
+import { IClassEquipmentGroups } from '@/store/modules/productionSetting/types';
+import { FetchWorkingProcedureSearchEnum } from '@/views/productionSetting/js/enums';
 import {
-  IPlateMakingGroup, IPlateMakingGroupMaterialSourceSaveData, ISavePlateMakingGroupParams,
+  IPlateMakingGroup, IPlateMakingGroupEquipmentSaveData, IPlateMakingGroupSource, ISavePlateMakingGroupParams,
 } from '@/views/productionSetting/PlateMakingGroupView/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import request from '../request/request';
@@ -27,7 +29,7 @@ const api = {
   getWorkingProcedureList(data) { // POST /Api/WorkingProcedure/List  工序列表
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
   },
-  getWorkingProcedureSearch(searchType?) { // POST /Api/WorkingProcedure/Search  工序查询
+  getWorkingProcedureSearch(searchType?: FetchWorkingProcedureSearchEnum) { // POST /Api/WorkingProcedure/Search  工序查询
     return request({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType } });
   },
   getWorkingProcedureSave(data) { // POST /Api/WorkingProcedure/Save  工序保存
@@ -101,19 +103,25 @@ const api = {
     return request<string>({ method: 'POST', url: '/Api/PlateMakingGroup/Save', data });
   },
   /** POST /Api/PlateMakingGroup/List  获取制版组列表 */
-  getPlateMakingGroupList() {
-    return request<IPlateMakingGroup[]>({ method: 'POST', url: '/Api/PlateMakingGroup/List', data: { Page: 1, PageSize: 9999 } });
+  getPlateMakingGroupList(WorkID: string) {
+    return request<IPlateMakingGroup[]>({ method: 'POST', url: '/Api/PlateMakingGroup/List', data: { Page: 1, PageSize: 9999, WorkID } });
+  },
+  /** GET /Api/PlateMakingGroup/Source  获取制版组的设备和物料 */
+  getPlateMakingGroupSource(workingID: string) {
+    return request<
+    { ClassEquipmentGroups: IClassEquipmentGroups[], MaterialSources: IPlateMakingGroupSource[] }
+    >({ method: 'GET', url: '/Api/PlateMakingGroup/Source', params: { workingID } });
   },
   /** DELETE /Api/PlateMakingGroup/Remove  制版组删除 */
   getPlateMakingGroupRemove(id: string) {
     return request({ method: 'DELETE', url: '/Api/PlateMakingGroup/Remove', params: { id } });
   },
-  /** POST /Api/PlateMakingGroup/MaterialSource/Save  制版组物料来源保 */
-  getPlateMakingGroupMaterialSourceSave(data: IPlateMakingGroupMaterialSourceSaveData) {
+  /** POST /Api/PlateMakingGroup/MaterialSource/Save  制版组物料来源保存 */
+  getPlateMakingGroupMaterialSourceSave(data) {
     return request<string>({ method: 'POST', url: '/Api/PlateMakingGroup/MaterialSource/Save', data });
   },
   /** POST /Api/PlateMakingGroup/Equipment/Save  制版组设备保存 */
-  getPlateMakingGroupEquipmentSave(data: IPlateMakingGroupMaterialSourceSaveData) {
+  getPlateMakingGroupEquipmentSave(data: IPlateMakingGroupEquipmentSaveData) {
     return request<IEquipmentGroupSaveResult[]>({ method: 'POST', url: '/Api/PlateMakingGroup/Equipment/Save', data });
   },
   /** DELETE /Api/PlateMakingGroup/Equipment/Remove  制版组设备删除 */
