@@ -76,5 +76,9 @@ export enum FetchWorkingProcedureSearchEnum {
   /** 订单报工的非组合工序 */
   OrderReportNotCombination = 3,
   /** 制版工序 */
-  PlateMaking = 4
+  PlateMaking = 4,
+  /** 制版组工序（非印刷版及非印刷版相同） */
+  PlateMakingGroup = 5,
+  /** 非制版组的制版工序（印刷版或与印刷版相同） */
+  NotPlateMakingGroup = 6,
 }

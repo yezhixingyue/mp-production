@@ -10,6 +10,7 @@
       :WorkID="PlateMakingGroupManageData.WorkID"
       :list="PlateMakingGroupManageData.ManageListData.list"
       :loading="PlateMakingGroupManageData.ManageListData.loading"
+      :tabLoading="PlateMakingGroupManageData.loading"
       :MaterialSourcesData="PlateMakingGroupManageData.ManageListData.MaterialSourcesData"
       :ClassEquipmentGroups="PlateMakingGroupManageData.ManageListData.ClassEquipmentGroups"
       @edit="onSaveClick"
@@ -18,7 +19,7 @@
       @makingGroupSource="onMakingGroupSourceClick"
       />
     <Dialog v-model:visible="visible" :curEditItem="curEditItem" :list="PlateMakingGroupManageData.ManageListData.list" @submit="onItemChangeSubmit" />
-    <Footer :listNumber="PlateMakingGroupManageData.ManageListData.listNumber" />
+    <Footer :listNumber="PlateMakingGroupManageData.ManageListData.listNumber" :WorkID="PlateMakingGroupManageData.WorkID" />
   </section>
 </template>
 

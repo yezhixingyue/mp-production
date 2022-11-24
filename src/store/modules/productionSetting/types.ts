@@ -4,6 +4,7 @@ import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/en
 import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/LinePutOutClass';
 import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
 import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMakingGroupView/js/PlateMakingGroupManageClass';
+import { PlateMakingWorkSetupClass } from '@/views/productionSetting/productionLine/js/PlateMakingWorkSetupClass';
 import { LineStatusEnum } from '../../../views/productionSetting/js/enums';
 
 // 辅助信息
@@ -83,6 +84,7 @@ export interface IState {
   PlateMakingGroupManageData: PlateMakingGroupManageClass
   PlateMakingGroupPutOutPageData: null | LinePutOutClass,
   PlateMakingGroupCapacityPageData: null | LineCapacityClass,
+  PlateMakingWorkSetupHander: PlateMakingWorkSetupClass,
 }
 
 export interface ImpositionTemmplateListGroupType {
@@ -134,6 +136,10 @@ export interface IProductionLineWorkings {
   LineWorkID: string,
   ClassEquipmentGroups: IClassEquipmentGroups[],
   MaterialSources: IMaterialSources[],
+  /** 制版工序ID */
+  PlateMakingWorkID: null | string
+  /** 制版工序下的制版组ID（ 仅制版工序为非印刷版相关时才可设置 ） */
+  PlateMakingGroupID: null | string
 }
 export interface IWorkingProcedureList {
   LineType: number,

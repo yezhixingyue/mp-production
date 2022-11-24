@@ -38,7 +38,10 @@
                 {{getEquipmentText(item)}}
               </span>
               <span class="operate">
-                <mp-button type="primary" class="ft-12" link @click="delLineWorking(item)">设置制版工序</mp-button>
+                <mp-button type="primary" class="ft-12" link @click="setPlateMakingWork(
+                  item,
+                  [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name || ''
+                  )">设置制版工序</mp-button>
                 <mp-button type="primary" class="ft-12" link @click="ToEquipment(
                   item,
                   [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name
@@ -209,6 +212,8 @@
       </div>
     </template>
     </DialogContainerComp>
+    <!-- 制版工序设置 -->
+    <PlateMakingWorkSetupDialog v-model:visible="PlateMakingVisible" v-if="!isCombine" />
   </div>
 </template>
 
@@ -222,18 +227,16 @@ import api from '@/api';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
-import { IWorkingProcedureList } from '@/store/modules/productionSetting/types';
+import { IProductionLineWorkings, IWorkingProcedureList } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import { FetchWorkingProcedureSearchEnum, LineStatusEnum, LineTypeEnum } from '@/views/productionSetting/js/enums';
 import { getSourceWork } from '../js/utils';
-
-interface ProcessListType {
-  ID: string,
-  Name: string
-}
+import PlateMakingWorkSetupDialog from './Comps/PlateMakingWorkSetupDialog.vue';
+import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
 
 const props = withDefaults(defineProps<{
   type: 'combine' | 'normal'
@@ -299,11 +302,11 @@ const addPrcessShow = ref(false);
 const setSplitShow = ref(false);
 const ProductionLineList:Ref<ProductionLineListType[]> = ref([]);
 // 普通工序
-const PrcessList:Ref<ProcessListType[]> = ref([]);
+const PrcessList:Ref<IWorkingProcedureSearch[]> = ref([]);
 // 拆分工序
-const splitPrcessList:Ref<ProcessListType[]> = ref([]);
+const splitPrcessList:Ref<IWorkingProcedureSearch[]> = ref([]);
 // 组合工序
-const combinationPrcessList:Ref<ProcessListType[]> = ref([]);
+const combinationPrcessList:Ref<IWorkingProcedureSearch[]> = ref([]);
 // 生产线工序列表
 const ProductionLineData:Ref<IWorkingProcedureList|null> = ref(null);
 const Data:DataType = reactive({
@@ -449,7 +452,7 @@ const getPrcessList = () => {
   const type = isCombine.value ? FetchWorkingProcedureSearchEnum.OrderReportNotCombination : FetchWorkingProcedureSearchEnum.NotCombination;
   api.getWorkingProcedureSearch(type).then(res => {
     if (res.data.Status === 1000) {
-      PrcessList.value = res.data.Data as ProcessListType[];
+      PrcessList.value = res.data.Data;
     }
   });
 };
@@ -457,7 +460,7 @@ const getPrcessList = () => {
 const getsplitPrcessList = () => {
   api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.Split).then(res => {
     if (res.data.Status === 1000) {
-      splitPrcessList.value = res.data.Data as ProcessListType[];
+      splitPrcessList.value = res.data.Data;
     }
   });
 };
@@ -465,7 +468,7 @@ const getsplitPrcessList = () => {
 const getCombinationPrcessList = () => {
   api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.Combination).then(res => {
     if (res.data.Status === 1000) {
-      combinationPrcessList.value = res.data.Data as ProcessListType[];
+      combinationPrcessList.value = res.data.Data;
     }
   });
 };
@@ -624,6 +627,13 @@ const setSplitPrimaryClick = () => {
     });
   }
 };
+// 设置制版工序
+const PlateMakingVisible = ref(false);
+const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
+const setPlateMakingWork = (item: IProductionLineWorkings, WorkName: string) => {
+  PlateMakingWorkSetupHander.value.setCurWorkItem(item, WorkName);
+  PlateMakingVisible.value = true;
+};
 
 onActivated(() => {
   const sessionKey = props.type === 'normal' ? 'productionLinePage' : 'combinationProductionLinePage';
@@ -644,6 +654,7 @@ onMounted(() => {
     getImpositionTemmplateList();
     getsplitPrcessList();
     sessionStorage.removeItem('productionLinePage');
+    productionSettingStore.setPlateMakingWorkSetupHanderInit();
   }
   if (!productionSettingStore.MaterialTypeGroup.length) {
     productionSettingStore.getMaterialTypeGroupAll();

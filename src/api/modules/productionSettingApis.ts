@@ -1,8 +1,10 @@
 import { IClassEquipmentGroups } from '@/store/modules/productionSetting/types';
 import { FetchWorkingProcedureSearchEnum } from '@/views/productionSetting/js/enums';
 import {
-  IPlateMakingGroup, IPlateMakingGroupEquipmentSaveData, IPlateMakingGroupSource, ISavePlateMakingGroupParams,
+  IPlateMakingAllGroupType,
+  IPlateMakingGroup, IPlateMakingGroupEquipmentSaveData, IPlateMakingGroupSource, ISavePlateMakingGroupParams, IWorkingProcedureSearch,
 } from '@/views/productionSetting/PlateMakingGroupView/js/types';
+import { ISetPlateMakingWorkParams } from '@/views/productionSetting/productionLine/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import request from '../request/request';
 
@@ -30,7 +32,7 @@ const api = {
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
   },
   getWorkingProcedureSearch(searchType?: FetchWorkingProcedureSearchEnum) { // POST /Api/WorkingProcedure/Search  工序查询
-    return request({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType } });
+    return request<IWorkingProcedureSearch[]>({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType } });
   },
   getWorkingProcedureSave(data) { // POST /Api/WorkingProcedure/Save  工序保存
     return request({ method: 'POST', url: '/Api/WorkingProcedure/Save', data });
@@ -97,6 +99,10 @@ const api = {
   getProductionLineCapacitySave(data) { // POST /Api/ProductionLine/Capacity/Save  生产线设备产能编辑
     return request<string>({ method: 'POST', url: '/Api/ProductionLine/Capacity/Save', data });
   },
+  /** POST /Api/ProductionLine/WorkingProcedure/SetPlateMakingWork  生产线工序设置制版工序 */
+  getProductionLineWorkingProcedureSetPlateMakingWork(data: ISetPlateMakingWorkParams) {
+    return request({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/SetPlateMakingWork', data });
+  },
   // 制版组 ------------------------ PlateMakingGroup
   /** POST /Api/PlateMakingGroup/Save  制版组保存 */
   getPlateMakingGroupSave(data: ISavePlateMakingGroupParams) {
@@ -105,6 +111,10 @@ const api = {
   /** POST /Api/PlateMakingGroup/List  获取制版组列表 */
   getPlateMakingGroupList(WorkID: string) {
     return request<IPlateMakingGroup[]>({ method: 'POST', url: '/Api/PlateMakingGroup/List', data: { Page: 1, PageSize: 9999, WorkID } });
+  },
+  /** POST /Api/PlateMakingGroup/All  全部制版组列表数据 不带分页 */
+  getPlateMakingGroupAll() {
+    return request<IPlateMakingAllGroupType[]>({ method: 'POST', url: '/Api/PlateMakingGroup/All' });
   },
   /** GET /Api/PlateMakingGroup/Source  获取制版组的设备和物料 */
   getPlateMakingGroupSource(workingID: string) {

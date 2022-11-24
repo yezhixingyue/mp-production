@@ -73,9 +73,12 @@
       </ul>
     </main>
     <ADAreaDialogSelector
-    v-model:visible="visible"
-    :value="Data.DeliveryTimeForm.AreaList" @change="(list) => Data.DeliveryTimeForm.AreaList = list" v-model:AreaDescribe='Data.DeliveryTimeForm.AreaDescribe'
-    ></ADAreaDialogSelector>
+      v-model:visible="visible"
+      v-model:AreaDescribe='Data.DeliveryTimeForm.AreaDescribe'
+      :value="Data.DeliveryTimeForm.AreaList"
+      @change="(list) => Data.DeliveryTimeForm.AreaList = list"
+    />
+    <ShiftTimeSetupDialog v-model:visible="shiftPointVisible" />
     <footer>
       <el-button type='primary' class="is-blue-button" @click="onSubmitClick">保存</el-button>
       <el-button class="cancel-blue-btn" @click="$goback()"><i></i> 返回</el-button>
@@ -94,18 +97,9 @@ import messageBox from '@/assets/js/utils/message';
 import { useRouterStore } from '@/store/modules/routerStore';
 import ADAreaDialogSelector from '@/components/common/DialogComps/ADAreaDialogSelector.vue';
 import { useCommonStore } from '@/store/modules/common/index';
+import ShiftTimeSetupDialog from './Comps/ShiftTimeSetupDialog/ShiftTimeSetupDialog.vue';
+import { IShiftType } from './Comps/ShiftTimeSetupDialog/types';
 
-interface SType {
-  F: string,
-  S: string,
-}
-interface ShiftType {
-  key?: string,
-  date?: string,
-  S: SType,
-  D: number,
-  H: number,
-}
 interface AreaListType {
   CountryID: number,
   ProvinceID: number,
@@ -120,7 +114,7 @@ interface DeliveryTimeFormType {
   ItemID:string
   ItemName:string
   AreaDescribe:string
-  Shift:ShiftType[]
+  Shift:IShiftType[]
   AreaList:AreaListType[]
   ExpressList:ExpressListType[]
 }
@@ -228,18 +222,6 @@ const verificationShift = () => {
   // num 有数据 验证不通过
   return !!num;
 };
-const onShiftAddClick = () => {
-  Data.DeliveryTimeForm.Shift.push({
-    key: Math.random().toString(16).slice(-10),
-    date: '',
-    S: {
-      F: '',
-      S: '',
-    },
-    D: 0,
-    H: 0,
-  });
-};
 const onSubmitClick = () => {
   Data.DeliveryTimeForm.Shift.forEach((item, index) => {
     onShiftTimeItemInput(item.date, index);
@@ -267,6 +249,21 @@ const onSubmitClick = () => {
 };
 const onShiftRemoveClick = (index) => {
   Data.DeliveryTimeForm.Shift.splice(index, 1);
+};
+
+const shiftPointVisible = ref(false);
+const onShiftAddClick = () => {
+  Data.DeliveryTimeForm.Shift.push({
+    key: Math.random().toString(16).slice(-10),
+    date: '',
+    S: {
+      F: '',
+      S: '',
+    },
+    D: 0,
+    H: 0,
+  });
+  shiftPointVisible.value = true;
 };
 
 onMounted(() => {

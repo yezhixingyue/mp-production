@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <div class="box">
+    <div class="box" v-if="WorkID">
       共检索出 <i class="is-primary">{{props.listNumber}}</i> 条记录
     </div>
   </footer>
@@ -9,6 +9,7 @@
 <script setup lang='ts'>
 const props = defineProps<{
   listNumber: number
+  WorkID: string
 }>();
 </script>
 

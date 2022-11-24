@@ -1,7 +1,7 @@
 <template>
   <main>
-    <el-empty description="暂无数据" v-if="!WorkID" />
-    <el-table v-else :data="localList" stripe border class="row-ft-12 table">
+    <el-empty description="暂无数据" v-if="!WorkID && !tabLoading" />
+    <el-table v-else-if="WorkID" :data="localList" stripe border class="row-ft-12 table">
       <mp-table-column width="200px" prop="Name" label="组名称" />
       <mp-table-column width="280px" prop="Type" label="设备/工厂组">
         <template #default="scope">
@@ -53,6 +53,7 @@ import { IPlateMakingGroup, IPlateMakingGroupSource } from '../../js/types';
 const props = defineProps<{
   list: IPlateMakingGroup[]
   loading: boolean
+  tabLoading: boolean
   WorkID: string
   MaterialSourcesData: null | IPlateMakingGroupSource[]
   ClassEquipmentGroups: null | IClassEquipmentGroups[]

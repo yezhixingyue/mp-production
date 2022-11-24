@@ -9,6 +9,7 @@ import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/
 import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
 import { EquipmentListType } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMakingGroupView/js/PlateMakingGroupManageClass';
+import { PlateMakingWorkSetupClass } from '@/views/productionSetting/productionLine/js/PlateMakingWorkSetupClass';
 import { IState, _UseClassEquipmentGroupType, getPropertyListType } from './types';
 
 export interface IActions {
@@ -24,6 +25,7 @@ export interface IActions {
   initPlateMakingGroupManageData: () => void,
   setPlateMakingGroupPutOutPageData: (data: EquipmentListType) => void,
   setPlateMakingGroupCapacityPageData: (data: EquipmentListType) => void,
+  setPlateMakingWorkSetupHanderInit: () => void,
 }
 type IGetters = Record<string, never>;
 
@@ -43,6 +45,8 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     PlateMakingGroupManageData: new PlateMakingGroupManageClass(),
     PlateMakingGroupPutOutPageData: null,
     PlateMakingGroupCapacityPageData: null,
+    /** 制版工序设置 */
+    PlateMakingWorkSetupHander: new PlateMakingWorkSetupClass(),
   }),
   getters: {},
   actions: {
@@ -120,6 +124,10 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
     setPlateMakingGroupCapacityPageData(LineEquipment) {
       this.PlateMakingGroupCapacityPageData = new LineCapacityClass(LineEquipment);
+    },
+    /** 制版工序设置 */
+    setPlateMakingWorkSetupHanderInit() {
+      this.PlateMakingWorkSetupHander.init();
     },
   },
 };
