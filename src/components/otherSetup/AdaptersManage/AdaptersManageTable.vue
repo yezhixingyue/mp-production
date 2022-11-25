@@ -7,6 +7,7 @@
     border
     style="width: 100%"
   >
+    <el-table-column width="60px" prop="ID" show-overflow-tooltip label="编号"></el-table-column>
     <el-table-column width="280px" prop="Name" show-overflow-tooltip label="名称"></el-table-column>
     <el-table-column min-width="150px" prop="Url" show-overflow-tooltip label="服务器地址"></el-table-column>
     <el-table-column min-width="150px" prop="PublicKey" show-overflow-tooltip label="公钥"></el-table-column>

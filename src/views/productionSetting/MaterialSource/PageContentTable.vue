@@ -49,9 +49,10 @@
 </template>
 
 <script setup lang='ts'>
-import { IMaterialSources, MaterialTypeGroupType, ProcessListType } from '@/store/modules/productionSetting/types';
+import { IMaterialSources, MaterialTypeGroupType } from '@/store/modules/productionSetting/types';
 import { resourceBundleFeatureEnumObj } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { MaterialSourceTypeEnum } from '../js/enums';
+import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
 
 export interface ITableItem extends IMaterialSources {
   _MaterialTypeGroup?: MaterialTypeGroupType
@@ -60,7 +61,7 @@ export interface ITableItem extends IMaterialSources {
 const props = defineProps<{
   tableList: ITableItem[]
   withoutOtherPrcess?: boolean
-  WorkingProcedureList: ProcessListType[]
+  WorkingProcedureList: IWorkingProcedureSearch[]
   title: string
 }>();
 
@@ -122,6 +123,7 @@ const selectProcess = (it) => {
 }
 .mp-common-title-wrap {
   // padding-left: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
+  padding-top: 35px;
 }
 </style>

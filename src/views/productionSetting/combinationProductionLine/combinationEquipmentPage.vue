@@ -4,6 +4,7 @@
     :BreadcrumbList="BreadcrumbList"
     :LineWorkID="processInfo.LineWorkID"
     :ClassEquipmentGroups="processInfo.ClassEquipmentGroups"
+    :curLineWorkName="curLineWorkName"
     @save="handleEquipmentSubmit"
     @remove="handleRemove"
     @toPutOut="ToPutOutPage"
@@ -27,25 +28,25 @@ const router = useRouter();
 
 const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
 
-const curWorkName = ref('');
+const curLineWorkName = ref('');
 
 const BreadcrumbList = computed(() => [
   { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
   {
-    name: `选择设备/工厂：${curWorkName.value}`,
+    name: `选择设备/工厂：${curLineWorkName.value}`,
   },
 ]);
 
 const ToPutOutPage = (item) => {
   router.push({
     name: 'combinationPutOut',
-    params: { LineEquipment: JSON.stringify(item), WorkName: curWorkName.value },
+    params: { LineEquipment: JSON.stringify(item), WorkName: curLineWorkName.value },
   });
 };
 const TocCpacityPage = (item) => {
   router.push({
     name: 'combinationCapacity',
-    params: { LineEquipment: JSON.stringify(item), WorkName: curWorkName.value },
+    params: { LineEquipment: JSON.stringify(item), WorkName: curLineWorkName.value },
   });
 };
 const afterRemove = (ID) => {
@@ -112,7 +113,7 @@ onMounted(() => {
   const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;
   if (temp) {
     processInfo.value = { ...temp };
-    curWorkName.value = route.params.WorkName as string;
+    curLineWorkName.value = route.params.WorkName as string;
   }
 });
 

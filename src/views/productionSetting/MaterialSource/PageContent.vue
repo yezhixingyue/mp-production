@@ -6,7 +6,10 @@
     <main>
       <PageContentTable v-if="tableList" :tableList="tableList" :withoutOtherPrcess="props.withoutOtherPrcess"
        :title="props.title" :WorkingProcedureList="WorkingProcedureList" @select="selectProcess" />
-      <ul class="intro">
+      <PageContentTable v-if="tableList4PlateMaking && PlateMakingMaterialSourceSetupData"
+       :tableList="tableList4PlateMaking" :withoutOtherPrcess="props.withoutOtherPrcess"
+       :title="PlateMakingMaterialSourceSetupData.WorkName" :WorkingProcedureList="WorkingProcedureList" @select="(e) => selectProcess(e, true)" />
+      <ul class="intro" v-if="tableList || (tableList4PlateMaking && PlateMakingMaterialSourceSetupData)">
         <li v-if="type==='combine'">如果物料资源来源于其他生产线，则必须等待其完工，当前工序才可以开始；</li>
         <li v-if="type==='line' || type==='combine'">如果一种物料资源包来源于其他某个工序，则必须等待其完工，当前工序才可开始；</li>
         <li v-if="type==='line' || type==='combine'">如果一种物料资源包来源于多个工序，指其中任意一个工序完工，便可开始当前工序；</li>
@@ -28,7 +31,7 @@ import api from '@/api';
 import { IMpBreadcrumbItem } from '@/assets/Types/common';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import {
-  IMaterialSources, IProductionLineWorkings, ProcessListType,
+  IMaterialSources, IProductionLineWorkings,
 } from '@/store/modules/productionSetting/types';
 import {
   onMounted, ref, nextTick, computed,
@@ -41,6 +44,8 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import Dialog from './WorkingProcedureSelectDialog.vue';
 import { MaterialSourceTypeEnum } from '../js/enums';
 import PageContentTable, { ITableItem } from './PageContentTable.vue';
+import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
+import { IPlateMakingMaterialSourceSetupData } from '../productionLine/js/types';
 
 const productionSettingStore = useProductionSettingStore();
 
@@ -51,17 +56,20 @@ const props = defineProps<{
   originMaterialSources?: IMaterialSources[]
   saveApiFunc?:(data: { Materials: ITableItem[] | null }) => Promise<AxiosResponse<IResponse<string>, unknown>>
   params?: object
-  withoutOtherPrcess?: boolean
+  withoutOtherPrcess?: boolean // 列表中 物料来源是否可设置为来自其它工序 （ 制版组中不可以 ）
   title: string
   type: 'combine' | 'line' | 'PlateMakingGroup'
+  PlateMakingMaterialSourceSetupData?: IPlateMakingMaterialSourceSetupData | null
 }>();
 
 const emit = defineEmits(['saved']);
 
 const tableList = ref<null | ITableItem[]>(null);
 
+const tableList4PlateMaking = ref<null | ITableItem[]>(null);
+
 const visible = ref(false);
-const WorkingProcedureList = ref<ProcessListType[]>([]);
+const WorkingProcedureList = ref<IWorkingProcedureSearch[]>([]);
 const curRowData = ref<ITableItem|null>(null);
 const onDialogSave = (ids: string[]) => {
   // 1. 数据改变
@@ -70,47 +78,72 @@ const onDialogSave = (ids: string[]) => {
   visible.value = false;
 };
 
-const localWorkingProcedureList = computed(() => {
-  if (Array.isArray(props.workListRange)) {
-    return WorkingProcedureList.value.filter(it => props.workListRange?.includes(it.ID));
-  }
-  return WorkingProcedureList.value;
-});
-
-const selectProcess = (item: ITableItem) => {
+const _IsPlateMakingWork = ref(false);
+const selectProcess = (item: ITableItem, IsPlateMakingWork = false) => {
   curRowData.value = item;
+  _IsPlateMakingWork.value = IsPlateMakingWork;
   visible.value = true;
 };
 
-const saveProcess = async () => {
-  let t = tableList.value?.find(it => !it.SourceType && it.SourceType !== 0);
-  if (t) {
-    MpMessage.error({
-      title: '保存失败',
-      msg: `<span class='ft-12'><i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> 未设置来源</span>`,
-      dangerouslyUseHTMLString: true,
-    });
-    return;
+const localWorkingProcedureList = computed(() => {
+  let list = WorkingProcedureList.value;
+  if (Array.isArray(props.workListRange)) {
+    list = WorkingProcedureList.value.filter(it => props.workListRange?.includes(it.ID));
   }
-  t = tableList.value?.find(it => it.SourceType === MaterialSourceTypeEnum.otherPrcess && (!it.SourceWorkIDS || it.SourceWorkIDS.length === 0));
-  if (t) {
-    MpMessage.error({
-      title: '保存失败',
-      msg: `<span class='ft-12'><i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> 未设置来源工序</span>`,
-      dangerouslyUseHTMLString: true,
-    });
-    return;
+  if (_IsPlateMakingWork.value) {
+    list = list.filter(it => it.ID !== props.PlateMakingMaterialSourceSetupData?.PlateMakingWorkID);
   }
+  return list;
+});
 
+const saveProcess = async () => {
+  if (!tableList.value) return;
+  const list = [...tableList.value];
+  if (tableList4PlateMaking.value) {
+    list.push(...tableList4PlateMaking.value);
+  }
+  let t = list?.find(it => !it.SourceType && it.SourceType !== 0);
+  if (t) {
+    MpMessage.error({
+      title: '保存失败',
+      msg: `<span class='ft-12'>[ <i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> ] 未设置来源</span>`,
+      dangerouslyUseHTMLString: true,
+    });
+    return;
+  }
+  t = list?.find(it => it.SourceType === MaterialSourceTypeEnum.otherPrcess && (!it.SourceWorkIDS || it.SourceWorkIDS.length === 0));
+  if (t) {
+    MpMessage.error({
+      title: '保存失败',
+      msg: `<span class='ft-12'>[ <i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> ] 未设置来源工序</span>`,
+      dangerouslyUseHTMLString: true,
+    });
+    return;
+  }
   const Materials = tableList.value?.map(it => {
     const _it = { ...it };
     delete _it._MaterialTypeGroup;
     return _it;
   }) || [];
-  const temp = props.params ? { ...props.params, Materials } : { LineWorkID: props.curEditItem?.LineWorkID || '', Materials };
+  const temp = props.params
+    ? { ...props.params, Materials, IsPlateMakingWork: false }
+    : { LineWorkID: props.curEditItem?.LineWorkID || '', Materials, IsPlateMakingWork: false };
+  let params: object | object[] = temp;
+  if (props.type === 'line' || props.type === 'combine') params = [temp];
+  if (props.type === 'line' && props.PlateMakingMaterialSourceSetupData) {
+    const Materials2 = tableList4PlateMaking.value?.map(it => {
+      const _it = { ...it };
+      delete _it._MaterialTypeGroup;
+      return _it;
+    }) || [];
+    const temp2 = props.params
+      ? { ...props.params, Materials: Materials2, IsPlateMakingWork: true }
+      : { LineWorkID: props.PlateMakingMaterialSourceSetupData.PlateMakingWorkIdentID, Materials: Materials2, IsPlateMakingWork: true };
+    params = [temp, temp2];
+  }
   const fetchFunc = props.saveApiFunc || api.getProductionLinetMaterialSourceSave;
 
-  const resp = await fetchFunc(temp).catch(() => null);
+  const resp = await fetchFunc(params).catch(() => null);
 
   if (resp?.data.isSuccess) {
     const cb = async () => { // 处理数据变动
@@ -131,7 +164,7 @@ const getWorkingProcedureList = async () => {
   if (props.withoutOtherPrcess) return;
   const resp = await api.getWorkingProcedureSearch().catch(() => null);
   if (resp?.data.isSuccess) {
-    WorkingProcedureList.value = resp.data.Data as ProcessListType[];
+    WorkingProcedureList.value = resp.data.Data;
   }
 };
 
@@ -151,6 +184,15 @@ onMounted(async () => {
       _MaterialTypeGroup: t, // 物料资源包
     };
   });
+  tableList4PlateMaking.value = JSON.parse(JSON.stringify(props.PlateMakingMaterialSourceSetupData?.PlateMakingMaterialSources || []))
+    .map((it: IMaterialSources) => {
+      const t = productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.MaterialTypeID);
+      return {
+        ...it,
+        SourceWorkIDS: it.SourceWorkIDS || [],
+        _MaterialTypeGroup: t, // 物料资源包
+      };
+    });
 });
 
 </script>
@@ -172,7 +214,7 @@ onMounted(async () => {
     flex: 1;
     overflow: auto;
     overflow: overlay;
-    padding-top: 20px;
+    padding-top: 0px;
     box-sizing: border-box;
     padding-left: 20px;
     .intro {

@@ -3,13 +3,13 @@
     <ul class="content">
       <li>
         <h4>设置制版工序：</h4>
-        <el-radio-group v-model="ruleForm.GroupWorkID" @change="ruleForm.GroupID = ''">
+        <el-radio-group v-model="ruleForm.PlateMakingWorkID" @change="ruleForm.PlateMakingGroupID = ''">
           <el-radio v-for="it in PlateMakingWorkSetupHander.PlateMakingWorkAllList" :key="it.ID" :label="it.ID" :title="it.Name">{{it.Name}}</el-radio>
         </el-radio-group>
       </li>
       <li v-show="showGroup">
         <h4>选择制版组：</h4>
-        <el-radio-group v-model="ruleForm.GroupID">
+        <el-radio-group v-model="ruleForm.PlateMakingGroupID">
           <el-radio v-for="it in _PlateMakingGroupList" :key="it.ID" :label="it.ID" :title="it.Name">{{it.Name}}</el-radio>
         </el-radio-group>
         <span v-show="_PlateMakingGroupList.length === 0" class="is-gray ft-12 ml-22">暂无制版组，请先添加</span>
@@ -23,15 +23,15 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { computed, reactive } from 'vue';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { storeToRefs } from 'pinia';
-import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ISetPlateMakingWorkParams } from '../js/types';
 
 const props = defineProps<{
   visible: boolean,
+  curWorkName: string
 }>();
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'submited']);
 
 const localVisible = computed({
   get() {
@@ -45,43 +45,37 @@ const localVisible = computed({
 const productionSettingStore = useProductionSettingStore();
 const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
 
-const title = computed(() => `设置制版工序：${PlateMakingWorkSetupHander.value.WorkName || ''}`);
+const title = computed(() => `设置制版工序：${props.curWorkName}`);
 
 const ruleForm: ISetPlateMakingWorkParams = reactive({
   LineWorkID: '',
-  GroupWorkID: '',
-  GroupID: '',
+  PlateMakingWorkID: '',
+  PlateMakingGroupID: '',
 });
 
-const showGroup = computed(() => PlateMakingWorkSetupHander.value.getPlateMakingWorkCannotSetGroup(ruleForm.GroupWorkID));
+const showGroup = computed(() => PlateMakingWorkSetupHander.value.getPlateMakingWorkCannotSetGroup(ruleForm.PlateMakingWorkID));
 
-const _PlateMakingGroupList = computed(() => PlateMakingWorkSetupHander.value.PlateMakingGroupAllList.filter(it => it.WorkID === ruleForm.GroupWorkID));
+const _PlateMakingGroupList = computed(() => PlateMakingWorkSetupHander.value.PlateMakingGroupAllList.filter(it => it.WorkID === ruleForm.PlateMakingWorkID));
 
 const onOpen = () => {
   ruleForm.LineWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.LineWorkID || '';
-  ruleForm.GroupWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingWorkID || '';
-  ruleForm.GroupID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingGroupID || '';
+  ruleForm.PlateMakingWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingWorkID || '';
+  ruleForm.PlateMakingGroupID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingGroupID || '';
 };
 
-const submit = async () => {
-  if (!ruleForm.GroupID && showGroup.value) {
+const submit = () => {
+  if (!ruleForm.PlateMakingGroupID && showGroup.value) {
     MpMessage.error({
       title: '保存失败',
       msg: '请选择制版组',
     });
     return;
   }
-  const resp = await api.getProductionLineWorkingProcedureSetPlateMakingWork(ruleForm).catch(() => null);
-  if (resp?.data.isSuccess) {
-    const cb = () => {
-      localVisible.value = false;
-    };
-    MpMessage.success({
-      title: '保存成功',
-      onOk: cb,
-      onCancel: cb,
-    });
-  }
+  const cb = () => {
+    localVisible.value = false;
+    emit('submited');
+  };
+  PlateMakingWorkSetupHander.value.handlePlateMakingWorkSubmit(ruleForm, cb);
 };
 
 </script>

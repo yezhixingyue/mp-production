@@ -93,7 +93,7 @@ const onSaveClick = (e) => {
 
 const onRemoveClick = (it: TransformConstraintTableItemType<CapacityConditionItemClass>, i: number) => {
   MpMessage.warn({
-    title: '确定要删除此伸放吗？',
+    title: '确定要删除该设置吗？',
     msg: `${options.value.title}的第${i + 1}个条件`,
     onOk: () => {
       emit('rowRemove', it);

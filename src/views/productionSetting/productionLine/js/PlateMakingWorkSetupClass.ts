@@ -1,15 +1,14 @@
 import api from '@/api';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IProductionLineWorkings } from '@/store/modules/productionSetting/types';
 import { FetchWorkingProcedureSearchEnum } from '../../js/enums';
 import { IPlateMakingAllGroupType, IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
 import { ReportModeEnum, ProcessTypeEnum, TemplateTypeEnum } from '../../process/enums';
+import { ISetPlateMakingWorkParams } from './types';
 
 export class PlateMakingWorkSetupClass {
   /** 当前正在设置的生产线工序 */
   curWorkItem: null | IProductionLineWorkings = null
-
-  /** 当前正在设置的生产线工序名称 */
-  WorkName = ''
 
   /** 全部制版工序列表 */
   PlateMakingWorkAllList: IWorkingProcedureSearch[] = []
@@ -24,7 +23,6 @@ export class PlateMakingWorkSetupClass {
    */
   init() {
     this.curWorkItem = null;
-    this.WorkName = '';
     this.PlateMakingWorkAllList = [];
     this.PlateMakingGroupAllList = [];
     this.getPlateMakingWorkAllList();
@@ -32,9 +30,39 @@ export class PlateMakingWorkSetupClass {
   }
 
   /** 设置当前生产线工序及名称 */
-  setCurWorkItem(item: IProductionLineWorkings, WorkName: string) {
+  setCurWorkItem(item: IProductionLineWorkings) {
     this.curWorkItem = item;
-    this.WorkName = WorkName;
+  }
+
+  /**
+   * 保存制版工序
+   *
+   * @param {ISetPlateMakingWorkParams} ruleForm
+   * @param {() => void} callback
+   * @memberof PlateMakingWorkSetupClass
+   */
+  async handlePlateMakingWorkSubmit(ruleForm: ISetPlateMakingWorkParams, callback: () => void) {
+    const resp = await api.getProductionLineWorkingProcedureSetPlateMakingWork(ruleForm).catch(() => null);
+    if (resp?.data.isSuccess) {
+      const cb = () => {
+        if (this.curWorkItem) {
+          this.curWorkItem.PlateMakingWorkID = ruleForm.PlateMakingWorkID;
+          this.curWorkItem.PlateMakingGroupID = ruleForm.PlateMakingGroupID || null;
+          if (resp.data.Data.PlateMakingWorkIdentID && resp.data.Data.PlateMakingWorkIdentID !== this.curWorkItem.PlateMakingWorkIdentID) {
+            // 当该ID未变化时 不予重新赋值
+            this.curWorkItem.PlateMakingWorkIdentID = resp.data.Data.PlateMakingWorkIdentID;
+            this.curWorkItem.PlateMakingClassEquipmentGroups = resp.data.Data.PlateMakingClassEquipmentGroups;
+            this.curWorkItem.PlateMakingMaterialSources = resp.data.Data.PlateMakingMaterialSources;
+          }
+        }
+        callback();
+      };
+      MpMessage.success({
+        title: '保存成功',
+        onOk: cb,
+        onCancel: cb,
+      });
+    }
   }
 
   /**
@@ -84,5 +112,22 @@ export class PlateMakingWorkSetupClass {
     const PlateMakingWork = this.PlateMakingWorkAllList.find(it => it.ID === WorkID);
     if (!PlateMakingWork || !PlateMakingWork.ID) return false;
     return PlateMakingWork.TemplateType === TemplateTypeEnum.other && !PlateMakingWork.IsSameSizeWithPrintingPlate;
+  }
+
+  /**
+   * 获取生产线列表中制版工序展示文字
+   *
+   * @param {IProductionLineWorkings} item
+   * @returns
+   * @memberof PlateMakingWorkSetupClass
+   */
+  getPlateMakingWorkContent(item: IProductionLineWorkings) {
+    if (!item.PlateMakingWorkID) return '';
+    const t = this.PlateMakingWorkAllList.find(it => it.ID === item.PlateMakingWorkID);
+    if (!t) return '';
+    if (!item.PlateMakingGroupID) return t.Name;
+    const g = this.PlateMakingGroupAllList.find(it => it.ID === item.PlateMakingGroupID);
+    if (!g) return t.Name;
+    return `${t.Name} ( ${g.Name} )`;
   }
 }

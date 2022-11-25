@@ -28,7 +28,8 @@
             <div class="process-item">
               <span class="process">工序</span>
               <span class="equipment">设备/外协工厂</span>
-              <span class="operate">操作</span>
+              <span class="work" v-if="type==='normal'">制版工序</span>
+              <span class="operate" :class="type">操作</span>
             </div>
           </li>
           <li class="table-main" v-for="item in ProductionLineData?.ProductionLineWorkings" :key="item.WorkID">
@@ -37,8 +38,11 @@
               <span class="equipment ft-f-12" :title="getEquipmentText(item).replaceAll('；', '；\r\n')">
                 {{getEquipmentText(item)}}
               </span>
-              <span class="operate">
-                <mp-button type="primary" class="ft-12" link @click="setPlateMakingWork(
+              <span class="work" v-if="type==='normal'">
+                {{getPlateMakingWorkContent(item)}}
+              </span>
+              <span class="operate" :class="type">
+                <mp-button type="primary" class="ft-12" v-if="type==='normal'" link @click="setPlateMakingWork(
                   item,
                   [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name || ''
                   )">设置制版工序</mp-button>
@@ -46,7 +50,12 @@
                   item,
                   [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name
                   )">选择设备/工厂</mp-button>
-                <mp-button type="primary" class="ft-12" link :disabled="item.MaterialSources.length===0" @click="ToMaterialSource(
+                <mp-button type="primary" class="ft-12" link
+                :disabled="!!(
+                  (!item.MaterialSources || item.MaterialSources.length===0)
+                  &&
+                  (item.PlateMakingGroupID||!item.PlateMakingMaterialSources||item.PlateMakingMaterialSources.length===0))"
+                 @click="ToMaterialSource(
                   item,
                   [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name
                   )">物料来源</mp-button>
@@ -56,17 +65,32 @@
             <!-- 物料来源 -->
             <div class="material-source" v-if="item.MaterialSources">
               <!-- {{item.MaterialSources}} -->
-              <template v-for="material in item.MaterialSources" :key="material.MaterialTypeID">
-                <p>{{getMaterialName(material.MaterialTypeID)}}：
-                  <span>
-                    {{getSourceWork(material, PrcessList)}}
-                    <i v-if="!getSourceWork(material, PrcessList)" class="is-gray">来源未设置</i>
-                  </span>
+              <div :title="getMaterialSourcesContent(item.MaterialSources)">
+                <h4 v-if="item.PlateMakingMaterialSources" class="mr-5">[ 工序本身 ]</h4>
+                <template v-for="material in item.MaterialSources" :key="material.MaterialTypeID">
+                  <p>{{getMaterialName(material.MaterialTypeID)}}：
+                    <span>
+                      {{getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
+                      <i v-if="!getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
+                    </span>
+                  </p>
+                </template>
+                <p v-if="item.MaterialSources.length === 0">
+                  <span class="is-gray">暂无物料</span>
                 </p>
-              </template>
-              <p v-if="item.MaterialSources.length === 0">
-                <span class="is-gray">暂无物料</span>
-              </p>
+              </div>
+              <div v-if="item.PlateMakingMaterialSources" :title="getMaterialSourcesContent(item.PlateMakingMaterialSources)">
+                ；
+                <h4 class="mr-5">[ {{getPlateMakingWorkContent(item)}} ]</h4>
+                <template v-for="material in item.PlateMakingMaterialSources" :key="material.MaterialTypeID">
+                  <p>{{getMaterialName(material.MaterialTypeID)}}：
+                    <span>
+                      {{getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
+                      <i v-if="!getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
+                    </span>
+                  </p>
+                </template>
+              </div>
             </div>
           </li>
         </ul>
@@ -213,7 +237,7 @@
     </template>
     </DialogContainerComp>
     <!-- 制版工序设置 -->
-    <PlateMakingWorkSetupDialog v-model:visible="PlateMakingVisible" v-if="!isCombine" />
+    <PlateMakingWorkSetupDialog v-model:visible="PlateMakingVisible" :curWorkName="curWorkName" @submited="changeLineStatus" v-if="!isCombine" />
   </div>
 </template>
 
@@ -229,7 +253,7 @@ import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
-import { IProductionLineWorkings, IWorkingProcedureList } from '@/store/modules/productionSetting/types';
+import { IMaterialSources, IProductionLineWorkings, IWorkingProcedureList } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
@@ -399,6 +423,10 @@ const delLineWorking = (item) => {
     },
   );
 };
+const changeLineStatus = () => {
+  if (!ProductionLineData.value) return;
+  ProductionLineData.value.Status = LineStatusEnum.disabled;
+};
 // 获取设备文字
 const getEquipmentText = (item) => {
   const returnStr: string[] = [];
@@ -435,13 +463,13 @@ const getTemplatesName = () => {
   return returnData;
 };
 // 获取生产线列表
-const getProductionLineList = () => {
+const getProductionLineList = (id?: string) => {
   api.getProductionLineList({ Type: isCombine.value ? LineTypeEnum.combine : LineTypeEnum.normal }).then(res => {
     if (res.data.Status === 1000) {
       ProductionLineList.value = res.data.Data as ProductionLineListType[];
       // 默认选中第一条生产线
       if (ProductionLineList.value.length) {
-        Data.getPocessFrom.LineID = ProductionLineList.value[0].ID || '';
+        Data.getPocessFrom.LineID = id || ProductionLineList.value[0].ID || '';
         getProductionLineWorkingProcedureList();
       }
     }
@@ -506,7 +534,7 @@ const lineOpen = () => {
   api.getProductionLinOpen(actionLine.value?.ID).then(res => {
     if (res.data.Status === 1000) {
       const cb = () => {
-        getProductionLineList();
+        getProductionLineList(actionLine.value?.ID);
         // 处理数据变动
       };
 
@@ -559,11 +587,12 @@ const addLinePrimaryClick = () => {
   if (!Data.addLineFrom.Name) {
     messageBox.failSingleError('保存失败', '请输入生产线名称', () => null, () => null);
   } else {
+    console.log(Data.addLineFrom);
     api.getProductionLineSave(Data.addLineFrom).then(res => {
       if (res.data.Status === 1000) {
         const cb = () => {
           addLineCloseClick();
-          getProductionLineList();
+          getProductionLineList(Data.addLineFrom.ID);
         };
         // 保存成功
         messageBox.successSingle('保存成功', cb, cb);
@@ -629,10 +658,25 @@ const setSplitPrimaryClick = () => {
 };
 // 设置制版工序
 const PlateMakingVisible = ref(false);
+const curWorkName = ref('');
 const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
 const setPlateMakingWork = (item: IProductionLineWorkings, WorkName: string) => {
-  PlateMakingWorkSetupHander.value.setCurWorkItem(item, WorkName);
+  PlateMakingWorkSetupHander.value.setCurWorkItem(item);
+  curWorkName.value = WorkName;
   PlateMakingVisible.value = true;
+};
+const getPlateMakingWorkContent = (item: IProductionLineWorkings) => PlateMakingWorkSetupHander.value.getPlateMakingWorkContent(item);
+
+// 获取物料来源文字
+const getMaterialSourcesContent = (MaterialSources: IMaterialSources[]) => {
+  if (!MaterialSources || MaterialSources.length === 0) return '';
+  const list = MaterialSources.map(it => {
+    const name = getMaterialName(it.MaterialTypeID);
+    const content = getSourceWork(it, [...PrcessList.value, ...PlateMakingWorkSetupHander.value.PlateMakingWorkAllList]);
+
+    return `${name}：${content}`;
+  });
+  return list.join('；\r\n');
 };
 
 onActivated(() => {
@@ -698,7 +742,8 @@ onMounted(() => {
         flex: 1;
         overflow: auto;
         overflow: overlay;
-        border: 1px solid #D0D0D0;
+        border-top: 1px solid #D0D0D0;
+        // border-bottom: 1px solid #D0D0D0;
         >li{
           >.process-item{
             display: flex;
@@ -707,29 +752,72 @@ onMounted(() => {
             // height: 37px;
             line-height: 15px;
             // padding: 0 20px;
+            background-color: #fff;
+            transition: border-color 0.15s ease-in-out;
             .equipment{
               flex: 1;
+              white-space: nowrap;
             }
             .process{
               width: 155px;
             }
             .operate{
-              width: 340px;
+              width: 260px;
+              &.normal {
+                width: 340px;
+              }
+            }
+            .work {
+              width: 260px;
+              flex-shrink: 1;
+              flex-grow: none;
             }
             // border: 1px solid red;
-            border-bottom: 1px solid #D0D0D0;
+            // border-bottom: 1px dashed #D0D0D0;
+          }
+          position: relative;
+          border-left: 1px solid #D0D0D0;
+          border-right: 1px solid #D0D0D0;
+          position: relative;
+          &::after {
+            position: absolute;
+            left: 0;
+            top: -1px;
+            right: 0;
+            height: 1px;
+            content: '';
+            // background-color: #26bfc9;
+            border-top: 1px solid rgba(255,255,255,0);
+            transition: border-color 0.15s ease-in-out;
+          }
+          transition: border-color 0.15s ease-in-out;
+          &:hover {
+            // box-shadow: 0 0 0 1px #26bcf9;
+            border-color: #26bcf9;
+            .material-source {
+              border-color: #26bcf9;
+            }
+            &::after {
+              border-color: #26bcf9;
+            }
+            >.process-item {
+              background-color: lighten($color: #26bcf9, $amount: 42);
+            }
           }
         }
         .table-title{
           position: sticky;
           top: 0;
-          background-color: #fff;
+          background-color: #fff !important;
+          border-color: #D0D0D0 !important;
           .process-item{
             height: 37px;
             align-items: center;
             text-align: center;
             border-top:none;
             font-weight: 700;
+            border-bottom: 1px solid #D0D0D0;
+            background: none;
             >span+span{
               border-left: 1px solid #D0D0D0;
               height: 15px;
@@ -753,7 +841,7 @@ onMounted(() => {
               padding-left: 20px;
             }
             .equipment{
-              padding-left: 4em;
+              padding: 0 1em;
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
@@ -765,14 +853,52 @@ onMounted(() => {
               box-sizing: border-box;
               justify-content: space-between;
             }
+            .work {
+              padding: 0 1em;
+              box-sizing: border-box;
+              text-align: center;
+              font-weight: 700;
+              font-size: 13px;
+            }
           }
           .material-source{
-            padding-left: 30px;
-            font-size: 14px;
+            padding-left: 20px;
+            font-size: 13px;
+            padding-top: 1px;
             display: flex;
-            height: 45px;
+            height: 30px;
+            padding-bottom: 3px;
+            color: #888888;
             display: flex;
             align-items: center;
+            border-bottom: 1px solid #D0D0D0;
+            background-color: #f5f5f5;
+            background-image: linear-gradient(to right, #d0d0d0 78%, rgba(255,255,255,0) 0%); /* 35%设置虚线点x轴上的长度 */
+            background-position: top; /* top配置上边框位置的虚线 */
+            background-size: 12px 1px; /* 第一个参数设置虚线点的间距；第二个参数设置虚线点y轴上的长度 */
+            background-repeat: repeat-x;
+            transition: border-color 0.15s ease-in-out;
+            overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
+            > div {
+              flex-shrink: 1;
+              display: flex;
+              align-items: center;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              min-width: 20%;
+              max-width: 80%;
+              p {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+              &:last-of-type {
+                flex: none;
+              }
+            }
             p+p{
               margin-left: 30px;
             }

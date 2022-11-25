@@ -4,7 +4,7 @@ import {
   IPlateMakingAllGroupType,
   IPlateMakingGroup, IPlateMakingGroupEquipmentSaveData, IPlateMakingGroupSource, ISavePlateMakingGroupParams, IWorkingProcedureSearch,
 } from '@/views/productionSetting/PlateMakingGroupView/js/types';
-import { ISetPlateMakingWorkParams } from '@/views/productionSetting/productionLine/js/types';
+import { ISetPlateMakingWorkParams, ISetPlateMakingWorkSaveResult } from '@/views/productionSetting/productionLine/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import request from '../request/request';
 
@@ -101,7 +101,7 @@ const api = {
   },
   /** POST /Api/ProductionLine/WorkingProcedure/SetPlateMakingWork  生产线工序设置制版工序 */
   getProductionLineWorkingProcedureSetPlateMakingWork(data: ISetPlateMakingWorkParams) {
-    return request({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/SetPlateMakingWork', data });
+    return request<ISetPlateMakingWorkSaveResult>({ method: 'POST', url: '/Api/ProductionLine/WorkingProcedure/SetPlateMakingWork', data });
   },
   // 制版组 ------------------------ PlateMakingGroup
   /** POST /Api/PlateMakingGroup/Save  制版组保存 */

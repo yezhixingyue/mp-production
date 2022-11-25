@@ -22,12 +22,12 @@
 <script setup lang='ts'>
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { ProcessListType } from '@/store/modules/productionSetting/types';
 import { computed, ref } from 'vue';
+import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
 
 const props = defineProps<{
   visible: boolean
-  WorkingProcedureList: ProcessListType[]
+  WorkingProcedureList: IWorkingProcedureSearch[]
   originList: string[]
 }>();
 

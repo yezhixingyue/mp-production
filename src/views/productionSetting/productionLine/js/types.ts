@@ -1,6 +1,29 @@
+import { IClassEquipmentGroups, IMaterialSources } from '@/store/modules/productionSetting/types';
+
 export interface ISetPlateMakingWorkParams {
   LineWorkID: string
-  GroupWorkID: string
+  PlateMakingWorkID: string
   /** 可为空 */
-  GroupID: string
+  PlateMakingGroupID: string
+}
+
+export interface ISetPlateMakingWorkSaveResult {
+  PlateMakingClassEquipmentGroups: null | IClassEquipmentGroups[],
+  PlateMakingMaterialSources: null | IMaterialSources[],
+  PlateMakingWorkIdentID: null | string
+}
+
+export interface IPlateMakingEquipmentSetupData {
+  WorkName: string;
+  PlateMakingClassEquipmentGroups: IClassEquipmentGroups[];
+  PlateMakingWorkIdentID: string;
+}
+
+export type EquipmentSetupType = 'default' | 'additional';
+
+export interface IPlateMakingMaterialSourceSetupData {
+  WorkName: string;
+  PlateMakingMaterialSources: IMaterialSources[];
+  PlateMakingWorkIdentID: string;
+  PlateMakingWorkID: string;
 }

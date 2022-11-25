@@ -58,7 +58,8 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
       const cb = () => {
         // 处理数据变动
         if (!isEdit) {
-          this.list.unshift({ ...item, ID: +resp.data.Data });
+          const ID = /^\d+$/.test(`${resp.data.Data}`) ? +resp.data.Data : resp.data.Data;
+          this.list.unshift({ ...item, ID });
         } else {
           const i = this.list.findIndex(it => it.ID === item.ID);
           if (i > -1) {
@@ -77,7 +78,7 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
   }
 
   async handleItemRemove(item: T) {
-    if (typeof item.ID !== 'number') return;
+    if (!item.ID && item.ID !== 0) return;
     const resp = await this.removeFunc(item.ID).catch(() => null);
     if (resp?.data.isSuccess) {
       const cb = () => {

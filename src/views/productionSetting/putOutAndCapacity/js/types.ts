@@ -1,6 +1,7 @@
 export interface ILineEquipmentSaveParams {
   LineWorkID: string,
-  EquipmentIDS: string[]
+  EquipmentIDS: string[],
+  IsPlateMakingWork?: boolean,
 }
 
 export interface EquipmentListType {

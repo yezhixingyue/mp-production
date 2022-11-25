@@ -1,10 +1,14 @@
 <template>
-  <DialogContainerComp :title="`添加设备工厂`" :visible='localVisible' :width="660" :primaryClick="submit"
+  <DialogContainerComp :title="`添加设备工厂：${title}`" :visible='localVisible' :width="660" :primaryClick="submit"
     :closeClick="() => localVisible = false" :open="onOpen">
     <template #default>
       <div class="add-equipment-dialog">
         <el-scrollbar max-height="450px">
-          <ul class="one-list">
+          <div v-if="localClassEquipmentGroups.length === 0" class="is-pink">
+            <el-icon><WarningFilled /></el-icon>
+            <span class="ft-12 ml-8">暂无设备可设置</span>
+          </div>
+          <ul class="one-list" v-else>
             <template v-for="ClassIt in localClassEquipmentGroups" :key="ClassIt.ClassID">
               <li v-if="ClassIt.EquipmentGroups && ClassIt.EquipmentGroups.length">
                 <p class="one">{{ ClassIt.ClassName }}:</p>
@@ -41,6 +45,7 @@ const props = defineProps<{
   visible: boolean
   curEditItem: null | ILineEquipmentSaveParams
   ClassEquipmentGroups: IClassEquipmentGroups[]
+  title: string
 }>();
 
 const emit = defineEmits(['update:visible', 'submit']);
@@ -98,22 +103,27 @@ const submit = () => {
 
 <style scoped lang='scss'>
 .add-equipment-dialog{
-    .one-list{
-      min-height: 350px;
-      p{
-        font-size: 14px;
-        font-weight: 700;
-        padding: 10px 0;
-      }
-      .one{
-        padding-left: 1em;
-      }
-      .tow{
-        padding-left: 2em;
-      }
-      .checkbox{
-        padding-left: 3em;
-      }
+  .one-list{
+    min-height: 350px;
+    p{
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 0;
+    }
+    .one{
+      padding-left: 1em;
+    }
+    .tow{
+      padding-left: 2em;
+    }
+    .checkbox{
+      padding-left: 3em;
     }
   }
+}
+.is-pink {
+  i {
+    vertical-align: -2px;
+  }
+}
 </style>

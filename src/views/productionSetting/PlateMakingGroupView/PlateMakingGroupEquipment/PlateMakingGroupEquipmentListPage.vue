@@ -4,6 +4,7 @@
     :BreadcrumbList="BreadcrumbList"
     :ClassEquipmentGroups="PlateMakingGroupManageData.ManageListData.ClassEquipmentGroups"
     :Equipments="PlateMakingGroupManageData.ManageListData.curEditItemHandler?.itemData.Equipments"
+    :curLineWorkName="PlateMakingGroupManageData.ManageListData.curEditItemHandler?.itemData.Name || ''"
     @save="handleEquipmentSubmit"
     @remove="onRemoveClick"
     @toPutOut="ToPutOutPage"

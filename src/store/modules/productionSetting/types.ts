@@ -136,10 +136,17 @@ export interface IProductionLineWorkings {
   LineWorkID: string,
   ClassEquipmentGroups: IClassEquipmentGroups[],
   MaterialSources: IMaterialSources[],
+
   /** 制版工序ID */
   PlateMakingWorkID: null | string
+
   /** 制版工序下的制版组ID（ 仅制版工序为非印刷版相关时才可设置 ） */
   PlateMakingGroupID: null | string
+  PlateMakingClassEquipmentGroups: null | IClassEquipmentGroups[],
+  PlateMakingMaterialSources: null | IMaterialSources[],
+
+  /** 设置过制版工序后生成的标识ID 用于制版工序上的设备和物料来源保存 */
+  PlateMakingWorkIdentID: null | string
 }
 export interface IWorkingProcedureList {
   LineType: number,
