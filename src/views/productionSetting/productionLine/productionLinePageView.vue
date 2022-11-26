@@ -35,7 +35,7 @@
           <li class="table-main" v-for="item in ProductionLineData?.ProductionLineWorkings" :key="item.WorkID">
             <div class="process-item">
               <span class="process">{{[...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name}}</span>
-              <span class="equipment ft-f-12" :title="getEquipmentText(item).replaceAll('；', '；\r\n')">
+              <span class="equipment ft-f-12" :title="getEquipmentText(item).replaceAll(' | ', '\r\n')">
                 {{getEquipmentText(item)}}
               </span>
               <span class="work" v-if="type==='normal'">
@@ -79,7 +79,8 @@
                   <span class="is-gray">暂无物料</span>
                 </p>
               </div>
-              <div v-if="item.PlateMakingMaterialSources" :title="getMaterialSourcesContent(item.PlateMakingMaterialSources)">
+              <div v-if="item.PlateMakingMaterialSources && item.PlateMakingMaterialSources.length > 0"
+                 :title="getMaterialSourcesContent(item.PlateMakingMaterialSources)">
                 ；
                 <h4 class="mr-5">[ {{getPlateMakingWorkContent(item)}} ]</h4>
                 <template v-for="material in item.PlateMakingMaterialSources" :key="material.MaterialTypeID">
@@ -253,7 +254,9 @@ import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
-import { IMaterialSources, IProductionLineWorkings, IWorkingProcedureList } from '@/store/modules/productionSetting/types';
+import {
+  IClassEquipmentGroups, IMaterialSources, IProductionLineWorkings, IWorkingProcedureList,
+} from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
@@ -427,17 +430,40 @@ const changeLineStatus = () => {
   if (!ProductionLineData.value) return;
   ProductionLineData.value.Status = LineStatusEnum.disabled;
 };
+
+const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
+
 // 获取设备文字
-const getEquipmentText = (item) => {
-  const returnStr: string[] = [];
-  item.ClassEquipmentGroups.forEach(ClassIt => {
-    ClassIt.EquipmentGroups.forEach(GroupIt => {
-      if (GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).length) {
-        returnStr.push(`${GroupIt.GroupName}：${GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).join('/')}`);
-      }
+const getEquipmentText = (item: IProductionLineWorkings) => {
+  const getContent = (ClassEquipmentGroups: IClassEquipmentGroups[]) => {
+    const returnStr: string[] = [];
+    ClassEquipmentGroups.forEach(ClassIt => {
+      ClassIt.EquipmentGroups.forEach(GroupIt => {
+        if (GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).length) {
+          returnStr.push(`${GroupIt.GroupName}：${GroupIt.Equipments.filter(it => it.LineEquipmentID).map(it => it.Name).join('/')}`);
+        }
+      });
     });
-  });
-  return returnStr.join('；');
+    return returnStr.join('；');
+  };
+  let mainContent = getContent(item.ClassEquipmentGroups);
+  if (item.PlateMakingClassEquipmentGroups?.length) {
+    let plateMakingContent = getContent(item.PlateMakingClassEquipmentGroups);
+    if (plateMakingContent) {
+      let plateMakingName = '';
+      const t = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.find(it => it.ID === item.PlateMakingWorkID);
+      plateMakingName = t ? t.Name : '';
+      if (plateMakingName) {
+        const mainName = [...PrcessList.value, ...splitPrcessList.value, ...combinationPrcessList.value].find(it => it.ID === item.WorkID)?.Name;
+        if (mainName) {
+          mainContent = `[ ${mainName} ] ${mainContent}`;
+          plateMakingContent = `[ ${plateMakingName} ] ${plateMakingContent}`;
+          mainContent = `${mainContent} | ${plateMakingContent}`;
+        }
+      }
+    }
+  }
+  return mainContent;
 };
 // 获取物料名
 const getMaterialName = (ID) => productionSettingStore.MaterialTypeGroup.find(it => it.ID === ID)?.Name;
@@ -659,7 +685,6 @@ const setSplitPrimaryClick = () => {
 // 设置制版工序
 const PlateMakingVisible = ref(false);
 const curWorkName = ref('');
-const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
 const setPlateMakingWork = (item: IProductionLineWorkings, WorkName: string) => {
   PlateMakingWorkSetupHander.value.setCurWorkItem(item);
   curWorkName.value = WorkName;
@@ -897,6 +922,9 @@ onMounted(() => {
               }
               &:last-of-type {
                 flex: none;
+              }
+              h4 {
+                font-weight: 400;
               }
             }
             p+p{

@@ -1,4 +1,5 @@
 import { IClassEquipmentGroups } from '@/store/modules/productionSetting/types';
+import { IShiftTimeItem } from '@/views/productionSetting/deliveryTimeManage/types';
 import { FetchWorkingProcedureSearchEnum } from '@/views/productionSetting/js/enums';
 import {
   IPlateMakingAllGroupType,
@@ -21,7 +22,7 @@ const api = {
     return request({ method: 'POST', url: '/Api/ShiftTime/Save', data });
   },
   getShiftTimeDetail(id) { // GET /Api/ShiftTime/Detail  发货班次详情
-    return request({ method: 'GET', url: `/Api/ShiftTime/Detail?id=${id}` });
+    return request<IShiftTimeItem>({ method: 'GET', url: `/Api/ShiftTime/Detail?id=${id}` });
   },
   getShiftTimeRemove(id) { // GET /Api/ShiftTime/Remove  发货班次删除
     return request({ method: 'DELETE', url: `/Api/ShiftTime/Remove?id=${id}` });

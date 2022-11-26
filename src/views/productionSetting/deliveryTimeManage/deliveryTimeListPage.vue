@@ -38,15 +38,15 @@
             {{scope.row.ExpressList.map(item => commonStore.ExpressList.find(it => it.ID === item.ID)?.Name).join('、')}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="Shift" label="发货班次" min-width="260">
+        <el-table-column prop="Shift" label="发货班次" min-width="260">
         <template #default="scope">
-            {{JSON.parse(scope.row.Shift).map(item => `${item.S.F}:${item.S.S} 运输时长：${item.D}天${item.H}小时`).join('|')}}
+            <span style="white-space: nowrap" :title="getShiftData(scope.row.Shift).replaceAll('；', '；\r\n')">{{getShiftData(scope.row.Shift)}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
             <template v-if="!scope.row.IsSpecialColor">
-              <mp-button type="info" link @click="onItemSetupClick(scope.row.ItemID)">
+              <mp-button type="info" link @click="onItemSetupClick(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link
                 @click="onRemoveClick(scope.row)">
@@ -75,30 +75,12 @@ import { storeToRefs } from 'pinia';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
-
-interface getRecordDataType {
-  ProvinceName: string,
-  CityName:string,
-  CountyName: string,
-  CompanyID: number,
-  Page: number,
-  PageSize: number,
-}
-interface ExpressListType {
-  ID: number,
-  Name: string,
-}
-interface ShiftTimeListType {
-  ItemID: string,
-  ItemName: string,
-  AreaDescribe: string,
-  Shift: string,
-  ExpressList: ExpressListType[],
-}
+import { getRecordDataType, IShiftRowItem, IShiftTimeItem } from './types';
+import { ShiftItemClass } from './Comps/ShiftTimeSetupDialog/ShiftItemClass';
 
 const commonStore = useCommonStore();
 const router = useRouter();
-const ShiftTimeList:Ref<ShiftTimeListType[]> = ref([]);
+const ShiftTimeList:Ref<IShiftTimeItem[]> = ref([]);
 const ShiftTimeListNumber = ref(0);
 const getShiftTimeLisData:getRecordDataType = reactive({
   ProvinceName: '不限',
@@ -112,11 +94,16 @@ const ExpressList = computed(() => ([{
   Name: '不限',
   ID: 0,
 }, ...commonStore.ExpressList]));
-const onItemSetupClick = (ItemID) => {
+const onItemSetupClick = (Item) => {
   router.push({
     name: 'deliveryTimeListSteup',
-    params: { deliveryTimeID: ItemID || '' },
+    params: { curEditItem: Item ? JSON.stringify(Item) : '' },
   });
+};
+
+const getShiftData = (Shift: IShiftRowItem[]) => {
+  const list = ShiftItemClass.getShiftTimeContentList(Shift);
+  return list.map(it => `${it.label}：[ ${it.content} ]`).join('；');
 };
 
 const { DistrictTreeList } = storeToRefs(commonStore);
@@ -138,10 +125,11 @@ const ExpressVal = computed({
 const getTableDataList = (Page = 1) => {
   getShiftTimeLisData.Page = Page;
   const temp = { ...getShiftTimeLisData };
+  ShiftTimeList.value = [];
   if (getShiftTimeLisData.ProvinceName === '不限') temp.ProvinceName = '';
   api.getShiftTimeList(temp).then(res => {
     if (res.data.Status === 1000) {
-      ShiftTimeList.value = res.data.Data as ShiftTimeListType[];
+      ShiftTimeList.value = res.data.Data as IShiftTimeItem[];
       ShiftTimeListNumber.value = res.data.DataNumber;
     }
   });

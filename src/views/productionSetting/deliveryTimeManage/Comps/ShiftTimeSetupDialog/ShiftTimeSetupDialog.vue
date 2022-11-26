@@ -1,62 +1,69 @@
 <template>
-  <DialogContainerComp :title="`发货班次`" :visible='localVisible' :width="660" top="10vh" @submit="submit" @open="onOpen" @cancel="localVisible = false">
-    <div class="top">
-      <label class="l">设定时间为：</label>
-      <div>
-        <p>
-          <el-radio-group v-model="ruleForm.ShiftType">
-            <el-radio v-for="it in ShiftTypeEnumList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
-          </el-radio-group>
-        </p>
-        <div class="date-box">
-          <!-- 每周 -->
-          <el-checkbox-group v-model="ruleForm.WeekTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.weekly">
-            <el-checkbox v-for="(it, i) in weekList" :key='i' :label="i + 1">{{it}}</el-checkbox>
-          </el-checkbox-group>
-          <!-- 每月 -->
-          <el-checkbox-group v-model="ruleForm.MonthTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.monthly">
-            <el-checkbox v-for="it in 31" :key='it' :label="it + 1">{{it}}号</el-checkbox>
-          </el-checkbox-group>
+  <DialogContainerComp :title="`发货班次`" appendToBody primary-text="确定"
+   :visible='localVisible' :width="660" top="10vh" @submit="submit" @open="onOpen" @cancel="cancel" @closed="closed">
+    <template v-if="ruleForm">
+      <div class="top">
+        <label class="l">设定时间为：</label>
+        <div>
+          <p>
+            <el-radio-group v-model="ruleForm.ShiftType">
+              <el-radio v-for="it in ShiftTypeEnumList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
+            </el-radio-group>
+          </p>
+          <div class="date-box">
+            <!-- 每周 -->
+            <el-checkbox-group v-model="ruleForm._WeekTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.weekly">
+              <el-checkbox v-for="(it, i) in weekList" :key='i' :label="i + 1">{{it}}</el-checkbox>
+            </el-checkbox-group>
+            <!-- 每月 -->
+            <el-checkbox-group v-model="ruleForm._MonthTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.monthly">
+              <el-checkbox v-for="it in 31" :key='it' :label="it + 1">{{it}}号</el-checkbox>
+            </el-checkbox-group>
+          </div>
         </div>
       </div>
-    </div>
-    <hr class="line" />
-    <div class="bottom">
-      <p>
-        <mp-button class="ft-13" type="primary" link>+ 添加发车时间点</mp-button>
-      </p>
-      <ul class='list'>
-        <li v-for="(it, i) in ruleForm.Shift" :key="it.key">
-          <el-time-picker
-            v-model="it.date"
-            @change="e => onShiftTimeItemInput(e, i)"
-            :clearable='false'
-            value-format="HH:mm"
-            format="HH:mm"
-            :picker-options="{ format: 'HH:mm' }"
-            :default-value='defaultBeginTime'
-            placeholder="20:00"
-            size="small"
-          >
-          </el-time-picker>
-          <mp-button v-show="i > 0" @click="onShiftRemoveClick(i)" link>删除</mp-button>
-        </li>
-      </ul>
-    </div>
+      <hr class="line" />
+      <div class="bottom">
+        <p>
+          <mp-button class="ft-13" type="primary" link @click="onAddClick">+ 添加发车时间点</mp-button>
+        </p>
+        <ul class='list' ref="oUl">
+          <li v-for="(it, i) in ruleForm.ShiftTime" :key="it._key">
+            <el-time-picker
+              v-model="it._date"
+              :clearable='false'
+              value-format="HH:mm"
+              format="HH:mm"
+              :picker-options="{ format: 'HH:mm' }"
+              :default-value='defaultBeginTime'
+              placeholder="20:00"
+              :teleported="false"
+            >
+            </el-time-picker>
+            <mp-button v-show="ruleForm.ShiftTime.length > 1" @click="onShiftRemoveClick(i)" link>
+              <i class="icon-delete iconfont"></i>
+              <span>删除</span>
+            </mp-button>
+          </li>
+        </ul>
+      </div>
+    </template>
   </DialogContainerComp>
 </template>
 
 <script setup lang='ts'>
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { computed, reactive } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { ShiftTypeEnumList, ShiftTypeEnum } from '../../enums';
-import { IShiftType } from './types';
+import { IShiftRowItem } from '../../types';
+import { ShiftItemClass, weekList } from './ShiftItemClass';
 
 const props = defineProps<{
   visible: boolean,
+  curEditShiftTime: IShiftRowItem | null,
 }>();
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'submit']);
 
 const localVisible = computed({
   get() {
@@ -67,44 +74,47 @@ const localVisible = computed({
   },
 });
 
-const weekList = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']; // 从1开始
-
 const defaultBeginTime = computed(() => new Date(new Date(new Date(new Date().setHours(20)).setMinutes(0)).setSeconds(0)));
 
-const ruleForm = reactive<{
-  WeekTypeLimit: number[]
-  MonthTypeLimit: number[]
-  ShiftType: '' | ShiftTypeEnum
-  Shift: IShiftType[]
-}>({
-  WeekTypeLimit: [],
-  MonthTypeLimit: [],
-  ShiftType: '',
-  Shift: [],
-});
-
-const onShiftTimeItemInput = (data: string, index: number) => {
-  if (!data) return;
-  const [F, S] = data.split(':');
-  ruleForm.Shift[index].S.F = F;
-  ruleForm.Shift[index].S.S = S;
-};
+const ruleForm = ref<null | ShiftItemClass>(null);
 
 const onShiftRemoveClick = (index: number) => {
-  ruleForm.Shift.splice(index, 1);
+  ruleForm.value?.ShiftTime.splice(index, 1);
+};
+
+const oUl = ref<InstanceType<typeof HTMLElement>>();
+
+const onAddClick = async () => {
+  ruleForm.value?.addOneNewShiftTime();
+  if (oUl.value) {
+    await nextTick();
+    oUl.value.scrollTop = 10000;
+  }
 };
 
 const onOpen = () => {
-  console.log('onOpen');
+  ruleForm.value = new ShiftItemClass(props.curEditShiftTime);
+};
+
+const cancel = () => {
+  localVisible.value = false;
+};
+
+const closed = () => {
+  ruleForm.value = null;
 };
 
 const submit = () => {
-  console.log('submit');
+  const result = ruleForm.value?.submit();
+  if (result) {
+    emit('submit', result);
+  }
 };
 
 </script>
 
 <style scoped lang='scss'>
+@import '@/assets/css/mixins.scss';
 .top {
   display: flex;
   color: #444;
@@ -139,5 +149,44 @@ const submit = () => {
 .bottom {
   padding-top: 15px;
   padding-left: 25px;
+}
+
+ul.list {
+  padding-top: 15px;
+  height: 145px;
+  overflow: scroll;
+  overflow: overlay;
+  @include scroll;
+  scroll-behavior: smooth !important;
+  > li {
+    margin-bottom: 8px;
+    :deep(.el-input) {
+      height: 30px;
+      width: 140px;
+      margin-right: 30px;
+    }
+    > button {
+      font-size: 12px;
+      i {
+        font-size: 14px;
+        margin-right: 8px;
+        color: #26bcf9;
+        transform: scaleX(0.95) scaleY(1.05);
+      }
+      span {
+        color: #989898;
+      }
+      &:hover {
+        span {
+          color: #585858;
+        }
+      }
+      &:active {
+        span {
+          color: #444;
+        }
+      }
+    }
+  }
 }
 </style>

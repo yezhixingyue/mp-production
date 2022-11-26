@@ -162,7 +162,7 @@ export default {
 
 <style lang="scss">
 .mp-common-dialog{
-  position: relative;
+  // position: relative;
   border-radius: 5px;
   .el-dialog__header{
     height: 40px;

@@ -36,7 +36,6 @@ interface Props {
   displayLevel2?:boolean
   defaultLabels?:boolean
 }
-console.log(commonStore.DistrictList, 'DistrictList');
 const emit = defineEmits(['change']);
 const TreeCompRef = ref<InstanceType<typeof TreeComp>>();
 const props = withDefaults(defineProps<Props>(), {
@@ -127,8 +126,6 @@ const Level2AreaList = computed(() => {
 });
 
 const handleAreaChangeFunc = (checkedNodes, checkedKeys, isAll) => {
-  console.log(checkedNodes, checkedKeys, isAll, 'checkedNodes, checkedKeys, isAll');
-
   if (checkedNodes.length === 0) {
     emit('change', []);
     return;
@@ -319,7 +316,7 @@ const defaultProps = {
                     height: 20px;
                   }
                   padding-left: 0px !important;
-                  width: 5.3em;
+                  width: 9.5em;
                   height: 20px;
                   line-height: 20px;
                   overflow: hidden;
@@ -331,7 +328,7 @@ const defaultProps = {
             > .el-tree-node__content {
               color: $--color-text-primary;
               font-weight: 600;
-              width: 5em;
+              width: 9em;
               overflow: hidden;
               flex: none;
               height: 32px;
@@ -374,7 +371,9 @@ const defaultProps = {
             justify-content: space-between;
             align-items: center;
             > span.title {
-              width: 5em;
+              width: 8em;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
             > .mp-el-tree-node-collapse-btn {
               padding-left: 20px;
@@ -449,11 +448,11 @@ const defaultProps = {
   &.isProduct {
     > .content > .el-tree > .el-tree-node > .el-tree-node__children
     > .el-tree-node .el-tree-node__children > .el-tree-node > .el-tree-node__content {
-      width: 8em;
+      width: 10em;
     }
     > .content > .el-tree > .el-tree-node > .el-tree-node__children
     > .el-tree-node > .el-tree-node__content {
-      width: 7em;
+      width: 10em;
     }
   }
 }

@@ -12,6 +12,7 @@ const proxyUrl = 'http://192.168.3.253:2022'; // 吕伟
 module.exports = defineConfig({
   transpileDependencies: true,
   publicPath,
+  productionSourceMap: false,
   devServer: {
     proxy: {
       // '/Api/Upload': { // 代理上传图片地址

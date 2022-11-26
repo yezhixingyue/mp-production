@@ -25,23 +25,16 @@
 
 <script lang="ts" setup>
 import {
-  ref, onMounted, computed, Ref, watch,
+  ref, onMounted, computed, watch,
 } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-
+import { IAreaList } from '@/views/productionSetting/deliveryTimeManage/types';
 import { useCommonStore } from '@/store/modules/common/index';
 import ADAreaTreeContentComp from '../ADAreaTreeContentComp.vue';
 
-interface AreaListType {
-  CountryID: number,
-  ProvinceID: number,
-  CityID: number,
-  CountyID: number,
-}
-
 interface Props {
   visible: boolean
-  value:AreaListType[]
+  value:IAreaList[]
   treeType?:string
   AreaDescribe:string
   productClassifyType?:number
@@ -63,7 +56,7 @@ const commonStore = useCommonStore();
 // const oTreeWrap:Ref = ref(null);
 const oTreeWrap = ref<InstanceType<typeof ADAreaTreeContentComp>>();
 
-const localAreaList: Ref<AreaListType[]> = ref([]);
+const localAreaList = ref<IAreaList[]>([]);
 
 const localVisible = computed({
   get() {
@@ -90,7 +83,6 @@ watch(() => localVisible.value, (newVal) => {
   }
 });
 onMounted(() => {
-  console.log(oTreeWrap.value, 'oTreeWrap.value');
   if (!commonStore.DistrictTreeList.length) {
     commonStore.getDistrictList();
   }

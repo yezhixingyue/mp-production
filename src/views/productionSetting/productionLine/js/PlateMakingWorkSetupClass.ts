@@ -48,7 +48,7 @@ export class PlateMakingWorkSetupClass {
         if (this.curWorkItem) {
           this.curWorkItem.PlateMakingWorkID = ruleForm.PlateMakingWorkID;
           this.curWorkItem.PlateMakingGroupID = ruleForm.PlateMakingGroupID || null;
-          if (resp.data.Data.PlateMakingWorkIdentID && resp.data.Data.PlateMakingWorkIdentID !== this.curWorkItem.PlateMakingWorkIdentID) {
+          if (resp.data.Data.PlateMakingWorkIdentID !== this.curWorkItem.PlateMakingWorkIdentID) {
             // 当该ID未变化时 不予重新赋值
             this.curWorkItem.PlateMakingWorkIdentID = resp.data.Data.PlateMakingWorkIdentID;
             this.curWorkItem.PlateMakingClassEquipmentGroups = resp.data.Data.PlateMakingClassEquipmentGroups;
