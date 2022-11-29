@@ -33,7 +33,7 @@ const BreadcrumbList = [
     to: { path: '/PlateMakingGroupEquipmentList' },
     name: `选择设备/工厂：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,
   },
-  { name: `设置申放：${PlateMakingGroupPutOutPageData.value?.curLineEquipment?.Name}` },
+  { name: `设置伸放：${PlateMakingGroupPutOutPageData.value?.curLineEquipment?.Name}` },
 ];
 
 const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
@@ -46,7 +46,11 @@ const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>
 };
 
 onMounted(() => {
-  PlateMakingGroupPutOutPageData.value?.getInitData();
+  const curWork = {
+    ID: PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.ID || '',
+    Name: PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || '',
+  };
+  PlateMakingGroupPutOutPageData.value?.getInitData(curWork);
 });
 
 </script>

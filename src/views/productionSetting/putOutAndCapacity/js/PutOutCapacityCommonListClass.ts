@@ -37,11 +37,11 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
     this.curLineEquipment = LineEquipment;
   }
 
-  /** 当前工序名称，仅生产线和组合生产线使用 */
-  curWorkName = ''
+  /** 当前工序，仅生产线和组合生产线使用 */
+  curWork: { ID: string, Name: string } | null = null;
 
-  getInitData(workName = '') {
-    this.curWorkName = workName;
+  getInitData(curWork: { ID: string, Name: string } | null = null) {
+    this.curWork = curWork;
     this.getList();
     this.getPropertyList();
   }
@@ -101,7 +101,11 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   private async getPropertyList() {
     if (!this.curLineEquipment) return;
-    const resp = await api.propertyApis.getPropertyList(this.getPropertyListParams).catch(() => null);
+    const temp = {
+      ...this.getPropertyListParams,
+      WorkingID: this.curWork?.ID || '',
+    };
+    const resp = await api.propertyApis.getPropertyList(temp).catch(() => null);
     if (resp?.data.isSuccess) {
       this.PropertyList = resp.data.Data || [];
     }

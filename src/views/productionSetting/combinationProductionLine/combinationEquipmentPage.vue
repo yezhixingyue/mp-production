@@ -38,15 +38,21 @@ const BreadcrumbList = computed(() => [
 ]);
 
 const ToPutOutPage = (item) => {
+  const Name = curLineWorkName.value;
+  const ID = processInfo.value?.WorkID || '';
+  const Work = { ID, Name };
   router.push({
     name: 'combinationPutOut',
-    params: { LineEquipment: JSON.stringify(item), WorkName: curLineWorkName.value },
+    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work) },
   });
 };
 const TocCpacityPage = (item) => {
+  const Name = curLineWorkName.value;
+  const ID = processInfo.value?.WorkID || '';
+  const Work = { ID, Name };
   router.push({
     name: 'combinationCapacity',
-    params: { LineEquipment: JSON.stringify(item), WorkName: curLineWorkName.value },
+    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work) },
   });
 };
 const afterRemove = (ID) => {

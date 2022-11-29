@@ -28,7 +28,7 @@ const BreadcrumbList = [
   { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
   {
     to: { path: '/combinationEquipment' },
-    name: `选择设备/工厂：${CombineLineCapacityPageData.value?.curWorkName}`,
+    name: `选择设备/工厂：${CombineLineCapacityPageData.value?.curWork?.Name}`,
   },
   {
     name: `设置产能：${CombineLineCapacityPageData.value?.curLineEquipment?.Name}`,

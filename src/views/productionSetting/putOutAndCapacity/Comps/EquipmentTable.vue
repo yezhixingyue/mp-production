@@ -10,7 +10,7 @@
     <mp-table-column prop="Name" label="设备" width="245" class-name="left" />
     <mp-table-column prop="name" label="操作" width="240">
       <template #default="scope">
-        <mp-button type="primary" class="ft-12" link @click="ToPutOutPage(scope.row)">申放</mp-button>
+        <mp-button type="primary" class="ft-12" link @click="ToPutOutPage(scope.row)">伸放</mp-button>
         <mp-button type="primary" class="ft-12" link @click="TocCpacityPage(scope.row)">设备产能</mp-button>
         <mp-button type="danger" class="ft-12" link @click="onRemoveClick(scope.row)">删除</mp-button>
       </template>
@@ -33,7 +33,7 @@ const onClick = () => {
   emit('add');
 };
 
-const ToPutOutPage = (it: EquipmentListType) => { // 申放
+const ToPutOutPage = (it: EquipmentListType) => { // 伸放
   emit('ToPutOutPage', it);
 };
 

@@ -21,11 +21,11 @@ const BreadcrumbList = [
   { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
   {
     to: { path: '/combinationEquipment' },
-    name: `选择设备/工厂：${CombineLinePutOutPageData.value?.curWorkName}`,
+    name: `选择设备/工厂：${CombineLinePutOutPageData.value?.curWork?.Name}`,
   },
-  { name: `设置申放：${CombineLinePutOutPageData.value?.curLineEquipment?.Name}`, to: { path: '/combinationPutOut' } },
+  { name: `设置伸放：${CombineLinePutOutPageData.value?.curLineEquipment?.Name}`, to: { path: '/combinationPutOut' } },
   {
-    name: `${CombineLinePutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}申放`,
+    name: `${CombineLinePutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}伸放`,
   },
 ];
 

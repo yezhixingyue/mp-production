@@ -53,7 +53,7 @@ const routes: RouteRecordRaw = {
       path: '/putOut',
       name: 'putOut',
       meta: {
-        title: '申放',
+        title: '伸放',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
@@ -65,7 +65,7 @@ const routes: RouteRecordRaw = {
       path: '/putOutSetup',
       name: 'putOutSetup',
       meta: {
-        title: '设置申放',
+        title: '设置伸放',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
@@ -138,7 +138,7 @@ const routes: RouteRecordRaw = {
       path: '/combinationPutOut',
       name: 'combinationPutOut',
       meta: {
-        title: '申放',
+        title: '伸放',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
@@ -150,7 +150,7 @@ const routes: RouteRecordRaw = {
       path: '/combinationPutOutSetup',
       name: 'combinationPutOutSetup',
       meta: {
-        title: '设置申放',
+        title: '设置伸放',
         hideMenu: true,
         requiresAuth: true,
         icon: 'iconfont icon-xinxi',
@@ -210,7 +210,7 @@ const routes: RouteRecordRaw = {
       path: '/plateMakingGroupEquipmentPutOut',
       name: 'plateMakingGroupEquipmentPutOut',
       meta: {
-        title: '申放',
+        title: '伸放',
         hideMenu: true,
         requiresAuth: true,
         pageName: 'PlateMakingGroupEquipmentPutOutPage',
@@ -221,7 +221,7 @@ const routes: RouteRecordRaw = {
       path: '/plateMakingGroupEquipmentPutOutSetup',
       name: 'plateMakingGroupEquipmentPutOutSetup',
       meta: {
-        title: '设置申放',
+        title: '设置伸放',
         hideMenu: true,
         requiresAuth: true,
         pageName: 'PlateMakingGroupEquipmentPutOutSetupPage',

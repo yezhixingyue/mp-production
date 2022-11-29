@@ -30,6 +30,7 @@ export class LineCapacityClass extends PutOutCapacityCommonListClass<CapacityCon
     const temp = {
       UseModule: UseModuleEnum.CapacityNumber,
       EquipmentGroupID: this.curLineEquipment?.GroupID || '',
+      WorkingID: this.curWork?.ID || '',
     };
 
     const resp = await api.propertyApis.getPropertyList(temp).catch(() => null);

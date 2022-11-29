@@ -31,9 +31,9 @@ const BreadcrumbList = computed(() => ([
   { to: { path: '/productionLine' }, name: '生产线' },
   {
     to: { path: '/equipment' },
-    name: `选择设备/工厂：${LinePutOutPageData.value?.curWorkName}`,
+    name: `选择设备/工厂：${LinePutOutPageData.value?.curWork?.Name || ''}`,
   },
-  { name: `设置申放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
+  { name: `设置伸放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
 ]));
 
 const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
@@ -46,7 +46,9 @@ const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>
 };
 
 onMounted(() => {
-  LinePutOutPageData.value?.getInitData(route.params.WorkName as string);
+  const workString = route.params.Work as string;
+  const curWork: { ID: string, Name: string } | null = workString ? JSON.parse(workString) : null;
+  LinePutOutPageData.value?.getInitData(curWork);
 });
 
 </script>

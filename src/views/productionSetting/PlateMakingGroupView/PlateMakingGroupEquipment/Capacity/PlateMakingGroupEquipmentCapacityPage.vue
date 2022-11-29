@@ -49,7 +49,11 @@ const remove = (item) => {
 };
 
 onMounted(() => {
-  PlateMakingGroupCapacityPageData.value?.getInitData();
+  const curWork = {
+    ID: PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.ID || '',
+    Name: PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || '',
+  };
+  PlateMakingGroupCapacityPageData.value?.getInitData(curWork);
   PlateMakingGroupCapacityPageData.value?.getRightPropertyList();
 });
 

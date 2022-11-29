@@ -23,9 +23,9 @@ const BreadcrumbList = [
     to: { path: '/PlateMakingGroupEquipmentList' },
     name: `选择设备/工厂：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,
   },
-  { to: { path: '/plateMakingGroupEquipmentPutOut' }, name: `设置申放：${PlateMakingGroupPutOutPageData.value?.curLineEquipment?.Name}` },
+  { to: { path: '/plateMakingGroupEquipmentPutOut' }, name: `设置伸放：${PlateMakingGroupPutOutPageData.value?.curLineEquipment?.Name}` },
   {
-    name: `${PlateMakingGroupPutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}申放`,
+    name: `${PlateMakingGroupPutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}伸放`,
   },
 ];
 

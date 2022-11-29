@@ -14,6 +14,7 @@ export interface ISetPlateMakingWorkSaveResult {
 }
 
 export interface IPlateMakingEquipmentSetupData {
+  WorkID: string
   WorkName: string;
   PlateMakingClassEquipmentGroups: IClassEquipmentGroups[];
   PlateMakingWorkIdentID: string;

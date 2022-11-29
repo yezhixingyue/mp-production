@@ -47,17 +47,21 @@ const BreadcrumbList = computed(() => [
 ]);
 
 const ToPutOutPage = (item, type: EquipmentSetupType = 'default') => {
-  const WorkName = type === 'default' ? curLineWorkName.value : PlateMakingEquipmentSetupData.value?.WorkName || '';
+  const Name = type === 'default' ? curLineWorkName.value : PlateMakingEquipmentSetupData.value?.WorkName || '';
+  const ID = type === 'default' ? processInfo.value?.WorkID || '' : PlateMakingEquipmentSetupData.value?.WorkID || '';
+  const Work = { ID, Name };
   router.push({
     name: 'putOut',
-    params: { LineEquipment: JSON.stringify(item), WorkName },
+    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work) },
   });
 };
 const TocCpacityPage = (item, type: EquipmentSetupType = 'default') => {
-  const WorkName = type === 'default' ? curLineWorkName.value : PlateMakingEquipmentSetupData.value?.WorkName || '';
+  const Name = type === 'default' ? curLineWorkName.value : PlateMakingEquipmentSetupData.value?.WorkName || '';
+  const ID = type === 'default' ? processInfo.value?.WorkID || '' : PlateMakingEquipmentSetupData.value?.WorkID || '';
+  const Work = { ID, Name };
   router.push({
     name: 'capacity',
-    params: { LineEquipment: JSON.stringify(item), WorkName },
+    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work) },
   });
 };
 const afterRemove = (ID, type: EquipmentSetupType = 'default') => {
@@ -136,6 +140,7 @@ const PlateMakingEquipmentSetupData = computed<IPlateMakingEquipmentSetupData | 
     const t = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.find(it => it.ID === processInfo.value?.PlateMakingWorkID);
     if (t && processInfo.value.PlateMakingClassEquipmentGroups) {
       return {
+        WorkID: t.ID,
         WorkName: t.Name,
         PlateMakingClassEquipmentGroups: processInfo.value.PlateMakingClassEquipmentGroups,
         PlateMakingWorkIdentID: processInfo.value.PlateMakingWorkIdentID,

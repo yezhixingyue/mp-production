@@ -9,7 +9,7 @@
       </template>
       <template #default>
         <div class="right-class">
-          <p class="title">则申放为：</p>
+          <p class="title">则伸放为：</p>
           <p class="conent">
             <el-input v-model.number="rightPanelData.Value" maxlength="9"></el-input>
             <el-select v-model="rightPanelData.Type" class="m-2" placeholder="Select">
@@ -48,15 +48,15 @@ const rightPanelData = ref<null | Partial<PutOutConditionItemClass>>(null);
 
 const submit = (e: PutOutConditionItemClass) => {
   if (!rightPanelData.value?.Value && rightPanelData.value?.Value !== 0) {
-    MpMessage.error({ title: '保存失败', msg: '申放数值未设置' });
+    MpMessage.error({ title: '保存失败', msg: '伸放数值未设置' });
     return;
   }
   if (!/^\d+$/.test(`${rightPanelData.value.Value}`)) {
-    MpMessage.error({ title: '保存失败', msg: '申放数值设置不正确，请检查' });
+    MpMessage.error({ title: '保存失败', msg: '伸放数值设置不正确，请检查' });
     return;
   }
   if (rightPanelData.value.Type === 1 && rightPanelData.value.Value > 100) {
-    MpMessage.error({ title: '保存失败', msg: '百分比时，申放数值不能超过100' });
+    MpMessage.error({ title: '保存失败', msg: '百分比时，伸放数值不能超过100' });
     return;
   }
   const temp = { ...e, ...rightPanelData.value };

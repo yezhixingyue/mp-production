@@ -27,15 +27,15 @@ export default {
     // console.log('setup');
     const dateString = ref('');
     const weekString = ref('');
-    const weekTextList = ref<string[]>(['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']);
+    const weekTextList = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     function getCurDate() {
       const date = new Date();
       const day = date.getDate();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
-      const w = date.getDay() - 1;
+      const w = date.getDay();
       dateString.value = `${year}年${month}月${day}日`;
-      weekString.value = weekTextList.value[w];
+      weekString.value = weekTextList[w];
     }
     onMounted(() => {
       getCurDate();

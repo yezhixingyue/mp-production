@@ -33,7 +33,7 @@ const BreadcrumbList = computed(() => [
   { to: { path: '/productionLine' }, name: '生产线' },
   {
     to: { path: '/equipment' },
-    name: `选择设备/工厂：${LineCapacityPageData.value?.curWorkName}`,
+    name: `选择设备/工厂：${LineCapacityPageData.value?.curWork?.Name}`,
   },
   { name: `设置产能：${LineCapacityPageData.value?.curLineEquipment?.Name}` },
 ]);
@@ -49,7 +49,9 @@ const remove = (item) => {
 };
 
 onMounted(() => {
-  LineCapacityPageData.value?.getInitData(route.params.WorkName as string);
+  const workString = route.params.Work as string;
+  const curWork: { ID: string, Name: string } | null = workString ? JSON.parse(workString) : null;
+  LineCapacityPageData.value?.getInitData(curWork);
   LineCapacityPageData.value?.getRightPropertyList();
 });
 

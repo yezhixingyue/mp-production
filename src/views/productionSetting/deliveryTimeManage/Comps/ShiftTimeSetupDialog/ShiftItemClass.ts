@@ -9,7 +9,7 @@ export interface IShiftTimeInDialog extends IShiftTime {
   _date: string
 }
 
-export const weekList = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']; // 从1开始
+export const weekList = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; // 从1开始
 
 export class ShiftItemClass implements IShiftRowItem {
   ShiftID = ''
