@@ -1,7 +1,10 @@
+import { WorkSourceTypeEnum } from './enum';
+
 export interface ILineEquipmentSaveParams {
   LineWorkID: string,
   EquipmentIDS: string[],
-  IsPlateMakingWork?: boolean,
+  // IsPlateMakingWork?: boolean,
+  WorkSourceType: WorkSourceTypeEnum,
 }
 
 export interface EquipmentListType {

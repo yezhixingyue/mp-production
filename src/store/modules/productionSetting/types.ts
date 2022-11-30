@@ -153,4 +153,5 @@ export interface IWorkingProcedureList {
   TemplateIDS: string[],
   ProductionLineWorkings: IProductionLineWorkings[] | null,
   Status: LineStatusEnum,
+  ProductionLineSplitWorking: null | IProductionLineWorkings
 }

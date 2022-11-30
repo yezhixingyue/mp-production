@@ -25,6 +25,7 @@ import { IProductionLineWorkings } from '@/store/modules/productionSetting/types
 import EquipmentListPage from '../putOutAndCapacity/EquipmentListPage.vue';
 import { ILineEquipmentSaveParams } from '../putOutAndCapacity/js/types';
 import { EquipmentSetupType, IPlateMakingEquipmentSetupData } from './js/types';
+import { WorkSourceTypeEnum } from '../putOutAndCapacity/js/enum';
 
 interface ISaveResult {
   EquipmentID: string
@@ -90,8 +91,9 @@ const handleRemove = (item, type: EquipmentSetupType = 'default') => {
     }
   });
 };
-const setEquipment = (list, resultArr: ISaveResult[], IsPlateMakingWork = false) => {
-  const targetClassEquipmentGroups = IsPlateMakingWork ? processInfo.value?.PlateMakingClassEquipmentGroups : processInfo.value?.ClassEquipmentGroups;
+const setEquipment = (list, resultArr: ISaveResult[], WorkSourceType: WorkSourceTypeEnum) => {
+  const targetClassEquipmentGroups = WorkSourceType === WorkSourceTypeEnum.PlateMaking
+    ? processInfo.value?.PlateMakingClassEquipmentGroups : processInfo.value?.ClassEquipmentGroups;
   if (!targetClassEquipmentGroups) return;
   targetClassEquipmentGroups?.forEach((ClassIt, index) => {
     ClassIt.EquipmentGroups.forEach((GroupIt, i) => {
@@ -113,10 +115,17 @@ function setStorage() { // 设置会话存储
   sessionStorage.setItem('productionLinePage', 'true');
 }
 const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () => void) => {
-  api.getProductionLinetEquipmentSave(params).then(res => {
+  const temp = {
+    ...params,
+  };
+  console.log(isSplit.value, temp.WorkSourceType, isSplit.value && temp.WorkSourceType !== WorkSourceTypeEnum.PlateMaking);
+  if (isSplit.value && temp.WorkSourceType !== WorkSourceTypeEnum.PlateMaking) {
+    temp.WorkSourceType = WorkSourceTypeEnum.Split;
+  }
+  api.getProductionLinetEquipmentSave(temp).then(res => {
     if (res.data.Status === 1000) {
       const cb = () => {
-        setEquipment([...params.EquipmentIDS], res.data.Data as ISaveResult[], params.IsPlateMakingWork);
+        setEquipment([...params.EquipmentIDS], res.data.Data as ISaveResult[], params.WorkSourceType);
         setStorage();
         callback();
       };
@@ -150,12 +159,15 @@ const PlateMakingEquipmentSetupData = computed<IPlateMakingEquipmentSetupData | 
   return null;
 });
 
+const isSplit = ref(false);
+
 onMounted(() => {
   const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;
   if (temp) {
     processInfo.value = { ...temp };
     curLineWorkName.value = route.params.WorkName as string;
   }
+  isSplit.value = route.params.isSplit === 'true';
 });
 
 </script>

@@ -39,6 +39,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { IClassEquipmentGroups } from '@/store/modules/productionSetting/types';
 import { computed, reactive } from 'vue';
 import { filterClassEquipmentGroups } from '../../PlateMakingGroupView/js/utils';
+import { WorkSourceTypeEnum } from '../js/enum';
 import { ILineEquipmentSaveParams } from '../js/types';
 
 const props = defineProps<{
@@ -53,6 +54,7 @@ const emit = defineEmits(['update:visible', 'submit']);
 const ruleForm = reactive<ILineEquipmentSaveParams>({
   LineWorkID: '',
   EquipmentIDS: [],
+  WorkSourceType: WorkSourceTypeEnum.Normal,
 });
 
 const localClassEquipmentGroups = computed(() => filterClassEquipmentGroups(props.ClassEquipmentGroups));

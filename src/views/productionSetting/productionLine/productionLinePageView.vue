@@ -32,7 +32,31 @@
               <span class="operate" :class="type">操作</span>
             </div>
           </li>
-          <li class="table-main" v-for="item in ProductionLineData?.ProductionLineWorkings" :key="item.WorkID">
+          <li class="table-main split" v-if="ProductionLineData?.ProductionLineSplitWorking">
+            <div class="process-item">
+              <span class="process">{{[...PrcessList,...splitPrcessList, ...combinationPrcessList]
+              .find(it => it.ID === ProductionLineData?.ProductionLineSplitWorking?.WorkID)?.Name}}</span>
+              <span class="equipment ft-f-12" :title="getEquipmentText(ProductionLineData.ProductionLineSplitWorking).replaceAll(' | ', '\r\n')">
+                {{getEquipmentText(ProductionLineData.ProductionLineSplitWorking)}}
+              </span>
+              <span class="work" v-if="type==='normal'">
+                {{getPlateMakingWorkContent(ProductionLineData.ProductionLineSplitWorking)}}
+              </span>
+              <span class="operate" :class="type">
+                <mp-button type="primary" class="ft-12 h" v-if="type==='normal'" link>设置制版工序</mp-button>
+                <mp-button type="primary" class="ft-12" link @click="ToEquipment(
+                  ProductionLineData?.ProductionLineSplitWorking,
+                  [...PrcessList,...splitPrcessList, ...combinationPrcessList]
+                    .find(it => it.ID === ProductionLineData?.ProductionLineSplitWorking?.WorkID)?.Name,
+                  true,
+                  )">选择设备/工厂</mp-button>
+                <mp-button type="primary" class="ft-12 h" link>物料来源</mp-button>
+                <mp-button type="danger" class="ft-12" link @click="delLineWorking(ProductionLineData?.ProductionLineSplitWorking)">删除</mp-button>
+              </span>
+            </div>
+          </li>
+          <li class="table-main" :class="{hs: ProductionLineData?.ProductionLineSplitWorking && i === 0}"
+           v-for="(item, i) in ProductionLineData?.ProductionLineWorkings" :key="item.WorkID">
             <div class="process-item">
               <span class="process">{{[...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name}}</span>
               <span class="equipment ft-f-12" :title="getEquipmentText(item).replaceAll(' | ', '\r\n')">
@@ -93,6 +117,10 @@
                 </template>
               </div>
             </div>
+          </li>
+          <li class="empty" v-if="((!ProductionLineData?.ProductionLineWorkings || ProductionLineData.ProductionLineWorkings.length === 0)
+           && !ProductionLineData?.ProductionLineSplitWorking)">
+            <el-empty></el-empty>
           </li>
         </ul>
         <div class="matters-need-attention">
@@ -397,11 +425,11 @@ const ToMaterialSource = (item, WorkName) => {
   });
 };
 // 跳转生产设备
-const ToEquipment = (item, WorkName) => {
+const ToEquipment = (item, WorkName, isSplit = false) => {
   const name = isCombine.value ? 'combinationEquipment' : 'equipment';
   router.push({
     name,
-    params: { processInfo: JSON.stringify(item), WorkName },
+    params: { processInfo: JSON.stringify(item), WorkName, isSplit: JSON.stringify(isSplit) },
   });
 };
 // 获取生产线工序列表
@@ -803,6 +831,31 @@ onMounted(() => {
           position: relative;
           border-left: 1px solid #D0D0D0;
           border-right: 1px solid #D0D0D0;
+        }
+        .table-title{
+          position: sticky;
+          top: 0;
+          background-color: #fff !important;
+          border-color: #D0D0D0 !important;
+          .process-item{
+            height: 37px;
+            align-items: center;
+            text-align: center;
+            border-top:none;
+            font-weight: 700;
+            border-bottom: 1px solid #D0D0D0;
+            background: none;
+            >span+span{
+              border-left: 1px solid #D0D0D0;
+              height: 15px;
+              text-align: center;
+            }
+          }
+        }
+        .table-main:hover{
+          background-color: #F0F9FE;
+        }
+        .table-main{
           position: relative;
           &::after {
             position: absolute;
@@ -828,35 +881,13 @@ onMounted(() => {
             >.process-item {
               background-color: lighten($color: #26bcf9, $amount: 42);
             }
-          }
-        }
-        .table-title{
-          position: sticky;
-          top: 0;
-          background-color: #fff !important;
-          border-color: #D0D0D0 !important;
-          .process-item{
-            height: 37px;
-            align-items: center;
-            text-align: center;
-            border-top:none;
-            font-weight: 700;
-            border-bottom: 1px solid #D0D0D0;
-            background: none;
-            >span+span{
-              border-left: 1px solid #D0D0D0;
-              height: 15px;
-              text-align: center;
+            &.split, &.hs {
+              border-color: #26bcf9;
+              &::after {
+                border-color: rgba(255,255,255,0);
+              }
             }
           }
-        }
-        .table-main:nth-child(2n-1){
-          background-color: #F5F5F5;
-        }
-        .table-main:hover{
-          background-color: #F0F9FE;
-        }
-        .table-main{
           .process-item{
             height: 45px;
             align-items: center;
@@ -897,8 +928,8 @@ onMounted(() => {
             display: flex;
             align-items: center;
             border-bottom: 1px solid #D0D0D0;
-            background-color: #f5f5f5;
-            background-image: linear-gradient(to right, #d0d0d0 78%, rgba(255,255,255,0) 0%); /* 35%设置虚线点x轴上的长度 */
+            background-color: #f8f8f8;
+            background-image: linear-gradient(to right, #ddd 78%, rgba(255,255,255,0) 0%); /* 35%设置虚线点x轴上的长度 */
             background-position: top; /* top配置上边框位置的虚线 */
             background-size: 12px 1px; /* 第一个参数设置虚线点的间距；第二个参数设置虚线点y轴上的长度 */
             background-repeat: repeat-x;
@@ -935,6 +966,23 @@ onMounted(() => {
               line-height: 14px;
             }
           }
+          &.split {
+            border-top: 1px solid #d0d0d0;
+            border-bottom: 1px solid #d0d0d0;
+            margin: 10px 0;
+            .h {
+              visibility: hidden;
+            }
+          }
+          &.hs {
+            border-top: 1px solid #d0d0d0;
+          }
+        }
+        .empty {
+          border-bottom: 1px solid #d0d0d0;
+          height: calc(100% - 40px);
+          font-size: 12px;
+          color: #989898;
         }
       }
       >.matters-need-attention{

@@ -190,7 +190,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '制版组',
         requiresAuth: true,
-        icon: 'iconfont icon-zuheshengchanxian',
+        icon: 'iconfont icon-zhibanzu',
         pageName: 'PlateMakingGroupListPage',
       },
       component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupListPage/PlateMakingGroupListPage.vue'),

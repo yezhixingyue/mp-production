@@ -40,6 +40,7 @@ import EquipmentAddDialog from './Comps/EquipmentAddDialog.vue';
 import { EquipmentListType, ILineEquipmentSaveParams } from './js/types';
 import EquipmentTable from './Comps/EquipmentTable.vue';
 import { EquipmentSetupType, IPlateMakingEquipmentSetupData } from '../productionLine/js/types';
+import { WorkSourceTypeEnum } from './js/enum';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[]
@@ -99,9 +100,11 @@ const curClassEquipmentGroups = computed(() => {
 });
 const curEditItem = computed(() => {
   const _EquipmentList = curSetupType.value === 'default' ? EquipmentList : PlateMakingEquipmentList;
+  const WorkSourceType = curSetupType.value === 'default' ? WorkSourceTypeEnum.Normal : WorkSourceTypeEnum.PlateMaking;
   return {
     LineWorkID: props.LineWorkID || '',
     EquipmentIDS: _EquipmentList.value.map(it => it.ID),
+    WorkSourceType,
   };
 });
 const dialogTitle = computed(() => (curSetupType.value === 'default' ? props.curLineWorkName : props.PlateMakingEquipmentSetupData?.WorkName || ''));
@@ -117,7 +120,10 @@ const onAddClick = (type: EquipmentSetupType) => {
 };
 
 const submit = (data: ILineEquipmentSaveParams) => { // 添加设备 本地保存？
-  const temp = { ...data, IsPlateMakingWork: curSetupType.value === 'additional' };
+  const temp: ILineEquipmentSaveParams = { ...data };
+  if (curSetupType.value === 'additional') {
+    temp.WorkSourceType = WorkSourceTypeEnum.PlateMaking;
+  }
   if (curSetupType.value === 'additional' && props.PlateMakingEquipmentSetupData) {
     temp.LineWorkID = props.PlateMakingEquipmentSetupData.PlateMakingWorkIdentID;
   }
