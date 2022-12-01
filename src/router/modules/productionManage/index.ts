@@ -12,7 +12,7 @@ const routes: RouteRecordRaw = {
     icon: 'iconfont icon-shengchanguanli scale-9',
   },
   children: [
-    /* 转换器
+    /* 设备状态看板
     -------------------------------------- */
     {
       path: '/EquipmentStatus',
@@ -24,6 +24,19 @@ const routes: RouteRecordRaw = {
         pageName: 'EquipmentStatusListPage',
       },
       component: () => import('@/views/productionManage/EquipmentStatus/EquipmentStatusListPage.vue'),
+    },
+    /* 手工下单
+    -------------------------------------- */
+    {
+      path: '/ManualOrder',
+      name: 'ManualOrder',
+      meta: {
+        title: '手工下单',
+        requiresAuth: true,
+        icon: 'icon-shebeizhuangtai iconfont scale-9',
+        pageName: 'ManualOrderHandlerPage',
+      },
+      component: () => import('@/views/productionManage/ManualOrderHandlerPage/ManualOrderHandlerPage.vue'),
     },
   ],
 };

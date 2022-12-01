@@ -47,7 +47,7 @@
             {{getMaterialName(scope.row.Relations)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="需要大版文件" min-width="200">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="大版类型" min-width="200">
           <template #default="scope">
             <template v-if="scope.row.TemplateType === 0"> </template>
             <template v-if="scope.row.TemplateType === 1">

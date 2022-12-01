@@ -9,7 +9,15 @@ export interface IShiftTimeInDialog extends IShiftTime {
   _date: string
 }
 
-export const weekList = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; // 从1开始
+export const weekList = [
+  { ID: 1, Name: '周一' },
+  { ID: 2, Name: '周二' },
+  { ID: 3, Name: '周三' },
+  { ID: 4, Name: '周四' },
+  { ID: 5, Name: '周五' },
+  { ID: 6, Name: '周六' },
+  { ID: 0, Name: '周日' },
+];
 
 export class ShiftItemClass implements IShiftRowItem {
   ShiftID = ''
@@ -173,7 +181,7 @@ export class ShiftItemClass implements IShiftRowItem {
       let _ShiftTypeContent = '';
       switch (it.ShiftType) {
         case ShiftTypeEnum.weekly:
-          _ShiftTypeContent = weekList.filter((_it, i) => it.TypeLimit.includes(i + 1)).join('、');
+          _ShiftTypeContent = weekList.filter((_it) => it.TypeLimit.includes(_it.ID)).map(_it => _it.Name).join('、');
           break;
 
         case ShiftTypeEnum.monthly:

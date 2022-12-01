@@ -178,8 +178,8 @@ const renderContent = (h, { node, data }) => {
   }
   const text = !node.expanded ? '展开' : '收起';
   const classIcon = !node.expanded
-    ? 'el-icon-caret-bottom'
-    : 'close el-icon-caret-bottom';
+    ? 'icon-bottom'
+    : 'close icon-bottom';
   return h(
     'span',
     { class: 'el-tree-node__label' },
@@ -342,14 +342,22 @@ watch(() => props.defaultCheckedKeys, (newVal) => {
                 padding-right: 20px;
                 padding-left: 4px;
                 height: 100%;
-                > .el-icon-caret-bottom {
+                > .icon-bottom {
                   color: $--color-text-secondary;
                   font-size: 19px;
                   line-height: 21px;
                   position: relative;
-                  top: 2px;
-                  transition: all 0.1s !important;
+                  top: 4px;
+                  left: 4px;
+                  transition: 0.05s ease-in-out;
                   transform-origin: center;
+                  display: inline-block;
+                  width: 0;
+                  height: 0;
+                  border: 6px solid rgba($color: #000000, $alpha: 0);
+                  border-top-color: #cbcbcb;
+                  border-top-width: 7px;
+                  transform-origin: 50% 25% 0 ;
                   &.close {
                     transform: rotate(180deg);
                     // top: 3px;

@@ -13,11 +13,11 @@
           <div class="date-box">
             <!-- 每周 -->
             <el-checkbox-group v-model="ruleForm._WeekTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.weekly">
-              <el-checkbox v-for="(it, i) in weekList" :key='i' :label="i">{{it}}</el-checkbox>
+              <el-checkbox v-for="(it) in weekList" :key='it.ID' :label="it.ID">{{it.Name}}</el-checkbox>
             </el-checkbox-group>
             <!-- 每月 -->
             <el-checkbox-group v-model="ruleForm._MonthTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.monthly">
-              <el-checkbox v-for="it in 31" :key='it' :label="it + 1">{{it}}号</el-checkbox>
+              <el-checkbox v-for="it in 31" :key='it' :label="it">{{it}}号</el-checkbox>
             </el-checkbox-group>
           </div>
         </div>
