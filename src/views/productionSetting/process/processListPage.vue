@@ -10,7 +10,7 @@
       <el-table fit stripe :data="Data.processList"
        style="width: 100%">
         <el-table-column
-        show-overflow-tooltip prop="Name" label="工序" min-width="160" />
+        show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
         <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" min-width="130">
           <template #default="scope">
             <span v-if="scope.row.ReportMode === 0">块报工</span>
@@ -98,7 +98,6 @@ import messageBox from '@/assets/js/utils/message';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import type { RelationsType } from '@/store/modules/productionSetting/types';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
-import type { EquipmentGroups } from '@/components/pasteupSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { WorkingProcedureRelationEnum } from './enums';
 
@@ -141,19 +140,19 @@ function PaginationChange(newVal) {
 // 获取设备工厂
 // 格式化设备工厂
 const getEquipmentGroupsNames = (EquipmentGroups) => {
-  const returnStr:string[] = [];
-  const allEquipmentGroups:EquipmentGroups[] = [];
-  // 所有设备组
-  productionSettingStore.EquipmentListGroup.forEach(item => {
-    allEquipmentGroups.push(...item.EquipmentGroups);
-  });
-  EquipmentGroups.forEach(item => {
-    const group = allEquipmentGroups.find(it => it.ID === item.GroupID);
-    if (group) {
-      returnStr.push(group.Name as string);
+  let allEquipment = productionSettingStore.EquipmentListGroup.map(item => {
+    const actionEquipment = item.EquipmentGroups.filter(it => EquipmentGroups.find(el => it.ID === el.GroupID));
+    if (actionEquipment.length) {
+      return {
+        ClassID: item.ClassID,
+        ClassName: item.ClassName,
+        EquipmentGroups: actionEquipment,
+      };
     }
+    return null;
   });
-  return returnStr.join('、');
+  allEquipment = allEquipment.filter(it => it);
+  return allEquipment.map(item => `${item?.ClassName}：${item?.EquipmentGroups.map(it => it.Name).join('、')}`).join('；');
 };
 // 格式化辅助信息
 const getInfoName = (Relations:RelationsType[], Type) => {

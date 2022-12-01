@@ -13,17 +13,17 @@
     <template #default>
       <div class="add-material-dialog">
         <div style="font-size: 18px;font-weight: 600;margin-top: -10px;margin-bottom: 10px;">
-          {{materialInfo.CurrentPositionName}}
+          {{materialInfo?.CurrentPositionName}}
         </div>
         <div>
           <span class="label">
             SKU编码：
           </span>
             <p class="sku-code">
-              <el-input @keyup.enter="getMaterial(false)"
+              <el-input @keyup.enter="getMaterial"
               placeholder="请输入完整SKU编码，包括尺寸编码"
               v-model.trim="Data.getMaterialData.SKUCode"/>
-              <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
+              <mp-button link type="primary" @click="getMaterial">查询</mp-button>
             </p>
         </div>
         <div>
@@ -42,20 +42,13 @@
               :change="ThreeCascaderCompChange"
               ></ThreeCascaderComp>
               <OneLevelSelect
-              v-if="Data.itemSelectTempMaterial"
-                :options='Data.itemSelectTempMaterial.SizeSelects || []'
+                :options='Data.itemSelectTempMaterial?.SizeSelects || []'
                 :defaultProps="{
                   value:'SizeID',
                   label:'SizeDescribe',
                 }"
                 :value='Data.SizeSelects'
                 @change="SizeSelectChange"
-                :width="328"
-                :placeholder="'请选择物料尺寸'"
-                ></OneLevelSelect>
-              <OneLevelSelect
-                v-else
-                :options='[]'
                 :width="328"
                 :placeholder="'请选择物料尺寸'"
                 ></OneLevelSelect>
@@ -374,5 +367,8 @@ export default {
         margin-right: 20px;
       }
     }
+  }
+  .make-an-inventory-error-dialog .el-input-number .el-input__inner {
+    text-align: left;
   }
 </style>

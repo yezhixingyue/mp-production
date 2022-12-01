@@ -170,7 +170,7 @@ ul.list {
       i {
         font-size: 14px;
         margin-right: 8px;
-        color: #26bcf9;
+        color: #ff3769;
         transform: scaleX(0.95) scaleY(1.05);
       }
       span {

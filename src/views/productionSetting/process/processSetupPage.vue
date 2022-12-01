@@ -62,7 +62,8 @@
                     v-model="Data.processDataFrom.AllowBatchReport" :disabled="Data.processDataFrom.Type === ProcessTypeEnum.split" label="允许批量报工" />
                   <div style="height:32px" class="type-conent">
                     <template v-if="Data.processDataFrom.AllowPartReport">
-                      订单数量大于<el-input v-model.number="Data.processDataFrom.MinPartReportNumber"></el-input>时
+                      {{getEnumNameByIDAndEnumList(Data.processDataFrom.ReportMode, ReportModeEnumList).replace('报工', '')}}数量大于
+                      <el-input v-model.number="Data.processDataFrom.MinPartReportNumber"></el-input>时
                     </template>
                   </div>
                 </div>
@@ -89,7 +90,7 @@
                   </template>
                 </li>
               </ul>
-              <p class="title b">可选物料资源包：<mp-button type="primary" link @click="materialResourceShow = true">选择料资源包</mp-button><span>（选填）</span></p>
+              <p class="title b">可选物料资源包：<mp-button type="primary" link @click="materialResourceShow = true">选择物料资源包</mp-button><span>（选填）</span></p>
               <div class="info">{{showInfoMaterial.join('、')}}</div>
             </el-form>
           </div>
@@ -106,7 +107,7 @@
                       <el-checkbox v-model="equipment.OneTimeTwoSide" label="可一次印双面" />
                     </div>
                     <div class="del">
-                      <mp-button type="info" link @click="EquipmentGroupsRemove(index)"><i class="iconfont icon-delete"></i>删除</mp-button>
+                      <mp-button type="info" link @click="EquipmentGroupsRemove(index)"><i class="iconfont icon-delete is-pink"></i>删除</mp-button>
                     </div>
                   </li>
                 </el-scrollbar>
@@ -178,6 +179,7 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
 import {
   ReportModeEnumList, ReportModeEnum, ProcessTypeEnumList, ProcessTypeEnum, TemplateTypeEnumList, TemplateTypeEnum, WorkingProcedureRelationEnum,
 } from './enums';
@@ -580,8 +582,14 @@ export default {
           visibility: hidden;
         }
         .del{
+          button {
+            font-size: 12px;
+          }
           .iconfont.icon-delete{
-            color: $--color-primary;
+            // color: $--color-primary;
+            font-size: 14px;
+            position: relative;
+            top: -1px;
           }
         }
       }

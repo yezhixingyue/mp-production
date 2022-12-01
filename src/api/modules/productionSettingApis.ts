@@ -139,5 +139,9 @@ const api = {
   getPlateMakingGroupEquipmentRemove(id: string) {
     return request({ method: 'DELETE', url: '/Api/PlateMakingGroup/Equipment/Remove', params: { id } });
   },
+  /** DELETE /Api/ProductionLine/SplitWorkingProcedure/Remove   删除生产线分切工序 */
+  getSplitWorkingProcedureRemove(lineID: string) {
+    return request({ method: 'DELETE', url: '/Api/ProductionLine/SplitWorkingProcedure/Remove', params: { lineID } });
+  },
 };
 export default api;

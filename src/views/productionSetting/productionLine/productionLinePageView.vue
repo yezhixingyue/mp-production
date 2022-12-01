@@ -23,101 +23,27 @@
     <main>
       <!--  -->
       <div class="left">
+        <div class="table-title">
+          <div class="process-item">
+            <span class="process">工序</span>
+            <span class="equipment">设备/外协工厂</span>
+            <span class="work" v-if="type==='normal'">制版工序</span>
+            <span class="operate" :class="type">操作</span>
+          </div>
+        </div>
         <ul>
-          <li class="table-title">
-            <div class="process-item">
-              <span class="process">工序</span>
-              <span class="equipment">设备/外协工厂</span>
-              <span class="work" v-if="type==='normal'">制版工序</span>
-              <span class="operate" :class="type">操作</span>
-            </div>
-          </li>
-          <li class="table-main split" v-if="ProductionLineData?.ProductionLineSplitWorking">
-            <div class="process-item">
-              <span class="process">{{[...PrcessList,...splitPrcessList, ...combinationPrcessList]
-              .find(it => it.ID === ProductionLineData?.ProductionLineSplitWorking?.WorkID)?.Name}}</span>
-              <span class="equipment ft-f-12" :title="getEquipmentText(ProductionLineData.ProductionLineSplitWorking).replaceAll(' | ', '\r\n')">
-                {{getEquipmentText(ProductionLineData.ProductionLineSplitWorking)}}
-              </span>
-              <span class="work" v-if="type==='normal'">
-                {{getPlateMakingWorkContent(ProductionLineData.ProductionLineSplitWorking)}}
-              </span>
-              <span class="operate" :class="type">
-                <mp-button type="primary" class="ft-12 h" v-if="type==='normal'" link>设置制版工序</mp-button>
-                <mp-button type="primary" class="ft-12" link @click="ToEquipment(
-                  ProductionLineData?.ProductionLineSplitWorking,
-                  [...PrcessList,...splitPrcessList, ...combinationPrcessList]
-                    .find(it => it.ID === ProductionLineData?.ProductionLineSplitWorking?.WorkID)?.Name,
-                  true,
-                  )">选择设备/工厂</mp-button>
-                <mp-button type="primary" class="ft-12 h" link>物料来源</mp-button>
-                <mp-button type="danger" class="ft-12" link @click="delLineWorking(ProductionLineData?.ProductionLineSplitWorking)">删除</mp-button>
-              </span>
-            </div>
-          </li>
-          <li class="table-main" :class="{hs: ProductionLineData?.ProductionLineSplitWorking && i === 0}"
-           v-for="(item, i) in ProductionLineData?.ProductionLineWorkings" :key="item.WorkID">
-            <div class="process-item">
-              <span class="process">{{[...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name}}</span>
-              <span class="equipment ft-f-12" :title="getEquipmentText(item).replaceAll(' | ', '\r\n')">
-                {{getEquipmentText(item)}}
-              </span>
-              <span class="work" v-if="type==='normal'">
-                {{getPlateMakingWorkContent(item)}}
-              </span>
-              <span class="operate" :class="type">
-                <mp-button type="primary" class="ft-12" v-if="type==='normal'" link @click="setPlateMakingWork(
-                  item,
-                  [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name || ''
-                  )">设置制版工序</mp-button>
-                <mp-button type="primary" class="ft-12" link @click="ToEquipment(
-                  item,
-                  [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name
-                  )">选择设备/工厂</mp-button>
-                <mp-button type="primary" class="ft-12" link
-                :disabled="!!(
-                  (!item.MaterialSources || item.MaterialSources.length===0)
-                  &&
-                  (item.PlateMakingGroupID||!item.PlateMakingMaterialSources||item.PlateMakingMaterialSources.length===0))"
-                 @click="ToMaterialSource(
-                  item,
-                  [...PrcessList,...splitPrcessList, ...combinationPrcessList].find(it => it.ID === item.WorkID)?.Name
-                  )">物料来源</mp-button>
-                <mp-button type="danger" class="ft-12" link @click="delLineWorking(item)">删除</mp-button>
-              </span>
-            </div>
-            <!-- 物料来源 -->
-            <div class="material-source" v-if="item.MaterialSources">
-              <!-- {{item.MaterialSources}} -->
-              <div :title="getMaterialSourcesContent(item.MaterialSources)">
-                <h4 v-if="item.PlateMakingMaterialSources" class="mr-5">[ 工序本身 ]</h4>
-                <template v-for="material in item.MaterialSources" :key="material.MaterialTypeID">
-                  <p>{{getMaterialName(material.MaterialTypeID)}}：
-                    <span>
-                      {{getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
-                      <i v-if="!getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
-                    </span>
-                  </p>
-                </template>
-                <p v-if="item.MaterialSources.length === 0">
-                  <span class="is-gray">暂无物料</span>
-                </p>
-              </div>
-              <div v-if="item.PlateMakingMaterialSources && item.PlateMakingMaterialSources.length > 0"
-                 :title="getMaterialSourcesContent(item.PlateMakingMaterialSources)">
-                ；
-                <h4 class="mr-5">[ {{getPlateMakingWorkContent(item)}} ]</h4>
-                <template v-for="material in item.PlateMakingMaterialSources" :key="material.MaterialTypeID">
-                  <p>{{getMaterialName(material.MaterialTypeID)}}：
-                    <span>
-                      {{getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
-                      <i v-if="!getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
-                    </span>
-                  </p>
-                </template>
-              </div>
-            </div>
-          </li>
+          <LineTableRowComp
+            v-for="it in localTableList"
+            :key="it.WorkID"
+            :item="it"
+            :type="type"
+            :PrcessList="PrcessList"
+            @setPlateMakingWork="setPlateMakingWork"
+            @ToEquipment="ToEquipment"
+            @ToMaterialSource='ToMaterialSource'
+            @delLineWorking="delLineWorking"
+            @onSplitWorkingRemove="onSplitWorkingRemove"
+           />
           <li class="empty" v-if="((!ProductionLineData?.ProductionLineWorkings || ProductionLineData.ProductionLineWorkings.length === 0)
            && !ProductionLineData?.ProductionLineSplitWorking)">
             <el-empty></el-empty>
@@ -168,9 +94,9 @@
           </span>
         </p>
         <p class="templates" v-if="!isCombine">
-          <span class="label">可用拼版模板：</span>
+          <span class="label">可用拼版模板(印刷版)：</span>
           <span class="ft-12">
-            {{getTemplatesName().map(it => it.Name).join('、')}}
+            {{getTemplatesName().map(it => it.Name).join('、') || '无'}}
           </span>
         </p>
       </div>
@@ -196,7 +122,7 @@
           </el-form-item>
           <template v-if="!isCombine">
             <div class="text bold">
-              可用拼版模板
+              可用拼版模板(印刷版)
             </div>
             <el-checkbox-group v-model="Data.addLineFrom.TemplateIDS">
               <el-form-item v-for="item in computedImpositionTemmplate" :key="item.ClassID" class="form-item-required">
@@ -289,9 +215,13 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import { FetchWorkingProcedureSearchEnum, LineStatusEnum, LineTypeEnum } from '@/views/productionSetting/js/enums';
+import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
 import { getSourceWork } from '../js/utils';
 import PlateMakingWorkSetupDialog from './Comps/PlateMakingWorkSetupDialog.vue';
 import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
+import { ReportModeEnumList } from '../process/enums';
+import { ILocalProductionLineWorkings } from './js/types';
+import LineTableRowComp from './Comps/LineTableRowComp.vue';
 
 const props = withDefaults(defineProps<{
   type: 'combine' | 'normal'
@@ -369,6 +299,7 @@ const Data:DataType = reactive({
   getMaxData: {
     Page: 1,
     PageSize: 999,
+    IsPrintPlate: true,
     OnlyShowName: true,
   },
   addLineFrom: {
@@ -396,67 +327,15 @@ const RadioGroupCompValue = computed(() => ({
   level1Val: Data.getPocessFrom.LineID,
   level2Val: '',
 }));
-// 选中的生产线
-const actionLine = computed(() => ProductionLineList.value.find(item => item.ID === Data.getPocessFrom.LineID));
-const computedImpositionTemmplate = computed(() => {
-  interface returnDataType {
-    ClassID:number,
-    Name:string,
-    children:ImpositionTemmplateListType[],
-  }
-  const returnData:returnDataType[] = [];
-  Data.ImpositionTemmplateList.forEach(item => {
-    const temp = returnData.find(it => it.ClassID === item.ClassID);
-    // 找到此条数据对应的分类及该分类下的所有模板
-    if (!temp) {
-      const TemmplateClass = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === item.ClassID);
-      const TemmplateList = Data.ImpositionTemmplateList.filter(it => it.ClassID === item.ClassID);
-      returnData.push({ Name: TemmplateClass?.Name || '', children: TemmplateList, ClassID: TemmplateClass?.ID || 0 });
-    }
-  });
-  return returnData;
-});
-// 跳转物料来源
-const ToMaterialSource = (item, WorkName) => {
-  const name = isCombine.value ? 'combinationMaterialSource' : 'materialSource';
-  router.push({
-    name,
-    params: { processInfo: JSON.stringify(item), lineData: JSON.stringify(ProductionLineData.value), WorkName },
-  });
-};
-// 跳转生产设备
-const ToEquipment = (item, WorkName, isSplit = false) => {
-  const name = isCombine.value ? 'combinationEquipment' : 'equipment';
-  router.push({
-    name,
-    params: { processInfo: JSON.stringify(item), WorkName, isSplit: JSON.stringify(isSplit) },
-  });
-};
-// 获取生产线工序列表
-const getProductionLineWorkingProcedureList = () => {
-  api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
-    if (res.data.Status === 1000) {
-      ProductionLineData.value = res.data.Data as IWorkingProcedureList;
-    }
-  });
-};
-// 删除生产线工序
-const delLineWorking = (item) => {
-  messageBox.warnCancelBox(
-    '确定要删除此工序吗？',
-    `${[...PrcessList.value, ...splitPrcessList.value, ...combinationPrcessList.value].find(it => it.ID === item.WorkID)?.Name}`,
-    () => {
-      api.getProductionLineWorkingProcedureRemove(item.LineWorkID).then(res => {
-        if (res.data.Status === 1000) {
-          getProductionLineWorkingProcedureList();
-        }
-      });
-    },
-  );
-};
-const changeLineStatus = () => {
-  if (!ProductionLineData.value) return;
-  ProductionLineData.value.Status = LineStatusEnum.disabled;
+
+// 获取工序名称和报工类型信息
+const getWorkingInfo = (item: IProductionLineWorkings) => {
+  const _summaryWorkList = [...PrcessList.value, ...splitPrcessList.value, ...combinationPrcessList.value];
+  const t = _summaryWorkList.find(it => it.ID === item.WorkID);
+  return t ? {
+    Name: t.Name,
+    ReportModeContent: getEnumNameByIDAndEnumList(t.ReportMode, ReportModeEnumList),
+  } : null;
 };
 
 const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
@@ -495,6 +374,129 @@ const getEquipmentText = (item: IProductionLineWorkings) => {
 };
 // 获取物料名
 const getMaterialName = (ID) => productionSettingStore.MaterialTypeGroup.find(it => it.ID === ID)?.Name;
+
+const getPlateMakingWorkContent = (item: IProductionLineWorkings) => PlateMakingWorkSetupHander.value.getPlateMakingWorkContent(item);
+
+// 获取物料来源文字
+const getMaterialSourcesContent = (MaterialSources: IMaterialSources[]) => {
+  if (!MaterialSources || MaterialSources.length === 0) return '';
+  const list = MaterialSources.map(it => {
+    const name = getMaterialName(it.MaterialTypeID);
+    const content = getSourceWork(it, [...PrcessList.value, ...PlateMakingWorkSetupHander.value.PlateMakingWorkAllList]);
+
+    return `${name}：${content}`;
+  });
+  return list.join('；\r\n');
+};
+
+/* 计算后的表格数据
+--------------------------------------- */
+const localTableList = computed(() => {
+  const _list: IProductionLineWorkings[] = [];
+
+  if (ProductionLineData.value?.ProductionLineSplitWorking) {
+    _list.push(ProductionLineData.value.ProductionLineSplitWorking);
+  }
+  if (ProductionLineData.value?.ProductionLineWorkings) {
+    _list.push(...ProductionLineData.value.ProductionLineWorkings);
+  }
+
+  const list = _list.map((item, i) => {
+    const temp = item as ILocalProductionLineWorkings;
+    const info = getWorkingInfo(item);
+    if (info) {
+      temp._WorkName = info.Name;
+      temp._ReportModeContent = info.ReportModeContent;
+    }
+    temp._EquipmentText = getEquipmentText(item);
+    temp._PlateMakingWorkContent = getPlateMakingWorkContent(item);
+    temp._isSplit = !!(i === 0 && ProductionLineData.value?.ProductionLineSplitWorking);
+    temp._isAfterSplitFirst = !!(i === 1 && ProductionLineData.value?.ProductionLineSplitWorking);
+    temp._MaterialSourcesContent = getMaterialSourcesContent(item.MaterialSources);
+    temp._PlateMakingMaterialSourcesContent = getMaterialSourcesContent(item.PlateMakingMaterialSources || []);
+    return temp;
+  });
+
+  return list;
+});
+
+// 选中的生产线
+const actionLine = computed(() => ProductionLineList.value.find(item => item.ID === Data.getPocessFrom.LineID));
+const computedImpositionTemmplate = computed(() => { // 可用拼版模板列表
+  interface returnDataType {
+    ClassID:number,
+    Name:string,
+    children:ImpositionTemmplateListType[],
+  }
+  const returnData:returnDataType[] = [];
+  Data.ImpositionTemmplateList.forEach(item => {
+    const temp = returnData.find(it => it.ClassID === item.ClassID);
+    // 找到此条数据对应的分类及该分类下的所有模板
+    if (!temp) {
+      const TemmplateClass = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === item.ClassID);
+      const TemmplateList = Data.ImpositionTemmplateList.filter(it => it.ClassID === item.ClassID);
+      returnData.push({ Name: TemmplateClass?.Name || '', children: TemmplateList, ClassID: TemmplateClass?.ID || 0 });
+    }
+  });
+  return returnData;
+});
+// 跳转物料来源
+const ToMaterialSource = (item: ILocalProductionLineWorkings) => {
+  const name = isCombine.value ? 'combinationMaterialSource' : 'materialSource';
+  router.push({
+    name,
+    params: { processInfo: JSON.stringify(item), lineData: JSON.stringify(ProductionLineData.value), WorkName: item._WorkName },
+  });
+};
+// 跳转生产设备
+const ToEquipment = (item: ILocalProductionLineWorkings) => {
+  const name = isCombine.value ? 'combinationEquipment' : 'equipment';
+  router.push({
+    name,
+    params: { processInfo: JSON.stringify(item), WorkName: item._WorkName, isSplit: JSON.stringify(item._isSplit) },
+  });
+};
+// 获取生产线工序列表
+const getProductionLineWorkingProcedureList = () => {
+  api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
+    if (res.data.Status === 1000) {
+      ProductionLineData.value = res.data.Data as IWorkingProcedureList;
+    }
+  });
+};
+// 删除生产线工序
+const delLineWorking = (item: ILocalProductionLineWorkings) => {
+  api.getProductionLineWorkingProcedureRemove(item.LineWorkID).then(res => {
+    if (res.data.Status === 1000) {
+      MpMessage.success({
+        title: '删除成功',
+        onOk: getProductionLineWorkingProcedureList,
+        onCancel: getProductionLineWorkingProcedureList,
+      });
+    }
+  });
+};
+
+const changeLineStatus = () => {
+  if (!ProductionLineData.value) return;
+  ProductionLineData.value.Status = LineStatusEnum.disabled;
+};
+// 删除生产线分切工序
+const onSplitWorkingRemove = (item: ILocalProductionLineWorkings) => {
+  api.getSplitWorkingProcedureRemove(item.LineID).then(res => {
+    if (res.data.Status === 1000) {
+      const cb = () => {
+        getProductionLineWorkingProcedureList();
+        if (actionLine.value) actionLine.value.SplitWordID = '';
+      };
+      MpMessage.success({
+        title: '删除成功',
+        onOk: cb,
+        onCancel: cb,
+      });
+    }
+  });
+};
 
 const RadioGroupCompChange = (levelData) => {
   const { level1Val } = levelData;
@@ -575,12 +577,8 @@ const addPrcess = () => {
   addPrcessShow.value = true;
 };
 const setSplit = () => {
-  if (actionLine.value?.SplitWordID) {
-    Data.setSplitFrom.SplitWordID = actionLine.value?.SplitWordID;
-  } else {
-    Data.setSplitFrom.SplitWordID = '';
-  }
   Data.setSplitFrom.ID = actionLine.value?.ID || '';
+  Data.setSplitFrom.SplitWordID = actionLine.value?.SplitWordID || '';
   // 格式化已经添加的工序
   setSplitShow.value = true;
 };
@@ -713,23 +711,10 @@ const setSplitPrimaryClick = () => {
 // 设置制版工序
 const PlateMakingVisible = ref(false);
 const curWorkName = ref('');
-const setPlateMakingWork = (item: IProductionLineWorkings, WorkName: string) => {
+const setPlateMakingWork = (item: ILocalProductionLineWorkings) => {
   PlateMakingWorkSetupHander.value.setCurWorkItem(item);
-  curWorkName.value = WorkName;
+  curWorkName.value = item._WorkName || '';
   PlateMakingVisible.value = true;
-};
-const getPlateMakingWorkContent = (item: IProductionLineWorkings) => PlateMakingWorkSetupHander.value.getPlateMakingWorkContent(item);
-
-// 获取物料来源文字
-const getMaterialSourcesContent = (MaterialSources: IMaterialSources[]) => {
-  if (!MaterialSources || MaterialSources.length === 0) return '';
-  const list = MaterialSources.map(it => {
-    const name = getMaterialName(it.MaterialTypeID);
-    const content = getSourceWork(it, [...PrcessList.value, ...PlateMakingWorkSetupHander.value.PlateMakingWorkAllList]);
-
-    return `${name}：${content}`;
-  });
-  return list.join('；\r\n');
 };
 
 onActivated(() => {
@@ -763,6 +748,8 @@ onMounted(() => {
 
 <style lang='scss'>
 @import '@/assets/css/var.scss';
+@import '@/assets/css/mixins.scss';
+
 .production-line-page{
   display: flex;
   flex-direction: column;
@@ -795,7 +782,8 @@ onMounted(() => {
         flex: 1;
         overflow: auto;
         overflow: overlay;
-        border-top: 1px solid #D0D0D0;
+        @include scroll;
+        // border-top: 1px solid #D0D0D0;
         // border-bottom: 1px solid #D0D0D0;
         >li{
           >.process-item{
@@ -831,26 +819,6 @@ onMounted(() => {
           position: relative;
           border-left: 1px solid #D0D0D0;
           border-right: 1px solid #D0D0D0;
-        }
-        .table-title{
-          position: sticky;
-          top: 0;
-          background-color: #fff !important;
-          border-color: #D0D0D0 !important;
-          .process-item{
-            height: 37px;
-            align-items: center;
-            text-align: center;
-            border-top:none;
-            font-weight: 700;
-            border-bottom: 1px solid #D0D0D0;
-            background: none;
-            >span+span{
-              border-left: 1px solid #D0D0D0;
-              height: 15px;
-              text-align: center;
-            }
-          }
         }
         .table-main:hover{
           background-color: #F0F9FE;
@@ -919,11 +887,11 @@ onMounted(() => {
           }
           .material-source{
             padding-left: 20px;
-            font-size: 13px;
-            padding-top: 1px;
+            font-size: 12px;
+            padding-top: 2px;
             display: flex;
             height: 30px;
-            padding-bottom: 3px;
+            padding-bottom: 2px;
             color: #888888;
             display: flex;
             align-items: center;
@@ -983,6 +951,7 @@ onMounted(() => {
           height: calc(100% - 40px);
           font-size: 12px;
           color: #989898;
+          min-height: 420px;
         }
       }
       >.matters-need-attention{
@@ -1119,6 +1088,55 @@ onMounted(() => {
       text-align: center;
       span{
         font-weight: 700;
+      }
+    }
+  }
+}
+
+.table-title{
+  background-color: #f5f5f5 !important;
+  border-color: #D0D0D0 !important;
+  .process-item{
+    height: 37px;
+    align-items: center;
+    background-color: #f5f5f5 !important;
+    text-align: center;
+    border-top:none;
+    font-weight: 700;
+    border: 1px solid #D0D0D0;
+    background: none;
+    display: flex;
+    font-size: 14px;
+    align-items: center;
+    // height: 37px;
+    line-height: 15px;
+    // padding: 0 20px;
+    transition: border-color 0.15s ease-in-out;
+    .equipment{
+      flex: 1;
+      white-space: nowrap;
+    }
+    .process{
+      width: 175px;
+    }
+    .operate{
+      width: 260px;
+      &.normal {
+        width: 340px;
+      }
+    }
+    .work {
+      width: 260px;
+      flex-shrink: 1;
+      flex-grow: none;
+    }
+    .equipment, .process, .work {
+      position: relative;
+      &::after {
+        position: absolute;
+        content: '|';
+        right: 0;
+        color: #e5e5e5;
       }
     }
   }

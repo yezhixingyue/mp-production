@@ -1,4 +1,4 @@
-import { IClassEquipmentGroups, IMaterialSources } from '@/store/modules/productionSetting/types';
+import { IClassEquipmentGroups, IMaterialSources, IProductionLineWorkings } from '@/store/modules/productionSetting/types';
 
 export interface ISetPlateMakingWorkParams {
   LineWorkID: string
@@ -27,4 +27,15 @@ export interface IPlateMakingMaterialSourceSetupData {
   PlateMakingMaterialSources: IMaterialSources[];
   PlateMakingWorkIdentID: string;
   PlateMakingWorkID: string;
+}
+
+export interface ILocalProductionLineWorkings extends IProductionLineWorkings {
+  _WorkName?: string
+  _ReportModeContent?: string
+  _EquipmentText: string
+  _PlateMakingWorkContent: string
+  _isSplit: boolean
+  _isAfterSplitFirst: boolean
+  _MaterialSourcesContent: string
+  _PlateMakingMaterialSourcesContent: string
 }

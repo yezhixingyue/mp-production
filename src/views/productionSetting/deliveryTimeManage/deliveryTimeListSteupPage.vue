@@ -28,7 +28,6 @@
               <el-checkbox
                 v-model="ExpressCheckAll"
                 :indeterminate="isIndeterminate"
-                @change="handleCheckAllChange(ExpressCheckAll)"
                 >全选</el-checkbox
               >
             </p>
@@ -104,25 +103,27 @@ const visible = ref(false);
 
 /* 设置配送方式相关
 ------------------------ */
-const ExpressCheckAll = ref(false);
-const isIndeterminate = ref(false);
-function handleCheckAllChange(val: boolean) {
-  ruleForm.value.ExpressList = val ? commonStore.ExpressList.map(it => it) : [];
-  isIndeterminate.value = false;
-}
+// const ExpressCheckAll = ref(false);
+// const isIndeterminate = ref(false);
+// function handleCheckAllChange(val: boolean) {
+//   ruleForm.value.ExpressList = val ? commonStore.ExpressList.map(it => it) : [];
+//   console.log(val, ruleForm.value.ExpressList);
+// }
+const isIndeterminate = computed(() => localExpressList.value.length > 0 && localExpressList.value.length < commonStore.ExpressList.length);
+const ExpressCheckAll = computed({
+  get() {
+    return localExpressList.value.length > 0 && localExpressList.value.length === commonStore.ExpressList.length;
+  },
+  set(val) {
+    ruleForm.value.ExpressList = val ? [...commonStore.ExpressList] : [];
+  },
+});
 const localExpressList = computed({
   get() {
     return ruleForm.value.ExpressList.map(item => commonStore.ExpressList.find(it => it.ID === item.ID)).filter(it => it).map(it => it?.ID);
   },
   set(list) {
     ruleForm.value.ExpressList = commonStore.ExpressList.filter(item => list.find(it => it === item.ID)) || [];
-    if (commonStore.ExpressList.length === list.length) {
-      isIndeterminate.value = false;
-      ExpressCheckAll.value = true;
-    } else {
-      ExpressCheckAll.value = false;
-      isIndeterminate.value = !!list.length;
-    }
   },
 });
 

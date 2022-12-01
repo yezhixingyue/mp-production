@@ -44,7 +44,7 @@
           </span>
           <el-input-number style="margin-right:5px" placeholder="请输入正确数量"
             :controls="false" v-model="Data.editDeliveryForm.Number" />
-            {{materialInfo.StockUnit}}
+            {{materialInfo?.StockUnit}}
         </div>
         <div style="margin-top:20px;align-items: flex-start;">
           <span class="label">
