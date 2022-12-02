@@ -93,10 +93,11 @@ import {
   onMounted, ref, reactive, onActivated, computed,
 } from 'vue';
 import api from '@/api';
-import { ImpositionTemmplateListGroupType, ProcessListType } from '@/store/modules/productionSetting/types';
+import { ImpositionTemmplateListGroupType } from '@/store/modules/productionSetting/types';
+import { IWorkingProcedureInfo } from '@/assets/Types/ProductionLineSet/types';
 import messageBox from '@/assets/js/utils/message';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
-import type { RelationsType } from '@/store/modules/productionSetting/types';
+import type { IRelationsType } from '@/store/modules/productionSetting/types';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { WorkingProcedureRelationEnum } from './enums';
@@ -105,7 +106,7 @@ const PasteupSettingStore = usePasteupSettingStore();
 const productionSettingStore = useProductionSettingStore();
 
 interface DataType{
-  processList: ProcessListType[],
+  processList: IWorkingProcedureInfo[],
 }
 const router = useRouter();
 const Data:DataType = reactive({
@@ -126,7 +127,7 @@ const ToProcess = (item) => {
 const getProcessList = () => {
   api.getWorkingProcedureList(getProcessListData.value).then(res => {
     if (res.data.Status === 1000) {
-      Data.processList = res.data.Data as ProcessListType[];
+      Data.processList = res.data.Data as IWorkingProcedureInfo[];
       getProcessListData.value.DataTotal = res.data.DataNumber as number;
     }
   });
@@ -155,7 +156,7 @@ const getEquipmentGroupsNames = (EquipmentGroups) => {
   return allEquipment.map(item => `${item?.ClassName}：${item?.EquipmentGroups.map(it => it.Name).join('、')}`).join('；');
 };
 // 格式化辅助信息
-const getInfoName = (Relations:RelationsType[], Type) => {
+const getInfoName = (Relations:IRelationsType[], Type) => {
   const returnStr:string[] = [];
   Relations.forEach(item => {
     if (item.Type === 0) {
@@ -173,7 +174,7 @@ const getInfoName = (Relations:RelationsType[], Type) => {
   return returnStr.join('、');
 };
 // 格式化物料资源
-const getMaterialName = (Relations:RelationsType[]) => {
+const getMaterialName = (Relations:IRelationsType[]) => {
   const returnStr:string[] = [];
   Relations.forEach(item => {
     if (item.Type === 1) {
@@ -200,7 +201,7 @@ const ImpositionTemmplateListGroup = computed(() => {
   return returnData;
 });
 // 格式化大阪模板
-const getTemplateName = (Relations:RelationsType[]) => {
+const getTemplateName = (Relations:IRelationsType[]) => {
   const temp = Relations.filter(item => item.Type === WorkingProcedureRelationEnum.otherBoard);
   const ids = temp.map(it => it.RelationID);
   const list = ImpositionTemmplateListGroup.value.map(it => ({

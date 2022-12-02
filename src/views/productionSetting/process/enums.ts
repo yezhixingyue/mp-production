@@ -34,7 +34,7 @@ export const ReportModeEnumList = getEnumList(ReportModeEnumObj);
 
 /* 工序类型枚举相关
 -------------------------------------- */
-export enum ProcessTypeEnum {
+export enum WorkingTypeEnum {
   /** 普通工序  */
   normal = 0,
   /** 印刷工序 */
@@ -50,31 +50,31 @@ export enum ProcessTypeEnum {
 /**
  * 工序类型枚举
  */
-export const ProcessTypeEnumObj = {
+export const WorkingTypeEnumObj = {
   normal: {
-    ID: ProcessTypeEnum.normal,
+    ID: WorkingTypeEnum.normal,
     Name: '普通工序',
   },
   print: {
-    ID: ProcessTypeEnum.print,
+    ID: WorkingTypeEnum.print,
     Name: '印刷工序',
   },
   platemaking: {
-    ID: ProcessTypeEnum.platemaking,
+    ID: WorkingTypeEnum.platemaking,
     Name: '制版工序',
   },
   combine: {
-    ID: ProcessTypeEnum.combine,
+    ID: WorkingTypeEnum.combine,
     Name: '组合工序',
   },
   split: {
-    ID: ProcessTypeEnum.split,
+    ID: WorkingTypeEnum.split,
     Name: '拆分工序',
   },
 };
 
 /** 工序类型枚举列表 */
-export const ProcessTypeEnumList = getEnumList(ProcessTypeEnumObj);
+export const WorkingTypeEnumList = getEnumList(WorkingTypeEnumObj);
 
 /* 大版类型枚举相关（ 目前仅制版工序中使用到 ）
 -------------------------------------- */

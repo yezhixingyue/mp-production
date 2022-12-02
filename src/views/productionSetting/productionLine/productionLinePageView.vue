@@ -214,8 +214,10 @@ import {
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
-import { FetchWorkingProcedureSearchEnum, LineStatusEnum, LineTypeEnum } from '@/views/productionSetting/js/enums';
+import { FetchWorkingProcedureSearchEnum } from '@/views/productionSetting/js/enums';
 import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import { LineStatusEnum, LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getSourceWork } from '../js/utils';
 import PlateMakingWorkSetupDialog from './Comps/PlateMakingWorkSetupDialog.vue';
 import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
@@ -262,17 +264,6 @@ interface setSplitFromType {
 interface getPocessFromType {
   LineID: string,
 }
-interface ProductionLineListType {
-    SplitWordID: string,
-    CreateTime: string,
-    Status: number,
-    Type: number,
-    NeedFoldWay: boolean,
-    TemplateIDS: string[],
-    CombinationWordIDS: string[],
-    ID: string,
-    Name: string,
-}
 interface DataType {
   ImpositionTemmplateList:ImpositionTemmplateListType[],
   getMaxData:getMaxDataType,
@@ -285,7 +276,7 @@ const productionSettingStore = useProductionSettingStore();
 const addLineShow = ref(false);
 const addPrcessShow = ref(false);
 const setSplitShow = ref(false);
-const ProductionLineList:Ref<ProductionLineListType[]> = ref([]);
+const ProductionLineList:Ref<IProductionLineSet[]> = ref([]);
 // 普通工序
 const PrcessList:Ref<IWorkingProcedureSearch[]> = ref([]);
 // 拆分工序
@@ -522,7 +513,7 @@ const getTemplatesName = () => {
 const getProductionLineList = (id?: string) => {
   api.getProductionLineList({ Type: isCombine.value ? LineTypeEnum.combine : LineTypeEnum.normal }).then(res => {
     if (res.data.Status === 1000) {
-      ProductionLineList.value = res.data.Data as ProductionLineListType[];
+      ProductionLineList.value = res.data.Data as IProductionLineSet[];
       // 默认选中第一条生产线
       if (ProductionLineList.value.length) {
         Data.getPocessFrom.LineID = id || ProductionLineList.value[0].ID || '';

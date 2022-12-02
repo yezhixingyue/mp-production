@@ -5,7 +5,8 @@ import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/
 import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
 import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMakingGroupView/js/PlateMakingGroupManageClass';
 import { PlateMakingWorkSetupClass } from '@/views/productionSetting/productionLine/js/PlateMakingWorkSetupClass';
-import { LineStatusEnum } from '../../../views/productionSetting/js/enums';
+import { LineStatusEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { WorkingProcedureRelationEnum } from '@/views/productionSetting/process/enums';
 
 // 辅助信息
 export interface NotesType{
@@ -45,30 +46,24 @@ export interface ImpositionTemmplateListType {
   ID:string,
   Name:string,
 }
-// g工序列表
-export interface EquipmentGroupsType{
+export interface IEquipmentGroupsType{
   GroupID: string,
+  /** 权重 */
   Weight: number,
+  /** 可一次印双面 */
   OneTimeTwoSide: boolean,
 }
-export interface RelationsType{
+
+/**
+ * 相关资源
+ *
+ * @export
+ * @interface IRelationsType
+ */
+export interface IRelationsType{
   RelationID: string,
-  Type: number
-}
-export interface ProcessListType{
-  isRestrict:boolean,
-  CreateTime: string,
-  ReportMode: number,
-  Type: number,
-  MaxProduceNumber: number,
-  AllowPartReport: boolean,
-  MinPartReportNumber: number,
-  AllowBatchReport: boolean,
-  TemplateType: number,
-  EquipmentGroups: EquipmentGroupsType[],
-  Relations: RelationsType[],
-  ID: string,
-  Name: string,
+  /** 资源类型,0.辅助信息 1.可选物料资源包 2.其他大版文件(大版类型为其他情况) = ['0', '1', '2']  */
+  Type: WorkingProcedureRelationEnum
 }
 
 export interface IState {

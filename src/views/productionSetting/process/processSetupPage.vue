@@ -18,7 +18,7 @@
                     v-for="it in ReportModeEnumList"
                     :key="it.ID"
                     :label="it.ID"
-                    :disabled="Data.processDataFrom.Type === ProcessTypeEnum.combine && it.ID !== ReportModeEnum.order"
+                    :disabled="Data.processDataFrom.Type === WorkingTypeEnum.combine && it.ID !== ReportModeEnum.order"
                    >{{it.Name}}</el-radio>
                 </el-radio-group>
               </el-form-item>
@@ -26,15 +26,15 @@
                 <div>
                   <el-radio-group v-model="Data.processDataFrom.Type">
                     <el-radio
-                      v-for="it in ProcessTypeEnumList"
+                      v-for="it in WorkingTypeEnumList"
                       :key="it.ID"
                       :label="it.ID"
-                      :disabled="(it.ID === ProcessTypeEnum.combine && Data.processDataFrom.ReportMode !== ReportModeEnum.order)
-                        ||(it.ID === ProcessTypeEnum.split && Data.processDataFrom.AllowBatchReport)"
+                      :disabled="(it.ID === WorkingTypeEnum.combine && Data.processDataFrom.ReportMode !== ReportModeEnum.order)
+                        ||(it.ID === WorkingTypeEnum.split && Data.processDataFrom.AllowBatchReport)"
                      >{{it.Name}}</el-radio>
                   </el-radio-group>
                   <!-- 仅制版工序时显示： 每套版限制加工数量 -->
-                  <div class="type-conent" :class="{'v-hide': Data.processDataFrom.Type !== ProcessTypeEnum.platemaking}">
+                  <div class="type-conent" :class="{'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking}">
                     <el-checkbox v-model="Data.processDataFrom.isRestrict" label="限制每套版加工数量" />
                     <span v-show="Data.processDataFrom.isRestrict">
                       每套版最大可加工<el-input v-model.number="Data.processDataFrom.MaxProduceNumber" maxlength="9"></el-input>次
@@ -43,7 +43,7 @@
                 </div>
               </el-form-item>
               <!-- 仅制版工序时显示： 大版类型 -->
-              <el-form-item :label="`大版类型：`" :class="{'v-hide': Data.processDataFrom.Type !== ProcessTypeEnum.platemaking}" class="form-item-required">
+              <el-form-item :label="`大版类型：`" :class="{'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking}" class="form-item-required">
                 <el-radio-group v-model="Data.processDataFrom.TemplateType" class="min-height-radio" style="height: 32px;">
                   <el-radio v-for="it in TemplateTypeEnumList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
                 </el-radio-group>
@@ -59,7 +59,7 @@
                   <el-checkbox @change="() => Data.processDataFrom.AllowBatchReport = false"
                     v-model="Data.processDataFrom.AllowPartReport" label="允许部分报工" />
                   <el-checkbox @change="() => Data.processDataFrom.AllowPartReport = false"
-                    v-model="Data.processDataFrom.AllowBatchReport" :disabled="Data.processDataFrom.Type === ProcessTypeEnum.split" label="允许批量报工" />
+                    v-model="Data.processDataFrom.AllowBatchReport" :disabled="Data.processDataFrom.Type === WorkingTypeEnum.split" label="允许批量报工" />
                   <div style="height:32px" class="type-conent">
                     <template v-if="Data.processDataFrom.AllowPartReport">
                       {{getEnumNameByIDAndEnumList(Data.processDataFrom.ReportMode, ReportModeEnumList).replace('报工', '')}}数量大于
@@ -103,7 +103,7 @@
                   <li v-for="equipment, index in Data.processDataFrom.EquipmentGroups" :key="equipment.GroupID">
                     <div class="equipment" :title="getEquipmentNameByID(equipment.GroupID)">{{getEquipmentNameByID(equipment.GroupID)}}</div>
                     <div class="state-percent">权重：<el-input v-model.trim="equipment.Weight" maxlength="9" placeholder="请输入"></el-input></div>
-                    <div class="whether" :class="{hide:Data.processDataFrom.Type!==ProcessTypeEnum.print}">
+                    <div class="whether" :class="{hide:Data.processDataFrom.Type!==WorkingTypeEnum.print}">
                       <el-checkbox v-model="equipment.OneTimeTwoSide" label="可一次印双面" />
                     </div>
                     <div class="del">
@@ -181,7 +181,7 @@ import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
 import {
-  ReportModeEnumList, ReportModeEnum, ProcessTypeEnumList, ProcessTypeEnum, TemplateTypeEnumList, TemplateTypeEnum, WorkingProcedureRelationEnum,
+  ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, TemplateTypeEnumList, TemplateTypeEnum, WorkingProcedureRelationEnum,
 } from './enums';
 
 const PasteupSettingStore = usePasteupSettingStore();
@@ -190,13 +190,13 @@ const productionSettingStore = useProductionSettingStore();
 
 const route = useRoute();
 
-interface EquipmentGroupsType{
+interface IEquipmentGroupsType{
   GroupID: string,
   GroupName: string,
   Weight: number|string,
   OneTimeTwoSide: boolean,
 }
-interface RelationsType{
+interface IRelationsType{
   RelationID: string,
   Name?: string,
   PID?: string|number,
@@ -215,8 +215,8 @@ interface processDataFromType{
   MinPartReportNumber: number|string,
   AllowBatchReport: boolean,
   TemplateType: TemplateTypeEnum,
-  EquipmentGroups: EquipmentGroupsType[],
-  Relations: RelationsType[],
+  EquipmentGroups: IEquipmentGroupsType[],
+  Relations: IRelationsType[],
 }
 
 interface DataType {
@@ -234,7 +234,7 @@ const Data:DataType = reactive({
     // 是否限制每套版加工数量 自加字段回显需要添加
     isRestrict: false,
     ReportMode: ReportModeEnum.block,
-    Type: ProcessTypeEnum.normal,
+    Type: WorkingTypeEnum.normal,
     MaxProduceNumber: '',
     AllowPartReport: false,
     MinPartReportNumber: '',
@@ -275,9 +275,9 @@ const saveMaterialActive = computed(() => Data.processDataFrom.Relations
 const showInfoActive = computed(() => {
   const Infos = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.assets);
   interface returnType {
-    file:RelationsType[]
-    text:RelationsType[]
-    number:RelationsType[]
+    file:IRelationsType[]
+    text:IRelationsType[]
+    number:IRelationsType[]
   }
   const returnData:returnType = {
     // 文件
@@ -288,7 +288,7 @@ const showInfoActive = computed(() => {
     number: [],
   };
   const getType = (Type) => {
-    let list:RelationsType[] = [];
+    let list:IRelationsType[] = [];
     productionSettingStore.ResourceNoteGroup.forEach(item => {
       if (item.Type === Type) {
         const temp = item.Notes.filter(res => Infos.find(el => el.RelationID === res.ID));
@@ -402,15 +402,15 @@ const saveProcess = () => {
   if (!Data.processDataFrom.Name) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '请输入工序名称', () => null, () => null);
-  } else if (Data.processDataFrom.Type === ProcessTypeEnum.platemaking && Data.processDataFrom.isRestrict
+  } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && Data.processDataFrom.isRestrict
    && !Data.processDataFrom.MaxProduceNumber && Data.processDataFrom.MaxProduceNumber !== 0) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '请输入每套版最大可加工数量', () => null, () => null);
-  } else if (Data.processDataFrom.Type === ProcessTypeEnum.platemaking && Data.processDataFrom.isRestrict
+  } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && Data.processDataFrom.isRestrict
    && !/^[1-9]+[0-9]*$/.test(`${Data.processDataFrom.MaxProduceNumber}`)) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '每套版最大可加工数量不正确', () => null, () => null);
-  } else if (Data.processDataFrom.Type === ProcessTypeEnum.platemaking && Data.processDataFrom.TemplateType === TemplateTypeEnum.other
+  } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && Data.processDataFrom.TemplateType === TemplateTypeEnum.other
      && !showTemplate.value.length) {
     messageBox.failSingleError('保存失败', '请选择大版模板', () => null, () => null);
     // 弹框提 其他时 大阪模板为空

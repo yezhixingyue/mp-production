@@ -3,7 +3,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IProductionLineWorkings } from '@/store/modules/productionSetting/types';
 import { FetchWorkingProcedureSearchEnum } from '../../js/enums';
 import { IPlateMakingAllGroupType, IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
-import { ReportModeEnum, ProcessTypeEnum, TemplateTypeEnum } from '../../process/enums';
+import { ReportModeEnum, WorkingTypeEnum, TemplateTypeEnum } from '../../process/enums';
 import { ISetPlateMakingWorkParams } from './types';
 
 export class PlateMakingWorkSetupClass {
@@ -77,7 +77,7 @@ export class PlateMakingWorkSetupClass {
     if (resp?.data.isSuccess) {
       const temp:IWorkingProcedureSearch = {
         ReportMode: ReportModeEnum.block,
-        Type: ProcessTypeEnum.platemaking,
+        Type: WorkingTypeEnum.platemaking,
         TemplateType: TemplateTypeEnum.other,
         ID: '',
         Name: '[无]',

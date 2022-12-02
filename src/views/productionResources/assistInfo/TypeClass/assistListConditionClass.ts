@@ -1,16 +1,22 @@
 import { localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 
+export enum AssistInfoTypeEnum {
+  file = 0,
+  text = 1,
+  numerical = 2,
+}
+
 export const AssistInfoTypeEnums = {
   file: {
-    ID: 0,
+    ID: AssistInfoTypeEnum.file,
     Name: '文件',
   },
   text: {
-    ID: 1,
+    ID: AssistInfoTypeEnum.text,
     Name: '文字信息',
   },
   numerical: {
-    ID: 2,
+    ID: AssistInfoTypeEnum.numerical,
     Name: '数值',
   },
 };
