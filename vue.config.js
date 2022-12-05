@@ -5,8 +5,8 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const publicPath = isDev ? '' : '/Web/';
 
-// const proxyUrl = 'http://192.168.1.92:8052'; // 测试
-const proxyUrl = 'http://192.168.3.68:8052'; // 强哥
+const proxyUrl = 'http://192.168.1.92:8052'; // 测试
+// const proxyUrl = 'http://192.168.3.68:8052'; // 强哥
 // const proxyUrl = 'http://192.168.3.253:2022'; // 吕伟
 
 // const imgUrl = 'http://192.168.1.92:8050';

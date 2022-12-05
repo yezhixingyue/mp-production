@@ -321,6 +321,19 @@ function verification() {
       messageBox.failSingleError('保存失败', '请上传模板文件', () => null, () => null);
       return false;
     }
+    // 按模板尺寸 没有输入允许误差
+    if (Data.addPasteupTemplateFrom.SizeType === 0
+    && (typeof Data.addPasteupTemplateFrom.LengthErrorRange.MaxValue !== 'number'
+    || typeof Data.addPasteupTemplateFrom.LengthErrorRange.MinValue !== 'number')) {
+      messageBox.failSingleError('保存失败', '请输入长允许误差', () => null, () => null);
+      return false;
+    }
+    if (Data.addPasteupTemplateFrom.SizeType === 0
+    && (typeof Data.addPasteupTemplateFrom.WidthErrorRange.MaxValue !== 'number'
+    || typeof Data.addPasteupTemplateFrom.WidthErrorRange.MinValue !== 'number')) {
+      messageBox.failSingleError('保存失败', '请输入宽允许误差', () => null, () => null);
+      return false;
+    }
     // 按模板尺寸 并且按模位
     if (Data.addPasteupTemplateFrom.SizeType === 0 && Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode) {
       // 验证模位合法性
@@ -413,7 +426,6 @@ function beforeUpload(file) {
 
 onMounted(() => {
   const temp = JSON.parse(route.params.Template as string) as ImpositionTemmplate;
-
   if (!temp.ModeSizeAttribute) {
     temp.ModeSizeAttribute = {
       PlateInfo: {
@@ -452,18 +464,6 @@ onMounted(() => {
       BleedRight: null,
     };
   }
-  if (!temp.LengthErrorRange) {
-    temp.LengthErrorRange = {
-      MinValue: '',
-      MaxValue: '',
-    };
-  }
-  if (!temp.WidthErrorRange) {
-    temp.WidthErrorRange = {
-      MinValue: '',
-      MaxValue: '',
-    };
-  }
   if (temp.ClassID) {
     Data.addPasteupTemplateFrom = temp;
   }
@@ -471,7 +471,6 @@ onMounted(() => {
   if (!PasteupSettingStore.ImpositionTemmplateClassList.length) {
     PasteupSettingStore.getImpositionTemmplateClassList();
   }
-  console.log(temp, Data);
 });
 
 </script>
