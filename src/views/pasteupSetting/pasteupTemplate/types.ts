@@ -35,21 +35,24 @@ interface RangeType {
   MinValue: number|null|'',
   MaxValue: number|null|'',
 }
-export interface ImpositionTemmplate{
-  ClassID: number | string,
-  // 印刷版
-  IsPrintingPlate: boolean,
-  // 和印刷版保持一致
-  IsSameSizeWithPrintingPlate: boolean,
-  // 翻版方式
+export interface SizeListType{
+  TemplateID: string,
   ReproductionType: number,
-  // 尺寸
   SizeType: number,
-  ModeSizeAttribute: ModeSizeAttribute,
-  ActualSizeAttribute: ActualSizeAttribute,
+  ModeSizeAttribute: ModeSizeAttribute | null,
+  ActualSizeAttribute: ActualSizeAttribute | null,
+  LengthErrorRange: RangeType | null,
+  WidthErrorRange: RangeType | null,
   CreateTime: string,
   ID: string,
   Name: string,
-  LengthErrorRange: RangeType,
-  WidthErrorRange: RangeType,
+}
+
+export interface ImpositionTemmplate{
+  CreateTime?: string,
+  ID: string,
+  Name: string,
+  IsPrintingPlate:boolean,
+  IsSameSizeWithPrintingPlate:boolean,
+  List:SizeListType[],
 }

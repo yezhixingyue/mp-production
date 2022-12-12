@@ -1,7 +1,7 @@
 <template>
   <div class="pasteup-template-page">
     <header>
-      <div class="classs">
+      <!-- <div class="classs">
         <RadioGroupComp
           :level1Options='ImpositionTemmplateClassList'
           :level2Options='[]'
@@ -13,21 +13,21 @@
           @change="RadioGroupCompChange"
           ></RadioGroupComp>
         <mp-button type="primary" link @click="ManagementClass">管理分类</mp-button>
-      </div>
+      </div> -->
       <div class="header-top">
-        <mp-button type="primary" @click="ToPasteupTemplateSteupPagePage">+ 添加拼版模板</mp-button>
+        <mp-button type="primary" @click="Data.addTemplateFromShow = true">+ 添加拼版模板</mp-button>
       </div>
     </header>
     <main>
         <el-table border fit stripe
-        :data="Data.ImpositionTemmplateList" style="width: 100%">
-          <el-table-column show-overflow-tooltip prop="SupplierName" label="分类" min-width="224">
+        :data="PasteupSettingStore.ImpositionTemmplateList" style="width: 100%">
+          <!-- <el-table-column show-overflow-tooltip prop="SupplierName" label="分类" min-width="224">
             <template #default="scope">
               <span >
                 {{getClassName(scope.row.ClassID) }}
               </span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
           show-overflow-tooltip prop="Name" label="名称" min-width="280" />
           <el-table-column
@@ -44,17 +44,12 @@
           <el-table-column
           show-overflow-tooltip prop="MaterialTypeIDS" label="尺寸" min-width="272">
             <template #default="scope">
-              <template v-if="!scope.row.IsSameSizeWithPrintingPlate">
-              <span v-if="scope.row.SizeType===0">
-                按模板尺寸
-              </span>
-              <span v-if="scope.row.SizeType===1">
-                按实际拼版尺寸
-              </span>
+              <template v-if="scope.row.List.length">
+                {{scope.row.List.length}}条记录
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="Address" label="拼版方式" show-overflow-tooltip min-width="280" >
+          <!-- <el-table-column prop="Address" label="拼版方式" show-overflow-tooltip min-width="280" >
             <template #default="scope">
               <template v-if="!scope.row.IsSameSizeWithPrintingPlate">
               <span v-if="scope.row.ModeSizeAttribute && scope.row.ModeSizeAttribute.UseMode">
@@ -62,10 +57,12 @@
               </span>
               </template>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope">
-              <mp-button type="info" link @click="ToPasteupTemplateSteupPagePage(scope.row)">
+              <mp-button type="info" link @click="ToTemplateSetSize(scope.row)" :disabled="scope.row.IsSameSizeWithPrintingPlate">
+                <i class="iconfont icon-shengchanxian" :class="{'disabled':scope.row.IsSameSizeWithPrintingPlate}"></i>设置尺寸</mp-button>
+              <mp-button type="info" link @click="EditTemplate(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link
                 @click="delImpositionTemmplate(scope.row)">
@@ -74,6 +71,31 @@
           </el-table-column>
         </el-table>
     </main>
+    <DialogContainerComp
+    :title="`${Data.addTemplateFrom.ID ? '修改' : '添加'}拼版模板`"
+    :visible='Data.addTemplateFromShow'
+    :width="400"
+    :primaryClick="addTemplatePrimaryClick"
+    :closeClick="() => Data.addTemplateFromShow = false"
+    :closed="addTemplateCloseedClick"
+    >
+    <template #default>
+      <div class="add-printing-color-dialog">
+        <el-form :model="Data.addTemplateFrom" label-width="82px">
+          <el-form-item label="名称：" class="form-item-required">
+            <el-input :maxlength="100" v-model="Data.addTemplateFrom.Name" />
+          </el-form-item>
+          <el-form-item label="" >
+            <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
+            v-model="Data.addTemplateFrom.IsPrintingPlate" label="印刷版" size="large" />
+            <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
+            v-model="Data.addTemplateFrom.IsSameSizeWithPrintingPlate" label="和印刷版保持一致" size="large" />
+            <p>注意：每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。</p>
+          </el-form-item>
+        </el-form>
+      </div>
+    </template>
+    </DialogContainerComp>
     <footer>
       <div class="bottom-count-box">
         <MpPagination
@@ -89,76 +111,100 @@
 <script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  reactive, onMounted, onActivated, computed,
+  reactive, onMounted, onActivated, watch,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
-import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
+// import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
+import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { ImpositionTemmplate } from './types';
 
 interface getImpositionTemmplateDataType {
   Page: number,
   PageSize: number,
-  ClassID: number|string,
 }
+
 interface DataType {
   DataTotal: number,
+  addTemplateFromShow:boolean,
   getImpositionTemmplateData:getImpositionTemmplateDataType,
-  ImpositionTemmplateList:ImpositionTemmplate[],
+  addTemplateFrom:ImpositionTemmplate,
 }
 const router = useRouter();
 const PasteupSettingStore = usePasteupSettingStore();
 const Data:DataType = reactive({
   DataTotal: 0,
   getImpositionTemmplateData: {
-    ClassID: '',
     Page: 1,
     PageSize: 20,
   },
-  ImpositionTemmplateList: [],
+  addTemplateFromShow: false,
+  addTemplateFrom: {
+    ID: '',
+    Name: '',
+    // 印刷版
+    IsPrintingPlate: false,
+    // 和印刷版保持一致
+    IsSameSizeWithPrintingPlate: false,
+    List: [],
+  },
 });
-const ImpositionTemmplateClassList = computed(() => [{
-  ID: '',
-  Name: '所有分类',
-}, ...PasteupSettingStore.ImpositionTemmplateClassList]);
-const RadioGroupCompValue = computed(() => ({
-  level1Val: Data.getImpositionTemmplateData.ClassID,
-  level2Val: '',
-}));
+// const ImpositionTemmplateClassList = computed(() => [{
+//   ID: '',
+//   Name: '所有分类',
+// }, ...PasteupSettingStore.ImpositionTemmplateClassList]);
+// const RadioGroupCompValue = computed(() => ({
+//   level1Val: Data.getImpositionTemmplateData.ClassID,
+//   level2Val: '',
+// }));
 
 function getImpositionTemmplateList() {
-  api.getImpositionTemmplateList(Data.getImpositionTemmplateData).then(res => {
-    if (res.data.Status === 1000) {
-      Data.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
-      Data.DataTotal = res.data.DataNumber as number;
-    }
+  PasteupSettingStore.getImpositionTemmplateList((DataNumber) => {
+    Data.DataTotal = DataNumber as number;
   });
+  // api.getImpositionTemmplateList(Data.getImpositionTemmplateData).then(res => {
+  //   if (res.data.Status === 1000) {
+  //     Data.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
+  //   }
+  // });
 }
-function RadioGroupCompChange(levelData) {
-  const { level1Val } = levelData;
-  if (level1Val !== undefined) {
-    Data.getImpositionTemmplateData.ClassID = level1Val;
-    getImpositionTemmplateList();
-  }
-}
+// function RadioGroupCompChange(levelData) {
+//   const { level1Val } = levelData;
+//   if (level1Val !== undefined) {
+//     Data.getImpositionTemmplateData.ClassID = level1Val;
+//     getImpositionTemmplateList();
+//   }
+// }
 // 管理分类
-function ManagementClass() {
-  router.push({
-    name: 'impositionTemmplateClass',
-  });
-}
+// function ManagementClass() {
+//   router.push({
+//     name: 'impositionTemmplateClass',
+//   });
+// }
 // 添加修改拼版模板
-function ToPasteupTemplateSteupPagePage(item = null) {
+function ToTemplateSetSize(item = null) {
   router.push({
-    name: 'pasteupTemplateSteup',
+    name: 'templateSetSize',
     params: { Template: JSON.stringify(item) },
   });
 }
+// 添加修改拼版模板
+// function ToPasteupTemplateSteupPagePage(item = null) {
+//   router.push({
+//     name: 'pasteupTemplateSteup',
+//     params: { Template: JSON.stringify(item) },
+//   });
+// }
+// 编辑拼版模板
+function EditTemplate(item) {
+  Data.addTemplateFrom = { ...item };
+  Data.addTemplateFromShow = true;
+}
 function PaginationChange(newVal) {
-  if (Data.getImpositionTemmplateData.Page === newVal) return;
-  Data.getImpositionTemmplateData.Page = newVal;
+  if (PasteupSettingStore.getImpositionTemmplateData.Page === newVal) return;
+  PasteupSettingStore.getImpositionTemmplateData.Page = newVal;
   getImpositionTemmplateList();
 }
 
@@ -172,11 +218,49 @@ function delImpositionTemmplate(item) {
     });
   }, () => undefined);
 }
-function getClassName(ClassID) {
-  const ClassItem = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === ClassID);
-  return ClassItem?.Name;
-}
 
+function addTemplatePrimaryClick() {
+  if (Data.addTemplateFrom.Name) {
+    api.getImpositionTemmplateSave(Data.addTemplateFrom).then(res => {
+      if (res.data.Status === 1000) {
+        const cb = () => {
+          getImpositionTemmplateList();
+          Data.addTemplateFromShow = false;
+        };
+        // 保存成功
+        messageBox.successSingle('保存成功', cb, cb);
+      }
+    });
+  } else {
+    messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
+  }
+  //
+}
+function addTemplateCloseedClick() {
+  Data.addTemplateFrom = {
+    ID: '',
+    Name: '',
+    // 印刷版
+    IsPrintingPlate: false,
+    // 和印刷版保持一致
+    IsSameSizeWithPrintingPlate: false,
+    List: [],
+  };
+}
+// function getClassName(ClassID) {
+//   const ClassItem = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === ClassID);
+//   return ClassItem?.Name;
+// }
+watch(() => Data.addTemplateFrom.IsPrintingPlate, (newVal) => {
+  if (newVal) {
+    Data.addTemplateFrom.IsSameSizeWithPrintingPlate = false;
+  }
+});
+watch(() => Data.addTemplateFrom.IsSameSizeWithPrintingPlate, (newVal) => {
+  if (newVal) {
+    Data.addTemplateFrom.IsPrintingPlate = false;
+  }
+});
 onActivated(() => {
   const pasteupTemplateSteupPage = sessionStorage.getItem('pasteupTemplateSteupPage') === 'true';
   if (pasteupTemplateSteupPage) {
@@ -187,8 +271,6 @@ onActivated(() => {
 onMounted(() => {
   sessionStorage.removeItem('pasteupTemplateSteupPage');
   getImpositionTemmplateList();
-  // 获取所有分类
-  PasteupSettingStore.getImpositionTemmplateClassList();
 });
 
 </script>
@@ -229,6 +311,12 @@ export default {
       flex-direction: column;
       .el-table{
         flex: 1;
+        .icon-shengchanxian{
+          color: #26bcf9;
+        }
+        .disabled{
+          color: #cbcbcb !important;
+        }
       }
   }
   >footer{

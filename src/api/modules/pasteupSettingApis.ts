@@ -47,6 +47,15 @@ const api = {
   getImpositionTemmplateSave(data) { // POST /Api/ImpositionTemmplate/Save  拼版模板保存
     return request({ method: 'POST', url: '/Api/ImpositionTemplate/Save', data });
   },
+  getImpositionTemmplateSizeSave(data) { // POST /Api/ImpositionTemplateSize/Save  拼版模板尺寸保存
+    return request({ method: 'POST', url: '/Api/ImpositionTemplateSize/Save', data });
+  },
+  getImpositionTemmplateSizeList(data) { // POST /Api/ImpositionTemplateSize/List  拼版模板尺寸列表
+    return request({ method: 'POST', url: '/Api/ImpositionTemplateSize/List', data });
+  },
+  getImpositionTemmplateSizeRemove(id) { // DELETE /Api/ImpositionTemplateSize/Remove  拼版模板尺寸删除
+    return request({ method: 'DELETE', url: `/Api/ImpositionTemplateSize/Remove?id=${id}` });
+  },
   getImpositionTemmplateList(data) { // POST /Api/ImpositionTemmplate/List  拼版模板列表
     return request({ method: 'POST', url: '/Api/ImpositionTemplate/List', data });
   },

@@ -24,16 +24,27 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/pasteupSetting/pasteupTemplate/pasteupTemplatePage.vue'),
     },
+    // {
+    //   path: '/impositionTemmplateClass',
+    //   name: 'impositionTemmplateClass',
+    //   meta: {
+    //     title: '拼版模板',
+    //     requiresAuth: true,
+    //     hideMenu: true,
+    //     pageName: 'impositionTemmplateClassListPage',
+    //   },
+    //   component: () => import('@/views/pasteupSetting/pasteupTemplate/impositionTemmplateClassListPage.vue'),
+    // },
     {
-      path: '/impositionTemmplateClass',
-      name: 'impositionTemmplateClass',
+      path: '/templateSetSize',
+      name: 'templateSetSize',
       meta: {
-        title: '拼版模板',
+        title: '设置模板尺寸',
         requiresAuth: true,
         hideMenu: true,
-        pageName: 'impositionTemmplateClassListPage',
+        pageName: 'templateSetSizePage',
       },
-      component: () => import('@/views/pasteupSetting/pasteupTemplate/impositionTemmplateClassListPage.vue'),
+      component: () => import('@/views/pasteupSetting/pasteupTemplate/templateSetSize.vue'),
     },
     {
       path: '/pasteupTemplateSteup',
@@ -114,8 +125,14 @@ const routeTree:RouteTreeType = {
     {
       name: 'pasteupTemplate',
       children: [
-        { name: 'impositionTemmplateClass', children: [] },
-        { name: 'pasteupTemplateSteup', children: [] },
+        // { name: 'impositionTemmplateClass', children: [] },
+        {
+          name: 'templateSetSize',
+          children: [
+            { name: 'pasteupTemplateSteup', children: [] },
+          ],
+        },
+
       ],
     },
     {
