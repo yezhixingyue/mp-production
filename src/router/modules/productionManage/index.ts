@@ -22,21 +22,23 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-shebeizhuangtai iconfont scale-9',
         pageName: 'EquipmentStatusListPage',
+        PermissionInfo: ['Developing', 'None'],
       },
-      component: () => import('@/views/productionManage/EquipmentStatus/EquipmentStatusListPage.vue'),
+      component: () => import('@/views/productionManagePages/EquipmentStatus/EquipmentStatusListPage.vue'),
     },
-    /* 手工下单
+    /* 手动下单
     -------------------------------------- */
     {
       path: '/ManualOrder',
       name: 'ManualOrder',
       meta: {
-        title: '手工下单',
+        title: '手动下单',
         requiresAuth: true,
-        icon: 'icon-shebeizhuangtai iconfont scale-9',
+        icon: 'icon-header-03 iconfont scale-12',
         pageName: 'ManualOrderHandlerPage',
+        // PermissionInfo: ['Developing', 'None'],
       },
-      component: () => import('@/views/productionManage/ManualOrderHandlerPage/ManualOrderHandlerPage.vue'),
+      component: () => import('@/views/productionManagePages/ManualOrderHandlerPage/ManualOrderHandlerPage.vue'),
     },
   ],
 };

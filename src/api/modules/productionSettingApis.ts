@@ -28,6 +28,13 @@ const api = {
     return request({ method: 'DELETE', url: `/Api/ShiftTime/Remove?id=${id}` });
   },
 
+  /** 生产下单相关数据接口
+  ----------------------------------------------------- */
+  /** GET /Api/ProductionLine/All  所有使用中的生产线 */
+  getProductionLineAll() {
+    return request({ method: 'GET', url: '/Api/ProductionLine/All' });
+  },
+
   // 工序 ------------------------ WorkingProcedure
   getWorkingProcedureList(data) { // POST /Api/WorkingProcedure/List  工序列表
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });

@@ -3,7 +3,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IProductionLineWorkings } from '@/store/modules/productionSetting/types';
 import { FetchWorkingProcedureSearchEnum } from '../../js/enums';
 import { IPlateMakingAllGroupType, IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
-import { ReportModeEnum, WorkingTypeEnum, TemplateTypeEnum } from '../../process/enums';
+import { ReportModeEnum, WorkingTypeEnum } from '../../process/enums';
 import { ISetPlateMakingWorkParams } from './types';
 
 export class PlateMakingWorkSetupClass {
@@ -78,7 +78,8 @@ export class PlateMakingWorkSetupClass {
       const temp:IWorkingProcedureSearch = {
         ReportMode: ReportModeEnum.block,
         Type: WorkingTypeEnum.platemaking,
-        TemplateType: TemplateTypeEnum.other,
+        // TemplateType: TemplateTypeEnum.other,
+        IsPrintingPlate: null,
         ID: '',
         Name: '[无]',
         IsSameSizeWithPrintingPlate: null,
@@ -111,7 +112,7 @@ export class PlateMakingWorkSetupClass {
   getPlateMakingWorkCannotSetGroup(WorkID: string) {
     const PlateMakingWork = this.PlateMakingWorkAllList.find(it => it.ID === WorkID);
     if (!PlateMakingWork || !PlateMakingWork.ID) return false;
-    return PlateMakingWork.TemplateType === TemplateTypeEnum.other && !PlateMakingWork.IsSameSizeWithPrintingPlate;
+    return !PlateMakingWork.IsPrintingPlate && !PlateMakingWork.IsSameSizeWithPrintingPlate;
   }
 
   /**

@@ -133,7 +133,7 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
             }
           }
           >.pot-out{
-            width: 150px;
+            width: 220px;
             text-align: center;
           }
           >.priority{

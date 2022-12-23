@@ -9,6 +9,7 @@
     @opened="onOpened"
     draggable
     :append-To-Body="appendToBody"
+    :destroy-on-close="destroyOnClose"
     :top="top"
     :close-on-click-modal="closeOnClickModal">
     <template #header>
@@ -23,7 +24,7 @@
     </template>
     <template #footer>
       <slot name="footer">
-        <mp-button type="primary" class="gradient" v-if="showPrimary"
+        <mp-button type="primary" class="gradient" v-if="showPrimary" :disabled="disabled"
         @click="Primary">{{primaryText}}</mp-button>
         <mp-button type="danger" v-if="showDel" @click="Del">{{delBtnText }}</mp-button>
         <mp-button v-if="showClose" class="blue" @click="Close">{{closeBtnText}}</mp-button>
@@ -107,6 +108,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    destroyOnClose: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['closed', 'open', 'opened', 'submit', 'cancel', 'update:visible', 'danger'],
   setup(props, context) {
@@ -175,6 +184,7 @@ export default {
       padding-left: 16px;
       color: #888E99;
       font-size: 14px;
+      text-align: left;
     }
     .el-dialog__headerbtn{
       width: 56px;

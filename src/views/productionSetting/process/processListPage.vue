@@ -49,14 +49,7 @@
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="大版类型" min-width="200">
           <template #default="scope">
-            <template v-if="scope.row.TemplateType === 0"> </template>
-            <template v-if="scope.row.TemplateType === 1">
-              印刷版
-            </template>
-            <template v-if="scope.row.TemplateType === 2">
-              {{getTemplateName(scope.row.Relations)}}
-            </template>
-
+            {{getTemplateName(scope.row.TemplateID)}}
           </template>
 
         </el-table-column>
@@ -90,19 +83,15 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import { useRouter } from 'vue-router';
 import {
-  onMounted, ref, reactive, onActivated, computed,
+  onMounted, ref, reactive, onActivated,
 } from 'vue';
 import api from '@/api';
-import { ImpositionTemmplateListGroupType } from '@/store/modules/productionSetting/types';
 import { IWorkingProcedureInfo } from '@/assets/Types/ProductionLineSet/types';
 import messageBox from '@/assets/js/utils/message';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import type { IRelationsType } from '@/store/modules/productionSetting/types';
-import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { WorkingProcedureRelationEnum } from './enums';
 
-const PasteupSettingStore = usePasteupSettingStore();
 const productionSettingStore = useProductionSettingStore();
 
 interface DataType{
@@ -187,28 +176,11 @@ const getMaterialName = (Relations:IRelationsType[]) => {
 
   return returnStr.join('、');
 };
-const ImpositionTemmplateListGroup = computed(() => {
-  const returnData:ImpositionTemmplateListGroupType[] = [];
-  productionSettingStore.ImpositionTemmplateList.forEach(item => {
-    const temp = returnData.find(it => it.ClassID === item.ClassID);
-    // 找到此条数据对应的分类及该分类下的所有模板
-    if (!temp) {
-      const TemmplateClass = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === item.ClassID);
-      const TemmplateList = productionSettingStore.ImpositionTemmplateList.filter(it => it.ClassID === item.ClassID);
-      returnData.push({ Name: TemmplateClass?.Name || '', children: TemmplateList, ClassID: TemmplateClass?.ID || 0 });
-    }
-  });
-  return returnData;
-});
 // 格式化大阪模板
-const getTemplateName = (Relations:IRelationsType[]) => {
-  const temp = Relations.filter(item => item.Type === WorkingProcedureRelationEnum.otherBoard);
-  const ids = temp.map(it => it.RelationID);
-  const list = ImpositionTemmplateListGroup.value.map(it => ({
-    Name: it.Name,
-    content: it.children.filter(c => ids.includes(c.ID)).map(c => c.Name).join('、'),
-  })).filter(it => it.content).map(it => `${it.Name}：${it.content}`);
-  return list.join('；');
+const getTemplateName = (TemplateID: string) => {
+  const t = productionSettingStore.ImpositionTemmplateList.find(it => it.ID === TemplateID);
+
+  return t?.Name || '';
 };
 const delProcess = (item) => {
   messageBox.warnCancelBox('确定要删除此工序吗？', `${item.Name}`, () => {
@@ -234,9 +206,10 @@ onActivated(() => {
     getProcessList();
     sessionStorage.removeItem('processSetupPage');
   }
-  if (!PasteupSettingStore.ImpositionTemmplateClassList.length) {
-    PasteupSettingStore.getImpositionTemmplateClassList();
-  }
+});
+onMounted(() => {
+  sessionStorage.removeItem('processSetupPage');
+  getProcessList();
   productionSettingStore.getEquipmentGroup();
   productionSettingStore.getResourceNoteGroup();
   productionSettingStore.getMaterialTypeGroupAll();
@@ -244,11 +217,9 @@ onActivated(() => {
     Page: 1,
     PageSize: 999,
     OnlyShowName: true,
+    // IsPrintPlate: false,
+    // IsSameWithPrintPlate: false,
   });
-});
-onMounted(() => {
-  sessionStorage.removeItem('processSetupPage');
-  getProcessList();
 });
 </script>
 <script lang="ts">
@@ -273,24 +244,24 @@ export default {
         color: red;
       }
       .hint{
-          font-size: 12px;
-          line-height: 30px;
-          color: #F4A307;
-          position: relative;
-          padding-left: 23px;
-          &::before{
-            content: '';
-            background-image: url('@/assets/images/warn.png');
-            display: inline-block;
-            background-size: 13px 13px;
-            width: 13px;
-            height: 13px;
-            margin-right: 10px;
-            position: absolute;
-            left: 0;
-            top: 8px;
-          }
+        font-size: 12px;
+        line-height: 30px;
+        color: #F4A307;
+        position: relative;
+        padding-left: 23px;
+        &::before{
+          content: '';
+          background-image: url('@/assets/images/warn.png');
+          display: inline-block;
+          background-size: 13px 13px;
+          width: 13px;
+          height: 13px;
+          margin-right: 10px;
+          position: absolute;
+          left: 0;
+          top: 8px;
         }
+      }
     }
   }
   >main{

@@ -31,7 +31,10 @@ export interface IPlateMakingMaterialSourceSetupData {
 
 export interface ILocalProductionLineWorkings extends IProductionLineWorkings {
   _WorkName?: string
+  /** 报工方式 */
   _ReportModeContent?: string
+  /** 工序类型 */
+  _WorkingTypeContent?: string
   _EquipmentText: string
   _PlateMakingWorkContent: string
   _isSplit: boolean

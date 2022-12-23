@@ -1,4 +1,4 @@
-import { IEquipmentStatusItem } from '@/views/productionManage/EquipmentStatus/js/types';
+import { IEquipmentStatusItem } from '@/views/productionManagePages/EquipmentStatus/js/types';
 import request from '../request/request';
 
 export const productionManageApis = {

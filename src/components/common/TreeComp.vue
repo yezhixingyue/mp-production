@@ -196,8 +196,6 @@ const renderContent = (h, { node, data }) => {
 };
 
 const handleCheckAllChange = () => {
-  console.log(checkAll.value, 'checkAllcheckAllcheckAll');
-
   if (checkAll.value) {
     treeComp.value.setCheckedNodes(treeData.value);
     selectKeys.value = AllKeys.value;

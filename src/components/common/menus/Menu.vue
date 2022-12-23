@@ -105,7 +105,7 @@ const onClick = () => {
   user-select: none;
   transition: 0.1s ease-in-out;
   > img {
-    margin-right: 5px;
+    margin-right: 6px;
     vertical-align: -2px;
   }
   > span {
@@ -121,7 +121,7 @@ const onClick = () => {
 
   > i {
     color: #26bcf9;
-    margin-right: 5px;
+    margin-right: 6px;
     font-size: 15px;
   }
   &:hover > i {
@@ -134,8 +134,6 @@ const onClick = () => {
   &.isPink {
     > i {
       color: #ff3769;
-      margin-right: 5px;
-      font-size: 15px;
     }
     &:hover > i {
       color: darken($color: #ff3769, $amount: 8)
@@ -148,8 +146,6 @@ const onClick = () => {
   &.isSuccess {
     > i {
       color: #80c269;
-      margin-right: 5px;
-      font-size: 15px;
     }
     &:hover > i {
       color: darken($color: #80c269, $amount: 8)

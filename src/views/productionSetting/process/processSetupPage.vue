@@ -44,14 +44,9 @@
               </el-form-item>
               <!-- 仅制版工序时显示： 大版类型 -->
               <el-form-item :label="`大版类型：`" :class="{'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking}" class="form-item-required">
-                <el-radio-group v-model="Data.processDataFrom.TemplateType" class="min-height-radio" style="height: 32px;">
-                  <el-radio v-for="it in TemplateTypeEnumList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
-                </el-radio-group>
-                <div :class="{'v-hide': Data.processDataFrom.TemplateType !== TemplateTypeEnum.other}" style="width: 100%;">
-                  <mp-button type="primary" link @click="selectTemplateGroupShow = true" style="transition: none;">选择大版模板</mp-button>
-                  <span class="ml-8" style="position:relative; top:1px;" :title="showTemplate.join('；\r\n')">
-                    {{showTemplate.join('；')}}
-                  </span>
+                <div style="width: 100%;">
+                  <mp-button type="primary" link @click="selectTemplateGroupShow = true" style="transition: none;position:relative;top:-1px;">选择大版模板</mp-button>
+                  <span class="ml-15" :title="showTemplate"> {{showTemplate}}</span>
                 </div>
               </el-form-item>
               <el-form-item :label="`其他：`">
@@ -63,7 +58,7 @@
                   <div style="height:32px" class="type-conent">
                     <template v-if="Data.processDataFrom.AllowPartReport">
                       {{getEnumNameByIDAndEnumList(Data.processDataFrom.ReportMode, ReportModeEnumList).replace('报工', '')}}数量大于
-                      <el-input v-model.number="Data.processDataFrom.MinPartReportNumber"></el-input>时
+                      <el-input v-model.number="Data.processDataFrom.MinPartReportNumber" maxlength="9"></el-input>时
                     </template>
                   </div>
                 </div>
@@ -149,11 +144,9 @@
     :saveEquipment="saveMaterial"
     />
     <SelectTemplateGroup
-    :visible='selectTemplateGroupShow'
-    :changeVisible='(visble) => selectTemplateGroupShow = visble'
-    :activeTemplateList="activeTemplateList"
-    :TemplateGroup="ImpositionTemmplateListGroup"
-    :saveTemplate="saveTemplate"
+      v-model:visible="selectTemplateGroupShow"
+      v-model="Data.processDataFrom.TemplateID"
+      :ImpositionTemmplateList="productionSettingStore.ImpositionTemmplateList"
     />
     <footer>
       <mp-button type="primary" class="gradient" @click="saveProcess">保存</mp-button>
@@ -173,18 +166,15 @@ import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vu
 import materialResource from '@/components/productionSetting/materialResource.vue';
 import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
 import api from '@/api';
-import type { ImpositionTemmplateListGroupType } from '@/store/modules/productionSetting/types';
 import { useRouterStore } from '@/store/modules/routerStore';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
-import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
 import {
-  ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, TemplateTypeEnumList, TemplateTypeEnum, WorkingProcedureRelationEnum,
+  ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, WorkingProcedureRelationEnum,
 } from './enums';
 
-const PasteupSettingStore = usePasteupSettingStore();
 const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
 
@@ -211,10 +201,10 @@ interface processDataFromType{
   ReportMode: number,
   Type: number,
   MaxProduceNumber: number|string,
+  TemplateID: string | null
   AllowPartReport: boolean,
   MinPartReportNumber: number|string,
   AllowBatchReport: boolean,
-  TemplateType: TemplateTypeEnum,
   EquipmentGroups: IEquipmentGroupsType[],
   Relations: IRelationsType[],
 }
@@ -236,10 +226,10 @@ const Data:DataType = reactive({
     ReportMode: ReportModeEnum.block,
     Type: WorkingTypeEnum.normal,
     MaxProduceNumber: '',
+    TemplateID: '',
     AllowPartReport: false,
     MinPartReportNumber: '',
     AllowBatchReport: false,
-    TemplateType: TemplateTypeEnum.print,
     EquipmentGroups: [],
     Relations: [],
   },
@@ -251,19 +241,6 @@ const BreadcrumbList = computed(() => [
     name: `${Data.processDataFrom.ID ? '编辑' : '添加'}工序`,
   },
 ]);
-const ImpositionTemmplateListGroup = computed(() => {
-  const returnData:ImpositionTemmplateListGroupType[] = [];
-  productionSettingStore.ImpositionTemmplateList.forEach(item => {
-    const temp = returnData.find(it => it.ClassID === item.ClassID);
-    // 找到此条数据对应的分类及该分类下的所有模板
-    if (!temp) {
-      const TemmplateClass = PasteupSettingStore.ImpositionTemmplateClassList.find(it => it.ID === item.ClassID);
-      const TemmplateList = productionSettingStore.ImpositionTemmplateList.filter(it => it.ClassID === item.ClassID);
-      returnData.push({ Name: TemmplateClass?.Name || '', children: TemmplateList, ClassID: TemmplateClass?.ID || 0 });
-    }
-  });
-  return returnData;
-});
 
 // 辅助信息的默认选中
 const saveInfoActive = computed(() => Data.processDataFrom.Relations
@@ -324,17 +301,10 @@ const showInfoMaterial = computed(() => {
 });
 // 显示的大版模板文字信息
 const showTemplate = computed(() => {
-  const temp = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.otherBoard);
-  const ids = temp.map(it => it.RelationID);
-  const list = ImpositionTemmplateListGroup.value.map(it => ({
-    Name: it.Name,
-    content: it.children.filter(c => ids.includes(c.ID)).map(c => c.Name).join('、'),
-  })).filter(it => it.content).map(it => `${it.Name}：${it.content}`);
-  return list;
+  const t = productionSettingStore.ImpositionTemmplateList.find(it => it.ID === Data.processDataFrom.TemplateID);
+  return t?.Name || '';
 });
-// 选中的大版文件
-const activeTemplateList = computed(() => Data.processDataFrom.Relations
-  .filter(item => item.Type === WorkingProcedureRelationEnum.otherBoard).map(it => it.RelationID));
+
 const activeEquipmentList = computed(() => Data.processDataFrom.EquipmentGroups.map(it => it.GroupID));
 const EquipmentGroupsSum = computed(() => {
   let sum = 0;
@@ -358,14 +328,6 @@ const saveEquipment = (Equipments) => {
     OneTimeTwoSide: false,
   }));
   selectDeviceGroupShow.value = false;
-};
-const saveTemplate = (infoList) => {
-  // 去除掉已经选中的数据
-  const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== WorkingProcedureRelationEnum.otherBoard);
-  Data.processDataFrom.Relations = [...elseData, ...infoList.map(res => ({
-    RelationID: res.ID, Name: res.Name, Type: WorkingProcedureRelationEnum.otherBoard, PID: res.Type,
-  }))];
-  selectTemplateGroupShow.value = false;
 };
 const saveInfo = (infoList) => {
   // 去除掉已经选中的数据
@@ -410,8 +372,7 @@ const saveProcess = () => {
    && !/^[1-9]+[0-9]*$/.test(`${Data.processDataFrom.MaxProduceNumber}`)) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '每套版最大可加工数量不正确', () => null, () => null);
-  } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && Data.processDataFrom.TemplateType === TemplateTypeEnum.other
-     && !showTemplate.value.length) {
+  } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && !Data.processDataFrom.TemplateID) {
     messageBox.failSingleError('保存失败', '请选择大版模板', () => null, () => null);
     // 弹框提 其他时 大阪模板为空
   } else if (Data.processDataFrom.AllowPartReport && !Data.processDataFrom.MinPartReportNumber && Data.processDataFrom.MinPartReportNumber !== 0) {
@@ -427,7 +388,11 @@ const saveProcess = () => {
     // 弹框提 权重之和不等于100
     messageBox.failSingleError('保存失败', '权重之和不等于100', () => null, () => null);
   } else {
-    api.getWorkingProcedureSave(Data.processDataFrom).then(res => {
+    const temp = {
+      ...Data.processDataFrom,
+      MaxProduceNumber: Data.processDataFrom.isRestrict ? Data.processDataFrom.MaxProduceNumber : '',
+    };
+    api.getWorkingProcedureSave(temp).then(res => {
       if (res.data.Status === 1000) {
         const cb = () => {
           setStorage();

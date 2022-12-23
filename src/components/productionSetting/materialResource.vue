@@ -8,6 +8,7 @@
     :closeClick="CloseClick"
     :closed="Closed"
     :appendToBody="true"
+    primary-text="确定"
     >
     <template #default>
       <div class="set-apply-equipment-dialog">
@@ -17,19 +18,16 @@
             <el-checkbox
             v-for="(item) in props.MaterialListGroup"
             :key="item.ID" :label="item.ID">
-              <el-tooltip
-                class="box-item"
-                effect="dark"
-                :content="item.Name"
-                placement="top"
-                :disabled="item.Name.length<9"
-              >
-              {{item.Name}}
-              </el-tooltip>
+              <span :title="item.Name">
+                <em>{{item.Name}}</em>
+                <i v-if="(item.Feature === MakingGroupTypeFeatureEnum.main)">(主)</i>
+                <i v-if="(item.Feature === MakingGroupTypeFeatureEnum.semifinished)">(半)</i>
+              </span>
             </el-checkbox>
           </el-checkbox-group>
         </div>
         </el-scrollbar>
+        <p class="tips-box"><el-icon><WarningFilled /></el-icon> 仅能包含一个主料</p>
       </div>
     </template>
     </DialogContainerComp>
@@ -44,6 +42,8 @@ import type { EquipmentGroups } from '@/components/pasteupSetting/types';
 import type {
   MaterialTypeGroupType,
 } from '@/store/modules/productionSetting/types';
+import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface Props {
   visible: boolean
@@ -78,7 +78,15 @@ function Closed() {
 }
 function PrimaryClick() {
   const returnData = props.MaterialListGroup.filter(res => checkList.value.find(it => it === res.ID));
-  props.MaterialListGroup.map(res => checkList.value.find(it => it === res.ID));
+
+  const mainList = returnData.filter(it => it.Feature === MakingGroupTypeFeatureEnum.main);
+  if (mainList.length > 1) {
+    MpMessage.error({
+      title: '操作失败',
+      msg: '仅能包含一个主料',
+    });
+    return;
+  }
 
   props.saveEquipment(returnData || []);
 }
@@ -110,10 +118,31 @@ watch(() => Dialog.value, (newVal) => {
           display: inline-block;
           width: 10em;
           overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
+          > span {
+            display: flex;
+            overflow: hidden;
+            em {
+              flex-shrink: 1;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              margin-right: 1px;
+            }
+            i {
+              flex: none;
+            }
+          }
         }
       }
+    }
+  }
+  .tips-box {
+    width: 180px;
+    margin: 35px auto;
+    margin-bottom: -15px;
+    i {
+      vertical-align: -2px;
+      margin: 0 6px;
     }
   }
 </style>

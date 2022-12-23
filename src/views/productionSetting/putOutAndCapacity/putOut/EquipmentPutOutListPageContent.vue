@@ -4,6 +4,7 @@
       <MpBreadcrumb :list="props.BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="onSaveClick(null)">+ 添加条件</mp-button>
+        <span class="tips-box"><el-icon><WarningFilled /></el-icon> 匹配一条作为伸放设置</span>
       </div>
     </header>
     <main>
@@ -65,6 +66,12 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
     padding-bottom: 0;
     .header-top{
       margin-top: 20px;
+      .tips-box {
+        margin-left: 20px;
+        i {
+          vertical-align: -2px;
+        }
+      }
     }
   }
   >main{

@@ -8,6 +8,7 @@
     :closeClick="CloseClick"
     :closed="Closed"
     :appendToBody="true"
+    primary-text="确定"
     >
     <template #default>
       <div class="set-apply-equipment-dialog">

@@ -49,9 +49,10 @@ const remove = (item) => {
 };
 
 onMounted(() => {
+  const t = PlateMakingGroupManageData.value.WorkingList.find(it => it.ID === PlateMakingGroupManageData.value.WorkID);
   const curWork = {
-    ID: PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.ID || '',
-    Name: PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || '',
+    ID: t?.ID || '',
+    Name: t?.Name || '',
   };
   PlateMakingGroupCapacityPageData.value?.getInitData(curWork);
   PlateMakingGroupCapacityPageData.value?.getRightPropertyList();

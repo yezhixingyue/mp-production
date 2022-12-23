@@ -7,6 +7,7 @@ import PasteupSetting from './modules/pasteupSettingApis';
 import { companyApis } from './modules/companyApis';
 import { otherSettingApis } from './modules/otherApis';
 import { productionManageApis } from './modules/productionManageApis';
+import { ManualOrderHandlerApis } from './modules/ManualOrderHandlerApis';
 import productionSetting from './modules/productionSettingApis';
 import request from './request/request';
 
@@ -55,6 +56,8 @@ const api = {
   ...companyApis,
   // 生产管理 api
   ...productionManageApis,
+  // 手动下单 api
+  ManualOrderHandlerApis,
 };
 
 export default api;

@@ -13,7 +13,7 @@ let requestNum = 0;
 let loadingInstance;
 const getShowLoading = (config) => { // 查看当前请求是否需要展示弹窗
   let showLoading = true;
-  const arr = ['/Api/MaterialType/All', '/Api/Upload/File', '/Api/SingleMaterial/ByType']; // 不需要展示loading的api地址
+  const arr = ['/Api/MaterialType/All', '/Api/Upload/File', '/Api/SingleMaterial/ByType', '/Api/FileNode']; // 不需要展示loading的api地址
   if (config && config.url) {
     for (let i = 0; i < arr.length; i += 1) {
       if (config.url.split('?')[0].includes(arr[i]) || config.closeLoading) {
@@ -64,9 +64,7 @@ const instance = new Axios({
 
         throw new Error('请重新登录');
       }
-      curConfig.headers = {
-        Authorization: `Bearer ${token}`,
-      };
+      if (curConfig.headers) curConfig.headers.Authorization = `Bearer ${token}`;
       // 打开loading
       if (getShowLoading(curConfig)) handleLoadingOpen();
       return config;
@@ -98,7 +96,9 @@ const instance = new Axios({
         let _msg = '';
         switch (error.response.status) {
           case 401:
+            instance.cancelAllRequest();
             userStore.token = '';
+            window.location.href = `${window.location.href.split('#')[0] || ''}#/login`;
             break;
           case 403:
             break;

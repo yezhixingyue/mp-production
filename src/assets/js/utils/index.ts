@@ -42,3 +42,18 @@ export const scrollToTop = element => element.scrollIntoView({ behavior: 'smooth
   * @param {*} element
   */
 export const scrollToBottom = element => element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+/**
+ * 获取文件后缀名
+ *
+ * @param {string} filename
+ * @returns
+ */
+export const extname = (filename: string) => {
+  if (!filename || typeof filename !== 'string') {
+    return '未知类型';
+  }
+  const a = filename.split('').reverse().join('');
+  const b = a.substring(0, a.search(/\./)).split('').reverse().join('');
+  return b.toLowerCase();
+};

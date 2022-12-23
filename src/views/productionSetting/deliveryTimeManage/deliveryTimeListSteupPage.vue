@@ -44,7 +44,7 @@
         <li>
           <span class="title">发货班次：</span>
           <div class="content-item">
-            <mp-button link type="primary" @click="onShiftAddClick(-1)">+添加</mp-button>
+            <mp-button link type="primary" @click="onShiftAddClick(-1)">+添加发货班次</mp-button>
             <ShiftTimeTable :ShiftTimeList="ruleForm.Shift" @edit="onShiftAddClick" @remove="onRemoveClick" />
             <!-- <el-time-picker
               :clearable='false'

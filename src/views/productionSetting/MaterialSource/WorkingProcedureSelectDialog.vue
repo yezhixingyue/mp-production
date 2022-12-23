@@ -1,11 +1,12 @@
 <template>
   <DialogContainerComp
-    title="添加工序"
+    title="选择工序"
     :visible='localVisible'
     :width="660"
     :primaryClick="submit"
     :closeClick="() => localVisible = false"
     @open="onOpen"
+    primaryText="确定"
     >
     <template #default>
       <div class="content">
@@ -14,6 +15,7 @@
             <el-checkbox :label="item.ID">{{item.Name}}</el-checkbox>
           </template>
         </el-checkbox-group>
+        <el-empty v-if="(props.WorkingProcedureList.length === 0)" style="margin-top:-30px" description="暂无工序可选择" />
       </div>
     </template>
   </DialogContainerComp>

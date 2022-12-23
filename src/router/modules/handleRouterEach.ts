@@ -1,6 +1,6 @@
 import { useRouterStore } from '@/store/modules/routerStore';
-// import NProgress from 'nprogress';
-// import 'nprogress/nprogress.css';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 // import messageBox from '../assets/js/utils/message';
 import { useUserStore } from '@/store/modules/user';
 // import { RouterType } from '@/router/modules/routerTypes';
@@ -15,10 +15,10 @@ import { getLastRouteInfoByName } from './getLastRouteInfoByName';
 // }
 /*  页面进度条
 ------------------------------------------ */
-// NProgress.configure({
-//   trickleSpeed: 50,
-//   showSpinner: false,
-// });
+NProgress.configure({
+  trickleSpeed: 20,
+  // showSpinner: false,
+});
 
 /*  处理跳转报错
 ------------------------------------------ */
@@ -82,12 +82,15 @@ function handlePermission(
       if (to.matched.length >= 2) {
         if (to.name) {
           const t = getLastRouteInfoByName(to.name, 'root');
-          if (t) next({ name: t });
+          if (t) {
+            next({ name: t });
+            return;
+          }
         }
       }
       isInit = false;
     }
-    // if (from.name !== to.name) NProgress.start();
+    if (from.name !== to.name) NProgress.start();
     NextHandler(from, to, next); // 2.6 如果满足权限要求则允许跳转， 否则跳转提示页面
   } else next({ path: '/notauth' });
 }
@@ -101,9 +104,7 @@ export const goBackLastPage = (router:Router, route?: RouteLocationNormalized) =
   const RouterStore = useRouterStore();
   if (!router || !router.currentRoute) return;
   let curRouteName = router.currentRoute.value.name;
-  console.log(curRouteName, 0);
   if (route) curRouteName = route.name;
-  console.log(curRouteName, 1);
   if (!curRouteName) return;
   // 1 首先找到其上一级的路由name名称
   const lastRouteName = getLastRouteInfoByName(curRouteName);
@@ -124,38 +125,31 @@ export const goBackLastPage = (router:Router, route?: RouteLocationNormalized) =
 
 export const handleRouterEach = (router:Router) => {
   router.beforeEach(
-    (
+    async (
       to:RouteLocationNormalized,
       from:RouteLocationNormalized,
       next:NavigationGuardNext,
     ) => { // 使用全局路由导航守卫进行权限控制
       const userStore = useUserStore();
-      // NextHandler(from, to, next);
-      // // 暂时不做限制
-      // next();
-
       const { token } = userStore;
+      if (to.name === 'login' && token) {
+        next({ name: from.name || 'home' });
+        return;
+      }
 
       // 2.2 判断要去往的页面中有无token要求，如果无则跳转否则则进入判
       if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (to.name === 'login') { // 2.3 登录页面不考虑，直接跳转
-          if (token) { // 如果有token 不允许跳转
-            next({ name: 'home' });
-          } else {
-            userStore.token = '';
-            NextHandler(from, to, next);
-          }
-        } else if (token) { // 2.4 如果有token信息，获取到当前用户权限信息
-          const permission = userStore.user;
-          if (!permission || permission.Token !== token) {
-            userStore.getUser().then(res => {
-              if (res && Object.prototype.toString.call(res)
-                === '[object Object]' && res.Token && res.Token === token) {
-                handlePermission(to, next, res.PermissionList, from);
-              }
-            });
-          } else if (permission.Token === token) {
-            handlePermission(to, next, permission.PermissionList, from);
+        if (token) { // 2.4 如果有token信息，获取到当前用户权限信息
+          const { user } = userStore;
+          if (!user || user.Token !== token) {
+            const res = await userStore.getUser();
+            if (res && res.Token && res.Token === token) {
+              handlePermission(to, next, res.PermissionList, from);
+              return;
+            }
+          } else if (user.Token === token) {
+            handlePermission(to, next, user.PermissionList, from);
+            return;
           } else {
             userStore.token = '';
             next({
@@ -180,7 +174,6 @@ export const handleRouterEach = (router:Router) => {
           }
           // ;
         } else { // 如果没有token，跳转登录或提示页面
-          userStore.token = '';
           next({
             path: '/login', // 此处应当跳转登录页面
           // query: { redirect: to.fullPath },
@@ -190,10 +183,7 @@ export const handleRouterEach = (router:Router) => {
         // 临时调用
         // NextHandler(from, to, () => null);
         // next();
-      } else if (to.name === 'login' && token) {
-        next({ name: 'home' });
       } else {
-        userStore.token = '';
         NextHandler(from, to, next);
       }
     },
@@ -203,7 +193,7 @@ export const handleRouterEach = (router:Router) => {
     if (to.meta.title) { // 1. 根据路由元信息中title信息设置页面标题
       document.title = `${to.meta.title} - 名片之家生产管理系统`;
     }
-    // NProgress.done();
+    NProgress.done();
   });
 
   /**

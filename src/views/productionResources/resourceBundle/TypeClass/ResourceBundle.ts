@@ -6,7 +6,7 @@ import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
  * @export
  * @enum {number}
  */
-export enum MakingGroupTypeEnum {
+export enum MakingGroupTypeFeatureEnum {
   /** 主料 */
   main = 0,
   /** 辅料 */
@@ -17,15 +17,15 @@ export enum MakingGroupTypeEnum {
 
 export const resourceBundleFeatureEnumObj = {
   main: {
-    ID: MakingGroupTypeEnum.main,
+    ID: MakingGroupTypeFeatureEnum.main,
     Name: '主料',
   },
   sup: {
-    ID: MakingGroupTypeEnum.sup,
+    ID: MakingGroupTypeFeatureEnum.sup,
     Name: '辅料',
   },
   semifinished: {
-    ID: MakingGroupTypeEnum.semifinished,
+    ID: MakingGroupTypeFeatureEnum.semifinished,
     Name: '半成品',
   },
 };

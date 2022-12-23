@@ -1,6 +1,6 @@
 import { IMaterialSources } from '@/store/modules/productionSetting/types';
-import { MakingGroupTypeEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
-import { WorkingTypeEnum, ReportModeEnum, TemplateTypeEnum } from '../../process/enums';
+import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
+import { WorkingTypeEnum, ReportModeEnum } from '../../process/enums';
 
 /**
  * 保存制版组参数
@@ -44,9 +44,11 @@ export interface IWorkingProcedureSearch {
   /** 工序类型： 普通、印刷、制版、组合、拆分 */
   Type: WorkingTypeEnum
   /** 大版类型：印刷版、其它（ 其它中包含与印刷版相同的模板类型 ） */
-  TemplateType: TemplateTypeEnum
+  // TemplateType: TemplateTypeEnum
   /** 模板类型是否与印刷版相同 */
   IsSameSizeWithPrintingPlate: boolean | null
+  /** 模板类型是否印刷版 */
+  IsPrintingPlate: boolean | null
 }
 
 export interface IPlateMakingGroupMaterialSourceSaveData {
@@ -68,7 +70,7 @@ export interface IPlateMakingGroupSource {
   /** 物料名称 */
   RelationName: string
   /** 资源类型 */
-  Type: MakingGroupTypeEnum
+  Type: MakingGroupTypeFeatureEnum
   /** 排序 */
   Index: number
 }

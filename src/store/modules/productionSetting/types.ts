@@ -7,6 +7,7 @@ import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMaki
 import { PlateMakingWorkSetupClass } from '@/views/productionSetting/productionLine/js/PlateMakingWorkSetupClass';
 import { LineStatusEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { WorkingProcedureRelationEnum } from '@/views/productionSetting/process/enums';
+import { LineIsUseModeEnum, ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
 
 // 辅助信息
 export interface NotesType{
@@ -42,7 +43,6 @@ export interface MaterialTypeGroupType{
 }
 
 export interface ImpositionTemmplateListType {
-  ClassID:number,
   ID:string,
   Name:string,
 }
@@ -145,8 +145,11 @@ export interface IProductionLineWorkings {
 }
 export interface IWorkingProcedureList {
   LineType: number,
-  TemplateIDS: string[],
   ProductionLineWorkings: IProductionLineWorkings[] | null,
   Status: LineStatusEnum,
   ProductionLineSplitWorking: null | IProductionLineWorkings
+  /** 是否允许按模位，仅生产线 */
+  UseModeType: LineIsUseModeEnum,
+  /** 允许翻版方式， 仅生产线 */
+  ReproductionTypes: ReproductionTypeEnum[]
 }

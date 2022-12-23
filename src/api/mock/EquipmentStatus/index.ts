@@ -1,4 +1,4 @@
-// import Mock from 'mockjs';
-// import getEquipmentStatusList from './getEquipmentStatusList';
+import Mock from 'mockjs';
+import getEquipmentStatusList from './getEquipmentStatusList';
 
-// Mock.mock('/Api/EquipmentStatus/List', getEquipmentStatusList);
+Mock.mock('/Api/EquipmentStatus/List', getEquipmentStatusList);

@@ -54,7 +54,7 @@ module.exports = defineConfig({
   //   devtool: 'source-map',
   // },
   configureWebpack: config => {
-    config.devtool = 'source-map';
+    config.devtool = process.env.NODE_ENV === 'development' ? 'source-map' : false;
     // 处理图标乱码的问题 （是否解决待确认）
     config.module.rules.filter(rule => rule.test.toString().indexOf('scss') !== -1).forEach(rule => {
       rule.oneOf.forEach(oneOfRule => {

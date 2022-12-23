@@ -1,5 +1,5 @@
 <template>
-  <Menu title="删除" icon="icon-delete iconfont" isPink :disabled="props.disabled" @click="onClick" />
+  <Menu title="删除" icon="icon-delete iconfont" class="mp-remove-menu" isPink :disabled="props.disabled" @click="onClick" />
 </template>
 
 <script setup lang='ts'>

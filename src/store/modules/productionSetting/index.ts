@@ -35,6 +35,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     EquipmentListGroup: [],
     ResourceNoteGroup: [],
     MaterialTypeGroup: [],
+    /** 仅工序列表使用？ */
     ImpositionTemmplateList: [],
     PropertyList: [],
     LinePutOutPageData: null,
@@ -89,7 +90,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         this.MaterialTypeGroup = resp.data.Data as MaterialTypeGroupType[];
       }
     },
-    // 获取拼版模板列表
+    // 获取拼版模板列表 -- 仅工序列表使用？
     getImpositionTemmplateList(Data) {
       api.getImpositionTemmplateList(Data).then(res => {
         if (res.data.Status === 1000) {

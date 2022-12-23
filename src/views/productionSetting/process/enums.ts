@@ -78,26 +78,26 @@ export const WorkingTypeEnumList = getEnumList(WorkingTypeEnumObj);
 
 /* 大版类型枚举相关（ 目前仅制版工序中使用到 ）
 -------------------------------------- */
-export enum TemplateTypeEnum {
-  /** 印刷版 */
-  print = 1,
-  /** 其它 */
-  other = 2,
-}
+// export enum TemplateTypeEnum {
+//   /** 印刷版 */
+//   print = 1,
+//   /** 其它 */
+//   other = 2,
+// }
 
-export const TemplateTypeEnumObj = {
-  print: {
-    ID: TemplateTypeEnum.print,
-    Name: '印刷版',
-  },
-  other: {
-    ID: TemplateTypeEnum.other,
-    Name: '其它',
-  },
-};
+// export const TemplateTypeEnumObj = {
+//   print: {
+//     ID: TemplateTypeEnum.print,
+//     Name: '印刷版',
+//   },
+//   other: {
+//     ID: TemplateTypeEnum.other,
+//     Name: '其它',
+//   },
+// };
 
 /** 大版类型枚举列表 （ 制版工序 ） */
-export const TemplateTypeEnumList = getEnumList(TemplateTypeEnumObj);
+// export const TemplateTypeEnumList = getEnumList(TemplateTypeEnumObj);
 
 /* 工序中资源类型 Relations 中的 Type
 -------------------------------------- */

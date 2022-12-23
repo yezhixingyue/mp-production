@@ -52,3 +52,20 @@ export const getEnumNameByIDAndEnumList = (id: localEnumValueIDType, list: ILoca
   const t = list.find(it => it.ID === id);
   return t ? t.Name : '';
 };
+
+/**
+ * 提取ts枚举中所有的值组成列表， 排除excepts内的内容项
+ *
+ * @template E 枚举类型
+ * @param {any} Enums 枚举类型
+ * @param {EnumT[]} [excepts=[]] 需要排除的枚举选项组成的数组
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getEnumValuesByTsEnum = <EnumT = number>(Enums: any, excepts:EnumT[] = []):EnumT[] => {
+  if (typeof Enums !== 'object' || !Enums) return [];
+  const _list = Object.keys(Enums)
+    .filter(key => !/^\d+$/.test(key) && !excepts.includes(Enums[key]))
+    .map(key => Enums[key]);
+
+  return _list;
+};

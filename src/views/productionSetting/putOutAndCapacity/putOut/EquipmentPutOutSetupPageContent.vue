@@ -66,7 +66,7 @@ const submit = (e: PutOutConditionItemClass) => {
 onMounted(() => {
   rightPanelData.value = {
     LineEquipmentID: props.curLineEquipment?.LineEquipmentID || '',
-    Value: props.curConditionRow?.Value || '',
+    Value: props.curConditionRow?.Value || props.curConditionRow?.Value === 0 ? props.curConditionRow?.Value : '',
     Type: props.curConditionRow?.Type || 0,
   };
 });

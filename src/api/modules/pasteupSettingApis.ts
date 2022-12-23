@@ -1,3 +1,4 @@
+import { IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import request from '../request/request';
 
 const api = {
@@ -5,8 +6,8 @@ const api = {
   getPrintColorSave(data) { // POST /Api/PrintColor/Save  印色保存
     return request({ method: 'POST', url: '/Api/PrintColor/Save', data });
   },
-  getPrintColorList() { // GET /Api/PrintColor/List  印色列表
-    return request({ method: 'GET', url: '/Api/PrintColor/List' });
+  getPrintColorList(includeGeneralColor = true) { // GET /Api/PrintColor/List  印色列表
+    return request<IPrintColor[]>({ method: 'GET', url: '/Api/PrintColor/List', params: { includeGeneralColor } });
   },
   getPrintColorRemove(id) { // GET /Api/PrintColor/Remove  印色删除
     return request({ method: 'DELETE', url: `/Api/PrintColor/Remove?id=${id}` });

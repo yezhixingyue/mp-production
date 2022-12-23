@@ -51,7 +51,6 @@ export class ConstraintsItemClass {
     if (!msg && this.Property?.ValueType === PropertyValueTypeEnum.numerical && this.Property.ValueRange) {
       const { MinValue, MaxValue } = this.Property.ValueRange;
       const val = this.ValueList[0].Value; // 后面添加数值类型判断
-      console.log(val);
       if (Number.isNaN(+val)) {
         msg = '必须为数值类型';
       } else {

@@ -109,6 +109,14 @@
 }
 
 
+#nprogress .bar {
+  background: #26bcf9
+}
+#nprogress .spinner-icon {
+  border-top-color: #26bcf9;
+  border-left-color: #26bcf9;
+}
+
 .el-button{
   .iconfont{
     font-size: 12px;
@@ -256,7 +264,8 @@ input[type='number'] {
     font-size: 15px;
     position: relative;
     top: 1px;
-    margin-right: 10px;
+    margin-right: 6px;
+    vertical-align: -2px;
   }
   &.is-pink {
     background: rgb(255, 248, 250);

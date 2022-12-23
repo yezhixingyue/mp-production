@@ -15,7 +15,9 @@
     "cropperjs": "^1.5.12",
     "element-plus": "^2.2.25",
     "js-base64": "^3.7.2",
+    "js-sha1": "^0.6.0",
     "mockjs": "^1.1.0",
+    "nprogress": "^0.2.0",
     "pinia": "^2.0.13",
     "pinia-plugin-persist": "^1.0.0",
     "pinia-plugin-persistedstate": "^1.6.1",
@@ -29,6 +31,7 @@
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@types/mockjs": "^1.0.7",
+    "@types/nprogress": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",

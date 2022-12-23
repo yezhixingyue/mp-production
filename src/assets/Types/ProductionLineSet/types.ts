@@ -1,5 +1,6 @@
 import { IEquipmentGroupsType, IRelationsType } from '@/store/modules/productionSetting/types';
-import { ReportModeEnum, TemplateTypeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
+import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
+import { LineIsUseModeEnum, ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
 import { LineStatusEnum, LineTypeEnum } from './enum';
 
 /**
@@ -21,9 +22,13 @@ export interface IProductionLineSet {
   /** 是否需要折手 */
   NeedFoldWay: boolean,
   /** 可用拼版模板 */
-  TemplateIDS: string[],
+  // TemplateIDS: string[],
   /** 组合工序ID，组合生产线才有，可多个 */
   CombinationWordIDS: string[],
+  /** 是否允许按模位，仅生产线 */
+  UseModeType: LineIsUseModeEnum,
+  /** 允许翻版方式， 仅生产线 */
+  ReproductionTypes: ReproductionTypeEnum[]
 }
 
 /**
@@ -51,7 +56,7 @@ export interface IWorkingProcedureInfo{
   /** 允许批量报工 */
   AllowBatchReport: boolean,
   /** 大版类型 1.印刷版 2.其他 = ['1', '2'] */
-  TemplateType: TemplateTypeEnum,
+  // TemplateType: TemplateTypeEnum,
   /** 设备组 */
   EquipmentGroups: IEquipmentGroupsType[],
   /** 工序所需资源：辅助信息（文件、文字、数值），物料资源包等 */

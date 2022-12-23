@@ -15,13 +15,15 @@
         操作
       </div>
     </li>
-    <li v-for="(it, i) in localTableList" :key="it.ID" class="item">
+    <li v-for="(it, i) in localTableList" :key="it.ID" class="item content-item">
       <div class="content">
         <i class="index">{{i + 1}}. </i>
         <ConditionTextDisplayComp :conditionObj="it.Constraint" :content="it._Content" />
       </div>
       <!-- 计算数量添加进去 -->
-      <div class="pot-out">
+      <div class="pot-out"
+        :title="it.Value + (it.Property && Property.getPropertyName(it.Property) ? ` ( ${Property.getPropertyName(it.Property)} )` : '') + options.unit"
+      >
         {{it.Value}}
         {{it.Property && Property.getPropertyName(it.Property) ? ` ( ${Property.getPropertyName(it.Property)} )` : ''}}
         {{options.unit}}
@@ -103,4 +105,11 @@ const onRemoveClick = (it: TransformConstraintTableItemType<CapacityConditionIte
 </script>
 
 <style scoped lang='scss'>
+.content-item {
+  > div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
 </style>

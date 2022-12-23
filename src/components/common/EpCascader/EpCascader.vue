@@ -44,9 +44,6 @@ import ListComp from './ListComp.vue';
 import { debounce } from './assets/utils';
 
 export default {
-  setup() {
-    console.log(Clickoutside);
-  },
   props: {
     list: {
       type: Array,
@@ -278,7 +275,7 @@ export default {
     position: relative;
     box-sizing: border-box;
     line-height: 26px;
-    padding: 0 28px 0 13px;
+    padding: 0 30px 0 13px;
     transition: border-color 0.5s !important;
     background: #fff;
     height: 30px;

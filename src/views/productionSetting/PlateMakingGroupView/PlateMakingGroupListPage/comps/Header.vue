@@ -2,7 +2,7 @@
   <header>
     <div class="menu">
       <span v-for="it in props.WorkingList" :key="it.ID" :class="{active:it.ID===props.modelValue}" @click="onMenuClick(it)">{{it.Name}}</span>
-      <em v-if="!props.loading && props.WorkingList.length === 0" class="is-pink ft-12"><el-icon class="ft-14"><WarningFilled /></el-icon> 暂无制版工序!</em>
+      <em v-if="!props.loading && props.WorkingList.length === 0" class="is-pink ft-12"><el-icon class="ft-14"><WarningFilled /></el-icon> 暂无相关制版工序!</em>
     </div>
     <mp-button type="primary" v-show="props.modelValue" @click="onClick">+ 添加制版组</mp-button>
   </header>
@@ -42,11 +42,11 @@ const onClick = () => {
     cursor: pointer;
     background-color: #f5f5f5;
     color: #444;
-    transition: 0.15s ease-in-out;
+    transition: 0.2s ease-in-out;
     position: relative;
     user-select: none;
     &:hover {
-      background-color: #eee;
+      color: #26bcf9;
     }
     &.active {
       color: #26bcf9;

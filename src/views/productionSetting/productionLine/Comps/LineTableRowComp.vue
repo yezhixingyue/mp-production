@@ -1,11 +1,11 @@
 <template>
   <li class="table-main" :class="{hs: item._isAfterSplitFirst, split: item._isSplit}">
     <div class="process-item">
-      <span class="process" :title="`${item._WorkName}\r\n报工方式：${item._ReportModeContent}`">{{item._WorkName}}</span>
+      <span class="process" :title="`${item._WorkName}\r\n报工方式：${item._ReportModeContent}\r\n工序类型：${item._WorkingTypeContent}`">{{item._WorkName}}</span>
       <span class="equipment ft-f-12" :title="item._EquipmentText ? item._EquipmentText.replaceAll(' | ', '\r\n') : ''">
         {{item._EquipmentText}}
       </span>
-      <span class="work" v-if="type==='normal'">
+      <span class="work" v-if="type==='normal'" :title="item._PlateMakingWorkContent">
         {{item._PlateMakingWorkContent}}
       </span>
       <span class="operate" :class="type">
@@ -28,8 +28,8 @@
         <template v-for="material in item.MaterialSources" :key="material.MaterialTypeID">
           <p>{{getMaterialName(material.MaterialTypeID)}}：
             <span>
-              {{getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
-              <i v-if="!getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
+              {{getSourceWork(material, [..._summaryWorkList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
+              <i v-if="!getSourceWork(material, [..._summaryWorkList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
               <template v-if="item.PlateMakingMaterialSources"> ；</template>
             </span>
           </p>
@@ -44,8 +44,8 @@
         <template v-for="material in item.PlateMakingMaterialSources" :key="material.MaterialTypeID">
           <p>{{getMaterialName(material.MaterialTypeID)}}：
             <span>
-              {{getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
-              <i v-if="!getSourceWork(material, [...PrcessList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
+              {{getSourceWork(material, [..._summaryWorkList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])}}
+              <i v-if="!getSourceWork(material, [..._summaryWorkList,...PlateMakingWorkSetupHander.PlateMakingWorkAllList])" class="is-gray">来源未设置</i>
             </span>
           </p>
         </template>
@@ -65,7 +65,7 @@ import { ILocalProductionLineWorkings } from '../js/types';
 const props = defineProps<{
   item: ILocalProductionLineWorkings,
   type: 'combine' | 'normal'
-  PrcessList: IWorkingProcedureSearch[]
+  _summaryWorkList: IWorkingProcedureSearch[]
 }>();
 
 const emit = defineEmits(['setPlateMakingWork', 'ToEquipment', 'ToMaterialSource', 'delLineWorking', 'onSplitWorkingRemove']);

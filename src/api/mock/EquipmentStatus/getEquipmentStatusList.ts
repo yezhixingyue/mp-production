@@ -1,5 +1,5 @@
-import { EquipmentTaskStatusEnum } from '@/views/productionManage/EquipmentStatus/js/enums';
-import { ITask } from '@/views/productionManage/EquipmentStatus/js/types';
+import { EquipmentTaskStatusEnum } from '@/views/productionManagePages/EquipmentStatus/js/enums';
+import { ITask } from '@/views/productionManagePages/EquipmentStatus/js/types';
 import Mock from 'mockjs';
 
 export default () => {
@@ -17,8 +17,8 @@ export default () => {
       Status = EquipmentTaskStatusEnum.canWorking;
     }
 
-    if (i > 3) {
-      Status = EquipmentTaskStatusEnum.needMaterial;
+    if (i > 2) {
+      Status = Math.random() > 0.5 ? EquipmentTaskStatusEnum.needMaterial : EquipmentTaskStatusEnum.error;
     }
 
     TaskList.push({
@@ -47,9 +47,10 @@ export default () => {
           ID: '1223',
           Name: '王大锤',
         },
-        'TaskNumber|30-150': 40,
+        'TaskNumber|30-1500': 40,
         TaskList,
-        Error: '报告:机器成了变形金刚！', // 仅在错误状态显示
+        ErrorOperater: '王建国',
+        Error: '机器变成了变形金刚，即将飞往塞伯坦星球', // 仅在错误状态显示
       },
     ],
   });

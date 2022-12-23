@@ -79,22 +79,22 @@
     :closeClick="() => Data.addTemplateFromShow = false"
     :closed="addTemplateCloseedClick"
     >
-    <template #default>
-      <div class="add-printing-color-dialog">
-        <el-form :model="Data.addTemplateFrom" label-width="82px">
-          <el-form-item label="名称：" class="form-item-required">
-            <el-input :maxlength="100" v-model="Data.addTemplateFrom.Name" />
-          </el-form-item>
-          <el-form-item label="" >
-            <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
-            v-model="Data.addTemplateFrom.IsPrintingPlate" label="印刷版" size="large" />
-            <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
-            v-model="Data.addTemplateFrom.IsSameSizeWithPrintingPlate" label="和印刷版保持一致" size="large" />
-            <p>注意：每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。</p>
-          </el-form-item>
-        </el-form>
-      </div>
-    </template>
+      <template #default>
+        <div class="add-printing-color-dialog">
+          <el-form :model="Data.addTemplateFrom" label-width="82px">
+            <el-form-item label="名称：" class="form-item-required">
+              <el-input :maxlength="100" v-model="Data.addTemplateFrom.Name" />
+            </el-form-item>
+            <el-form-item label="" >
+              <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
+                v-model="Data.addTemplateFrom.IsPrintingPlate" label="印刷版" size="large" />
+              <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
+                v-model="Data.addTemplateFrom.IsSameSizeWithPrintingPlate" label="和印刷版保持一致" size="large" />
+              <p>注意：每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。</p>
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
     </DialogContainerComp>
     <footer>
       <div class="bottom-count-box">

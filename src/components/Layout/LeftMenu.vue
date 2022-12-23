@@ -39,6 +39,8 @@ import {
   modulePageNames,
   getChildrenRouteNamesByParentRouteName,
 } from '@/router/modules/getLastRouteInfoByName';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
 
 export default {
   setup() {
@@ -48,6 +50,28 @@ export default {
     const curRoute = computed(() => routeData);
     let defaultOpeneds:string[] = [];
 
+    const userStore = useUserStore();
+
+    const { user } = storeToRefs(userStore);
+
+    const getIsMatchPermission = (route: RouteRecordRaw) => { // 判断是否符合权限
+      if (!route.meta?.requiresAuth || !route.meta.PermissionInfo || route.meta.PermissionInfo.length === 0) return true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let key: any = user.value?.PermissionList || {};
+      try {
+        if (process.env.NODE_ENV === 'development' && route.meta.PermissionInfo[0] === 'Developing') {
+          key = true;
+        } else {
+          route.meta.PermissionInfo.forEach(item => { // 2.5 获取到当前页面所需要的权限信息，看是否满足权限要求
+            key = key[item];
+          });
+        }
+      } catch (error) {
+        key = false;
+      }
+      return key === true;
+    };
+
     function getShowMenuList() { // 初始化获取左侧按钮列表
       if (!moduleRoutes || moduleRoutes.length === 0) return [];
       const list:RouteRecordRaw[] = moduleRoutes.filter(it => (!it.meta || !it.meta.hideMenu)
@@ -55,7 +79,7 @@ export default {
         if (!Array.isArray(_it.children)) return _it;
         return {
           ..._it,
-          children: _it.children.filter(child => child.meta && child.meta.icon && !child.meta.hideMenu), // 此处筛选权限
+          children: _it.children.filter(child => child.meta && child.meta.icon && !child.meta.hideMenu && getIsMatchPermission(child)), // 此处筛选权限
         };
       });
 

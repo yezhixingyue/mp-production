@@ -99,7 +99,6 @@ const getName = (it: PropertyListItemType) => Property.getPropertyName(it);
 const visible = ref(false);
 
 const onPropSelect = (e) => {
-  console.log('onPropSelect', e);
   if (rightPanelData.value) rightPanelData.value.Property = e;
 };
 
@@ -123,7 +122,7 @@ const submit = (e: CapacityConditionItemClass) => {
 onMounted(() => {
   rightPanelData.value = {
     LineEquipmentID: props.curLineEquipment?.LineEquipmentID || '',
-    Value: props.curConditionRow?.Value || '',
+    Value: props.curConditionRow?.Value || props.curConditionRow?.Value === 0 ? props.curConditionRow?.Value : '',
     Type: props.curConditionRow?.Type || props.curCapacityType,
     Property: props.curConditionRow?.Property || null,
   };

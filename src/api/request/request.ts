@@ -18,6 +18,9 @@ const setAuthorization = <D>(config: IDataRequestConfig<D>) => {
   if (userStore.token && _config.headers) {
     const Authorization = `Bearer ${userStore.token}`;
     _config.headers.Authorization = Authorization;
+    if (config.headers?.['Content-Range']) {
+      _config.headers['Content-Range'] = config.headers['Content-Range'];
+    }
   }
   return _config;
 };

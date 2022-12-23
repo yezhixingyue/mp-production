@@ -13,7 +13,7 @@
         <el-table-column
         show-overflow-tooltip prop="Linkman" label="类型" min-width="144">
           <template #default="scope">
-            <span v-if="!scope.row.IsSpecialColor">专色</span>
+            <span v-if="scope.row.IsSpecialColor">专色</span>
             <span v-else>四色</span>
           </template>
         </el-table-column>
@@ -21,7 +21,7 @@
         show-overflow-tooltip prop="ShowColor" label="显示颜色" min-width="158" />
         <el-table-column prop="name" label="操作" min-width="240">
           <template #default="scope">
-            <template v-if="!scope.row.IsSpecialColor">
+            <template v-if="scope.row.IsSpecialColor">
               <mp-button type="info" link @click="editPrintColor(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link

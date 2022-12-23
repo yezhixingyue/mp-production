@@ -70,7 +70,6 @@ export class PropertyListClass {
           default:
             break;
         }
-        console.log(key);
         if (key) {
           target = _list.find(it => {
             const left = it[key] as IPropertyObjectMember | null;
@@ -98,8 +97,6 @@ export class PropertyListClass {
       PropertyList: formatTypePropertyList(PropertyList, it.ID), // 后续可再继续细分
     })).filter(it => it.PropertyList.length > 0);
 
-    console.log(PropertyList, list);
-
     return list;
   }
 
@@ -116,10 +113,11 @@ export class PropertyListClass {
     if (!imperfectProp || !PropertyList || !Array.isArray(PropertyList) || PropertyList.length === 0) return null;
     const t = PropertyList.find(it => {
       const {
-        MaterialType, FixedType, Type, Property,
+        MaterialType, FixedType, Type, Property, Assist,
       } = it;
       if (!((!MaterialType && MaterialType === imperfectProp.MaterialType) || (MaterialType && imperfectProp.MaterialType && MaterialType.ID === imperfectProp.MaterialType.ID))) return false;
       if (!((!Property && Property === imperfectProp.Property) || (Property && imperfectProp.Property && Property.ID === imperfectProp.Property.ID))) return false;
+      if (!((!Assist && Assist === imperfectProp.Assist) || (Assist && imperfectProp.Assist && Assist.ID === imperfectProp.Assist.ID))) return false;
       if (FixedType !== imperfectProp.FixedType) return false;
       if (Type !== imperfectProp.Type) return false;
       return true;
