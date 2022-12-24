@@ -34,4 +34,7 @@ export const otherSettingApis = {
   getUploadedProgress(uniqueName: string) { // 获取断点续传文件已上传的位置  GET /Api/FileNode
     return request({ method: 'GET', url: '/Api/FileNode', params: { uniqueName } });
   },
+  getFileSuffixList() { // GET /Api/File/SuffixList  获取文件上传格式后缀名列表
+    return request<string[]>({ method: 'GET', url: '/Api/File/SuffixList' });
+  },
 };

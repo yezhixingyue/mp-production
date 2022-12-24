@@ -14,6 +14,8 @@ import {
 import { checkMobile } from './utils';
 
 export class PlaceOrderClass {
+  OrderID = ''
+
   /** 工期时间 */
   ProducePeriod = {
     /** 发货时间 */
@@ -164,6 +166,7 @@ export class PlaceOrderClass {
     const resp = await api.ManualOrderHandlerApis.getCreateOrder(temp).catch(() => null);
 
     if (resp?.data.isSuccess) {
+      this.OrderID = resp.data.Data as string;
       return true;
     }
     return false;

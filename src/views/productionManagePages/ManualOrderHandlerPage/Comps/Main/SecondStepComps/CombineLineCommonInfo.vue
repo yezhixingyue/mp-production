@@ -43,7 +43,8 @@
             <em v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
           </td>
           <td class="w-operator">
-            <MpFileSelectButton link :accept="''" @change="(file) => it._File = file" />
+            <MpFileSelectButton link :accept="ManualOrderHandlerPageData._fileAccept.assist"
+             @change="(file) => handleFileChange(file, it, combineData?.FileList || [])" />
           </td>
         </tr>
       </tbody>
@@ -72,6 +73,7 @@ import { ManualOrderHandlerPageData } from '../../../js';
 import WorkingSelectDialog from './ProductionInstanceComps/WorkingSelectDialog.vue';
 import AssistInfoSetupDialog from './ProductionInstanceComps/AssistInfoSetupDialog.vue';
 import { ILineDetailWorkingProcedure } from '../../../js/ProductionLineDetailTypes';
+import { handleFileChange } from '../../../js/utils';
 
 const combineData = computed(() => ManualOrderHandlerPageData.value?.CreateOrderInfo);
 

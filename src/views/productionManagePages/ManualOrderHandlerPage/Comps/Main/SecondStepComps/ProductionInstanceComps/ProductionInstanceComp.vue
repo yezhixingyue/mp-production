@@ -129,7 +129,7 @@
               <em v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
             </td>
             <td class="w-operator">
-              <MpFileSelectButton link :accept="'.pdf'" @change="(file) => it._File = file" />
+              <MpFileSelectButton link :accept="ManualOrderHandlerPageData?._fileAccept.pdf" @change="(file) => handleFileChange(file, it, itemData.FileList)"/>
             </td>
           </tr>
         </tbody>
@@ -150,7 +150,8 @@
               <em v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
             </td>
             <td class="w-operator">
-              <MpFileSelectButton link :accept="''" @change="(file) => it._File = file" />
+              <MpFileSelectButton link :accept="ManualOrderHandlerPageData?._fileAccept.assist"
+               @change="(file)=>handleFileChange(file, it, itemData.FileList)"/>
             </td>
           </tr>
         </tbody>
@@ -175,7 +176,7 @@
               <em v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
             </td>
             <td class="w-operator">
-              <MpFileSelectButton link :accept="'.pdf'" @change="(file) => it._File = file" />
+              <MpFileSelectButton link :accept="ManualOrderHandlerPageData?._fileAccept.pdf" @change="(file) => handleFileChange(file, it, itemData.FileList)"/>
               <RemoveMenu class="remove" @click="onColorRemoveClick(it)" />
             </td>
           </tr>
@@ -220,6 +221,7 @@ import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeC
 import {
   IConvertOrderFile, IPrintColor, IProductionInstanceOriginData, ProductLineSimpleType,
 } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
+import { handleFileChange } from '@/views/productionManagePages/ManualOrderHandlerPage/js/utils';
 import { PrintColorEnumList, PlaceOrderMaterialSourceEnumList } from '../../../../js/EnumList';
 import { PrintSideEnum, PlaceOrderMaterialSourceEnum } from '../../../../js/enums';
 import { PlaceOrderProductionInstance } from '../../../../js/PlaceOrderProductionInstance';

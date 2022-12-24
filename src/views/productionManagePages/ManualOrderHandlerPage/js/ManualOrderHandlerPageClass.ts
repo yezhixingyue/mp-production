@@ -57,6 +57,7 @@ export class ManualOrderHandlerPageClass {
         this.curStep = PlaceStepEnum.Second;
         // 3. 到第二步时需要获取下生产线列表数据
         this.getProductionLineList();
+        this.getFileSuffixList();
         break;
 
       case PlaceStepEnum.Second: // 前往第三步 -- 需要进行前一步内容填写校验
@@ -72,8 +73,7 @@ export class ManualOrderHandlerPageClass {
         result = this.CreateOrderInfo.validateThirdSep();
         if (!result) return;
         // 2. 校验通过后：转换数据格式 准备进行提交
-        console.log(this.CreateOrderInfo);
-        // 3. 上传文件
+        // 3. 上传文件 --- 已在前面步骤中完成
         // 4. 数据整理 - 提交
 
         // 5. 提交成功后跳转至第四步
@@ -130,6 +130,19 @@ export class ManualOrderHandlerPageClass {
     }
   }
 
+  _fileAccept = {
+    pdf: '.pdf',
+    assist: '',
+  }
+
+  private async getFileSuffixList() {
+    if (this._fileAccept.assist) return;
+    const resp = await api.getFileSuffixList().catch(() => null);
+    if (resp?.data.isSuccess) {
+      this._fileAccept.assist = resp.data.Data.join(',');
+    }
+  }
+
   /** 设置生产线  在此加了一层代理， 目的是在该处获取到选中生产线的详细信息以供下面使用 */
   setCurProdutionLine(e: ProductLineSimpleType) {
     // 1. 获取生产线详细信息 及 物料弹窗类别信息  可使用Promise.all方法 --- 在内部获取
@@ -138,8 +151,17 @@ export class ManualOrderHandlerPageClass {
     this.CreateOrderInfo.setCurProdutionLine(e);
   }
 
-  constructor() {
-    this.getExpressList();
-    // this.getProductionLineList(); // 临时获取 方便开发 开发完成后需注释掉该行
+  constructor(origindata?: Pick<ManualOrderHandlerPageClass,
+    'ExpressList' | 'ProductionLineList' | 'FactoryMaterialClassList' | 'SpecialColorList' | '_fileAccept'>) {
+    if (origindata) {
+      this.ExpressList = origindata.ExpressList;
+      this.ProductionLineList = origindata.ProductionLineList;
+      this.FactoryMaterialClassList = origindata.FactoryMaterialClassList;
+      this.SpecialColorList = origindata.SpecialColorList;
+      this._fileAccept.assist = origindata._fileAccept.assist;
+    } else {
+      this.getExpressList();
+      // this.getProductionLineList(); // 临时获取 方便开发 开发完成后需注释掉该行
+    }
   }
 }

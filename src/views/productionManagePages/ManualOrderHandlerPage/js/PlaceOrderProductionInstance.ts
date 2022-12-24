@@ -107,8 +107,6 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
     const _AssistList: IConvertAssistInfo[] = [];
     const _FileList: IConvertOrderFile[] = [];
 
-    console.log(this.WorkingList);
-
     this.WorkingList.forEach(it => {
       // 1. 拼版文件
       if (it.Template && !_FileList.find(_it => _it.Plate === it.Template?.ID)) {

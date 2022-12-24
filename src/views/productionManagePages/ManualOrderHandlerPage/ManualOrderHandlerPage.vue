@@ -3,11 +3,13 @@
     <Header :step="ManualOrderHandlerPageData.curStep" :stepList="ManualOrderHandlerPageData.stepList" />
     <main>
       <!-- 第一步：填写订单信息 -->
-      <FirstStepPanel v-show="(ManualOrderHandlerPageData.curStep === PlaceStepEnum.First)" />
+      <FirstStepPanel v-if="(ManualOrderHandlerPageData.curStep === PlaceStepEnum.First)" />
       <!-- 第二步：设置生产工序 -->
-      <SecondStepPanel v-show="(ManualOrderHandlerPageData.curStep === PlaceStepEnum.Second)" />
+      <SecondStepPanel v-if="(ManualOrderHandlerPageData.curStep === PlaceStepEnum.Second)" />
       <!-- 第三步：展示配置信息及价格设置 -->
-      <ThirdStepPanel v-show="(ManualOrderHandlerPageData.curStep === PlaceStepEnum.Third)" />
+      <ThirdStepPanel v-if="(ManualOrderHandlerPageData.curStep === PlaceStepEnum.Third)" />
+      <!-- 第四步：下单成功 -->
+      <FourthStepPanel v-if="(ManualOrderHandlerPageData.curStep === PlaceStepEnum.Fourth)" />
 
       <!-- 文件上传组件 -->
       <UploadFilesDialog v-model:visible="visible" @uploaded="onUploaded" />
@@ -23,6 +25,7 @@ import Header from './Comps/Header.vue';
 import FirstStepPanel from './Comps/Main/FirstStepPanel.vue';
 import SecondStepPanel from './Comps/Main/SecondStepPanel.vue';
 import ThirdStepPanel from './Comps/Main/ThirdStepPanel.vue';
+import FourthStepPanel from './Comps/Main/FourthStepPanel.vue';
 import UploadFilesDialog from './Comps/Main/UploadFilesComp/UploadFilesDialog.vue';
 import Footer from './Comps/Footer.vue';
 import { ManualOrderHandlerPageClass } from './js/ManualOrderHandlerPageClass';
