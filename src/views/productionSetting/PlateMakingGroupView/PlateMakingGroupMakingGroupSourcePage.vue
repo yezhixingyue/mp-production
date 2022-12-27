@@ -19,7 +19,10 @@ import { IMaterialSources } from '@/store/modules/productionSetting/types';
 import PageContent from '../MaterialSource/PageContent.vue';
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/PlateMakingGroupList' }, name: '制版组' },
+  {
+    to: { path: '/PlateMakingGroupList' },
+    name: PlateMakingGroupManageData.value.WorkingList.find(it => it.ID === PlateMakingGroupManageData.value.WorkID)?.Name || '制版组',
+  },
   {
     name: `设置制版组物料来源：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,
   },
@@ -27,6 +30,8 @@ const BreadcrumbList = computed(() => [
 
 const ProductionSettingStore = useProductionSettingStore();
 const { PlateMakingGroupManageData } = storeToRefs(ProductionSettingStore);
+
+console.log(PlateMakingGroupManageData.value);
 
 const originMaterialSources = computed(() => {
   const list = PlateMakingGroupManageData.value.ManageListData.MaterialSourcesData?.map(it => {

@@ -314,7 +314,7 @@ export default {
           text-overflow: ellipsis;
           line-height: 15px;
         }
-        padding: 5px 15px;
+        padding: 6px 15px 4px;
           width: 100%;
         // width: 120px;
         // overflow: hidden;
@@ -324,11 +324,9 @@ export default {
   }
   > .title {
     font-size: 14px;
-    position: relative;
-    top: -2px;
     width: 5em;
-    // margin-right: 15px;
-    line-height: 23px;
+    margin-right: 10px;
+    line-height: 28px;
     font-weight: 600;
     color: $--color-text-primary;
     text-align: right;

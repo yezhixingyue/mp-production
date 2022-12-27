@@ -56,6 +56,7 @@ export interface ILineDetailWorkingProcedure {
   NoteInfos: ILineWorkingNoteInfo[]
   /** 工序所需资源包（可选） */
   MaterialSources: ILineWorkingMaterialSources []
+  WorkTimes: number | ''
 }
 
 /**

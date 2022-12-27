@@ -25,7 +25,7 @@ if (CombineLineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.dry)
 if (CombineLineCapacityPageData.value?.curCapacityType === CapacityTypeEnum.preparation) name = '准备时间';
 
 const BreadcrumbList = [
-  { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
+  { to: { path: '/combinationProductionLine' }, name: CombineLineCapacityPageData.value?.curLineName || '组合生产线' },
   {
     to: { path: '/combinationEquipment' },
     name: `选择设备/工厂：${CombineLineCapacityPageData.value?.curWork?.Name}`,

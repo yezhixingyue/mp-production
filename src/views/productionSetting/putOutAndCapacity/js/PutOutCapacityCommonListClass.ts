@@ -40,8 +40,11 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
   /** 当前工序，仅生产线和组合生产线使用 */
   curWork: { ID: string, Name: string } | null = null;
 
-  getInitData(curWork: { ID: string, Name: string } | null = null) {
+  curLineName = ''
+
+  getInitData(curWork: { ID: string, Name: string } | null = null, lineName = '') {
     this.curWork = curWork;
+    this.curLineName = lineName;
     this.getList();
     this.getPropertyList();
   }

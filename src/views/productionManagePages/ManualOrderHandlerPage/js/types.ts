@@ -20,13 +20,14 @@ export interface IBaseProperty<T> {
 export interface IConvertAssistInfo {
   /** 辅助信息ID */
   ID: string
+  /** 未赋值前不能用该字段 */
   _Name: string
   /** 辅助信息类型 */
   Type: AssistInfoTypeEnum
   /** 文字信息 */
   Content: string
-  /** 数值信息 -- 暂用不到 */
-  // Value: number
+  /** 数值信息 */
+  Value: number | ''
 }
 
 /**
@@ -71,6 +72,7 @@ export interface IConvertOrderFile {
   _LineInfo: {
     ID: string,
     Name: string,
+    Index: '' | number
   }
 }
 
@@ -94,6 +96,38 @@ interface ICustomerAddress {
   AddressDetail: string
 }
 
+interface IWorkingInstance extends Pick<IWorkingProcedureInfo, 'ID' | 'Type' | 'ReportMode' | 'AllowPartReport' | 'MinPartReportNumber' | 'AllowBatchReport'> {
+  /** 加工顺序 */
+  Index: number
+  /** 加工次数 */
+  WorkTimes: number
+}
+
+interface IProductionInstanceAttributeMaterial {
+  /** 物料ID */
+  ID: string
+  /** 物料属性关系 下方这些字段在后面使用到的时候再进行补充 */
+  // MaterialRelationAttributes
+  // MaterialRelationBrands
+  // MaterialCode
+  // SizeIDS
+}
+
+/** 实例上的属性 */
+interface IProductionInstanceAttribute {
+  /** 物料类型ID */
+  MaterialTypeID: string
+  /** 物料信息 */
+  Material: IProductionInstanceAttributeMaterial
+}
+
+/** 大版信息，仅补充了ID，其它属性在后面使用到的时候再补充 */
+interface IPlateInfo {
+  ID: string
+  /** 大版编号 */
+  Code: number
+}
+
 /**
  * 生产实例
  *
@@ -101,7 +135,7 @@ interface ICustomerAddress {
  */
 export interface IProductionInstance {
   ID: string
-  // Name: string
+  Name: string
   /** 订单ID */
   OrderID: string
   /** 部件ID */
@@ -122,16 +156,14 @@ export interface IProductionInstance {
   Width: number
   /** 尺寸 */
   Size: string
-  /** 印刷文件总面积，可能用不到 */
-  TotalArea: number
   /** 物料来源 = ['0', '1', '2', '3'] */
   MaterialSource: PlaceOrderMaterialSourceEnum
-  /** 物料 */
+  /** 物料ID */
   Material: string
   /** 生产线 */
   LineList: IProductionLineSet[]
   /** 工序 */
-  WorkingList: IWorkingProcedureInfo[]
+  WorkingList: IWorkingInstance[]
   /** 辅助信息列表 */
   AssistList: IConvertAssistInfo[]
   /** 文件列表 */
@@ -142,6 +174,16 @@ export interface IProductionInstance {
   SemiFinished: IBaseProperty<string>
   /** 物料取货地址 */
   Address: ICustomerAddress
+  /** 实例属性 */
+  Attribute: IProductionInstanceAttribute
+  /** 计算属性 后面用到再补充 */
+  // CalculateAttribute
+  /** 大版列表 */
+  PlateList: IPlateInfo[]
+  /** 当前大版 */
+  CurrentPlate: IPlateInfo
+  /** 当前工序 */
+  CurrentWorking: IWorkingInstance
 }
 
 /**
@@ -151,17 +193,31 @@ export interface IProductionInstance {
  */
 export interface IProductAttribute {
   /** 产品一级分类 */
-  FirstLevel: IBaseProperty<number>
+  FirstLevel?: IBaseProperty<number>
   /** 产品二级分类 */
-  SecondLevel: IBaseProperty<number>
+  SecondLevel?: IBaseProperty<number>
   /** 产品信息 */
-  Product: IBaseProperty<string>
+  Product?: IBaseProperty<string>
   /** 款数 */
   KindCount: number
   /** 数量 */
   ProductAmount: number
+  /** 尺寸 */
+  Size: string
   /** 产品单位 */
   Unit: string
+}
+
+/** 网点信息 */
+interface IDelivery {
+  /** 网点编码 */
+  StationSN: string
+  /** 网点名称 */
+  StationName: string
+  /** 片区编码 */
+  DistrictSN: string
+  /** 片区名称 */
+  DistrictName: string
 }
 
 /**
@@ -169,15 +225,23 @@ export interface IProductAttribute {
  *
  * @interface IDeliveryAddress
  */
-export interface IDeliveryAddress {
+interface IDeliveryAddress {
+  /** 订单ID */
+  OrderID: string
   Express: {
+    /** 配送方式 */
     First: number
+    /** 配送公司ID */
     Second: number
   },
+  /** 网点信息 - 物流区域 */
+  Delivery: IDelivery
+  /** 配送公司名称 */
   ExpressText: string
   Address: {
     Consignee: string
     Mobile: string
+    ExpressArea: IAddressAreaCell
     AddressDetail: string
   }
 }
@@ -187,7 +251,7 @@ export interface IDeliveryAddress {
  *
  * @interface IPlaceCustomerInfo
  */
-export interface IPlaceCustomerInfo {
+interface IPlaceCustomerInfo {
   /** 客户ID */
   CustomerID : string
   /** 客户编号 */
@@ -235,19 +299,21 @@ interface IProducePeriod {
 }
 
 /**
- * 创建订单信息
+ * 订单条目信息
  *
  * @export
- * @interface IPlaceOrderInfo
+ * @interface IManageOrderInfo
  */
-export interface IPlaceOrderInfo {
+export interface IManageOrderInfo {
   ID: string
+  /** 订单ID */
+  OrderID: string
   /** 订单状态 */
   Status: OrderStatusEnum
   /** 销售端订单号  */
   SalesOrderID: number
   /** 销售平台信息  */
-  SalesPlatfrom: IBaseProperty<number>
+  SalesPlatfrom?: IBaseProperty<number>
   /** 订单内容  */
   Content: string
   /** 订单描述  */
@@ -257,9 +323,13 @@ export interface IPlaceOrderInfo {
   /** 需要的生产线 */
   LineList: IProductionLineSet[]
   /** 需要生产线中选中的工序 */
-  WorkingList: IWorkingProcedureInfo[]
+  WorkingList: IWorkingInstance[]
   /** 实例列表 */
   InstanceList: IProductionInstance[]
+  /** 辅助信息列表 */
+  AssistList: IConvertAssistInfo[]
+  /** 文件列表 */
+  FileList: IConvertOrderFile[]
   /** 产品属性 */
   Attribute: IProductAttribute
   /** 收货方式 */
@@ -276,6 +346,10 @@ export interface IPlaceOrderInfo {
   CreateTime: string
   /** 是否需要打包 */
   NeedPacked: boolean
+  /** 当前生产实例 */
+  CurrentInstance: IProductionInstance
+  /** 计算属性 后面用到再补充 */
+  // CalculateAttribute
 }
 
 /** 所有可用生产线信息的类型（生产线|组合生产线，简略） */
@@ -299,5 +373,5 @@ interface ISubmitParamsInstanceList extends Omit<PlaceOrderProductionInstance, '
 
 export interface ISubmitParams extends Omit<PlaceOrderClass, 'InstanceList' | 'FileList'> {
   FileList?: Partial<IConvertOrderFile>[]
-  InstanceList: ISubmitParamsInstanceList[]
+  InstanceList: Partial<ISubmitParamsInstanceList>[]
 }

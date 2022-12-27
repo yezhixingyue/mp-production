@@ -48,7 +48,7 @@ export class EquipmentStatusManageClass {
 
     this.loading = true;
     // 获取列表数据 然后进行赋值：list listNumber
-    const resp = await api.getEquipmentStatusList(this.condition).catch(() => null);
+    const resp = await api.productionManageApis.getEquipmentStatusList(this.condition).catch(() => null);
     console.log('获取列表数据', resp);
     this.loading = false;
 

@@ -4,108 +4,16 @@
       <span class="title ft-14">成品尺寸:</span>
       <el-input v-model.trim="combineData.Attribute.Size" maxlength="40" style="width: 290px;"></el-input>
     </p>
-    <table class="work-table">
-      <thead>
-        <tr>
-          <span class="title">代加工工序:</span>
-          <mp-button link type="primary" @click="workingVisible = true">添加工序</mp-button>
-          <span v-if="combineData.WorkingList.length === 0" class="empty is-pink">
-            <el-icon><WarningFilled /></el-icon>暂无工序, 请添加工序
-          </span>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="work in combineData.WorkingList" :key="work.ID">
-          <td class="w-title" :title="work.Name">{{ work.Name }}</td>
-          <td class="w-content" :title="getWorkingContent(work).replaceAll('；', '\r\n')">{{ getWorkingContent(work) }}</td>
-          <td class="w-operator">
-            <RemoveMenu class="remove" @click="onWorkRemoveClick(work)" />
-          </td>
-        </tr>
-        <tr v-if="combineData.WorkingList.length > 0" class="extra">
-          <mp-button link type="primary" @click="assistVisible = true">辅助信息</mp-button>
-        </tr>
-      </tbody>
-    </table>
-    <!-- 辅助文件列表 -->
-    <table v-if="ManualOrderHandlerPageData && combineData.WorkingList.length > 0 && _AssistFileList.length > 0">
-      <thead>
-        <tr>
-          <span class="title">辅助文件:</span>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="it in _AssistFileList" :key="it._NoteInfo?.ID">
-          <td class="w-title" :title="it._NoteInfo?.Name">{{ it._NoteInfo?.Name }}</td>
-          <td class="w-content file" :title="it._File?.name || ''">
-            <i v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(0, -6) }}</i>
-            <i v-else>{{ it._File?.name || '' }}</i>
-            <em v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
-          </td>
-          <td class="w-operator">
-            <MpFileSelectButton link :accept="ManualOrderHandlerPageData._fileAccept.assist"
-             @change="(file) => handleFileChange(file, it, combineData?.FileList || [])" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <!-- 设置辅助信息弹窗 -->
-    <AssistInfoSetupDialog v-model="combineData.AssistList" v-model:visible="assistVisible" />
-    <!-- 添加工序 -->
-    <WorkingSelectDialog
-      v-model:visible="workingVisible"
-      v-model="combineData.WorkingList"
-      :workingList="combineData._curCombineLine?.Detail.WorkingProcedures || []"
-      @change="handleWorkingSelect"
-    />
-    <!-- 设置辅助信息弹窗 -->
-    <!-- <AssistInfoSetupDialog v-model="itemData.AssistList" v-model:visible="assistVisible" /> -->
+    <RightSetupPanelComp v-model="combineData" index="" isCombine :WorkingProcedures="combineData._curCombineLine?.Detail.WorkingProcedures || []" />
   </div>
 </template>
 
 <script setup lang='ts'>
-import { ref, computed } from 'vue';
-import { MpMessage } from '@/assets/js/utils/MpMessage';
-import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
-import MpFileSelectButton from '@/components/common/General/MpFileSelectButton.vue';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { computed } from 'vue';
 import { ManualOrderHandlerPageData } from '../../../js';
-import WorkingSelectDialog from './ProductionInstanceComps/WorkingSelectDialog.vue';
-import AssistInfoSetupDialog from './ProductionInstanceComps/AssistInfoSetupDialog.vue';
-import { ILineDetailWorkingProcedure } from '../../../js/ProductionLineDetailTypes';
-import { handleFileChange } from '../../../js/utils';
+import RightSetupPanelComp from './ProductionInstanceComps/RightSetupPanelComp.vue';
 
 const combineData = computed(() => ManualOrderHandlerPageData.value?.CreateOrderInfo);
-
-const workingVisible = ref(false);
-
-const handleWorkingSelect = () => {
-  combineData.value?.handleCombineWorkingSelect();
-};
-
-/** 辅助文件列表 */
-const _AssistFileList = computed(() => combineData.value?.FileList.filter(it => it._NoteInfo) || []);
-
-const assistVisible = ref(false);
-
-const onWorkRemoveClick = (work: ILineDetailWorkingProcedure) => {
-  MpMessage.warn({
-    title: '确定删除该工序吗',
-    msg: `工序名称: [ ${work.Name} ]`,
-    onOk: () => {
-      if (!combineData.value) return;
-      combineData.value.WorkingList = combineData.value.WorkingList.filter(it => it.ID !== work.ID);
-      handleWorkingSelect();
-    },
-  });
-};
-
-const getWorkingContent = (work: ILineDetailWorkingProcedure) => work.NoteInfos
-  .filter(it => it.Type === AssistInfoTypeEnum.text)
-  .map(it => combineData.value?.AssistList.find(_it => _it.ID === it.ID))
-  .filter(it => it && it.Content)
-  .map(it => `${it?._Name}：${it?.Content}`)
-  .join('；');
 
 </script>
 
@@ -197,6 +105,12 @@ const getWorkingContent = (work: ILineDetailWorkingProcedure) => work.NoteInfos
               }
             }
           }
+          &.w-work-times {
+            width: 150px;
+            .el-input {
+              width: 55px;
+            }
+          }
           &.w-operator {
             // width: 239px;
             padding-left: 10px;
@@ -210,12 +124,12 @@ const getWorkingContent = (work: ILineDetailWorkingProcedure) => work.NoteInfos
         }
       }
     }
-    &.work-table > tbody > tr > td {
-      &.w-content {
-        width: 475px;
-        max-width: 475px;
-      }
-    }
+    // &.work-table > tbody > tr > td {
+    //   &.w-content {
+    //     width: 475px;
+    //     max-width: 475px;
+    //   }
+    // }
   }
 }
 </style>

@@ -23,6 +23,7 @@
 import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 
 const props = defineProps<{
   visible: boolean
@@ -43,11 +44,12 @@ const localVisible = computed({
 const list = ref<IConvertAssistInfo[]>([]);
 
 const onOpen = () => {
-  list.value = props.modelValue.map(it => ({ ...it }));
+  list.value = props.modelValue.filter(it => it.Type === AssistInfoTypeEnum.text).map(it => ({ ...it }));
 };
 
 const submit = () => {
-  emit('update:modelValue', list.value);
+  const _list = props.modelValue.filter(it => it.Type !== AssistInfoTypeEnum.text);
+  emit('update:modelValue', [...list.value, ..._list]);
   localVisible.value = false;
 };
 

@@ -101,7 +101,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   }
 
   /** 根据选中工序生成相关信息: WorkingList AssistList FileList */
-  generateInstanceDataByWorkingList() {
+  handleWorkingSelect(index: number | '') {
     // 需要生成的数据有: WorkingList AssistList FileList  其中  FileList中包含拼版文件 辅助文件 和 专色文件 3种类型
 
     const _AssistList: IConvertAssistInfo[] = [];
@@ -119,6 +119,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
           _LineInfo: {
             ID: this._originLineData?.ID || '',
             Name: this._originLineData?.Name || '',
+            Index: index,
           },
         });
       }
@@ -135,6 +136,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
             _LineInfo: {
               ID: this._originLineData?.ID || '',
               Name: this._originLineData?.Name || '',
+              Index: index,
             },
           });
         }
@@ -146,6 +148,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
             _Name: NoteInfo.Name,
             Type: NoteInfo.Type,
             Content: t ? t.Content : '',
+            Value: '',
           });
         }
       });
@@ -160,7 +163,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   }
 
   /** 处理专色文件变动 添加或删除 */
-  handleSpecialColorChange(list: IPrintColor[]) {
+  handleSpecialColorChange(list: IPrintColor[], index: number | '') {
     const ids = list.map(it => it.ID);
     this.FileList = this.FileList.filter(it => !it._SpecialColorInfo || ids.includes(it._SpecialColorInfo.ID));
     const selectedIds = this.FileList.filter(it => it._SpecialColorInfo).map(it => it._SpecialColorInfo?.ID || '');
@@ -175,10 +178,17 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
       _LineInfo: {
         ID: this._originLineData?.ID || '',
         Name: this._originLineData?.Name || '',
+        Index: index,
       },
     }));
 
     this.FileList.push(...newColorFiles);
+  }
+
+  /** 处理数值变动 */
+  handleNumbericChange(list: IConvertAssistInfo[]) {
+    const textList = this.AssistList.filter(it => it.Type === AssistInfoTypeEnum.text);
+    this.AssistList = [...textList, ...list];
   }
 
   _MaterialList: IFactoryMaterialList[] = []
@@ -206,7 +216,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
 
   /** 当前生产线实例名称 */
   get _LineInstanceName() {
-    if (!this._isBelongToCombineLine) return '生产线';
+    if (!this._isBelongToCombineLine) return '';
     return this.SemiFinished.Name || '';
   }
 
@@ -267,6 +277,19 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
       return false;
     }
 
+    const text = this._LineInstanceName ? '中 ' : '';
+
+    let target = this.WorkingList.find(it => it.WorkTimes === '');
+    if (target) {
+      MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序未设置作业次数` });
+      return false;
+    }
+    target = this.WorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || it.WorkTimes <= 0));
+    if (target) {
+      MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序作业次数设置不正确，必须为正整数类型` });
+      return false;
+    }
+
     if (this.MaterialSource !== PlaceOrderMaterialSourceEnum.warehouse && this.AllowUnionMekeup) {
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}物料来源非仓库领料，此时应禁止印刷版合拼` });
       return false;
@@ -276,7 +299,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
     if (t) {
       MpMessage.error({
         title: '操作失败',
-        msg: `${this._LineInstanceName}中 [ ${t._NoteInfo?.Name || t._PlateTemplate?.Name || t._SpecialColorInfo?.Name} ] 未上传文件`,
+        msg: `${this._LineInstanceName}${text}[ ${t._NoteInfo?.Name || t._PlateTemplate?.Name || t._SpecialColorInfo?.Name} ] 未上传文件`,
       });
       return false;
     }

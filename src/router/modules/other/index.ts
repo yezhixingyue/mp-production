@@ -9,7 +9,7 @@ const routes: RouteRecordRaw = {
   meta: {
     title: '其它设置',
     requiresAuth: true,
-    icon: 'iconfont icon-guanli',
+    icon: 'iconfont icon-guanli scale-13',
   },
   children: [
     /* 转换器

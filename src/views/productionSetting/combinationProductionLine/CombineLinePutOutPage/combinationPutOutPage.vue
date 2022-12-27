@@ -28,7 +28,7 @@ const curLineEquipment = JSON.parse(route.params.LineEquipment as string);
 productionSettingStore.setCombineLinePutOutPageData(curLineEquipment);
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
+  { to: { path: '/combinationProductionLine' }, name: CombineLinePutOutPageData.value?.curLineName || '组合生产线' },
   {
     to: { path: '/combinationEquipment' },
     name: `选择设备/工厂：${CombineLinePutOutPageData.value?.curWork?.Name}`,
@@ -48,7 +48,7 @@ const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>
 onMounted(() => {
   const workString = route.params.Work as string;
   const curWork: { ID: string, Name: string } | null = workString ? JSON.parse(workString) : null;
-  CombineLinePutOutPageData.value?.getInitData(curWork);
+  CombineLinePutOutPageData.value?.getInitData(curWork, route.params.lineName as string);
 });
 
 </script>

@@ -90,6 +90,9 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
       height: 16px;
       display: flex;
       align-items: center;
+      &:first-of-type {
+        margin-top: 8px;
+      }
       >span{
         width: 100px;
         &.hint{
@@ -115,6 +118,10 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
       }
     }
     > ul {
+      padding-bottom: 25px;
+      &:last-of-type {
+        padding-bottom: 10px;
+      }
       > li {
         border: 1px solid #eee;
         border-bottom: none;

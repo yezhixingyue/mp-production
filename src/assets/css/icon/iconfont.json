@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "32949627",
+      "name": "组合生产线",
+      "font_class": "zuheshengchanxian",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "33041597",
+      "name": "生产异常",
+      "font_class": "shengchanyichang",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "33041600",
+      "name": "外协异常",
+      "font_class": "waixieyichang",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "33041699",
+      "name": "异常管理",
+      "font_class": "yichangguanli",
+      "unicode": "e637",
+      "unicode_decimal": 58935
+    },
+    {
+      "icon_id": "14719563",
+      "name": "手动下单",
+      "font_class": "header-03",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
       "icon_id": "33040633",
       "name": "制版组",
       "font_class": "zhibanzu",
@@ -46,13 +81,6 @@
       "font_class": "gongxu",
       "unicode": "e613",
       "unicode_decimal": 58899
-    },
-    {
-      "icon_id": "32315915",
-      "name": "组合生产线",
-      "font_class": "zuheshengchanxian",
-      "unicode": "e614",
-      "unicode_decimal": 58900
     },
     {
       "icon_id": "32315849",

@@ -118,7 +118,7 @@ const totalPrice = computed(() => {
 
   > footer {
     text-align: center;
-    padding-top: 30px;
+    padding: 30px 0;
     > div {
       margin-bottom: 15px;
       .el-input {

@@ -9,7 +9,7 @@ const routes: RouteRecordRaw = {
   meta: {
     title: '企业管理',
     requiresAuth: true,
-    icon: 'iconfont icon-qiyeguanli',
+    icon: 'iconfont icon-qiyeguanli scale-11',
   },
   children: [
     /* 员工管理

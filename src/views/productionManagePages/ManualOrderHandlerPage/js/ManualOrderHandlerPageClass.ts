@@ -1,6 +1,8 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getMaterialTypeGroup, IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { PlaceStepEnum } from './enums';
 import { PlaceOrderClass } from './PlaceOrderClass';
 import { IBaseProperty, IPrintColor, ProductLineSimpleType } from './types';
@@ -130,6 +132,18 @@ export class ManualOrderHandlerPageClass {
     }
   }
 
+  /** 数值列表数据 */
+  AssistNumbericalList: IAssistListItem[] = [];
+
+  /** 获取数值列表数据 */
+  getAssistNumbericalList = async () => {
+    if (this.AssistNumbericalList.length > 0) return;
+    const resp = await api.getNoteAll(AssistInfoTypeEnum.numerical).catch(() => null);
+    if (resp?.data.isSuccess) {
+      this.AssistNumbericalList = resp.data.Data;
+    }
+  }
+
   _fileAccept = {
     pdf: '.pdf',
     assist: '',
@@ -152,12 +166,13 @@ export class ManualOrderHandlerPageClass {
   }
 
   constructor(origindata?: Pick<ManualOrderHandlerPageClass,
-    'ExpressList' | 'ProductionLineList' | 'FactoryMaterialClassList' | 'SpecialColorList' | '_fileAccept'>) {
+    'ExpressList' | 'ProductionLineList' | 'FactoryMaterialClassList' | 'SpecialColorList' | '_fileAccept' | 'AssistNumbericalList'>) {
     if (origindata) {
       this.ExpressList = origindata.ExpressList;
       this.ProductionLineList = origindata.ProductionLineList;
       this.FactoryMaterialClassList = origindata.FactoryMaterialClassList;
       this.SpecialColorList = origindata.SpecialColorList;
+      this.AssistNumbericalList = origindata.AssistNumbericalList;
       this._fileAccept.assist = origindata._fileAccept.assist;
     } else {
       this.getExpressList();

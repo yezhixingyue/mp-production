@@ -25,7 +25,10 @@ if (PlateMakingGroupCapacityPageData.value?.curCapacityType === CapacityTypeEnum
 if (PlateMakingGroupCapacityPageData.value?.curCapacityType === CapacityTypeEnum.preparation) name = '准备时间';
 
 const BreadcrumbList = [
-  { to: { path: '/PlateMakingGroupList' }, name: '制版组' },
+  {
+    to: { path: '/PlateMakingGroupList' },
+    name: PlateMakingGroupManageData.value.WorkingList.find(it => it.ID === PlateMakingGroupManageData.value.WorkID)?.Name || '制版组',
+  },
   {
     to: { path: '/PlateMakingGroupEquipmentList' },
     name: `选择设备/工厂：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,

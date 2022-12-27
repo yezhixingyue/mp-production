@@ -4,6 +4,7 @@ import { ISubcontractorFactoryListItemType } from '@/views/productionResources/s
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
 import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/TypeClass/Equipment';
 import { MaterialTypeLimitItemType } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import request from '../request/request';
 
 export const resourceApis = {
@@ -20,6 +21,10 @@ export const resourceApis = {
   },
   getResourceNoteGroup() { // POST /Api/Note/Group  所有辅助信息分类查询
     return request({ method: 'GET', url: '/Api/Note/Group' });
+  },
+  /** GET /Api/Note/All    辅助信息分类查询 */
+  getNoteAll(noteType?: AssistInfoTypeEnum) {
+    return request<IAssistListItem[]>({ method: 'GET', url: '/Api/Note/All', params: { noteType } });
   },
   /** 生产资源 - 设备分类相关 EquipmentClassification
    -------------------------------------------- */

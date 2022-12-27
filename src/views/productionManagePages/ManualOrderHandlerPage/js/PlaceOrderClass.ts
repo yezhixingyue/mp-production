@@ -147,21 +147,31 @@ export class PlaceOrderClass {
     delete temp._curLineType;
     delete temp._curSinigleLine;
 
-    temp.InstanceList = temp.InstanceList.map(it => ({
-      ...it,
-      FileList: it.FileList.map(f => {
-        const t = {
-          UniqueName: f.UniqueName,
-          Plate: f.Plate,
-          AssistList: f.AssistList,
-          SpecialColorList: f.SpecialColorList,
-        };
-        if (!f.Plate) delete t.Plate;
-        if (!f.AssistList?.length) delete t.AssistList;
-        if (!f.SpecialColorList?.length) delete t.SpecialColorList;
-        return t;
-      }),
-    }));
+    temp.InstanceList = temp.InstanceList.map(it => {
+      const _it = {
+        ...it,
+        FileList: it.FileList?.map(f => {
+          const t = {
+            UniqueName: f.UniqueName,
+            Plate: f.Plate,
+            AssistList: f.AssistList,
+            SpecialColorList: f.SpecialColorList,
+          };
+          if (!f.Plate) delete t.Plate;
+          if (!f.AssistList?.length) delete t.AssistList;
+          if (!f.SpecialColorList?.length) delete t.SpecialColorList;
+          return t;
+        }) || [],
+      };
+      delete _it._MaterialSource;
+      delete _it._originLineData;
+      delete _it._isBelongToCombineLine;
+      delete _it._MaterialList;
+      delete _it._key;
+      delete _it._CacheMaterialTypeIDs;
+
+      return _it;
+    });
 
     const resp = await api.ManualOrderHandlerApis.getCreateOrder(temp).catch(() => null);
 
@@ -263,6 +273,17 @@ export class PlaceOrderClass {
         return false;
       }
 
+      let target = this.WorkingList.find(it => it.WorkTimes === '');
+      if (target) {
+        MpMessage.error({ title: '操作失败', msg: `[${target.Name}] 工序未设置作业次数` });
+        return false;
+      }
+      target = this.WorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || it.WorkTimes <= 0));
+      if (target) {
+        MpMessage.error({ title: '操作失败', msg: `[${target.Name}] 工序作业次数设置不正确，必须为正整数类型` });
+        return false;
+      }
+
       const t = this.FileList.find(it => !it._File);
       if (t) {
         MpMessage.error({
@@ -361,7 +382,7 @@ export class PlaceOrderClass {
   }
 
   /** 组合生产线  添加工序 | 删除工序 后的对应处理函数： 用于生成半成品生产线实例： 1. 半成品   2. 来自其它生产线  3. 去重  4. 必需 */
-  handleCombineWorkingSelect() {
+  handleWorkingSelect() {
     const list: PlaceOrderProductionInstance[] = [];
 
     // 1. 定义组合生产线中根据所选工序计算出来的所有可用到的半成品列表 -- 包含必需和非必需 必需的排至前面
@@ -399,6 +420,7 @@ export class PlaceOrderClass {
             _LineInfo: {
               ID: this._curCombineLine?.ID || '',
               Name: this._curCombineLine?.Name || '',
+              Index: '',
             },
           });
         }
@@ -410,6 +432,7 @@ export class PlaceOrderClass {
             _Name: NoteInfo.Name,
             Type: NoteInfo.Type,
             Content: t ? t.Content : '',
+            Value: '',
           });
         }
       });
@@ -430,6 +453,12 @@ export class PlaceOrderClass {
     this._CombineInstanceList = list;
     this.AssistList = _AssistList;
     this.FileList = _FileList;
+  }
+
+  /** 处理数值变动 */
+  handleNumbericChange(list: IConvertAssistInfo[]) {
+    const textList = this.AssistList.filter(it => it.Type === AssistInfoTypeEnum.text);
+    this.AssistList = [...textList, ...list];
   }
 
   /** 组合生产线实例选中或切换生产线 */

@@ -1,0 +1,52 @@
+<template>
+  <section class="page-wrap">
+    <Header :condition="ManageOrderListPageData.condition" :getList="getList" :setCondition="setCondition" @clear="clearCondition" />
+    <Main :list="ManageOrderListPageData.list" :MaterialList="ManageOrderListPageData.MaterialList" :loading="ManageOrderListPageData.loading" />
+    <Footer :condition="ManageOrderListPageData.condition" :getList="getList" :total="ManageOrderListPageData.listNumber" />
+  </section>
+</template>
+
+<script setup lang='ts'>
+import { onMounted, ref } from 'vue';
+import Header from './Comps/Header.vue';
+import Main from './Comps/Main.vue';
+import Footer from './Comps/Footer.vue';
+import { ManageOrderListClass } from './js/ManageOrderListClass';
+
+const ManageOrderListPageData = ref(new ManageOrderListClass());
+
+const setCondition = (e) => { ManageOrderListPageData.value.setCondition(e); };
+
+const clearCondition = () => { ManageOrderListPageData.value.clearCondition(); };
+
+const getList = () => { ManageOrderListPageData.value.getList(); };
+
+onMounted(() => { ManageOrderListPageData.value.getInitData(); });
+</script>
+
+<script lang="ts">
+export default {
+  name: 'ManageOrderListPage',
+};
+</script>
+
+<style scoped lang='scss'>
+.page-wrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  > main {
+    flex: 1;
+  }
+  > footer {
+    height: 40px;
+    padding-top: 7px;
+  }
+  > header, > footer {
+    flex: none;
+  }
+  > header, > main, > footer {
+    background-color: #fff;
+  }
+}
+</style>

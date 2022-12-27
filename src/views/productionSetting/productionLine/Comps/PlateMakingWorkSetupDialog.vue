@@ -4,7 +4,7 @@
       <li>
         <h4>设置制版工序：</h4>
         <el-radio-group v-model="ruleForm.PlateMakingWorkID" @change="ruleForm.PlateMakingGroupID = ''">
-          <el-radio v-for="it in PlateMakingWorkSetupHander.PlateMakingWorkAllList" :key="it.ID" :label="it.ID" :title="it.Name">{{it.Name}}</el-radio>
+          <el-radio v-for="it in localPlateMakingWorkAllList" :key="it.ID" :label="it.ID" :title="it.Name">{{it.Name}}</el-radio>
         </el-radio-group>
       </li>
       <li v-show="showGroup">
@@ -25,6 +25,7 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { storeToRefs } from 'pinia';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ISetPlateMakingWorkParams } from '../js/types';
+import { ReportModeEnum } from '../../process/enums';
 
 const props = defineProps<{
   visible: boolean,
@@ -46,6 +47,17 @@ const productionSettingStore = useProductionSettingStore();
 const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
 
 const title = computed(() => `设置制版工序：${props.curWorkName}`);
+
+const localPlateMakingWorkAllList = computed(() => {
+  if (PlateMakingWorkSetupHander.value.curWorkItem) {
+    const curReportMode = PlateMakingWorkSetupHander.value.curWorkItem._WorkItemInfo.ReportMode; // 报工方式
+    if (curReportMode === ReportModeEnum.board) { // 大版报工
+      return PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.filter(it => it.ReportMode === ReportModeEnum.board);
+    }
+  }
+
+  return PlateMakingWorkSetupHander.value.PlateMakingWorkAllList;
+});
 
 const ruleForm: ISetPlateMakingWorkParams = reactive({
   LineWorkID: '',

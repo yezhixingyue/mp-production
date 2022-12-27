@@ -38,6 +38,7 @@ export interface IProductionLineSet {
  * @interface IWorkingProcedureInfo
  */
 export interface IWorkingProcedureInfo{
+  /** 工序ID */
   ID: string,
   Name: string,
   CreateTime: string,

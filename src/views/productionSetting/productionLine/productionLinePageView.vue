@@ -333,6 +333,7 @@ const getWorkingInfo = (item: IProductionLineWorkings) => {
     Name: t.Name,
     ReportModeContent: getEnumNameByIDAndEnumList(t.ReportMode, ReportModeEnumList),
     WorkingTypeContent: getEnumNameByIDAndEnumList(t.Type, WorkingTypeEnumList),
+    WorkItemInfo: t,
   } : null;
 };
 
@@ -406,6 +407,7 @@ const localTableList = computed(() => {
       temp._WorkName = info.Name;
       temp._ReportModeContent = info.ReportModeContent;
       temp._WorkingTypeContent = info.WorkingTypeContent;
+      temp._WorkItemInfo = info.WorkItemInfo;
     }
     temp._EquipmentText = getEquipmentText(item);
     temp._PlateMakingWorkContent = getPlateMakingWorkContent(item);
@@ -426,7 +428,12 @@ const ToMaterialSource = (item: ILocalProductionLineWorkings) => {
   const name = isCombine.value ? 'combinationMaterialSource' : 'materialSource';
   router.push({
     name,
-    params: { processInfo: JSON.stringify(item), lineData: JSON.stringify(ProductionLineData.value), WorkName: item._WorkName },
+    params: {
+      processInfo: JSON.stringify(item),
+      lineData: JSON.stringify(ProductionLineData.value),
+      WorkName: item._WorkName,
+      lineName: actionLine.value?.Name || '生产线',
+    },
   });
 };
 // 跳转生产设备
@@ -434,7 +441,12 @@ const ToEquipment = (item: ILocalProductionLineWorkings) => {
   const name = isCombine.value ? 'combinationEquipment' : 'equipment';
   router.push({
     name,
-    params: { processInfo: JSON.stringify(item), WorkName: item._WorkName, isSplit: JSON.stringify(item._isSplit) },
+    params: {
+      processInfo: JSON.stringify(item),
+      WorkName: item._WorkName,
+      isSplit: JSON.stringify(item._isSplit),
+      lineName: actionLine.value?.Name || '生产线',
+    },
   });
 };
 // 获取生产线工序列表
@@ -700,6 +712,7 @@ const setSplitPrimaryClick = () => {
 const PlateMakingVisible = ref(false);
 const curWorkName = ref('');
 const setPlateMakingWork = (item: ILocalProductionLineWorkings) => {
+  console.log(item);
   PlateMakingWorkSetupHander.value.setCurWorkItem(item);
   curWorkName.value = item._WorkName || '';
   PlateMakingVisible.value = true;
@@ -748,6 +761,7 @@ onMounted(() => {
     padding-left: 22px;
     min-width: 200px;
     box-shadow: 0 0 2px 5px #000;
+    flex: none;
     .set-slit{
       margin-top: 12px;
       margin-left: -2px;
@@ -817,6 +831,7 @@ onMounted(() => {
     background-color: #fff;
     padding-right: 10px;
     flex: 1;
+    overflow-x: hidden;
     >header{
       padding: 20px;
       padding-left: 0;

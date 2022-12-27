@@ -25,14 +25,15 @@
       }}生产线</mp-button>
     </div>
     <!-- 单一生产线实例 -->
-    <ProductionInstanceComp v-show="curLineData.Type===LineTypeEnum.normal" v-model="ManualOrderHandlerPageData.CreateOrderInfo._SingleInstanceList[0]" />
+    <ProductionInstanceComp
+      v-show="curLineData.Type===LineTypeEnum.normal" :index="0" v-model="ManualOrderHandlerPageData.CreateOrderInfo._SingleInstanceList[0]" />
     <!-- 组合生产线公共部分 -->
     <CombineLineCommonInfo v-show="curLineData.Type === LineTypeEnum.combine" />
     <!-- 组合生产线实例列表 -->
     <ProductionInstanceComp
       v-show="curLineData.Type===LineTypeEnum.combine"
       v-for="(item, i) in ManualOrderHandlerPageData.CreateOrderInfo._CombineInstanceList" :key="item._key"
-      v-model="ManualOrderHandlerPageData.CreateOrderInfo._CombineInstanceList[i]"
+      v-model="ManualOrderHandlerPageData.CreateOrderInfo._CombineInstanceList[i]" :index="i"
     />
     <p class="add-semiFinished" v-show="curLineData.Type === LineTypeEnum.combine
       && ManualOrderHandlerPageData.CreateOrderInfo._AllMaterialSources.length > ManualOrderHandlerPageData.CreateOrderInfo._CombineInstanceList.length">

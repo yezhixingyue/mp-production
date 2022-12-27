@@ -4,11 +4,11 @@ import { IProductionLineWorkings } from '@/store/modules/productionSetting/types
 import { FetchWorkingProcedureSearchEnum } from '../../js/enums';
 import { IPlateMakingAllGroupType, IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
 import { ReportModeEnum, WorkingTypeEnum } from '../../process/enums';
-import { ISetPlateMakingWorkParams } from './types';
+import { ISetPlateMakingWorkParams, ILocalProductionLineWorkings } from './types';
 
 export class PlateMakingWorkSetupClass {
   /** 当前正在设置的生产线工序 */
-  curWorkItem: null | IProductionLineWorkings = null
+  curWorkItem: null | ILocalProductionLineWorkings = null
 
   /** 全部制版工序列表 */
   PlateMakingWorkAllList: IWorkingProcedureSearch[] = []
@@ -30,7 +30,7 @@ export class PlateMakingWorkSetupClass {
   }
 
   /** 设置当前生产线工序及名称 */
-  setCurWorkItem(item: IProductionLineWorkings) {
+  setCurWorkItem(item: ILocalProductionLineWorkings) {
     this.curWorkItem = item;
   }
 

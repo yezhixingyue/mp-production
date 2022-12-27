@@ -55,7 +55,7 @@ const api = {
   // 公司管理 api
   ...companyApis,
   // 生产管理 api
-  ...productionManageApis,
+  productionManageApis,
   // 手动下单 api
   ManualOrderHandlerApis,
 };

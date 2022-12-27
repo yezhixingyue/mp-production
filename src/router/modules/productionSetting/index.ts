@@ -9,7 +9,7 @@ const routes: RouteRecordRaw = {
   meta: {
     title: '生产设置',
     requiresAuth: true,
-    icon: 'iconfont icon-shebeifenlei',
+    icon: 'iconfont icon-shengchanxian',
   },
   children: [
     /* 生产线模块
@@ -190,7 +190,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '制版组',
         requiresAuth: true,
-        icon: 'iconfont icon-zhibanzu',
+        icon: 'iconfont icon-zhibanzu scale-9',
         pageName: 'PlateMakingGroupListPage',
       },
       component: () => import('@/views/productionSetting/PlateMakingGroupView/PlateMakingGroupListPage/PlateMakingGroupListPage.vue'),

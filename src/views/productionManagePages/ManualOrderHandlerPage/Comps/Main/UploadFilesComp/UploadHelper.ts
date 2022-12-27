@@ -37,7 +37,7 @@ export class UploadHelper {
     const UniqueName = FileTypeClass.getUniqueFileName({
       file: this.target._File,
       Terminal: 3,
-      aside: `${this.target._LineInfo.ID}${type}`,
+      aside: `${this.target._LineInfo.ID}${this.target._LineInfo.Index}${type}`,
       CustomerID: userStore.user?.StaffID || '',
     });
 

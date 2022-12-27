@@ -40,6 +40,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManualOrderHandlerPage/ManualOrderHandlerPage.vue'),
     },
+    /* 订单
+    -------------------------------------- */
+    {
+      path: '/ManageOrderList',
+      name: 'ManageOrderList',
+      meta: {
+        title: '订单',
+        requiresAuth: true,
+        icon: 'icon-dingdan iconfont scale-9',
+        pageName: 'ManageOrderListPage',
+        PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/ManageOrderListPage/ManageOrderListPage.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {

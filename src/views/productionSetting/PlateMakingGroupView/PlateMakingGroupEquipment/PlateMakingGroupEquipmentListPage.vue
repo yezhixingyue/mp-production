@@ -20,7 +20,10 @@ import EquipmentListPage from '../../putOutAndCapacity/EquipmentListPage.vue';
 import { EquipmentListType, ILineEquipmentSaveParams } from '../../putOutAndCapacity/js/types';
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/PlateMakingGroupList' }, name: '制版组' },
+  {
+    to: { path: '/PlateMakingGroupList' },
+    name: PlateMakingGroupManageData.value.WorkingList.find(it => it.ID === PlateMakingGroupManageData.value.WorkID)?.Name || '制版组',
+  },
   {
     name: `选择设备/工厂：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,
   },

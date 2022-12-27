@@ -30,7 +30,10 @@ const curLineEquipment = JSON.parse(route.params.LineEquipment as string);
 productionSettingStore.setPlateMakingGroupCapacityPageData(curLineEquipment);
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/PlateMakingGroupList' }, name: '制版组' },
+  {
+    to: { path: '/PlateMakingGroupList' },
+    name: PlateMakingGroupManageData.value.WorkingList.find(it => it.ID === PlateMakingGroupManageData.value.WorkID)?.Name || '制版组',
+  },
   {
     to: { path: '/PlateMakingGroupEquipmentList' },
     name: `选择设备/工厂：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,

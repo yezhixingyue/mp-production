@@ -25,9 +25,10 @@ const route = useRoute();
 const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
 
 const curWorkName = ref('');
+const curLineName = ref('');
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/productionLine' }, name: '生产线' },
+  { to: { path: '/productionLine' }, name: curLineName.value },
   {
     name: `设置工序物料来源：${curWorkName.value}`,
   },
@@ -65,6 +66,7 @@ onMounted(() => {
     const lineData = JSON.parse(route.params.lineData as string);
     workListRange.value = lineData?.ProductionLineWorkings?.filter(it => it.LineWorkID !== temp.LineWorkID).map(it => it.WorkID) || [];
     curWorkName.value = route.params.WorkName as string;
+    curLineName.value = route.params.lineName as string;
   }
 });
 </script>

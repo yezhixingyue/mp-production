@@ -39,9 +39,10 @@ const router = useRouter();
 const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
 
 const curLineWorkName = ref('');
+const curLineName = ref('');
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/productionLine' }, name: '生产线' },
+  { to: { path: '/productionLine' }, name: curLineName.value },
   {
     name: `选择设备/工厂：${curLineWorkName.value}`,
   },
@@ -53,7 +54,7 @@ const ToPutOutPage = (item, type: EquipmentSetupType = 'default') => {
   const Work = { ID, Name };
   router.push({
     name: 'putOut',
-    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work) },
+    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work), lineName: curLineName.value },
   });
 };
 const TocCpacityPage = (item, type: EquipmentSetupType = 'default') => {
@@ -62,7 +63,7 @@ const TocCpacityPage = (item, type: EquipmentSetupType = 'default') => {
   const Work = { ID, Name };
   router.push({
     name: 'capacity',
-    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work) },
+    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work), lineName: curLineName.value },
   });
 };
 const afterRemove = (ID, type: EquipmentSetupType = 'default') => {
@@ -166,6 +167,7 @@ onMounted(() => {
   if (temp) {
     processInfo.value = { ...temp };
     curLineWorkName.value = route.params.WorkName as string;
+    curLineName.value = route.params.lineName as string;
   }
   isSplit.value = route.params.isSplit === 'true';
 });

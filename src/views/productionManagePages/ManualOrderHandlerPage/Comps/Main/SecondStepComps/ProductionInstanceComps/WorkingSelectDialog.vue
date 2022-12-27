@@ -10,9 +10,10 @@
     >
     <div class="working-select-content">
       <el-checkbox-group v-model="checkList">
-        <el-checkbox :label="it.ID" :disabled="checkedIds.includes(it.ID)" v-for="it in workingList" :title="it.Name" :key="it.ID">{{it.Name}}</el-checkbox>
+        <el-checkbox :label="it.ID" :disabled="checkedIds.includes(it.ID)" v-for="it in localWorkingList" :title="it.Name" :key="it.ID"
+        >{{it.Name}}</el-checkbox>
       </el-checkbox-group>
-      <el-empty :description="`暂无工序`" v-if="(workingList.length === 0)" />
+      <el-empty :description="`暂无工序`" v-if="(localWorkingList.length === 0)" />
     </div>
   </DialogContainerComp>
 </template>
@@ -40,6 +41,8 @@ const localVisible = computed({
   },
 });
 
+const localWorkingList = computed(() => props.workingList.map(it => ({ ...it, WorkTimes: it.WorkTimes || '' })));
+
 const checkList = ref<string[]>([]);
 
 const onOpen = () => {
@@ -57,7 +60,7 @@ const submit = () => {
     return;
   }
 
-  const list = checkList.value.map(id => props.workingList.find(it => it.ID === id)).filter(it => it) as ILineDetailWorkingProcedure[];
+  const list = checkList.value.map(id => localWorkingList.value.find(it => it.ID === id)).filter(it => it) as ILineDetailWorkingProcedure[];
   const _PrintingPlateLength = list.filter(it => it.Template && it.Template.IsPrintingPlate).length;
 
   // if (_PrintingPlateLength === 0) {

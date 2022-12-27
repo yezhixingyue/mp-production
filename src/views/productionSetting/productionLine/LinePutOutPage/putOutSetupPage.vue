@@ -18,7 +18,7 @@ const productionSettingStore = useProductionSettingStore();
 const { LinePutOutPageData } = storeToRefs(productionSettingStore);
 
 const BreadcrumbList = [
-  { to: { path: '/productionLine' }, name: '生产线' },
+  { to: { path: '/productionLine' }, name: LinePutOutPageData.value?.curLineName || '' },
   {
     to: { path: '/equipment' },
     name: `选择设备/工厂：${LinePutOutPageData.value?.curWork?.Name}`,

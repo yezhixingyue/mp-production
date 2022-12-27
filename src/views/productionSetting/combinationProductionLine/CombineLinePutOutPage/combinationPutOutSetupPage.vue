@@ -18,7 +18,7 @@ const productionSettingStore = useProductionSettingStore();
 const { CombineLinePutOutPageData } = storeToRefs(productionSettingStore);
 
 const BreadcrumbList = [
-  { to: { path: '/combinationProductionLine' }, name: '组合生产线' },
+  { to: { path: '/combinationProductionLine' }, name: CombineLinePutOutPageData.value?.curLineName || '组合生产线' },
   {
     to: { path: '/combinationEquipment' },
     name: `选择设备/工厂：${CombineLinePutOutPageData.value?.curWork?.Name}`,

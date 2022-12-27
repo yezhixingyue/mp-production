@@ -9,7 +9,7 @@ export const ManualOrderHandlerApis = {
     return request({ method: 'POST', url: '/Api/CreateOrder', data });
   },
   /** GET /Api/Material/All 生产线取物料 */
-  getFactoryMaterialList(typeID: string) {
+  getFactoryMaterialList(typeID?: string) {
     return request<IFactoryMaterialList[]>({ method: 'GET', url: '/Api/Material/All', params: { typeID } });
   },
   /** 获取生产线详细信息 GET /Api/ProductionLine/Detail */

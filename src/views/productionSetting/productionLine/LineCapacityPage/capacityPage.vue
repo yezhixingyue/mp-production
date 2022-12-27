@@ -30,7 +30,7 @@ const curLineEquipment = JSON.parse(route.params.LineEquipment as string);
 productionSettingStore.setLineCapacityPageData(curLineEquipment);
 
 const BreadcrumbList = computed(() => [
-  { to: { path: '/productionLine' }, name: '生产线' },
+  { to: { path: '/productionLine' }, name: LineCapacityPageData.value?.curLineName || '' },
   {
     to: { path: '/equipment' },
     name: `选择设备/工厂：${LineCapacityPageData.value?.curWork?.Name}`,
@@ -51,7 +51,7 @@ const remove = (item) => {
 onMounted(() => {
   const workString = route.params.Work as string;
   const curWork: { ID: string, Name: string } | null = workString ? JSON.parse(workString) : null;
-  LineCapacityPageData.value?.getInitData(curWork);
+  LineCapacityPageData.value?.getInitData(curWork, route.params.lineName as string);
   LineCapacityPageData.value?.getRightPropertyList();
 });
 

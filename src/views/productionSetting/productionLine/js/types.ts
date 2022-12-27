@@ -1,4 +1,5 @@
 import { IClassEquipmentGroups, IMaterialSources, IProductionLineWorkings } from '@/store/modules/productionSetting/types';
+import { IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
 
 export interface ISetPlateMakingWorkParams {
   LineWorkID: string
@@ -35,6 +36,7 @@ export interface ILocalProductionLineWorkings extends IProductionLineWorkings {
   _ReportModeContent?: string
   /** 工序类型 */
   _WorkingTypeContent?: string
+  _WorkItemInfo: IWorkingProcedureSearch
   _EquipmentText: string
   _PlateMakingWorkContent: string
   _isSplit: boolean
