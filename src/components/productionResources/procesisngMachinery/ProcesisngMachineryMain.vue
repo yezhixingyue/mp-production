@@ -33,7 +33,7 @@
 <script setup lang='ts'>
 import { getNameByIDAndList } from '@/assets/js/utils';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/TypeClass/Equipment';
+import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { EquipmentListClass, EquipmentTableMenuEnumType } from '@/views/productionResources/procesisngMachinery/TypeClass/EquipmentListClass';
 
 const props = defineProps<{
@@ -44,7 +44,7 @@ const emit = defineEmits(['menuClick']);
 
 const formatListName = (id, list, options = { key: 'Name', value: 'ID' }) => getNameByIDAndList(id, list, options);
 
-const onMenuClick = (it: EquipmentListItemType, type: EquipmentTableMenuEnumType) => {
+const onMenuClick = (it: IManageEquipmentInfo, type: EquipmentTableMenuEnumType) => {
   switch (type) {
     case EquipmentTableMenuEnumType.edit:
       emit('menuClick', it, type);
@@ -72,7 +72,7 @@ const onMenuClick = (it: EquipmentListItemType, type: EquipmentTableMenuEnumType
   }
 };
 
-const getRowKey = (row: EquipmentListItemType) => row.ID;
+const getRowKey = (row: IManageEquipmentInfo) => row.ID;
 
 </script>
 

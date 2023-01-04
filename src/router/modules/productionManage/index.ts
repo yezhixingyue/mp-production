@@ -40,6 +40,34 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManualOrderHandlerPage/ManualOrderHandlerPage.vue'),
     },
+    /* 大版
+    -------------------------------------- */
+    {
+      path: '/ManagePlateList',
+      name: 'ManagePlateList',
+      meta: {
+        title: '大版',
+        requiresAuth: true,
+        icon: 'icon-daban iconfont',
+        pageName: 'ManagePlateListPage',
+        PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/ManagePlateListPage/ManagePlateListPage.vue'),
+    },
+    /* 块
+    -------------------------------------- */
+    {
+      path: '/ManageChunkList',
+      name: 'ManageChunkList',
+      meta: {
+        title: '块',
+        requiresAuth: true,
+        icon: 'icon-kuai iconfont',
+        pageName: 'ManageChunkListPage',
+        PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/ManageChunkListPage/ManageChunkListPage.vue'),
+    },
     /* 订单
     -------------------------------------- */
     {
@@ -48,11 +76,37 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '订单',
         requiresAuth: true,
-        icon: 'icon-dingdan iconfont scale-9',
+        icon: 'icon-dingdan iconfont',
         pageName: 'ManageOrderListPage',
         PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManageOrderListPage/ManageOrderListPage.vue'),
+    },
+    /* 设备管理
+    -------------------------------------- */
+    {
+      path: '/ManageEquipmentList',
+      name: 'ManageEquipmentList',
+      meta: {
+        title: '设备管理',
+        requiresAuth: true,
+        icon: 'icon-shebeiguanli iconfont',
+        pageName: 'ManageEquipmentListPage',
+        PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/ManageEquipmentListPage.vue'),
+    },
+    {
+      path: '/ManageEquipmentRunTime',
+      name: 'ManageEquipmentRunTime',
+      meta: {
+        title: '设备运行时间',
+        requiresAuth: true,
+        hideMenu: true,
+        pageName: 'ManageEquipmentRunTimePage',
+        PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/ManageEquipment/ManageEquipmentRunTimePage/ManageEquipmentRunTimePage.vue'),
     },
   ],
 };
@@ -60,11 +114,46 @@ const routeTree:RouteTreeType = {
   name: 'productionManage',
   isModuleRoot: true,
   children: [
-    /* 转换器
+    /* 设备状态看板
     -------------------------------------- */
     {
       name: 'EquipmentStatus',
       children: [],
+    },
+    /* 手动下单
+    -------------------------------------- */
+    {
+      name: 'ManualOrder',
+      children: [],
+    },
+    /* 大版
+    -------------------------------------- */
+    {
+      name: 'ManagePlateList',
+      children: [],
+    },
+    /* 块
+    -------------------------------------- */
+    {
+      name: 'ManageChunkList',
+      children: [],
+    },
+    /* 订单
+    -------------------------------------- */
+    {
+      name: 'ManageOrderList',
+      children: [],
+    },
+    /* 设备管理
+    -------------------------------------- */
+    {
+      name: 'ManageEquipmentList',
+      children: [
+        {
+          name: 'ManageEquipmentRunTime',
+          children: [],
+        },
+      ],
     },
   ],
 };

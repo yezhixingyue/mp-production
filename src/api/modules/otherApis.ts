@@ -37,4 +37,26 @@ export const otherSettingApis = {
   getFileSuffixList() { // GET /Api/File/SuffixList  获取文件上传格式后缀名列表
     return request<string[]>({ method: 'GET', url: '/Api/File/SuffixList' });
   },
+  /* 管理系统密码相关
+  --------------------------------- */
+  /** GET /Api/SystemPassword   获取系统密码 */
+  getSystemPassword() {
+    return request<string>({ method: 'GET', url: '/Api/SystemPassword' });
+  },
+  /** PUT /Api/Change/SystemPassword  修改系统密码 */
+  getChangeSystemPassword(password: string) {
+    return request({ method: 'PUT', url: '/Api/Change/SystemPassword', params: { password } });
+  },
+  /** PUT /Api/Equipment/Unbind   设备解绑 */
+  getEquipmentUnbind(id: string) {
+    return request({ method: 'PUT', url: '/Api/Equipment/Unbind', params: { id } });
+  },
+  /** PUT /Api/Equipment/OnOffSetup  开关机设置 */
+  getEquipmentOnOffSetup(id: string, startup: boolean) {
+    return request({ method: 'PUT', url: '/Api/Equipment/OnOffSetup', params: { id, startup } });
+  },
+  /** POST /Api/Equipment/MaintainSetup  设备设置维护信息 */
+  getEquipmentMaintainSetup(data) {
+    return request({ method: 'POST', url: '/Api/Equipment/MaintainSetup', data });
+  },
 };

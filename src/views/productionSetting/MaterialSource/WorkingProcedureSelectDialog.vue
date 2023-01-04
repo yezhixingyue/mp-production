@@ -11,7 +11,7 @@
     <template #default>
       <div class="content">
         <el-checkbox-group v-model="checkList">
-          <template v-for="item in props.WorkingProcedureList" :key="item.ClassID" >
+          <template v-for="item in props.WorkingProcedureList" :key="item.ID" >
             <el-checkbox :label="item.ID">{{item.Name}}</el-checkbox>
           </template>
         </el-checkbox-group>

@@ -30,7 +30,7 @@ export default {
     const displaySider = computed(() => route.meta.requiresAuth);
     const fullAcreen = computed(() => route.meta.fullAcreen);
 
-    const isLogin = computed(() => route.name === 'login');
+    const isLogin = computed(() => route.name === 'login' || route.name === 'client');
     const isHome = computed(() => route.path === '/');
     return {
       isLogin,

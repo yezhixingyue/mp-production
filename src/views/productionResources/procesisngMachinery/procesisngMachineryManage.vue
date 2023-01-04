@@ -13,17 +13,18 @@ import Main from '@/components/productionResources/procesisngMachinery/Procesisn
 import Footer from '@/components/productionResources/procesisngMachinery/procesisngMachineryFooter.vue';
 import Dialog from '@/components/productionResources/procesisngMachinery/procesisngMachineryDialog.vue';
 import { onMounted, ref } from 'vue';
+import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { EquipmentListClass, EquipmentTableMenuEnumType } from './TypeClass/EquipmentListClass';
-import { Equipment, EquipmentListItemType } from './TypeClass/Equipment';
+import { Equipment } from './TypeClass/Equipment';
 
 const localEquipmentListClassData = ref(new EquipmentListClass());
 
-const onItemSetupClick = (it: null | EquipmentListItemType) => {
+const onItemSetupClick = (it: null | IManageEquipmentInfo) => {
   localEquipmentListClassData.value.curEditItem = it;
   localEquipmentListClassData.value.visible = true;
 };
 
-const onMenuClick = (it: EquipmentListItemType, type: EquipmentTableMenuEnumType) => {
+const onMenuClick = (it: IManageEquipmentInfo, type: EquipmentTableMenuEnumType) => {
   switch (type) {
     case EquipmentTableMenuEnumType.edit:
       onItemSetupClick(it);

@@ -143,6 +143,7 @@ const submit = () => {
     letter-spacing: 0.5px;
     margin-top: 20px;
     display: flex;
+    background-color: #fff;
     > span.label {
       line-height: 35px;
       > i {

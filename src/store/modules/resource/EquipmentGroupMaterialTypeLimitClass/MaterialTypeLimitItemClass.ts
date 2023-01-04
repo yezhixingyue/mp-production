@@ -6,6 +6,14 @@ export class MaterialTypeLimitItemClass {
 
   MaterialTypeID = ''
 
+  MaxSizeLength: '' | number = ''
+
+  MaxSizeWidh: '' | number = ''
+
+  MinSizeLength: '' | number = ''
+
+  MinSizeWidh: '' | number = ''
+
   LimitConstraints: ILimitConstraintsItem[] = [] // 后面专门建立Constraints类来处理
 
   constructor(data) {

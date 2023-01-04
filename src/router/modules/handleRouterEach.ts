@@ -132,8 +132,12 @@ export const handleRouterEach = (router:Router) => {
     ) => { // 使用全局路由导航守卫进行权限控制
       const userStore = useUserStore();
       const { token } = userStore;
+      if (to.name === 'client') {
+        next();
+        return;
+      }
       if (to.name === 'login' && token) {
-        next({ name: from.name || 'home' });
+        next({ name: from.name && from.name !== 'client' ? from.name : 'home' });
         return;
       }
 
@@ -143,7 +147,12 @@ export const handleRouterEach = (router:Router) => {
           const { user } = userStore;
           if (!user || user.Token !== token) {
             const res = await userStore.getUser();
-            if (res && res.Token && res.Token === token) {
+            if (res === 'login') {
+              userStore.token = '';
+              next({
+                path: '/login',
+              });
+            } else if (res && res.Token && res.Token === token) {
               handlePermission(to, next, res.PermissionList, from);
               return;
             }

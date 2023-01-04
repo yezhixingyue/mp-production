@@ -12,4 +12,5 @@ export interface IUser {
   },
   Token: string,
   PermissionList: object
+  Mobile: string
 }

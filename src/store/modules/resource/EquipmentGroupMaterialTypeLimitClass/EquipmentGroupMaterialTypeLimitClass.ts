@@ -2,6 +2,7 @@ import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
+import { GroupSizeLimitClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GroupSizeLimitClass';
 import { EquipmentGroupItemType } from '../EquipmentGroupTypeClass/EquipmentGroupItemClass';
 import { IMaterialTypeLimitItemTypeWithName, IMaterialTypeLimitTableItemType, MaterialTypeLimitItemType } from './MaterialTypeLimitItemClass';
 import { ILimitConstraintsItem, IMaterialTypeLimitSaveParams } from './types';
@@ -86,6 +87,31 @@ export class EquipmentGroupMaterialTypeLimitClass {
         if (i > -1) this.list.splice(i, 1);
       };
       MpMessage.success({ title: '删除成功', onOk: callback, onCancel: callback });
+    }
+  }
+
+  public async setItemSizeLimit(data: GroupSizeLimitClass, callback: () => void) {
+    const temp = {
+      ID: data.ID,
+      MinSizeWidh: data.MinWidth,
+      MaxSizeWidh: data.MaxWidth,
+      MinSizeLength: data.MinLength,
+      MaxSizeLength: data.MaxLength,
+    };
+    const resp = await api.getEquipmentGroupMaterialTypeSizeSetUp(temp).catch(() => null);
+
+    if (resp?.data.isSuccess) {
+      const cb = async () => {
+        const t = this.list.find(it => it.ID === data.ID);
+        if (t) {
+          t.MaxSizeLength = data.MaxLength;
+          t.MaxSizeWidh = data.MaxWidth;
+          t.MinSizeLength = data.MinLength;
+          t.MinSizeWidh = data.MinWidth;
+        }
+        callback();
+      };
+      MpMessage.success({ title: '设置成功', onOk: cb, onCancel: cb });
     }
   }
 

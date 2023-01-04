@@ -17,7 +17,7 @@
       </thead>
       <tbody>
         <template v-for="row in localList" :key="row.ID">
-          <tr class="row-title">
+          <tr class="row-title" @click.self.stop="onSpreadClick(row)">
             <td :style="`width:${widthList[0].width}px`" :title="row.SalesPlatfrom?.Name || ''">{{ row.SalesPlatfrom?.Name || '' }}</td>
             <td :style="`width:${widthList[1].width}px`" :title="row.OrderID || ''">{{ row.OrderID || '' }}</td>
             <td :style="`width:${widthList[2].width}px`" :title="row._SellSideProductName || ''">{{ row._SellSideProductName || '' }}</td>
@@ -28,11 +28,11 @@
             <td :style="`width:${widthList[7].width}px`" :title="row._ProduceEndTime || ''">{{ row._ProduceEndTime || '' }}</td>
             <td :style="`width:${widthList[8].width}px`">
               <span class="top-text" :class="{'v-hide': row._isTop}">已置顶</span>
-              <mp-button link type="primary">一键置顶</mp-button>
+              <mp-button link type="primary" @click="onTopClick(row)">一键置顶</mp-button>
             </td>
             <td :style="`width:${widthList[9].width}px`">
-              <mp-button link type="primary">生产流程</mp-button>
-              <mp-button link type="primary">时间线</mp-button>
+              <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
+              <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="!row._isCombineLine">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
@@ -56,8 +56,14 @@
             </tr>
           </template>
         </template>
+        <tr class="empty" v-if="localList.length === 0 && !loading" :style="`width:${totalWidth}px`">
+          <span>暂无数据</span>
+        </tr>
       </tbody>
     </table>
+    <SetOrderTopDialog v-model:visible="topVisible" @submit="onTopSubmit" />
+    <TimeLineDisplayDialog v-model:visible="timeLineVisible" :row="curRow" />
+    <ProcessDisplayDialog v-model:visible="processVisible" :row="curRow" />
   </main>
 </template>
 
@@ -65,11 +71,17 @@
 import { computed, ref } from 'vue';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { IManageOrderInfo, IFactoryMaterialList } from '../../ManualOrderHandlerPage/js/types';
+import SetOrderTopDialog from './SetOrderTopDialog.vue';
+import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
+import ProcessDisplayDialog from './ProcessDisplayDialog.vue';
 
 const props = defineProps<{
   list: IManageOrderInfo[]
+  loading: boolean
   MaterialList: IFactoryMaterialList[]
 }>();
+
+const emit = defineEmits(['top']);
 
 const getSellSideProductName = (it: IManageOrderInfo) => {
   const { FirstLevel, SecondLevel, Product } = it.Attribute;
@@ -94,14 +106,6 @@ const totalWidth = computed(() => widthList.map(it => it.width).reduce((a, b) =>
 
 const spreadList = ref<string[]>([]);
 
-const onSpreadClick = (it: IManageOrderInfo) => {
-  if (spreadList.value.includes(it.ID)) {
-    spreadList.value = spreadList.value.filter(id => id !== it.ID);
-  } else {
-    spreadList.value.push(it.ID);
-  }
-};
-
 const localList = computed(() => props.list.map(it => ({
   ...it,
   /** 销售端产品 */
@@ -115,9 +119,48 @@ const localList = computed(() => props.list.map(it => ({
   _Size: it.LineList.length > 0 ? it.Attribute.Size || '' : it.InstanceList[0]?.Size || '',
 })));
 
+const onSpreadClick = (it: typeof localList.value[number]) => {
+  if (!it._isCombineLine) return;
+  if (spreadList.value.includes(it.ID)) {
+    spreadList.value = spreadList.value.filter(id => id !== it.ID);
+  } else {
+    spreadList.value.push(it.ID);
+  }
+};
+
 const getMaterialName = (MaterialID: string) => {
   const t = props.MaterialList.find(it => it.ID === MaterialID);
   return t ? t.Name : '';
+};
+
+/** 当前设置对象条目 3弹窗共用 */
+const curRow = ref<null | typeof localList.value[number]>(null);
+
+/** 置顶 */
+const topVisible = ref(false);
+
+const onTopClick = (row: typeof localList.value[number]) => {
+  curRow.value = row;
+  topVisible.value = true;
+};
+
+const onTopSubmit = () => {
+  if (!curRow.value) return;
+  emit('top', curRow.value.ID);
+};
+
+/** 时间线 */
+const timeLineVisible = ref(false);
+const onTimeLineClick = (row: typeof localList.value[number]) => {
+  curRow.value = row;
+  timeLineVisible.value = true;
+};
+
+/** 生产流程 */
+const processVisible = ref(false);
+const onProcessClick = (row: typeof localList.value[number]) => {
+  curRow.value = row;
+  processVisible.value = true;
 };
 
 </script>
@@ -134,7 +177,7 @@ const getMaterialName = (MaterialID: string) => {
     display: block;
     height: 100%;
     overflow: auto;
-    overflow: overlay;
+    overflow-y: overlay;
     > thead {
       height: 38px;
       box-sizing: border-box;
@@ -214,7 +257,7 @@ const getMaterialName = (MaterialID: string) => {
             }
           }
           &:hover {
-            background-color: #f2f2f2;
+            background-color: #f0f0f0;
           }
         }
 
@@ -251,6 +294,13 @@ const getMaterialName = (MaterialID: string) => {
               display: inline-block;
             }
           }
+        }
+        &.empty {
+          font-size: 12px;
+          color: #989898;
+          text-align: center;
+          padding: 40px;
+          box-sizing: border-box;
         }
       }
     }

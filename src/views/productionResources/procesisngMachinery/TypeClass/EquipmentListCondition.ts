@@ -1,4 +1,4 @@
-import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
+import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 
 export class EquipmentListCondition {
   ClassID: number | '' = ''
@@ -17,8 +17,7 @@ export class EquipmentListCondition {
     return CommonClassType.filter(this);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setConditon(e: [[string, string], any]) {
+  setConditon(e: ISetConditionParams) {
     return CommonClassType.setCondition(e, this);
   }
 }

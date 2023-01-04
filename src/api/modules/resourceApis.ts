@@ -2,7 +2,7 @@ import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
-import { EquipmentListItemType } from '@/views/productionResources/procesisngMachinery/TypeClass/Equipment';
+import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { MaterialTypeLimitItemType } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import request from '../request/request';
@@ -31,8 +31,9 @@ export const resourceApis = {
   getEquipmentClassificationSave(data) { // POST /Api/EquipmentClass/Save  设备分类编辑
     return request<string>({ method: 'POST', url: '/Api/EquipmentClass/Save', data });
   },
-  getEquipmentClassificationList() { // POST /Api/EquipmentClass/List  设备分类查询
-    return request<EquipmentClassificationListItem[]>({ method: 'GET', url: '/Api/EquipmentClass/List' });
+  getEquipmentClassificationList(sign?: string) { // POST /Api/EquipmentClass/List  设备分类查询
+    const headers = sign ? { sign } : undefined;
+    return request<EquipmentClassificationListItem[]>({ method: 'GET', url: '/Api/EquipmentClass/List', headers });
   },
   getEquipmentClassificationRemove(id) { // POST /Api/EquipmentClass/Remove  设备分类删除
     return request({ method: 'DELETE', url: '/Api/EquipmentClass/Remove', params: { id } });
@@ -70,8 +71,11 @@ export const resourceApis = {
   getEquipmentGroupSave(data) { // POST /Api/EquipmentGroup/Save   设备组添加|保存
     return request<string>({ method: 'POST', url: '/Api/EquipmentGroup/Save', data });
   },
-  getEquipmentGroupList(conditon) { // POST /Api/EquipmentGroup/List   设备组查询
-    return request<EquipmentGroupItemType[]>({ method: 'POST', url: '/Api/EquipmentGroup/List', data: conditon });
+  getEquipmentGroupList(conditon, sign?: string) { // POST /Api/EquipmentGroup/List   设备组查询
+    const headers = sign ? { sign } : undefined;
+    return request<EquipmentGroupItemType[]>({
+      method: 'POST', url: '/Api/EquipmentGroup/List', data: conditon, headers,
+    });
   },
   getEquipmentGroupRemove(id) { // DELETE /Api/EquipmentGroup/Remove   设备组删除
     return request({ method: 'DELETE', url: '/Api/EquipmentGroup/Remove', params: { id } });
@@ -88,8 +92,11 @@ export const resourceApis = {
   getEquipmentSave(data) { // POST /Api/Equipment/Save   加工设备保存
     return request<string>({ method: 'POST', url: '/Api/Equipment/Save', data });
   },
-  getEquipmentList(condition) { // POST /Api/Equipment/List   获取加工设备列表 -- 建立条件类
-    return request<EquipmentListItemType[]>({ method: 'POST', url: '/Api/Equipment/List', data: condition });
+  getEquipmentList(condition, sign?: string) { // POST /Api/Equipment/List   获取加工设备列表 -- 建立条件类
+    const headers = sign ? { sign } : undefined;
+    return request<IManageEquipmentInfo[]>({
+      method: 'POST', url: '/Api/Equipment/List', data: condition, headers,
+    });
   },
   getEquipmentSetStatus(data) { // POST /Api/Equipment/SetStatus   设置停用和启用
     return request({ method: 'POST', url: '/Api/Equipment/SetStatus', data });
@@ -107,6 +114,10 @@ export const resourceApis = {
   },
   getEquipmentGroupMaterialTypeRemove(id) { // DELETE /Api/EquipmentGroupMaterialType/Remove   设备组物料类型删除
     return request({ method: 'DELETE', url: '/Api/EquipmentGroupMaterialType/Remove', params: { id } });
+  },
+  /** POST /Api/EquipmentGroupMaterialType/SizeSetUp   设备组物料类型尺寸设置 */
+  getEquipmentGroupMaterialTypeSizeSetUp(data) {
+    return request({ method: 'POST', url: '/Api/EquipmentGroupMaterialType/SizeSetUp', data });
   },
   getEquipmentGroupMaterialTypeConditionLimitSave(data) { // POST /Api/EquipmentGroupMaterialTypeLimit/Save    设备组物料类型条件编辑
     return request<number>({ method: 'POST', url: '/Api/EquipmentGroupMaterialTypeLimit/Save', data });

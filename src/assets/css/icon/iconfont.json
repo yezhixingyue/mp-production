@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "33041365",
+      "name": "电话",
+      "font_class": "dianhua",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "33041383",
+      "name": "密码",
+      "font_class": "mima",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
       "icon_id": "32949627",
       "name": "组合生产线",
       "font_class": "zuheshengchanxian",

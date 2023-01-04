@@ -1,4 +1,5 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export interface ICatch { // 解决终端警告用
   response:AxiosResponse
@@ -23,6 +24,8 @@ export interface IRequestInterceptors {
 
 export interface IRequestConfig extends AxiosRequestConfig {
   interceptors?: IRequestInterceptors
+  /** 是否关闭全局loading */
+  closeLoading?: boolean
 }
 
 export interface CancelRequestSource {
@@ -42,4 +45,11 @@ export interface IResponse<D> {
   Message: string
   Status: number
   isSuccess: boolean
+}
+
+export interface IMPAxiosInstance extends AxiosInstance {
+  get<T = any, R = AxiosResponse<IResponse<T>>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
+  post<T = any, R = AxiosResponse<IResponse<T>>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
+  put<T = any, R = AxiosResponse<IResponse<T>>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
+  delete<T = any, R = AxiosResponse<IResponse<T>>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
 }

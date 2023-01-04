@@ -12,6 +12,7 @@
         <span class="is-pink-span" v-if="props.removeTitle" @click="onTableRemoveClick">{{props.removeTitle}}</span>
       </div>
     </header>
+    <slot name="interlining"></slot>
     <ul>
       <li v-for="(it, i) in localTableList" :key="it.ID" class="item" @click="onRowClick(it)" :class="{active: props.activeId === it.ID}">
         <div class="content">

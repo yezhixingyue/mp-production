@@ -4,23 +4,7 @@
     <template v-if="ruleForm">
       <div class="top">
         <label class="l">设定时间为：</label>
-        <div>
-          <p>
-            <el-radio-group v-model="ruleForm.ShiftType">
-              <el-radio v-for="it in ShiftTypeEnumList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
-            </el-radio-group>
-          </p>
-          <div class="date-box">
-            <!-- 每周 -->
-            <el-checkbox-group v-model="ruleForm._WeekTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.weekly">
-              <el-checkbox v-for="(it) in weekList" :key='it.ID' :label="it.ID">{{it.Name}}</el-checkbox>
-            </el-checkbox-group>
-            <!-- 每月 -->
-            <el-checkbox-group v-model="ruleForm._MonthTypeLimit" v-show="ruleForm.ShiftType === ShiftTypeEnum.monthly">
-              <el-checkbox v-for="it in 31" :key='it' :label="it">{{it}}号</el-checkbox>
-            </el-checkbox-group>
-          </div>
-        </div>
+        <MultiDateSelectComp v-model:type="ruleForm.ShiftType" v-model:month-limit="ruleForm._MonthTypeLimit" v-model:week-limit="ruleForm._WeekTypeLimit" />
       </div>
       <hr class="line" />
       <div class="bottom">
@@ -53,10 +37,10 @@
 
 <script setup lang='ts'>
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
+import MultiDateSelectComp from '@/components/common/SelectComps/MultiDateSelectComp.vue';
 import { computed, nextTick, ref } from 'vue';
-import { ShiftTypeEnumList, ShiftTypeEnum } from '../../enums';
 import { IShiftRowItem } from '../../types';
-import { ShiftItemClass, weekList } from './ShiftItemClass';
+import { ShiftItemClass } from './ShiftItemClass';
 
 const props = defineProps<{
   visible: boolean,
@@ -126,19 +110,6 @@ const submit = () => {
     line-height: 30px;
     font-size: 12px;
     margin-right: 10px;
-  }
-  :deep(.el-radio) {
-    margin-right: 85px;
-  }
-  .date-box {
-    width: 475px;
-    :deep(.el-checkbox) {
-      height: 26px;
-    }
-    :deep(.el-checkbox__label) {
-      display: inline-block;
-      width: 34px;
-    }
   }
 }
 .line {

@@ -5,12 +5,21 @@
         <mp-button type="primary" @click="ToProcess(null)">添加工序</mp-button>
         <span class="hint">说明：拼版为特殊工序，不用添加</span>
       </div>
+      <SearchInputComp
+        :word='getProcessListData.KeyWords'
+        title="关键词搜索"
+        placeholder="请输入搜索关键词"
+        resetWords="清空所有筛选条件"
+        :changePropsFunc="(keywords: string) => getProcessListData.KeyWords = keywords"
+        :requestFunc='PaginationChange'
+        :searchWatchKey="Data.processList"
+        @reset='clearCondition'
+      />
     </header>
     <main>
       <el-table fit stripe :data="Data.processList"
        style="width: 100%">
-        <el-table-column
-        show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
+        <el-table-column show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
         <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" min-width="130">
           <template #default="scope">
             <span v-if="scope.row.ReportMode === 0">块报工</span>
@@ -81,6 +90,7 @@
 
 <script lang="ts" setup>
 import MpPagination from '@/components/common/MpPagination.vue';
+import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { useRouter } from 'vue-router';
 import {
   onMounted, ref, reactive, onActivated,
@@ -105,7 +115,12 @@ const getProcessListData = ref({
   Page: 1,
   PageSize: 20,
   DataTotal: 0,
+  KeyWords: '',
 });
+const clearCondition = () => {
+  getProcessListData.value.Page = 1;
+  getProcessListData.value.KeyWords = '';
+};
 const ToProcess = (item) => {
   router.push({
     name: 'processSetup',
@@ -122,8 +137,8 @@ const getProcessList = () => {
   });
 };
 
-function PaginationChange(newVal) {
-  if (getProcessListData.value.Page === newVal) return;
+function PaginationChange(newVal = 1) {
+  // if (getProcessListData.value.Page === newVal) return;
   getProcessListData.value.Page = newVal as number;
   getProcessList();
 }
@@ -236,6 +251,9 @@ export default {
   >header{
     padding: 20px;
     background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     >.header-top{
       display: flex;
       >span{

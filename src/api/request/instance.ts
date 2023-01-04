@@ -4,14 +4,15 @@ import { router } from '@/router';
 import messageBox from '@/assets/js/utils/message';
 import { ElLoading } from 'element-plus';
 import Axios from './axios';
-import { ICatch } from './types';
+import { ICatch, IMPAxiosInstance, IRequestConfig } from './types';
+import { setRequestHeaderMiddleware } from './utils';
+import { clientApiUrls } from '../modules/clientApis';
 
 const apiListByNotNeedToken = ['/Api/Staff/Login']; // 不需要token访问的接口列表
 
-// const closeTip = false;
 let requestNum = 0;
 let loadingInstance;
-const getShowLoading = (config) => { // 查看当前请求是否需要展示弹窗
+const getShowLoading = (config?: IRequestConfig) => { // 查看当前请求是否需要展示弹窗
   let showLoading = true;
   const arr = ['/Api/MaterialType/All', '/Api/Upload/File', '/Api/SingleMaterial/ByType', '/Api/FileNode']; // 不需要展示loading的api地址
   if (config && config.url) {
@@ -50,21 +51,24 @@ const handleLoadingClose = () => { // 关闭弹窗
   if (requestNum === 0 && loadingInstance) loadingInstanceClose();
 };
 
-const instance = new Axios({
+const axios = new Axios({
   interceptors: {
     // 请求拦截器
-    requestInterceptors: (config) => {
+    requestInterceptors: (config: IRequestConfig) => {
       const userStore = useUserStore();
       // const router = useRouter();
       const curConfig = config;
       const { token } = userStore;
 
-      if (!token && !apiListByNotNeedToken.includes(curConfig.url || '')) {
+      if (!token && !apiListByNotNeedToken.includes(curConfig.url || '') && !clientApiUrls.includes(config.url || '')
+       && !curConfig.headers?.sign && !curConfig.headers?.Authorization) {
         router.replace('/login');
 
         throw new Error('请重新登录');
       }
-      if (curConfig.headers) curConfig.headers.Authorization = `Bearer ${token}`;
+      if (curConfig.headers) {
+        setRequestHeaderMiddleware(curConfig, token);
+      }
       // 打开loading
       if (getShowLoading(curConfig)) handleLoadingOpen();
       return config;
@@ -72,11 +76,11 @@ const instance = new Axios({
     // 响应拦截器
     responseInterceptors: (result:AxiosResponse) => {
       // 关闭loading
-      if (getShowLoading(result.config) && loadingInstance) handleLoadingClose();
+      if (getShowLoading(result.config as IRequestConfig) && loadingInstance) handleLoadingClose();
       const userStore = useUserStore();
       if (result.data.Status !== 1000) {
         if (result.data.Status === 8037) {
-          instance.cancelAllRequest();
+          axios.cancelAllRequest();
           messageBox.failSingle('请重新登录', () => {
             const host = window.location.href.split('#')[0] || '';
             userStore.token = '';
@@ -89,14 +93,14 @@ const instance = new Axios({
       return result;
     },
     responseInterceptorsCatch: (error:ICatch) => {
-      if (getShowLoading(error.config) && loadingInstance) handleLoadingClose();
+      if (getShowLoading(error.config as IRequestConfig) && loadingInstance) handleLoadingClose();
 
       const userStore = useUserStore();
       if (error.response) {
         let _msg = '';
         switch (error.response.status) {
           case 401:
-            instance.cancelAllRequest();
+            axios.cancelAllRequest();
             userStore.token = '';
             window.location.href = `${window.location.href.split('#')[0] || ''}#/login`;
             break;
@@ -145,4 +149,6 @@ const instance = new Axios({
   },
 });
 
-export default instance;
+export default axios;
+
+export const { instance } = axios as { instance: IMPAxiosInstance };

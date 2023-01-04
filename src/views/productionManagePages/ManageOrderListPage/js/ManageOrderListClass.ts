@@ -27,7 +27,7 @@ export class ManageOrderListClass {
     this.condition = new Condition();
   }
 
-  async getMaterialList() {
+  private async getMaterialList() {
     if (this.MaterialList.length > 0) { // 已经获取过
       return;
     }
@@ -58,5 +58,12 @@ export class ManageOrderListClass {
   getInitData() {
     this.getList();
     this.getMaterialList();
+  }
+
+  /** 订单置顶 */
+  async handleOrderToTop(id: string) {
+    const t = this.list.find(it => it.ID === id);
+    if (!t) return;
+    console.log('handleOrderToTop', id, t);
   }
 }

@@ -3,6 +3,9 @@
     v-model="dialogVisible"
     :width="width"
     class='mp-common-dialog'
+    :class="{
+      hideHeader: !showHeader
+    }"
     @close="Close"
     @closed="closedC"
     @open="onOpen"
@@ -12,7 +15,7 @@
     :destroy-on-close="destroyOnClose"
     :top="top"
     :close-on-click-modal="closeOnClickModal">
-    <template #header>
+    <template #header v-if="showHeader">
       <slot name="header">
         <p>
           {{title}}
@@ -116,6 +119,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showHeader: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['closed', 'open', 'opened', 'submit', 'cancel', 'update:visible', 'danger'],
   setup(props, context) {
@@ -178,6 +185,7 @@ export default {
     box-sizing: border-box;
     padding-top: 12px;
     padding-bottom: 12px;
+    position: relative;
     p{
       line-height: 16px;
       border-left: 3px solid #26bcf9;
@@ -193,13 +201,14 @@ export default {
     }
     &::after{
       content: '';
-      width: calc(100% - 20px);
+      width: calc(100% - 2px);
       height: 1px;
-      top: 40px;
+      // top: 40px;
       background-color: #EEEEEE;
       display: inline-block;
       position: absolute;
       left: 10px;
+      bottom: 0;
     }
   }
   .el-dialog__body{
@@ -216,6 +225,12 @@ export default {
     }
     .el-button+.el-button{
       margin-left: 30px;
+    }
+  }
+
+  &.hideHeader {
+    .el-dialog__header {
+      display: none;
     }
   }
 }

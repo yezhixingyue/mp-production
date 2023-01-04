@@ -13,7 +13,7 @@ type IGetters = Record<string, never>;
 
 interface IActions {
   getLogin: (loginForm: ILoginSubmitForm) => Promise<boolean>;
-  getUser: () => Promise<null | IUser>;
+  getUser: () => Promise<null | IUser | 'login'>;
 }
 
 const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
@@ -41,9 +41,14 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     async getUser() {
       if (this.user && this.user.Account.Token === this.token) return null;
       this.user = null;
-      if (!this.token) return null;
-      const resp = await api.getUser().catch(() => null);
-      if (!resp || !resp.data.isSuccess) return null;
+      if (!this.token) return 'login';
+      const resp = await api.getUser().catch((error) => error);
+      if (!resp || !resp.data.isSuccess) {
+        if (resp?.status === 401) {
+          return 'login';
+        }
+        return null;
+      }
       this.user = resp.data.Data;
       this.getUserTime = Date.now();
       return resp.data.Data;

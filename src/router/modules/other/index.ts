@@ -25,6 +25,19 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/otherSetup/AdaptersManage/AdaptersManagePage.vue'),
     },
+    /* 设置管理密码
+    -------------------------------------- */
+    {
+      path: '/ManageAdminPassword',
+      name: 'ManageAdminPassword',
+      meta: {
+        title: '设置管理密码',
+        requiresAuth: true,
+        icon: 'icon-suoding scale-13 iconfont',
+        pageName: 'ManageAdminPasswordPage',
+      },
+      component: () => import('@/views/otherSetup/ManageAdminPasswordPage/ManageAdminPasswordPage.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {
@@ -35,6 +48,12 @@ const routeTree:RouteTreeType = {
     -------------------------------------- */
     {
       name: 'adapter',
+      children: [],
+    },
+    /* 设置管理密码
+    -------------------------------------- */
+    {
+      name: 'ManageAdminPassword',
       children: [],
     },
   ],

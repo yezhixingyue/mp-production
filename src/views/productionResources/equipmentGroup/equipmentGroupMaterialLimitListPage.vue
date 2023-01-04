@@ -9,6 +9,7 @@
       @limitItemRemove="removeLimitItem"
       @saveConditon="onConditionSaveClick"
       @removeCondition="onConditionRemoveClick"
+      @setSizeLimit="handleSizeLimit"
      />
     <Footer />
   </section>
@@ -41,6 +42,10 @@ const saveLimitItem = (e: IMaterialTypeLimitSaveParams, cb) => {
 
 const removeLimitItem = (item: IMaterialTypeLimitTableItemType) => {
   MaterialTypeLimitData.value.removeLimitItem(item);
+};
+
+const handleSizeLimit = (data, cb) => {
+  MaterialTypeLimitData.value.setItemSizeLimit(data, cb);
 };
 
 const onConditionSaveClick = (item: IMaterialTypeLimitTableItemType, conditonItem) => { // 添加设置条件 - 跳转页面

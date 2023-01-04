@@ -14,7 +14,7 @@
         <i class="s">:</i>
         <el-input v-model.trim="it.Content" maxlength="40"></el-input>
       </div>
-      <el-empty :description="`暂无可设置内容`" v-if="(modelValue.length === 0)" />
+      <el-empty :description="`暂无可设置内容`" v-if="(list.length === 0)" />
     </div>
   </DialogContainerComp>
 </template>

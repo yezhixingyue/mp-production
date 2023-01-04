@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 // import { useUserStore } from '@/store/modules/user/index';
-import aboutView from '@/views/aboutView.vue';
 import LoginView from '../views/LoginView/index.vue';
 import HomeView from '../views/HomeView.vue';
 import { moduleRoutes } from './modules/index';
@@ -26,13 +25,13 @@ const routes: Array<RouteRecordRaw> = [
     component: LoginView,
   },
   {
-    path: '/about',
-    name: 'about',
+    path: '/client',
+    name: 'client',
     meta: {
-      title: '关于',
+      title: '生产报工',
       requiresAuth: false,
     },
-    component: aboutView,
+    component: () => import(/* webpackChunkName: "client" */ '@/views/ProductionClient/ProductionClientView.vue'),
   },
   // {
   //   path: '/about',

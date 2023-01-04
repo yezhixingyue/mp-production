@@ -1,7 +1,12 @@
 <template>
   <section class="page-wrap">
-    <Header :condition="ManageOrderListPageData.condition" :getList="getList" :setCondition="setCondition" @clear="clearCondition" />
-    <Main :list="ManageOrderListPageData.list" :MaterialList="ManageOrderListPageData.MaterialList" :loading="ManageOrderListPageData.loading" />
+    <Header :condition="ManageOrderListPageData.condition" :list="ManageOrderListPageData.list"
+     :getList="getList" :setCondition="setCondition" @clear="clearCondition" />
+    <Main
+     :list="ManageOrderListPageData.list"
+     :MaterialList="ManageOrderListPageData.MaterialList"
+     :loading="ManageOrderListPageData.loading"
+     @top="handleOrderToTop" />
     <Footer :condition="ManageOrderListPageData.condition" :getList="getList" :total="ManageOrderListPageData.listNumber" />
   </section>
 </template>
@@ -21,6 +26,8 @@ const clearCondition = () => { ManageOrderListPageData.value.clearCondition(); }
 
 const getList = () => { ManageOrderListPageData.value.getList(); };
 
+const handleOrderToTop = (id: string) => { ManageOrderListPageData.value.handleOrderToTop(id); }; // 订单置顶
+
 onMounted(() => { ManageOrderListPageData.value.getInitData(); });
 </script>
 
@@ -37,6 +44,7 @@ export default {
   flex-direction: column;
   > main {
     flex: 1;
+    margin-top: 8px;
   }
   > footer {
     height: 40px;

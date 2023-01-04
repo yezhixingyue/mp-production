@@ -17,6 +17,7 @@
       resetWords="清空所有筛选条件"
       :changePropsFunc="(keywords: string) => setCondition([['KeyWords', ''], keywords])"
       :requestFunc='getList'
+      :searchWatchKey="list"
       @reset='clearCondition'
      />
   </header>
@@ -27,12 +28,14 @@ import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { computed } from 'vue';
+import { IManageOrderInfo } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from '../js/Condition';
 
 const props = defineProps<{
   setCondition:(e: ISetConditionParams) => void
   getList:(Page?: number) => void
   condition: Condition
+  list: IManageOrderInfo[]
 }>();
 
 const emit = defineEmits(['clear']);

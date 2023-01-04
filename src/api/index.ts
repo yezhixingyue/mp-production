@@ -8,6 +8,7 @@ import { companyApis } from './modules/companyApis';
 import { otherSettingApis } from './modules/otherApis';
 import { productionManageApis } from './modules/productionManageApis';
 import { ManualOrderHandlerApis } from './modules/ManualOrderHandlerApis';
+import { clientApis } from './modules/clientApis';
 import productionSetting from './modules/productionSettingApis';
 import request from './request/request';
 
@@ -15,8 +16,9 @@ const api = {
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login
     return request<null|string>({ method: 'POST', url: '/Api/Staff/Login', data });
   },
-  getUser() {
-    return request<IUser>({ method: 'post', url: '/Api/Staff/Detail' });
+  getUser(token?: string) {
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+    return request<IUser>({ method: 'post', url: '/Api/Staff/Detail', headers });
   },
   getDistrictList(ID?:number) {
     return request<IDistrictItem[]>({ method: 'get', url: '/Api/District/List', params: { parentID: ID } });
@@ -58,6 +60,8 @@ const api = {
   productionManageApis,
   // 手动下单 api
   ManualOrderHandlerApis,
+  // 生产报工客户端 api
+  clientApis,
 };
 
 export default api;

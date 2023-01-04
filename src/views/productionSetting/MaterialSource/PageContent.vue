@@ -90,8 +90,13 @@ const localWorkingProcedureList = computed(() => {
   if (Array.isArray(props.workListRange)) {
     list = WorkingProcedureList.value.filter(it => props.workListRange?.includes(it.ID));
   }
-  if (_IsPlateMakingWork.value) {
+  if (_IsPlateMakingWork.value) { // 设置的是制版工序物料来源
     list = list.filter(it => it.ID !== props.PlateMakingMaterialSourceSetupData?.PlateMakingWorkID);
+  } else if (props.curEditItem?.PlateMakingWorkID && !props.curEditItem.PlateMakingGroupID) { // 设置的是普通工序的物料来源 且自身携带制版工序(非制版组)
+    // 此时需要把自身携带的制版工序ID添加到列表中供选择
+    const id = props.curEditItem.PlateMakingWorkID;
+    const t = WorkingProcedureList.value.find(it => it.ID === id);
+    if (t) list.push(t);
   }
   return list;
 });
@@ -164,6 +169,7 @@ const getWorkingProcedureList = async () => {
   if (props.withoutOtherPrcess) return;
   const resp = await api.getWorkingProcedureSearch().catch(() => null);
   if (resp?.data.isSuccess) {
+    console.log(resp);
     WorkingProcedureList.value = resp.data.Data;
   }
 };
