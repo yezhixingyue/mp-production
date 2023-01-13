@@ -11,6 +11,13 @@
         font-size: 14px;
       }
     </style>
+    <script>
+      var bool = navigator.userAgent.includes('Chrome') || navigator.userAgent.includes('Firefox');
+      if (!bool) {
+        var url = window.location.origin + window.location.pathname + '/browser';
+        window.location.replace(url);
+      }
+    </script>
   </head>
   <body>
     <noscript>

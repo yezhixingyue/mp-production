@@ -40,8 +40,9 @@ const originMaterialSources = computed(() => {
       MaterialTypeName: it.RelationName,
       SourceType: '',
       SourceWorkIDS: [],
-      NeedSource: false,
+      NeedResource: false,
       FactoryProvide: false,
+      AllowSourceLine: false,
     };
     const t = PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Materials.find(it => it.MaterialTypeID === temp.MaterialTypeID);
     if (t) {

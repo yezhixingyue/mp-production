@@ -33,7 +33,9 @@ export interface ILineWorkingMaterialSources {
   /** 物料来源方式 = ['0', '1', '2', '3'] */
   SourceType: MaterialSourceTypeEnum,
   /** 是否为必需资源 */
-  NeedSource: boolean
+  NeedResource: boolean
+  /** 可来自其他生产线 */
+  AllowSourceLine: boolean
   /** 如果外协是否外协厂自备 */
   FactoryProvide: boolean
   /** 来源工序ID列表 好像用不到 */

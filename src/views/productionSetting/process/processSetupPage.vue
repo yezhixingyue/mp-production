@@ -171,6 +171,7 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import {
   ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, WorkingProcedureRelationEnum,
 } from './enums';
@@ -361,6 +362,21 @@ const getEquipmentNameByID = (ID) => {
   return str;
 };
 const saveProcess = () => {
+  // 检查 如果当前工序类型为制版工序的话 物料资源包中不允许有半成品
+  const checkPlatemakingMaterialSource = () => {
+    if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking) {
+      const list = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.material);
+      if (list.length > 0) {
+        const t = list.find(it => {
+          const m = productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.RelationID);
+          return m?.Feature === MakingGroupTypeFeatureEnum.semifinished;
+        });
+        if (t) return false;
+      }
+    }
+    return true;
+  };
+
   if (!Data.processDataFrom.Name) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '请输入工序名称', () => null, () => null);
@@ -375,6 +391,8 @@ const saveProcess = () => {
   } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && !Data.processDataFrom.TemplateID) {
     messageBox.failSingleError('保存失败', '请选择大版模板', () => null, () => null);
     // 弹框提 其他时 大阪模板为空
+  } else if (!checkPlatemakingMaterialSource()) { // 如果当前工序类型为制版工序的话 物料资源包中不允许有半成品
+    messageBox.failSingleError('保存失败', '制版工序物料来源中不允许有半成品', () => null, () => null);
   } else if (Data.processDataFrom.AllowPartReport && !Data.processDataFrom.MinPartReportNumber && Data.processDataFrom.MinPartReportNumber !== 0) {
     // 弹框提醒 允许部分报工 最大数量
     messageBox.failSingleError('保存失败', '请输入允许部分报工时最大数量', () => null, () => null);

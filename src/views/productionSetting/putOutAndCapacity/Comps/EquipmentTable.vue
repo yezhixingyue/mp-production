@@ -10,7 +10,7 @@
     <mp-table-column prop="Name" label="设备" width="245" class-name="left" />
     <mp-table-column prop="name" label="操作" width="240">
       <template #default="scope">
-        <mp-button type="primary" class="ft-12" link @click="ToPutOutPage(scope.row)">伸放</mp-button>
+        <mp-button type="primary" class="ft-12" :class="{'v-hide': isPlateMaking}" link @click="ToPutOutPage(scope.row)">伸放</mp-button>
         <mp-button type="primary" class="ft-12" link @click="TocCpacityPage(scope.row)">设备产能</mp-button>
         <mp-button type="danger" class="ft-12" link @click="onRemoveClick(scope.row)">删除</mp-button>
       </template>
@@ -25,6 +25,8 @@ import { EquipmentListType } from '../js/types';
 const props = defineProps<{
   EquipmentList: EquipmentListType[],
   title: string
+  /** 是否设置的为制版工序 此时不展示伸放按钮 */
+  isPlateMaking?: boolean
 }>();
 
 const emit = defineEmits(['ToPutOutPage', 'TocCpacityPage', 'onRemoveClick', 'add']);
@@ -34,6 +36,7 @@ const onClick = () => {
 };
 
 const ToPutOutPage = (it: EquipmentListType) => { // 伸放
+  if (props.isPlateMaking) return;
   emit('ToPutOutPage', it);
 };
 
@@ -63,6 +66,9 @@ const onRemoveClick = (it: EquipmentListType) => { // 本地保存？
 }
 .ft-12 {
   margin-left: 20px;
+}
+.v-hide {
+  visibility: hidden;
 }
 :deep(.left .cell) {
   text-align: left !important;

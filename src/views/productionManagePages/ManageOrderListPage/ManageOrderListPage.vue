@@ -4,7 +4,6 @@
      :getList="getList" :setCondition="setCondition" @clear="clearCondition" />
     <Main
      :list="ManageOrderListPageData.list"
-     :MaterialList="ManageOrderListPageData.MaterialList"
      :loading="ManageOrderListPageData.loading"
      @top="handleOrderToTop" />
     <Footer :condition="ManageOrderListPageData.condition" :getList="getList" :total="ManageOrderListPageData.listNumber" />

@@ -1,3 +1,4 @@
+import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 import { PlateStatusEnum } from './enum';
 
 export interface IPlateListChild {
@@ -28,7 +29,7 @@ export interface IManagePlateInfo {
   /** 生产线 */
   Line: string
   /** 当前位置 */
-  Equipment: string
+  Equipment: IEquipmentBaseInfo
   /** 状态 */
   Status: PlateStatusEnum
   /** 子板列表 */

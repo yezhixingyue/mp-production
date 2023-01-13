@@ -1,7 +1,8 @@
-import { IBaseProperty } from '../../ManualOrderHandlerPage/js/types';
+import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 import { ChunkStatusEnum } from './enum';
 
 export interface IManageChunkInfo {
+  /** ID */
   ID: string
   /** 块ID */
   ChunkID: string
@@ -9,8 +10,8 @@ export interface IManageChunkInfo {
   ChunkCode: string
   /** 大版编号 */
   PlateCode: number
-  /** 销售端 */
-  Server: IBaseProperty<number>
+  /** 销售端名称 */
+  ServerName: string
   /** 物料 */
   Material: string
   /** 尺寸规格 */
@@ -20,9 +21,9 @@ export interface IManageChunkInfo {
   /** 单位 */
   Unit: string
   /** 生产线 */
-  ProductionLine: string
+  Line: string
   /** 当前所在机器位置  */
-  Equipment: string
+  Equipment?: IEquipmentBaseInfo
   /** 状态 */
   Status: ChunkStatusEnum
 }

@@ -1,5 +1,5 @@
 import {
-  EquipmentStatusColorEnum, EquipmentStatusEnum, EquipmentStatusHoverColorEnum,
+  EquipmentStatusColorEnum, EquipmentStatusForBoardEnum, EquipmentStatusHoverColorEnum,
   EquipmentStatusLabelEnum, EquipmentTaskStatusColorEnum, EquipmentTaskStatusEnum, EquipmentTaskStatusHoverColorEnum, EquipmentTaskStatusLabelEnum,
 } from './enums';
 
@@ -9,7 +9,7 @@ import {
  * 已开机 生产中 已关机 机器报停
  */
 export const EquipmentStatusEnumList = Object.keys(EquipmentStatusLabelEnum).map(key => ({
-  ID: EquipmentStatusEnum[key],
+  ID: EquipmentStatusForBoardEnum[key],
   Name: EquipmentStatusLabelEnum[key],
   Color: EquipmentStatusColorEnum[key],
   HoverColor: EquipmentStatusHoverColorEnum[key],

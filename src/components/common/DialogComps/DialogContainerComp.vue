@@ -4,7 +4,8 @@
     :width="width"
     class='mp-common-dialog'
     :class="{
-      hideHeader: !showHeader
+      hideHeader: !showHeader,
+      danger: danger,
     }"
     @close="Close"
     @closed="closedC"
@@ -23,14 +24,17 @@
       </slot>
     </template>
     <template #default>
+      <div class="close" v-if="!showHeader" @click="Close">
+        <el-icon><Close /></el-icon>
+      </div>
       <slot name="default"></slot>
     </template>
     <template #footer>
       <slot name="footer">
-        <mp-button type="primary" class="gradient" v-if="showPrimary" :disabled="disabled"
+        <mp-button :type="danger ? 'danger' : 'primary'" class="gradient" v-if="showPrimary" :disabled="disabled"
         @click="Primary">{{primaryText}}</mp-button>
         <mp-button type="danger" v-if="showDel" @click="Del">{{delBtnText }}</mp-button>
-        <mp-button v-if="showClose" class="blue" @click="Close">{{closeBtnText}}</mp-button>
+        <mp-button v-if="showClose" :class="danger ? 'pink' : 'blue'" @click="Close">{{closeBtnText}}</mp-button>
       </slot>
     </template>
   </el-dialog>
@@ -123,6 +127,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    danger: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['closed', 'open', 'opened', 'submit', 'cancel', 'update:visible', 'danger'],
   setup(props, context) {
@@ -198,6 +206,7 @@ export default {
       width: 56px;
       height: 40px;
       top: 2px;
+      right: -20px;
     }
     &::after{
       content: '';
@@ -214,6 +223,25 @@ export default {
   .el-dialog__body{
     padding-top: 40px;
     padding-bottom: 20px;
+    .close {
+      position: absolute;
+      right: 0px;
+      top: 0;
+      width: 34px;
+      height: 30px;
+      text-align: center;
+      padding-top: 9px;
+      box-sizing: border-box;
+      cursor: pointer;
+      i {
+        transition: 0.15s ease-in-out;
+      }
+      &:hover {
+        i {
+          color: #26bcf9;
+        }
+      }
+    }
   }
   .el-dialog__footer{
     padding-top: 20px;
@@ -231,6 +259,15 @@ export default {
   &.hideHeader {
     .el-dialog__header {
       display: none;
+    }
+  }
+
+  &.danger {
+    .el-dialog__header p {
+      border-color: #ff3769;
+    }
+    .el-textarea, .el-input {
+      --el-input-focus-border-color: #ff3769;
     }
   }
 }

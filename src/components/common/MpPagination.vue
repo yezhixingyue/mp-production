@@ -7,7 +7,7 @@
       </span>
       <el-pagination
          @current-change="handleCurrentChange"
-         v-model:current-page="currentPage"
+         :modelValue="currentPage"
          hide-on-single-page
          :page-size="pageSize"
          :pager-count='5'
@@ -15,7 +15,12 @@
          :total="total">
        </el-pagination>
     </el-config-provider>
-    <span class="count"><span>共检索出</span> <i> {{total}} </i> <span>条记录</span></span>
+    <span class="count">
+      <DownLoadExcelComp />
+      <span>共检索出</span>
+      <i class="num"> {{total}} </i>
+      <span>条记录</span>
+    </span>
   </section>
 </template>
 
@@ -23,10 +28,12 @@
 import { ElConfigProvider } from 'element-plus';
 import { computed } from 'vue';
 import zhCn from 'element-plus/lib/locale/lang/zh-cn';
+import DownLoadExcelComp from '@/components/common/DownLoadExcelComp.vue';
 
 export default {
   components: {
     ElConfigProvider,
+    DownLoadExcelComp,
   },
   props: {
     nowPage: {
@@ -39,7 +46,9 @@ export default {
     total: {
       type: Number,
     },
-    handlePageChange: {},
+    handlePageChange: {
+      type: Function,
+    },
     center: {
       type: Boolean,
       default: false,
@@ -51,13 +60,20 @@ export default {
   },
   setup(props) {
     function handleCurrentChange(val) {
-      props.handlePageChange(val);
+      if (props.handlePageChange) props.handlePageChange(val);
     }
+
     const currentPage = computed(() => props.nowPage);
+
+    const onDownloadClick = () => {
+      console.log('onDownloadClick');
+    };
+
     return {
       currentPage,
       handleCurrentChange,
       locale: zhCn,
+      onDownloadClick,
     };
   },
 };
@@ -67,6 +83,7 @@ export default {
 .mp--pagination{
   display: flex;
   justify-content: flex-end;
+  font-size: 13px;
   // width: 100%;
   // padding-top: 20px;
   .count{
@@ -75,13 +92,16 @@ export default {
     margin: 0 40px;
     line-height: 36px;
     color: #444;
-    >span:first-child{
-      min-width: 56px;
+    .is-blue-span {
+      margin-right: 50px;
+      i {
+        font-size: 15px;
+        transform: scaleY(1.1);
+        vertical-align: -2px;
+        margin-left: 3px;
+      }
     }
-    >span:last-child{
-      min-width: 42px;
-    }
-    i{
+    i.num {
       color: #26bcf9;
       font-weight: 700;
       padding: 0 3px;

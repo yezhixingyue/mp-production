@@ -6,7 +6,7 @@
       </li>
       <li v-if="isCombineLine">
         <h4 class="mr-15">{{ item._originLineData?.Name }}</h4>
-        <h4 v-if="!item.AllowUnionMekeup">禁止印刷版合拼</h4>
+        <h4 v-if="item.ForbitUnionMakeup">禁止印刷版合拼</h4>
       </li>
       <li class="summary">
         <span class="title is-pink" v-if="isCombineLine">{{ item.Number }}{{ item.Unit }}</span>
@@ -16,15 +16,18 @@
         <span class="title">{{ item.PrintSide === PrintSideEnum.double ? '双面印' : '单面印' }}</span>
         <span class="title">印色：{{ getColorDisplayContent(item.ColorList) }}</span>
       </li>
-      <li v-if="!isCombineLine && !item.AllowUnionMekeup">
+      <li v-if="!isCombineLine && item.ForbitUnionMakeup">
         <h4>禁止印刷版合拼</h4>
       </li>
       <li>
         <span>{{ item._MaterialName }}</span>
       </li>
       <li>
-        <span>{{getEnumNameByIDAndEnumList(item.MaterialSource, PlaceOrderMaterialSourceEnumList)
-          }}{{item.MaterialSource===PlaceOrderMaterialSourceEnum.homePickup ? ':' : ''}}</span>
+        <span class="mr-2">
+          {{getEnumNameByIDAndEnumList(item.MaterialSource, PlaceOrderMaterialSourceEnumList)}}
+          <template v-if="item.MaterialSource!==PlaceOrderMaterialSourceEnum.warehouse">(物料尺寸：{{ item.MaterialLength }}×{{ item.MaterialWidth }}mm)</template>
+          {{item.MaterialSource===PlaceOrderMaterialSourceEnum.homePickup ? ':' : ''}}
+        </span>
       </li>
       <li v-if="item.MaterialSource===PlaceOrderMaterialSourceEnum.homePickup" class="column">
         <p>{{ item.Address.AddressDetail }}</p>

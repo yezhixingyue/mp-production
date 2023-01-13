@@ -7,6 +7,7 @@
           <el-tooltip
             class="box-item"
             effect="dark"
+            :enterable="false"
             :disabled="item[defaultProps.label].length<7"
             :content="item[defaultProps.label]"
             placement="top"
@@ -25,6 +26,7 @@
             effect="dark"
             :disabled="item[computedLv2DefaultProps.label].length<6"
             :content="item[computedLv2DefaultProps.label]"
+            :enterable="false"
             placement="top"
           >
             {{item[computedLv2DefaultProps.label]}}

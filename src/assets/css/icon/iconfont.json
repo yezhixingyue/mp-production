@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "33041882",
+      "name": "下载",
+      "font_class": "xiazai",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
       "icon_id": "33041365",
       "name": "电话",
       "font_class": "dianhua",

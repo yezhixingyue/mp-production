@@ -2,35 +2,39 @@
   <main class="main-comp-wrap">
     <table>
       <thead>
-        <tr>
-          <th :style="`width:${widthList[0].width}px`">销售端</th>
-          <th :style="`width:${widthList[1].width}px`">订单ID</th>
-          <th :style="`width:${widthList[2].width}px`">销售端产品</th>
-          <th :style="`width:${widthList[3].width}px`">内容</th>
-          <th :style="`width:${widthList[4].width}px`">尺寸</th>
-          <th :style="`width:${widthList[5].width}px`">数量</th>
-          <th :style="`width:${widthList[6].width}px`">下单时间</th>
-          <th :style="`width:${widthList[7].width}px`">预计生产完成时间</th>
-          <th :style="`width:${widthList[8].width}px`">置顶</th>
-          <th :style="`width:${widthList[9].width}px`">操作</th>
+        <tr @mousedown="mousedown" @mousemove="mousemove">
+          <th data-index="0" :style="`width:${widthList[0].width}px`">销售端</th>
+          <th data-index="1" :style="`width:${widthList[1].width}px`">订单ID</th>
+          <th data-index="2" :style="`width:${widthList[2].width}px`">销售端产品</th>
+          <th data-index="3" :style="`width:${widthList[3].width}px`">内容</th>
+          <th data-index="4" :style="`width:${widthList[4].width}px`">尺寸</th>
+          <th data-index="5" :style="`width:${widthList[5].width}px`">物料</th>
+          <th data-index="6" :style="`width:${widthList[6].width}px`">生产线</th>
+          <th data-index="7" :style="`width:${widthList[7].width}px`">数量</th>
+          <th data-index="8" :style="`width:${widthList[8].width}px`">下单时间</th>
+          <th data-index="9" :style="`width:${widthList[9].width}px`">预计生产完成时间</th>
+          <th data-index="10" :style="`width:${widthList[10].width}px`">置顶</th>
+          <th data-index="11" :style="`width:${widthList[11].width}px`">操作</th>
         </tr>
       </thead>
       <tbody>
         <template v-for="row in localList" :key="row.ID">
           <tr class="row-title" @click.self.stop="onSpreadClick(row)">
-            <td :style="`width:${widthList[0].width}px`" :title="row.SalesPlatfrom?.Name || ''">{{ row.SalesPlatfrom?.Name || '' }}</td>
-            <td :style="`width:${widthList[1].width}px`" :title="row.OrderID || ''">{{ row.OrderID || '' }}</td>
-            <td :style="`width:${widthList[2].width}px`" :title="row._SellSideProductName || ''">{{ row._SellSideProductName || '' }}</td>
-            <td :style="`width:${widthList[3].width}px`" :title="row.Content || ''">{{ row.Content || '' }}</td>
+            <td :style="`width:${widthList[0].width}px`" :title="row.ServerName">{{ row.ServerName || '' }}</td>
+            <td :style="`width:${widthList[1].width}px`" :title="row.OrderCode">{{ row.OrderCode || '' }}</td>
+            <td :style="`width:${widthList[2].width}px`" :title="row._SellSideProductName">{{ row._SellSideProductName || '' }}</td>
+            <td :style="`width:${widthList[3].width}px`" :title="row.Content">{{ row.Content || '' }}</td>
             <td :style="`width:${widthList[4].width}px`" :title="row._Size">{{ row._Size }}</td>
-            <td :style="`width:${widthList[5].width}px`" :title="row._Count || ''">{{ row._Count || '' }}</td>
-            <td :style="`width:${widthList[6].width}px`" :title="row._CreateTime || ''">{{ row._CreateTime || '' }}</td>
-            <td :style="`width:${widthList[7].width}px`" :title="row._ProduceEndTime || ''">{{ row._ProduceEndTime || '' }}</td>
-            <td :style="`width:${widthList[8].width}px`">
-              <span class="top-text" :class="{'v-hide': row._isTop}">已置顶</span>
-              <mp-button link type="primary" @click="onTopClick(row)">一键置顶</mp-button>
+            <td :style="`width:${widthList[5].width}px`" :title="row._Material">{{ row._Material }}</td>
+            <td :style="`width:${widthList[6].width}px`" :title="row._LineContent">{{ row._LineContent }}</td>
+            <td :style="`width:${widthList[7].width}px`" :title="row._Count">{{ row._Count || '' }}</td>
+            <td :style="`width:${widthList[8].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
+            <td :style="`width:${widthList[9].width}px`" :title="row._ProduceEndTime">{{ row._ProduceEndTime || '' }}</td>
+            <td :style="`width:${widthList[10].width}px`">
+              <span class="top-text" v-show="row.IsTop" :class="{'v-hide': !row.IsTop}">已置顶</span>
+              <mp-button link type="primary" @click="onTopClick(row)" :disabled="row.IsTop">一键置顶</mp-button>
             </td>
-            <td :style="`width:${widthList[9].width}px`">
+            <td :style="`width:${widthList[11].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="!row._isCombineLine">
@@ -41,18 +45,24 @@
             </td>
           </tr>
           <template v-if="row._isSpread">
-            <tr class="combine-line-info">
+            <tr class="combine-line-info" :style="`width:${totalWidth}px`">
               <td>
                 <span>组合生产线：</span>
-                <h4>{{ row.LineList[0]?.Name || '未知生产线' }}</h4>
+                <h4>{{ row.Line || '未知生产线' }}</h4>
               </td>
             </tr>
-            <tr v-for="instance in row.InstanceList" :key="instance.ID" class="instance-list" :style="`width:${totalWidth}px`">
+            <tr v-for="(instance, i) in row.InstanceList" :key="i" class="instance-list" :style="`width:${totalWidth}px`">
               <td class="name">
-                <span class="title">{{ instance.SemiFinished?.Name ? `${instance.SemiFinished?.Name}：` : ''}}</span>
-                <span class="m">{{ getMaterialName(instance.Material) }}</span>
+                <span class="title">{{ instance.SemiFinishedName ? `${instance.SemiFinishedName}：` : ''}}</span>
+                <span class="m">{{ instance.Material }}</span>
               </td>
               <td class="number">{{ instance.Number }}{{ instance.Unit }}</td>
+              <td v-for="line in instance.LineList" :key="line.ID" v-show="line.PlateList.length > 0" class="line"
+                :title="`${line.Name}\r\n大版ID：\r\n${line.PlateList.join('\r\n')}`">
+                <h4>{{ line.Name }}</h4>
+                <span class="ml-15">大版ID：</span>
+                <span>{{ line.PlateList.join('、') }}</span>
+              </td>
             </tr>
           </template>
         </template>
@@ -68,41 +78,44 @@
 </template>
 
 <script setup lang='ts'>
-import { computed, ref } from 'vue';
+import {
+  computed, onMounted, onUnmounted, ref,
+} from 'vue';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
-import { IManageOrderInfo, IFactoryMaterialList } from '../../ManualOrderHandlerPage/js/types';
 import SetOrderTopDialog from './SetOrderTopDialog.vue';
 import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
 import ProcessDisplayDialog from './ProcessDisplayDialog.vue';
+import { IManageOrderListItem } from '../js/type';
 
 const props = defineProps<{
-  list: IManageOrderInfo[]
+  list: IManageOrderListItem[]
   loading: boolean
-  MaterialList: IFactoryMaterialList[]
 }>();
 
 const emit = defineEmits(['top']);
 
-const getSellSideProductName = (it: IManageOrderInfo) => {
-  const { FirstLevel, SecondLevel, Product } = it.Attribute;
-  const list = [FirstLevel?.Name || '', SecondLevel?.Name || '', Product?.Name || ''];
+const getSellSideProductName = (it: IManageOrderListItem) => {
+  const { FirstLevel, SecondLevel, ProductName } = it;
+  const list = [FirstLevel || '', SecondLevel || '', ProductName || ''];
   return list.filter(it => it).join('-');
 };
 
-const widthList = [
-  { width: 130 },
+const widthList = ref([
   { width: 120 },
-  { width: 255 },
-  { width: 208 },
-  { width: 188 },
-  { width: 120 },
+  { width: 85 },
+  { width: 200 },
+  { width: 140 },
+  { width: 140 },
+  { width: 140 },
   { width: 160 },
-  { width: 155 },
-  { width: 150 },
+  { width: 120 },
+  { width: 110 },
+  { width: 140 },
+  { width: 120 },
   { width: 230 },
-];
+]);
 
-const totalWidth = computed(() => widthList.map(it => it.width).reduce((a, b) => a + b, 0));
+const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a, b) => a + b, 0));
 
 const spreadList = ref<string[]>([]);
 
@@ -110,13 +123,17 @@ const localList = computed(() => props.list.map(it => ({
   ...it,
   /** 销售端产品 */
   _SellSideProductName: getSellSideProductName(it),
-  _Count: `${`${it.Attribute.ProductAmount}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${it.Attribute.Unit}`,
+  _Count: `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${it.Unit}`,
   _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
-  _ProduceEndTime: format2MiddleLangTypeDateFunc2(it.ProducePeriod.ProduceEndTime),
-  _isTop: false,
+  _ProduceEndTime: format2MiddleLangTypeDateFunc2(it.WishFinishTime),
   _isSpread: spreadList.value.includes(it.ID),
-  _isCombineLine: it.LineList.length > 0,
-  _Size: it.LineList.length > 0 ? it.Attribute.Size || '' : it.InstanceList[0]?.Size || '',
+  _isCombineLine: it.InstanceList.length > 1,
+  _Size: it.InstanceList.length > 1 ? it.Size || '' : it.InstanceList[0]?.Size || '',
+  _Material: it.InstanceList.length > 1 ? '' : it.InstanceList[0]?.Material || '',
+  _LineContent: it.InstanceList.length > 1 ? '' : it.InstanceList[0]?.LineList
+    .map(l => (l.PlateList.length > 0 ? `${l.Name} 大版ID:${l.PlateList.join('、')}` : ''))
+    .filter(it => it)
+    .join('；\r\n') || '',
 })));
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
@@ -126,11 +143,6 @@ const onSpreadClick = (it: typeof localList.value[number]) => {
   } else {
     spreadList.value.push(it.ID);
   }
-};
-
-const getMaterialName = (MaterialID: string) => {
-  const t = props.MaterialList.find(it => it.ID === MaterialID);
-  return t ? t.Name : '';
 };
 
 /** 当前设置对象条目 3弹窗共用 */
@@ -162,6 +174,62 @@ const onProcessClick = (row: typeof localList.value[number]) => {
   curRow.value = row;
   processVisible.value = true;
 };
+
+/** 拖动事件 */
+let curIndex = -1;
+let start = 0;
+
+const bodymousemove = (e: MouseEvent) => {
+  if (curIndex === -1) return;
+  if (start === 0) {
+    start = e.clientX;
+    return;
+  }
+  const diff = e.clientX - start;
+  const num = widthList.value[curIndex].width + diff;
+  if (num >= 45) widthList.value[curIndex].width = num;
+  start = e.clientX;
+};
+
+const bodymouseup = () => {
+  document.body.removeEventListener('mousemove', bodymousemove);
+};
+
+const mousedown = (e: MouseEvent) => { // 处理开始拖动
+  const dom = e.target as HTMLElement;
+  if (dom.nodeName !== 'TH') return;
+  let index = +(dom.dataset.index || -1);
+  if (index === -1) return;
+  if (widthList.value[index] && (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10)) {
+    if (e.offsetX < 10) {
+      index -= 1;
+    }
+    start = 0;
+    curIndex = index;
+    document.body.addEventListener('mousemove', bodymousemove);
+  }
+};
+
+const mousemove = (e: MouseEvent) => { // 处理鼠标指针样式变化
+  // 找到所在方格位置 及 是否移动至可拖动位置
+  const dom = e.target as HTMLElement;
+  if (dom.nodeName !== 'TH') return;
+  const index = +(dom.dataset.index || -1);
+  if (index === -1) return;
+  if (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10) {
+    dom.style.cursor = 'col-resize';
+  } else {
+    dom.style.cursor = '';
+  }
+};
+
+onMounted(() => {
+  document.body.addEventListener('mouseup', bodymouseup);
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener('mouseup', bodymouseup);
+});
 
 </script>
 
@@ -200,6 +268,10 @@ const onProcessClick = (row: typeof localList.value[number]) => {
           font-weight: 700;
           white-space: nowrap;
           position: relative;
+          overflow: hidden;
+          min-width: 30px;
+          user-select: none;
+          text-overflow: ellipsis;
           &:not(:last-of-type)::after {
             content: '';
             height: 15px;
@@ -250,7 +322,7 @@ const onProcessClick = (row: typeof localList.value[number]) => {
             text-align: center;
             .top-text {
               vertical-align: middle;
-              margin-right: 30px;
+              margin-right: 10px;
               &.v-hide {
                 visibility: hidden;
               }
@@ -273,6 +345,7 @@ const onProcessClick = (row: typeof localList.value[number]) => {
               text-overflow: ellipsis;
               display: inline-block;
               vertical-align: top;
+              flex: none;
             &.name {
               margin-left: 36px;
               min-width: 240px;
@@ -283,7 +356,7 @@ const onProcessClick = (row: typeof localList.value[number]) => {
             }
             &.number {
               min-width: 65px;
-              margin-right: 15px;
+              margin-right: 25px;
             }
           }
         }
@@ -292,6 +365,25 @@ const onProcessClick = (row: typeof localList.value[number]) => {
             margin-left: 36px;
             h4 {
               display: inline-block;
+            }
+          }
+        }
+        &.instance-list {
+          display: flex;
+          .line {
+            display: flex;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex-shrink: 1;
+            > span:last-of-type {
+              flex-shrink: 1;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            & + .line {
+              padding-left: 60px;
             }
           }
         }

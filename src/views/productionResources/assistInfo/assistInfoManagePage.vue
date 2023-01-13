@@ -127,7 +127,6 @@ export default {
     overflow: hidden;
     > :deep(.el-table) {
       height: 100%;
-      // width: 900px;
     }
   }
   > footer {

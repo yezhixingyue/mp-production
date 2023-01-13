@@ -64,6 +64,16 @@
             </el-radio-group>
           </div>
         </li>
+        <!-- 物料尺寸 -->
+        <li class="size" v-if="itemData.MaterialSource!==''&&itemData.MaterialSource!==PlaceOrderMaterialSourceEnum.warehouse">
+          <span class="title">物料尺寸:</span>
+          <div class="content">
+            <el-input maxlength="9" v-model.number="itemData.MaterialLength"></el-input>
+            <i>x</i>
+            <el-input maxlength="9" v-model.number="itemData.MaterialWidth"></el-input>
+            <em>mm</em>
+          </div>
+        </li>
         <!-- 取料地址 -->
         <li class="address" v-show="(itemData.MaterialSource === PlaceOrderMaterialSourceEnum.homePickup)">
           <p>取货地址:</p>
@@ -78,7 +88,7 @@
           </p>
         </li>
       </template>
-      <li class="remove-row" v-if="itemData._MaterialSource?.NeedSource === false">
+      <li class="remove-row" v-if="itemData._MaterialSource?.NeedResource === false">
         <RemoveMenu class="remove" @click="onSemiFinisiedRemoveClick" title="删除此半成品" />
       </li>
     </ul>
@@ -245,7 +255,7 @@ const onSemiFinisiedRemoveClick = () => {
 
       &.address {
         flex-direction: column;
-        margin-top: -6px;
+        margin-top: 0px;
         :deep(.el-textarea) {
           font-size: 12px;
           width: 282px;

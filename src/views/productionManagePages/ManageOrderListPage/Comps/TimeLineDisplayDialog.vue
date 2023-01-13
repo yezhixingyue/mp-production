@@ -18,11 +18,11 @@
 <script setup lang='ts'>
 import { computed } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { IManageOrderInfo } from '../../ManualOrderHandlerPage/js/types';
+import { IManageOrderListItem } from '../js/type';
 
 const props = defineProps<{
   visible: boolean
-  row: null | IManageOrderInfo
+  row: null | IManageOrderListItem
 }>();
 
 const emit = defineEmits(['update:visible']);

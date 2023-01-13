@@ -10,19 +10,21 @@
     closeBtnText="关闭"
     >
     <div class="process-content">
-      content
+      <LineFlowchartComp v-if="localOrderFlowchart" :FlowchartData="localOrderFlowchart" />
     </div>
   </DialogContainerComp>
 </template>
 
 <script setup lang='ts'>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { IManageOrderInfo } from '../../ManualOrderHandlerPage/js/types';
+import LineFlowchartComp from './LineFlowchartComp/LineFlowchartComp.vue';
+import { OrderFlowchart } from '../js/OrderFlowchart/OrderFlowchart';
+import { IManageOrderListItem } from '../js/type';
 
 const props = defineProps<{
   visible: boolean
-  row: null | IManageOrderInfo
+  row: null | IManageOrderListItem
 }>();
 
 const emit = defineEmits(['update:visible']);
@@ -36,8 +38,10 @@ const localVisible = computed({
   },
 });
 
+const localOrderFlowchart = ref<OrderFlowchart | null>(null);
+
 const onOpen = () => {
-  console.log('onOpen', props.row);
+  localOrderFlowchart.value = new OrderFlowchart();
 };
 
 </script>

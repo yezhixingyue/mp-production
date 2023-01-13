@@ -122,8 +122,9 @@ export interface IMaterialSources {
   MaterialTypeName: string
   SourceType: number | '',
   SourceWorkIDS: string[] | null,
-  NeedSource: boolean,
+  NeedResource: boolean,
   FactoryProvide: boolean,
+  AllowSourceLine: boolean
 }
 export interface IProductionLineWorkings {
   LineID: string,

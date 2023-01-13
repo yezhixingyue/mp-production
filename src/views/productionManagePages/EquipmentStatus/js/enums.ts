@@ -1,18 +1,20 @@
+import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
+
 /**
- * 机器状态枚举
+ * 机器状态枚举 -- 仅用于看板展示
  *
  * @export
  * @enum {number}
  */
-export enum EquipmentStatusEnum {
+export enum EquipmentStatusForBoardEnum {
   /** 已开机 */
-  opened = 1,
+  opened = 0,
   /** 生产中 */
-  inWorking = 2,
+  inWorking = 1,
   /** 已关闭 */
-  closed = 3,
+  closed = 2,
   /** 机器报停 */
-  error = 4,
+  error = 3,
 }
 
 /**
@@ -74,13 +76,13 @@ export enum EquipmentStatusLabelEnum {
  */
 export enum EquipmentTaskStatusEnum {
   /** 生产中 */
-  inWorking = 1,
+  inWorking = ProductiveTaskStatusEnum.InProduction,
   /** 可生产 */
-  canWorking = 2,
+  canWorking = ProductiveTaskStatusEnum.Producibility,
   /** 等待物料 */
-  needMaterial = 3,
+  needMaterial = ProductiveTaskStatusEnum.Initial,
   /** 异常 */
-  error = 4,
+  error = ProductiveTaskStatusEnum.Error,
 }
 
 /**

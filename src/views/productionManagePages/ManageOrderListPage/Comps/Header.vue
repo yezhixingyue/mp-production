@@ -28,14 +28,14 @@ import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { computed } from 'vue';
-import { IManageOrderInfo } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from '../js/Condition';
+import { IManageOrderListItem } from '../js/type';
 
 const props = defineProps<{
   setCondition:(e: ISetConditionParams) => void
   getList:(Page?: number) => void
   condition: Condition
-  list: IManageOrderInfo[]
+  list: IManageOrderListItem[]
 }>();
 
 const emit = defineEmits(['clear']);

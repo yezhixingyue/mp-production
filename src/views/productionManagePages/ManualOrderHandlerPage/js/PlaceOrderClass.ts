@@ -138,6 +138,7 @@ export class PlaceOrderClass {
           return t;
         });
       }
+      temp.WorkingList = temp.WorkingList?.map(it => ({ ...it, WorkingID: it.ID })) || [];
     }
 
     delete temp._AllMaterialSources;
@@ -162,6 +163,7 @@ export class PlaceOrderClass {
           if (!f.SpecialColorList?.length) delete t.SpecialColorList;
           return t;
         }) || [],
+        WorkingList: it.WorkingList?.map(it => ({ ...it, WorkingID: it.ID })),
       };
       delete _it._MaterialSource;
       delete _it._originLineData;
@@ -397,10 +399,10 @@ export class PlaceOrderClass {
           if (m.Feature === MakingGroupTypeFeatureEnum.semifinished && m.SourceType === MaterialSourceTypeEnum.otherLine) {
             const ids = _AllMaterialSources.map(it => it.MaterialTypeID);
             if (!ids.includes(m.MaterialTypeID)) {
-              if (!m.NeedSource) {
+              if (!m.NeedResource) {
                 _AllMaterialSources.push(m);
               } else { // 把必需的半成品排至前列
-                const i = _AllMaterialSources.findIndex(it => !it.NeedSource);
+                const i = _AllMaterialSources.findIndex(it => !it.NeedResource);
                 _AllMaterialSources.splice(i > -1 ? i : 0, 0, m);
               }
             }
@@ -433,6 +435,7 @@ export class PlaceOrderClass {
             Type: NoteInfo.Type,
             Content: t ? t.Content : '',
             Value: '',
+            FilePath: '',
           });
         }
       });
@@ -443,7 +446,7 @@ export class PlaceOrderClass {
       const t = this._CombineInstanceList.find(it => it.SemiFinished.ID === m.MaterialTypeID);
       if (t) {
         list.push(t);
-      } else if (m.NeedSource) {
+      } else if (m.NeedResource) {
         list.push(new PlaceOrderProductionInstance(true, null, m));
       }
     });

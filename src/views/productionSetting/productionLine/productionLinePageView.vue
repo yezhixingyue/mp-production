@@ -50,6 +50,7 @@
               label:'Name',
             }"
             :value='RadioGroupCompValue'
+            :useTooltip="false"
             @change="RadioGroupCompChange"
             ></RadioGroupComp>
           <!-- <div class="menu">
@@ -523,7 +524,12 @@ const getPrcessList = () => {
   const type = isCombine.value ? FetchWorkingProcedureSearchEnum.OrderReportNotCombination : FetchWorkingProcedureSearchEnum.NotCombination;
   api.getWorkingProcedureSearch(type).then(res => {
     if (res.data.Status === 1000) {
-      PrcessList.value = res.data.Data;
+      if (!isCombine.value) { // 如果是普通生产线 对工序列表进行筛选 - 筛选掉物料来源中包含半成品的工序
+        console.log(res.data.Data, productionSettingStore.MaterialTypeGroup);
+        PrcessList.value = res.data.Data;
+      } else {
+        PrcessList.value = res.data.Data;
+      }
     }
   });
 };
@@ -726,7 +732,7 @@ onActivated(() => {
     sessionStorage.removeItem(sessionKey);
   }
 });
-onMounted(() => {
+onMounted(async () => {
   if (isCombine.value) {
     sessionStorage.removeItem('combinationProductionLinePage');
     getCombinationPrcessList();
@@ -738,10 +744,10 @@ onMounted(() => {
     sessionStorage.removeItem('productionLinePage');
     productionSettingStore.setPlateMakingWorkSetupHanderInit();
   }
-  if (!productionSettingStore.MaterialTypeGroup.length) {
-    productionSettingStore.getMaterialTypeGroupAll();
-  }
   getProductionLineList();
+  if (!productionSettingStore.MaterialTypeGroup.length) {
+    await productionSettingStore.getMaterialTypeGroupAll();
+  }
   getPrcessList();
 });
 </script>

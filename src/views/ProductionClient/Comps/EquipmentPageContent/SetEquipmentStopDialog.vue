@@ -2,15 +2,19 @@
   <DialogContainerComp
     :visible='localVisible'
     :width="520"
-    title="设备报停:"
+    :title="title"
     @submit="submit"
-    @cancel="localVisible = false"
+    @cancel="onCancel"
     @closed="onClosed"
     top="20vh"
-    primary-text="报停"
+    :primary-text="requestResult ? '确定' : '报停'"
+    :danger="!requestResult"
+    :show-close="!requestResult"
+    :show-header="!requestResult"
     class="mp-client-set-equipment-report-stop-dialog-comp-wrap"
     >
-    <div class="dialog-content">
+    <ErrorContent v-if="requestResult" :ErrorInfo="requestResult.ErrorInfo" />
+    <div class="dialog-content" v-else>
       <h2>报停原因：</h2>
       <el-input v-model.trim="reason" autocomplete="off" maxlength="20" show-word-limit></el-input>
       <p class="tips-box">
@@ -26,6 +30,8 @@ import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ManageClientPageData } from '@/api/client/clientStore';
+import ErrorContent from './CurTaskPanel/EquipmentError/ErrorContent.vue';
+import { IEquipmentErrorInfo } from '../../assets/js/types';
 
 const props = defineProps<{
   visible: boolean
@@ -42,22 +48,39 @@ const localVisible = computed({
   },
 });
 
+const title = computed(() => `设备报停：${ManageClientPageData.value.curActiveInstance?.Equipment.Name || ''}`);
+
 const reason = ref(''); // 6 - 16位
+
+const requestResult = ref<null | { ErrorInfo: IEquipmentErrorInfo; cb:() => void }>(null);
+
+const onCancel = () => {
+  if (requestResult.value) {
+    requestResult.value.cb();
+  }
+  localVisible.value = false;
+};
 
 const onClosed = () => {
   reason.value = '';
+  requestResult.value = null;
 };
 
-const submit = () => {
+const submit = async () => {
+  if (requestResult.value) {
+    // 成功后的弹窗关闭处理
+    onCancel();
+    return;
+  }
   if (!reason.value) {
     MpMessage.error({ title: '操作失败', msg: '请输入报停原因' });
     return;
   }
   if (ManageClientPageData.value.curActiveInstance) {
-    const cb = () => {
-      localVisible.value = false;
-    };
-    ManageClientPageData.value.curActiveInstance.reportStop(reason.value, cb);
+    const result = await ManageClientPageData.value.curActiveInstance.getEquipmentStop(reason.value);
+    if (result) {
+      requestResult.value = result;
+    }
   }
 };
 
@@ -88,7 +111,7 @@ const submit = () => {
     }
   }
   .el-dialog__footer {
-    padding-bottom: 20px;
+    padding-bottom: 35px;
     .el-button {
       height: 40px;
       width: 135px;

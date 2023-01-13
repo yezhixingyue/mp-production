@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang='ts'>
-import { MpMessage } from '@/assets/js/utils/MpMessage';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { computed, ref } from 'vue';
 import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
@@ -56,10 +55,6 @@ const onOpen = () => {
 };
 
 const submit = () => {
-  if (checkList.value.length === 0) {
-    MpMessage.error({ title: '保存失败', msg: '请选择工序' });
-    return;
-  }
   emit('save', checkList.value);
 };
 

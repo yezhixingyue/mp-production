@@ -5,11 +5,11 @@
         <p class="ft-12">
           <span>{{hoverItemInfo.data.item?.ClassName}}</span>
           <i> - </i>
-          <span>{{hoverItemInfo.data.item?.GroupName}}</span>
+          <span>{{hoverItemInfo.data.item?.Equipment.GroupName}}</span>
         </p>
         <!-- 设备名称 -->
         <h4 class="n">
-          <span class="mr-5">{{hoverItemInfo.data.item?.Name}}</span>
+          <span class="mr-5">{{hoverItemInfo.data.item?.Equipment.Name}}</span>
           <span class="status" v-show="hoverItemInfo.data.item?._EquipmentStatusEnumItem?.Name">
             <i :style="`background-color: ${hoverItemInfo.data.item?._EquipmentStatusEnumItem?.Color}`"></i>
             <em>{{hoverItemInfo.data.item?._EquipmentStatusEnumItem?.Name || ''}}</em>
@@ -18,25 +18,25 @@
         <!-- 设备状态 -->
         <p>
           <span class="title">任务:</span>
-          <span class="c">{{hoverItemInfo.data.item?.TaskNumber}}个</span>
+          <span class="c">{{hoverItemInfo.data.item?.TaskList.length}}个</span>
         </p>
         <!-- 操作人 -->
         <p>
           <span class="title">操作人:</span>
-          <span class="c">{{hoverItemInfo.data.item?.Operater.Name}}</span>
+          <span class="c">{{hoverItemInfo.data.item?.Operator}}</span>
         </p>
         <!-- 分隔线 -->
-        <hr v-show="hoverItemInfo.data.Task || (hoverItemInfo.data.item?.Error && hoverItemInfo.data.item.Status === EquipmentStatusEnum.error)" />
+        <hr v-show="hoverItemInfo.data.Task || (hoverItemInfo.data.item?.Remark && hoverItemInfo.data.item.Status === EquipmentStatusForBoardEnum.error)" />
         <!-- 错误信息 -->
-        <p v-show="hoverItemInfo.data.item?.Error && hoverItemInfo.data.item.Status === EquipmentStatusEnum.error" class="is-pink">
+        <p v-show="hoverItemInfo.data.item?.Remark && hoverItemInfo.data.item.Status === EquipmentStatusForBoardEnum.error" class="is-pink">
           <span class="title bold">错误:</span>
-          <span class="is-pink ft-12">{{hoverItemInfo.data.item?.Error}}</span>
-          <span v-show="hoverItemInfo.data.item"> -- {{hoverItemInfo.data.item?.ErrorOperater}}</span>
+          <span class="is-pink ft-12">{{hoverItemInfo.data.item?.Remark}}</span>
+          <span v-show="hoverItemInfo.data.item"> -- {{hoverItemInfo.data.item?.ErrorOperator}}</span>
         </p>
         <!-- 当前指针选定任务 -->
         <p v-show="hoverItemInfo.data.Task">
           <span class="title">任务ID:</span>
-          <span class="c">{{hoverItemInfo.data.Task?.ID}}</span>
+          <span class="c">{{hoverItemInfo.data.Task?.Code}}</span>
         </p>
         <p v-show="hoverItemInfo.data.Task?._EquipmentTaskStatusEnumitem">
           <span class="title">任务状态:</span>
@@ -45,12 +45,12 @@
           >{{hoverItemInfo.data.Task?._EquipmentTaskStatusEnumitem?.Name}}</span>
         </p>
         <p v-show="hoverItemInfo.data.Task">
-          <span class="title">任务内容:</span>
-          <span class="c">{{hoverItemInfo.data.Task?.ProductName}}</span>
+          <span class="title">使用物料:</span>
+          <span class="c">{{hoverItemInfo.data.Task?.Material}}</span>
         </p>
-        <p v-show="hoverItemInfo.data.Task?.BeginTime">
+        <p v-show="hoverItemInfo.data.Task?.StartTime">
           <span class="title">开始时间:</span>
-          <span class="c ft-12">{{format2MiddleLangTypeDateFunc2(hoverItemInfo.data.Task?.BeginTime)}}</span>
+          <span class="c ft-12">{{format2MiddleLangTypeDateFunc2(hoverItemInfo.data.Task?.StartTime)}}</span>
         </p>
         <p v-show="hoverItemInfo.data.Task?.Duration">
           <span class="title">预计时长:</span>
@@ -63,7 +63,7 @@
 <script setup lang='ts'>
 import { ref, watchEffect } from 'vue';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
-import { EquipmentStatusEnum } from '../js/enums';
+import { EquipmentStatusForBoardEnum } from '../js/enums';
 import { IHoverTarget } from '../js/types';
 
 const props = defineProps<{

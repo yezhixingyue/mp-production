@@ -43,6 +43,11 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   /** 物料来源 */
   MaterialSource: PlaceOrderMaterialSourceEnum | '' = ''
 
+  /** 物料尺寸 - 非仓库领料需要传 */
+  MaterialLength: '' | number = ''
+
+  MaterialWidth: '' | number = ''
+
   /** 上门取料地址 仅MaterialSource为上门取件时需要 */
   Address = {
     /** 收货人 */
@@ -66,7 +71,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   FileList: IConvertOrderFile[] = []
 
   /** 允许合拼 */
-  AllowUnionMekeup = true
+  ForbitUnionMakeup = false
 
   /** 输出半成品, 仅属于组合生产线时使用 */
   SemiFinished = {
@@ -149,6 +154,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
             Type: NoteInfo.Type,
             Content: t ? t.Content : '',
             Value: '',
+            FilePath: '',
           });
         }
       });
@@ -254,6 +260,11 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
       return false;
     }
 
+    if (this.MaterialSource !== PlaceOrderMaterialSourceEnum.warehouse) {
+      if (!checkIsPositiveInteger(this.MaterialLength, `${this._LineInstanceName}物料尺寸长`)) return false;
+      if (!checkIsPositiveInteger(this.MaterialWidth, `${this._LineInstanceName}物料尺寸宽`)) return false;
+    }
+
     if (this.MaterialSource === PlaceOrderMaterialSourceEnum.homePickup) {
       if (!this.Address.AddressDetail) {
         MpMessage.error({ title: '操作失败', msg: `请输入${this._LineInstanceName}物料取货地址` });
@@ -290,7 +301,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
       return false;
     }
 
-    if (this.MaterialSource !== PlaceOrderMaterialSourceEnum.warehouse && this.AllowUnionMekeup) {
+    if (this.MaterialSource !== PlaceOrderMaterialSourceEnum.warehouse && !this.ForbitUnionMakeup) {
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}物料来源非仓库领料，此时应禁止印刷版合拼` });
       return false;
     }

@@ -14,6 +14,22 @@
     }
   }
 }
+.el-button {
+  &.pink {
+    border-color: $--color-pink;
+    color: $--color-pink;
+    &:hover {
+      border-color: $--color-pink;
+      color: $--color-pink;
+      background-color: lighten($color: $--color-pink, $amount: 37);
+    }
+    &:active {
+      border-color: darken($color: $--color-pink, $amount: 12);
+      color:darken($color: $--color-pink, $amount: 12);
+      background-color: lighten($color: $--color-pink, $amount: 37);
+    }
+  }
+}
 
 .el-button--primary{
   &.el-button:focus, &.el-button:hover{

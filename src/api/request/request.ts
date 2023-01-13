@@ -3,7 +3,7 @@
 // 该文件用于提供一个请求接口的方法，可以在该方法中设置响应拦截器，由于较繁琐 且目前用不到  暂时搁置
 
 import { AxiosResponse } from 'axios';
-import instance from './instance';
+import { instance } from './instance';
 
 import type { IRequestConfig, IResponse } from './types';
 

@@ -9,7 +9,7 @@
     <el-table-column width="130">
       <template #default="scope">
         <el-checkbox v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnumObj.semifinished.ID"
-          v-model="scope.row.NeedSource" label="必须资源"></el-checkbox>
+          v-model="scope.row.NeedResource" label="必须资源"></el-checkbox>
       </template>
     </el-table-column>
     <el-table-column width="170">
@@ -17,18 +17,27 @@
         <el-checkbox v-model="scope.row.FactoryProvide" label="如外协则外协厂自备"></el-checkbox>
       </template>
     </el-table-column>
+    <el-table-column width="145">
+      <template #default="scope">
+        <el-checkbox
+          v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnumObj.semifinished.ID"
+          :disabled="scope.row.SourceType !== MaterialSourceTypeEnum.otherPrcess && scope.row.SourceType !== '' "
+          v-model="scope.row.AllowSourceLine" label="可来自其他生产线"></el-checkbox>
+      </template>
+    </el-table-column>
     <el-table-column min-width="360">
       <template #default="scope">
         <span class="source">
           <el-radio-group :class="{'other-line':scope.row._MaterialTypeGroup?.Feature !== resourceBundleFeatureEnumObj.semifinished.ID}"
             v-model="scope.row.SourceType">
-            <el-radio :label="MaterialSourceTypeEnum.otherLine"
-              v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnumObj.semifinished.ID">其他生产线</el-radio>
-            <el-radio :label="MaterialSourceTypeEnum.outOfStorage">预出库</el-radio>
-            <el-radio :label="MaterialSourceTypeEnum.picking">领料</el-radio>
-            <el-radio :label="MaterialSourceTypeEnum.otherPrcess" v-if="!props.withoutOtherPrcess">其他工序</el-radio>
+            <!-- <el-radio :label="MaterialSourceTypeEnum.otherLine"
+              v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnumObj.semifinished.ID">其他生产线</el-radio> -->
+            <el-radio :label="MaterialSourceTypeEnum.outOfStorage" :disabled="scope.row.AllowSourceLine">预出库</el-radio>
+            <el-radio :label="MaterialSourceTypeEnum.picking" :disabled="scope.row.AllowSourceLine">领料</el-radio>
+            <!-- <el-radio :label="MaterialSourceTypeEnum.plateMaking" v-if="hasPlateMakingWork">制版工序</el-radio> -->
+            <el-radio :label="MaterialSourceTypeEnum.otherPrcess" v-if="!withoutOtherPrcess">其他工序</el-radio>
           </el-radio-group>
-          <template v-if="scope.row.SourceType === MaterialSourceTypeEnum.otherPrcess && !props.withoutOtherPrcess">
+          <template v-if="scope.row.SourceType === MaterialSourceTypeEnum.otherPrcess && !withoutOtherPrcess">
             <div class="Process-list" v-if="scope.row.SourceWorkIDS && scope.row.SourceWorkIDS.length"
               :title="scope.row.SourceWorkIDS.map(it => getProcessName(it)).join('\r\n或 ')">
               <template v-for="(item,i) in scope.row.SourceWorkIDS" :key="item">
@@ -63,6 +72,7 @@ const props = defineProps<{
   withoutOtherPrcess?: boolean
   WorkingProcedureList: IWorkingProcedureSearch[]
   title: string
+  hasPlateMakingWork?: boolean
 }>();
 
 const emit = defineEmits(['select']);
@@ -84,9 +94,9 @@ const selectProcess = (it) => {
       margin-left: 16px;
       flex-wrap: nowrap;
     }
-    .other-line {
-      margin-left: 130px;
-    }
+    // .other-line {
+    //   margin-left: 20px;
+    // }
     .Process-list{
       padding: 0 20px;
       padding-right: 0;

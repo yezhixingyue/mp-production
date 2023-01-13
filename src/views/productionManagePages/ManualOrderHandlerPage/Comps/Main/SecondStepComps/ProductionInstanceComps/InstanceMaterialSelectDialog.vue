@@ -151,7 +151,7 @@ const submit = () => {
 @import '@/assets/css/mixins.scss';
 .m-select-content {
   margin-top: -18px;
-  padding-left: 10px;
+  padding-left: 0px;
   > .header {
     padding-left: 21px;
     padding-bottom: 15px;

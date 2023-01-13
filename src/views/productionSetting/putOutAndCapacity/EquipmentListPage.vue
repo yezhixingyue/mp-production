@@ -11,11 +11,13 @@
        @onRemoveClick="onRemoveClick"
        @ToPutOutPage="ToPutOutPage"
        @TocCpacityPage="TocCpacityPage"
+       :isPlateMaking="isPlateMakingGroup"
        />
       <EquipmentTable
        v-if="PlateMakingEquipmentSetupData"
        :title="PlateMakingEquipmentSetupData.WorkName"
        :EquipmentList="PlateMakingEquipmentList"
+       isPlateMaking
        @add="onAddClick('additional')"
        @onRemoveClick="onRemoveClick"
        @ToPutOutPage="ToPutOutPage"
@@ -49,6 +51,8 @@ const props = defineProps<{
   curLineWorkName: string
   PlateMakingEquipmentSetupData?: IPlateMakingEquipmentSetupData | null
   Equipments?: { ID: string, LineEquipmentID: string }[]
+  /** 是否为制版组使用 */
+  isPlateMakingGroup?: boolean
 }>();
 
 const emit = defineEmits(['ToPutOut', 'TocCpacity', 'remove', 'save']);

@@ -5,6 +5,7 @@
     </header>
     <main>
       <PageContentTable v-if="tableList" :tableList="tableList" :withoutOtherPrcess="props.withoutOtherPrcess"
+       :hasPlateMakingWork="!!curEditItem?.PlateMakingWorkID"
        :title="props.title" :WorkingProcedureList="WorkingProcedureList" @select="selectProcess" />
       <PageContentTable v-if="tableList4PlateMaking && PlateMakingMaterialSourceSetupData"
        :tableList="tableList4PlateMaking" :withoutOtherPrcess="props.withoutOtherPrcess"
@@ -30,6 +31,7 @@
 import api from '@/api';
 import { IMpBreadcrumbItem } from '@/assets/Types/common';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
+import { resourceBundleFeatureEnumObj } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import {
   IMaterialSources, IProductionLineWorkings,
 } from '@/store/modules/productionSetting/types';
@@ -92,12 +94,14 @@ const localWorkingProcedureList = computed(() => {
   }
   if (_IsPlateMakingWork.value) { // 设置的是制版工序物料来源
     list = list.filter(it => it.ID !== props.PlateMakingMaterialSourceSetupData?.PlateMakingWorkID);
-  } else if (props.curEditItem?.PlateMakingWorkID && !props.curEditItem.PlateMakingGroupID) { // 设置的是普通工序的物料来源 且自身携带制版工序(非制版组)
-    // 此时需要把自身携带的制版工序ID添加到列表中供选择
-    const id = props.curEditItem.PlateMakingWorkID;
-    const t = WorkingProcedureList.value.find(it => it.ID === id);
-    if (t) list.push(t);
   }
+  //  else if (props.curEditItem?.PlateMakingWorkID) { // 设置的是普通工序的物料来源 且自身携带制版工序(包括制版组) --- 暂不考虑该方法 使用添加枚举方式
+  //   // 此时需要把自身携带的制版工序ID添加到列表中供选择
+  //   const id = props.curEditItem.PlateMakingWorkID;
+
+  //   const t = WorkingProcedureList.value.find(it => it.ID === id);
+  //   if (t) list.push(t);
+  // }
   return list;
 });
 
@@ -116,11 +120,14 @@ const saveProcess = async () => {
     });
     return;
   }
-  t = list?.find(it => it.SourceType === MaterialSourceTypeEnum.otherPrcess && (!it.SourceWorkIDS || it.SourceWorkIDS.length === 0));
+  t = list?.find(it => it.SourceType === MaterialSourceTypeEnum.otherPrcess
+   && (!it.SourceWorkIDS || it.SourceWorkIDS.length === 0)
+   && (!it.AllowSourceLine || it._MaterialTypeGroup?.Feature !== resourceBundleFeatureEnumObj.semifinished.ID));
   if (t) {
+    const _msg = t._MaterialTypeGroup?.Feature === resourceBundleFeatureEnumObj.semifinished.ID ? '未设置来源工序且未设置可来自其他生产线' : '未设置来源工序';
     MpMessage.error({
       title: '保存失败',
-      msg: `<span class='ft-12'>[ <i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> ] 未设置来源工序</span>`,
+      msg: `<span class='ft-12'>[ <i class='is-primary'>${t._MaterialTypeGroup?.Name}</i> ] ${_msg}</span>`,
       dangerouslyUseHTMLString: true,
     });
     return;

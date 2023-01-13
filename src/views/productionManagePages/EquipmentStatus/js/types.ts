@@ -1,57 +1,51 @@
+import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 import { EquipmentStatusEnumList, EquipmentTaskStatusEnumList } from './EnumList';
-import { EquipmentStatusEnum, EquipmentTaskStatusEnum } from './enums';
+import { EquipmentStatusForBoardEnum, EquipmentTaskStatusEnum } from './enums';
 
 /**
- * 任务接口 - 暂定
+ * 任务接口
  *
  * @export
  * @interface ITask
  */
 export interface ITask {
-  ID: number
-  /** 任务目标产品 */
-  ProductName: string
+  /** 任务编号 */
+  Code: number
+  /** 物料 */
+  Material: string
   /** 数量 */
-  // ProductionCount: number
+  Number: number
   /** 单位 */
-  // Unit: string
+  Unit: string
   /** 任务状态 */
   Status: EquipmentTaskStatusEnum
   /** 开始时间 */
-  BeginTime: string
+  StartTime: string
   /** 结束时间 */
   EndTime: string
-  /** 任务时长 */
+  /** 任务时长 -- 单位是小时吗？ */
   Duration: number
 }
 
 /**
- * 设备状态条目接口 - 暂定
+ * 设备状态条目接口
  *
  * @export
  * @interface IEquipmentStatusItem
  */
 export interface IEquipmentStatusItem {
-  ID: string
-  /** 设备名称 */
-  Name: string
   /** 设备分类名称 */
   ClassName: string
-  /** 设备组名称 */
-  GroupName: string
+  /** 设备信息 */
+  Equipment: IEquipmentBaseInfo,
   /** 设备状态 */
-  Status: EquipmentStatusEnum
+  Status: EquipmentStatusForBoardEnum
   /** 设备操作人 */
-  Operater: {
-    ID: string
-    Name: string
-  }
+  Operator: string
   /** 错误信息 */
-  Error: string
+  Remark: string
   /** 报错人 */
-  ErrorOperater: string
-  /** 任务数量 */
-  TaskNumber: number
+  ErrorOperator: string
   /** 任务列表 */
   TaskList: ITask[]
 }

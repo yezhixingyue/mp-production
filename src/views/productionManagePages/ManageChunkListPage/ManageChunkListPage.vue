@@ -41,6 +41,10 @@ export default {
   > main {
     flex: 1;
     margin-top: 8px;
+    overflow: hidden;
+    > :deep(.el-table) {
+      height: 100%;
+    }
   }
   > footer {
     height: 40px;

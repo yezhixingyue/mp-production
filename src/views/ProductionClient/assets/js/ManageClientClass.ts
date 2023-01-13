@@ -45,6 +45,12 @@ export class ManageClientClass {
 
     this.InstanceList = list.map(it => this.InstanceList.find(_it => _it.Equipment.ID === it.ID) || new TerminalEquipmentInstance(it));
 
+    // 对curActiveInstance的相关处理 -- 如果当前实例被移除 则置curActiveInstance为null
+    if (this.curActiveInstance) {
+      const t = this.InstanceList.find(it => it.Equipment.ID === this.curActiveInstance?.Equipment.ID);
+      if (!t) this.curActiveInstance = null;
+    }
+
     /** 只保留当前存在设备的缓存信息 */
     if (list.length > 0) SessionStorageClientHandler.filterNonexistence(list.map(it => it.ID));
   }

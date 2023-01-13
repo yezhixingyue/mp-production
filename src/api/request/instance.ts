@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import { useUserStore } from '@/store/modules/user';
 import { router } from '@/router';
 import messageBox from '@/assets/js/utils/message';
-import { ElLoading } from 'element-plus';
+import { ElLoading, ElMessage } from 'element-plus';
 import Axios from './axios';
 import { ICatch, IMPAxiosInstance, IRequestConfig } from './types';
 import { setRequestHeaderMiddleware } from './utils';
@@ -81,11 +81,12 @@ const axios = new Axios({
       if (result.data.Status !== 1000) {
         if (result.data.Status === 8037) {
           axios.cancelAllRequest();
-          messageBox.failSingle('请重新登录', () => {
+          const cb = () => {
             const host = window.location.href.split('#')[0] || '';
             userStore.token = '';
             window.location.href = `${host}#/login`;
-          });
+          };
+          messageBox.failSingle('请重新登录', cb, cb);
         } else {
           messageBox.failSingleError('操作失败', result.data.Message, () => null);
         }
@@ -143,6 +144,39 @@ const axios = new Axios({
           messageBox.failSingleError('操作失败', _msg);
         }
         return Promise.reject(error.response);
+      }
+      if (error?.message === 'Network Error') {
+        ElMessage({
+          showClose: true,
+          message: '网络错误',
+          type: 'error',
+        });
+      } else if (error.message && error.message.includes('timeout')) {
+        ElMessage({
+          showClose: true,
+          message: '网络超时',
+          type: 'error',
+        });
+      } else if (error.response && (error.response as AxiosResponse).status === 404) {
+        ElMessage({
+          showClose: true,
+          message: '404错误',
+          type: 'error',
+        });
+      } else {
+        let msg = '';
+        if (error.response && (error.response as AxiosResponse).data && (error.response as AxiosResponse).data.Message) {
+          msg = (error.response as AxiosResponse).data.Message;
+        } else if (error && error.message) {
+          msg = error.message;
+        }
+        if (msg) {
+          ElMessage({
+            showClose: true,
+            message: msg,
+            type: 'error',
+          });
+        }
       }
       return Promise.reject(error);
     },

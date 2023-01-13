@@ -4,6 +4,7 @@ import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 export interface ICatch { // 解决终端警告用
   response:AxiosResponse
   config:unknown,
+  message?: string
 }
 
 /**
@@ -26,6 +27,7 @@ export interface IRequestConfig extends AxiosRequestConfig {
   interceptors?: IRequestInterceptors
   /** 是否关闭全局loading */
   closeLoading?: boolean
+  msgCallback?: () => void
 }
 
 export interface CancelRequestSource {

@@ -108,6 +108,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManageEquipment/ManageEquipmentRunTimePage/ManageEquipmentRunTimePage.vue'),
     },
+    /* 生产任务
+    -------------------------------------- */
+    {
+      path: '/ManageTaskList',
+      name: 'ManageTaskList',
+      meta: {
+        title: '生产任务',
+        requiresAuth: true,
+        icon: 'icon-shengchanrenwu iconfont',
+        pageName: 'ManageTaskListPage',
+        PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/ManageTaskListPage/ManageTaskListPage.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {
@@ -154,6 +168,12 @@ const routeTree:RouteTreeType = {
           children: [],
         },
       ],
+    },
+    /* 生产任务
+    -------------------------------------- */
+    {
+      name: 'ManageTaskList',
+      children: [],
     },
   ],
 };

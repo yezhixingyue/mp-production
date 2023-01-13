@@ -1,4 +1,5 @@
 import api from '@/api';
+import clientApi from '@/api/client';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import { Base64 } from 'js-base64';
@@ -90,6 +91,8 @@ export class InstanceLoginClass {
       Mobile: this.mobile,
       Password: Base64.encode(this.password),
       Terminal: 1,
+      EquipmentID: this.EquipmentID,
+      Site: 2,
     };
 
     this.loading = true;
@@ -110,10 +113,15 @@ export class InstanceLoginClass {
   }
 
   /** 注销登录 - 清除缓存 */
-  public logout() {
-    this.user = null;
-    this.token = '';
-    // 清理缓存
-    SessionStorageClientHandler.clearItem(this.EquipmentID);
+  public async logout() {
+    const resp = await clientApi.getStaffLoginOut(this.EquipmentID).catch(() => null);
+    if (resp?.data.isSuccess) {
+      this.user = null;
+      this.token = '';
+      // 清理缓存
+      SessionStorageClientHandler.clearItem(this.EquipmentID);
+      return true;
+    }
+    return false;
   }
 }

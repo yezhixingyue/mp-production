@@ -1,6 +1,6 @@
 import { getLimitWords } from '@/assets/js/utils/getLimitWords';
 import { EquipmentStatusEnumList, EquipmentTaskStatusEnumList } from './EnumList';
-import { EquipmentStatusEnum } from './enums';
+import { EquipmentStatusForBoardEnum } from './enums';
 import { IHoverTarget, ILocalEquipmentStatusItem, IPopupDataItemData } from './types';
 
 /** 条纹颜色 */
@@ -135,11 +135,11 @@ export class BoardDraw {
     this.ctx.fillText(it.ClassName.slice(0, 6), x + 10 + 0.5, y + 6 + 2 + 0.5, this.layout.TitleLeftWidth);
 
     this.ctx.font = 'bold 14px YaHei';
-    this.ctx.fillText(it.GroupName.slice(0, 6), x + 10 + 0.5, y + 6 + 22 + 0.5, this.layout.TitleLeftWidth);
+    this.ctx.fillText(it.Equipment.GroupName.slice(0, 6), x + 10 + 0.5, y + 6 + 22 + 0.5, this.layout.TitleLeftWidth);
 
     // 3 右侧文字
     this.ctx.font = 'bold 25px YaHei';
-    this.ctx.fillText(it.Name.slice(0, 6), x + 10 + 0.5 + this.layout.TitleLeftWidth, y + 14 + 0.5, this.TitleRightWidth);
+    this.ctx.fillText(it.Equipment.Name.slice(0, 6), x + 10 + 0.5 + this.layout.TitleLeftWidth, y + 14 + 0.5, this.TitleRightWidth);
     this.ctx.closePath();
   }
 
@@ -171,11 +171,11 @@ export class BoardDraw {
     this.ctx.fillStyle = '#444';
     this.ctx.textBaseline = 'top';
     this.ctx.font = '14px YaHei';
-    this.ctx.fillText(`任 务: ${it.TaskNumber}个`, x + this.layout.TitleWidth + 14 + 0.5, y + 6 + 2 + 0.5, this.layout.TaskNumberWidth);
+    this.ctx.fillText(`任 务: ${it.TaskList.length}个`, x + this.layout.TitleWidth + 14 + 0.5, y + 6 + 2 + 0.5, this.layout.TaskNumberWidth);
 
     // 3 操作人
     this.ctx.font = '14px YaHei';
-    this.ctx.fillText(`操作人: ${it.Operater.Name.slice(0, 10)}`, x + this.layout.TitleWidth + 14 + 0.5, y + 6 + 23 + 0.5, this.layout.IntroWidth - 30);
+    this.ctx.fillText(`操作人: ${it.Operator.slice(0, 10)}`, x + this.layout.TitleWidth + 14 + 0.5, y + 6 + 23 + 0.5, this.layout.IntroWidth - 30);
 
     this.ctx.closePath();
 
@@ -285,13 +285,13 @@ export class BoardDraw {
   private _drawTask(x: number, y: number, h: number, it: ILocalEquipmentStatusItem) {
     if (!this.ctx) return;
     // 正常任务列表, 错误信息提取到其它步骤呈现
-    if (it.Status !== EquipmentStatusEnum.error && it.TaskList.length > 0) {
+    if (it.Status !== EquipmentStatusForBoardEnum.error && it.TaskList.length > 0) {
       const startX = x + this.layout.TitleWidth + this.layout.IntroWidth;
       const startY = y + 10;
 
       it.TaskList.forEach((task) => {
         // 需要知道： 1. 起点  2. 长度 3. 颜色（4种状态） 4. 文字内容（剪切、 小于30不显示？）
-        const startTime = new Date(task.BeginTime.replace('Z', '')) > new Date() ? new Date(task.BeginTime.replace('Z', '')) : new Date();
+        const startTime = new Date(task.StartTime.replace('Z', '')) > new Date() ? new Date(task.StartTime.replace('Z', '')) : new Date();
         const endTime = new Date(task.EndTime.replace('Z', ''));
         // 1. 起点x坐标
         const x = startX + ((startTime.getTime() - Date.now()) / (60 * 60 * 1000)) * this.layout.HourCellWidth;
@@ -330,7 +330,7 @@ export class BoardDraw {
   /** 添加任务文字 */
   private _drawTaskWords() {
     this.list.forEach(it => {
-      if (it.Status !== EquipmentStatusEnum.error && it.TaskList.length > 0) {
+      if (it.Status !== EquipmentStatusForBoardEnum.error && it.TaskList.length > 0) {
         it.TaskList.forEach((task) => {
           // 4. 画图
           if (this.ctx && task._points && task._points.len >= 30) {
@@ -339,7 +339,13 @@ export class BoardDraw {
             this.ctx.fillStyle = '#444';
             this.ctx.textBaseline = 'top';
             this.ctx.font = '12px YaHei';
-            const words = getLimitWords(`ID:${task.ID} ${task.ProductName}`, 12, task._points.len, this.canvas || undefined);
+            const words = getLimitWords(
+              `ID:${task.Code} ${task.Material} ${task.Number}${task.Unit} ${task.Duration}小时`,
+              12,
+              task._points.len,
+
+              this.canvas || undefined,
+            );
             this.ctx.fillText(words, task._points.x, task._points.y + 20, task._points.len);
 
             this.ctx.closePath();
@@ -352,7 +358,7 @@ export class BoardDraw {
   /** 填充错误和错误报告人信息 */
   private _drawErrorInfo() {
     this.list.forEach((it, i) => {
-      if (it.Error && it.Status === EquipmentStatusEnum.error) {
+      if (it.Remark && it.Status === EquipmentStatusForBoardEnum.error) {
         if (!this.ctx) return;
         const x = 0;
         const y = this.layout.rowHeight * i + 0.5 + this.layout.TopWhiteSpace;
@@ -390,7 +396,7 @@ export class BoardDraw {
         this.ctx.fillStyle = '#FF0000';
         this.ctx.textBaseline = 'top';
         this.ctx.font = 'bold 15px SimHei';
-        this.ctx.fillText(`报告: ${it.Error}!    —— ${it.ErrorOperater}`, startX + 30 + 10, y + 17, this.layout.HourCellWidth * 22);
+        this.ctx.fillText(`报告: ${it.Remark}!    —— ${it.ErrorOperator}`, startX + 30 + 10, y + 17, this.layout.HourCellWidth * 22);
 
         this.ctx.closePath();
       }

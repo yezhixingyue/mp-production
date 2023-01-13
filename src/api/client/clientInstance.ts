@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
-import { ElLoading } from 'element-plus';
-import messageBox from '@/assets/js/utils/message';
+import { ElLoading, ElMessage } from 'element-plus';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { SessionStorageClientHandler } from '@/views/ProductionClient/assets/js/SessionStorageHandler';
 import Axios from '../request/axios';
 import { ICatch, IMPAxiosInstance, IRequestConfig } from '../request/types';
@@ -67,8 +67,14 @@ const axios = new Axios({
           // 请重新登录
           axios.cancelAllRequest();
           logout();
+          ElMessage.error(result.data.Message || '请重新登录');
         } else {
-          messageBox.failSingleError('操作失败', result.data.Message, () => null);
+          MpMessage.error({
+            title: '操作失败',
+            msg: result.data.Message,
+            onCancel: result.config.msgCallback || undefined,
+            onOk: result.config.msgCallback || undefined,
+          });
         }
       }
       return result;
@@ -120,9 +126,47 @@ const axios = new Axios({
             break;
         }
         if (_msg) {
-          messageBox.failSingleError('操作失败', _msg);
+          MpMessage.error({
+            title: '操作失败',
+            msg: _msg,
+            onCancel: (error.config as IRequestConfig).msgCallback || undefined,
+            onOk: (error.config as IRequestConfig).msgCallback || undefined,
+          });
         }
         return Promise.reject(error.response);
+      }
+      if (error?.message === 'Network Error') {
+        ElMessage({
+          showClose: true,
+          message: '网络错误',
+          type: 'error',
+        });
+      } else if (error.message && error.message.includes('timeout')) {
+        ElMessage({
+          showClose: true,
+          message: '网络超时',
+          type: 'error',
+        });
+      } else if (error.response && (error.response as AxiosResponse).status === 404) {
+        ElMessage({
+          showClose: true,
+          message: '404错误',
+          type: 'error',
+        });
+      } else {
+        let msg = '';
+        if (error.response && (error.response as AxiosResponse).data && (error.response as AxiosResponse).data.Message) {
+          msg = (error.response as AxiosResponse).data.Message;
+        } else if (error && error.message) {
+          msg = error.message;
+        }
+        if (msg) {
+          ElMessage({
+            showClose: true,
+            message: msg,
+            type: 'error',
+          });
+        }
       }
       return Promise.reject(error);
     },

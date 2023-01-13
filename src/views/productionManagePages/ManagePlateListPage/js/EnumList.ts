@@ -2,6 +2,10 @@ import { getEnumList } from '@/assets/js/utils/getListByEnums';
 import { PlateStatusEnum } from './enum';
 
 const PlateStatusEnumObj = {
+  Initial: {
+    ID: PlateStatusEnum.Initial,
+    Name: '等待物料',
+  },
   HaveMakeup: {
     ID: PlateStatusEnum.HaveMakeup,
     Name: '等待生产',

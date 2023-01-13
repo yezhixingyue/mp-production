@@ -13,6 +13,8 @@ export enum MaterialSourceTypeEnum {
   picking = 2,
   /** 其它工序 */
   otherPrcess = 3,
+  /** 制版工序 */
+  plateMaking = 4,
 }
 
 export const MaterialSourceTypeEnumObj = {
@@ -27,6 +29,10 @@ export const MaterialSourceTypeEnumObj = {
   picking: {
     ID: MaterialSourceTypeEnum.picking,
     Name: '领料',
+  },
+  plateMaking: {
+    ID: MaterialSourceTypeEnum.plateMaking,
+    Name: '制版工序',
   },
   otherPrcess: {
     ID: MaterialSourceTypeEnum.otherPrcess,

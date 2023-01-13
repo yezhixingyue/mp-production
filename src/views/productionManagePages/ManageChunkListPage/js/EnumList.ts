@@ -2,6 +2,10 @@ import { getEnumList } from '@/assets/js/utils/getListByEnums';
 import { ChunkStatusEnum } from './enum';
 
 const ChunkStatusEnumObj = {
+  Initial: {
+    ID: ChunkStatusEnum.Initial,
+    Name: '等待物料',
+  },
   HaveMakeup: {
     ID: ChunkStatusEnum.HaveMakeup,
     Name: '等待生产',

@@ -1,14 +1,15 @@
 import api from '@/api';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
-import { IFactoryMaterialList, IManageOrderInfo } from '../../ManualOrderHandlerPage/js/types';
+import { IFactoryMaterialList } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from './Condition';
+import { IManageOrderListItem } from './type';
 
 export class ManageOrderListClass {
   /** 获取订单列表的条件信息 */
   condition = new Condition()
 
   /** 订单列表数据 */
-  list: IManageOrderInfo[] = []
+  list: IManageOrderListItem[] = []
 
   /** 订单列表条目数 */
   listNumber = 0

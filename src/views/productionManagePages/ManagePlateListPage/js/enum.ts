@@ -1,7 +1,7 @@
 /** 大版状态枚举 */
 export enum PlateStatusEnum {
   /** 初始化数据 */
-  // Initial = 0,
+  Initial = 0,
   /** 等待生产 */
   HaveMakeup = 10,
   /** 生产中 */

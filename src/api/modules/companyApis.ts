@@ -1,3 +1,4 @@
+import { IStaff } from '@/views/companyManage/StaffManage/js/types';
 import request from '../request/request';
 
 export const companyApis = {
@@ -19,8 +20,10 @@ export const companyApis = {
   getJobPermissionSave(data) {
     return request({ method: 'POST', url: '/Api/JobPermission/Save', data });
   },
-  getStaffList(data) { // 获取员工信息列表
-    return request({ method: 'POST', url: '/Api/Staff/List', data });
+  getStaffList(data, closeLoading = false) { // 获取员工信息列表
+    return request<IStaff[]>({
+      method: 'POST', url: '/Api/Staff/List', data, closeLoading,
+    });
   },
   getStaffBaseInfoSave(data) { // /Api/StaffBaseInfo/Save 保存员工信息
     return request({ method: 'POST', url: '/Api/StaffBaseInfo/Save', data });

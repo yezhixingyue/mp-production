@@ -22,12 +22,19 @@ export interface IConvertAssistInfo {
   ID: string
   /** 未赋值前不能用该字段 */
   _Name: string
+  /** 数据库赋值 */
+  Name?: string
   /** 辅助信息类型 */
   Type: AssistInfoTypeEnum
   /** 文字信息 */
   Content: string
   /** 数值信息 */
   Value: number | ''
+  /** 文件路径  */
+  FilePath: string
+  /** 该文件是否为图片文件 */
+  IsImage?: boolean
+
 }
 
 /**
@@ -168,8 +175,8 @@ export interface IProductionInstance {
   AssistList: IConvertAssistInfo[]
   /** 文件列表 */
   FileList: IConvertOrderFile[]
-  /** 允许合拼 */
-  AllowUnionMekeup: boolean
+  /** 禁止合拼 */
+  ForbitUnionMakeup: boolean
   /** 输出半成品 */
   SemiFinished: IBaseProperty<string>
   /** 物料取货地址 */

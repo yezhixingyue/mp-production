@@ -20,6 +20,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'arrow-parens': 'off',
     'vuejs-accessibility/form-control-has-label': 'off',
+    'vuejs-accessibility/mouse-events-have-key-events': 'off',
     'import/no-cycle': 'off',
     'no-plusplus': 'off',
     'no-shadow': 'off',

@@ -13,6 +13,7 @@ function failSingle(msg, successFunc, failFunc, dangerouslyUseHTMLString = false
     showClose: true,
     confirmButtonText: '确定',
     title: msg,
+    autofocus: false,
     draggable: false,
     customClass: 'mp-order-del-pop-reverse-warn-null fail mp-message',
     dangerouslyUseHTMLString,
@@ -35,6 +36,7 @@ function failSingleError(title, msg, successFunc, failFunc, dangerouslyUseHTMLSt
     confirmButtonText: '关闭',
     title,
     draggable: false,
+    autofocus: false,
     customClass: 'mp-order-del-pop-reverse-fail mp-message',
     dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
@@ -54,6 +56,7 @@ function warnSingleError(msg, successFunc, failFunc, title = '注意', text = '�
     showClose: true,
     message: msg,
     type: 'warning',
+    autofocus: false,
     confirmButtonText: text,
     title,
     customClass: 'mp-order-del-pop-reverse-warn mp-message',
@@ -77,6 +80,7 @@ function warnCancelBox(title, msg, successFunc, failFunc, dangerouslyUseHTMLStri
     confirmButtonText: '确定',
     title,
     customClass: 'mp-order-del-pop-reverse-warn mp-message',
+    autofocus: false,
     showCancelButton: true,
     cancelButtonText: '取消',
     draggable: false,
@@ -99,6 +103,7 @@ function dangerCancelBox(title, msg, successFunc, failFunc) {
     confirmButtonText: '确定',
     title,
     customClass: 'mp-operation-reverse-danger mp-message',
+    autofocus: false,
     showCancelButton: true,
     cancelButtonText: '取消',
     dangerouslyUseHTMLString: true,
@@ -121,6 +126,7 @@ function warnCancelNullMsg(title, successFunc, failFunc, dangerouslyUseHTMLStrin
     title,
     customClass: 'mp-order-del-pop-reverse-warn-null mp-message',
     draggable: false,
+    autofocus: false,
     dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }
@@ -144,6 +150,7 @@ function successSingle(title, successFunc, failFunc, canCloseOnPressEscape = tru
     closeOnPressEscape: canCloseOnPressEscape,
     customClass,
     draggable: false,
+    autofocus: false,
     dangerouslyUseHTMLString,
   }).then(() => successFunc && successFunc()).catch(() => failFunc && failFunc());
 }

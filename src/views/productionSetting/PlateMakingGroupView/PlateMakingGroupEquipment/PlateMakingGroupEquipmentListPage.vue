@@ -5,6 +5,7 @@
     :ClassEquipmentGroups="PlateMakingGroupManageData.ManageListData.ClassEquipmentGroups"
     :Equipments="PlateMakingGroupManageData.ManageListData.curEditItemHandler?.itemData.Equipments"
     :curLineWorkName="PlateMakingGroupManageData.ManageListData.curEditItemHandler?.itemData.Name || ''"
+    isPlateMakingGroup
     @save="handleEquipmentSubmit"
     @remove="onRemoveClick"
     @toPutOut="ToPutOutPage"
