@@ -1,5 +1,7 @@
+import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
+import { ExternalTaskStatusEnum } from '@/views/OutsourceManage/js/enum';
+import { PlateStatusEnum } from '@/views/productionManagePages/ManagePlateListPage/js/enum';
 import { IBaseProperty, IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { MaterialSourceTypeEnum } from '@/views/productionSetting/js/enums';
 import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { EquipmentReceiveCodeEnum, ProductiveTaskStatusEnum } from './enum';
 
@@ -21,15 +23,15 @@ export interface IWorkingMaterialSource {
   /** 物料 */
   Material: IBaseProperty<string>
   /** 是否外协工厂自备（针对外协工厂） */
-  FactoryPrivide: boolean
-  /** 物料来源类型 */
-  SourceType: MaterialSourceTypeEnum
-  /** 来源ID */
-  SourceID: string
+  // FactoryPrivide: boolean
+  // /** 物料来源类型 */
+  // SourceType: MaterialSourceTypeEnum
+  // /** 来源ID */
+  // SourceID: string
 }
 
 /** 任务中工序上的订单信息类型 */
-export interface IEquipmentOrderInfo {
+export interface ITaskOrderInfo {
   /** 订单ID */
   ID: string
   /** 销售端名称 */
@@ -44,36 +46,56 @@ export interface IEquipmentOrderInfo {
   SecondLevel?: string
   /** 产品信息 */
   Product?: string
+  /** 数量 */
+  Number: number
   /** 产品单位 -- 大版报工方式时固定为张 */
   Unit: string
   /** 尺寸 */
   Size: string
+  /** 预计生产完成时间 */
+  ProduceEndTime: string
   /** 工序列表 */
   WorkingList:IBaseProperty<string>[]
 }
 
 /** 任务中工序上的大版信息类型 */
-export interface IEquipmentPlateInfo {
+export interface ITaskPlateInfo {
   /** 大版ID */
   ID: string
   /** 大版编号 */
   Code: number
+  /** 生产线 */
+  Line: string
   /** 拼版模板名称 */
   Template: string
   /** 拼版模板尺寸名称 */
   TemplateSize: string
   /** 物料 */
   Material: string
+  /** 加工数量 */
+  Number: number
   /** 单位 */
   Unit: string
+  /** 订单数量 */
+  OrderNumber: number
+  /** 块数量 */
+  ChunkNumber: number
+  /** 大版状态 = ['0', '10', '30', '40', '255'], 枚举值未定义  */
+  Status: PlateStatusEnum
   /** 工序列表 */
   WorkingList:IBaseProperty<string>[]
+  ChildList: null | ITaskPlateInfo[]
 }
 
 /** 任务中工序上的块信息类型 */
-export interface IEquipmentChunkInfo {
+export interface ITaskChunkInfo {
+  ID: string
+  /** 编号 */
+  Code: string
   /** 块名称 */
   Name: string
+  /** 数量 */
+  Number: number
   /** 单位 */
   Unit: string
   /** 尺寸 */
@@ -82,14 +104,58 @@ export interface IEquipmentChunkInfo {
   WorkingList:IBaseProperty<string>[]
 }
 
-/** 加工任务中 - 当前任务工序信息 */
-export interface IEquipmentWorkingInfo {
-  /** 任务工序ID */
+/** 当前任务设备基础信息 */
+export interface IEquipmentBaseInfo {
+  /** 设备ID */
   ID: string
+  /** 设备名称 */
+  Name: string
+  /** 设备组分类ID */
+  ClassID: number
+  /** 设备组分类名称 */
+  ClassName: string
+  /** 设备组ID */
+  GroupID: string
+  /** 设备组名称 */
+  GroupName: string
+  /** 是否外协工厂 */
+  IsExternalFactory: boolean
+}
+
+/** 工序中的辅助信息类型 */
+export interface ITaskWorkingAssistInfo extends Omit<IConvertAssistInfo, '_Name' | 'Value'> {
+  /** 任务工序ID */
+  TaskWorkingID: string
+}
+
+/** 工序外协信息 */
+export interface IWorkingExternalAttribute {
+  /** 原价 */
+  OrignalAmount: number
+  /** 异常减款 */
+  ReduceAmount: number
+  /** 最终价格 */
+  FinalAmount: number
+  /** 外协状态 */
+  Status: ExternalTaskStatusEnum
+  /** 是否有文件可下载 */
+  HaveFile: boolean
+  /** 外协修改的文字内容 */
+  ProcessContent: string
+}
+
+/** 加工任务中 - 当前任务工序信息 */
+export interface ITaskWorkingInfo {
+  /** 任务工序ID */
+  TaskWorkingID: string
+  /** 生产线ID */
+  LineID: string
   /** 工序ID */
   WorkingID: string
   /** 工序名称 */
   WorkingName: string
+  /** 对象类型 （报工类型?） */
+  TargetType: TargetTypeEnum
   /** 对象列表 - 暂未使用 */
   TargetID: string
   /** 工序类型 */
@@ -102,6 +168,8 @@ export interface IEquipmentWorkingInfo {
   MinPartReportNumber: number
   /** 是否允许批量报工 */
   AllowBatchReport: boolean
+  /** 加工数量(不含伸放) */
+  Number: number
   /** 损耗 */
   Wastage: number
   /** 准备时间 */
@@ -114,51 +182,51 @@ export interface IEquipmentWorkingInfo {
   WorkTimes: number
   /** 工序在生产线中的排序  */
   Index: number
+  /** 设备信息 */
+  Equipment?: IEquipmentBaseInfo
   /** 物料列表 */
-  MaterialList: IWorkingMaterialSource[]
+  // MaterialList: IWorkingMaterialSource[]
   /** 辅助信息列表 */
-  AssistList: IConvertAssistInfo[]
+  AssistList: ITaskWorkingAssistInfo[]
   /** 订单信息 */
-  OrderInfo?: IEquipmentOrderInfo
+  OrderInfo?: ITaskOrderInfo
   /** 大版信息 */
-  PlateInfo?: IEquipmentPlateInfo
+  PlateInfo?: ITaskPlateInfo
   /** 块信息 */
-  ChunkInfo?: IEquipmentChunkInfo,
-}
-
-/** 当前任务设备基础信息 */
-export interface IEquipmentBaseInfo {
-  /** 设备ID */
-  ID: string
-  /** 设备名称 */
-  Name: string
-  /** 设备组ID */
-  GroupID: string
-  /** 设备组名称 */
-  GroupName: string
-  /** 是否外协工厂 */
-  IsOutSourcing: boolean
+  ChunkInfo?: ITaskChunkInfo,
+  /** 可用设备列表 */
+  UseableEquipmentList: IBaseProperty<string>[]
+  /** 外协属性 */
+  ExternalAttribute: IWorkingExternalAttribute
 }
 
 /** 当前任务的下一个工序信息列表类型 */
 export interface INextWorkingProduction {
-  /** ID */
-  ID: string
-  /** 名称 */
-  Name: string
   /** 加工设备 */
   Equipment: IEquipmentBaseInfo
   /** 颜色 */
   Color: string
+  /** 任务工序ID */
+  TaskWorkingID: string
+  /** 任务流程类型 -- 具体枚举值不清楚 - 似乎暂未用到该值 */
+  Type: number
+  /** 下一个任务工序ID */
+  NextTaskWorkingID: string
+  /**  对象ID */
+  TargetID: string
+  /** ID */
+  ID: string
+  /** 名称 */
+  Name: string
 }
 
 /**
  * 当前加工任务信息类型
  *
  * @export
- * @interface IEquipmentTaskInfo
+ * @interface ITaskDetail
  */
-export interface IEquipmentTaskInfo {
+export interface ITaskDetail {
   /** 任务ID */
   ID: string
   /** 任务编号 */
@@ -167,22 +235,34 @@ export interface IEquipmentTaskInfo {
   Status: ProductiveTaskStatusEnum
   /** 加工总数量 */
   TotalNumber: number
-  /** 未完成数量 -- 通常在可部分报工情况下会使用到 */
-  UnFinishNumber: number
   /** 此工序加工第几次 */
   Index: number
+  /** 未完成数量 -- 通常在可部分报工情况下会使用到 */
+  UnFinishNumber: number
   /** 工序信息 */
-  Working: IEquipmentWorkingInfo,
+  Working: ITaskWorkingInfo,
   /** 设备信息 */
   Equipment: IEquipmentBaseInfo,
   /** 下一道工序列表  */
   NextWorkingList: INextWorkingProduction[]
-  /** 创建时间 */
-  CreateTime: string
   /** 开始时间 */
   StartTime: string
-  /** 最迟完成时间 */
+  /** 预计加工时长（分钟） */
+  WishDuration: number
+  /** 最晚送达时间 */
+  LatestSendTime: string
+  /** 最迟完工时间 */
   LatestFinishTime: string
+  /** 实际加工时长（分钟） */
+  ActualDuration: number
+  /** 完工时间 */
+  FinishTime: string
+  /** 是否已置顶 */
+  IsTop: boolean
+  /** 操作人 */
+  Operator: string
+  /** 创建时间 */
+  CreateTime: string
 }
 
 /**
@@ -226,5 +306,5 @@ export interface IEquipmentErrorInfo {
   /** 新设备信息 （如果有替换设备） */
   Equipment: IEquipmentBaseInfo
   /** 待转移任务列表 */
-  TaskList: IEquipmentTaskInfo[]
+  TaskList: ITaskDetail[]
 }

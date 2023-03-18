@@ -71,6 +71,7 @@ import { reactive, onMounted } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface addPrintingColorShowFromType {
 IsSpecialColor:boolean,
@@ -123,7 +124,7 @@ const addColorPrimaryClick = () => {
           addColorCloseClick();
           getPrintColorList();
         };
-        messageBox.successSingle(`${Data.addPrintingColorShowFrom.ID ? '修改' : '添加'}成功`, cb, cb);
+        MpMessage.dialogSuccess(`${Data.addPrintingColorShowFrom.ID ? '修改' : '添加'}成功`, cb, cb);
       }
     });
   }

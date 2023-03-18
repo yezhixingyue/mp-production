@@ -1,4 +1,5 @@
 import api from '@/api';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { IFactoryMaterialList } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from './Condition';
@@ -65,6 +66,15 @@ export class ManageOrderListClass {
   async handleOrderToTop(id: string) {
     const t = this.list.find(it => it.ID === id);
     if (!t) return;
-    console.log('handleOrderToTop', id, t);
+
+    const resp = await api.productionManageApis.getOrderPushTop(id).catch(() => null);
+
+    if (resp?.data.isSuccess) {
+      const cb = () => {
+        t.IsTop = true;
+      };
+
+      MpMessage.dialogSuccess('置顶成功', cb, cb);
+    }
   }
 }

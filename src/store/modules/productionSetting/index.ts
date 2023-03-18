@@ -61,6 +61,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
             const EquipmentGroups = item.EquipmentGroups.map(it => ({
               ID: it.GroupID,
               Name: it.GroupName,
+              AllowBatchReport: it.AllowBatchReport,
             }));
             this.EquipmentListGroup.push({
               ClassID: item.ClassID,

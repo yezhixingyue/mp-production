@@ -71,7 +71,7 @@ export class EquipmentGroupMaterialTypeLimitClass {
         if (cb) cb();
         this.getPropertyList(true);
       };
-      MpMessage.success({ title: '添加成功', onOk: callback, onCancel: callback });
+      MpMessage.dialogSuccess({ title: '添加成功', onOk: callback, onCancel: callback });
     }
   }
 
@@ -111,7 +111,7 @@ export class EquipmentGroupMaterialTypeLimitClass {
         }
         callback();
       };
-      MpMessage.success({ title: '设置成功', onOk: cb, onCancel: cb });
+      MpMessage.dialogSuccess({ title: '设置成功', onOk: cb, onCancel: cb });
     }
   }
 

@@ -5,11 +5,20 @@
  */
 export enum FlowchartNodeStatusEnum {
   /** 已完成 */
-  completed = 0,
+  completed = 2,
   /** 生产中 */
   inProduction = 1,
   /** 未开始 */
-  notStarted = 2,
+  notStarted = 0,
   /** 有问题 */
-  atQuestion = 255,
+  atQuestion = 3,
+}
+
+export enum FlowchartNodeColorEnum {
+  /** 已完成 */
+  completed = '#4B7902',
+  /** 生产中 */
+  inProduction = '#00BFBF',
+  /** 有问题 */
+  atQuestion = '#A30014',
 }

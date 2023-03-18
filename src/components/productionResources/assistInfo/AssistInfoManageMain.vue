@@ -23,7 +23,7 @@
 
 <script setup lang='ts'>
 import type { IAssistListItem } from '@/views/productionResources/assistInfo/types';
-import { getEnumNameByIDAndEnums, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 
 const props = defineProps<{
@@ -32,7 +32,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['edit', 'remove']);
 
-const formatType = (type: localEnumValueIDType) => getEnumNameByIDAndEnums(type, AssistInfoTypeEnums);
+const formatType = (type: localEnumValueIDType) => getEnumNameByID(type, AssistInfoTypeEnums);
 
 const onEditClick = (it: IAssistListItem) => {
   emit('edit', it);

@@ -92,7 +92,7 @@ const handleItemSetupSubmit = async (data: SubcontractorFactory) => {
       };
       handleAfterSubmit(temp, isEdit);
     };
-    MpMessage.success({ title, onOk: callback, onCancel: callback });
+    MpMessage.dialogSuccess({ title, onOk: callback, onCancel: callback });
   }
 };
 

@@ -51,7 +51,7 @@
               value-format="HH:mm"
               format="HH:mm"
               :picker-options="{ format: 'HH:mm' }"
-              placeholder="20:00"
+              placeholder="请选择时间"
             >
             </el-time-picker> -->
           </div>
@@ -66,8 +66,8 @@
     />
     <ShiftTimeSetupDialog v-model:visible="shiftTimeVisible" :curEditShiftTime="curEditShiftTime" @submit="onShiftTimeSubmit" />
     <footer>
-      <el-button type='primary' class="is-blue-button" @click="onSubmitClick">保存</el-button>
-      <el-button class="cancel-blue-btn" @click="getGoBackFun"><i></i> 返回</el-button>
+      <mp-button type='primary' class="is-blue-button" @click="onSubmitClick">保存</mp-button>
+      <mp-button class="cancel-blue-btn" @click="getGoBackFun"><i></i> 返回</mp-button>
     </footer>
   </section>
 </template>

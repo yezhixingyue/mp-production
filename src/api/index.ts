@@ -5,10 +5,13 @@ import { propertyApis } from './modules/propertyApis';
 import MaterialStorage from './modules/materialStorageApis';
 import PasteupSetting from './modules/pasteupSettingApis';
 import { companyApis } from './modules/companyApis';
+import { downloadExcelApis } from './modules/downloadExcelApis';
 import { otherSettingApis } from './modules/otherApis';
 import { productionManageApis } from './modules/productionManageApis';
 import { ManualOrderHandlerApis } from './modules/ManualOrderHandlerApis';
 import { clientApis } from './modules/clientApis';
+import { ExceptionHandlerApis } from './modules/ExceptionHandlerApis';
+import { outsourceApis } from './modules/outsourceApis';
 import productionSetting from './modules/productionSettingApis';
 import request from './request/request';
 
@@ -50,18 +53,24 @@ const api = {
   ...PasteupSetting,
   // 生产设置 api
   ...productionSetting,
-  // 属性相关 api
+  /** 属性相关 api */
   propertyApis,
   // 其它设置 api
   ...otherSettingApis,
   // 公司管理 api
   ...companyApis,
-  // 生产管理 api
+  /** 全部导出excel表格 api */
+  downloadExcelApis,
+  /** 生产管理 api */
   productionManageApis,
-  // 手动下单 api
+  /** 手动下单 api */
   ManualOrderHandlerApis,
-  // 生产报工客户端 api
+  /** 生产报工客户端 api */
   clientApis,
+  /** 异常处理接口 */
+  ExceptionHandlerApis,
+  /** 外协管理相关接口 */
+  outsourceApis,
 };
 
 export default api;

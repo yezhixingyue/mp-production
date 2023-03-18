@@ -1,5 +1,5 @@
 <template>
-  <div class="mp-erp-login-page-wrap">
+  <div class="mp-erp-login-page-wrap" :class="{'is-order-app': isOrderApp}">
     <section>
       <header>
         <img src="../../assets/images/logo-big.png" alt="">
@@ -9,7 +9,7 @@
           <div class="left">
             <div class="mask">
               <div class="line"></div>
-              <h2>名片之家</h2>
+              <h2>{{ pageTitle }}</h2>
               <p>500万广告设计机构印刷服务商</p>
               <p>Five Million AD Design Agencies Printing Services</p>
             </div>
@@ -21,6 +21,7 @@
               hide-required-asterisk
               ref="ruleForm"
               label-width="0px"
+              :disabled="logining || loadingUserInfo"
               class="demo-ruleForm">
               <el-form-item prop="Mobile" :rules="[
                 { required: true, message: '请输入账号(手机号码)', trigger: 'blur' },
@@ -38,7 +39,7 @@
                 { required: true, message: '请输入密码', trigger: 'blur' },
                 { min: 6, max: 16, message: '密码长度应在6-16位之间', trigger: 'blur' },
               ]">
-                  <el-input type="password" v-model.trim="loginForm.Password"
+                  <el-input type="password" v-model.trim="loginForm.Password" autocomplete="new-password"
                   @keyup.enter="submitForm" placeholder="请输入密码" maxlength="16">
                   <template #prefix>
                     <i>
@@ -48,7 +49,7 @@
                   </el-input>
               </el-form-item>
               <el-form-item>
-                  <el-button type="info" @click="submitForm">{{logining ? '登录中...' : '登录'}}</el-button>
+                  <mp-button type="info" @click="submitForm">{{buttonTitle}}</mp-button>
               </el-form-item>
             </el-form>
           </div>
@@ -59,24 +60,39 @@
 </template>
 
 <script lang='ts'>
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { Base64 } from 'js-base64';
 import { ILoginSubmitForm } from '@/store/modules/user/types';
 import { useUserStore } from '@/store/modules/user';
 // import { useLayoutStore } from '@/store/modules/layout';
 // import { useRouter } from 'vue-router';
 import { FormInstance } from 'element-plus';
+import { getHasLoginPermission } from '@/router/modules/OrderAppRouteManage/utils';
 
 export default {
   name: 'LoginPage',
   setup() {
     // const router = useRouter();
-    const loginForm: ILoginSubmitForm = reactive({ Mobile: '', Password: '', Terminal: 1 });
+    const loginForm: ILoginSubmitForm = reactive({
+      Mobile: '', Password: '', Terminal: 1, Site: 1,
+    });
     const userStore = useUserStore();
     // const LayoutStore = useLayoutStore();
 
     const ruleForm = ref<FormInstance>();
     const logining = ref(false);
+    const loadingUserInfo = ref(false);
+
+    const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
+
+    const pageTitle = isOrderApp ? '生产下单与外协入库系统' : '名片之家 生产Erp系统';
+
+    const buttonTitle = computed(() => {
+      if (loadingUserInfo.value) return '正在获取用户信息...';
+      if (logining.value) return '登录中...';
+
+      return '登录';
+    });
 
     const submitForm = () => {
       if (ruleForm.value) {
@@ -88,14 +104,21 @@ export default {
 
             logining.value = true;
             const res = await userStore.getLogin(temp);
+            if (isOrderApp || !res) logining.value = false;
 
             if (res) {
-              // LayoutStore.setEditableTabsValue('/');
-              // LayoutStore.setLeftMenuDefaultActive('0');
-              // // 登录成功
-              // router.replace('/');
-              window.location.reload();
-              // window.location = window.location.pathname;
+              if (isOrderApp) {
+                loadingUserInfo.value = true;
+                await userStore.getUser();
+
+                if (getHasLoginPermission()) { // 此处判断是否有权限登录
+                  window.location.reload();
+                } else {
+                  loadingUserInfo.value = false;
+                }
+              } else {
+                window.location.reload();
+              }
             }
           }
         });
@@ -103,7 +126,11 @@ export default {
     };
 
     return {
+      isOrderApp,
+      pageTitle,
+      buttonTitle,
       logining,
+      loadingUserInfo,
       ruleForm,
       loginForm,
       submitForm,
@@ -250,11 +277,16 @@ export default {
                 background-color: #E1E3E4;
                 border: none;
                 color: #243142;
-                &:hover {
-                  background-color: #ddd;
+                &:not(.is-disabled) {
+                  &:hover {
+                    background-color: #ddd;
+                  }
+                  &:active {
+                    background-color: #cbcbcb;
+                  }
                 }
-                &:active {
-                  background-color: #cbcbcb;
+                &.is-disabled {
+                  color: rgba($color: #243142, $alpha: 0.7);
                 }
               }
             }
@@ -264,6 +296,17 @@ export default {
               }
             }
           }
+        }
+      }
+    }
+  }
+
+  &.is-order-app {
+    > section {
+      background: none;
+      > main {
+        > .box > .left {
+          background: none
         }
       }
     }

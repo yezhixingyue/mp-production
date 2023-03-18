@@ -46,6 +46,8 @@ export interface IManageEquipmentInfo {
   Remark: string
   /** 创建时间 */
   CreateTime: string
+  /** 是否批量报工 */
+  AllowBatchReport: boolean | null
 }
 
 /** 经过处理的 用于表格展示的列表数据类型 */

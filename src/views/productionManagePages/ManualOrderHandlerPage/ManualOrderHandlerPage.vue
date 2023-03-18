@@ -1,5 +1,5 @@
 <template>
-  <section class="wrap" v-if="ManualOrderHandlerPageData">
+  <section class="page-wrap" v-if="ManualOrderHandlerPageData">
     <Header :step="ManualOrderHandlerPageData.curStep" :stepList="ManualOrderHandlerPageData.stepList" />
     <main>
       <!-- 第一步：填写订单信息 -->
@@ -85,7 +85,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.wrap {
+.page-wrap {
   background-color: #fff;
   width: 100%;
   height: 100%;

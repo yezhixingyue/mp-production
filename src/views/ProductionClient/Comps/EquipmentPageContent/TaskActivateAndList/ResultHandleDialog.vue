@@ -5,6 +5,7 @@
     @cancel="localVisible = false"
     @submit="submit"
     @close="onClose"
+    autoSubmitFocus
     :primaryText="displayInfo?.title || ''"
     class="mp-client-equipment-receive-result-handler-dialog-wrap"
     top="20vh"

@@ -23,7 +23,6 @@ export class EquipmentFilterClass {
   private getEquipmentClassList = async () => { // 获取设备分类
     const resp = await api.getEquipmentClassificationList().catch(() => null);
     if (resp?.data?.isSuccess) {
-      console.log(this);
       this.EquipmentClassList = resp.data.Data || [];
     }
   }

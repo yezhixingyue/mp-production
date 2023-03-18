@@ -3,12 +3,12 @@ import { PlateStatusEnum } from './enum';
 
 const PlateStatusEnumObj = {
   Initial: {
-    ID: PlateStatusEnum.Initial,
+    ID: PlateStatusEnum.WaiteMaterial,
     Name: '等待物料',
   },
   HaveMakeup: {
-    ID: PlateStatusEnum.HaveMakeup,
-    Name: '等待生产',
+    ID: PlateStatusEnum.Producibility,
+    Name: '待生产',
   },
   InProduction: {
     ID: PlateStatusEnum.InProduction,
@@ -16,7 +16,7 @@ const PlateStatusEnumObj = {
   },
   Finished: {
     ID: PlateStatusEnum.Finished,
-    Name: '已生产',
+    Name: '已完成',
   },
   HaveCancled: {
     ID: PlateStatusEnum.HaveCancled,

@@ -24,15 +24,6 @@ const routes: Array<RouteRecordRaw> = [
     },
     component: LoginView,
   },
-  {
-    path: '/client',
-    name: 'client',
-    meta: {
-      title: '生产报工',
-      requiresAuth: false,
-    },
-    component: () => import(/* webpackChunkName: "client" */ '@/views/ProductionClient/ProductionClientView.vue'),
-  },
   // {
   //   path: '/about',
   //   name: 'about',
@@ -46,6 +37,16 @@ const routes: Array<RouteRecordRaw> = [
   //   component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
   // },
   ...moduleRoutes,
+  { // 无权限页
+    path: '/notauth',
+    name: 'notauth',
+    meta: {
+      title: '没有访问权限',
+      hideMenu: true,
+      requiresAuth: true,
+    },
+    component: () => import('@/views/NoAuthPage.vue'),
+  },
 ];
 
 export const router = createRouter({

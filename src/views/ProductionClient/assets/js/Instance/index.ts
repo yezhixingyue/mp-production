@@ -2,7 +2,7 @@ import clientApi from '@/api/client';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentStatusEnum } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/enum';
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
-import { IEquipmentErrorInfo, IEquipmentTaskInfo } from '../types';
+import { IEquipmentErrorInfo, ITaskDetail } from '../types';
 import { InstanceLoginClass } from './InstanceLoginClass';
 import { InstanceTaskListClass } from './InstanceTaskListClass/InstanceTaskListClass';
 
@@ -23,7 +23,7 @@ export class TerminalEquipmentInstance {
   public ErrorInfo: IEquipmentErrorInfo | null = null
 
   /** 当前任务信息 */
-  public curTaskData: null | IEquipmentTaskInfo = null
+  public curTaskData: null | ITaskDetail = null
 
   /** 当前任务信息是否已获取完成 --- 如果已获取完成且当前任务为空的情况下 在页面上进行针对处理 */
   public isCurTaskLoading = false
@@ -33,8 +33,9 @@ export class TerminalEquipmentInstance {
 
   /** 记录滚动信息 切换后还原 */
   public scrollInfo = {
-    left: 0,
+    // left: 0,
     top: 0,
+    willScroll: false,
   }
 
   constructor(Equipment: IManageEquipmentInfo) {
@@ -63,7 +64,11 @@ export class TerminalEquipmentInstance {
 
   /** 当该实例切换至激活状态时所要处理的一些内容 */
   switchToActive() {
-    if (!this.curTaskData && this.loginData.token && this.Equipment.ID) { // 如果已登录但未获取任务信息则执行
+    if (!this.curTaskData
+       && this.loginData.token
+       && this.Equipment.ID
+       && !(this.Equipment.AllowBatchReport && this.TaskListData.TaskList.length > 0)
+    ) { // 如果已登录但未获取任务信息则执行
       this.getTaskInfo();
     }
   }
@@ -101,6 +106,12 @@ export class TerminalEquipmentInstance {
 
     // 1. 初始化 - 清除掉原有的任务信息
     this.curTaskData = null;
+
+    /** ------------------------------ 此处拦截 处理批量报工 */
+    if (this.Equipment.AllowBatchReport) {
+      this.TaskListData.getEquipmentTaskList();
+      return;
+    }
 
     // 2. 获取数据
     this.isCurTaskLoading = true;
@@ -147,18 +158,24 @@ export class TerminalEquipmentInstance {
         this.Equipment.Status = EquipmentStatusEnum.normal;
         this.getTaskInfo();
       };
-      MpMessage.success({ title: '恢复生产成功', onCancel: cb, onOk: cb });
+      MpMessage.dialogSuccess({ title: '恢复生产成功', onCancel: cb, onOk: cb });
     }
   }
 
-  /** 加工完成 */
-  public async setTaskComplete(Number, callback: () => void) {
-    if (!this.curTaskData) return;
+  /** 加工完成  批量报工时需要传递TaskID --- 此时会内部调用批量报工函数 */
+  public async setTaskComplete(Number: number | '', callback: () => void, TaskID?: string) {
+    if (!this.curTaskData && !TaskID) return;
+
+    if (this.Equipment.AllowBatchReport) {
+      if (TaskID) this.getEquipmentTaskBatchReport([TaskID], callback);
+      return;
+    }
 
     const temp = {
-      TaskID: this.curTaskData.ID,
+      TaskID: TaskID || this.curTaskData?.ID,
       Number,
     };
+
     const resp = await clientApi.getEquipmentReprot(temp).catch(() => null);
 
     if (resp?.data.Status === 1000) {
@@ -166,16 +183,33 @@ export class TerminalEquipmentInstance {
         this.getTaskInfo();
         callback();
       };
-      MpMessage.success({ title: '已加工完成', onOk: cb, onCancel: cb });
+      MpMessage.dialogSuccess({ title: '已完成', onOk: cb, onCancel: cb });
     }
   }
 
-  /** 任务报错 */
-  public async setTaskError(Remark: string, callback: () => void) {
-    if (!this.curTaskData) return;
+  /** 批量报工 */
+  public async getEquipmentTaskBatchReport(List: string[], callback: () => void) {
+    if (List.length === 0) return;
+
+    const temp = { List };
+
+    const resp = await clientApi.getEquipmentTaskBatchReport(temp).catch(() => null);
+
+    if (resp?.data.Status === 1000) {
+      const cb = () => {
+        this.getTaskInfo();
+        callback();
+      };
+      MpMessage.dialogSuccess({ title: '已完成', onOk: cb, onCancel: cb });
+    }
+  }
+
+  /** 任务报错  批量报工时需要传递TaskID */
+  public async setTaskError(Remark: string, callback: () => void, TaskID?: string) {
+    if (!this.curTaskData && !TaskID) return;
 
     const temp = {
-      ID: this.curTaskData.ID,
+      ID: TaskID || this.curTaskData?.ID || '',
       Remark,
     };
     const resp = await clientApi.getEquipmentTaskError(temp).catch(() => null);
@@ -185,7 +219,7 @@ export class TerminalEquipmentInstance {
         this.getTaskInfo();
         callback();
       };
-      MpMessage.success({ title: '设置报错成功', onOk: cb, onCancel: cb });
+      MpMessage.dialogSuccess({ title: '设置报错成功', onOk: cb, onCancel: cb });
     }
   }
 }

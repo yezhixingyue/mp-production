@@ -1,4 +1,4 @@
-import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
+// import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 import { ChunkStatusEnum } from './enum';
 
 export interface IManageChunkInfo {
@@ -23,7 +23,9 @@ export interface IManageChunkInfo {
   /** 生产线 */
   Line: string
   /** 当前所在机器位置  */
-  Equipment?: IEquipmentBaseInfo
+  // Equipment?: IEquipmentBaseInfo
+  /** 当前位置 */
+  Position: string
   /** 状态 */
   Status: ChunkStatusEnum
 }

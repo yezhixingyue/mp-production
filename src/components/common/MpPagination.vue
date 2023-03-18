@@ -7,7 +7,7 @@
       </span>
       <el-pagination
          @current-change="handleCurrentChange"
-         :modelValue="currentPage"
+         :current-page="currentPage"
          hide-on-single-page
          :page-size="pageSize"
          :pager-count='5'
@@ -16,7 +16,7 @@
        </el-pagination>
     </el-config-provider>
     <span class="count">
-      <DownLoadExcelComp />
+      <NewDownLoadExcelComp v-if="localExportExcelProps" :disabled="total === 0" v-bind="localExportExcelProps" />
       <span>共检索出</span>
       <i class="num"> {{total}} </i>
       <span>条记录</span>
@@ -26,14 +26,15 @@
 
 <script lang="ts">
 import { ElConfigProvider } from 'element-plus';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import zhCn from 'element-plus/lib/locale/lang/zh-cn';
-import DownLoadExcelComp from '@/components/common/DownLoadExcelComp.vue';
+import NewDownLoadExcelComp from '@/components/common/General/DownLoadExcelComp/DownLoadExcelComp.vue';
+import { IExportExcelProps } from './General/DownLoadExcelComp/types';
 
 export default {
   components: {
     ElConfigProvider,
-    DownLoadExcelComp,
+    NewDownLoadExcelComp,
   },
   props: {
     nowPage: {
@@ -57,6 +58,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ExportExcelProps: { // IExportExcelProps 类型
+      type: Object,
+      default: () => null,
+    },
   },
   setup(props) {
     function handleCurrentChange(val) {
@@ -65,15 +70,19 @@ export default {
 
     const currentPage = computed(() => props.nowPage);
 
-    const onDownloadClick = () => {
-      console.log('onDownloadClick');
-    };
+    const localExportExcelProps = computed<IExportExcelProps | null>(() => (props.ExportExcelProps ? {
+      ...(props.ExportExcelProps as IExportExcelProps),
+    } : null));
+
+    watch(currentPage, (val) => {
+      console.log(val);
+    });
 
     return {
       currentPage,
       handleCurrentChange,
       locale: zhCn,
-      onDownloadClick,
+      localExportExcelProps,
     };
   },
 };

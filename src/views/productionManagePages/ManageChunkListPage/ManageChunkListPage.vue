@@ -29,7 +29,7 @@ onMounted(() => { ManagePlateListPageData.value.getInitData(); });
 
 <script lang="ts">
 export default {
-  name: 'ManagePlateListPage',
+  name: 'ManageChunkListPage',
 };
 </script>
 

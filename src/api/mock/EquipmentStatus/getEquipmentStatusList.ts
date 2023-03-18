@@ -1,5 +1,5 @@
-import { EquipmentTaskStatusEnum } from '@/views/productionManagePages/EquipmentStatus/js/enums';
-import { ITask } from '@/views/productionManagePages/EquipmentStatus/js/types';
+import { EquipmentTaskStatusEnum } from '@/views/productionManagePages/EquipmentStatus/List/js/enums';
+import { ITask } from '@/views/productionManagePages/EquipmentStatus/List/js/types';
 import Mock from 'mockjs';
 
 export default () => {
@@ -29,7 +29,7 @@ export default () => {
       Unit: '张',
       StartTime,
       EndTime,
-      Duration: 2,
+      Duration: '2小时',
     });
   }
 

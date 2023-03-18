@@ -1,9 +1,11 @@
 export interface ILoginSubmitForm {
   Password: string
   Mobile: string
+  /** 0. 客户端   1. 网页 */
   Terminal: 1 | 2
   EquipmentID?: string
-  Site?: 2
+  /** 1. 后台 2. 报工  */
+  Site: 1 | 2
 }
 
 export interface IUser {
@@ -15,4 +17,5 @@ export interface IUser {
   Token: string,
   PermissionList: object
   Mobile: string
+  HeadPic: string
 }

@@ -9,26 +9,29 @@
       <mp-table-column min-width="140px" prop="Size" label="尺寸" />
       <mp-table-column width="110px" prop="_Number" label="数量" />
       <mp-table-column width="130px" prop="Line" label="生产线" />
-      <mp-table-column width="130px" prop="_Position" label="当前位置" />
+      <mp-table-column width="130px" prop="Position" label="当前位置" />
       <mp-table-column width="110px" prop="_StatusText" label="状态" />
       <mp-table-column width="280px" label="操作" class-name="ctrl">
         <template #default="scope">
-        <mp-button type="primary" class="ft-12" link @click="onProcessClick(scope.row, scope.$index)">生产流程</mp-button>
-        <mp-button type="primary" class="ft-12" link @click="onThumbnailClick(scope.row, scope.$index)">查看缩略图</mp-button>
-      </template>
+          <mp-button type="primary" class="ft-12" link @click="onProcessClick(scope.row, scope.$index)">生产流程</mp-button>
+          <mp-button type="primary" class="ft-12" link @click="onThumbnailClick(scope.row, scope.$index)">查看缩略图</mp-button>
+        </template>
       </mp-table-column>
       <template #empty>
         <span class="ft-12" v-show="!loading">暂无数据</span>
       </template>
     </el-table>
+    <ProcessDisplayDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.block" />
   </main>
 </template>
 
 <script setup lang='ts'>
-import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
-import { computed } from 'vue';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { ReportModeEnum } from '@/views/productionSetting/process/enums';
+import { computed, ref } from 'vue';
 import { ChunkStatusEnumList } from '../js/EnumList';
 import { IManageChunkInfo } from '../js/type';
+import ProcessDisplayDialog from '../../ManageOrderListPage/Comps/ProcessDisplayDialog/ProcessDisplayDialog.vue';
 
 const props = defineProps<{
   list: IManageChunkInfo[]
@@ -39,15 +42,21 @@ const localList = computed(() => {
   const list = props.list.map(it => ({
     ...it,
     _Number: it.Number || it.Number === 0 ? `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${it.Unit || ''}` : '',
-    _Position: it.Equipment ? [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') : '',
-    _StatusText: getEnumNameByIDAndEnumList(it.Status, ChunkStatusEnumList) || '',
+    _StatusText: getEnumNameByID(it.Status, ChunkStatusEnumList) || '',
   }));
 
   return list;
 });
 
-const onProcessClick = (item: IManageChunkInfo, index: number) => { // 生产流程
+/** 当前设置对象条目 弹窗共用 */
+const curRow = ref<null | typeof localList.value[number]>(null);
+
+/** 生产流程 */
+const processVisible = ref(false);
+const onProcessClick = (item: typeof localList.value[number], index: number) => { // 生产流程
   console.log('onProcessClick', item, index);
+  curRow.value = item;
+  processVisible.value = true;
 };
 
 const onThumbnailClick = (item: IManageChunkInfo, index: number) => { // 查看缩略图

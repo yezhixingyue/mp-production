@@ -13,8 +13,17 @@
       </el-input>
     </header>
 
-    <!-- 2. 列表展示 -->
-    <TaskListTable :TaskList="curInstance.TaskListData.TaskList" :loading="curInstance.TaskListData.loading" />
+    <!-- 2. 普通列表展示 -->
+    <TaskListTable :TaskList="curInstance.TaskListData.TaskList" :loading="curInstance.TaskListData.loading" useLittleHeight
+      v-if="!curInstance.Equipment.AllowBatchReport"
+      v-show="curInstance.TaskListData.TaskList.length > 0" />
+    <!-- 3. 批量上传列表展示与操作 -->
+    <BatchReportComp
+      v-else :curInstance="curInstance" v-show="curInstance.TaskListData.TaskList.length > 0"
+      @singleReport="onSingleCompleteClick"
+      @error="onErrorClick"
+      @report="handleBatchReport"
+    />
 
     <!-- 送达结果弹窗处理 -->
     <ResultHandleDialog v-model:visible="resultVisible" :result="receiveResult" @close="onClose" @submit="onDialogSubmit" />
@@ -26,17 +35,20 @@ import { ManageClientPageData } from '@/api/client/clientStore';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentReceiveCodeEnum } from '@/views/ProductionClient/assets/js/enum';
 import { TerminalEquipmentInstance } from '@/views/ProductionClient/assets/js/Instance';
-import { IReceiveResult } from '@/views/ProductionClient/assets/js/types';
+import { ITaskDetail, IReceiveResult } from '@/views/ProductionClient/assets/js/types';
 import { EquipmentStatusEnum } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/enum';
 import {
   onMounted, ref, computed, onUnmounted, watch,
 } from 'vue';
 import ResultHandleDialog from './ResultHandleDialog.vue';
 import TaskListTable from './TaskListTable.vue';
+import BatchReportComp from './BatchReport/BatchReportComp.vue';
 
 const props = defineProps<{
   curInstance: Required<TerminalEquipmentInstance>
 }>();
+
+const emit = defineEmits(['report', 'singleReport', 'error', 'displayPic']);
 
 const curActiveInstance = computed(() => ManageClientPageData.value.curActiveInstance);
 
@@ -100,6 +112,20 @@ const handleKeyup = (e: KeyboardEvent) => {
   oInput.value.focus();
 };
 
+/* 批量操作相关
+-------------------------------- */
+const onSingleCompleteClick = (row: ITaskDetail) => { // 单个报工完成
+  emit('singleReport', row);
+};
+
+const onErrorClick = (row: ITaskDetail) => { // 报错
+  emit('error', row);
+};
+
+const handleBatchReport = (list, callback) => {
+  emit('report', list, callback);
+};
+
 onMounted(() => {
   document.body.addEventListener('keyup', handleKeyup);
 });
@@ -112,7 +138,7 @@ onUnmounted(() => {
 
 <style scoped lang='scss'>
 .mp-client-task-activate-and-list-comp-wrap {
-  padding-top: 30px;
+  padding: 30px 0;
   > header {
     display: flex;
     align-items: center;

@@ -1,9 +1,9 @@
 <template>
   <router-view v-slot="{ Component }">
-    <transition name="fade-transform"
+    <transition :name="!atRefreshing ? 'fade-transform' : ''"
       mode="out-in" @before-leave="beforeLeave" @after-enter="afterEnter">
       <keep-alive :include='[...curTabPagesNameList]'>
-        <component :is="Component"></component>
+        <component :is="Component" :key="Component ? Component.key : ''" v-if="!refreshing" v-show="!atRefreshing"></component>
       </keep-alive>
     </transition>
   </router-view>
@@ -28,6 +28,7 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLayoutStore } from '@/store/modules/layout/index';
+import { refreshing, atRefreshing } from './index';
 
 export default {
   setup() {
@@ -53,9 +54,6 @@ export default {
       dom.style.overflow = 'overlay';
     }
 
-    const key = computed(() => route.path);
-    const curTabPagesNameList = computed(() => LayoutStore.curTabPagesNameList);
-
     const pageName = computed(() => {
       if (route.meta.pageName) return route.meta.pageName;
       let _name = '';
@@ -67,7 +65,12 @@ export default {
       return _name;
     });
 
+    const key = computed(() => route.path);
+    const curTabPagesNameList = computed(() => LayoutStore.curTabPagesNameList.filter(it => !refreshing.value || it !== pageName.value));
+
     return {
+      refreshing,
+      atRefreshing,
       beforeLeave,
       afterEnter,
       setThisDom,

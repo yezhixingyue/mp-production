@@ -61,7 +61,7 @@
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope">
               <mp-button type="info" link @click="ToTemplateSetSize(scope.row)" :disabled="scope.row.IsSameSizeWithPrintingPlate">
-                <i class="iconfont icon-shengchanxian" :class="{'disabled':scope.row.IsSameSizeWithPrintingPlate}"></i>设置尺寸</mp-button>
+                <i class="iconfont icon-shengchanxian" :class="{'disabled':scope.row.IsSameSizeWithPrintingPlate}"></i>模板规格</mp-button>
               <mp-button type="info" link @click="EditTemplate(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link
@@ -74,7 +74,7 @@
     <DialogContainerComp
     :title="`${Data.addTemplateFrom.ID ? '修改' : '添加'}拼版模板`"
     :visible='Data.addTemplateFromShow'
-    :width="400"
+    :width="530"
     :primaryClick="addTemplatePrimaryClick"
     :closeClick="() => Data.addTemplateFromShow = false"
     :closed="addTemplateCloseedClick"
@@ -83,7 +83,7 @@
         <div class="add-printing-color-dialog">
           <el-form :model="Data.addTemplateFrom" label-width="82px">
             <el-form-item label="名称：" class="form-item-required">
-              <el-input :maxlength="100" v-model="Data.addTemplateFrom.Name" />
+              <el-input :maxlength="100" style="width: 360px;" v-model="Data.addTemplateFrom.Name" />
             </el-form-item>
             <el-form-item label="" >
               <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
@@ -119,6 +119,7 @@ import messageBox from '@/assets/js/utils/message';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 // import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ImpositionTemmplate } from './types';
 
 interface getImpositionTemmplateDataType {
@@ -228,7 +229,7 @@ function addTemplatePrimaryClick() {
           Data.addTemplateFromShow = false;
         };
         // 保存成功
-        messageBox.successSingle('保存成功', cb, cb);
+        MpMessage.dialogSuccess('保存成功', cb, cb);
       }
     });
   } else {

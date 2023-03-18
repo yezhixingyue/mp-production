@@ -1,6 +1,4 @@
 import { RouteRecordRaw } from 'vue-router';
-import LoginView from '@/views/LoginView/index.vue';
-import HomeView from '@/views/HomeView.vue';
 import { RouteTreeType } from '@/router/modules/routerTypes';
 import materialWarehouseRouteRoot from './materialWarehouse';
 import productionResources from './productionResources';
@@ -9,45 +7,33 @@ import otherSettingRouteRoot from './other';
 import companyManageRouteRoot from './companyManage';
 import productionManageRouteRoot from './productionManage';
 import productionRouteRoot from './productionSetting';
+import ExceptionManageRouteRoot from './ExceptionManage';
+import OutsourceManageRouteRoot from './OutsourceManage';
+import orderAppRouteRoot from './OrderAppRouteManage/orderAppRoutes';
 
-export const moduleRoutes: RouteRecordRaw[] = [
+const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
+
+export const moduleRoutes: RouteRecordRaw[] = isOrderApp ? [orderAppRouteRoot.routes] : [
   {
-    path: '/',
-    name: 'home',
+    path: '/client',
+    name: 'client',
     meta: {
-      title: '首页',
-      requiresAuth: true,
-    },
-    component: HomeView,
-  },
-  {
-    path: '/login',
-    name: 'login',
-    meta: {
-      title: '登录',
+      title: '生产报工',
       requiresAuth: false,
     },
-    component: LoginView,
+    component: () => import(/* webpackChunkName: "client" */ '@/views/ProductionClient/ProductionClientView.vue'),
   },
+  ExceptionManageRouteRoot.routes,
   productionManageRouteRoot.routes,
+  OutsourceManageRouteRoot.routes,
   productionRouteRoot.routes,
   productionResources.routes,
   pasteupSettingRouteRoot.routes,
   materialWarehouseRouteRoot.routes,
-  otherSettingRouteRoot.routes,
   companyManageRouteRoot.routes,
-  { // 无权限页
-    path: '/notauth',
-    name: 'notauth',
-    meta: {
-      title: '没有访问权限',
-      hideMenu: true,
-      requiresAuth: true,
-    },
-    component: () => import('@/views/NoAuthPage.vue'),
-  },
+  otherSettingRouteRoot.routes,
 ];
-const routeTree:RouteTreeType[] = [
+const routeTree:RouteTreeType[] = isOrderApp ? [orderAppRouteRoot.routeTree] : [
   materialWarehouseRouteRoot.routeTree,
   productionResources.routeTree,
   pasteupSettingRouteRoot.routeTree,
@@ -55,6 +41,8 @@ const routeTree:RouteTreeType[] = [
   companyManageRouteRoot.routeTree,
   productionManageRouteRoot.routeTree,
   productionRouteRoot.routeTree,
+  ExceptionManageRouteRoot.routeTree,
+  OutsourceManageRouteRoot.routeTree,
 ];
 
 export default {

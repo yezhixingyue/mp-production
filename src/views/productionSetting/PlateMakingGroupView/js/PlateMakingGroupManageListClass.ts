@@ -94,7 +94,7 @@ export class PlateMakingGroupManageListClass {
         callback();
       };
       if (isEdit) {
-        MpMessage.success({
+        MpMessage.dialogSuccess({
           title: `${isEdit ? '编辑' : '添加'}成功`,
           onOk: cb,
           onCancel: cb,

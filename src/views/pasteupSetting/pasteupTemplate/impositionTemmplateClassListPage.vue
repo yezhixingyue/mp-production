@@ -60,6 +60,7 @@ import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { FoldWayTemplateClassType } from '@/store/modules/pasteupSetting/types';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface DataType {
   addClassShow:boolean,
@@ -100,7 +101,7 @@ function addClassPrimaryClick() {
           addClassCloseClick();
           getClassList();
         };
-        messageBox.successSingle(`${Data.addClassFrom.ID ? '修改' : '添加'}成功`, cb, cb);
+        MpMessage.dialogSuccess(`${Data.addClassFrom.ID ? '修改' : '添加'}成功`, cb, cb);
       }
     });
   }

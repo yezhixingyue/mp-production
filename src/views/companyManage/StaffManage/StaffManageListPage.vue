@@ -41,7 +41,6 @@ import Header from './Comps/StaffListHeader.vue';
 import Main from './Comps/StaffListMain.vue';
 import DetailAndCheckDialog from './Comps/Detail&CheckDialog/IndexComp.vue';
 import IntranetDialog from './Comps/IntranetDialog.vue';
-import { IStaff } from './js/types';
 
 const router = useRouter();
 const companyStore = useCompanyStore();
@@ -51,8 +50,8 @@ const { StaffManagePageData } = storeToRefs(companyStore);
 const { user } = storeToRefs(userStore);
 
 /** 添加|编辑 */
-const onSetupClick = (it: IStaff | null) => {
-  StaffManagePageData.value.curEditStaff = it;
+const onSetupClick = ({ item }) => {
+  StaffManagePageData.value.curEditStaff = item;
   router.push('/StaffSetup');
 };
 

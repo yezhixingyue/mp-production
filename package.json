@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "compile-print-scss": "sass ./src/assets/css/print.scss ./public/css/print.css",
+    "serve": "npm run compile-print-scss && vue-cli-service serve",
+    "build": "npm run compile-print-scss && vue-cli-service build",
+    "serve.order": "npm run compile-print-scss && vue-cli-service serve --mode order",
+    "build.order": "npm run compile-print-scss && vue-cli-service build --mode prod.order",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },

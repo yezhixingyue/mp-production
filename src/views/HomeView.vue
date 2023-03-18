@@ -21,6 +21,7 @@
 
 <script lang='ts'>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
@@ -37,8 +38,13 @@ export default {
       dateString.value = `${year}年${month}月${day}日`;
       weekString.value = weekTextList[w];
     }
+    const router = useRouter();
+
     onMounted(() => {
       getCurDate();
+      if (process.env.VUE_APP_TARGET === 'My Order App') { // 跳转页面
+        router.replace('/orderAppRoutes');
+      }
     });
     return {
       dateString,

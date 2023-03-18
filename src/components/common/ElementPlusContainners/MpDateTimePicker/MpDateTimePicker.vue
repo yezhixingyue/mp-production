@@ -1,10 +1,10 @@
 <template>
   <div class="mp-date-time-picker">
     <!-- 日期选择 -->
-    <el-date-picker v-model="date" class="date" type="date" :placeholder="placeholder"
+    <el-date-picker v-model="date" class="date" type="date" :placeholder="placeholder" :clearable="clearable"
        format="YYYY-MM-DD" value-format="YYYY-MM-DD" :disabled-date="getDisabledDate" />
     <!-- 时间选择 select方式 -->
-    <el-time-select v-model="time" start="00:00" :step="timeSelectStep" end="23:59" v-if="(useTimeSelect && withTime && !onlyDate)"  placeholder="00:00"/>
+    <el-time-select v-model="time" start="00:00" :step="timeSelectStep" end="23:59" v-if="(useTimeSelect && withTime && !onlyDate)"  placeholder=""/>
     <!-- 时间选择 picker方式 -->
     <el-time-picker v-model="time" format="HH:mm" value-format="HH:mm" :default-value="pickTimeDefaultValue"
      v-if="(useTimePicker && withTime && !onlyDate)" placeholder="" />
@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<{
   useTimePicker?: boolean // 使用时间点为picker模式  和上面一个必须有一个为true
   timeSelectStep?: string
   disabledBeforeToday?: boolean // 是否禁用当天之前的时间
+  clearable?: boolean
 }>(), {
   placeholder: '年/月/日',
   withTime: false,
@@ -34,6 +35,7 @@ const props = withDefaults(defineProps<{
   useTimePicker: false,
   timeSelectStep: '00:30',
   disabledBeforeToday: false,
+  clearable: true,
 });
 
 const emit = defineEmits(['update:modelValue']);

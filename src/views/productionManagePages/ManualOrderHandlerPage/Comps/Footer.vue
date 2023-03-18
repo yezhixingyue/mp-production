@@ -1,6 +1,6 @@
 <template>
   <footer v-show="(curStepIndex < stepList.length - 1)">
-    <mp-button class="blue" v-show="(curStepIndex > 0)" @click="onPrevClick">上一步</mp-button>
+    <mp-button class="blue" v-if="(curStepIndex > 0)" @click="onPrevClick">上一步</mp-button>
     <mp-button type="primary" @click="onNextClick">下一步</mp-button>
   </footer>
 </template>

@@ -142,6 +142,7 @@ import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 import { getGoBackFun } from '@/router';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface AttributeSelectsType {
     SelectID: string | number,
@@ -311,7 +312,7 @@ export default {
             setStorage();
           };
             // 成功
-          messageBox.successSingle(`${Data.addAttributesForm.AttributeID ? '修改' : '添加'}成功`, cb, cb);
+          MpMessage.dialogSuccess(`${Data.addAttributesForm.AttributeID ? '修改' : '添加'}成功`, cb, cb);
         }
       });
     }

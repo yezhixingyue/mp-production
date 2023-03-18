@@ -132,6 +132,7 @@ import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogCo
 import api from '@/api';
 import { useRouter } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface SaveStorehouseFormType {
   StorehouseID: string,
@@ -279,7 +280,7 @@ export default {
               getStorehouseList();
               SaveStorehouseCloseClick();
             };
-            messageBox.successSingle(`${Data.SaveStorehouseForm.StorehouseID ? '修改' : '添加'}成功`, cb, cb);
+            MpMessage.dialogSuccess(`${Data.SaveStorehouseForm.StorehouseID ? '修改' : '添加'}成功`, cb, cb);
           }
         });
       }

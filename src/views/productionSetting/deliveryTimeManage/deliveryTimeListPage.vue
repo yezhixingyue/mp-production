@@ -117,6 +117,7 @@ const ExpressVal = computed({
     return getShiftTimeLisData.CompanyID;
   },
   set(val) {
+    if (val === getShiftTimeLisData.CompanyID) return;
     getShiftTimeLisData.CompanyID = val;
     getTableDataList();
   },

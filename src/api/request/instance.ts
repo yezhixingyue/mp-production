@@ -3,10 +3,12 @@ import { useUserStore } from '@/store/modules/user';
 import { router } from '@/router';
 import messageBox from '@/assets/js/utils/message';
 import { ElLoading, ElMessage } from 'element-plus';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import Axios from './axios';
 import { ICatch, IMPAxiosInstance, IRequestConfig } from './types';
 import { setRequestHeaderMiddleware } from './utils';
 import { clientApiUrls } from '../modules/clientApis';
+import { downloadExcelApiUrls } from '../modules/downloadExcelApis';
 
 const apiListByNotNeedToken = ['/Api/Staff/Login']; // 不需要token访问的接口列表
 
@@ -78,8 +80,9 @@ const axios = new Axios({
       // 关闭loading
       if (getShowLoading(result.config as IRequestConfig) && loadingInstance) handleLoadingClose();
       const userStore = useUserStore();
-      if (result.data.Status !== 1000) {
-        if (result.data.Status === 8037) {
+
+      if (result.data.Status !== 1000 && !downloadExcelApiUrls.includes(result.config.url || '') && !result.config.closeTips) {
+        if ([8037, 7025].includes(result.data.Status)) {
           axios.cancelAllRequest();
           const cb = () => {
             const host = window.location.href.split('#')[0] || '';
@@ -88,9 +91,15 @@ const axios = new Axios({
           };
           messageBox.failSingle('请重新登录', cb, cb);
         } else {
-          messageBox.failSingleError('操作失败', result.data.Message, () => null);
+          MpMessage.error({
+            title: '操作失败',
+            msg: result.data.Message,
+            onCancel: result.config.msgCallback || undefined,
+            onOk: result.config.msgCallback || undefined,
+          });
         }
       }
+
       return result;
     },
     responseInterceptorsCatch: (error:ICatch) => {
@@ -108,6 +117,7 @@ const axios = new Axios({
           case 403:
             break;
           case 404:
+            _msg = '错误404，资源不存在';
             break;
           case 413: // 处理文件导出错误
             break;

@@ -34,7 +34,7 @@ export class PlateMakingGroupManageItemHandlerClass {
         this.itemData.Equipments = resp.data.Data.filter(it => !it.IsRemove).map(it => ({ ID: it.EquipmentID, LineEquipmentID: it.LineEquipmentID }));
         callback();
       };
-      MpMessage.success({ title: '保存成功', onOk: cb, onCancel: cb });
+      MpMessage.dialogSuccess({ title: '保存成功', onOk: cb, onCancel: cb });
     }
   }
 }

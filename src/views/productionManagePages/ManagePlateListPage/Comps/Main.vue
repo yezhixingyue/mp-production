@@ -20,20 +20,20 @@
         <template v-for="row in localList" :key="row.ID">
           <tr class="row-title" @click.self.stop="onSpreadClick(row)">
             <td :style="`width:${widthList[0].width}px`" :title="row.Code + ''">{{ row.Code || '' }}</td>
-            <td :style="`width:${widthList[1].width}px`" :title="row.Size">{{ row.Size || '' }}</td>
+            <td :style="`width:${widthList[1].width}px`" :title="row._Size">{{ row._Size || '' }}</td>
             <td :style="`width:${widthList[2].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
             <td :style="`width:${widthList[3].width}px`" :title="row._Number">{{ row._Number || '' }}</td>
-            <td :style="`width:${widthList[4].width}px`" :title="row.IncludeChunkNumber + ''">{{ row.IncludeChunkNumber }}</td>
+            <td :style="`width:${widthList[4].width}px`" :title="row.ChunkNumber + ''">{{ row.ChunkNumber }}</td>
             <td :style="`width:${widthList[5].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
             <td :style="`width:${widthList[6].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
             <td :style="`width:${widthList[7].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
-            <td :style="`width:${widthList[8].width}px`" :title="row._Position">{{ row._Position || '' }}</td>
+            <td :style="`width:${widthList[8].width}px`" :title="row.Position">{{ row.Position || '' }}</td>
             <td :style="`width:${widthList[9].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
             <td :style="`width:${widthList[10].width}px`">
               <mp-button link type="primary" @click="onOrderPrintClick(row)">打印工单</mp-button>
               <mp-button link type="primary" @click="onBarCodePrintClick(row)">打印条码稿</mp-button>
               <mp-button link type="primary" @click="onProcessClick(row)">进度详情</mp-button>
-              <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.Children.length === 0">
+              <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
                 <el-icon v-show="row._isSpread"><CaretTop /></el-icon>
@@ -41,14 +41,14 @@
             </td>
           </tr>
           <template v-if="row._isSpread">
-            <tr v-for="(child) in row.Children" :key="child.ID" class="child-list" :style="`width:${totalWidth}px`">
+            <tr v-for="(child) in row.ChildList" :key="child.ID" class="child-list" :style="`width:${totalWidth}px`">
               <td class="name">
                 <span class="m">{{ child.Code }}</span>
               </td>
-              <td class="number">含订单：{{ child.IncludeChunkNumber }}个</td>
+              <td class="number">含订单：{{ child.ChunkNumber }}个</td>
               <td :style="`width:${widthList[10].width}px`">
-                <mp-button link type="primary" @click="onProcessClick(row)">进度详情</mp-button>
-                <mp-button link type="primary" @click="onBarCodePrintClick(row)">打印条码稿</mp-button>
+                <mp-button link type="primary" @click="onProcessClick(row, child)">进度详情</mp-button>
+                <mp-button link type="primary" @click="onBarCodePrintClick(row, child)">打印条码稿</mp-button>
               </td>
             </tr>
           </template>
@@ -58,6 +58,25 @@
         </tr>
       </tbody>
     </table>
+    <ProcessDisplayDialog v-model:visible="processVisible" :item="curRowChildPlat || curRow" :targetType="ReportModeEnum.board" />
+
+    <!-- 打印工单 -->
+    <PrintDialog ref="oPrintDialog" :title="`${curRow?.Code}（大版工单）`">
+      <div class="plate-print-content">
+        <div class="img-box">
+          <img :src="imgSrc" v-show="imgSrc" alt="">
+        </div>
+        <div class="right">
+          <h2>大版ID：{{ curRow?.Code || '' }}</h2>
+          <div class="remark">
+            <p>{{ curRow?.Template || '' }} {{ curRow?.TemplateSize || '' }}</p>
+            <p>{{ curRow?.Material || '' }}</p>
+          </div>
+          <h4>{{ curRow?.Number || '' }}{{ curRow?.Unit || '' }}</h4>
+          <p class="time">打印时间：{{ curPrintData }}</p>
+        </div>
+      </div>
+    </PrintDialog>
   </main>
 </template>
 
@@ -65,10 +84,15 @@
 import {
   computed, onMounted, onUnmounted, ref,
 } from 'vue';
-import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
-import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
-import { IManagePlateInfo } from '../js/type';
+import { getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { format2LangTypeDate, format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { ReportModeEnum } from '@/views/productionSetting/process/enums';
+import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
+import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
+import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
+import ProcessDisplayDialog from '../../ManageOrderListPage/Comps/ProcessDisplayDialog/ProcessDisplayDialog.vue';
 
 const props = defineProps<{
   list: IManagePlateInfo[]
@@ -97,13 +121,14 @@ const localList = computed(() => props.list.map(it => ({
   ...it,
   _Number: `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}张`,
   _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
-  _Position: it.Equipment ? [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') : '',
-  _StatusText: getEnumNameByIDAndEnumList(it.Status, PlateStatusEnumList) || '',
+  // _Position: it.Equipment ? [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') : '',
+  _StatusText: getEnumNameByID(it.Status, PlateStatusEnumList) || '',
   _isSpread: spreadList.value.includes(it.ID),
+  _Size: [it.Template, it.TemplateSize].filter(it => it).join(' '),
 })));
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
-  if (it.Children.length === 0) return;
+  if (it.ChildList.length === 0) return;
   if (spreadList.value.includes(it.ID)) {
     spreadList.value = spreadList.value.filter(id => id !== it.ID);
   } else {
@@ -115,16 +140,37 @@ const onSpreadClick = (it: typeof localList.value[number]) => {
 // const curRow = ref<null | typeof localList.value[number]>(null);
 
 /** 事件 */
-const onProcessClick = (row: typeof localList.value[number]) => {
-  console.log('onProcessClick', row);
+const curRow = ref<null | typeof localList.value[number]>(null);
+const curRowChildPlat = ref<null | IPlateListChild>(null);
+
+const processVisible = ref(false);
+const onProcessClick = (row: typeof localList.value[number], childPlat: IPlateListChild | null = null) => {
+  curRow.value = row;
+  curRowChildPlat.value = childPlat;
+  processVisible.value = true;
 };
 
-const onOrderPrintClick = (row: typeof localList.value[number]) => {
-  console.log('onOrderPrintClick', row);
+const imgSrc = ref('');
+const curPrintData = ref('');
+const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
+const onOrderPrintClick = async (row: typeof localList.value[number]) => {
+  if (!row || !oPrintDialog.value) return;
+
+  curRow.value = row;
+  imgSrc.value = '';
+
+  const src = await getQRCodeSrc(row.Code); // 获取img src
+
+  if (src) {
+    imgSrc.value = src;
+    curPrintData.value = format2LangTypeDate(getTimeConvertFormat({ withHMS: true }));
+    // oPrintDialog.value.print(`${row.Code}（大版工单）`);
+    oPrintDialog.value.open();
+  }
 };
 
-const onBarCodePrintClick = (row: typeof localList.value[number]) => {
-  console.log('onBarCodePrintClick', row);
+const onBarCodePrintClick = (row: typeof localList.value[number], childPlat: IPlateListChild | null = null) => {
+  console.log('onBarCodePrintClick', row, childPlat);
 };
 
 /** 拖动事件 */
@@ -151,8 +197,8 @@ const mousedown = (e: MouseEvent) => { // 处理开始拖动
   const dom = e.target as HTMLElement;
   if (dom.nodeName !== 'TH') return;
   let index = +(dom.dataset.index || -1);
-  if (index === -1) return;
-  if (widthList.value[index] && (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10)) {
+  if (!widthList.value?.[index]) return;
+  if (widthList.value && widthList.value[index] && (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10)) {
     if (e.offsetX < 10) {
       index -= 1;
     }
@@ -167,7 +213,7 @@ const mousemove = (e: MouseEvent) => { // 处理鼠标指针样式变化
   const dom = e.target as HTMLElement;
   if (dom.nodeName !== 'TH') return;
   const index = +(dom.dataset.index || -1);
-  if (index === -1) return;
+  if (!widthList.value?.[index]) return;
   if (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10) {
     dom.style.cursor = 'col-resize';
   } else {

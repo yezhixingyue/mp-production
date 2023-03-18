@@ -14,26 +14,26 @@ const api = {
   },
 
   // 折手模板
-  getFoldWayTemplateClassSave(data) { // POST /Api/FoldWayTemplate/Class/Save  折手模板分类保存
-    return request({ method: 'POST', url: '/Api/FoldWayTemplate/Class/Save', data });
+  getFoldWayTemplateClassSave(data) { // POST /Api/FoldingTemplate/Class/Save  折手模板分类保存
+    return request({ method: 'POST', url: '/Api/FoldingTemplate/Class/Save', data });
   },
-  getFoldWayTemplateClassList() { // POST /Api/FoldWayTemplate/Class/List  折手模板分类列表
-    return request({ method: 'GET', url: '/Api/FoldWayTemplate/Class/List' });
+  getFoldWayTemplateClassList() { // POST /Api/FoldingTemplate/Class/List  折手模板分类列表
+    return request({ method: 'GET', url: '/Api/FoldingTemplate/Class/List' });
   },
-  getFoldWayTemplateClassRemove(id) { // DELETE /Api/FoldWayTemplate/Class/Remove  折手模板分类删除
-    return request({ method: 'DELETE', url: `/Api/FoldWayTemplate/Class/Remove?id=${id}` });
+  getFoldWayTemplateClassRemove(id) { // DELETE /Api/FoldingTemplate/Class/Remove  折手模板分类删除
+    return request({ method: 'DELETE', url: `/Api/FoldingTemplate/Class/Remove?id=${id}` });
   },
-  getFoldWayTemplateRemove(id) { // DELETE /Api/FoldWayTemplate/Remove  折手模板删除
-    return request({ method: 'DELETE', url: `/Api/FoldWayTemplate/Remove?id=${id}` });
+  getFoldWayTemplateRemove(id) { // DELETE /Api/FoldingTemplate/Remove  折手模板删除
+    return request({ method: 'DELETE', url: `/Api/FoldingTemplate/Remove?id=${id}` });
   },
-  getFoldWayTemplateSave(data) { // POST /Api/FoldWayTemplate/Save  折手模板保存
-    return request({ method: 'POST', url: '/Api/FoldWayTemplate/Save', data });
+  getFoldWayTemplateSave(data) { // POST /Api/FoldingTemplate/Save  折手模板保存
+    return request({ method: 'POST', url: '/Api/FoldingTemplate/Save', data });
   },
-  getFoldWayTemplateList(data) { // POST /Api/FoldWayTemplate/List  折手模板列表
-    return request({ method: 'POST', url: '/Api/FoldWayTemplate/List', data });
+  getFoldWayTemplateList(data) { // POST /Api/FoldingTemplate/List  折手模板列表
+    return request({ method: 'POST', url: '/Api/FoldingTemplate/List', data });
   },
-  getFoldWayTemplateUseableEquipment(data) { // POST /Api/FoldWayTemplate/UseableEquipment  适用模板保存
-    return request({ method: 'POST', url: '/Api/FoldWayTemplate/UseableEquipment', data });
+  getFoldWayTemplateUseableEquipment(data) { // POST /Api/FoldingTemplate/UseableEquipment  适用模板保存
+    return request({ method: 'POST', url: '/Api/FoldingTemplate/UseableEquipment', data });
   },
   // 拼版模板
   getImpositionTemmplateClassSave(data) { // POST /Api/ImpositionTemmplate/Class/Save  拼版模板分类保存

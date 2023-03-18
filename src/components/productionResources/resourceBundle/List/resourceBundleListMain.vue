@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang='ts'>
-import { getEnumNameByIDAndEnums, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpButton from '@/components/common/MpButton.vue';
 import {
@@ -38,10 +38,10 @@ const props = defineProps<{
 
 const emit = defineEmits(['edit', 'remove']);
 
-const formatFeatureType = (Feature: localEnumValueIDType) => getEnumNameByIDAndEnums(Feature, resourceBundleFeatureEnumObj);
+const formatFeatureType = (Feature: localEnumValueIDType) => getEnumNameByID(Feature, resourceBundleFeatureEnumObj);
 const formatMatchType = (item: ResourceBundleClass) => {
   if (item.Feature === resourceBundleFeatureEnumObj.semifinished.ID) return '';
-  return getEnumNameByIDAndEnums(item.MatchType, resourceBundleMatchEnum);
+  return getEnumNameByID(item.MatchType, resourceBundleMatchEnum);
 };
 const formatMaterialTypeGroups = (item: ResourceBundleClass) => {
   if (item.Feature === resourceBundleFeatureEnumObj.semifinished.ID) return '';

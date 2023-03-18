@@ -1,13 +1,17 @@
 /** 块状态枚举 */
 export enum ChunkStatusEnum {
-  /** 初始化数据 */
-  Initial = 0,
-  /** 可生产 */
-  HaveMakeup = 10,
+  /** 等待物料 */
+  WaitMaterial = 0,
+  /** 待生产 */
+  Producibility = 10,
   /** 生产中 */
   InProduction = 30,
-  /** 已生产 */
-  Finished = 40,
-  /** 块取消 */
+  /** 已完成 */
+  Finished = 50,
+  /** 块重新拼版 */
+  ChunkReMakeup = 251,
+  /** 订单重新拼版 */
+  OrderReMakeup = 252,
+  /** 订单取消 */
   HaveCancled = 255,
 }

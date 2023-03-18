@@ -179,7 +179,7 @@ export default {
           // this.$store.commit('layout/changeCurTabPath', newRoute.path);
           LayoutStore.changeCurTabPath(newRoute.path);
         }
-        if (!modulePageNames.includes(newRoute.name)) {
+        if (!modulePageNames.value.includes(newRoute.name)) {
           // newRoute 为响应式类型 不深复制的时候 路由改变状态管理内的值 otherTabPageNames 就会改变
           LayoutStore.setOtherTabPageNames(newRouteData);
         }

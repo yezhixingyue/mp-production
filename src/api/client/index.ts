@@ -1,4 +1,4 @@
-import { IEquipmentErrorInfo, IEquipmentTaskInfo } from '@/views/ProductionClient/assets/js/types';
+import { IEquipmentErrorInfo, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { clientInstance as instance } from './clientInstance';
 
 const clientApi = {
@@ -18,7 +18,7 @@ const clientApi = {
   },
   /** GET /Api/Equipment/StartTask  获取设备当前加工任务信息 - 如果当前没有任务信息则自动开启一个任务 */
   getEquipmentStartTask(equipmentID: string) {
-    return instance.get<IEquipmentTaskInfo>('/Api/Equipment/StartTask', { params: { equipmentID } });
+    return instance.get<ITaskDetail>('/Api/Equipment/StartTask', { params: { equipmentID } });
   },
   /** POST /Api/Equipment/Receive   送达 -- 扫描条码枪 */
   getEquipmentReceive(data, msgCallback) {
@@ -47,6 +47,10 @@ const clientApi = {
   /** GET /Api/Staff/LoginOut  员工退出登录 -目前仅报工使用 */
   getStaffLoginOut(equipmentID: string) {
     return instance.get('/Api/Staff/LoginOut', { params: { equipmentID } });
+  },
+  /** POST /Api/Equipment/TaskBatchReport  批量报工 */
+  getEquipmentTaskBatchReport(data) {
+    return instance.post('/Api/Equipment/TaskBatchReport', data);
   },
 };
 

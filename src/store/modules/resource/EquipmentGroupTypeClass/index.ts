@@ -60,7 +60,7 @@ export class EquipmentGroupTypeClass {
         if (closeDialogFunc) closeDialogFunc();
       };
 
-      MpMessage.success({ title, onOk: callback, onCancel: callback });
+      MpMessage.dialogSuccess({ title, onOk: callback, onCancel: callback });
     }
   }
 
@@ -91,7 +91,7 @@ export class EquipmentGroupTypeClass {
         if (closeDialogFunc) closeDialogFunc();
       };
 
-      MpMessage.success({ title: '尺寸限制设置成功', onOk: cb, onCancel: cb });
+      MpMessage.dialogSuccess({ title: '尺寸限制设置成功', onOk: cb, onCancel: cb });
     }
   }
 
@@ -107,7 +107,7 @@ export class EquipmentGroupTypeClass {
         if (closeDialogFunc) closeDialogFunc();
       };
 
-      MpMessage.success({ title: '印色数量限制设置成功', onOk: cb, onCancel: cb });
+      MpMessage.dialogSuccess({ title: '印色数量限制设置成功', onOk: cb, onCancel: cb });
     }
   }
   // 其它方法： 设置物料限制、设置印色数量限制等  api.getEquipmentGroupSave

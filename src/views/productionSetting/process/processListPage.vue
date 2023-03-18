@@ -20,14 +20,14 @@
       <el-table fit stripe :data="Data.processList"
        style="width: 100%">
         <el-table-column show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
-        <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" min-width="130">
+        <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" width="120">
           <template #default="scope">
             <span v-if="scope.row.ReportMode === 0">块报工</span>
             <span v-if="scope.row.ReportMode === 1">大版报工</span>
             <span v-if="scope.row.ReportMode === 2">订单报工</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="工序类型" min-width="130">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="工序类型" width="120">
           <template #default="scope">
             <span v-if="scope.row.Type === 0">普通工序</span>
             <span v-if="scope.row.Type === 1">印刷工序</span>
@@ -36,33 +36,38 @@
             <span v-if="scope.row.Type === 4">拆分工序</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="310">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="220">
           <template #default="scope">
             {{getEquipmentGroupsNames(scope.row.EquipmentGroups)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="200">
+        <el-table-column show-overflow-tooltip prop="ReportMode" label="允许批量报工" width="120">
+          <template #default="scope">
+            {{ scope.row.AllowBatchReport ? '允许' : '不允许' }}
+          </template>
+        </el-table-column>
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="160">
           <template #default="scope">
             {{getInfoName(scope.row.Relations, 0)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="200">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="160">
           <template #default="scope">
             {{getInfoName(scope.row.Relations,1)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="200">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="160">
           <template #default="scope">
             {{getMaterialName(scope.row.Relations)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="大版类型" min-width="200">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="大版类型" min-width="160">
           <template #default="scope">
             {{getTemplateName(scope.row.TemplateID)}}
           </template>
 
         </el-table-column>
-        <el-table-column prop="name" label="操作" min-width="186">
+        <el-table-column prop="name" label="操作" width="200">
           <template #default="scope">
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="ToProcess(scope.row)">
@@ -129,6 +134,7 @@ const ToProcess = (item) => {
 };
 // 获取工序列表
 const getProcessList = () => {
+  Data.processList = [];
   api.getWorkingProcedureList(getProcessListData.value).then(res => {
     if (res.data.Status === 1000) {
       Data.processList = res.data.Data as IWorkingProcedureInfo[];

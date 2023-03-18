@@ -102,6 +102,7 @@ import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 export default {
   name: 'setDimensionsPage',
@@ -206,7 +207,7 @@ export default {
               setStorage();
             };
               // 成功
-            messageBox.successSingle(`${Data.addDimensionsForm.SizeID ? '修改' : '添加'}成功`, cb, cb);
+            MpMessage.dialogSuccess(`${Data.addDimensionsForm.SizeID ? '修改' : '添加'}成功`, cb, cb);
           }
         });
       }

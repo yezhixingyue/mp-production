@@ -19,7 +19,7 @@
               v-model="item.checkAll"
               :indeterminate="item.isIndeterminate"
               @change="handleCheckAllChange(item.checkAll, index)"
-            >{{getEnumNameByIDAndEnums(item.Type, AssistInfoTypeEnums)}}</el-checkbox>
+            >{{getEnumNameByID(item.Type, AssistInfoTypeEnums)}}</el-checkbox>
           </p>
           <el-checkbox-group
             v-model="item.checks"
@@ -44,7 +44,7 @@ import {
   reactive, computed, watch,
 } from 'vue';
 import type { NotesType, SelectAssistInfoGroup } from '@/store/modules/productionSetting/types';
-import { getEnumNameByIDAndEnums } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 
 interface ListFrom extends SelectAssistInfoGroup{

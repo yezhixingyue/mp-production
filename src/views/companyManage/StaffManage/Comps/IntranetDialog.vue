@@ -67,7 +67,7 @@ export default {
         const cb = () => {
           this.visible = false;
         };
-        MpMessage.success({ title: '设置成功', onOk: cb, onCancel: cb });
+        MpMessage.dialogSuccess({ title: '设置成功', onOk: cb, onCancel: cb });
       }
     },
     async getIntranetContent() {

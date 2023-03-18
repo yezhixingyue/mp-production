@@ -187,6 +187,7 @@ import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -453,7 +454,7 @@ export default {
                 getMaterialManageList();
               };
               // 成功
-              messageBox.successSingle(`${Data.editTypeID ? '修改' : '添加'}成功`, cb, cb);
+              MpMessage.dialogSuccess(`${Data.editTypeID ? '修改' : '添加'}成功`, cb, cb);
             }
           }
         });

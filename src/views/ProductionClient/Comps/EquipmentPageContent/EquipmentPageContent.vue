@@ -26,7 +26,7 @@ import ContentHeader from './ContentHeader.vue';
 import CurTaskPanel from './CurTaskPanel/CurTaskPanel.vue';
 import LoginComp from './LoginComp.vue';
 import SetEquipmentStopDialog from './SetEquipmentStopDialog.vue';
-import FloatingBall from './FloatingBall.vue';
+import FloatingBall from './FloatingBall/FloatingBall.vue';
 
 const emit = defineEmits(['setEquipment']);
 
@@ -40,7 +40,7 @@ const curActiveInstance = computed(() => ManageClientPageData.value.curActiveIns
 
 <style scoped lang='scss'>
 .containner {
-  width: 1280px;
+  width: 1260px;
   margin: 0 auto;
   position: relative;
 }

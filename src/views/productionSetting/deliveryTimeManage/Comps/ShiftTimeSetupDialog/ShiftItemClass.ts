@@ -1,4 +1,4 @@
-import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { ShiftTypeEnum, ShiftTypeEnumList } from '../../enums';
@@ -177,7 +177,7 @@ export class ShiftItemClass implements IShiftRowItem {
    */
   static getShiftTimeContentList(ShiftTimeList: IShiftRowItem[]) {
     const list = ShiftTimeList.map(it => {
-      const _ShiftTypeName = getEnumNameByIDAndEnumList(it.ShiftType, ShiftTypeEnumList);
+      const _ShiftTypeName = getEnumNameByID(it.ShiftType, ShiftTypeEnumList);
       let _ShiftTypeContent = '';
       switch (it.ShiftType) {
         case ShiftTypeEnum.weekly:

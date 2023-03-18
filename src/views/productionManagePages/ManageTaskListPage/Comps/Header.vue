@@ -47,14 +47,11 @@ import { TaskListConditionCompareEnumList } from '../js/EnumList';
 
 const props = defineProps<{
   ManageTaskListData: ManageTaskListClass
+  getList:() => Promise<void>
 }>();
 
 const setCondition = (e) => {
   props.ManageTaskListData.condition.setConditon(e);
-};
-
-const getList = () => {
-  props.ManageTaskListData.getList();
 };
 
 const _Operator = computed({
@@ -63,7 +60,7 @@ const _Operator = computed({
   },
   set(val) {
     setCondition([['Operator'], val]);
-    getList();
+    props.getList();
   },
 });
 
@@ -86,7 +83,7 @@ const _Compare = computed({
   },
   set(val) {
     setCondition([['Compare'], val]);
-    getList();
+    props.getList();
   },
 });
 

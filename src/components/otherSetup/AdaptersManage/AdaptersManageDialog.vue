@@ -121,7 +121,7 @@ export default {
               // 修改列表数据
               this.$emit('saved', { ...this.ruleForm });
             };
-            MpMessage.success({
+            MpMessage.dialogSuccess({
               title, onOk: cb, onCancel: cb,
             });
           }

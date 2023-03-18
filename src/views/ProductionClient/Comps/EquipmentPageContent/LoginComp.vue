@@ -4,7 +4,7 @@
     <el-input placeholder="请输入您的手机号" v-model.trim="loginInfo.mobile" maxlength="11">
       <template #prepend><i class="iconfont icon-dianhua"></i></template>
     </el-input>
-    <el-input placeholder="请输入您的密码" v-model.trim="loginInfo.password" maxlength="16" type="password" @keyup.enter="login">
+    <el-input placeholder="请输入您的密码" v-model.trim="loginInfo.password" maxlength="16" type="password" autocomplete="new-password" @keyup.enter="login">
       <template #prepend><i class="iconfont icon-mima scale-12"></i></template>
     </el-input>
     <mp-button type="primary" @click="login">登录</mp-button>

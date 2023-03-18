@@ -40,7 +40,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="it in _MakeupFileList" :key="it.Plate">
+        <tr v-for="it in _MakeupFileList" :key="it.Template?.ID || ''">
           <td class="w-title" :title="it._PlateTemplate?.Name">{{ it._PlateTemplate?.Name }}</td>
           <td class="w-content file" :title="it._File?.name || ''">
             <i v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(0, -6) }}</i>

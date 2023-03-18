@@ -68,12 +68,15 @@ const handleItemSubmit = (data: AssistInfoItem) => {
 /** 删除
  ------------------------------------------- */
 const onRemoveClick = (item: IAssistListItem) => {
-  MpMessage.warn({
-    title: '确定删除该条辅助信息吗 ?',
-    msg: `名称：[ ${item.Name} ]`,
-    onOk: () => {
-      handleRemove(item.ID);
-    },
+  // MpMessage.warn({
+  //   title: '确定删除该条辅助信息吗 ?',
+  //   msg: `名称：[ ${item.Name} ]`,
+  //   onOk: () => {
+  //     handleRemove(item.ID);
+  //   },
+  // });
+  MpMessage.warn('确定删除该条辅助信息吗1', `名称：[ ${item.Name} ]`, () => {
+    handleRemove(item.ID);
   });
 };
 
@@ -88,7 +91,8 @@ const handleRemove = async (ID: string) => {
       }
     };
 
-    MpMessage.success({ title: '删除成功', onOk: cb, onCancel: cb });
+    // MpMessage.success({ title: '删除成功', onOk: cb, onCancel: cb });
+    MpMessage.success('删除成功2', cb, cb);
   }
 };
 

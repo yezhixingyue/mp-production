@@ -59,7 +59,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   }
 
   /** 选中生产线 里面只赋值ID */
-  LineList: { ID: string }[] = []
+  LineList: { ID: string, Name: string }[] = []
 
   /** 工序 */
   WorkingList: ILineDetailWorkingProcedure[] = []
@@ -96,7 +96,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
     this._isBelongToCombineLine = isCombine;
     if (originData) {
       this._originLineData = originData;
-      this.LineList = [{ ID: originData.ID }];
+      this.LineList = [{ ID: originData.ID, Name: originData.Name }];
     }
     if (MaterialSource) {
       this.SemiFinished.ID = MaterialSource.MaterialTypeID;
@@ -114,12 +114,14 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
 
     this.WorkingList.forEach(it => {
       // 1. 拼版文件
-      if (it.Template && !_FileList.find(_it => _it.Plate === it.Template?.ID)) {
-        const t = this.FileList.find(_it => _it.Plate === it.Template?.ID);
+      if (it.Template && !_FileList.find(_it => _it.Template?.ID === it.Template?.ID)) {
+        const t = this.FileList.find(_it => _it.Template?.ID === it.Template?.ID);
         _FileList.push({
           UniqueName: t ? t.UniqueName : '',
           _File: t ? t._File : null,
-          Plate: it.Template.ID,
+          Template: {
+            ID: it.Template.ID,
+          },
           _PlateTemplate: it.Template,
           _LineInfo: {
             ID: this._originLineData?.ID || '',
@@ -136,7 +138,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
           _FileList.push({
             UniqueName: t ? t.UniqueName : '',
             _File: t ? t._File : null,
-            AssistList: [NoteInfo.ID],
+            AssistList: [{ ID: NoteInfo.ID }],
             _NoteInfo: NoteInfo,
             _LineInfo: {
               ID: this._originLineData?.ID || '',

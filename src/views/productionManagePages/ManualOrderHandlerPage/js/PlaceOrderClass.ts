@@ -128,11 +128,13 @@ export class PlaceOrderClass {
         temp.FileList = temp.FileList.map(f => {
           const t = {
             UniqueName: f.UniqueName,
-            Plate: f.Plate,
+            Template: {
+              ID: f.Template?.ID || '',
+            },
             AssistList: f.AssistList,
             SpecialColorList: f.SpecialColorList,
           };
-          if (!f.Plate) delete t.Plate;
+          // if (f.Template?.ID) delete t.Template;
           if (!f.AssistList?.length) delete t.AssistList;
           if (!f.SpecialColorList?.length) delete t.SpecialColorList;
           return t;
@@ -154,11 +156,13 @@ export class PlaceOrderClass {
         FileList: it.FileList?.map(f => {
           const t = {
             UniqueName: f.UniqueName,
-            Plate: f.Plate,
+            Template: {
+              ID: f.Template?.ID || '',
+            },
             AssistList: f.AssistList,
             SpecialColorList: f.SpecialColorList,
           };
-          if (!f.Plate) delete t.Plate;
+          // if (!f.TemplateID) delete t.TemplateID;
           if (!f.AssistList?.length) delete t.AssistList;
           if (!f.SpecialColorList?.length) delete t.SpecialColorList;
           return t;
@@ -396,7 +400,8 @@ export class PlaceOrderClass {
     this.WorkingList.forEach(w => {
       if (w.MaterialSources) {
         w.MaterialSources.forEach(m => {
-          if (m.Feature === MakingGroupTypeFeatureEnum.semifinished && m.SourceType === MaterialSourceTypeEnum.otherLine) {
+          // if (m.Feature === MakingGroupTypeFeatureEnum.semifinished && m.SourceType === MaterialSourceTypeEnum.otherLine) {
+          if (m.Feature === MakingGroupTypeFeatureEnum.semifinished && m.AllowSourceLine && m.SourceType === MaterialSourceTypeEnum.otherPrcess) {
             const ids = _AllMaterialSources.map(it => it.MaterialTypeID);
             if (!ids.includes(m.MaterialTypeID)) {
               if (!m.NeedResource) {
@@ -417,7 +422,7 @@ export class PlaceOrderClass {
           _FileList.push({
             UniqueName: t ? t.UniqueName : '',
             _File: t ? t._File : null,
-            AssistList: [NoteInfo.ID],
+            AssistList: [{ ID: NoteInfo.ID }],
             _NoteInfo: NoteInfo,
             _LineInfo: {
               ID: this._curCombineLine?.ID || '',

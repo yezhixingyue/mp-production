@@ -1,4 +1,5 @@
 import { RouteTreeChildrenType, RouteTreeType } from '@/router/modules/routerTypes';
+import { computed } from 'vue';
 import { RouteLocationNormalized, RouteRecordName } from 'vue-router';
 import routeConfig from './index';
 
@@ -82,10 +83,13 @@ export const getChildrenRouteNamesByParentRouteName = (parentRouteName:string) =
   return '';
 };
 
-export const modulePageNames:Array<string|RouteRecordName|undefined|null> = routeConfig.routeTree
-  .map((it:RouteTreeType) => it.children || null)
-  .filter((it) => it)
-  .reduce((prev, cur) => [...prev, ...cur]).map((it:RouteTreeChildrenType) => it.name);
+export const modulePageNames = computed<Array<string|RouteRecordName|undefined|null>>(() => {
+  if (!routeConfig.routeTree) return [];
+  return routeConfig.routeTree
+    .map((it:RouteTreeType) => it.children || null)
+    .filter((it) => it)
+    .reduce((prev, cur) => [...prev, ...cur]).map((it:RouteTreeChildrenType) => it.name);
+});
 
 export const getJudgmentWhetherIsSamePage = (
   newRoute:RouteLocationNormalized,
@@ -93,8 +97,8 @@ export const getJudgmentWhetherIsSamePage = (
 ) => {
   if (!newRoute || !oldRoute) return false;
 
-  const newRouteRootPageName = modulePageNames.includes(newRoute.name) ? newRoute.name : getLastRouteInfoByName(newRoute.name, 'root');
-  const oldRouteRootPageName = modulePageNames.includes(oldRoute.name) ? oldRoute.name : getLastRouteInfoByName(oldRoute.name, 'root');
+  const newRouteRootPageName = modulePageNames.value.includes(newRoute.name) ? newRoute.name : getLastRouteInfoByName(newRoute.name, 'root');
+  const oldRouteRootPageName = modulePageNames.value.includes(oldRoute.name) ? oldRoute.name : getLastRouteInfoByName(oldRoute.name, 'root');
   return newRouteRootPageName === oldRouteRootPageName;
 };
 

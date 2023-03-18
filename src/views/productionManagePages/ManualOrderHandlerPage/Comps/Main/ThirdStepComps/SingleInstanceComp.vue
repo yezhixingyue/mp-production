@@ -24,7 +24,7 @@
       </li>
       <li>
         <span class="mr-2">
-          {{getEnumNameByIDAndEnumList(item.MaterialSource, PlaceOrderMaterialSourceEnumList)}}
+          {{getEnumNameByID(item.MaterialSource, PlaceOrderMaterialSourceEnumList)}}
           <template v-if="item.MaterialSource!==PlaceOrderMaterialSourceEnum.warehouse">(物料尺寸：{{ item.MaterialLength }}×{{ item.MaterialWidth }}mm)</template>
           {{item.MaterialSource===PlaceOrderMaterialSourceEnum.homePickup ? ':' : ''}}
         </span>
@@ -45,7 +45,7 @@
       <li v-if="_MakeupFileList.length > 0">
         <span class="title">拼版文件:</span>
         <div class="f-list">
-          <p v-for="it in _MakeupFileList" :key="it.Plate">
+          <p v-for="it in _MakeupFileList" :key="it.Template?.ID">
             <span class="file-type-name" :title="it._PlateTemplate?.Name">{{ it._PlateTemplate?.Name }}</span>
             <span class="file-name" :title='it._File?.name' v-if="it._File">
               <!-- <i>{{ it._File.name.replace(/\.\w+$/, '') }}</i>
@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang='ts'>
-import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { computed } from 'vue';
 import { PlaceOrderMaterialSourceEnumList } from '../../../js/EnumList';

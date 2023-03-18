@@ -103,7 +103,7 @@ export class EquipmentListClass {
         this.visible = false;
       };
 
-      MpMessage.success({ title, onOk: cb, onCancel: cb });
+      MpMessage.dialogSuccess({ title, onOk: cb, onCancel: cb });
     }
   }
 

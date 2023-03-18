@@ -14,7 +14,7 @@
     <div class="dialog-content">
       <div class="login" v-if="!sign">
         <h2>验证管理密码：</h2>
-        <el-input v-model.trim="password" @keyup.enter="loginAdmin" autocomplete="off" type="password" clearable maxlength="16"></el-input>
+        <el-input v-model.trim="password" @keyup.enter="loginAdmin" autocomplete="new-password" type="password" clearable maxlength="16"></el-input>
       </div>
       <div v-else class="setup-content">
         <div class="header">

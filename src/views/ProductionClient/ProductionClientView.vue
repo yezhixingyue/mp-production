@@ -11,6 +11,9 @@
 
     <!-- 设置机器弹窗 -->
     <SetEquipmentDialog v-model:visible="setEquipmentVisible" />
+
+    <!-- 回到顶部 -->
+    <el-backtop target=".mp-production-client-view-wrap" :visibility-height="100" class="client-to-top" />
   </div>
 </template>
 
@@ -40,5 +43,21 @@ onMounted(() => {
 .mp-production-client-view-wrap {
   height: 100%;
   background-color: #fff;
+  overflow: auto;
+  overflow: overlay;
+}
+
+@media screen and (min-width: 1400px) {
+  .client-to-top {
+    right: calc(50% - 675px) !important;
+  }
+}
+
+.client-to-top {
+  width: 50px;
+  height: 50px;
+  :deep(.el-icon) {
+    font-size: 26px !important;
+  }
 }
 </style>

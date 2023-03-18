@@ -8,9 +8,9 @@
        :title="curLineWorkName"
        :EquipmentList="EquipmentList"
        @add="onAddClick('default')"
-       @onRemoveClick="onRemoveClick"
-       @ToPutOutPage="ToPutOutPage"
-       @TocCpacityPage="TocCpacityPage"
+       @onRemoveClick="(e) => onRemoveClick(e, 'default')"
+       @ToPutOutPage="(e) => ToPutOutPage(e, 'default')"
+       @TocCpacityPage="(e) => TocCpacityPage(e, 'default')"
        :isPlateMaking="isPlateMakingGroup"
        />
       <EquipmentTable
@@ -19,9 +19,9 @@
        :EquipmentList="PlateMakingEquipmentList"
        isPlateMaking
        @add="onAddClick('additional')"
-       @onRemoveClick="onRemoveClick"
-       @ToPutOutPage="ToPutOutPage"
-       @TocCpacityPage="TocCpacityPage"
+       @onRemoveClick="(e) => onRemoveClick(e, 'additional')"
+       @ToPutOutPage="(e) => ToPutOutPage(e, 'additional')"
+       @TocCpacityPage="(e) => TocCpacityPage(e, 'additional')"
        />
     </main>
     <EquipmentAddDialog v-model:visible="visible" :title="dialogTitle"
@@ -135,16 +135,16 @@ const submit = (data: ILineEquipmentSaveParams) => { // 添加设备 本地保�
   emit('save', temp, callback);
 };
 
-const ToPutOutPage = (it: EquipmentListType) => { // 伸放
-  emit('ToPutOut', it, curSetupType.value);
+const ToPutOutPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 伸放
+  emit('ToPutOut', it, type);
 };
 
-const TocCpacityPage = (it: EquipmentListType) => { // 设备产能
-  emit('TocCpacity', it, curSetupType.value);
+const TocCpacityPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 设备产能
+  emit('TocCpacity', it, type);
 };
 
-const onRemoveClick = (it: EquipmentListType) => { // 本地保存？
-  emit('remove', it, curSetupType.value);
+const onRemoveClick = (it: EquipmentListType, type: EquipmentSetupType) => { // 本地保存？
+  emit('remove', it, type);
 };
 
 </script>

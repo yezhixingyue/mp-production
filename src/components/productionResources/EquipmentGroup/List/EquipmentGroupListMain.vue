@@ -10,6 +10,11 @@
           {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}
         </template>
       </mp-table-column>
+      <!-- <mp-table-column width="125px" prop="Feature" label="允许批量报工">
+        <template #default="scope">
+          {{scope.row.AllowBatchReport ? '允许' : (scope.row.AllowBatchReport === false ? '不允许' : '' )}}
+        </template>
+      </mp-table-column> -->
       <!-- <mp-table-column min-width="200px" label="尺寸限制">
         <template #default="scope">{{formatSizeLimit(scope.row)}}</template>
       </mp-table-column> -->

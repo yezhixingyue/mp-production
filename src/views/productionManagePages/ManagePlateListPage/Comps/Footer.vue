@@ -1,6 +1,7 @@
 <template>
   <footer>
-    <MpPagination center :nowPage="condition.Page" :pageSize="condition.PageSize" :total="total" :handlePageChange="getList" />
+    <MpPagination center :nowPage="condition.Page" :pageSize="condition.PageSize" :total="total"
+     :handlePageChange="getList" />
   </footer>
 </template>
 
@@ -13,6 +14,7 @@ defineProps<{
   condition: Condition
   total: number
 }>();
+
 </script>
 
 <style scoped lang='scss'>

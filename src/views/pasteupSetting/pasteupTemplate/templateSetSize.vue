@@ -3,7 +3,7 @@
     <header>
       <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
-        <mp-button type="primary" @click="ToPasteupTemplateSteupPagePage">添加尺寸</mp-button>
+        <mp-button type="primary" @click="ToPasteupTemplateSteupPagePage">添加规格</mp-button>
       </div>
     </header>
     <main>
@@ -116,7 +116,7 @@ const getTemmplateSize = ref({
 const BreadcrumbList = computed(() => [
   { to: { path: '/pasteupTemplate' }, name: '拼版模板' },
   {
-    name: `设置尺寸：
+    name: `模板规格：
           ${pasteupTemplateData.value.ID ? `${pasteupTemplateData.value.Name}` : ''}`,
   },
 ]);
@@ -126,7 +126,6 @@ function getImpositionTemmplateSizeList() {
     if (res.data.Status === 1000) {
       sizeList.value = res.data.Data as SizeListType[];
       getTemmplateSize.value.DataTotal = res.data.DataNumber;
-      console.log(res);
     }
   });
 }

@@ -89,6 +89,7 @@ const sexFilterVal = computed({
     return props.StaffManagePageData.condition.Sex;
   },
   set(val) {
+    if (val === props.StaffManagePageData.condition.Sex) return;
     props.StaffManagePageData.setCondition([['Sex', ''], val]);
     props.StaffManagePageData.getDataList();
   },
@@ -99,6 +100,7 @@ const educationFilterVal = computed({
     return props.StaffManagePageData.condition.Education;
   },
   set(val) {
+    if (val === props.StaffManagePageData.condition.Education) return;
     props.StaffManagePageData.setCondition([['Education', ''], val]);
     props.StaffManagePageData.getDataList();
   },
@@ -109,6 +111,7 @@ const statusFilterVal = computed({
     return props.StaffManagePageData.condition.Status;
   },
   set(val) {
+    if (val === props.StaffManagePageData.condition.Status) return;
     props.StaffManagePageData.setCondition([['Status', ''], val]);
     props.StaffManagePageData.getDataList();
   },
@@ -119,6 +122,7 @@ const jobPostFilterVal = computed({
     return props.StaffManagePageData.condition.PositionID;
   },
   set(val) {
+    if (val === props.StaffManagePageData.condition.PositionID) return;
     props.StaffManagePageData.setCondition([['PositionID', ''], val]);
     props.StaffManagePageData.getDataList();
   },

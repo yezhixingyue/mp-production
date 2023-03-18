@@ -3,10 +3,15 @@ const { defineConfig } = require('@vue/cli-service');
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const publicPath = isDev ? '' : '/Web/';
+console.log(process.env.NODE_ENV);
 
-const proxyUrl = 'http://192.168.1.92:8052'; // 测试
-// const proxyUrl = 'http://192.168.3.68:8052'; // 强哥
+let publicPath = '';
+if (!isDev) {
+  publicPath = process.env.VUE_APP_TARGET === 'My Order App' ? '/Order/' : '/Web/';
+}
+
+// const proxyUrl = 'http://192.168.1.92:8052'; // 测试
+const proxyUrl = 'http://192.168.3.68:8052'; // 强哥
 // const proxyUrl = 'http://192.168.3.253:2022'; // 吕伟
 
 // const imgUrl = 'http://192.168.1.92:8050';
@@ -43,6 +48,16 @@ module.exports = defineConfig({
         changeOrigin: true,
       },
       '/PlateFile': { //
+        target: proxyUrl,
+        ws: true,
+        changeOrigin: true,
+      },
+      '/File': { // 代理临时图片地址
+        target: proxyUrl,
+        ws: true,
+        changeOrigin: true,
+      },
+      '/QRCode': { // 代理二维码图片获取地址
         target: proxyUrl,
         ws: true,
         changeOrigin: true,

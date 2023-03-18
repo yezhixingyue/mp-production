@@ -6,15 +6,18 @@
     :class="{
       hideHeader: !showHeader,
       danger: danger,
+      loading: loading,
     }"
     @close="Close"
     @closed="closedC"
     @open="onOpen"
     @opened="onOpened"
     draggable
+    :modal="showModal"
     :append-To-Body="appendToBody"
     :destroy-on-close="destroyOnClose"
     :top="top"
+    :show-close="!loading"
     :close-on-click-modal="closeOnClickModal">
     <template #header v-if="showHeader">
       <slot name="header">
@@ -31,20 +34,29 @@
     </template>
     <template #footer>
       <slot name="footer">
-        <mp-button :type="danger ? 'danger' : 'primary'" class="gradient" v-if="showPrimary" :disabled="disabled"
+        <mp-button :type="danger ? 'danger' : 'primary'" class="gradient" v-if="showPrimary" :disabled="disabled || loading" ref="oSubmitBtn"
         @click="Primary">{{primaryText}}</mp-button>
-        <mp-button type="danger" v-if="showDel" @click="Del">{{delBtnText }}</mp-button>
-        <mp-button v-if="showClose" :class="danger ? 'pink' : 'blue'" @click="Close">{{closeBtnText}}</mp-button>
+        <mp-button type="danger" v-if="showDel" @click="Del" :disabled="loading">{{delBtnText }}</mp-button>
+        <mp-button v-if="showClose" :class="danger ? 'pink' : 'blue'" @click="Close" :disabled="loading">{{closeBtnText}}</mp-button>
       </slot>
     </template>
   </el-dialog>
 </template>
 
 <script lang="ts">
-import { computed } from 'vue';
+import { ElButton } from 'element-plus';
+import { computed, ref } from 'vue';
 
 export default {
   props: {
+    showModal: {
+      type: Boolean,
+      default: true,
+    },
+    autoSubmitFocus: {
+      type: Boolean,
+      default: false,
+    },
     visible: {
       type: Boolean,
       default: false,
@@ -131,6 +143,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['closed', 'open', 'opened', 'submit', 'cancel', 'update:visible', 'danger'],
   setup(props, context) {
@@ -152,6 +168,7 @@ export default {
       context.emit('danger');
     }
     function Close() {
+      if (props.loading) return;
       props.closeClick();
       if (props.autoClose) {
         dialogVisible.value = false;
@@ -167,11 +184,16 @@ export default {
       context.emit('open');
     }
 
+    const oSubmitBtn = ref<InstanceType<typeof ElButton>>();
     const onOpened = () => {
-      context.emit('opened');
+      if (props.autoSubmitFocus && !props.disabled && props.showPrimary && oSubmitBtn.value?.$el) {
+        console.log(oSubmitBtn.value.$el);
+        oSubmitBtn.value.$el.focus();
+      }
     };
 
     return {
+      oSubmitBtn,
       Primary,
       Del,
       onOpen,
@@ -268,6 +290,11 @@ export default {
     }
     .el-textarea, .el-input {
       --el-input-focus-border-color: #ff3769;
+    }
+  }
+  &.loading {
+    .el-dialog__footer {
+      visibility: hidden;
     }
   }
 }

@@ -20,13 +20,13 @@
       <p class="templates" v-if="!isCombine && ProductionLineData">
         <span class="label">允许翻版方式：</span>
         <span class="ft-12">
-          {{ProductionLineData.ReproductionTypes?.map(t => getEnumNameByIDAndEnumList(t, ReproductionTypeEnumList)).join('、') || '无'}}
+          {{ProductionLineData.ReproductionTypes?.map(t => getEnumNameByID(t, ReproductionTypeEnumList)).join('、') || '无'}}
         </span>
       </p>
       <p class="templates" v-if="!isCombine && ProductionLineData">
         <span class="label">是否允许按模位：</span>
         <span class="ft-12">
-          {{getEnumNameByIDAndEnumList(ProductionLineData.UseModeType, LineIsUseModeEnumList)}}
+          {{getEnumNameByID(ProductionLineData.UseModeType, LineIsUseModeEnumList)}}
         </span>
       </p>
       <!-- 共用 -->
@@ -224,7 +224,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import { FetchWorkingProcedureSearchEnum } from '@/views/productionSetting/js/enums';
-import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { LineStatusEnum, LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getSourceWork } from '../js/utils';
@@ -332,8 +332,8 @@ const getWorkingInfo = (item: IProductionLineWorkings) => {
   const t = _summaryWorkList.value.find(it => it.ID === item.WorkID);
   return t ? {
     Name: t.Name,
-    ReportModeContent: getEnumNameByIDAndEnumList(t.ReportMode, ReportModeEnumList),
-    WorkingTypeContent: getEnumNameByIDAndEnumList(t.Type, WorkingTypeEnumList),
+    ReportModeContent: getEnumNameByID(t.ReportMode, ReportModeEnumList),
+    WorkingTypeContent: getEnumNameByID(t.Type, WorkingTypeEnumList),
     WorkItemInfo: t,
   } : null;
 };
@@ -525,7 +525,6 @@ const getPrcessList = () => {
   api.getWorkingProcedureSearch(type).then(res => {
     if (res.data.Status === 1000) {
       if (!isCombine.value) { // 如果是普通生产线 对工序列表进行筛选 - 筛选掉物料来源中包含半成品的工序
-        console.log(res.data.Data, productionSettingStore.MaterialTypeGroup);
         PrcessList.value = res.data.Data;
       } else {
         PrcessList.value = res.data.Data;
@@ -654,7 +653,7 @@ const addLinePrimaryClick = () => {
         getProductionLineList(Data.addLineFrom.ID);
       };
       // 保存成功
-      messageBox.successSingle('保存成功', cb, cb);
+      MpMessage.dialogSuccess('保存成功', cb, cb);
     }
   });
 };
@@ -679,7 +678,7 @@ const addPrcessPrimaryClick = () => {
           getProductionLineWorkingProcedureList();
         };
         // 保存成功
-        messageBox.successSingle('保存成功', cb, cb);
+        MpMessage.dialogSuccess('保存成功', cb, cb);
       }
     });
   }
@@ -709,7 +708,7 @@ const setSplitPrimaryClick = () => {
           getProductionLineWorkingProcedureList();
         };
         // 保存成功
-        messageBox.successSingle('保存成功', cb, cb);
+        MpMessage.dialogSuccess('保存成功', cb, cb);
       }
     });
   }

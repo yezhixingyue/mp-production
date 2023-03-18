@@ -25,12 +25,16 @@
               <el-form-item :label="`工序类型：`" class="form-item-required">
                 <div>
                   <el-radio-group v-model="Data.processDataFrom.Type">
+                    <!-- 1. 仅订单报工时可设置为组合工序 -->
+                    <!-- 2. 拆分工序不允许批量报工 -->
+                    <!-- 3. 制版工序不允许部分报工 -->
                     <el-radio
                       v-for="it in WorkingTypeEnumList"
                       :key="it.ID"
                       :label="it.ID"
                       :disabled="(it.ID === WorkingTypeEnum.combine && Data.processDataFrom.ReportMode !== ReportModeEnum.order)
-                        ||(it.ID === WorkingTypeEnum.split && Data.processDataFrom.AllowBatchReport)"
+                        ||(it.ID === WorkingTypeEnum.split && Data.processDataFrom.AllowBatchReport)
+                        ||(it.ID === WorkingTypeEnum.platemaking && Data.processDataFrom.AllowPartReport)"
                      >{{it.Name}}</el-radio>
                   </el-radio-group>
                   <!-- 仅制版工序时显示： 每套版限制加工数量 -->
@@ -52,12 +56,15 @@
               <el-form-item :label="`其他：`">
                 <div>
                   <el-checkbox @change="() => Data.processDataFrom.AllowBatchReport = false"
-                    v-model="Data.processDataFrom.AllowPartReport" label="允许部分报工" />
+                    v-model="Data.processDataFrom.AllowPartReport" :disabled="Data.processDataFrom.Type === WorkingTypeEnum.platemaking" label="允许部分报工" />
                   <el-checkbox @change="() => Data.processDataFrom.AllowPartReport = false"
-                    v-model="Data.processDataFrom.AllowBatchReport" :disabled="Data.processDataFrom.Type === WorkingTypeEnum.split" label="允许批量报工" />
+                    v-model="Data.processDataFrom.AllowBatchReport"
+                    :disabled="Data.processDataFrom.Type === WorkingTypeEnum.split
+                     || Data.processDataFrom.EquipmentGroups.length > 0"
+                    label="允许批量报工" />
                   <div style="height:32px" class="type-conent">
                     <template v-if="Data.processDataFrom.AllowPartReport">
-                      {{getEnumNameByIDAndEnumList(Data.processDataFrom.ReportMode, ReportModeEnumList).replace('报工', '')}}数量大于
+                      {{getEnumNameByID(Data.processDataFrom.ReportMode, ReportModeEnumList).replace('报工', '')}}数量大于
                       <el-input v-model.number="Data.processDataFrom.MinPartReportNumber" maxlength="9"></el-input>时
                     </template>
                   </div>
@@ -95,7 +102,7 @@
               <p class="title">设备组：<mp-button type="primary" link @click="selectDeviceGroupShow = true">选择设备组</mp-button> </p>
               <ul class="equipment-groups">
                 <el-scrollbar max-height="435px">
-                  <li v-for="equipment, index in Data.processDataFrom.EquipmentGroups" :key="equipment.GroupID">
+                  <li v-for="(equipment, index) in Data.processDataFrom.EquipmentGroups" :key="equipment.GroupID">
                     <div class="equipment" :title="getEquipmentNameByID(equipment.GroupID)">{{getEquipmentNameByID(equipment.GroupID)}}</div>
                     <div class="state-percent">权重：<el-input v-model.trim="equipment.Weight" maxlength="9" placeholder="请输入"></el-input></div>
                     <div class="whether" :class="{hide:Data.processDataFrom.Type!==WorkingTypeEnum.print}">
@@ -115,6 +122,10 @@
                 <span class="label">具体算法：</span>
                 <span class="content">例如有200个订单需要经过A工序进行加工，A工序有3种设备组 x、y、z，权重分别为 x:20；y:20；z:60，则200个订单分配方式为：x:40个订单、y:40个订单、z:120个订单</span>
               </p>
+              <p class="info-text">
+                <span class="label">操作说明：</span>
+                <span class="content">设置过设备组后，左侧 [ 允许批量报工 ] 将不允许修改</span>
+              </p>
             </div>
           </div>
         </div>
@@ -126,6 +137,7 @@
     :activeEquipmentList="activeEquipmentList"
     :EquipmentListGroup="productionSettingStore.EquipmentListGroup"
     :saveEquipment="saveEquipment"
+    :AllowBatchReport="Data.processDataFrom.AllowBatchReport"
     />
     <!-- 辅助信息 -->
     <SelectAssistInfo
@@ -170,7 +182,7 @@ import { useRouterStore } from '@/store/modules/routerStore';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
-import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import {
   ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, WorkingProcedureRelationEnum,
@@ -235,6 +247,9 @@ const Data:DataType = reactive({
     Relations: [],
   },
 });
+
+/** 初始选中设备组ID */
+let initEquipmentGroupIDs: IEquipmentGroupsType['GroupID'][] = [];
 
 const BreadcrumbList = computed(() => [
   { to: { path: '/processList' }, name: '工序' },
@@ -415,6 +430,12 @@ const saveProcess = () => {
         const cb = () => {
           setStorage();
           RouterStore.goBack();
+          const curEquipmentGroupIDs = temp.EquipmentGroups.map(it => it.GroupID);
+          if (curEquipmentGroupIDs.length !== initEquipmentGroupIDs.length
+           || curEquipmentGroupIDs.length !== [...new Set([...curEquipmentGroupIDs, ...initEquipmentGroupIDs])].length) {
+            // 设备组有变化 此时应重新获取设备组列表以刷新列表中是否允许批量报工字段的值
+            productionSettingStore.getEquipmentGroup();
+          }
         };
         // 保存成功
         messageBox.successSingle('保存成功', cb, cb);
@@ -429,6 +450,7 @@ onMounted(() => {
   if (temp) {
     Data.processDataFrom = { ...temp, isRestrict: !!temp.MaxProduceNumber };
   }
+  initEquipmentGroupIDs = Data.processDataFrom.EquipmentGroups.map(it => it.GroupID);
 });
 </script>
 <script lang="ts">

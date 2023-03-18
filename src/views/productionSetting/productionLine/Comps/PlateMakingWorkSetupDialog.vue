@@ -50,7 +50,7 @@ const title = computed(() => `设置制版工序：${props.curWorkName}`);
 
 const localPlateMakingWorkAllList = computed(() => {
   if (PlateMakingWorkSetupHander.value.curWorkItem) {
-    const curReportMode = PlateMakingWorkSetupHander.value.curWorkItem._WorkItemInfo.ReportMode; // 报工方式
+    const curReportMode = PlateMakingWorkSetupHander.value.curWorkItem._WorkItemInfo?.ReportMode; // 报工方式
     if (curReportMode === ReportModeEnum.board) { // 大版报工
       return PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.filter(it => it.ReportMode === ReportModeEnum.board);
     }
@@ -70,6 +70,7 @@ const showGroup = computed(() => PlateMakingWorkSetupHander.value.getPlateMaking
 const _PlateMakingGroupList = computed(() => PlateMakingWorkSetupHander.value.PlateMakingGroupAllList.filter(it => it.WorkID === ruleForm.PlateMakingWorkID));
 
 const onOpen = () => {
+  console.log(PlateMakingWorkSetupHander.value.curWorkItem);
   ruleForm.LineWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.LineWorkID || '';
   ruleForm.PlateMakingWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingWorkID || '';
   ruleForm.PlateMakingGroupID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingGroupID || '';

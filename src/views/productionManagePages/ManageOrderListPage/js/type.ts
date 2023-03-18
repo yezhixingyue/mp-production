@@ -74,3 +74,15 @@ export interface IManageOrderListItem {
   /** 实例列表 */
   InstanceList: ISellOrderInstanceItem[]
 }
+
+/** 时间线数据类型 */
+export interface IOrderTimelineItem {
+  /**  */
+  Index: number
+  ShowFocus: boolean
+  Operator: string
+  Description: string
+  OperateTime: string
+  SystemFill: boolean
+  _IsBegin?: boolean
+}

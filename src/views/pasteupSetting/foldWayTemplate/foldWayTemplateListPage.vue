@@ -93,6 +93,7 @@ import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { FoldWayTemplateType } from './type';
 
 interface _EquipmentGroups{
@@ -207,7 +208,7 @@ function saveEquipment(Equipments) {
         Data.ApplyEquipmentShow = false;
         getFoldWayTemplateList();
       };
-      messageBox.successSingle('保存成功', cb, cb);
+      MpMessage.dialogSuccess('保存成功', cb, cb);
     }
   });
 }

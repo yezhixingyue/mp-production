@@ -5,6 +5,7 @@ import { SessionStorageClientHandler } from '@/views/ProductionClient/assets/js/
 import Axios from '../request/axios';
 import { ICatch, IMPAxiosInstance, IRequestConfig } from '../request/types';
 import { ManageClientPageData } from './clientStore';
+import { downloadExcelApiUrls } from '../modules/downloadExcelApis';
 
 let requestNum = 0;
 let loadingInstance;
@@ -62,7 +63,7 @@ const axios = new Axios({
     // 响应拦截器
     responseInterceptors: (result:AxiosResponse) => {
       if (loadingInstance && (result.config as IRequestConfig)?.closeLoading !== true) handleLoadingClose();
-      if (result.data.Status !== 1000) {
+      if (result.data.Status !== 1000 && !downloadExcelApiUrls.includes(result.config.url || '')) {
         if ([8037, 7025].includes(result.data.Status)) {
           // 请重新登录
           axios.cancelAllRequest();

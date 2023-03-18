@@ -41,7 +41,7 @@ export class EquipmentClassificationItemClassType { // EquipmentClassificationIt
         };
         cb(temp);
       };
-      MpMessage.success({ title, onOk: callback, onCancel: callback });
+      MpMessage.dialogSuccess({ title, onOk: callback, onCancel: callback });
     }
   }
 }

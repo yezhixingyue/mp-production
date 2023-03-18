@@ -179,7 +179,7 @@ export class StaffManageClass {
       };
 
       const title = item.Status === StaffStatusEnum.pending ? '审核成功' : '设置成功';
-      MpMessage.success({
+      MpMessage.dialogSuccess({
         title,
         onOk: cb,
         onCancel: cb,

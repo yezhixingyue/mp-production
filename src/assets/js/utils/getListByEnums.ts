@@ -43,16 +43,6 @@ export const getEnumList = (enums: IEnumsType, options: IGetListByEnumsOptions =
   return list;
 };
 
-export const getEnumNameByIDAndEnums = (id: localEnumValueIDType, enums: IEnumsType) => {
-  const t = Object.values(enums).find(it => it.ID === id);
-  return t ? t.Name : '';
-};
-
-export const getEnumNameByIDAndEnumList = (id: localEnumValueIDType, list: ILocalEnumValue[]) => {
-  const t = list.find(it => it.ID === id);
-  return t ? t.Name : '';
-};
-
 /**
  * 提取ts枚举中所有的值组成列表， 排除excepts内的内容项
  *
@@ -69,3 +59,18 @@ export const getEnumValuesByTsEnum = <EnumT = number>(Enums: any, excepts:EnumT[
 
   return _list;
 };
+
+/** 通过ID和枚举列表获取项目的Name */
+export function getEnumNameByID(id: localEnumValueIDType, data: ILocalEnumValue[]): string
+/** 通过ID和枚举对象获取项目的Name */
+export function getEnumNameByID(id: localEnumValueIDType, data: IEnumsType): string
+/** 通过ID和枚举列表（或枚举对象）获取项目的Name */
+export function getEnumNameByID(id: localEnumValueIDType, data: ILocalEnumValue[] | IEnumsType) {
+  let t: undefined | ILocalEnumValue;
+  if (Array.isArray(data)) {
+    t = data.find(it => it.ID === id);
+  } else {
+    t = Object.values(data).find(it => it.ID === id);
+  }
+  return t ? t.Name : '';
+}

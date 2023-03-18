@@ -1,6 +1,6 @@
 import clientApi from '@/api/client';
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
-import { IEquipmentTaskInfo } from '../../types';
+import { ITaskDetail } from '../../types';
 import { Condition } from './Condition';
 
 /**
@@ -13,7 +13,7 @@ export class InstanceTaskListClass {
   condition: Condition
 
   /** 任务列表 */
-  TaskList: IEquipmentTaskInfo[] = []
+  TaskList: ITaskDetail[] = []
 
   TaskListNumber = 0
 

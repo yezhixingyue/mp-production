@@ -1,8 +1,9 @@
-import { IEquipmentTaskInfo } from '@/views/ProductionClient/assets/js/types';
+import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 
-export const getTaskDisplayInfo = (TaskData: IEquipmentTaskInfo, withTemplate = true) => {
+/** 获取报工工序中的一些文字展示信息 */
+export const getTaskDisplayInfo = (TaskData: ITaskDetail, withTemplate = true) => {
   const WorkingList:IBaseProperty<string>[] = [];
 
   const temp = {
@@ -42,6 +43,34 @@ export const getTaskDisplayInfo = (TaskData: IEquipmentTaskInfo, withTemplate = 
 
     default:
       break;
+  }
+
+  return temp;
+};
+
+/** 获取报工任务中的下一道工序信息 ( 用于非拆分工序 ) */
+export const getNextWorkContent = (TaskData: ITaskDetail | null) => {
+  // if (!TaskData || TaskData.Working.Type === WorkingTypeEnum.split) { // 拆分工序
+  //   return null;
+  // }
+
+  const temp = {
+    NextWorkName: '',
+    EquipmentName: '',
+  };
+
+  if (TaskData?.NextWorkingList?.length === 1) {
+    const next = TaskData.NextWorkingList[0];
+    if (!next.Name) return null;
+
+    temp.NextWorkName = next.Name;
+
+    if (next.Equipment) {
+      const _class = [next.Equipment.GroupName, next.Equipment.Name].filter(it => it).join('-');
+      if (_class) {
+        temp.EquipmentName = _class;
+      }
+    }
   }
 
   return temp;

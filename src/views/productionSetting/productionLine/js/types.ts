@@ -36,7 +36,7 @@ export interface ILocalProductionLineWorkings extends IProductionLineWorkings {
   _ReportModeContent?: string
   /** 工序类型 */
   _WorkingTypeContent?: string
-  _WorkItemInfo: IWorkingProcedureSearch
+  _WorkItemInfo?: IWorkingProcedureSearch
   _EquipmentText: string
   _PlateMakingWorkContent: string
   _isSplit: boolean

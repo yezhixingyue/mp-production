@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { format2MiddleLangTypeDateFunc2, formatOnlyDate } from '@/assets/js/filters/dateFilters';
+import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 
 export default {
   props: {
@@ -50,7 +50,7 @@ export default {
       } = this.detailData;
       const _RegTime = TimeRecord?.RegTime ? format2MiddleLangTypeDateFunc2(TimeRecord.RegTime) : '';
       const _CheckTime = TimeRecord?.CheckTime ? format2MiddleLangTypeDateFunc2(TimeRecord.CheckTime) : '';
-      const _OutTime = TimeRecord?.OutTime ? formatOnlyDate(TimeRecord.OutTime) : '';
+      const _OutTime = TimeRecord?.OutTime ? format2MiddleLangTypeDateFunc2(TimeRecord.OutTime) : '';
       let _lastLoginTime = '';
       let _lastLoginIP = '';
       if (LastLoginRecord) {

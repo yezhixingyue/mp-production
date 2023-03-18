@@ -27,6 +27,25 @@
         :visible-arrow="false"
         transition="none"
         :enterable="false"
+        content="刷新当前页面"
+        placement="bottom-start"
+        v-if="LayoutStore.editableTabs.length > 1"
+      >
+        <div class="clear-box mr-10">
+          <el-button
+            link
+            @click="refresh"
+           >
+            <el-icon><RefreshRight /></el-icon>
+          </el-button>
+        </div>
+      </el-tooltip>
+      <el-tooltip
+        popper-class="mp-common-tip-span-btn-popper-box"
+        :show-after="280"
+        :visible-arrow="false"
+        transition="none"
+        :enterable="false"
         content="关闭所有标签"
         placement="bottom-start"
         v-if="LayoutStore.editableTabs.length > 1"
@@ -43,53 +62,17 @@
         :style="`left:${contextMenuLeft}px;top:${contextMenuTop}px`"
       >
         <li @click="() => onCloseCurClick()" @keyup="()=>null">关闭</li>
+        <!-- <li @click="refresh" @keyup="()=>null" v-if="localTabsValue === contextmenuItemData?.name">刷新本页</li> -->
         <li @click="onCloseOtherClick" @keyup="()=>null">关闭其它</li>
         <li @click="onCloseAllClick" @keyup="()=>null">关闭所有</li>
       </ul>
     </div>
 
-    <!-- <button v-for="item in LayoutStore.editableTabs" :key="item.name"
-    :style="localTabsValue==item.name?'color:red':''"
-    @click="changeTab(item)"
-    >{{item.title}} <i @click="onCloseCurClick(item.name)" @keyup="()=>{}">x</i></button>
-    头部 -->
-
-      <div class="user">
-        <el-dropdown trigger="click">
-          <span class="el-dropdown-link">
-            <el-icon class="ft-16 is-bold">
-              <User />
-            </el-icon>
-            <!-- <mp-button>退出登录</mp-button> -->
-            <span>
-              {{user ? user.StaffName : ''}}
-            </span>
-            <el-icon>
-              <ArrowDown />
-            </el-icon>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu class="mp-erp-user-drop-down-wrap">
-              <el-dropdown-item
-              @click="changePwd"
-              :icon="Lock" command='changePwd'>修改密码</el-dropdown-item>
-              <el-dropdown-item
-              @click="handleLogoutClick"
-                :icon="SwitchButton"
-                command='logout'>退出登录
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-      <ChangePwdDialog v-model:visible="visible4ChangePassword"></ChangePwdDialog>
+    <UserDropdownMenu />
   </div>
 </template>
 
 <script lang='ts'>
-import {
-  SwitchButton, Lock, User, ArrowDown,
-} from '@element-plus/icons-vue';
 import { useLayoutStore } from '@/store/modules/layout/index';
 import {
   computed, ref, Ref, onMounted, onBeforeUnmount,
@@ -98,18 +81,18 @@ import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import { addBarType } from '@/store/modules/layout/addBarType';
-import ChangePwdDialog from './ChangePwdDialog.vue';
+import { setRefreshing } from '.';
+import UserDropdownMenu from './UserDropdownMenu/UserDropdownMenu.vue';
 
 export default {
   components: {
-    ChangePwdDialog,
+    UserDropdownMenu,
   },
   setup() {
     const LayoutStore = useLayoutStore();
     const router = useRouter();
     const userStore = useUserStore();
     const oList:Ref = ref(null);
-    const visible4ChangePassword = ref(false);
     const { user } = storeToRefs(userStore);
     const localTabsValue = computed({
       get() {
@@ -137,9 +120,6 @@ export default {
     function handleLogoutClick() {
       userStore.token = '';
       router.replace('/login');
-    }
-    function changePwd() {
-      visible4ChangePassword.value = true;
     }
     function onCloseCurClick(name?:string) {
       // 关闭;
@@ -190,7 +170,6 @@ export default {
           contextMenuLeft.value = e.pageX - oList.value.offsetLeft;
           contextMenuTop.value = e.pageY - oList.value.offsetTop;
           showContextMenu.value = true;
-          // console.log(title);
           getContextmenuItemData(title);
         }
       }
@@ -199,25 +178,27 @@ export default {
       if (!showContextMenu.value) return;
       showContextMenu.value = false;
     }
+
+    const refresh = () => {
+      setRefreshing(router);
+    };
+
     onMounted(() => {
       document.addEventListener('click', onDocumentClick);
     });
     onBeforeUnmount(() => {
       document.removeEventListener('click', onDocumentClick);
     });
+
     return {
-      SwitchButton,
-      Lock,
-      User,
-      ArrowDown,
-      visible4ChangePassword,
+      refresh,
       oList,
       onContextmenuclick,
+      contextmenuItemData,
       showContextMenu,
       contextMenuLeft,
       contextMenuTop,
       handleLogoutClick,
-      changePwd,
       LayoutStore,
       localTabsValue,
       changeTab,
@@ -231,12 +212,12 @@ export default {
 </script>
 <style lang='scss'>
 @import "@/assets/css/var.scss";
-// @use '@/assets/css/var.scss';
 .mp-erp-layout-header-comp-wrap{
   display: flex;
   align-items: center;
   background-color: #fff;
   height: 40px;
+  z-index: 200;
   >.open-close-left-menu{
     i{
       cursor: pointer;
@@ -251,7 +232,8 @@ export default {
   }
   .centre{
     flex: 1;
-    overflow: hidden;
+    // overflow: hidden;
+    max-width: calc(100% - 200px);
     display: flex;
     align-items: center;
     position: relative;
@@ -322,8 +304,8 @@ export default {
     }
     .clear-box{
       box-sizing: border-box;
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       font-size: 14px;
       color: #7C7C7C;
       border: 1px solid #E8E8E8;
@@ -332,6 +314,7 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: 0.12s ease-in-out;
       .el-button{
         width: 100%;
         height: 100%;
@@ -339,15 +322,26 @@ export default {
       }
       i{
         margin: 0;
+        color: #a2a2a2;
+        transition: 0.15s ease-in-out;
       }
       &:hover{
         cursor: pointer;
+        background-color: #f5f5f5;
+        border-color: #cbcbcb;
+      }
+      &:active {
+        background-color: #eee;
+        border-color: #888e99;
+        i {
+          color: #686868;
+        }
       }
     }
     > .mp-erp-layout-header-show-menu-box {
       position: absolute;
       width: 80px;
-      height: 90px;
+      // height: 90px;
       font-size: 12px;
       padding: 6px 0;
       display: flex;
@@ -362,33 +356,12 @@ export default {
       > li {
         padding: 6px 12px;
         cursor: pointer;
+        line-height: 15px;
         user-select: none;
         &:hover {
           background-color: #eee;
           color: rgb(38, 188, 249);
         }
-      }
-    }
-  }
-  .user{
-    width: 188px;
-    padding-right: 25px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: flex-end;
-    &:hover{
-      cursor: pointer;
-    }
-    .el-dropdown-link{
-      display: flex;
-      align-items: center;
-      user-select: none;
-      span{
-        margin: 0 5px;
-      }
-      color: #888e99;
-      &:hover {
-        color: #26bcf9;
       }
     }
   }

@@ -8,7 +8,7 @@
       </div>
       <div>
         <span class="label">新密码:</span>
-        <el-input v-model.trim="newPwd" autocomplete="off" type="password" show-password maxlength="16" show-word-limit></el-input>
+        <el-input v-model.trim="newPwd" autocomplete="none" type="new-password" show-password maxlength="16" show-word-limit></el-input>
       </div>
     </main>
     <footer>

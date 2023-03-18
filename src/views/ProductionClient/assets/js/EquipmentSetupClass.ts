@@ -118,8 +118,7 @@ export class EquipmentSetupClass {
   }
 
   public async getInitData(sign: string) { // 获取初始数据
-    this.getList(sign);
-    await Promise.all([this.getEquipmentClassList(sign), this.getEquipmentGroupList(sign)]);
+    await Promise.all([this.getList(sign), this.getEquipmentClassList(sign), this.getEquipmentGroupList(sign)]);
 
     // 此处生成列表绑定数据
     const _list = this.list.map(id => {

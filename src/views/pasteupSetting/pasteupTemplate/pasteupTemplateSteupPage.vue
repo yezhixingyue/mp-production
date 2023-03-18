@@ -82,27 +82,27 @@
             </p>
             <div class="error-range">
               <p v-if="Data.addPasteupTemplateFrom.LengthErrorRange">
-                长允许误差：
+                宽允许误差：
                 + <el-input v-model.number="Data.addPasteupTemplateFrom.LengthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
                 - <el-input v-model.number="Data.addPasteupTemplateFrom.LengthErrorRange.MinValue"/> mm
               </p>
               &nbsp;&nbsp;&nbsp;&nbsp;
               <p v-if="Data.addPasteupTemplateFrom.WidthErrorRange">
-                宽允许误差：
+                高允许误差：
                 + <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
                 - <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MinValue"/> mm
               </p>
             </div>
             <p class="template-info" v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.PlateInfo.FilePath">
               <ul>
-                <li>模板：<span>长:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length}}mm</span>
-                          <span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width}}mm</span></li>
+                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length}}mm</span>
+                          <span>高:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width}}mm</span></li>
                 <el-scrollbar max-height="100px">
                 <li v-for="(Area,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList" :key="index">
                 版芯：<span>X:{{Area.XCoordinate}}mm</span>
                 <span>Y:{{Area.YCoordinate}}mm</span>
-                <span>长:{{Area.Length}}mm</span>
-                <span>宽:{{Area.Width}}mm</span></li>
+                <span>宽:{{Area.Length}}mm</span>
+                <span>高:{{Area.Width}}mm</span></li>
                 </el-scrollbar>
               </ul>
             </p>
@@ -140,9 +140,9 @@
                   </span>
                 </span>
                 <span class="size">
-                  <span class="dark">长：</span>
+                  <span class="dark">宽：</span>
                   <el-input v-model.number="ModeItemList.Length"/>
-                  mm <i>X</i> <span class="dark">宽：</span>
+                  mm <i>X</i> <span class="dark">高：</span>
                   <el-input v-model.number="ModeItemList.Width"/> mm
                 </span>
                 <span class="row">
@@ -324,13 +324,13 @@ function verification() {
     if (Data.addPasteupTemplateFrom.SizeType === 0
     && (typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MaxValue !== 'number'
     || typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MinValue !== 'number')) {
-      messageBox.failSingleError('保存失败', '请输入长允许误差', () => null, () => null);
+      messageBox.failSingleError('保存失败', '请输入宽允许误差', () => null, () => null);
       return false;
     }
     if (Data.addPasteupTemplateFrom.SizeType === 0
     && (typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MaxValue !== 'number'
     || typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MinValue !== 'number')) {
-      messageBox.failSingleError('保存失败', '请输入宽允许误差', () => null, () => null);
+      messageBox.failSingleError('保存失败', '请输入高允许误差', () => null, () => null);
       return false;
     }
     // 按模板尺寸 并且按模位
@@ -372,11 +372,11 @@ function verification() {
         const xEndInclude = Number(ModeItem.XCoordinate) + ModeItem.Length * ModeItem.ColumnNumber <= Number(Area.XCoordinate) + Number(Area.Length);
         const yEndInclude = Number(ModeItem.YCoordinate) + ModeItem.Width * ModeItem.RowNumber <= Number(Area.YCoordinate) + Number(Area.Width);
         if (!xEndInclude) {
-          messageBox.failSingleError('保存失败', `第${index + 1}行数据长度超出可拼版区域`, () => null, () => null);
+          messageBox.failSingleError('保存失败', `第${index + 1}行数据宽度超出可拼版区域`, () => null, () => null);
           return false;
         }
         if (!yEndInclude) {
-          messageBox.failSingleError('保存失败', `第${index + 1}行数据宽度超出可拼版区域`, () => null, () => null);
+          messageBox.failSingleError('保存失败', `第${index + 1}行数据高度超出可拼版区域`, () => null, () => null);
           return false;
         }
       }

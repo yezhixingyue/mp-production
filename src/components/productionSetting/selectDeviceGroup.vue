@@ -72,6 +72,8 @@ interface Props {
   saveEquipment?: (list:EquipmentGroups[]) => void
   activeEquipmentList?: string[]
   EquipmentListGroup?: UseClassEquipmentGroupType[]
+  /** 是否允许批量报工 */
+  AllowBatchReport: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -142,11 +144,15 @@ function handleCheckedCitiesChange(value:string[], index) {
 }
 
 watch(() => Dialog.value, (newVal) => {
+  if (!newVal) return;
   // 格式化显示数据
   Data.applyEquipmentListFrom = [];
   props.EquipmentListGroup.forEach((element) => {
+    const EquipmentGroups = element.EquipmentGroups.filter(it => it.AllowBatchReport === null || it.AllowBatchReport === props.AllowBatchReport);
+    if (EquipmentGroups.length === 0) return;
     Data.applyEquipmentListFrom.push({
       ...element as UseClassEquipmentGroupType,
+      EquipmentGroups,
       checkAll: false,
       isIndeterminate: false,
       checks: [],

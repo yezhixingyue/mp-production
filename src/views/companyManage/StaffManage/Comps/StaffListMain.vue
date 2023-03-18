@@ -47,7 +47,7 @@ import DetailMenu from '@/components/common/menus/DetailMenu.vue';
 import { computed } from 'vue';
 import { useCommonStore } from '@/store/modules/common';
 import { storeToRefs } from 'pinia';
-import { getEnumNameByIDAndEnumList } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import {
   EducationEnumList, SexEnumList, StaffStatusEnumList, StaffStatusEnum,
 } from '../js/enums';
@@ -110,14 +110,14 @@ const formatDepartment = ({ PositionList }: IStaff, departmentLevelList: IDepart
 
 const localList = computed(() => props.StaffManagePageData.dataList.map(it => ({
   ...it,
-  _gender: getEnumNameByIDAndEnumList(it.Sex, SexEnumList),
-  _EducationText: getEnumNameByIDAndEnumList(it.Education, EducationEnumList),
+  _gender: getEnumNameByID(it.Sex, SexEnumList),
+  _EducationText: getEnumNameByID(it.Education, EducationEnumList),
   _IntranetContent: it.UseIntranet ? '仅限内部网络' : '不限',
   _address: getAddressContent(it.Area, DistrictTreeList.value),
   _Birthday: formatDate(it.TimeRecord?.Birthday),
   _JoinDate: formatDate(it.TimeRecord?.JoinDate),
   _department: formatDepartment(it, props.StaffManagePageData.departmentLevelList, props.StaffManagePageData.jobPostList),
-  _statusText: getEnumNameByIDAndEnumList(it.Status, StaffStatusEnumList),
+  _statusText: getEnumNameByID(it.Status, StaffStatusEnumList),
 })));
 
 const onDetailClick = (item: IStaff, index: number) => {

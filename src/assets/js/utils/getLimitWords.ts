@@ -1,7 +1,7 @@
 let canvasInstance: null | HTMLCanvasElement = null;
 
 /** 获取文字宽度 */
-const getWordsWidth = (words: string, fontSize: number, canvas?: HTMLCanvasElement, font = 'YaHei') => {
+export const getWordsWidth = (words: string, fontSize: number, canvas?: HTMLCanvasElement, font = 'YaHei') => {
   let context: null | CanvasRenderingContext2D = null;
 
   if (canvasInstance) {

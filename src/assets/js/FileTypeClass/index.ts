@@ -40,7 +40,7 @@ export default class FileTypeClass {
     uniqueName: string,
     onUploadProgressFunc: (percentage: number) => void,
     finalPercentage = 100,
-  ): { status: boolean, error: string } {
+  ): Promise<{ status: boolean; error: string }> {
     return UploadFileByBreakPoint(file, uniqueName, onUploadProgressFunc, finalPercentage);
   }
 }

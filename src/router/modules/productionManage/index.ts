@@ -22,9 +22,20 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-shebeizhuangtai iconfont scale-9',
         pageName: 'EquipmentStatusListPage',
-        PermissionInfo: ['Developing', 'None'],
+        // PermissionInfo: ['Developing', 'None'],
       },
-      component: () => import('@/views/productionManagePages/EquipmentStatus/EquipmentStatusListPage.vue'),
+      component: () => import('@/views/productionManagePages/EquipmentStatus/List/EquipmentStatusListPage.vue'),
+    },
+    {
+      path: '/EquipmentStatusDetail',
+      name: 'EquipmentStatusDetail',
+      meta: {
+        title: '设备状态',
+        requiresAuth: true,
+        pageName: 'EquipmentStatusDetailPage',
+        // PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/EquipmentStatus/Detail/EquipmentStatusDetailPage.vue'),
     },
     /* 手动下单
     -------------------------------------- */
@@ -36,7 +47,7 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-header-03 iconfont scale-12',
         pageName: 'ManualOrderHandlerPage',
-        // PermissionInfo: ['Developing', 'None'],
+        PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManualOrderHandlerPage/ManualOrderHandlerPage.vue'),
     },
@@ -50,7 +61,7 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-daban iconfont',
         pageName: 'ManagePlateListPage',
-        PermissionInfo: ['Developing', 'None'],
+        // PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManagePlateListPage/ManagePlateListPage.vue'),
     },
@@ -64,7 +75,7 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-kuai iconfont',
         pageName: 'ManageChunkListPage',
-        PermissionInfo: ['Developing', 'None'],
+        // PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManageChunkListPage/ManageChunkListPage.vue'),
     },
@@ -78,9 +89,23 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-dingdan iconfont',
         pageName: 'ManageOrderListPage',
-        PermissionInfo: ['Developing', 'None'],
+        // PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManageOrderListPage/ManageOrderListPage.vue'),
+    },
+    /* 外来物料
+    -------------------------------------- */
+    {
+      path: '/ManageOutsideMaterialList',
+      name: 'ManageOutsideMaterialList',
+      meta: {
+        title: '外来物料',
+        requiresAuth: true,
+        icon: 'icon-wuliaodaohuo iconfont',
+        pageName: 'ManageOutsideMaterialListPage',
+        // PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/productionManagePages/ManageOutsideMaterialListPage/ManageOutsideMaterialListPage.vue'),
     },
     /* 设备管理
     -------------------------------------- */
@@ -92,7 +117,7 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-shebeiguanli iconfont',
         pageName: 'ManageEquipmentListPage',
-        PermissionInfo: ['Developing', 'None'],
+        // PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/ManageEquipmentListPage.vue'),
     },
@@ -104,7 +129,7 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         hideMenu: true,
         pageName: 'ManageEquipmentRunTimePage',
-        PermissionInfo: ['Developing', 'None'],
+        // PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManageEquipment/ManageEquipmentRunTimePage/ManageEquipmentRunTimePage.vue'),
     },
@@ -118,7 +143,7 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-shengchanrenwu iconfont',
         pageName: 'ManageTaskListPage',
-        PermissionInfo: ['Developing', 'None'],
+        // PermissionInfo: ['Developing', 'None'],
       },
       component: () => import('@/views/productionManagePages/ManageTaskListPage/ManageTaskListPage.vue'),
     },
@@ -132,7 +157,9 @@ const routeTree:RouteTreeType = {
     -------------------------------------- */
     {
       name: 'EquipmentStatus',
-      children: [],
+      children: [
+        { name: 'EquipmentStatusDetail', children: [] },
+      ],
     },
     /* 手动下单
     -------------------------------------- */
@@ -156,6 +183,12 @@ const routeTree:RouteTreeType = {
     -------------------------------------- */
     {
       name: 'ManageOrderList',
+      children: [],
+    },
+    /* 外来物料
+    -------------------------------------- */
+    {
+      name: 'ManageOutsideMaterialList',
       children: [],
     },
     /* 设备管理

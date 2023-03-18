@@ -32,7 +32,10 @@
             <td :style="`width:${widthList[9].width}px`" :title="row._ProduceEndTime">{{ row._ProduceEndTime || '' }}</td>
             <td :style="`width:${widthList[10].width}px`">
               <span class="top-text" v-show="row.IsTop" :class="{'v-hide': !row.IsTop}">已置顶</span>
-              <mp-button link type="primary" @click="onTopClick(row)" :disabled="row.IsTop">一键置顶</mp-button>
+              <mp-button link type="primary" @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
+              <mp-button link type="primary" style="margin-left:8px"
+               :disabled="row._isMakeuped"
+               @click="onTestClick(row)" >_临时拼版</mp-button>
             </td>
             <td :style="`width:${widthList[11].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
@@ -73,18 +76,21 @@
     </table>
     <SetOrderTopDialog v-model:visible="topVisible" @submit="onTopSubmit" />
     <TimeLineDisplayDialog v-model:visible="timeLineVisible" :row="curRow" />
-    <ProcessDisplayDialog v-model:visible="processVisible" :row="curRow" />
+    <ProcessDisplayDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.order" />
   </main>
 </template>
 
 <script setup lang='ts'>
+import api from '@/api';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import {
   computed, onMounted, onUnmounted, ref,
 } from 'vue';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
+import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import SetOrderTopDialog from './SetOrderTopDialog.vue';
 import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
-import ProcessDisplayDialog from './ProcessDisplayDialog.vue';
+import ProcessDisplayDialog from './ProcessDisplayDialog/ProcessDisplayDialog.vue';
 import { IManageOrderListItem } from '../js/type';
 
 const props = defineProps<{
@@ -119,6 +125,12 @@ const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a,
 
 const spreadList = ref<string[]>([]);
 
+const getIsMakeuped = (it: IManageOrderListItem) => {
+  const t = it.InstanceList.find(ins => ins.LineList.find(l => l.PlateList.length > 0));
+
+  return !!t;
+};
+
 const localList = computed(() => props.list.map(it => ({
   ...it,
   /** 销售端产品 */
@@ -134,7 +146,16 @@ const localList = computed(() => props.list.map(it => ({
     .map(l => (l.PlateList.length > 0 ? `${l.Name} 大版ID:${l.PlateList.join('、')}` : ''))
     .filter(it => it)
     .join('；\r\n') || '',
+  _isMakeuped: getIsMakeuped(it),
 })));
+
+const onTestClick = async (it: typeof localList.value[number]) => {
+  const resp = await api.productionManageApis.getOrderDistributeWithTest(it.ID).catch(() => null);
+
+  if (resp?.data.isSuccess) {
+    MpMessage.success('拼版成功，自行刷新');
+  }
+};
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
   if (!it._isCombineLine) return;
@@ -199,8 +220,8 @@ const mousedown = (e: MouseEvent) => { // 处理开始拖动
   const dom = e.target as HTMLElement;
   if (dom.nodeName !== 'TH') return;
   let index = +(dom.dataset.index || -1);
-  if (index === -1) return;
-  if (widthList.value[index] && (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10)) {
+  if (!widthList.value?.[index]) return;
+  if (widthList.value && widthList.value[index] && (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10)) {
     if (e.offsetX < 10) {
       index -= 1;
     }
@@ -215,7 +236,7 @@ const mousemove = (e: MouseEvent) => { // 处理鼠标指针样式变化
   const dom = e.target as HTMLElement;
   if (dom.nodeName !== 'TH') return;
   const index = +(dom.dataset.index || -1);
-  if (index === -1) return;
+  if (!widthList.value?.[index]) return;
   if (e.offsetX < 10 || e.offsetX > widthList.value[index].width - 10) {
     dom.style.cursor = 'col-resize';
   } else {
@@ -322,7 +343,10 @@ onUnmounted(() => {
             text-align: center;
             .top-text {
               vertical-align: middle;
-              margin-right: 10px;
+              // margin-right: 10px;
+              // display: inline-block;
+              // width: 100%;
+              // margin: 0;
               &.v-hide {
                 visibility: hidden;
               }

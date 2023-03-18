@@ -21,7 +21,8 @@ export interface SelectAssistInfoGroup{
 }
 interface _EquipmentGroups{
   GroupID: string,
-  GroupName: string
+  GroupName: string,
+  AllowBatchReport: null | boolean
 }
 
 export interface _UseClassEquipmentGroupType {

@@ -83,6 +83,7 @@ const Status = computed({
     return props.condition.Status;
   },
   set(val) {
+    if (val === props.condition.Status) return;
     props.setCondition([['Status', ''], val]);
     props.getList();
   },
@@ -140,6 +141,10 @@ const Status = computed({
         margin-top: 15px;
         position: relative;
         top: 2px;
+        .title {
+          font-weight: 700;
+          margin-right: 10px;
+        }
       }
     }
   }

@@ -11,16 +11,16 @@
     top="20vh"
     danger
     >
-    <ul class="dialog-content" v-if="curInstance.curTaskData && localInfo">
+    <ul class="dialog-content" v-if="TaskData && localInfo">
       <!-- ID -->
-      <li v-if="curInstance.curTaskData.Working.ReportMode === ReportModeEnum.board && curInstance.curTaskData.Working.PlateInfo">
+      <li v-if="TaskData.Working.ReportMode === ReportModeEnum.board && TaskData.Working.PlateInfo">
         <span class="label">大版ID：</span>
-        <h4>{{ curInstance.curTaskData.Working.PlateInfo.Code }}</h4>
+        <h4>{{ TaskData.Working.PlateInfo.Code }}</h4>
       </li>
-      <li v-if="curInstance.curTaskData.Working.ReportMode !== ReportModeEnum.board && curInstance.curTaskData.Working.OrderInfo">
+      <li v-if="TaskData.Working.ReportMode !== ReportModeEnum.board && TaskData.Working.OrderInfo">
         <span class="label">订单ID：</span>
-        <span class="mr-5">{{ curInstance.curTaskData.Working.OrderInfo.ServerName }}</span>
-        <h4>{{ curInstance.curTaskData.Working.OrderInfo.OrderID }}</h4>
+        <span class="mr-5">{{ TaskData.Working.OrderInfo.ServerName }}</span>
+        <h4>{{ TaskData.Working.OrderInfo.OrderID }}</h4>
       </li>
       <!-- 标题 -->
       <li class="title">
@@ -29,14 +29,14 @@
             <span class="f" v-if="localInfo.FirstTitle">
               {{ localInfo.FirstTitle }}
             </span>
-            <h4 v-if="curInstance.curTaskData.Working.ReportMode === ReportModeEnum.block && curInstance.curTaskData.Working.ChunkInfo?.Name">
-              {{ curInstance.curTaskData.Working.ChunkInfo.Name }}
+            <h4 v-if="TaskData.Working.ReportMode === ReportModeEnum.block && TaskData.Working.ChunkInfo?.Name">
+              {{ TaskData.Working.ChunkInfo.Name }}
             </h4>
           </div>
           <p v-if="localInfo.SecondTitle">{{ localInfo.SecondTitle }}</p>
         </div>
         <p class="r">
-          {{ curInstance.curTaskData.UnFinishNumber }}{{ localInfo.Unit }}
+          {{ TaskData.UnFinishNumber }}{{ localInfo.Unit }}
         </p>
       </li>
       <!-- 输入文字区域 -->
@@ -56,13 +56,13 @@
 import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
-import { TerminalEquipmentInstance } from '@/views/ProductionClient/assets/js/Instance';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { getTaskDisplayInfo } from '.';
 
 const props = defineProps<{
   visible: boolean
-  curInstance: Required<TerminalEquipmentInstance>,
+  TaskData: ITaskDetail | null,
 }>();
 
 const emit = defineEmits(['update:visible', 'setError']);
@@ -76,7 +76,7 @@ const localVisible = computed({
   },
 });
 
-const localInfo = computed(() => (props.curInstance.curTaskData ? getTaskDisplayInfo(props.curInstance.curTaskData, false) : null));
+const localInfo = computed(() => (props.TaskData ? getTaskDisplayInfo(props.TaskData, false) : null));
 
 const textarea = ref('');
 

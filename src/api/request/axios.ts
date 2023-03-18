@@ -57,7 +57,7 @@ class AxiosClass {
       (response: AxiosResponse<IResponse<unknown>>) => {
         if (response.data?.Status === 1000) {
           response.data.isSuccess = true;
-        } else {
+        } else if (typeof response.data === 'object') {
           response.data.isSuccess = false;
         }
         return response;

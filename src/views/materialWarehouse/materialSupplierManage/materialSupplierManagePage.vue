@@ -148,6 +148,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface MaterialSupplierFormType {
   SupplierID: string,
@@ -341,7 +342,7 @@ export default {
               addMaterialSupplierCloseClick();
             };
             // 成功
-            messageBox.successSingle(`${Data.MaterialSupplierForm.SupplierID ? '修改' : '添加'}成功`, cb, cb);
+            MpMessage.dialogSuccess(`${Data.MaterialSupplierForm.SupplierID ? '修改' : '添加'}成功`, cb, cb);
           }
         });
       }

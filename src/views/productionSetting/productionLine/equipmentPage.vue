@@ -73,6 +73,7 @@ const afterRemove = (ID, type: EquipmentSetupType = 'default') => {
     ClassIt.EquipmentGroups.forEach((GroupIt, GroupIti) => {
       GroupIt.Equipments.forEach((it, iti) => {
         if (it.ID === ID) {
+          console.log(it);
           const _it = it;
           _it.LineEquipmentID = '';
         }
@@ -119,7 +120,6 @@ const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () =>
   const temp = {
     ...params,
   };
-  console.log(isSplit.value, temp.WorkSourceType, isSplit.value && temp.WorkSourceType !== WorkSourceTypeEnum.PlateMaking);
   if (isSplit.value && temp.WorkSourceType !== WorkSourceTypeEnum.PlateMaking) {
     temp.WorkSourceType = WorkSourceTypeEnum.Split;
   }
@@ -131,7 +131,7 @@ const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () =>
         callback();
       };
         // 保存成功
-      MpMessage.success({
+      MpMessage.dialogSuccess({
         title: '保存成功',
         onOk: cb,
         onCancel: cb,

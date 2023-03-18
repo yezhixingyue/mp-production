@@ -2,7 +2,7 @@
   <div class="right-box">
     <!-- 当前展示图片 -->
     <div class="pic">
-      <el-image v-if="curImgInfo" style="width: 100%; height: 100%" fit="cover"
+      <el-image v-if="curImgInfo" style="width: 100%; height: 100%" fit="contain"
         :src="curImgInfo.FilePath"
         :preview-src-list="images.map(it => it.FilePath)"
         :initial-index="images.findIndex(it => it === curImgInfo) || 0"
@@ -36,14 +36,13 @@
 </template>
 
 <script setup lang='ts'>
-import { IEquipmentTaskInfo } from '@/views/ProductionClient/assets/js/types';
-import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
+import { ITaskDetail, ITaskWorkingAssistInfo } from '@/views/ProductionClient/assets/js/types';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { computed, onMounted, ref } from 'vue';
 import FileDownloadDialog from './FileDownloadDialog.vue';
 
 const props = defineProps<{
-  TaskData: IEquipmentTaskInfo
+  TaskData: ITaskDetail
 }>();
 
 /* 图片处理相关
@@ -57,9 +56,9 @@ const images = computed(() => {
   return list;
 });
 
-const curImgInfo = ref<null | IConvertAssistInfo>(null);
+const curImgInfo = ref<null | ITaskWorkingAssistInfo>(null);
 
-const onImgClick = (imgInfo: IConvertAssistInfo) => {
+const onImgClick = (imgInfo: ITaskWorkingAssistInfo) => {
   curImgInfo.value = imgInfo;
 };
 
@@ -113,7 +112,7 @@ onMounted(() => {
     width: 495px;
     border-radius: 4px;
     overflow: hidden;
-    background-color: #eee;
+    background-color: #000;
     img {
       width: 100%;
       height: 100%;
@@ -136,10 +135,13 @@ onMounted(() => {
     display: inline-block;
     .item {
       height: 100%;
+      width: 82px;
+      background: #000000;
       display: inline-block;
       margin-right: 20px;
       position: relative;
       vertical-align: top;
+      overflow: hidden;
       &:last-of-type {
         margin-right: 0;
       }
@@ -155,25 +157,33 @@ onMounted(() => {
         transition: background-color 0.1s ease-in-out;
       }
       img {
+        width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         border-radius: 4px;
         user-select: none;
         min-width: 58px;
       }
-      &.active {
-        &::after {
-          background-color: rgba($color: #000000, $alpha: 0.2);
-        }
-      }
+      box-sizing: border-box;
+      border-radius: 4px;
+      // border: 1px solid rgba($color: #000000, $alpha: 0);
+      // &.active {
+      //   // &::after {
+      //   //   background-color: rgba($color: #000000, $alpha: 0.2);
+      //   // }
+      //   // border: 1px solid #ff0000;
+      //   border-color: burlywood;
+      //   border-width: 2px;
+      //   border-radius: 7px;
+      // }
       &:hover {
         &::after {
-          background-color: rgba($color: #000000, $alpha: 0.25);
+          background-color: rgba($color: #000000, $alpha: 0.1);
         }
       }
       &:active {
         &::after {
-          background-color: rgba($color: #000000, $alpha: 0.4);
+          background-color: rgba($color: #000000, $alpha: 0.2);
         }
       }
     }

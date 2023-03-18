@@ -27,7 +27,7 @@ export default {
   setup() {
     const route = useRoute();
 
-    const displaySider = computed(() => route.meta.requiresAuth);
+    const displaySider = computed(() => route.meta.requiresAuth && process.env.VUE_APP_TARGET !== 'My Order App');
     const fullAcreen = computed(() => route.meta.fullAcreen);
 
     const isLogin = computed(() => route.name === 'login' || route.name === 'client');

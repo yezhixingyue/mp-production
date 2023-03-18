@@ -57,9 +57,11 @@ const init = async () => {
       ID: StaffManagePageData.value.curEditStaff.StaffID,
       FieldType: 3,
     };
+
     const resp = await api.getStaffList(temp).catch(() => null);
     if (resp && resp.data.Status === 1000 && resp.data.Data?.[0]) {
-      staffForm.value = new Staff(resp.data.Data[0]);
+      const t = resp.data.Data.find(it => it.StaffID === temp.ID);
+      staffForm.value = new Staff(t);
     }
   }
 };

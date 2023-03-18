@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang='ts'>
-import { getEnumNameByIDAndEnums } from '@/assets/js/utils/getListByEnums';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IClassEquipmentGroups, IMaterialSources } from '@/store/modules/productionSetting/types';
 import { MaterialSourceTypeEnumObj } from '@/views/productionSetting/js/enums';
@@ -67,7 +67,7 @@ const formatMaterials = (list: IMaterialSources[]) => {
       const t = list.find(_it => _it.MaterialTypeID === it.RelationID);
       const temp = {
         label: it.RelationName,
-        content: t ? getEnumNameByIDAndEnums(t.SourceType, MaterialSourceTypeEnumObj) : '未设置',
+        content: t ? getEnumNameByID(t.SourceType, MaterialSourceTypeEnumObj) : '未设置',
       };
       return temp;
     });

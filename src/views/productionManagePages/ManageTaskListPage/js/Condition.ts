@@ -24,15 +24,15 @@ export class Condition {
 
   /** 状态 */
   StatusList = [
-    ProductiveTaskStatusEnum.InProduction,
-    ProductiveTaskStatusEnum.Error,
+    // ProductiveTaskStatusEnum.InProduction,
+    // ProductiveTaskStatusEnum.Error,
     ProductiveTaskStatusEnum.Finished,
-    ProductiveTaskStatusEnum.HaveCancled,
-    ProductiveTaskStatusEnum.Initial,
-    ProductiveTaskStatusEnum.Producibility,
+    // ProductiveTaskStatusEnum.HaveCancled,
+    // ProductiveTaskStatusEnum.Initial,
+    // ProductiveTaskStatusEnum.Producibility,
   ]
 
-  DateType = 'today'
+  DateType = 'last7Date'
 
   KeyWords = ''
 
@@ -49,6 +49,7 @@ export class Condition {
   }
 
   setConditon(e: ISetConditionParams) {
+    console.log(this);
     return CommonClassType.setCondition(e, this);
   }
 }

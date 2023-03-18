@@ -139,6 +139,7 @@ import { useRouter } from 'vue-router';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface formType {
   TypeID: string,
@@ -311,7 +312,7 @@ export default {
               MaterialWarehouseStore.getMaterialTypeGroup();
             };
               // 成功
-            messageBox.successSingle(`${Data.materialClassifyDialogForm.TypeID ? '修改' : '添加'}成功`, cb, cb);
+            MpMessage.dialogSuccess(`${Data.materialClassifyDialogForm.TypeID ? '修改' : '添加'}成功`, cb, cb);
           }
         });
       }
@@ -337,7 +338,7 @@ export default {
               getMaterialClassifyManage();
             };
             // 成功
-            messageBox.successSingle('保存成功', cback, cback);
+            MpMessage.dialogSuccess('保存成功', cback, cback);
           }
         });
       }, () => null);

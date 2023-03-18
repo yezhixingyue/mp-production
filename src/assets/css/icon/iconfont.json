@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "34444178",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "34448351",
+      "name": "设置",
+      "font_class": "shezhi2",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "34452407",
+      "name": "报停",
+      "font_class": "baoting",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "33866685",
+      "name": "外协管理",
+      "font_class": "waixieguanli",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "33865605",
+      "name": "待外协",
+      "font_class": "daiwaixie",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "33865606",
+      "name": "全部外协",
+      "font_class": "quanbuwaixie",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "33040643",
+      "name": "已入库未交接",
+      "font_class": "yirukuweijiaojie",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
       "icon_id": "33041882",
       "name": "下载",
       "font_class": "xiazai",

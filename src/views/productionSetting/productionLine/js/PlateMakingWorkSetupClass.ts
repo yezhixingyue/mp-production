@@ -57,7 +57,7 @@ export class PlateMakingWorkSetupClass {
         }
         callback();
       };
-      MpMessage.success({
+      MpMessage.dialogSuccess({
         title: '保存成功',
         onOk: cb,
         onCancel: cb,
@@ -76,7 +76,7 @@ export class PlateMakingWorkSetupClass {
     const resp = await api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.PlateMaking).catch(() => null);
     if (resp?.data.isSuccess) {
       const temp:IWorkingProcedureSearch = {
-        ReportMode: ReportModeEnum.block,
+        ReportMode: ReportModeEnum.board,
         Type: WorkingTypeEnum.platemaking,
         // TemplateType: TemplateTypeEnum.other,
         IsPrintingPlate: null,

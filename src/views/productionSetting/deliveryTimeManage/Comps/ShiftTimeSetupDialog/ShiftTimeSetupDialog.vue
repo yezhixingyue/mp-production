@@ -20,7 +20,7 @@
               format="HH:mm"
               :picker-options="{ format: 'HH:mm' }"
               :default-value='defaultBeginTime'
-              placeholder="20:00"
+              placeholder="请选择时间"
               :teleported="false"
             >
             </el-time-picker>

@@ -60,6 +60,7 @@ import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface tableItem {
   CategoryID: number | undefined
@@ -152,7 +153,7 @@ export default {
               MaterialWarehouseStore.getMaterialTypeGroup();
             };
             // 成功
-            messageBox.successSingle(`${Data.classifyInfo.CategoryID ? '修改' : '添加'}成功`, cb, cb);
+            MpMessage.dialogSuccess(`${Data.classifyInfo.CategoryID ? '修改' : '添加'}成功`, cb, cb);
           }
         });
       }

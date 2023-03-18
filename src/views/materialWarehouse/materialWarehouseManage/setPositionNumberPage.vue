@@ -115,6 +115,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import api from '@/api';
 import { useRoute } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 interface getLockStatusType {
   LockStatus: boolean,
@@ -230,7 +231,7 @@ export default {
               addPalletDimensionsCloseClick();
               setStorage();
             };
-            messageBox.successSingle('保存成功', cb, cb);
+            MpMessage.dialogSuccess('保存成功', cb, cb);
           }
         });
       }
