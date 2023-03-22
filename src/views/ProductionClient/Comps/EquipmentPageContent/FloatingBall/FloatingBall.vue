@@ -22,16 +22,24 @@ import {
 ------------------------------------ */
 const ballRef = ref<InstanceType<typeof HTMLElement>>();
 
-onMounted(() => {
+const bindEvent = () => { // 绑定拖动事件
   document.addEventListener('mouseup', ondocumentmouseup);
   document.addEventListener('mousemove', ondocumentmousemove);
   window.addEventListener('resize', initPosition);
-});
+};
 
-onUnmounted(() => {
+const unbindEvent = () => { // 释放事件绑定
   document.removeEventListener('mouseup', ondocumentmouseup);
   document.removeEventListener('mousemove', ondocumentmousemove);
   window.removeEventListener('resize', initPosition);
+};
+
+onMounted(() => {
+  bindEvent(); // 绑定拖动事件
+});
+
+onUnmounted(() => {
+  unbindEvent(); // 释放事件绑定
 });
 
 </script>

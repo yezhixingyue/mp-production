@@ -2,12 +2,12 @@
   <section class="wrap">
     <Header :classList="EquipmentStatusManagePageData.EquipmentClassList" v-model="EquipmentStatusManagePageData.curClassID" />
     <main>
-      <canvas ref="canvas" width="800" height="500"></canvas>
+      <canvas ref="canvas" width="800" height="500" v-show="EquipmentStatusManagePageData.list.length > 0"></canvas>
       <HoverItemTooltips v-if="EquipmentStatusManagePageData._HoverItemData" :hoverItemInfo="EquipmentStatusManagePageData._HoverItemData" />
+      <el-empty v-show="!EquipmentStatusManagePageData.loading && EquipmentStatusManagePageData.list.length === 0" description="暂无设备" />
     </main>
     <footer>
       <span>
-        <!-- 面板宽度： {{boardDraw.boardWidth}} -->
         当前设备 <i class="is-primary">{{EquipmentStatusManagePageData.listNumber}}</i> 个
       </span>
     </footer>
@@ -71,6 +71,15 @@ export default {
     position: relative;
     canvas {
       user-select: none;
+    }
+
+    :deep(.el-empty) {
+      padding-top: 15vh;
+      padding-right: 50px;
+
+      .el-empty__description p {
+        font-size: 13px;
+      }
     }
   }
   > footer {

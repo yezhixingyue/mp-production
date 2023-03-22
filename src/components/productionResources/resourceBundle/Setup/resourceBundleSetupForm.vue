@@ -8,13 +8,17 @@
         <el-radio v-for="it in FeatureMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
+    <el-form-item prop="IsPlateMaterial" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID" class="set-is-plate-material-box">
+      <el-checkbox v-model="ruleForm.IsPlateMaterial" @change="onIsPlateMaterialChange">版材</el-checkbox>
+    </el-form-item>
     <el-form-item label="包含物料类型：" prop="MaterialTypeGroups" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID">
       <MaterialTypeGroupSelector v-model="ruleForm.MaterialTypeGroups" />
     </el-form-item>
     <el-form-item label="满足方式：" prop="MatchType" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID">
       <el-radio-group v-model="ruleForm.MatchType">
         <el-radio v-for="it in MatchTypeMenuList" :key="it.ID" :label="it.ID"
-         :disabled="ruleForm.Feature===resourceBundleFeatureEnumObj.main.ID && it.ID===resourceBundleMatchEnum.every.ID">{{it.Name}}</el-radio>
+         :disabled="(ruleForm.Feature===resourceBundleFeatureEnumObj.main.ID || ruleForm.IsPlateMaterial)
+          && it.ID===resourceBundleMatchEnum.every.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
       <!-- <span class="is-gray-light"><el-icon><WarningFilled /></el-icon>暂无数据，请先添加</span> -->
@@ -73,6 +77,12 @@ const onFeatureChange = (e: number | string) => {
   }
 };
 
+const onIsPlateMaterialChange = (bool: boolean) => {
+  if (bool && ruleForm.value.MatchType === resourceBundleMatchEnum.every.ID) {
+    ruleForm.value.MatchType = '';
+  }
+};
+
 const getFormData = () => new Promise((resolve) => { // 校验 + 获取表单内容
   if (!ruleFormRef.value) {
     resolve(null);
@@ -114,6 +124,17 @@ defineExpose({
       margin-bottom: 30px;
       .el-input {
         width: 410px;
+      }
+
+      &.set-is-plate-material-box {
+        margin-top: -22px;
+        margin-bottom: 22px;
+
+        :deep(.el-checkbox__label) {
+          font-weight: 700;
+          font-size: 14px;
+          color: #444;
+        }
       }
     }
   }

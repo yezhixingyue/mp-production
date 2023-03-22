@@ -3,7 +3,7 @@
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12">
       <mp-table-column min-width="270px" prop="Name" label="资源包名称" />
       <mp-table-column min-width="150px" prop="Feature" label="性质">
-        <template #default="scope">{{formatFeatureType(scope.row.Feature)}}</template>
+        <template #default="scope">{{formatFeatureType(scope.row.Feature)}}{{ scope.row.IsPlateMaterial ? '(版材)' : '' }}</template>
       </mp-table-column>
       <mp-table-column min-width="320px" prop="MaterialTypeGroups" label="包含物料类型">
         <template #default="scope">{{formatMaterialTypeGroups(scope.row)}}</template>

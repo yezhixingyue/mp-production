@@ -37,6 +37,8 @@ export interface MaterialTypeGroupsType{
 }
 export interface MaterialTypeGroupType{
   Feature: number,
+  /** 是否为版材 */
+  IsPlateMaterial: boolean | null
   MatchType: number,
   MaterialTypeGroups: MaterialTypeGroupsType[],
   ID: string,

@@ -125,7 +125,6 @@ const localDate = computed({
     return ruleForm.value.TimeRecord?.JoinDate ? ruleForm.value.TimeRecord.JoinDate.split('T')[0].substring(0, 10) : '';
   },
   set(val) {
-    console.log(val);
     let timer = '';
     if (val) timer = `${val}T00:00:00.000Z`;
     ruleForm.value.TimeRecord.JoinDate = timer;

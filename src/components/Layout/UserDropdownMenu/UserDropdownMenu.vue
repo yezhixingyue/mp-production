@@ -41,7 +41,7 @@ import { useRouter } from 'vue-router';
 import { getImgGaussBlurUrl } from '@/assets/js/utils/gaussBlur';
 import ChangePwdDialog from './ChangePwdDialog.vue';
 
-defineProps<{
+const props = defineProps<{
   showImgType?: boolean
 }>();
 
@@ -60,7 +60,7 @@ const logout = () => {
 const imgSrc = ref('');
 const loadingImg = ref(false);
 watch(() => user.value?.HeadPic, (newVal, oldVal) => {
-  if (newVal === oldVal) return;
+  if (newVal === oldVal || !props.showImgType) return;
   imgSrc.value = '';
 
   if (newVal) {
@@ -130,8 +130,8 @@ watch(() => user.value?.HeadPic, (newVal, oldVal) => {
   padding-left: 22px;
   user-select: none;
   pointer-events: none;
-  padding-top: 6px;
-  padding-bottom: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   font-weight: 700;
 }
 </style>
