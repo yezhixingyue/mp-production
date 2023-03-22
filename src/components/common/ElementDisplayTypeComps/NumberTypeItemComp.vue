@@ -16,8 +16,8 @@
     <el-option
       v-for="(item,index) in options"
       :key="item + '-' + index"
-      :label="item"
-      :value="item">
+      :label="item.label"
+      :value="item.value">
     </el-option>
   </el-select>
 <!-- </span> -->
@@ -44,6 +44,10 @@ export default {
       type: Function,
       default: () => [],
     },
+    IsRequired: { // 是否必填
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const inpVal:WritableComputedRef<number> = computed({
@@ -51,15 +55,24 @@ export default {
         return props.PropValue as number;
       },
       set(value) {
-        props.UpdateData(Number(value) || null);
+        props.UpdateData(value);
       },
     });
     const getNumberValueList = (valueList) => {
       const reg = /\s|,|，/;
-      return valueList.split(reg).filter(it => it).map(it => Number(it));
+      return valueList.split(reg).filter(it => it).map(it => ({
+        label: Number(it),
+        value: Number(it),
+      }));
     };
     const options = computed(() => {
       if (!props.InputContent) return [];
+      if (!props.IsRequired) {
+        return [{
+          label: '无',
+          value: null,
+        }, ...getNumberValueList(props.InputContent)];
+      }
       return getNumberValueList(props.InputContent);
     });
     return {

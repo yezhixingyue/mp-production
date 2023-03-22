@@ -627,7 +627,7 @@ export default {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           Data.outDeliveryForm.UnitID = '';
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
-            .filter(it => it.UnitPurpose === 1);
+            .filter(it => it.UnitPurpose === 2);
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
           ThreeCascaderComp.value.reset();
         } else {

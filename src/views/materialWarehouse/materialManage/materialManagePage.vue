@@ -120,10 +120,11 @@
           <p v-if="item.AttributeType === 1">
 
             <NumberTypeItemComp
-              :PropValue="item.NumericValue||null"
+              :PropValue="item.NumericValue"
               :InputContent="item.RegularQuantity"
               :Allow="item.IsCustom"
               :AllowDecimal="item.IsAllowDecimal"
+              :IsRequired="item.IsRequired"
               :UpdateData="(newVal) => item.NumericValue = newVal">
             </NumberTypeItemComp>
             {{item.AttributeUnit}}
@@ -132,7 +133,7 @@
               v-else
               :PropValue="item.InputSelectValue
               ||item.SelectID"
-              :options="item.AttributeSelects"
+              :options="item.IsRequired?item.AttributeSelects : [{SelectID:'', SelectItemValue:'无'}, ...item.AttributeSelects]"
               :Allow="item.IsCustom"
               :UpdateData="(newVal) => UpdateData(item.AttributeSelects || [],newVal,index)">
             </OptionTypeItemComp>
@@ -413,7 +414,7 @@ export default {
       // 表单验证
       Data.addMaterialManageForm.MaterialRelationAttributes.forEach((item) => {
         // 数字输入或选择
-        if (item.AttributeType === 1 && item.IsRequired && !item.NumericValue) {
+        if (item.AttributeType === 1 && item.IsRequired && (!item.NumericValue && item.NumericValue !== 0)) {
           msg.push(item.AttributeName);
           // messageBox.failSingleError('保存失败', `请输入${item.AttributeName}`, () => null, () => null);
           // 选择项选择未填写
@@ -435,9 +436,9 @@ export default {
         .addMaterialManageForm.SizeIDS.length) {
         messageBox.failSingleError('保存失败', '请选择可选尺寸属性', () => null, () => null);
       } else {
-        const temp = Data.addMaterialManageForm;
-        temp.MaterialRelationAttributes = temp.MaterialRelationAttributes
-          .filter(res => !(res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
+        // const temp = Data.addMaterialManageForm;
+        // temp.MaterialRelationAttributes = temp.MaterialRelationAttributes
+        //   .filter(res => !(res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
 
         // 发送请求
         api.getMaterialSave({
@@ -527,10 +528,10 @@ export default {
       let msg = '';
       item.MaterialAttributes.forEach(res => {
         if (res.NumericValue) {
-          msg += res.NumericValue;
-          msg += res.AttributeUnit;
+          msg += res.NumericValue || '';
+          msg += res.AttributeUnit || '';
         } else {
-          msg += res.InputSelectValue || res.SelectValue;
+          msg += res.InputSelectValue || res.SelectValue || '';
         }
       });
       messageBox.warnCancelBox('确定要删除此物料吗？', msg, () => {
@@ -557,8 +558,6 @@ export default {
       };
     }
     function UpdateData(AttributeSelects, newVal, index) {
-      console.log(newVal, 'newVal');
-
       const temp = AttributeSelects.find(res => res.SelectID === newVal);
       if (temp) {
         Data.addMaterialManageForm
