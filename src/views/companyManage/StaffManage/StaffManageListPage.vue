@@ -50,8 +50,8 @@ const { StaffManagePageData } = storeToRefs(companyStore);
 const { user } = storeToRefs(userStore);
 
 /** 添加|编辑 */
-const onSetupClick = ({ item }) => {
-  StaffManagePageData.value.curEditStaff = item;
+const onSetupClick = (data) => {
+  StaffManagePageData.value.curEditStaff = data ? data.item : null;
   router.push('/StaffSetup');
 };
 

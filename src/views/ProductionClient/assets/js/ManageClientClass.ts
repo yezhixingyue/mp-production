@@ -4,6 +4,7 @@ import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipm
 import { getLocalMachineCode } from './getLocalMachineCode';
 import { SessionStorageClientHandler } from './SessionStorageHandler';
 import { TerminalEquipmentInstance } from './Instance';
+import { WebsocketHandler } from '../../Comps/EquipmentPageContent/FloatingBall/WebsocketHandler';
 
 /**
  * 生产报工页面数据
@@ -19,6 +20,12 @@ export class ManageClientClass {
   public TerminalEquipmentList: IManageEquipmentInfo[] = []
 
   public loading = false
+
+  /** 当前正在处于激活状态的机器实例 */
+  public curActiveInstance: null | TerminalEquipmentInstance = null
+
+  /** websocket通信获取到的未送出工单信息（小球展示内容数据） */
+  websocketHandler: null | WebsocketHandler = null
 
   /** 获取当前终端设备列表 */
   public async getTerminalEquipmentList() {
@@ -45,6 +52,8 @@ export class ManageClientClass {
 
     this.InstanceList = list.map(it => this.InstanceList.find(_it => _it.Equipment.ID === it.ID) || new TerminalEquipmentInstance(it));
 
+    this.websocketHandler = new WebsocketHandler(this.TerminalEquipmentList);
+
     // 对curActiveInstance的相关处理 -- 如果当前实例被移除 则置curActiveInstance为null
     if (this.curActiveInstance) {
       const t = this.InstanceList.find(it => it.Equipment.ID === this.curActiveInstance?.Equipment.ID);
@@ -54,7 +63,4 @@ export class ManageClientClass {
     /** 只保留当前存在设备的缓存信息 */
     if (list.length > 0) SessionStorageClientHandler.filterNonexistence(list.map(it => it.ID));
   }
-
-  /** 当前正在处于激活状态的机器实例 */
-  public curActiveInstance: null | TerminalEquipmentInstance = null
 }

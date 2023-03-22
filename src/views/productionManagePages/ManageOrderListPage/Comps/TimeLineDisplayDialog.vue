@@ -149,6 +149,8 @@ const onOpen = () => {
           }
           > span {
             flex: none;
+            position: relative;
+            top: 1px;
           }
         }
 

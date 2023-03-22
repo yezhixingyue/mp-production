@@ -16,18 +16,16 @@
         <div class="material-type">
           <el-checkbox-group v-model="checkList">
             <el-checkbox
-            v-for="(item) in props.MaterialListGroup"
+            v-for="(item) in localMaterialListGroupList"
             :key="item.ID" :label="item.ID">
-              <span :title="item.Name">
-                <em>{{item.Name}}</em>
-                <i v-if="(item.Feature === MakingGroupTypeFeatureEnum.main)">(主)</i>
-                <i v-if="(item.Feature === MakingGroupTypeFeatureEnum.semifinished)">(半)</i>
+              <span :title="item._FullName">
+                <em>{{item._FullName}}</em>
               </span>
             </el-checkbox>
           </el-checkbox-group>
         </div>
         </el-scrollbar>
-        <p class="tips-box"><el-icon><WarningFilled /></el-icon> 仅能包含一个主料</p>
+        <p class="tips-box"><el-icon><WarningFilled /></el-icon> 主料和版材均最多包含一个</p>
       </div>
     </template>
     </DialogContainerComp>
@@ -38,7 +36,6 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   ref, Ref, computed, watch,
 } from 'vue';
-import type { EquipmentGroups } from '@/components/pasteupSetting/types';
 import type {
   MaterialTypeGroupType,
 } from '@/store/modules/productionSetting/types';
@@ -48,7 +45,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 interface Props {
   visible: boolean
   changeVisible?: (bol:boolean) => void
-  saveEquipment?: (list:EquipmentGroups[]) => void
+  saveEquipment?: (list:MaterialTypeGroupType[]) => void
   activeMaterialList?: string[]
   MaterialListGroup?: MaterialTypeGroupType[]
 }
@@ -69,6 +66,21 @@ const Dialog = computed({
     props.changeVisible(newVal);
   },
 });
+
+const _getFullName = (it: MaterialTypeGroupType) => {
+  const arr: string[] = [];
+  if (it.Feature === MakingGroupTypeFeatureEnum.main) arr.push('主');
+  if (it.Feature === MakingGroupTypeFeatureEnum.semifinished) arr.push('半');
+  if (it.IsPlateMaterial) arr.push('版材');
+
+  const str = arr.length > 0 ? `${arr.map(s => `(${s})`).join('')}` : '';
+  return it.Name + str;
+};
+
+const localMaterialListGroupList = computed(() => props.MaterialListGroup.map(it => ({
+  ...it,
+  _FullName: _getFullName(it),
+})));
 function CloseClick() {
   props.changeVisible(false);
 }
@@ -79,8 +91,7 @@ function Closed() {
 function PrimaryClick() {
   const returnData = props.MaterialListGroup.filter(res => checkList.value.find(it => it === res.ID));
 
-  const mainList = returnData.filter(it => it.Feature === MakingGroupTypeFeatureEnum.main);
-  if (mainList.length > 1) {
+  if (returnData.filter(it => it.Feature === MakingGroupTypeFeatureEnum.main).length > 1) {
     MpMessage.error({
       title: '操作失败',
       msg: '仅能包含一个主料',
@@ -88,7 +99,15 @@ function PrimaryClick() {
     return;
   }
 
-  props.saveEquipment(returnData || []);
+  if (returnData.filter(it => it.IsPlateMaterial).length > 1) {
+    MpMessage.error({
+      title: '操作失败',
+      msg: '最多可选择1个版材',
+    });
+    return;
+  }
+
+  props.saveEquipment(returnData);
 }
 watch(() => Dialog.value, (newVal) => {
   if (newVal && props.activeMaterialList) {
@@ -137,7 +156,7 @@ watch(() => Dialog.value, (newVal) => {
     }
   }
   .tips-box {
-    width: 180px;
+    width: 220px;
     margin: 35px auto;
     margin-bottom: -15px;
     i {

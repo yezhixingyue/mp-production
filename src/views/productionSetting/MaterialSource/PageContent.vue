@@ -5,10 +5,10 @@
     </header>
     <main>
       <PageContentTable v-if="tableList" :tableList="tableList" :withoutOtherPrcess="props.withoutOtherPrcess"
-       :hasPlateMakingWork="!!curEditItem?.PlateMakingWorkID"
+       :hasPlateMakingWork="!!curEditItem?.PlateMakingWorkID" HideByIsPlateMaterial
        :title="props.title" :WorkingProcedureList="WorkingProcedureList" @select="selectProcess" />
       <PageContentTable v-if="tableList4PlateMaking && PlateMakingMaterialSourceSetupData"
-       :tableList="tableList4PlateMaking" :withoutOtherPrcess="props.withoutOtherPrcess"
+       :tableList="tableList4PlateMaking" withoutOtherPrcess
        :title="PlateMakingMaterialSourceSetupData.WorkName" :WorkingProcedureList="WorkingProcedureList" @select="(e) => selectProcess(e, true)" />
       <ul class="intro" v-if="tableList || (tableList4PlateMaking && PlateMakingMaterialSourceSetupData)">
         <li v-if="type==='combine'">如果物料资源来源于其他生产线，则必须等待其完工，当前工序才可以开始；</li>
@@ -16,6 +16,7 @@
         <li v-if="type==='line' || type==='combine'">如果一种物料资源包来源于多个工序，指其中任意一个工序完工，便可开始当前工序；</li>
         <li>如果来源于领料，则须等待仓库出库后才可开始；</li>
         <li>预出库不需等待。</li>
+        <li>版材有且只能有一个。</li>
       </ul>
     </main>
     <footer>
@@ -108,10 +109,11 @@ const localWorkingProcedureList = computed(() => {
 const saveProcess = async () => {
   if (!tableList.value) return;
   const list = [...tableList.value];
+  const len = tableList.value.length;
   if (tableList4PlateMaking.value) {
     list.push(...tableList4PlateMaking.value);
   }
-  let t = list?.find(it => !it.SourceType && it.SourceType !== 0);
+  let t = list.find((it, i) => !it.SourceType && it.SourceType !== 0 && !(it._MaterialTypeGroup?.IsPlateMaterial && i < len));
   if (t) {
     MpMessage.error({
       title: '保存失败',
@@ -197,6 +199,7 @@ onMounted(async () => {
       _MaterialTypeGroup: t, // 物料资源包
     };
   });
+  console.log('tableList', tableList.value);
   tableList4PlateMaking.value = JSON.parse(JSON.stringify(props.PlateMakingMaterialSourceSetupData?.PlateMakingMaterialSources || []))
     .map((it: IMaterialSources) => {
       const t = productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.MaterialTypeID);

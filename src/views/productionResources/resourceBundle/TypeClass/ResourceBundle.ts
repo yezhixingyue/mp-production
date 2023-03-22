@@ -55,6 +55,8 @@ export class ResourceBundleClass {
 
   MatchType: number | '' = resourceBundleMatchEnum.any.ID
 
+  IsPlateMaterial = false
+
   MaterialTypeGroups: IMaterialTypeItemInBundle[] = [] // 资源包中包含的物料类型列表
 
   constructor(data) {
