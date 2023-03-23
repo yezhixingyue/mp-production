@@ -145,7 +145,7 @@
     >
     <template #default>
       <div class="set-sms-marn-dialog">
-        <p v-for="item in Data.SMSList" :key="item">
+        <p v-for="(item,index) in Data.SMSList" :key="index">
           物料：{{item.Material}}；库存：{{item.Stock}}{{item.StockUnit}}; 电话：{{item.Mobiles.join(',')}}
         </p>
         <span v-if="!Data.SMSList.length">无短信</span>
@@ -219,7 +219,7 @@
         <div class="material-manage">
           <p>
             物料：
-            {{Data.materialManageInfo.AttributeDescribe}}
+            {{Data.materialManageInfo?.AttributeDescribe}}
               <!-- <template v-for="(item) in Data.materialManageInfo.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -234,10 +234,10 @@
               </template> -->
           </p>
           <p>
-            尺寸规格：{{Data.materialManageInfo.SizeDescribe}}
+            尺寸规格：{{Data.materialManageInfo?.SizeDescribe}}
           </p>
           <p>
-            SKU编码：{{Data.materialManageInfo.MaterialCode}}
+            SKU编码：{{Data.materialManageInfo?.MaterialCode}}
           </p>
         </div>
         <el-scrollbar max-height="350px">
@@ -248,7 +248,7 @@
               <p class="title">
                 <span>
                   {{Storehouseitem.StorehouseName}}：
-                  {{getStorehouseInNumber(Storehouseitem.GoodsPositionStockInfos)}}{{Data.materialManageInfo.StockUnit}}
+                  {{getStorehouseInNumber(Storehouseitem.GoodsPositionStockInfos)}}{{Data.materialManageInfo?.StockUnit}}
                 </span>
                 <span>
                   <mp-button type="primary" link
@@ -265,7 +265,7 @@
                   </span>
                   <span class="PCS">
                     {{GoodsPosition.Number}}
-                    {{Data.materialManageInfo.StockUnit}}
+                    {{Data.materialManageInfo?.StockUnit}}
                   </span>
                 </li>
                 <!-- <li>
@@ -316,6 +316,7 @@ import api from '@/api';
 import { useRouter } from 'vue-router';
 import { MaterialAttributesType } from '@/assets/Types/common';
 import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
+import messageBox from '@/assets/js/utils/message';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -364,6 +365,7 @@ interface StockListType {
 }
 
 interface GoodsPositionStockInfosType {
+  UpperDimension: string,
   StorehouseID: string,
   PositionName: string,
   PositionID: string,
@@ -375,10 +377,16 @@ interface StorehouseStockInfoType {
   StorehouseImg: string,
   GoodsPositionStockInfos: GoodsPositionStockInfosType[],
 }
+interface ISMSList {
+  Material: string,
+  Stock: number,
+  StockUnit: string,
+  Mobiles: string[],
+}
 interface DataType {
 
   seeSMSShow:boolean,
-  SMSList:string[],
+  SMSList:ISMSList[],
 
   SetSMSWarnShow:boolean,
   StorehouseStockShow:boolean,
@@ -506,7 +514,7 @@ export default {
       // 获取所有短信
       api.getIStockSMSList({}).then(res => {
         if (res.data.Status === 1000) {
-          Data.SMSList = res.data.Data as string[];
+          Data.SMSList = res.data.Data as ISMSList[];
         }
       });
     }
@@ -544,21 +552,26 @@ export default {
       api.getStorehouseStock(data.MaterialID).then(res => {
         if (res.data.Status === 1000) {
           Data.StorehouseStockInfo = res.data.Data as StorehouseStockInfoType[];
-          console.log(data, 'data');
-
           Data.materialManageInfo = { ...data };
           Data.StorehouseStockShow = true;
         }
       });
     }
     function SetSMSWarnPrimaryClick() {
-      api.getStockSetSMSWarn(Data.SetSMSWarnForm).then(res => {
-        if (res.data.Status === 1000) {
-          getStockList();
-          // 设置成功
-          SetSMSWarnCloseClick();
-        }
-      });
+      if ((Data.SetSMSWarnForm.WarnThreshold && Data.SetSMSWarnForm.NoticeMobile)
+      || (!Data.SetSMSWarnForm.WarnThreshold && !Data.SetSMSWarnForm.NoticeMobile)) {
+        api.getStockSetSMSWarn(Data.SetSMSWarnForm).then(res => {
+          if (res.data.Status === 1000) {
+            getStockList();
+            // 设置成功
+            SetSMSWarnCloseClick();
+          }
+        });
+      } else if (!Data.SetSMSWarnForm.WarnThreshold) {
+        messageBox.failSingleError('保存失败', '请输入预警阈值', () => null, () => null);
+      } else {
+        messageBox.failSingleError('保存失败', '请输入接收手机号码', () => null, () => null);
+      }
     }
     // 货位弹框
     function StorehouseStockPrimaryClick() {
