@@ -8,6 +8,7 @@ import { PlateMakingWorkSetupClass } from '@/views/productionSetting/productionL
 import { LineStatusEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { WorkingProcedureRelationEnum } from '@/views/productionSetting/process/enums';
 import { LineIsUseModeEnum, ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
+import { MakingGroupTypeFeatureEnum, resourceBundleMatchEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 
 // 辅助信息
 export interface NotesType{
@@ -36,11 +37,13 @@ export interface MaterialTypeGroupsType{
   MaterialTypeIDS: string[]
 }
 export interface MaterialTypeGroupType{
-  Feature: number,
+  Feature: MakingGroupTypeFeatureEnum,
   /** 是否为版材 */
-  IsPlateMaterial: boolean | null
-  MatchType: number,
+  IsPlateMaterial: boolean
+  /** 包含的物料类型有哪些 */
   MaterialTypeGroups: MaterialTypeGroupsType[],
+  /** 满足方式（任一还是全部） */
+  MatchType: resourceBundleMatchEnum,
   ID: string,
   Name: string
 }

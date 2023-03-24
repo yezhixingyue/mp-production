@@ -15,6 +15,8 @@ export enum MaterialSourceTypeEnum {
   otherPrcess = 3,
   /** 制版工序 */
   plateMaking = 4,
+  /** 为版材时传递的缺省值 (不展示在外面) */
+  _plateMaterialDefault = 255,
 }
 
 export const MaterialSourceTypeEnumObj = {

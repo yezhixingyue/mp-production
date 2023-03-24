@@ -26,7 +26,7 @@ import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getList
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpButton from '@/components/common/MpButton.vue';
 import {
-  ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnum,
+  ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj,
 } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
 import { getTableDiaplayContent } from '../Setup/MaterialTypeGroupSelector/utils';
@@ -41,7 +41,7 @@ const emit = defineEmits(['edit', 'remove']);
 const formatFeatureType = (Feature: localEnumValueIDType) => getEnumNameByID(Feature, resourceBundleFeatureEnumObj);
 const formatMatchType = (item: ResourceBundleClass) => {
   if (item.Feature === resourceBundleFeatureEnumObj.semifinished.ID) return '';
-  return getEnumNameByID(item.MatchType, resourceBundleMatchEnum);
+  return getEnumNameByID(item.MatchType, resourceBundleMatchEnumObj);
 };
 const formatMaterialTypeGroups = (item: ResourceBundleClass) => {
   if (item.Feature === resourceBundleFeatureEnumObj.semifinished.ID) return '';

@@ -30,13 +30,20 @@ export const resourceBundleFeatureEnumObj = {
   },
 };
 
-export const resourceBundleMatchEnum = {
-  any: {
-    ID: 0,
+export enum resourceBundleMatchEnum {
+  /** 提供任意一种类型物料即可 */
+  single = 0,
+  /** 每种类型都需要提供物料 */
+  every = 1,
+}
+
+export const resourceBundleMatchEnumObj = {
+  single: {
+    ID: resourceBundleMatchEnum.single,
     Name: '提供任意一种类型物料即可',
   },
   every: {
-    ID: 1,
+    ID: resourceBundleMatchEnum.every,
     Name: '每种类型都需要提供物料',
   },
 };
@@ -51,9 +58,9 @@ export class ResourceBundleClass {
 
   Name = ''
 
-  Feature = resourceBundleFeatureEnumObj.main.ID
+  Feature = MakingGroupTypeFeatureEnum.main
 
-  MatchType: number | '' = resourceBundleMatchEnum.any.ID
+  MatchType: number | '' = resourceBundleMatchEnum.single
 
   IsPlateMaterial = false
 

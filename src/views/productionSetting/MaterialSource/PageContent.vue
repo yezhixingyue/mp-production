@@ -108,7 +108,14 @@ const localWorkingProcedureList = computed(() => {
 
 const saveProcess = async () => {
   if (!tableList.value) return;
-  const list = [...tableList.value];
+  const list = [...tableList.value].map(it => {
+    if (it._MaterialTypeGroup?.IsPlateMaterial) {
+      // 此处强制修改版材的物料来源为0以提交接口 （为版材时不用传递配置内容，原值传递的为null，现根据接口该传默认值为0）
+      const _it = it;
+      _it.SourceType = MaterialSourceTypeEnum._plateMaterialDefault;
+    }
+    return it;
+  });
   const len = tableList.value.length;
   if (tableList4PlateMaking.value) {
     list.push(...tableList4PlateMaking.value);
@@ -197,9 +204,10 @@ onMounted(async () => {
       ...it,
       SourceWorkIDS: it.SourceWorkIDS || [],
       _MaterialTypeGroup: t, // 物料资源包
+      SourceType: it.SourceType === MaterialSourceTypeEnum._plateMaterialDefault ? '' : it.SourceType,
     };
   });
-  console.log('tableList', tableList.value);
+
   tableList4PlateMaking.value = JSON.parse(JSON.stringify(props.PlateMakingMaterialSourceSetupData?.PlateMakingMaterialSources || []))
     .map((it: IMaterialSources) => {
       const t = productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.MaterialTypeID);

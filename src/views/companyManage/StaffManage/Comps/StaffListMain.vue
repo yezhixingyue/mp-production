@@ -16,18 +16,44 @@
       </mp-table-column>
       <mp-table-column width="80px" prop="_statusText" label="状态"></mp-table-column>
       <mp-table-column width="80px" prop="CheckUser.StaffName" label="审核人"></mp-table-column>
-      <el-table-column width="320px" label="操作">
+      <el-table-column width="185px" label="操作">
         <template #default="scope">
           <div class="menus">
-            <DetailMenu @click="onDetailClick(scope.row, scope.$index)" :disabled="scope.row.Status===StaffStatusEnum.pending" />
-            <Menu title="离职" icon="icon-lizhi iconfont" isPink
+            <Menu title="审核" icon="icon-shenhe iconfont" isSuccess
+               v-if="scope.row.Status===StaffStatusEnum.pending" @click="onChangeStatusClick(scope.row, scope.$index)"/>
+            <DetailMenu v-else @click="onDetailClick(scope.row, scope.$index)" :disabled="scope.row.Status===StaffStatusEnum.pending" />
+            <!-- <Menu title="离职" icon="icon-lizhi iconfont" isPink
                v-if="scope.row.Status===StaffStatusEnum.approved" @click="onChangeStatusClick(scope.row, scope.$index)" />
             <Menu title="取消离职" icon="icon-fanhui iconfont" isSuccess
                v-if="scope.row.Status===StaffStatusEnum.leaved" @click="onChangeStatusClick(scope.row, scope.$index)"/>
-            <Menu title="审核" icon="icon-shenhe iconfont" isSuccess
-               v-if="scope.row.Status===StaffStatusEnum.pending" @click="onChangeStatusClick(scope.row, scope.$index)"/>
             <EditMenu @click="onEditClick(scope.row)" />
-            <RemoveMenu :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)" />
+            <RemoveMenu :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)" /> -->
+            <el-dropdown trigger="click">
+              <span class="el-dropdown-link staff">
+                <el-icon><MoreFilled /></el-icon>
+                更多
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu class="mp-stall-manage-table-menu--drop-down-wrap">
+                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved" @click="onChangeStatusClick(scope.row, scope.$index)">
+                    <i class="icon-lizhi iconfont is-pink"></i>
+                    <span>离职</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.leaved" @click="onChangeStatusClick(scope.row, scope.$index)">
+                    <i class="icon-fanhui iconfont is-success"></i>
+                    <span>取消离职</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item  @click="onEditClick(scope.row)">
+                    <i class="icon-bianji iconfont is-primary"></i>
+                    <span>编辑</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)">
+                    <i class="icon-delete iconfont"></i>
+                    <span>删除</span>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
         </template>
       </el-table-column>
@@ -41,8 +67,6 @@
 <script setup lang='ts'>
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import Menu from '@/components/common/menus/Menu.vue';
-import EditMenu from '@/components/common/menus/EditMenu.vue';
-import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import DetailMenu from '@/components/common/menus/DetailMenu.vue';
 import { computed } from 'vue';
 import { useCommonStore } from '@/store/modules/common';
@@ -190,6 +214,47 @@ const onRemoveClick = (item: IStaff, index: number) => {
   }
   .h {
     visibility: hidden;
+  }
+  :deep(.el-dropdown-link) {
+    font-size: 12px;
+    color: #989898;
+    line-height: 23px;
+    cursor: pointer;
+
+    > i {
+      transform: rotateZ(90deg);
+      font-size: 14px;
+      vertical-align: -2px;
+      color: #989898;
+    }
+
+    &:hover {
+      color: #585858;
+    }
+    &[aria-expanded="true"] {
+      color: #585858;
+    }
+  }
+}
+
+</style>
+
+<style lang="scss">
+.mp-stall-manage-table-menu--drop-down-wrap {
+  > li {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+
+    > i {
+      margin-right: 8px;
+    }
+
+    &:not(.is-disabled) {
+      i.icon-delete {
+        color: #ff3769;
+      }
+    }
   }
 }
 </style>

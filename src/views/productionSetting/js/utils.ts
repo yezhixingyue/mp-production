@@ -35,6 +35,9 @@ export const getSourceWork = (material: IMaterialSources, PrcessList) => {
         returnStr.push('其他生产线');
       }
       break;
+    case MaterialSourceTypeEnum._plateMaterialDefault:
+      returnStr.push('自身制版工序');
+      break;
     default:
       break;
   }

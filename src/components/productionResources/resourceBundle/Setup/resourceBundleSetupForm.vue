@@ -17,8 +17,8 @@
     <el-form-item label="满足方式：" prop="MatchType" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID">
       <el-radio-group v-model="ruleForm.MatchType">
         <el-radio v-for="it in MatchTypeMenuList" :key="it.ID" :label="it.ID"
-         :disabled="(ruleForm.Feature===resourceBundleFeatureEnumObj.main.ID || ruleForm.IsPlateMaterial)
-          && it.ID===resourceBundleMatchEnum.every.ID">{{it.Name}}</el-radio>
+        :disabled="(ruleForm.Feature===resourceBundleFeatureEnumObj.main.ID || ruleForm.IsPlateMaterial)
+          && it.ID===resourceBundleMatchEnum.every">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
       <!-- <span class="is-gray-light"><el-icon><WarningFilled /></el-icon>暂无数据，请先添加</span> -->
@@ -27,7 +27,7 @@
 
 <script setup lang='ts'>
 import {
-  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnum,
+  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj, resourceBundleMatchEnum,
 } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
@@ -49,7 +49,7 @@ const checkMaterialTypeGroups = (rule, value, callback) => {
 };
 
 const FeatureMenuList = getEnumList(resourceBundleFeatureEnumObj);
-const MatchTypeMenuList = getEnumList(resourceBundleMatchEnum);
+const MatchTypeMenuList = getEnumList(resourceBundleMatchEnumObj);
 
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = ref(new ResourceBundleClass(props.curEditItem));
@@ -72,13 +72,13 @@ const rules = reactive<FormRules>({
 });
 
 const onFeatureChange = (e: number | string) => {
-  if (e === resourceBundleFeatureEnumObj.main.ID && ruleForm.value.MatchType === resourceBundleMatchEnum.every.ID) {
+  if (e === resourceBundleFeatureEnumObj.main.ID && ruleForm.value.MatchType === resourceBundleMatchEnum.every) {
     ruleForm.value.MatchType = '';
   }
 };
 
 const onIsPlateMaterialChange = (bool: boolean) => {
-  if (bool && ruleForm.value.MatchType === resourceBundleMatchEnum.every.ID) {
+  if (bool && ruleForm.value.MatchType === resourceBundleMatchEnum.every) {
     ruleForm.value.MatchType = '';
   }
 };
