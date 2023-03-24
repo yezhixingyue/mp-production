@@ -304,7 +304,9 @@ export default {
     }
 
     function primaryClick() {
-      api.getMaterialTypeAttributeSave(Data.addAttributesForm).then(res => {
+      const Temp = { ...Data.addAttributesForm };
+      Temp.AttributeSelects = Temp.AttributeSelects.map((it, i) => ({ ...it, ...{ Sort: i } }));
+      api.getMaterialTypeAttributeSave(Temp).then(res => {
         if (res.data.Status === 1000) {
           const cb = () => {
             closeClick();
