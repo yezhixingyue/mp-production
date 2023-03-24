@@ -29,9 +29,9 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
 
   // Size = ''
 
-  Length: '' | number = ''
-
   Width: '' | number = ''
+
+  Height: '' | number = ''
 
   ColorList: PrintColorEnum[] = []
 
@@ -44,9 +44,9 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   MaterialSource: PlaceOrderMaterialSourceEnum | '' = ''
 
   /** 物料尺寸 - 非仓库领料需要传 */
-  MaterialLength: '' | number = ''
-
   MaterialWidth: '' | number = ''
+
+  MaterialHeight: '' | number = ''
 
   /** 上门取料地址 仅MaterialSource为上门取件时需要 */
   Address = {
@@ -244,8 +244,8 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
       }
     }
 
-    if (!checkIsPositiveInteger(this.Length, `${this._LineInstanceName}尺寸长`)) return false;
     if (!checkIsPositiveInteger(this.Width, `${this._LineInstanceName}尺寸宽`)) return false;
+    if (!checkIsPositiveInteger(this.Height, `${this._LineInstanceName}尺寸高`)) return false;
 
     if (this.ColorList.length === 0) {
       MpMessage.error({ title: '操作失败', msg: `请选择${this._LineInstanceName}印色` });
@@ -263,8 +263,8 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
     }
 
     if (this.MaterialSource !== PlaceOrderMaterialSourceEnum.warehouse) {
-      if (!checkIsPositiveInteger(this.MaterialLength, `${this._LineInstanceName}物料尺寸长`)) return false;
       if (!checkIsPositiveInteger(this.MaterialWidth, `${this._LineInstanceName}物料尺寸宽`)) return false;
+      if (!checkIsPositiveInteger(this.MaterialHeight, `${this._LineInstanceName}物料尺寸高`)) return false;
     }
 
     if (this.MaterialSource === PlaceOrderMaterialSourceEnum.homePickup) {

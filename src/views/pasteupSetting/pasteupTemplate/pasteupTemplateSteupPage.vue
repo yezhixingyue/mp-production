@@ -80,7 +80,7 @@
             <p class="hint">
               模板制作说明：版芯使用 PANTONE 804C 标记
             </p>
-            <div class="error-range">
+            <!-- <div class="error-range">
               <p v-if="Data.addPasteupTemplateFrom.LengthErrorRange">
                 宽允许误差：
                 + <el-input v-model.number="Data.addPasteupTemplateFrom.LengthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
@@ -92,17 +92,17 @@
                 + <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
                 - <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MinValue"/> mm
               </p>
-            </div>
+            </div> -->
             <p class="template-info" v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.PlateInfo.FilePath">
               <ul>
-                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length}}mm</span>
-                          <span>高:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width}}mm</span></li>
+                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width}}mm</span>
+                          <span>高:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Height}}mm</span></li>
                 <el-scrollbar max-height="100px">
                 <li v-for="(Area,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList" :key="index">
                 版芯：<span>X:{{Area.XCoordinate}}mm</span>
                 <span>Y:{{Area.YCoordinate}}mm</span>
-                <span>宽:{{Area.Length}}mm</span>
-                <span>高:{{Area.Width}}mm</span></li>
+                <span>宽:{{Area.Width}}mm</span>
+                <span>高:{{Area.Height}}mm</span></li>
                 </el-scrollbar>
               </ul>
             </p>
@@ -128,28 +128,28 @@
               <span class="handle"></span>
             </div>
             <ul v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.ModeItemList.length">
-              <li v-for="(ModeItemList,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList" :key="ModeItemList.key">
+              <li v-for="(ModeItem,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList" :key="ModeItem.key">
                 <span class="coord">
                   <span class="coord-item">
                     <span class="dark">x：</span>
-                    <el-input v-model.number="ModeItemList.XCoordinate"/> mm
+                    <el-input v-model.number="ModeItem.XCoordinate"/> mm
                   </span>
                   <span class="coord-item">
                     <span class="dark">y：</span>
-                    <el-input v-model.number="ModeItemList.YCoordinate"/> mm
+                    <el-input v-model.number="ModeItem.YCoordinate"/> mm
                   </span>
                 </span>
                 <span class="size">
                   <span class="dark">宽：</span>
-                  <el-input v-model.number="ModeItemList.Length"/>
+                  <el-input v-model.number="ModeItem.Width"/>
                   mm <i>X</i> <span class="dark">高：</span>
-                  <el-input v-model.number="ModeItemList.Width"/> mm
+                  <el-input v-model.number="ModeItem.Height"/> mm
                 </span>
                 <span class="row">
-                  <el-input v-model.number="ModeItemList.RowNumber"/> 行
+                  <el-input v-model.number="ModeItem.RowNumber"/> 行
                 </span>
                 <span class="col">
-                  <el-input v-model.number="ModeItemList.ColumnNumber"/> 列
+                  <el-input v-model.number="ModeItem.ColumnNumber"/> 列
                 </span>
                 <span class="handle">
                   <mp-button type="danger" link @click="delModeItem(index)">删除</mp-button>
@@ -222,8 +222,8 @@ const Data: DataType = reactive({
     ModeSizeAttribute: {
       PlateInfo: {
         FilePath: '',
-        Length: 0,
         Width: 0,
+        Height: 0,
         AreaList: [
           // {
           //   XCoordinate: 0,
@@ -239,8 +239,8 @@ const Data: DataType = reactive({
         {
           XCoordinate: null,
           YCoordinate: null,
-          Length: null,
           Width: null,
+          Height: null,
           RowNumber: null,
           ColumnNumber: null,
           key: '1',
@@ -278,8 +278,8 @@ function addModeItem() {
   Data.addPasteupTemplateFrom.ModeSizeAttribute?.ModeItemList.push({
     XCoordinate: null,
     YCoordinate: null,
-    Length: null,
     Width: null,
+    Height: null,
     RowNumber: null,
     ColumnNumber: null,
     key: Math.random().toString(16).slice(-10),
@@ -321,18 +321,18 @@ function verification() {
       return false;
     }
     // 按模板尺寸 没有输入允许误差
-    if (Data.addPasteupTemplateFrom.SizeType === 0
-    && (typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MaxValue !== 'number'
-    || typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MinValue !== 'number')) {
-      messageBox.failSingleError('保存失败', '请输入宽允许误差', () => null, () => null);
-      return false;
-    }
-    if (Data.addPasteupTemplateFrom.SizeType === 0
-    && (typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MaxValue !== 'number'
-    || typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MinValue !== 'number')) {
-      messageBox.failSingleError('保存失败', '请输入高允许误差', () => null, () => null);
-      return false;
-    }
+    // if (Data.addPasteupTemplateFrom.SizeType === 0
+    // && (typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MaxValue !== 'number'
+    // || typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MinValue !== 'number')) {
+    //   messageBox.failSingleError('保存失败', '请输入宽允许误差', () => null, () => null);
+    //   return false;
+    // }
+    // if (Data.addPasteupTemplateFrom.SizeType === 0
+    // && (typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MaxValue !== 'number'
+    // || typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MinValue !== 'number')) {
+    //   messageBox.failSingleError('保存失败', '请输入高允许误差', () => null, () => null);
+    //   return false;
+    // }
     // 按模板尺寸 并且按模位
     if (Data.addPasteupTemplateFrom.SizeType === 0 && Data.addPasteupTemplateFrom.ModeSizeAttribute?.UseMode) {
       // 验证模位合法性
@@ -341,26 +341,23 @@ function verification() {
         if (
           ModeItem.XCoordinate === null
             || ModeItem.YCoordinate === null
-            || !ModeItem.Length
             || !ModeItem.Width
+            || !ModeItem.Height
             || !ModeItem.RowNumber
             || !ModeItem.ColumnNumber
         ) {
           messageBox.failSingleError('保存失败', `请输入第${index + 1}行的数据`, () => null, () => null);
-          console.log('messageBoxmessageBoxmessageBox');
           return false;
         }
 
         const { AreaList } = Data.addPasteupTemplateFrom.ModeSizeAttribute ? Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo : { AreaList: [] };
         // 当前模位起点所在可拼版区域
-        const Area = AreaList.find(res => {
+        const Area = AreaList.find(area => {
           // 分别找到横轴和竖轴的起点是否都在此可拼版区域
-          const xinclude = Number(ModeItem.XCoordinate)
-              >= Number(res.XCoordinate) && Number(ModeItem.XCoordinate)
-              <= Number(res.XCoordinate) + Number(res.Length);
-          const yinclude = Number(ModeItem.YCoordinate)
-              >= Number(res.YCoordinate) && Number(ModeItem.YCoordinate)
-              <= Number(res.YCoordinate) + Number(res.Width);
+          const xinclude = Number(ModeItem.XCoordinate) >= Number(area.XCoordinate)
+           && Number(ModeItem.XCoordinate) <= Number(area.XCoordinate) + Number(area.Width);
+          const yinclude = Number(ModeItem.YCoordinate) >= Number(area.YCoordinate)
+           && Number(ModeItem.YCoordinate) <= Number(area.YCoordinate) + Number(area.Height);
           return xinclude && yinclude;
         });
         // 没找到说明起点不在可拼版区域
@@ -369,8 +366,8 @@ function verification() {
           return false;
         }
         // 横轴结束点是否在可拼版区域
-        const xEndInclude = Number(ModeItem.XCoordinate) + ModeItem.Length * ModeItem.ColumnNumber <= Number(Area.XCoordinate) + Number(Area.Length);
-        const yEndInclude = Number(ModeItem.YCoordinate) + ModeItem.Width * ModeItem.RowNumber <= Number(Area.YCoordinate) + Number(Area.Width);
+        const xEndInclude = Number(ModeItem.XCoordinate) + ModeItem.Width * ModeItem.ColumnNumber <= Number(Area.XCoordinate) + Number(Area.Width);
+        const yEndInclude = Number(ModeItem.YCoordinate) + ModeItem.Height * ModeItem.RowNumber <= Number(Area.YCoordinate) + Number(Area.Height);
         if (!xEndInclude) {
           messageBox.failSingleError('保存失败', `第${index + 1}行数据宽度超出可拼版区域`, () => null, () => null);
           return false;
@@ -415,8 +412,8 @@ function handlleUploaded(e) {
     if (Data.addPasteupTemplateFrom.ModeSizeAttribute) {
       Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath = e.Data.FilePath;
       Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList = e.Data.AreaList;
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Length = e.Data.Length;
       Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width = e.Data.Width;
+      Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Height = e.Data.Height;
     }
   } else {
     messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
@@ -447,14 +444,14 @@ onMounted(() => {
     Data.addPasteupTemplateFrom.ModeSizeAttribute = {
       PlateInfo: {
         FilePath: '',
-        Length: 0,
         Width: 0,
+        Height: 0,
         AreaList: [
           {
             XCoordinate: 0,
             YCoordinate: 0,
-            Length: 0,
             Width: 0,
+            Height: 0,
           },
         ],
       },
@@ -464,8 +461,8 @@ onMounted(() => {
         {
           XCoordinate: null,
           YCoordinate: null,
-          Length: null,
           Width: null,
+          Height: null,
           RowNumber: null,
           ColumnNumber: null,
           key: '1',

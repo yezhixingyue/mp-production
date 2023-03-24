@@ -1,22 +1,22 @@
 interface AreaList {
   XCoordinate: number|null|'',
   YCoordinate: number|null|'',
-  Length: number|null|'',
   Width: number|null|'',
+  Height: number|null|'',
 }
 interface ModeItemList {
   XCoordinate: number|null|'',
   YCoordinate: number|null|'',
-  Length: number|null|'',
   Width: number|null|'',
+  Height: number|null|'',
   RowNumber: number|null|'',
   ColumnNumber: number|null|'',
   key: string,
 }
 interface PlateInfo {
   FilePath: string,
-  Length: number,
   Width: number,
+  Height: number,
   AreaList: AreaList[],
 }
 interface ModeSizeAttribute {

@@ -22,9 +22,9 @@
         <li class="size">
           <span class="title">尺寸:</span>
           <div class="content">
-            <el-input maxlength="9" v-model.number="itemData.Length"></el-input>
-            <i>x</i>
             <el-input maxlength="9" v-model.number="itemData.Width"></el-input>
+            <i>x</i>
+            <el-input maxlength="9" v-model.number="itemData.Height"></el-input>
             <em>mm</em>
           </div>
         </li>
@@ -68,9 +68,9 @@
         <li class="size" v-if="itemData.MaterialSource!==''&&itemData.MaterialSource!==PlaceOrderMaterialSourceEnum.warehouse">
           <span class="title">物料尺寸:</span>
           <div class="content">
-            <el-input maxlength="9" v-model.number="itemData.MaterialLength"></el-input>
-            <i>x</i>
             <el-input maxlength="9" v-model.number="itemData.MaterialWidth"></el-input>
+            <i>x</i>
+            <el-input maxlength="9" v-model.number="itemData.MaterialHeight"></el-input>
             <em>mm</em>
           </div>
         </li>
@@ -214,7 +214,7 @@ const onSemiFinisiedRemoveClick = () => {
           width: 60px;
           position: relative;
           &::before {
-            content: '长';
+            content: '宽';
             position: absolute;
             top: -18px;
             line-height: 16px;
@@ -222,7 +222,7 @@ const onSemiFinisiedRemoveClick = () => {
             color: #888;
           }
           &:last-of-type::before {
-            content: '宽';
+            content: '高';
           }
         }
         .content {

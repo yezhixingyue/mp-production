@@ -11,7 +11,7 @@
       <li class="summary">
         <span class="title is-pink" v-if="isCombineLine">{{ item.Number }}{{ item.Unit }}</span>
         <span class="title">
-          {{ item.Length }}×{{ item.Width }}mm
+          {{ item.Width }}×{{ item.Height }}mm
         </span>
         <span class="title">{{ item.PrintSide === PrintSideEnum.double ? '双面印' : '单面印' }}</span>
         <span class="title">印色：{{ getColorDisplayContent(item.ColorList) }}</span>
@@ -25,7 +25,7 @@
       <li>
         <span class="mr-2">
           {{getEnumNameByID(item.MaterialSource, PlaceOrderMaterialSourceEnumList)}}
-          <template v-if="item.MaterialSource!==PlaceOrderMaterialSourceEnum.warehouse">(物料尺寸：{{ item.MaterialLength }}×{{ item.MaterialWidth }}mm)</template>
+          <template v-if="item.MaterialSource!==PlaceOrderMaterialSourceEnum.warehouse">(物料尺寸：{{ item.MaterialWidth }}×{{ item.MaterialHeight }}mm)</template>
           {{item.MaterialSource===PlaceOrderMaterialSourceEnum.homePickup ? ':' : ''}}
         </span>
       </li>
