@@ -394,8 +394,8 @@ function savePasteupTemplateSize() {
       Data.addPasteupTemplateFrom.LengthErrorRange = null;
       Data.addPasteupTemplateFrom.WidthErrorRange = null;
     }
-    api.getImpositionTemmplateSizeSave(Data.addPasteupTemplateFrom).then(res => {
-      if (res.data.Status === 1000) {
+    api.getImpositionTemmplateSizeSave(Data.addPasteupTemplateFrom).then(resp => {
+      if (resp.data.Status === 1000) {
         const cb = () => {
           PasteupSettingStore.getImpositionTemmplateList();
           setStorage();
@@ -421,14 +421,18 @@ function handlleUploaded(e) {
   Data.uploadBtnLoading = false;
 }
 function beforeUpload(file) {
-  const isLt15M = file.size / 1024 / 1024 < 15;
-  if (!isLt15M) {
+  const maxMbit = 15; // 文件尺寸限制 最大可上传多少兆的文件
+
+  const isLessthenMax = file.size < maxMbit * 1024 * 1024;
+
+  if (!isLessthenMax) {
     // 文件过大上传失败
-    messageBox.failSingleError('上传失败', '上传文件过大，请上传小于20M的文件', () => null, () => null);
+    messageBox.failSingleError('上传失败', `上传文件过大，请上传小于${maxMbit}M的文件`, () => null, () => null);
   } else {
     Data.uploadBtnLoading = true;
   }
-  return isLt15M;
+
+  return isLessthenMax;
 }
 
 onMounted(() => {
