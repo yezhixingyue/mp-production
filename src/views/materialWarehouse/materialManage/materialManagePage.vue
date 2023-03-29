@@ -92,7 +92,7 @@
     <DialogContainerComp
     :title="`${Data.editTypeID ? '修改' : '添加'}物料`"
     :visible='Data.addMaterialManageShow'
-    :width="660"
+    :width="700"
     :primaryClick="addMaterialManagePrimaryClick"
     :closeClick="addMaterialManageCloseClick"
     :closed="addMaterialManageClosed"
@@ -102,7 +102,7 @@
         <el-scrollbar>
       <div class="add-material-manage-dialog">
 
-        <el-form :model="Data.addMaterialManageForm" label-width="120px">
+        <el-form :model="Data.addMaterialManageForm" label-width="200px">
           <el-form-item :label="`类型：`">
             <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
           </el-form-item>
@@ -161,7 +161,7 @@
                   placement="top"
                   :disabled="size.SizeName.length<7"
                 >
-                {{size.SizeName}}{{size.SizeLength}}x{{size.SizeWidth}}mm
+                {{size.SizeName}}（{{size.SizeLength}}x{{size.SizeWidth}}mm）
                 </el-tooltip>
             </el-checkbox>
           </el-checkbox-group>
@@ -671,6 +671,7 @@ export default {
         margin: 0 auto;
         margin-bottom: 20px;
         width: 370px;
+        margin-left: 65px;
         &.attributes {
 
           .el-input, .el-select, .el-input-number{
@@ -689,12 +690,14 @@ export default {
       .el-checkbox-group{
         width: 100%;
         .el-checkbox{
-          max-width: 580px;
+          max-width: 213px;
+          min-width: 213px;
+          margin-right: 0px;
           .el-checkbox__label{
             display: inline-block;
             width: calc(100% - 14px - 10px);
             .el-only-child__content{
-              max-width: 580px;
+              max-width: 200px;
               display: inline-block;
               overflow: hidden;
               white-space: nowrap;

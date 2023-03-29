@@ -43,16 +43,15 @@
     <DialogContainerComp
     :title="'批量生成'"
     :visible='Data.dialogShow'
-    :width="660"
+    :width="700"
     :closeClick="closeClick"
     :closed="closed"
     >
     <template #default>
       <div class="add-Generative-Rule-dialog">
         <el-scrollbar>
-        <el-form :model="Data.generativeRule" label-width="180px">
+        <el-form :model="Data.generativeRule" label-width="300px">
           <el-form-item :label="`${item.AttributeName}：`"
-          :class="item.IsRequired?'form-item-required':''"
           v-for="(item) in Data.generativeRule.Attributes" :key="item.AttributeID">
 
             <el-checkbox-group
@@ -69,9 +68,17 @@
             <template v-else>
               <el-checkbox
               v-for="city in item.AttributeSelects"
-              :key="city.SelectID" :label="city.SelectID">{{
-                city.SelectItemValue
-              }}</el-checkbox>
+              :key="city.SelectID" :label="city.SelectID">
+              <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  :content="city.SelectItemValue"
+                  placement="top"
+                  :disabled="city.SelectItemValue.length<7"
+                >
+                {{city.SelectItemValue}}
+              </el-tooltip>
+              </el-checkbox>
             </template>
             <template v-if="item.IsCustom">
               <p class="custom">
@@ -88,14 +95,11 @@
             </template>
 
             </el-checkbox-group>
-            <template v-if="item.IsCustom">
-
-            </template>
           </el-form-item>
 
-          <el-divider />
+          <el-divider v-if="MaterialWarehouseStore.MaterialTypeSizeAllList.length"/>
 
-          <el-form-item label="可选尺寸：" class="form-item-required select-size"
+          <el-form-item label="可选尺寸：" class="select-size"
           v-if="MaterialWarehouseStore.MaterialTypeSizeAllList.length">
           <p>
             <el-checkbox
@@ -112,11 +116,11 @@
                 <el-tooltip
                   class="box-item"
                   effect="dark"
-                  :content="`${size.SizeName}${size.SizeLength}x${size.SizeWidth}mm`"
+                  :content="`${size.SizeName}\xa0${size.SizeLength}x${size.SizeWidth}mm`"
                   placement="top"
                   :disabled="size.SizeName.length<7"
                 >
-                {{size.SizeName}}{{size.SizeLength}}x{{size.SizeWidth}}mm
+                {{size.SizeName}} （{{size.SizeLength}}x{{size.SizeWidth}}mm）
                 </el-tooltip>
               </el-checkbox>
             </el-checkbox-group>
@@ -647,21 +651,59 @@ export default {
     max-height: 500px;
     .el-form{
       max-height: 500px;
-      .select-size{
-        .el-checkbox-group{
-          width: 100%;
-          .el-checkbox{
-            max-width: 400px;
-            .el-checkbox__label{
-              display: inline-block;
-              width: calc(100% - 14px - 10px);
-              .el-only-child__content{
-                max-width: 400px;
-                display: inline-block;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
+      padding-left: 20px;
+      .el-form-item{
+        flex-direction: column;
+        position: relative;
+        &.select-size{
+          p{
+            position: absolute;
+            left: 118px;
+            top: -30px;
+          }
+          .el-checkbox-group{
+            .el-checkbox{
+              max-width: 213px;
+              min-width: 213px;
+              margin-right: 0px;
+              .el-checkbox__label{
+                .el-only-child__content{
+                  max-width: 200px;
+                }
               }
+            }
+          }
+        }
+        .el-form-item__label{
+          justify-content: flex-start;
+          position: relative;
+          padding-left: 13px;
+          &::after{
+            content: "";
+            position: absolute;
+            width: 3px;
+            height: 15px;
+            left: 0;
+            top: 9px;
+            background-color: #26bcf9;
+          }
+        }
+      }
+      .el-checkbox-group{
+        width: 100%;
+        .el-checkbox{
+          max-width: 108px;
+          min-width: 108px;
+          margin-right: 10px;
+          .el-checkbox__label{
+            display: inline-block;
+            width: calc(100% - 14px - 10px);
+            .el-only-child__content{
+              max-width: 95px;
+              display: inline-block;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
             }
           }
         }
