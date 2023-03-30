@@ -66,19 +66,19 @@
               </el-checkbox>
             </template>
             <template v-else>
-              <el-checkbox
-              v-for="city in item.AttributeSelects"
-              :key="city.SelectID" :label="city.SelectID">
-              <el-tooltip
-                  class="box-item"
-                  effect="dark"
-                  :content="city.SelectItemValue"
-                  placement="top"
-                  :disabled="city.SelectItemValue.length<7"
-                >
-                {{city.SelectItemValue}}
-              </el-tooltip>
-              </el-checkbox>
+              <template v-for="city in item.AttributeSelects" :key="city.SelectID" >
+                <el-checkbox v-if="typeof city === 'object'" :label="city.SelectID">
+                <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    :content="city.SelectItemValue"
+                    placement="top"
+                    :disabled="city.SelectItemValue.length<7"
+                  >
+                  {{city.SelectItemValue}}
+                </el-tooltip>
+                </el-checkbox>
+              </template>
             </template>
             <template v-if="item.IsCustom">
               <p class="custom">
@@ -116,11 +116,11 @@
                 <el-tooltip
                   class="box-item"
                   effect="dark"
-                  :content="`${size.SizeName}\xa0${size.SizeLength}x${size.SizeWidth}mm`"
+                  :content="size.SizeDescribe"
                   placement="top"
-                  :disabled="size.SizeName.length<7"
+                  :disabled="size.SizeDescribe.length<15"
                 >
-                {{size.SizeName}} （{{size.SizeLength}}x{{size.SizeWidth}}mm）
+                {{size.SizeDescribe}}
                 </el-tooltip>
               </el-checkbox>
             </el-checkbox-group>
@@ -161,12 +161,16 @@ interface item {
 interface AttributesListType {
   [id:string]: item[]
 }
+interface IAttributeSelects {
+  SelectID:string
+  SelectItemValue:string
+}
 interface AttributesType {
   IsCustomValue: string,
   actionsValue: [],
   AttributeID: string,
   AttributeName: string,
-  AttributeSelects: string[],
+  AttributeSelects: string[]|IAttributeSelects[],
   IsCustom: boolean,
   selfDefiningValueID: string,
   AttributeUnit: string,

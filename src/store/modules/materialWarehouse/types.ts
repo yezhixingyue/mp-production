@@ -27,6 +27,7 @@ export interface MaterialTypeSizeType {
   SizeID: string,
   SizeName: string,
   SizeCode: string,
+  SizeDescribe: string,
   SizeLength: number,
   SizeWidth: number,
   SizeLengthIsChange: boolean,

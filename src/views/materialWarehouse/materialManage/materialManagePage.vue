@@ -59,15 +59,8 @@
               </template>
             </template> -->
           </el-table-column>
-          <el-table-column prop="可选尺寸" label="可选尺寸"
+          <el-table-column prop="SizeDescribe" label="可选尺寸"
           show-overflow-tooltip min-width="608">
-            <template #default="scope">
-              <template v-for="(it,i) in scope.row.MaterialSizes">
-                {{it.SizeName}}
-                {{it.SizeWidth}}x{{it.SizeLength}}
-                {{i<scope.row.MaterialSizes.length-1?'mm、':'mm'}}
-              </template>
-            </template>
           </el-table-column>
           <el-table-column prop="操作" label="操作" min-width="238">
             <template #default="scope">
@@ -157,11 +150,11 @@
                 <el-tooltip
                   class="box-item"
                   effect="dark"
-                  :content="`${size.SizeName}${size.SizeLength}x${size.SizeWidth}mm`"
+                  :content="size.SizeDescribe"
                   placement="top"
-                  :disabled="size.SizeName.length<7"
+                  :disabled="size.SizeDescribe.length<15"
                 >
-                {{size.SizeName}}（{{size.SizeLength}}x{{size.SizeWidth}}mm）
+                {{size.SizeDescribe}}
                 </el-tooltip>
             </el-checkbox>
           </el-checkbox-group>
