@@ -1,5 +1,4 @@
 <template>
-<!-- <span> -->
   <el-input-number v-if="!InputContent" placeholder="请输入" :controls="false"
   v-model="inpVal" :step="0.01"/>
   <!-- <el-input type="number" placeholder="请输入" v-if="!InputContent" v-model="inpVal" /> -->
@@ -20,10 +19,9 @@
       :value="item.value">
     </el-option>
   </el-select>
-<!-- </span> -->
 </template>
 <script lang='ts'>
-import { computed, WritableComputedRef } from 'vue';
+import { computed } from 'vue';
 
 export default {
   props: {
@@ -50,27 +48,34 @@ export default {
     },
   },
   setup(props) {
-    const inpVal:WritableComputedRef<number> = computed({
+    const inpVal = computed({
       get() {
-        return props.PropValue as number;
+        if (props.InputContent) {
+          return String(props.PropValue === null ? '' : props.PropValue);
+        }
+        return props.PropValue;
       },
       set(value) {
-        props.UpdateData(value);
+        if (value === '00000000-0000-0000-0000-000000000000') {
+          props.UpdateData('');
+        } else {
+          props.UpdateData((value));
+        }
       },
     });
     const getNumberValueList = (valueList) => {
       const reg = /\s|,|，/;
       return valueList.split(reg).filter(it => it).map(it => ({
-        label: Number(it),
-        value: Number(it),
+        label: String(it),
+        value: String(it),
       }));
     };
     const options = computed(() => {
       if (!props.InputContent) return [];
       if (!props.IsRequired) {
         return [{
-          label: '无',
-          value: null,
+          label: '请选择',
+          value: '00000000-0000-0000-0000-000000000000',
         }, ...getNumberValueList(props.InputContent)];
       }
       return getNumberValueList(props.InputContent);

@@ -20,8 +20,6 @@
               <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
-
-          <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
 
     </main>
@@ -41,6 +39,7 @@
     :primaryClick="primaryClick"
     :closeClick="closeClick"
     :closed="closeedClick"
+    :width="500"
     >
     <div class="add-material-classify ">
       <span class="required">分类名称：</span>
@@ -187,6 +186,7 @@ export default {
   flex-direction: column;
   height: 100%;
   .add-material-classify{
+    padding: 20px 0;
     display: flex;
     justify-content: center;
     .el-input{

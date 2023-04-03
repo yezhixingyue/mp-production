@@ -8,16 +8,16 @@
           <mp-button
           type="primary" @click="batchAddMaterialManage">批量生成</mp-button>
         </div>
-            <SearchInputComp
-              :word='Data.getMaterialManageData.KeyWords'
-              title="关键词搜索"
-              placeholder="请输入搜索关键词"
-              resetWords="清空所有筛选条件"
-              :changePropsFunc="(words) => Data.getMaterialManageData.KeyWords = words"
-              :requestFunc='getMaterialManageList'
-              @reset='clearCondition'
-              >
-            </SearchInputComp>
+        <SearchInputComp
+          :word='Data.getMaterialManageData.KeyWords'
+          title="关键词搜索"
+          placeholder="请输入搜索关键词"
+          resetWords="清空所有筛选条件"
+          :changePropsFunc="(words) => Data.getMaterialManageData.KeyWords = words"
+          :requestFunc='getMaterialManageList'
+          @reset='clearCondition'
+          >
+        </SearchInputComp>
       </div>
         <div class="top-main">
           <RadioGroupComp
@@ -44,20 +44,6 @@
           <el-table-column prop="Code" label="编码" min-width="157"/>
           <el-table-column prop="AttributeDescribe" label="物料"
           show-overflow-tooltip min-width="192">
-            <!-- <template #default="scope">
-              <template v-for="(item, index) in scope.row.MaterialAttributes"
-              :key="item.AttributeID">
-                <template v-if="item.NumericValue">
-                  <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                </template>
-                <template v-else>
-                  <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                </template>
-                <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                  {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
-                </template>
-              </template>
-            </template> -->
           </el-table-column>
           <el-table-column prop="SizeDescribe" label="可选尺寸"
           show-overflow-tooltip min-width="608">
@@ -111,7 +97,6 @@
           v-for="(item, index) in Data.addMaterialManageForm.MaterialRelationAttributes"
           :key="item.AttributeID" :prop="['NumericValue','SelectID','InputSelectValue']">
           <p v-if="item.AttributeType === 1">
-
             <NumberTypeItemComp
               :PropValue="item.NumericValue"
               :InputContent="item.RegularQuantity"
@@ -120,13 +105,15 @@
               :IsRequired="item.IsRequired"
               :UpdateData="(newVal) => item.NumericValue = newVal">
             </NumberTypeItemComp>
-            {{item.AttributeUnit}}
+            <span>{{item.AttributeUnit}}</span>
           </p>
             <OptionTypeItemComp
               v-else
               :PropValue="item.InputSelectValue
               ||item.SelectID"
-              :options="item.IsRequired?item.AttributeSelects : [{SelectID:'', SelectItemValue:'无'}, ...item.AttributeSelects]"
+              :options="item.IsRequired?item.AttributeSelects : [
+                {SelectID:'00000000-0000-0000-0000-000000000000', SelectItemValue:`请选择`},
+                ...item.AttributeSelects]"
               :Allow="item.IsCustom"
               :UpdateData="(newVal) => UpdateData(item.AttributeSelects || [],newVal,index)">
             </OptionTypeItemComp>
@@ -409,7 +396,6 @@ export default {
         // 数字输入或选择
         if (item.AttributeType === 1 && item.IsRequired && (!item.NumericValue && item.NumericValue !== 0)) {
           msg.push(item.AttributeName);
-          // messageBox.failSingleError('保存失败', `请输入${item.AttributeName}`, () => null, () => null);
           // 选择项选择未填写
         } else if (
           // 是选择项并且是必填项
@@ -417,7 +403,6 @@ export default {
           // 没选择并且没输入
           && !item.SelectID && !item.InputSelectValue) {
           msg.push(item.AttributeName);
-          // messageBox.failSingleError('保存失败', `请选择${item.AttributeName}`, () => null, () => null);
         }
       });
       if (!Data.addMaterialManageForm.MaterialCode) {
@@ -429,10 +414,6 @@ export default {
         .addMaterialManageForm.SizeIDS.length) {
         messageBox.failSingleError('保存失败', '请选择可选尺寸属性', () => null, () => null);
       } else {
-        // const temp = Data.addMaterialManageForm;
-        // temp.MaterialRelationAttributes = temp.MaterialRelationAttributes
-        //   .filter(res => !(res.NumericValue === null) || !!res.SelectID || !!res.InputSelectValue);
-
         // 发送请求
         api.getMaterialSave({
           TypeID: Data.editTypeID || Data.getMaterialManageData.TypeID,
@@ -486,8 +467,8 @@ export default {
             } else {
               temp = {
                 AttributeID: res.AttributeID,
-                NumericValue: temp.NumericValue || null,
-                SelectID: temp.SelectID,
+                NumericValue: temp.NumericValue,
+                SelectID: temp.SelectID === '00000000-0000-0000-0000-000000000000' ? '' : temp.SelectID,
                 InputSelectValue: temp.InputSelectValue,
                 AttributeName: res.AttributeName,
                 AttributeType: res.AttributeType,
@@ -552,6 +533,13 @@ export default {
     }
     function UpdateData(AttributeSelects, newVal, index) {
       const temp = AttributeSelects.find(res => res.SelectID === newVal);
+      if (newVal === '00000000-0000-0000-0000-000000000000' || newVal === null || newVal === '') {
+        Data.addMaterialManageForm
+          .MaterialRelationAttributes[index].SelectID = '';
+        Data.addMaterialManageForm
+          .MaterialRelationAttributes[index].InputSelectValue = '';
+        return;
+      }
       if (temp) {
         Data.addMaterialManageForm
           .MaterialRelationAttributes[index].SelectID = newVal;
@@ -563,7 +551,6 @@ export default {
         Data.addMaterialManageForm
           .MaterialRelationAttributes[index].InputSelectValue = newVal;
       }
-      return true;
     }
 
     function twoSelectChange(levelData) {
@@ -574,10 +561,6 @@ export default {
         getMaterialManageList();
       }
     }
-    // watch(() => twoSelecValue.value.level1Val, (newValue) => {
-    //   MaterialWarehouseStore.getMaterialTypeAll({ categoryID: newValue as number });
-    // });
-
     onActivated(() => {
       const bool = sessionStorage.getItem('saveGenerative') === 'true';
       if (!bool) return;
@@ -666,9 +649,15 @@ export default {
         width: 370px;
         margin-left: 65px;
         &.attributes {
-
           .el-input, .el-select, .el-input-number{
             width: 150px;
+          }
+          p{
+            display: flex;
+            >span{
+              margin-left: 5px;
+              white-space: nowrap;
+            }
           }
         }
       }

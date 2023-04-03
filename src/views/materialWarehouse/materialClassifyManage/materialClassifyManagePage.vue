@@ -28,12 +28,6 @@
           show-overflow-tooltip min-width="83" />
           <el-table-column prop="OutInUnitDescribe" label="出入库单位"
           show-overflow-tooltip min-width="378" />
-          <!-- <el-table-column prop="name" label="非库存物料"
-          show-overflow-tooltip min-width="98">
-            <template #default="scope">
-              {{!scope.row.IsStock?'非库存物料':''}}
-            </template>
-          </el-table-column> -->
           <el-table-column prop="name" label="操作" min-width="428">
             <template #default="scope">
               <mp-button type="primary" link
@@ -50,7 +44,6 @@
               @click="delMaterialClassify(scope.row)">删除</mp-button>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="address" label="Address" /> -->
         </el-table>
     </main>
     <footer>
@@ -92,14 +85,9 @@
           <el-form-item label="编码：" class="form-item-required">
             <el-input :maxlength="4" v-model="Data.materialClassifyDialogForm.TypeCode" />
           </el-form-item>
-          <!-- <el-form-item >
-            <el-checkbox v-model="IsStock"
-            label="非库存物料"/>
-          </el-form-item> -->
         </el-form>
         <div class="Prompt">
           <p>1.编码由 1 到 4 位的英文字母或数字组成，方便记忆，在入库搜索物料时输入编码， 可快速定位物料，类似于超市称重时输入的物品编号</p>
-          <!-- <p>2.非库存物料指该物料仅用于生产过程，但无需进行出入库操作， 例如：外协工厂加工好的烫印版、模切版</p> -->
         </div>
       </div>
     </template>
@@ -110,15 +98,23 @@
     :visible='Data.brandShow'
     :width="440"
     :primaryClick="brandPrimaryClick"
-    :closeClick="brandCloseClick"
-    >
+    :closeClick="brandCloseClick">
     <template #default>
       <div class="set-brand-dialog">
         <el-radio-group v-model="Data.setBrandForm.AttributeID">
           <el-radio :label="0" size="large">无</el-radio>
           <el-radio :label="item.AttributeID" size="large"
-          v-for="item in MaterialWarehouseStore.selectMaterialTypeAttribute"
-          :key="item.AttributeID">{{item.AttributeName}}</el-radio>
+            v-for="item in MaterialWarehouseStore.selectMaterialTypeAttribute"
+            :key="item.AttributeID">
+            <el-tooltip
+              class="box-item"
+              effect="dark"
+              :content="item.AttributeName"
+              placement="top"
+              :disabled="item.AttributeName.length<7">
+              {{item.AttributeName}}
+            </el-tooltip>
+          </el-radio>
         </el-radio-group>
         <div class="Prompt">
           <p>品牌属性仅允许设置一次，请谨慎操作</p>
@@ -321,11 +317,6 @@ export default {
       Data.brandShow = true;
       Data.setBrandForm.TypeID = typeID;
       MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(typeID);
-      // api.getMaterialTypeAttributeAll({ TypeID: typeID }).then((res:any) => {
-      //   if (res.data.Status === 1000) {
-      //     Data.setBrandAttributes = res.data.Data.filter((it) => it.AttributeType === 2);
-      //   }
-      // });
     }
 
     function brandPrimaryClick() {
@@ -344,14 +335,6 @@ export default {
       }, () => null);
     }
 
-    // function getMaterialCategoryList() {
-    //   api.getMaterialCategoryAll({}).then(res => {
-    //     if (res.data.Status === 1000) {
-    //       Data.CategoryList = res.data.Data as tableItem[];
-    //     }
-    //     console.log(res);
-    //   });
-    // }
     onActivated(() => {
       const bool = sessionStorage.getItem('updataMaterialClassifyManagePage') === 'true';
       if (!bool) return;
@@ -443,7 +426,20 @@ export default {
   .set-brand-dialog{
     .el-radio-group{
       label{
-        width: 100px;
+        width: 130px;
+        margin-right: 0;
+        .el-radio__label{
+          display: inline-block;
+          width: calc(100% - 14px - 10px);
+          line-height: 1em;
+          .el-only-child__content{
+            width: 100%;
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
       }
     }
     .Prompt{

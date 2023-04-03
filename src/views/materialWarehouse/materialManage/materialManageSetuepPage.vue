@@ -52,11 +52,10 @@
         <el-scrollbar>
         <el-form :model="Data.generativeRule" label-width="300px">
           <el-form-item :label="`${item.AttributeName}：`"
+          :class="{'form-item-required': item.IsRequired}"
           v-for="(item) in Data.generativeRule.Attributes" :key="item.AttributeID">
 
-            <el-checkbox-group
-              v-model="item.actionsValue"
-            >
+            <el-checkbox-group v-model="item.actionsValue">
             <template v-if="item.AttributeType === 1">
               <el-checkbox
               v-for="city in item.AttributeSelects"
@@ -86,7 +85,9 @@
                     自定义
                 </el-checkbox>
                 <template v-if="getCustominp(item)">
-                  <el-input v-model="item.selfDefiningValue" style="width:100px;margin:0 10px"/>
+                  <!-- 如果是数字 -->
+                  <el-input-number :controls="false" v-if="item.AttributeType === 1" v-model="item.selfDefiningValue" style="width:100px;margin:0 10px"/>
+                  <el-input v-else v-model="item.selfDefiningValue" style="width:100px;margin:0 10px"/>
                   <span class="unit">
                     {{item.AttributeUnit}}
                   </span>
@@ -220,31 +221,10 @@ export default {
       TypeID: '',
       CategoryID: '',
       BatchAddList: [
-        // {
-        //   ID: 0,
-        //   MaterialRelationAttributes: [
-        //     {
-        //       AttributeID: 0,
-        //       NumericValue: 'string',
-        //       SelectID: 0,
-        //       InputSelectValue: 'string',
-        //     },
-        //   ],
-        //   MaterialCode: 'string',
-        //   SizeIDS: [
-        //     0,
-        //   ],
-        //   BrandID: 0,
-        // },
       ],
       generativeRule: {
         SizeIDS: [],
         Attributes: [
-          // {
-          //   selfDefiningValueID: '',
-          //   selfDefiningValue: '',
-          //   actionsValue: [],
-          // },
         ],
       },
     });
@@ -339,10 +319,6 @@ export default {
       // Data.generativeRule.Attributes = [];
     }
 
-    // const year = ['2019', '2020'];
-    // const color = ['白色', '灰色', '蓝色'];
-    // const size = ['S', 'M', 'L'];
-    // const list = [year, color, size];
     // 求笛卡尔积
     function calcDescartes(array) {
       if (array.length < 2) return array[0] || [];
@@ -582,9 +558,11 @@ export default {
   }
   >main{
     flex: 1;
+    height: calc(100% - 108px - 50px);
     // margin-top: 10px;
     background-color: #fff;
-      >.el-scrollbar{
+    >.el-scrollbar{
+        box-shadow: 2px 0px 5px #DAE3FF;
         flex: 1;
         padding: 0 40px;
         .el-scrollbar__view{
