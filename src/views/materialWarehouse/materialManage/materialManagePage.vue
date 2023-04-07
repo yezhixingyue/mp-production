@@ -391,6 +391,7 @@ export default {
     };
     function addMaterialManagePrimaryClick() {
       const msg:string[] = [];
+      const NoNumber:string[] = [];
       // 表单验证
       Data.addMaterialManageForm.MaterialRelationAttributes.forEach((item) => {
         // 数字输入或选择
@@ -404,9 +405,14 @@ export default {
           && !item.SelectID && !item.InputSelectValue) {
           msg.push(item.AttributeName);
         }
+        if (item.AttributeType === 1 && Number.isNaN(Number(item.NumericValue))) {
+          NoNumber.push(item.AttributeName);
+        }
       });
       if (!Data.addMaterialManageForm.MaterialCode) {
         messageBox.failSingleError('保存失败', '请输入编码', () => null, () => null);
+      } else if (NoNumber.length) {
+        messageBox.failSingleError('保存失败', `${NoNumber.join('、')}为数字值，请输入数字`, () => null, () => null);
       } else if (msg.length) {
         messageBox.failSingleError('保存失败', `请输入或选择：${msg.join('、')}属性`, () => null, () => null);
       } else if (MaterialWarehouseStore

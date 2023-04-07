@@ -474,7 +474,7 @@ export default {
       if (!sizeId) return '';
       const temp = MaterialWarehouseStore
         .MaterialTypeSizeAllList.find(res => res.SizeID === sizeId);
-      return `${temp?.SizeName}${temp?.SizeLength}x${temp?.SizeWidth}mm`;
+      return temp?.SizeDescribe;
     }
 
     function saveGenerativeRule() {
@@ -564,7 +564,8 @@ export default {
     >.el-scrollbar{
         box-shadow: 2px 0px 5px #DAE3FF;
         flex: 1;
-        padding: 0 40px;
+        box-sizing: border-box;
+        padding: 10px 40px;
         .el-scrollbar__view{
           display: flex;
           flex-wrap: wrap;

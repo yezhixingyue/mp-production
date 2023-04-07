@@ -20,14 +20,14 @@
               {{scope.row.SizeCode}}
             </template>
           </el-table-column>
-          <el-table-column prop="SizeLength" label="长度" min-width="287">
-            <template #default="scope">
-              {{scope.row.SizeLength}}mm{{scope.row.SizeLengthIsChange?'（长度可加工）':''}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="SizeWidth" label="宽度" min-width="287">
+          <el-table-column prop="" label="宽度" min-width="287">
             <template #default="scope">
               {{scope.row.SizeWidth}}mm{{scope.row.SizeWidthIsChange?'（宽度可加工）':''}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="" label="高度" min-width="287">
+            <template #default="scope">
+              {{scope.row.SizeHeight}}mm{{scope.row.SizeHeightIsChange?'（高度可加工）':''}}
             </template>
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="287">
@@ -69,19 +69,19 @@
             <el-input :maxlength="3" v-model.trim="Data.addDimensionsForm.SizeCode" style="width:100px"/>
           </el-form-item>
           <p class="hint">编码由 1 到 3 位的英文字母或数字组成，附在物料编码之后，可快速定位具体物料尺寸</p>
-          <el-form-item label="长度：">
-            <el-input-number :max="999999999"
-            v-model="Data.addDimensionsForm.SizeLength" :controls="false"/>
-            mm
-            <el-checkbox v-model="Data.addDimensionsForm.SizeLengthIsChange"
-            label="长度可加工"/>
-          </el-form-item>
           <el-form-item label="宽度：">
             <el-input-number :max="999999999"
             v-model="Data.addDimensionsForm.SizeWidth" :controls="false"/>
             mm
             <el-checkbox v-model="Data.addDimensionsForm.SizeWidthIsChange"
             label="宽度可加工"/>
+          </el-form-item>
+          <el-form-item label="高度：">
+            <el-input-number :max="999999999"
+            v-model="Data.addDimensionsForm.SizeHeight" :controls="false"/>
+            mm
+            <el-checkbox v-model="Data.addDimensionsForm.SizeHeightIsChange"
+            label="高度可加工"/>
           </el-form-item>
         </el-form>
         <div class="Prompt">
@@ -123,10 +123,10 @@ export default {
         SizeID: '',
         SizeName: '',
         SizeCode: '',
-        SizeLength: null,
         SizeWidth: null,
-        SizeLengthIsChange: false,
+        SizeHeight: null,
         SizeWidthIsChange: false,
+        SizeHeightIsChange: false,
       },
       dimensisnsList: [],
       DataTotal: 0,
@@ -147,10 +147,10 @@ export default {
         SizeID: '',
         SizeName: '',
         SizeCode: '',
-        SizeLength: null,
         SizeWidth: null,
-        SizeLengthIsChange: false,
+        SizeHeight: null,
         SizeWidthIsChange: false,
+        SizeHeightIsChange: false,
       };
     }
     function closeClick() {
@@ -193,10 +193,10 @@ export default {
         messageBox.failSingleError('保存失败', '请输入尺寸名称', () => null, () => null);
       } else if (!Data.addDimensionsForm.SizeCode) {
         messageBox.failSingleError('保存失败', '请输入尺寸编码', () => null, () => null);
-      } else if (!Data.addDimensionsForm.SizeLength) {
-        messageBox.failSingleError('保存失败', '请输入尺寸长度', () => null, () => null);
       } else if (!Data.addDimensionsForm.SizeWidth) {
         messageBox.failSingleError('保存失败', '请输入尺寸宽度', () => null, () => null);
+      } else if (!Data.addDimensionsForm.SizeHeight) {
+        messageBox.failSingleError('保存失败', '请输入尺寸高度', () => null, () => null);
       } else {
         api.getMaterialTypeSizeSave(Data.addDimensionsForm).then(res => {
           if (res.data.Status === 1000) {

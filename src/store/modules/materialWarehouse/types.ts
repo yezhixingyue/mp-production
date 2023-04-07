@@ -28,10 +28,10 @@ export interface MaterialTypeSizeType {
   SizeName: string,
   SizeCode: string,
   SizeDescribe: string,
-  SizeLength: number,
   SizeWidth: number,
-  SizeLengthIsChange: boolean,
-  SizeWidthIsChange: boolean
+  SizeHeight: number,
+  SizeWidthIsChange: boolean,
+  SizeHeightIsChange: boolean
 }
 export interface MaterialAttributesType {
   CodeID: number| string,
@@ -46,8 +46,8 @@ export interface MaterialAttributesType {
 export interface MaterialSizesType {
   CodeID: number| string,
   SizeName: string,
-  SizeLength: number,
   SizeWidth: number,
+  SizeHeight: number,
 }
 export interface MaterialManageListType {
   CategoryID: number| string,
