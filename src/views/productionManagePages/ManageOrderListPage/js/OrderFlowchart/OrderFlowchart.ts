@@ -44,7 +44,6 @@ export class OrderFlowchart {
 
   constructor(list: IOrderFlowchartNode[] = []) {
     // 数据整理或还原
-
     this.NodeList = list;
 
     // 全部节点id
@@ -158,16 +157,22 @@ export class OrderFlowchart {
 
       const left = (PyramidDatas.length - rowIndex - 1) * (NodeWidth + LeftRightSpacing);
 
+      const unrestList: IOrderFlowchartNode[] = [];
+
       nodes.forEach(n => { // pipeList注入节点
         if (n[key] && (n[key] as []).length > 0) {
           const validNextNodes = prevNodes.filter(it => n[key]?.includes(it.TaskWorkingID));
 
-          const prevNodeTops = validNextNodes.map(it => it._Coordinate.top);
+          const tops = validNextNodes.map(it => it._Coordinate.top);
 
-          if (prevNodeTops.length > 0) {
-            const top = prevNodeTops.length === 1 ? prevNodeTops[0] : ((Math.max(...prevNodeTops) - Math.min(...prevNodeTops)) / 2 + Math.min(...prevNodeTops));
+          if (tops.length > 0) {
+            const top = tops.length === 1 ? tops[0] : ((Math.max(...tops) - Math.min(...tops)) / 2 + Math.min(...tops));
             pipeList.push(createDisplayItem(n, left, top, rowIndex));
+          } else {
+            unrestList.push(n);
           }
+        } else {
+          unrestList.push(n);
         }
       });
 
@@ -180,11 +185,28 @@ export class OrderFlowchart {
             const distance = p._Coordinate.top - next._Coordinate.top;
             const diff = (NodeHeight + TopBottomSpacing) - Math.abs(distance);
             if (diff > 0) { // 如果小于最小距离 -- 此时需要调整上下距离
-              pipeList.slice(0, pIndex + 1).forEach(_it => {
+              // 1. 在上方的向上平移
+              let _continue = true;
+              const _topList = pipeList.slice(0, pIndex + 1).reverse();
+              _topList.forEach((_it, _i) => {
+                if (!_continue) return;
+                if (_i > 0 && _topList[_i - 1]._Coordinate.top - _it._Coordinate.top >= NodeHeight + TopBottomSpacing) { // 如果距离足够则不再变化
+                  _continue = false;
+                  return;
+                }
                 const _t = _it;
                 _t._Coordinate.top -= diff / 2;
               });
-              pipeList.slice(pIndex + 1).forEach(_it => {
+
+              // 2. 在下方的向下平移
+              _continue = true;
+              const _bottomList = pipeList.slice(pIndex + 1);
+              _bottomList.forEach((_it, _i) => {
+                if (!_continue) return;
+                if (_i > 0 && _it._Coordinate.top - _bottomList[_i - 1]._Coordinate.top >= NodeHeight + TopBottomSpacing) { // 如果距离足够则不再变化
+                  _continue = false;
+                  return;
+                }
                 const _t = _it;
                 _t._Coordinate.top += diff / 2;
               });
@@ -193,15 +215,15 @@ export class OrderFlowchart {
         });
 
         const start = pipeList[0];
-        const end = pipeList[pipeList.length - 1];
+        // const end = pipeList[pipeList.length - 1];
 
-        if (end._Coordinate.top > (this.TotalHeight - 50 - NodeHeight)) { // 最后一个节点高度超出了最大高度
-          const diff = end._Coordinate.top - (this.TotalHeight - 50 - NodeHeight);
-          pipeList.forEach(_it => {
-            const _t = _it;
-            _t._Coordinate.top -= diff;
-          });
-        }
+        // if (end._Coordinate.top > (this.TotalHeight - 50 - NodeHeight)) { // 最后一个节点高度超出了最大高度
+        //   const diff = end._Coordinate.top - (this.TotalHeight - 50 - NodeHeight);
+        //   pipeList.forEach(_it => {
+        //     const _t = _it;
+        //     _t._Coordinate.top -= diff;
+        //   });
+        // }
         if (start._Coordinate.top < 0) { // 最开始节点高度高于0
           const diff = start._Coordinate.top;
           pipeList.forEach(_it => {
@@ -209,7 +231,19 @@ export class OrderFlowchart {
             _t._Coordinate.top -= diff;
           });
         }
+
+        const end = pipeList[pipeList.length - 1];
+
+        if (end._Coordinate.top > (this.TotalHeight - 50 - NodeHeight)) { // 最后一个节点高度超出了最大高度
+          this.TotalHeight = end._Coordinate.top + NodeHeight + 50;
+        }
       }
+
+      unrestList.forEach((n, i) => {
+        const top = i === 0 ? this.TotalHeight - 50 + TopBottomSpacing : pipeList[pipeList.length - 1]._Coordinate.top + NodeHeight + TopBottomSpacing;
+        pipeList.push(createDisplayItem(n, left, top, rowIndex));
+        if (top + NodeHeight + 50 > this.TotalHeight) this.TotalHeight = top + NodeHeight + 50;
+      });
 
       if (pipeList.length > 0) _PositionHandleNodeDisplayList.push(...pipeList);
 

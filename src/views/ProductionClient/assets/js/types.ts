@@ -1,3 +1,4 @@
+import { IRedoReproduce } from '@/views/ExceptionManage/_ExceptionCommonViews/js/type';
 import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 import { ExternalTaskStatusEnum } from '@/views/OutsourceManage/js/enum';
 import { PlateStatusEnum } from '@/views/productionManagePages/ManagePlateListPage/js/enum';
@@ -85,6 +86,12 @@ export interface ITaskPlateInfo {
   /** 工序列表 */
   WorkingList:IBaseProperty<string>[]
   ChildList: null | ITaskPlateInfo[]
+  Revocationable: boolean
+  /** 重做信息 */
+  Reproduce: IRedoReproduce
+  /** 大版是否可重新生产 */
+  Redoable: boolean
+  MapFilePath: string
 }
 
 /** 任务中工序上的块信息类型 */
@@ -123,10 +130,10 @@ export interface IEquipmentBaseInfo {
 }
 
 /** 工序中的辅助信息类型 */
-export interface ITaskWorkingAssistInfo extends Omit<IConvertAssistInfo, '_Name' | 'Value'> {
-  /** 任务工序ID */
-  TaskWorkingID: string
-}
+// export interface ITaskWorkingAssistInfo extends Omit<IConvertAssistInfo, '_Name' | 'Value'> {
+//   /** 任务工序ID */
+//   TaskWorkingID: string
+// }
 
 /** 工序外协信息 */
 export interface IWorkingExternalAttribute {
@@ -187,7 +194,7 @@ export interface ITaskWorkingInfo {
   /** 物料列表 */
   // MaterialList: IWorkingMaterialSource[]
   /** 辅助信息列表 */
-  AssistList: ITaskWorkingAssistInfo[]
+  AssistList: IConvertAssistInfo[]
   /** 订单信息 */
   OrderInfo?: ITaskOrderInfo
   /** 大版信息 */
@@ -234,7 +241,7 @@ export interface ITaskDetail {
   /** 任务状态 */
   Status: ProductiveTaskStatusEnum
   /** 加工总数量 */
-  TotalNumber: number
+  Number: number
   /** 此工序加工第几次 */
   Index: number
   /** 未完成数量 -- 通常在可部分报工情况下会使用到 */

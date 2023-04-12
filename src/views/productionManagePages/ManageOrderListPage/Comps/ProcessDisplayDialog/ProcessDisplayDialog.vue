@@ -3,6 +3,8 @@
     :visible='localVisible'
     title="生产流程"
     :showPrimary="false"
+    :draggable="false"
+    closeOnClickModal
     top='8vh'
     @open="onOpen"
     @cancel="onClose"

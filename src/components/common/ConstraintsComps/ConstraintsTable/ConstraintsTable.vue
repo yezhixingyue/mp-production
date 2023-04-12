@@ -16,7 +16,7 @@
     <ul>
       <li v-for="(it, i) in localTableList" :key="it.ID" class="item" @click="onRowClick(it)" :class="{active: props.activeId === it.ID}">
         <div class="content">
-          <i class="index">{{i + 1}}. </i>
+          <!-- <i class="index">{{i + 1}}. </i> -->
           <ConditionTextDisplayComp :conditionObj="it.Constraint" />
         </div>
         <!-- <div class="p" v-if="it."></div>

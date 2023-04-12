@@ -74,7 +74,7 @@
                   </div>
                 </template>
               </el-upload>
-              <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath">
+              <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath" target="_blank">
                 下载当前模板文件</el-link>
             </div>
             <p class="hint">

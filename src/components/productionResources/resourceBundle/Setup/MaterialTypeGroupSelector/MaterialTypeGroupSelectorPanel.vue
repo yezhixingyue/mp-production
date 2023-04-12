@@ -117,6 +117,7 @@ watch(() => props.MaterialTypeGroup, init, { immediate: true });
     > li {
       margin-bottom: 20px;
       > .panel-item-title {
+        margin-bottom: 2px;
         :deep(.el-checkbox__label) {
           font-weight: 700;
           font-size: 14px;
@@ -133,8 +134,13 @@ watch(() => props.MaterialTypeGroup, init, { immediate: true });
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+      :deep(.el-checkbox-group) {
+        display: flex;
+        flex-wrap: wrap;
+      }
       :deep(.el-checkbox-group .el-checkbox) {
         margin-right: 10px;
+        height: 28px;
       }
     }
   }

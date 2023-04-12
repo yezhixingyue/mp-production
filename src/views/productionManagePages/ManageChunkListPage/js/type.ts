@@ -28,4 +28,8 @@ export interface IManageChunkInfo {
   Position: string
   /** 状态 */
   Status: ChunkStatusEnum
+  /** 缩略图 前面 */
+  FrontThumbil: string
+  /** 缩略图 后面 */
+  BackThumbil: string
 }

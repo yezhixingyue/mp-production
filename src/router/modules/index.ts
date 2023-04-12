@@ -10,13 +10,14 @@ import productionRouteRoot from './productionSetting';
 import ExceptionManageRouteRoot from './ExceptionManage';
 import OutsourceManageRouteRoot from './OutsourceManage';
 import orderAppRouteRoot from './OrderAppRouteManage/orderAppRoutes';
+import { clientRouteName } from './config';
 
 const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
 
 export const moduleRoutes: RouteRecordRaw[] = isOrderApp ? [orderAppRouteRoot.routes] : [
   {
-    path: '/client',
-    name: 'client',
+    path: `/${clientRouteName}`,
+    name: clientRouteName,
     meta: {
       title: '生产报工',
       requiresAuth: false,

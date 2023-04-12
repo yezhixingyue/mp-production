@@ -3,26 +3,25 @@
     :visible='localVisible'
     :width="986"
     top="5vh"
-    title="示意图"
+    :title="title"
     @cancel="localVisible = false"
     @closed="onClosed"
-    primary-text="确定到货"
     class="mp-client-manage-batch-report-item-pic-diaplay-dialog-comp-wrap"
     >
     <div class="img-content">
       <div class="img-box">
         <el-image
           style="width: 100%; height: 100%"
-          :src="curImgInfo?.FilePath"
-          :preview-src-list="curRowData._images.map(it => it.FilePath)"
+          :src="curImgSrc"
+          :preview-src-list="picSrcList"
           :initial-index="index"
           fit="contain"
         />
       </div>
-      <div class="title">
+      <div class="title" v-if="curRowData">
         <span>编号：{{ curRowData._TargetID }}</span>
         <span class="n">
-          <i>{{ curImgInfo.Name }}</i>
+          <i>{{ curRowData._images[index].Name }}</i>
           <i>（第{{ index + 1 }}张/共{{ curRowData._images.length }}张）</i>
         </span>
         <span>{{ curRowData._Material }}  {{ curRowData._DetailText }}</span>
@@ -30,11 +29,11 @@
     </div>
     <template #footer>
       <div class="btn-box">
-        <mp-button type="primary" v-show="curRowData._images.length > 1"
-          @click="index === 0 ? index = curRowData._images.length - 1: index -= 1" link><el-icon class="mr-8"><DArrowLeft /></el-icon> 上一张</mp-button>
+        <mp-button type="primary" v-show="picSrcList.length > 1"
+          @click="index === 0 ? index = picSrcList.length - 1: index -= 1" link><el-icon class="mr-8"><DArrowLeft /></el-icon> 上一张</mp-button>
         <mp-button class="blue" @click="localVisible = false">关闭</mp-button>
-        <mp-button type="primary" v-show="curRowData._images.length > 1"
-          @click="index === curRowData._images.length - 1 ? index = 0 : index += 1" link>下一张 <el-icon class="ml-8"><DArrowRight /></el-icon></mp-button>
+        <mp-button type="primary" v-show="picSrcList.length > 1"
+          @click="index === picSrcList.length - 1 ? index = 0 : index += 1" link>下一张 <el-icon class="ml-8"><DArrowRight /></el-icon></mp-button>
       </div>
     </template>
   </DialogContainerComp>
@@ -47,7 +46,9 @@ import { getLocalTaskList } from './getLocalTaskList';
 
 const props = defineProps<{
   visible: boolean
-  curRowData: ReturnType<typeof getLocalTaskList>[number]
+  curRowData?: ReturnType<typeof getLocalTaskList>[number]
+  picSrcList: string[]
+  title: string
 }>();
 
 const emit = defineEmits(['update:visible', 'submit']);
@@ -65,7 +66,7 @@ const localVisible = computed({
 ------------------------------------ */
 const index = ref(0);
 
-const curImgInfo = computed(() => props.curRowData._images[index.value]);
+const curImgSrc = computed(() => props.picSrcList[index.value]);
 
 const onClosed = () => {
   index.value = 0;
@@ -85,6 +86,7 @@ const onClosed = () => {
       width: 908px;
       height: 600px;
       margin: 0 auto;
+      background-color: #f5f5f5;
       img {
         max-width: 100%;
         max-height: 100%;

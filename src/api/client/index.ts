@@ -52,6 +52,10 @@ const clientApi = {
   getEquipmentTaskBatchReport(data) {
     return instance.post('/Api/Equipment/TaskBatchReport', data);
   },
+  /** GET Api/Equipment/NextWorkingList */
+  getEquipmentNextWorkingList(TaskWorkingID: string) {
+    return instance.get('Api/Equipment/NextWorkingList', { params: { TaskWorkingID } });
+  },
 };
 
 export default clientApi;

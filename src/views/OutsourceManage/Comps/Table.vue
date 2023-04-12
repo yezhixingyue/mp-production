@@ -3,10 +3,11 @@
     <mp-table-column type="selection" width="70" label-class-name="check-title" class-name='check' v-if="pageType==='await'" />
     <mp-table-column width="110px" prop="Code" label="任务ID" />
     <mp-table-column width="160px" prop="_TargetID" label="关联ID" />
-    <mp-table-column width="170px" prop="_WorkingName" label="工序" />
-    <mp-table-column width="110px" prop="_TotalNumber" label="数量" />
-    <mp-table-column min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
-    <mp-table-column width="146px" label="外协工厂">
+    <mp-table-column v-if="pageType !== 'undelivered'" width="170px" prop="_WorkingName" label="工序" />
+    <mp-table-column v-if="pageType === 'undelivered'" min-width="100px" prop="_Material" label="物料" />
+    <mp-table-column width="110px" prop="_Number" label="数量" />
+    <mp-table-column v-if="pageType !== 'undelivered'" min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
+    <mp-table-column v-if="pageType !== 'undelivered'" width="146px" label="外协工厂">
       <template #default="scope">
         <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
          v-model="scope.row._ExternalSubmitParams.FactoryID" style="width:120px;" placeholder="指定外协工厂">
@@ -52,7 +53,7 @@
     </template>
 
     <!-- 下一道工序 未交接时展示 -->
-    <mp-table-column min-width="100px" label="下一道工序" v-if="pageType === 'inTransition'">
+    <mp-table-column min-width="100px" label="下一道工序" v-if="pageType === 'inTransition' || pageType === 'undelivered'">
       <template #default="scope">
         <h4 v-if="(scope.row as Row).NextWorkingList?.length === 1" class="is-red">
           {{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}
@@ -70,8 +71,8 @@
         <span v-else>{{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}</span>
       </template>
     </mp-table-column>
-    <mp-table-column width="100px" prop="Operator" label="操作人" />
-    <mp-table-column width="130px" prop="_StartTime" label="确认外协时间" />
+    <mp-table-column width="100px" prop="Operator" label="操作人" v-if="pageType !== 'undelivered'" />
+    <mp-table-column width="130px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
     <!-- 预计完成时间 全部时显示 -->
     <mp-table-column width="130px" label="预计完成日期" v-if="pageType === 'all'">
       <template #default="scope">
@@ -79,12 +80,12 @@
       </template>
     </mp-table-column>
     <!-- 完成时间 非待外协时显示 -->
-    <mp-table-column width="130px" label="完成时间" v-if="pageType !== 'await'">
+    <mp-table-column width="130px" label="完成时间" v-if="pageType !== 'await' && pageType !== 'undelivered'">
       <template #default="scope">
         {{ format2MiddleLangTypeDateFunc2((scope.row as Row).FinishTime) }}
       </template>
     </mp-table-column>
-    <mp-table-column width="100px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition'" />
+    <mp-table-column width="100px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
     <mp-table-column width="225px" label="操作" v-if="pageType==='await'">
       <template #default="scope">
         <mp-button type="primary" class='f' link @click="onMenuClick(scope.row, 'confirmExternal')"
@@ -104,6 +105,7 @@
       <span class="ft-12" v-show="!loading">暂无任务</span>
     </template>
   </el-table>
+  <NextWorkingListDialog v-model:visible="visible" :row="curRow" />
 </template>
 
 <script setup lang='ts'>
@@ -116,6 +118,7 @@ import MpDateTimePicker from '@/components/common/ElementPlusContainners/MpDateT
 import { ExternalTaskStatusEnum } from '../js/enum';
 import { getCanNotDownload } from '../js/utils';
 import { OutsourceManagePageType } from '../js/type';
+import NextWorkingListDialog from './NextWorkingListDialog.vue';
 
 type Row = ReturnType<typeof getLocalTaskList>[number]
 
@@ -125,7 +128,7 @@ const props = defineProps<{
   pageType: OutsourceManagePageType
 }>();
 
-const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'showNextWorkingList', 'print']);
+const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print']);
 
 /* 多选相关处理 ↓
 -------------------------------------------*/
@@ -149,8 +152,13 @@ const onMenuClick = (row: typeof props.TaskList[number], type: Parameters<typeof
   emit(type, row, isConfirm);
 };
 
+/* 下一道工序列表
+------------------------ */
+const curRow = ref<null | Row>(null);
+const visible = ref(false);
 const showNextWorkingList = (row: typeof props.TaskList[number]) => {
-  emit('showNextWorkingList', row);
+  curRow.value = row;
+  visible.value = true;
 };
 </script>
 

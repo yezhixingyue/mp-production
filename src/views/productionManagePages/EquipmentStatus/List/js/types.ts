@@ -42,6 +42,8 @@ export interface IEquipmentStatusItem {
   Status: EquipmentStatusForBoardEnum
   /** 设备操作人 */
   Operator?: string
+  /** 登录时间 */
+  LoginTime?: string
   /** 错误信息 */
   Remark?: string
   /** 报错人 */

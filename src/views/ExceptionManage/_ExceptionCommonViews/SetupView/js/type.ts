@@ -1,6 +1,7 @@
+import { ITaskPlateInfo } from '@/views/ProductionClient/assets/js/types';
 import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import {
-  IExceptionChunk, IExceptionPlate, IExceptionUnionLine, IExceptionTaskPlateInfo,
+  IExceptionChunk, IExceptionPlate, IExceptionUnionLine,
 } from '../../js/type';
 import {
   ExternalErrorLimitTypeEnum, RevocationTypeEnum, SolveTypeEnum,
@@ -35,7 +36,7 @@ export interface ITargetOrder {
 
 /** 撤销其他块：通过大版ID和订单ID查询到的块列表数据 */
 export interface IRevocationChunk extends Omit<IExceptionChunk, 'WorkingList'> {
-  Plate?: IExceptionTaskPlateInfo | null
+  Plate?: ITaskPlateInfo | null
   Order?: ITargetOrder
 }
 
@@ -44,7 +45,7 @@ export interface IRevocationDetail {
   /** 撤销此订单时，是否全选了块列表 */
   IsAllSelected: boolean
   Type: RevocationTypeEnum | ''
-  PlateList: IExceptionTaskPlateInfo[]
+  PlateList: ITaskPlateInfo[]
   ChunkList: IRevocationChunk[]
 }
 
@@ -115,7 +116,7 @@ interface IRedoInfo4Submit extends Omit<IRedoInfo4RuleForm, 'PlateList'> {
 }
 
 /** 指定大版勾选数据列表类型 */
-export interface IRevocationPlateItem extends Omit<IExceptionTaskPlateInfo, 'ChildList'> {
+export interface IRevocationPlateItem extends Omit<ITaskPlateInfo, 'ChildList'> {
   checked: boolean
   ChildList: IRevocationPlateItem[] | null
 }

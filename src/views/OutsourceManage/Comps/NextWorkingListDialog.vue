@@ -1,37 +1,34 @@
 <template>
  <DialogContainerComp
    :visible='localVisible'
-   :width='600'
+   :width='960'
    title='查看列表'
    top='12vh'
    @open='onOpen'
    @cancel='localVisible = false'
-   @submit='submit'
    >
    <div class='dialog-content'>
-    <ul class="header">
+    <ul class="header" v-if="row">
       <li>
         <template v-if="row.Working.ReportMode === ReportModeEnum.board && row.Working.PlateInfo">
-          <span class="label">大版ID：</span>
-          <h4>{{ row.Working.PlateInfo.Code }}</h4>
+          <span class="label">大版ID：{{ row.Working.PlateInfo.Code }}</span>
         </template>
         <template v-if="row.Working.ReportMode !== ReportModeEnum.board && row.Working.OrderInfo">
           <span class="label">订单ID：</span>
-          <span class="mr-5">{{ row.Working.OrderInfo.ServerName }}</span>
-          <h4>{{ row.Working.OrderInfo.OrderID }}</h4>
+          <span class="mr-5">{{ row.Working.OrderInfo.ServerName }} {{ row.Working.OrderInfo.OrderID }}</span>
         </template>
         <span>{{ row.Working.WorkingName }}</span>
         <span>{{ row.Equipment.Name }}</span>
       </li>
       <li>
-        <span>任务ID：{{ row.Code }}</span>
+        <span class="label">任务ID：{{ row.Code }}</span>
         <span>{{ row.Working.Number }}{{ localInfo?.Unit || '' }}</span>
         <span>{{ row._AssistText }}</span>
       </li>
     </ul>
-    <dl v-if="row.NextWorkingList.length > 0" class="wrap">
+    <dl v-if="_NextWorkingList.length > 0" class="wrap">
       <!-- <dt>色彩示例</dt> -->
-      <dd v-for="it in filterNextWorkingList(row.NextWorkingList)" :key="it.ID">
+      <dd v-for="it in _NextWorkingList" :key="it.ID">
         <div class="block" :style="`background-color:${it.Color}`"></div>
         <h5>下一道工序：</h5>
         <h4>{{ it.Name }}</h4>
@@ -43,16 +40,18 @@
 </template>
 
 <script setup lang='ts'>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { filterNextWorkingList } from '@/views/ProductionClient/assets/js/utils';
 import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { getTaskDisplayInfo } from '@/views/ProductionClient/Comps/EquipmentPageContent/CurTaskPanel';
+import { INextWorkingProduction } from '@/views/ProductionClient/assets/js/types';
+// import { MyTDClass } from '@/assets/js/decorator/MyTDClass';
 
 const props = defineProps<{
   visible: boolean
-  row: ReturnType<typeof getLocalTaskList>[number]
+  row: ReturnType<typeof getLocalTaskList>[number] | null
 }>();
 
 const emit = defineEmits(['update:visible']);
@@ -68,12 +67,15 @@ const localVisible = computed({
 
 const localInfo = computed(() => (props.row ? getTaskDisplayInfo(props.row, false) : null));
 
-const onOpen = () => {
-  console.log('onOpen');
-};
+const _NextWorkingList = ref<INextWorkingProduction[]>([]);
 
-const submit = () => {
-  console.log('submit  MpMessage.dialogSuccess');
+const onOpen = async () => {
+  // const td = new MyTDClass();
+  // const errors = td._validate();
+  // console.log('onOpen td', td, errors);
+  _NextWorkingList.value = [];
+
+  if (props.row) _NextWorkingList.value = await filterNextWorkingList(props.row.Working.TaskWorkingID);
 };
 
 </script>
@@ -82,9 +84,9 @@ const submit = () => {
 @import '@/assets/css/mixins.scss';
 
 .dialog-content {
- margin-top: -15px;
+ margin-top: -20px;
  min-height: 160px;
- max-height: 360px;
+ max-height: 425px;
  overflow: auto;
  overflow: overlay;
 
@@ -92,8 +94,16 @@ const submit = () => {
 
  > .header {
   font-size: 18px;
+  line-height: 20px;
+  li {
+    margin-bottom: 8px;
+  }
   span {
     margin-right: 30px;
+    &.label {
+      display: inline-block;
+      min-width: 172px;
+    }
   }
  }
  dl.wrap {

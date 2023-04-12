@@ -17,7 +17,7 @@
     </li>
     <li v-for="(it, i) in localTableList" :key="it.ID" class="item content-item">
       <div class="content">
-        <i class="index">{{i + 1}}. </i>
+        <!-- <i class="index">{{i + 1}}. </i> -->
         <ConditionTextDisplayComp :conditionObj="it.Constraint" :content="it._Content" />
       </div>
       <!-- 计算数量添加进去 -->

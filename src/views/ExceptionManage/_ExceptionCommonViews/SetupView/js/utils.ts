@@ -7,8 +7,12 @@ import { IExceptionPlate4Form } from './ruleFormType';
  * 下载条码稿
  *
  */
-export const loadBarcode = (plate: IExceptionPlate | IExceptionPlate4Form) => {
-  console.log('loadBarcode 下载条码稿', plate);
+export const loadBarcode = (data: { MapFilePath: string }) => {
+  if (data.MapFilePath) {
+    const url = process.env.NODE_ENV === 'development' ? 'http://192.168.3.68:8052/' : '';
+
+    window.open(`${url}${data.MapFilePath}`);
+  }
 };
 
 /** 获取订单报工或块报工重新信息中大版列表提交信息 */

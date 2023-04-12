@@ -12,11 +12,12 @@
     @closed="closedC"
     @open="onOpen"
     @opened="onOpened"
-    draggable
+    :draggable="draggable"
     :modal="showModal"
     :append-To-Body="appendToBody"
     :destroy-on-close="destroyOnClose"
     :top="top"
+    ref="oDialog"
     :show-close="!loading"
     :close-on-click-modal="closeOnClickModal">
     <template #header v-if="showHeader">
@@ -44,11 +45,15 @@
 </template>
 
 <script lang="ts">
-import { ElButton } from 'element-plus';
+import { ElButton, ElDialog } from 'element-plus';
 import { computed, ref } from 'vue';
 
 export default {
   props: {
+    draggable: {
+      type: Boolean,
+      default: true,
+    },
     showModal: {
       type: Boolean,
       default: true,
@@ -175,10 +180,25 @@ export default {
       }
       context.emit('cancel');
     }
+
+    const oDialog = ref<InstanceType<typeof ElDialog>>();
+
     function closedC() {
+      // if (oDialog.value) {
+      //   const el = oDialog.value.dialogContentRef?.$el as HTMLElement | undefined;
+
+      //   if (el) {
+      //     console.log('el.style.transform', el.style.transform);
+      //     el.style.transform = '';
+      //   }
+      // }
+
       props.closed();
       context.emit('closed');
     }
+
+    let initMarginTop = 0;
+
     function onOpen() {
       props.open();
       context.emit('open');
@@ -186,8 +206,22 @@ export default {
 
     const oSubmitBtn = ref<InstanceType<typeof ElButton>>();
     const onOpened = () => {
+      if (oDialog.value) {
+        const el = oDialog.value.dialogContentRef?.$el as HTMLElement | undefined;
+
+        if (el) {
+          if (!initMarginTop) {
+            initMarginTop = el.getBoundingClientRect().top;
+          }
+
+          const transformTop = el.style.transform.match(/translate\(-?\d+(.\d+)?px, (-?\d+(.\d+)?)px\)/)?.[2];
+
+          if (transformTop && +transformTop < -initMarginTop) {
+            el.style.transform = '';
+          }
+        }
+      }
       if (props.autoSubmitFocus && !props.disabled && props.showPrimary && oSubmitBtn.value?.$el) {
-        console.log(oSubmitBtn.value.$el);
         oSubmitBtn.value.$el.focus();
       }
     };
@@ -201,6 +235,7 @@ export default {
       closedC,
       onOpened,
       dialogVisible,
+      oDialog,
     };
   },
 };

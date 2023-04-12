@@ -35,6 +35,10 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu class="mp-stall-manage-table-menu--drop-down-wrap">
+                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved" @click="onUnLockClick(scope.row)">
+                    <el-icon class="ft-16 is-warning bold"><Unlock /></el-icon>
+                    <span>拼版释放</span>
+                  </el-dropdown-item>
                   <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved" @click="onChangeStatusClick(scope.row, scope.$index)">
                     <i class="icon-lizhi iconfont is-pink"></i>
                     <span>离职</span>
@@ -66,6 +70,7 @@
 
 <script setup lang='ts'>
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import api from '@/api';
 import Menu from '@/components/common/menus/Menu.vue';
 import DetailMenu from '@/components/common/menus/DetailMenu.vue';
 import { computed } from 'vue';
@@ -190,6 +195,24 @@ const onRemoveClick = (item: IStaff, index: number) => {
     msg: `删除员工：[ ${item.StaffName} ]`,
     onOk: () => {
       emit('remove', { item, index });
+    },
+  });
+};
+
+const handleUplock = async (item:IStaff) => {
+  const resp = await api.getStaffImpositionUnLock(item.StaffID).catch(() => null);
+
+  if (resp?.data.isSuccess) {
+    MpMessage.success('释放成功');
+  }
+};
+
+const onUnLockClick = (item:IStaff) => { // 审稿释放|解锁 getStaffImpositionUnLock
+  MpMessage.warn({
+    title: '确定释放拼版内容吗 ?',
+    msg: `该操作将会解锁 [ ${item.StaffName} ] 已拖到大版上的全部文件，请谨慎操作！`,
+    onOk: () => {
+      handleUplock(item);
     },
   });
 };

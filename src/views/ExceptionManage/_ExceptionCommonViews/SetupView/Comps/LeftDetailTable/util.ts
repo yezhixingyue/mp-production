@@ -1,7 +1,7 @@
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
+import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
-import { IExceptionTaskDetail } from '../../../js/type';
 
 export type leftEventType = 'BarCodePrint';
 
@@ -12,11 +12,12 @@ export interface IExceptionLeftDisplayList {
     label: string
     value: string | number
     haveEvent?: leftEventType
+    disabled?: boolean
   }[]
 }
 
 /** 获取任务展示信息 */
-const getTaskListInfo = (TaskDetail: IExceptionTaskDetail, IsOutSourcing: boolean) => {
+const getTaskListInfo = (TaskDetail: ITaskDetail, IsOutSourcing: boolean) => {
   // 任务ID、工序   设备、预计完成时间 或 加工厂（外协时）
   const list: IExceptionLeftDisplayList['list'] = [
     { label: '任务ID', value: TaskDetail.Code },
@@ -43,26 +44,28 @@ const getTaskListInfo = (TaskDetail: IExceptionTaskDetail, IsOutSourcing: boolea
 };
 
 /** 获取到大版展示信息 */
-const getBoardListInfo = (TaskDetail: IExceptionTaskDetail, showBarCodePrint: boolean) => {
+const getBoardListInfo = (TaskDetail: ITaskDetail, showBarCodePrint: boolean) => {
   const { PlateInfo, Number } = TaskDetail.Working;
-  const list: IExceptionLeftDisplayList['list'] = [
+  const list: IExceptionLeftDisplayList['list'] = PlateInfo ? [
     { label: '大版ID', value: PlateInfo.Code },
     { label: '模板', value: [PlateInfo.Template, PlateInfo.TemplateSize].filter(it => it).join(' ') },
     { label: '物料', value: PlateInfo.Material },
     /** 如果是块报工显示大版时，不显示下面加工数量 */
     { label: '加工数量', value: Number + PlateInfo.Unit },
     { label: '订单数量', value: PlateInfo.OrderNumber ? `${PlateInfo.OrderNumber}个订单${PlateInfo.ChunkNumber ? `（共${PlateInfo.ChunkNumber}个订单块）` : ''}` : '' },
-  ];
+  ] : [];
 
   if (showBarCodePrint) {
-    list.push({ label: '条码稿', value: '下载条码稿', haveEvent: 'BarCodePrint' });
+    list.push({
+      label: '条码稿', value: '下载条码稿', haveEvent: 'BarCodePrint', disabled: !(PlateInfo?.MapFilePath),
+    });
   }
 
   return { title: '大版信息', list };
 };
 
 /** 获取到订单展示信息 或块信息 */
-const getOrderListInfo = (TaskDetail: IExceptionTaskDetail, isChunk = false) => {
+const getOrderListInfo = (TaskDetail: ITaskDetail, isChunk = false) => {
   const { OrderInfo, ChunkInfo } = TaskDetail.Working;
 
   const list: IExceptionLeftDisplayList['list'] = [
@@ -77,7 +80,7 @@ const getOrderListInfo = (TaskDetail: IExceptionTaskDetail, isChunk = false) => 
 };
 
 /** 获取外协信息 */
-const getOutsourceListInfo = (TaskDetail: IExceptionTaskDetail) => {
+const getOutsourceListInfo = (TaskDetail: ITaskDetail) => {
   const getAssistContent = () => TaskDetail.Working.AssistList
     .filter(it => it.Type === AssistInfoTypeEnum.text)
     .map(it => it.Content)
@@ -105,7 +108,7 @@ const getOutsourceListInfo = (TaskDetail: IExceptionTaskDetail) => {
  *
  * 最后都展示错误提交信息
  */
-export const getLeftDisplayList = (TaskDetail: IExceptionTaskDetail, IsOutSourcing: boolean, showBarCodePrint: boolean) => {
+export const getLeftDisplayList = (TaskDetail: ITaskDetail, IsOutSourcing: boolean, showBarCodePrint: boolean) => {
   const list: IExceptionLeftDisplayList[] = [];
 
   // 1. 获取任务信息

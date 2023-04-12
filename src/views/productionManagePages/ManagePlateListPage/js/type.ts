@@ -28,6 +28,8 @@ interface _IManagePlateCommonInfo {
   Position: string
   /** 状态 */
   Status: PlateStatusEnum
+  /** 条码稿 */
+  MapFilePath: string
 }
 
 export type IPlateListChild = _IManagePlateCommonInfo

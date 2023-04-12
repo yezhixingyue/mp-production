@@ -19,11 +19,11 @@
 <script setup lang='ts'>
 import { computed } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { ITaskWorkingAssistInfo } from '@/views/ProductionClient/assets/js/types';
+import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 
 const props = defineProps<{
   visible: boolean
-  files: ITaskWorkingAssistInfo[]
+  files: IConvertAssistInfo[]
 }>();
 
 const emit = defineEmits(['update:visible']);

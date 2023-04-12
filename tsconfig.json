@@ -10,12 +10,14 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
+    "experimentalDecorators": true,
     "sourceMap": true,
     "baseUrl": ".",
     "noImplicitAny":false,
     "types": [
       "webpack-env",
       "jest",
+      "jquery",
     ],
     "paths": {
       "@/*": [
@@ -26,7 +28,7 @@
       "esnext",
       "dom",
       "dom.iterable",
-      "scripthost"
+      "scripthost",
     ]
   },
   "include": [

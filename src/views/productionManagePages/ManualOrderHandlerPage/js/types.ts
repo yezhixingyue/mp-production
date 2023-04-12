@@ -34,7 +34,7 @@ export interface IConvertAssistInfo {
   FilePath: string
   /** 该文件是否为图片文件 */
   IsImage?: boolean
-
+  TaskWorkingID?: string
 }
 
 /**

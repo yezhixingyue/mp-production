@@ -31,7 +31,7 @@
             <td :style="`width:${widthList[9].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
             <td :style="`width:${widthList[10].width}px`">
               <mp-button link type="primary" @click="onOrderPrintClick(row)">打印工单</mp-button>
-              <mp-button link type="primary" @click="onBarCodePrintClick(row)">打印条码稿</mp-button>
+              <mp-button link type="primary" @click="onBarCodePrintClick(row)" :disabled="!row.MapFilePath">打印条码稿</mp-button>
               <mp-button link type="primary" @click="onProcessClick(row)">进度详情</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
@@ -48,7 +48,7 @@
               <td class="number">含订单：{{ child.ChunkNumber }}个</td>
               <td :style="`width:${widthList[10].width}px`">
                 <mp-button link type="primary" @click="onProcessClick(row, child)">进度详情</mp-button>
-                <mp-button link type="primary" @click="onBarCodePrintClick(row, child)">打印条码稿</mp-button>
+                <mp-button link type="primary" @click="onBarCodePrintClick(row, child)" :disabled="!child.MapFilePath">打印条码稿</mp-button>
               </td>
             </tr>
           </template>
@@ -61,12 +61,12 @@
     <ProcessDisplayDialog v-model:visible="processVisible" :item="curRowChildPlat || curRow" :targetType="ReportModeEnum.board" />
 
     <!-- 打印工单 -->
-    <PrintDialog ref="oPrintDialog" :title="`${curRow?.Code}（大版工单）`">
+    <PrintDialog ref="oPrintDialog" :title="`${curRow?.Code}（大版）`">
       <div class="plate-print-content">
-        <div class="img-box">
+        <div class="img-box" v-if= 'curRow'>
           <img :src="imgSrc" v-show="imgSrc" alt="">
         </div>
-        <div class="right">
+        <div class="right" v-if= 'curRow'>
           <h2>大版ID：{{ curRow?.Code || '' }}</h2>
           <div class="remark">
             <p>{{ curRow?.Template || '' }} {{ curRow?.TemplateSize || '' }}</p>
@@ -75,6 +75,7 @@
           <h4>{{ curRow?.Number || '' }}{{ curRow?.Unit || '' }}</h4>
           <p class="time">打印时间：{{ curPrintData }}</p>
         </div>
+        <embed type="application/pdf" v-if= 'previewUrl' :src="previewUrl" width="100%" height="100%" />
       </div>
     </PrintDialog>
   </main>
@@ -89,6 +90,7 @@ import { format2LangTypeDate, format2MiddleLangTypeDateFunc2 } from '@/assets/js
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
+import { loadBarcode } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/utils';
 import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
 import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
@@ -169,8 +171,11 @@ const onOrderPrintClick = async (row: typeof localList.value[number]) => {
   }
 };
 
+const previewUrl = ref('');
 const onBarCodePrintClick = (row: typeof localList.value[number], childPlat: IPlateListChild | null = null) => {
-  console.log('onBarCodePrintClick', row, childPlat);
+  const item = childPlat || row;
+
+  loadBarcode(item);
 };
 
 /** 拖动事件 */

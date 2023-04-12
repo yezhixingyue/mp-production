@@ -7,7 +7,7 @@
         涉及{{ plate.OrderNumber }}个订单
         <template v-if="plate.ChunkNumber"> (共{{ plate.ChunkNumber }}个订单块)</template>
       </span>
-      <span class="is-blue-span" @click="loadBarcode(plate)">下载条码稿</span>
+      <span class="is-blue-span" :disabled="!plate.MapFilePath" @click="loadBarcode(plate)">下载条码稿</span>
     </div>
     <div class="s" v-if="!parentPlate">
       <div class='l'>

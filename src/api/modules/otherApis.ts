@@ -64,4 +64,10 @@ export const otherSettingApis = {
   getQRCodeSrc(content: string | number, size = 3) {
     return instance.get('/QRCode', { params: { content, size }, responseType: 'arraybuffer', closeTips: true });
   },
+  /* 审稿释放相关
+  --------------------------------- */
+  /** /Api/Staff/Imposition/UnLock PUT请求，解锁拼版 */
+  getStaffImpositionUnLock(id: string) {
+    return instance.put('/Api/Staff/Imposition/UnLock', null, { params: { id } });
+  },
 };

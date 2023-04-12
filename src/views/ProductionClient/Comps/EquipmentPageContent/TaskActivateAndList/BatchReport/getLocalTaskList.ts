@@ -58,7 +58,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
 
     const _UnFinishNumber = `${`${it.UnFinishNumber}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${info.Unit}`;
 
-    const _TotalNumber = `${`${it.TotalNumber}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${info.Unit}`;
+    const _Number = `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${info.Unit}`;
 
     const _StatusText = isError ? '待转移' : getEnumNameByID(it.Status, ProductiveTaskStatusEnumList);
 
@@ -109,7 +109,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _AssistText, // 辅助文字信息
       _Material,
       _UnFinishNumber,
-      _TotalNumber,
+      _Number,
       _StatusText,
       _DetailText,
       _files,

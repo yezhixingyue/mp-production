@@ -1,3 +1,6 @@
+import api from '@/api';
+import clientApi from '@/api/client';
+import { clientRouteName } from '@/router/modules/config';
 import { INextWorkingProduction } from './types';
 
 /** 获取下一道工序的文字展示内容 仅下一道工序为单个送达地点时才可展示出来 */
@@ -21,7 +24,18 @@ export const getNextWorkContentOnlySingle = (NextWorkingList?: INextWorkingProdu
   return str;
 };
 
-export const filterNextWorkingList = (NextWorkingList: INextWorkingProduction[]) => {
+export const filterNextWorkingList = async (TaskWorkingID: string) => {
+  // 需要区分client还是后台 -- 通过url进行区分
+  const requestFunc = window.location.hash.includes(`/${clientRouteName}`)
+    ? clientApi.getEquipmentNextWorkingList
+    : api.outsourceApis.getEquipmentNextWorkingList;
+
+  const resp = await requestFunc(TaskWorkingID).catch(() => null);
+
+  if (!resp || !resp.data.isSuccess) return [];
+
+  const NextWorkingList = resp.data.Data || [];
+
   const obj: { [key: string]: INextWorkingProduction } = {};
 
   NextWorkingList.forEach(it => {

@@ -3,9 +3,11 @@
      class="ball-box"
      ref="ballRef"
     :style="`transform: translate(${position.x}px, ${position.y}px);`"
-    @mousedown="(e) => onballmousedown(e, ballRef)"
+    @mousedown="handleballmousedown"
+    @mouseup="handleballmouseup"
+    v-show="count"
     >
-    <span>有200单</span>
+    <span>有{{ count }}单</span>
     <span>未送出</span>
   </div>
 </template>
@@ -17,6 +19,12 @@ import {
 import {
   ondocumentmouseup, ondocumentmousemove, initPosition, onballmousedown, position,
 } from './dragBall';
+
+defineProps<{
+  count: number
+}>();
+
+const emit = defineEmits(['triggerclick']);
 
 /* 拖动相关 ↓
 ------------------------------------ */
@@ -32,6 +40,20 @@ const unbindEvent = () => { // 释放事件绑定
   document.removeEventListener('mouseup', ondocumentmouseup);
   document.removeEventListener('mousemove', ondocumentmousemove);
   window.removeEventListener('resize', initPosition);
+};
+
+let begin = 0;
+
+const handleballmousedown = (e) => {
+  begin = Date.now();
+  onballmousedown(e, ballRef.value);
+};
+
+const handleballmouseup = () => {
+  if (Date.now() - begin < 150) {
+    emit('triggerclick');
+  }
+  begin = 0;
 };
 
 onMounted(() => {

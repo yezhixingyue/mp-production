@@ -25,7 +25,7 @@ export class ManageClientClass {
   public curActiveInstance: null | TerminalEquipmentInstance = null
 
   /** websocket通信获取到的未送出工单信息（小球展示内容数据） */
-  websocketHandler: null | WebsocketHandler = null
+  websocketHandler: WebsocketHandler = new WebsocketHandler()
 
   /** 获取当前终端设备列表 */
   public async getTerminalEquipmentList() {
@@ -47,12 +47,12 @@ export class ManageClientClass {
   }
 
   /** 设置当前客户端绑定的设备列表 - 可在设置的同时 进行其它方面的处理 -- 根据该列表 生成每台设备实例列表（清除原登录状态? - 暂不清除） */
-  public setTerminalEquipmentList(list: IManageEquipmentInfo[]) {
+  public async setTerminalEquipmentList(list: IManageEquipmentInfo[]) {
     this.TerminalEquipmentList = list.map(it => this.TerminalEquipmentList.find(_it => _it.ID === it.ID) || it);
 
     this.InstanceList = list.map(it => this.InstanceList.find(_it => _it.Equipment.ID === it.ID) || new TerminalEquipmentInstance(it));
 
-    this.websocketHandler = new WebsocketHandler(this.TerminalEquipmentList);
+    this.websocketHandler.getAllUndeliveredList(); // 更新设备信息
 
     // 对curActiveInstance的相关处理 -- 如果当前实例被移除 则置curActiveInstance为null
     if (this.curActiveInstance) {

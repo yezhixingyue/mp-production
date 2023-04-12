@@ -1,6 +1,6 @@
 <template>
   <div class="production-line-page">
-    <aside class="right">
+    <aside class="right" :class="{'in-preparation': !ProductionLineData}">
       <!-- 下面生产线： -->
       <p class="line-info" v-if="!isCombine">
         <span class="title" :title="actionLine?.Name || ''">
@@ -59,7 +59,7 @@
           </div> -->
           <mp-button type="primary" link @click="AddLine">+添加生产线</mp-button>
           <!-- 组合生产线显示内容： -->
-          <template v-if="isCombine">
+          <template v-if="isCombine && ProductionLineList.length > 0">
             <mp-button type="primary" link @click="editLine">编辑当前生产线 </mp-button>
             <mp-button type="danger" link @click="delLine">删除当前生产线</mp-button>
           </template>
@@ -198,6 +198,7 @@
               <el-radio :label="item.ID" :title="item.Name">{{item.Name}}</el-radio>
             </template>
           </el-radio-group>
+          <mp-empty v-if="splitPrcessList.length === 0"></mp-empty>
       </div>
     </template>
     </DialogContainerComp>
@@ -497,6 +498,7 @@ const RadioGroupCompChange = (levelData) => {
   if (level1Val !== undefined) {
     Data.getPocessFrom.LineID = level1Val as string;
     // 获取当前生产线的所有工序();
+    ProductionLineData.value = null;
     getProductionLineWorkingProcedureList();
   }
 };
@@ -758,6 +760,7 @@ onMounted(async () => {
 .production-line-page{
   height: 100%;
   display: flex;
+  background: #fff;
   > aside {
     background-color: #fff;
     box-sizing: border-box;
@@ -767,6 +770,12 @@ onMounted(async () => {
     min-width: 200px;
     box-shadow: 0 0 2px 5px #000;
     flex: none;
+
+    &.in-preparation {
+      visibility: hidden;
+      opacity: 0;
+    }
+
     .set-slit{
       margin-top: 12px;
       margin-left: -2px;
@@ -837,7 +846,7 @@ onMounted(async () => {
     padding-right: 10px;
     flex: 1;
     overflow-x: hidden;
-    >header{
+    > header{
       padding: 20px;
       padding-left: 0;
       background-color: #fff;

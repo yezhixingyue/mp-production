@@ -1,5 +1,5 @@
 import { getLimitWords, getWordsWidth } from '@/assets/js/utils/getLimitWords';
-import { MpMessage } from '@/assets/js/utils/MpMessage';
+// import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { router } from '@/router';
 import { EquipmentStatusEnumList, EquipmentTaskStatusEnumList } from './EnumList';
 import { EquipmentStatusForBoardEnum } from './enums';
@@ -152,13 +152,16 @@ export class BoardDraw {
   }
 
   /** 渲染任务详情按钮 */
-  private _renderDetailBtn(x: number, y: number, isHover = false) {
+  private _renderDetailBtn(disabled: boolean, x: number, y: number, isHover = false) {
     if (!this.ctx) return;
 
     this.ctx.beginPath();
 
     this.ctx.font = '13px YaHei';
     this.ctx.fillStyle = isHover ? '#35dff9' : '#26bcf9';
+    if (disabled) {
+      this.ctx.fillStyle = '#cbcbcb';
+    }
     this.ctx.fillText('任务详情', x + this.layout.TitleWidth + 20 + 0.5 + this.layout.TaskNumberWidth, y + 6 + 2 + 0.5);
 
     this.ctx.closePath();
@@ -188,7 +191,7 @@ export class BoardDraw {
     this.ctx.closePath();
 
     // 4 任务详情
-    this._renderDetailBtn(x, y);
+    this._renderDetailBtn(it.TaskList.length === 0, x, y);
 
     // 5 为该条数据上_menuBorder进行赋值，以供后续使用
     const _it = it;
@@ -537,10 +540,13 @@ export class BoardDraw {
       && e.offsetY > it._menuBorder.y
       && e.offsetY < it._menuBorder.y + it._menuBorder.h) {
       this.canvas.style.cursor = 'pointer';
-      this._renderDetailBtn(x, y, true);
+      this._renderDetailBtn(it.TaskList.length === 0, x, y, true);
+      if (it.TaskList.length === 0) {
+        this.canvas.style.cursor = 'not-allowed';
+      }
     } else {
       this.canvas.style.cursor = 'default';
-      this._renderDetailBtn(x, y);
+      this._renderDetailBtn(it.TaskList.length === 0, x, y);
     }
     // 5. 悬浮到任务列表部分时
     if (e.offsetX > this.layout.TitleWidth + this.layout.IntroWidth) {
@@ -566,7 +572,7 @@ export class BoardDraw {
       && e.offsetY > it._menuBorder.y
       && e.offsetY < it._menuBorder.y + it._menuBorder.h) {
       if (it.TaskList.length === 0) {
-        MpMessage.error('当前设备尚无任务', `设备名称：[ ${it.Equipment.Name} ]`);
+        // MpMessage.error('当前设备尚无任务', `设备名称：[ ${it.Equipment.Name} ]`);
       } else {
         sessionStorage.setItem('EquipmentStatusDetailData', JSON.stringify(it));
         router.push({ name: 'EquipmentStatusDetail' });

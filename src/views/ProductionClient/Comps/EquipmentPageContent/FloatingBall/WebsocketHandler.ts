@@ -1,6 +1,10 @@
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
-// import { io } from 'socket.io-client';
+import { getLocalMachineCode } from '@/views/ProductionClient/assets/js/getLocalMachineCode';
+
+export interface IUndeliveredListItem {
+  EquipmentID: string
+  UndeliveredNumber: number
+}
 
 /**
  * 动态更改未送出工单数量
@@ -31,41 +35,90 @@ import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipm
  * @class WebsocketHandler
  */
 export class WebsocketHandler {
-  /** 当前终端绑定的设备列表 */
-  private EquipmentList: IManageEquipmentInfo[]
+  private terminal = ''
 
-  public UnsendNumberDataList: { ID: string, Number: number }[] = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private chatServer: any = null;
 
-  constructor(EquipmentList: IManageEquipmentInfo[]) {
-    this.EquipmentList = EquipmentList;
+  public UndeliveredList: IUndeliveredListItem[] = []
 
-    // 初始化操作
-    this.init();
-  }
-
-  private async init() { // 如果需要重新连接 则要先断开连接 （应尽量避免该情况发生，设备数据有变化时可使用单一事件触发进行新数据获取）
+  private async init() { // websocket连接初始化
     try {
-      console.log('WebSocket init', this.EquipmentList);
+      const createLinks = (url: string) => {
+        const t = document.head.querySelector(`script[src="${url}"]`);
+        if (t) return true;
 
-      // 存放到类中 - 如果已有值 则仅更新设备数据即可 -- 暂定
-      // const socket = io('ws://192.168.3.85:8200');
+        return new Promise((resolve) => {
+          const link = document.createElement('script');
 
-      // socket.on('message', (e) => {
-      //   console.log('接收到message信息', e);
-      // });
+          link.src = url;
+          link.type = 'text/javascript';
 
-      // setTimeout(() => {
-      //   const btn: HTMLElement | null = document.querySelector('#test-send-socket-btn');
+          link.onload = () => {
+            resolve(true);
+          };
 
-      //   if (btn) {
-      //     btn.onclick = () => {
-      //       socket.emit('message', `来自客户端的信息：${Math.random()}`);
-      //     };
-      //   }
-      // }, 10);
+          document.head.appendChild(link);
+        });
+      };
+
+      const basicUrl = process.env.NODE_ENV === 'production' ? '' : 'http://192.168.3.68:8052';
+
+      await createLinks(`${basicUrl}/Scripts/jquery-3.6.0.min.js`);
+      await createLinks(`${basicUrl}/Scripts/jquery.signalR-2.4.3.min.js`);
+      await createLinks(`${basicUrl}/signalr/hubs`);
+
+      if (!this.terminal) {
+        this.terminal = await getLocalMachineCode();
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const chat = ($ as any).connection.messageHub;
+      chat.connection.url = '/signalr';
+
+      chat.client.UpdateUnReceivedNumber = (EquipmentID: string, UndeliveredNumber: number) => { // 单个设备未送出信息有变动
+        const t = this.UndeliveredList.find(it => it.EquipmentID === EquipmentID);
+        if (t) {
+          t.UndeliveredNumber = UndeliveredNumber;
+        } else {
+          this.UndeliveredList.push({
+            EquipmentID,
+            UndeliveredNumber,
+          });
+        }
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ($ as any).connection.hub.start().done(() => {
+        this.chatServer = chat.server;
+
+        chat.server.connect(this.terminal).done(() => {
+          this.getAllUndeliveredList();
+        });
+      });
     } catch (error) {
+      this.UndeliveredList = [];
       const msg = error instanceof Error ? error.message : '将导致未送出数量显示不准确';
       MpMessage.error({ title: '创建socket连接失败', msg });
     }
+  }
+
+  /** 获取当前终端全部设备的未送出数据 */
+  public getAllUndeliveredList() {
+    if (!this.chatServer) {
+      this.init();
+      return;
+    }
+
+    this.chatServer.getUndeliveredList()
+      .done((result: IUndeliveredListItem[]) => {
+        this.UndeliveredList = result || [];
+      })
+      .catch((error) => {
+        this.UndeliveredList = [];
+
+        const msg = error instanceof Error ? error.message : '将导致未送出数量显示不准确';
+        MpMessage.error({ title: '创建socket连接失败', msg });
+      });
   }
 }

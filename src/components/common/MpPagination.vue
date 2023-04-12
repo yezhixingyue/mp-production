@@ -1,8 +1,8 @@
 <template>
-  <section class="mp--pagination" :class='{center:center, countInLeft: countInLeft}'>
+  <section class="mp--pagination" :class='{center:center, countInLeft: countInLeft, left: left}'>
     <el-config-provider :locale="locale">
       <!-- 分页 -->
-      <span>
+      <span v-if="!left || !total || total <= pageSize">
         <slot></slot>
       </span>
       <el-pagination
@@ -51,6 +51,10 @@ export default {
       type: Function,
     },
     center: {
+      type: Boolean,
+      default: false,
+    },
+    left: {
       type: Boolean,
       default: false,
     },
@@ -139,6 +143,9 @@ export default {
       }
     }
     flex-direction: row-reverse;
+  }
+  &.left {
+    justify-content: space-between;
   }
 }
 </style>

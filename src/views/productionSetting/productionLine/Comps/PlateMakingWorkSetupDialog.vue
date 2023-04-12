@@ -69,11 +69,20 @@ const showGroup = computed(() => PlateMakingWorkSetupHander.value.getPlateMaking
 
 const _PlateMakingGroupList = computed(() => PlateMakingWorkSetupHander.value.PlateMakingGroupAllList.filter(it => it.WorkID === ruleForm.PlateMakingWorkID));
 
+const _originData = { // 新打开弹窗时的原始数据 - 用于比对保存时数据是否变化
+  LineWorkID: '',
+  PlateMakingWorkID: '',
+  PlateMakingGroupID: '',
+};
+
 const onOpen = () => {
-  console.log(PlateMakingWorkSetupHander.value.curWorkItem);
   ruleForm.LineWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.LineWorkID || '';
   ruleForm.PlateMakingWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingWorkID || '';
   ruleForm.PlateMakingGroupID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingGroupID || '';
+
+  _originData.LineWorkID = ruleForm.LineWorkID;
+  _originData.PlateMakingWorkID = ruleForm.PlateMakingWorkID;
+  _originData.PlateMakingGroupID = ruleForm.PlateMakingGroupID;
 };
 
 const submit = () => {
@@ -84,6 +93,17 @@ const submit = () => {
     });
     return;
   }
+
+  if (_originData.LineWorkID === ruleForm.LineWorkID
+   && _originData.PlateMakingWorkID === ruleForm.PlateMakingWorkID
+   && _originData.PlateMakingGroupID === ruleForm.PlateMakingGroupID) {
+    MpMessage.error({
+      title: '保存失败',
+      msg: '数据未变动',
+    });
+    return;
+  }
+
   const cb = () => {
     localVisible.value = false;
     emit('submited');

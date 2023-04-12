@@ -297,7 +297,7 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序未设置作业次数` });
       return false;
     }
-    target = this.WorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || it.WorkTimes <= 0));
+    target = this.WorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
     if (target) {
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序作业次数设置不正确，必须为正整数类型` });
       return false;

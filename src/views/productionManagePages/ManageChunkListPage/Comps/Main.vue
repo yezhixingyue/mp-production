@@ -14,7 +14,7 @@
       <mp-table-column width="280px" label="操作" class-name="ctrl">
         <template #default="scope">
           <mp-button type="primary" class="ft-12" link @click="onProcessClick(scope.row, scope.$index)">生产流程</mp-button>
-          <mp-button type="primary" class="ft-12" link @click="onThumbnailClick(scope.row, scope.$index)">查看缩略图</mp-button>
+          <mp-button type="primary" class="ft-12" link :disabled="!scope.row.FrontThumbil" @click="onThumbnailClick(scope.row)">查看缩略图</mp-button>
         </template>
       </mp-table-column>
       <template #empty>
@@ -22,6 +22,7 @@
       </template>
     </el-table>
     <ProcessDisplayDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.block" />
+    <PictureDisplayDialog v-model:visible="ThumbnailVisible" :title="`缩略图：${curRow?.ChunkCode || ''} (${curRow?.ChunkID || ''})`" :picSrcList="ThumbnailList" />
   </main>
 </template>
 
@@ -29,6 +30,7 @@
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { computed, ref } from 'vue';
+import PictureDisplayDialog from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/PictureDisplayDialog.vue';
 import { ChunkStatusEnumList } from '../js/EnumList';
 import { IManageChunkInfo } from '../js/type';
 import ProcessDisplayDialog from '../../ManageOrderListPage/Comps/ProcessDisplayDialog/ProcessDisplayDialog.vue';
@@ -59,8 +61,12 @@ const onProcessClick = (item: typeof localList.value[number], index: number) => 
   processVisible.value = true;
 };
 
-const onThumbnailClick = (item: IManageChunkInfo, index: number) => { // 查看缩略图
-  console.log('onThumbnailClick', item, index);
+const ThumbnailVisible = ref(false);
+const ThumbnailList = ref<string[]>([]);
+const onThumbnailClick = (item: typeof localList.value[number]) => { // 查看缩略图
+  curRow.value = item;
+  ThumbnailList.value = [item.FrontThumbil, item.BackThumbil].filter(it => it);
+  ThumbnailVisible.value = true;
 };
 
 </script>

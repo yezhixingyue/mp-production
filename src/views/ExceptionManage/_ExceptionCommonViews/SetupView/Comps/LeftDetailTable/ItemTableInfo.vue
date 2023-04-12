@@ -5,7 +5,7 @@
       <tbody>
         <tr v-for="(it, i) in tableItem.list" :key="i">
           <td class="title">{{ it.label }}：</td>
-          <td class="content" :class="{'is-blue-span': !!it.haveEvent}" @click="onClick(it.haveEvent)">{{ it.value }}</td>
+          <td class="content" :class="{'is-blue-span': !!it.haveEvent}" :disabled="it.disabled" @click="onClick(it.haveEvent)">{{ it.value }}</td>
         </tr>
       </tbody>
     </table>
@@ -49,6 +49,11 @@ const onClick = (label) => {
           &.content {
             width: 260px;
             padding: 8px 20px;
+
+            &[disabled] {
+              color: #cbcbcb !important;
+              pointer-events: none;
+            }
           }
         }
       }

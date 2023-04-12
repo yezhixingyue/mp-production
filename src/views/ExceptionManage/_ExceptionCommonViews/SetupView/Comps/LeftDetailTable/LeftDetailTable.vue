@@ -38,8 +38,8 @@ const displayList = computed(() => getLeftDisplayList(props.TaskExceptionDetail.
 const onmenuclick = (label: leftEventType) => {
   switch (label) {
     case 'BarCodePrint':
-      if (props.TaskExceptionDetail.PlateList?.length === 1) {
-        loadBarcode(props.TaskExceptionDetail.PlateList[0]);
+      if (props.TaskExceptionDetail.TaskDetail.Working.PlateInfo) {
+        loadBarcode(props.TaskExceptionDetail.TaskDetail.Working.PlateInfo);
       }
       break;
 

@@ -33,4 +33,8 @@ export const outsourceApis = {
   getEquipmentTaskError(data: { ID: string, Remark: string }) {
     return instance.post('/Api/Equipment/TaskError', data);
   },
+  /** GET Api/Equipment/NextWorkingList */
+  getEquipmentNextWorkingList(TaskWorkingID: string) {
+    return instance.get('Api/Equipment/NextWorkingList', { params: { TaskWorkingID } });
+  },
 };

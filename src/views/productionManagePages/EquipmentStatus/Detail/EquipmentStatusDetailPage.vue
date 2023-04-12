@@ -6,7 +6,7 @@
         <h4>{{ EquCombineTitle }} 任务列表</h4>
         <p>
           <span>操作工：{{ EquTaskDetailData.rowData?.Operator || '暂无人员登录' }}</span>
-          <span class="ml-30" v-show="EquTaskDetailData.rowData?.Operator">登录时间暂无字段 登录设备</span>
+          <span class="ml-30" v-if="EquTaskDetailData.rowData?.LoginTime">{{ format2MiddleLangTypeDateFunc2(EquTaskDetailData.rowData.LoginTime) }}</span>
         </p>
       </div>
     </header>
@@ -41,6 +41,7 @@ import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrum
 import TaskListTable from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/TaskListTable.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
+import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { EquipmentTaskDetailClass } from './js/EquipmentStatusDetailClass';
 import SwitchEquipmentDialog from './Comp/SwitchEquipmentDialog.vue';
 

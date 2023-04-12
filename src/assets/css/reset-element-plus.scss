@@ -31,14 +31,16 @@
   }
 }
 
-.el-button--primary{
-  &.el-button:focus, &.el-button:hover{
-    background-color: $-el-button--primary-hover-bg;
-    border-color: $-el-button--primary-hover-bg;
-  }
-  &.el-button:active{
-    background-color: darken($color: $--color-primary, $amount: 12);
-    border-color: darken($color: $--color-primary, $amount: 12);
+.el-button--primary {
+  &:not(.is-disabled):not(.is-link) {
+    &.el-button:focus, &.el-button:hover{
+      background-color: $-el-button--primary-hover-bg;
+      border-color: $-el-button--primary-hover-bg;
+    }
+    &.el-button:active{
+      background-color: darken($color: $--color-primary, $amount: 12);
+      border-color: darken($color: $--color-primary, $amount: 12);
+    }
   }
   &.gradient {
     background: linear-gradient(266deg, #36E0F9 0%, $--color-primary 100%);

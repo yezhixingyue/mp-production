@@ -40,8 +40,8 @@
       <!-- 报工数量 -->
       <li class="number">
         <h1>剩余{{ TaskData.UnFinishNumber }}{{ localInfo.Unit }} /</h1>
-        <span>共{{ TaskData.TotalNumber }}{{ localInfo.Unit }}</span>
-        <span class="gray" v-if="TaskData.Working.AllowPartReport">（已报{{ TaskData.TotalNumber - TaskData.UnFinishNumber }}{{ localInfo.Unit }}）</span>
+        <span>共{{ TaskData.Number }}{{ localInfo.Unit }}</span>
+        <span class="gray" v-if="TaskData.Working.AllowPartReport">（已报{{ TaskData.Number - TaskData.UnFinishNumber }}{{ localInfo.Unit }}）</span>
       </li>
       <!-- 辅助文字信息 -->
       <li class="assist" v-if="_AssistTextList.length > 0">

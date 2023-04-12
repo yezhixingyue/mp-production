@@ -8,9 +8,7 @@
       @loadFile="onDownloadClick"
       @print="onPrintClick"
       @ConfirmExternal="onConfirmExternalClick"
-      @showNextWorkingList="showNextWorkingList"
     />
-    <NextWorkingListDialog v-if="curRow" v-model:visible="visible" :row="curRow" />
     <PrintDialog ref="oPrintDialog" :onlyPrint="onlyPrint" noAutoPrint @submit="submitExternal">
       <section class="outside-print-area" v-if="curRow">
         <main>
@@ -24,7 +22,7 @@
           <!-- 外协信息 -->
           <div class="right">
             <h2>{{ curRow._WorkingName }}</h2>
-            <h2>数量：{{ curRow._TotalNumber }}</h2>
+            <h2>数量：{{ curRow._Number }}</h2>
             <p>金额：<span v-show="curRow._ExternalSubmitParams.Amount || curRow._ExternalSubmitParams.Amount === 0"
                 >￥{{ `${curRow._ExternalSubmitParams.Amount}`.replace(/(?=(\B)(\d{3})+$)/g, ',') }}元</span></p>
             <p class=f>工厂：{{ curRow._ExternalSubmitParams._FactoryName }}<span></span></p>
@@ -56,7 +54,6 @@ import { ManageListClass } from '../js/ManageListClass';
 import { checkExTaskIsComplete } from '../js/utils';
 import Table from './Table.vue';
 import { OutsourceManagePageType } from '../js/type';
-import NextWorkingListDialog from './NextWorkingListDialog.vue';
 
 const props = defineProps<{
   ManageListData: Required<ManageListClass>
@@ -135,14 +132,6 @@ const onConfirmExternalClick = (row: ReturnType<typeof getLocalTaskList>[number]
   MpMessage.warn(title, `任务ID: [ ${row.Code} ]`, () => {
     ManageListClass.handleExternalConfirm([row], isConfirm);
   });
-};
-
-/* 下一道工序列表
------------------------- */
-const visible = ref(false);
-const showNextWorkingList = (row: ReturnType<typeof getLocalTaskList>[number]) => {
-  curRow.value = row;
-  visible.value = true;
 };
 
 </script>

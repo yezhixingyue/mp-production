@@ -36,7 +36,8 @@
 </template>
 
 <script setup lang='ts'>
-import { ITaskDetail, ITaskWorkingAssistInfo } from '@/views/ProductionClient/assets/js/types';
+import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
+import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { computed, onMounted, ref } from 'vue';
 import FileDownloadDialog from './FileDownloadDialog.vue';
@@ -56,9 +57,9 @@ const images = computed(() => {
   return list;
 });
 
-const curImgInfo = ref<null | ITaskWorkingAssistInfo>(null);
+const curImgInfo = ref<null | IConvertAssistInfo>(null);
 
-const onImgClick = (imgInfo: ITaskWorkingAssistInfo) => {
+const onImgClick = (imgInfo: IConvertAssistInfo) => {
   curImgInfo.value = imgInfo;
 };
 

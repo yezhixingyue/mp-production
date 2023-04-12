@@ -6,7 +6,7 @@ import { ExternalTaskStatusEnum } from './enum';
  * @export
  * @interface IOutsourceManagePageType
  */
-export type OutsourceManagePageType = 'await' | 'inTransition' | 'all'
+export type OutsourceManagePageType = 'await' | 'inTransition' | 'all' | 'undelivered'
 
 /**
  * 根据上面页面类型确定的页面差异对象，用于生成页面类型相对应的数据选项

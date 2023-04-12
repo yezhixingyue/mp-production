@@ -1,24 +1,24 @@
 <template>
   <DialogContainerComp
     :visible='localVisible'
-    :width="isSplitWorking ? 960 : 560"
+    :width="isMultiple ? 960 : 560"
     :title="`设置完工：${TaskData?.Working.WorkingName || ''}`"
     @cancel="localVisible = false"
     @submit="submit"
     @open="onOpen"
     primaryText="完工"
     class="mp-client-set-task-complete-dialog-wrap"
-    :top="isSplitWorking ? '12vh' : '20vh'"
+    :top="isMultiple ? '12vh' : '20vh'"
     >
-    <ul class="dialog-content" v-if="TaskData && localInfo" :class="{split: isSplitWorking}">
+    <ul class="dialog-content" v-if="TaskData && localInfo" :class="{split: isMultiple}">
       <!-- ID -->
       <li v-if="TaskData.Working.ReportMode === ReportModeEnum.board && TaskData.Working.PlateInfo"
-        :class="{'mr-60': isSplitWorking}">
+        :class="{'mr-60': isMultiple}">
         <span class="label">大版ID：</span>
         <h4>{{ TaskData.Working.PlateInfo.Code }}</h4>
       </li>
       <li v-if="TaskData.Working.ReportMode !== ReportModeEnum.board && TaskData.Working.OrderInfo"
-        :class="{'mr-60': isSplitWorking}">
+        :class="{'mr-60': isMultiple}">
         <span class="label">订单ID：</span>
         <span class="mr-5">{{ TaskData.Working.OrderInfo.ServerName }}</span>
         <h4>{{ TaskData.Working.OrderInfo.OrderID }}</h4>
@@ -34,7 +34,7 @@
         <span v-if="localInfo.SecondTitle">{{ localInfo.SecondTitle }}</span>
       </li>
       <!-- 工序列表 -->
-      <li v-if="!isSplitWorking && localInfo.WorkingList.length > 0" class="work-list">
+      <li v-if="!isMultiple && localInfo.WorkingList.length > 0" class="work-list">
         <span class="label">工序：</span>
         <div>
           <h4 v-for="(it, i) in localInfo.WorkingList" :key="it.ID">
@@ -54,7 +54,7 @@
         <i>{{ localInfo.Unit }}</i>
       </li>
       <!-- 下一道工序 -->
-      <li class="next" v-if="_NextWorkContent || isSplitWorking">
+      <li class="next" v-if="_NextWorkContent || isMultiple">
         <hr>
         <!-- 非分切工序 -->
         <div v-if="_NextWorkContent && _NextWorkContent.NextWorkName">
@@ -64,9 +64,9 @@
           <h2 v-if="_NextWorkContent.EquipmentName">{{ _NextWorkContent.EquipmentName }}</h2>
         </div>
         <!-- 分切工序 -->
-        <dl v-if="isSplitWorking && props.TaskData && props.TaskData.NextWorkingList.length > 1">
+        <dl v-if="isMultiple">
           <!-- <dt>色彩示例</dt> -->
-          <dd v-for="it in filterNextWorkingList(props.TaskData.NextWorkingList)" :key="it.ID">
+          <dd v-for="it in _NextWorkingList" :key="it.ID">
             <div class="block" :style="`background-color:${it.Color}`"></div>
             <h5>下一道工序：</h5>
             <h4>{{ it.Name }}</h4>
@@ -81,9 +81,9 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
+import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
+import { INextWorkingProduction, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { filterNextWorkingList } from '@/views/ProductionClient/assets/js/utils';
 import { getNextWorkContent, getTaskDisplayInfo } from '.';
 
@@ -105,16 +105,19 @@ const localVisible = computed({
 
 const localInfo = computed(() => (props.TaskData ? getTaskDisplayInfo(props.TaskData, false) : null));
 
-/** 是否为拆分工序 */
-const isSplitWorking = computed(() => props.TaskData?.Working.Type === WorkingTypeEnum.split);
+/** 是否有多个下级工序设备 */
+const isMultiple = computed(() => props.TaskData && props.TaskData.NextWorkingList.length > 1);
 
 /** 下一道工序文字信息 */
 const _NextWorkContent = computed(() => getNextWorkContent(props.TaskData));
 
 const count = ref<number | ''>('');
-
-const onOpen = () => {
+const _NextWorkingList = ref<INextWorkingProduction[]>([]);
+const onOpen = async () => {
   count.value = '';
+  _NextWorkingList.value = [];
+
+  if (props.TaskData) _NextWorkingList.value = await filterNextWorkingList(props.TaskData.Working.TaskWorkingID);
 };
 
 const submit = () => {
