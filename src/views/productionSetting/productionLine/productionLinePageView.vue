@@ -170,6 +170,7 @@
       :primaryClick="addPrcessPrimaryClick"
       :closeClick="addPrcessCloseClick"
       :closed="addPrcessCloseedClick"
+      top="10vh"
       >
       <template #default>
         <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
@@ -1244,6 +1245,11 @@ onMounted(async () => {
 .mp-pd-line-setup-dialog-content-wrap {
   margin-top: -18px;
   min-height: 200px;
+  max-height: 500px;
+  overflow: auto;
+  overflow: overlay;
+
+  @include scroll;
 }
 .formatRadioCheckBox {
   .el-checkbox-group {
