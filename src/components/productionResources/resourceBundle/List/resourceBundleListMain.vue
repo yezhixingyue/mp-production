@@ -3,7 +3,13 @@
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12">
       <mp-table-column min-width="270px" prop="Name" label="资源包名称" />
       <mp-table-column min-width="150px" prop="Feature" label="性质">
-        <template #default="scope">{{formatFeatureType(scope.row.Feature)}}{{ scope.row.IsPlateMaterial ? '(版材)' : '' }}</template>
+        <template #default="scope">
+          {{formatFeatureType(scope.row.Feature)}}
+          {{ scope.row.IsPlateMaterial ? '(版材)' : '' }}
+          <template v-if="scope.row.Feature === MakingGroupTypeFeatureEnum.semifinished && typeof scope.row.PartType === 'number'">
+            {{ `(${getEnumNameByID(scope.row.PartType, PartTypeEnumList) || '未知'})` }}
+          </template>
+        </template>
       </mp-table-column>
       <mp-table-column min-width="320px" prop="MaterialTypeGroups" label="包含物料类型">
         <template #default="scope">{{formatMaterialTypeGroups(scope.row)}}</template>
@@ -26,7 +32,7 @@ import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getList
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpButton from '@/components/common/MpButton.vue';
 import {
-  ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj,
+  ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj, PartTypeEnumList, MakingGroupTypeFeatureEnum,
 } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
 import { getTableDiaplayContent } from '../Setup/MaterialTypeGroupSelector/utils';

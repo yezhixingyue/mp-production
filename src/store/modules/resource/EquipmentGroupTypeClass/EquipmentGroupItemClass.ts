@@ -1,5 +1,6 @@
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
+import { GripperTypeEnum } from './GripperSetupClass';
 
 export interface IMaterialConstraintsItem {
   MaterialTypeID: string
@@ -31,6 +32,12 @@ export class EquipmentGroupItemClass {
   MaxLength: number|'' = ''
 
   MaterialConstraints: IMaterialConstraintsItem[] = []
+
+  /** 叼口类型 */
+  BiteMouthType: GripperTypeEnum = GripperTypeEnum.empty
+
+  /** 叼口尺寸 */
+  BiteMouthSize: number | '' = ''
 
   constructor(data) {
     if (data) {

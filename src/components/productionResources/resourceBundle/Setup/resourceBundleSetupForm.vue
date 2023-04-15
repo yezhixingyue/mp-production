@@ -8,8 +8,13 @@
         <el-radio v-for="it in FeatureMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item prop="IsPlateMaterial" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID" class="set-is-plate-material-box">
+    <el-form-item prop="IsPlateMaterial" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID" class="type-box">
       <el-checkbox v-model="ruleForm.IsPlateMaterial" @change="onIsPlateMaterialChange">版材</el-checkbox>
+    </el-form-item>
+    <el-form-item prop="PartType" v-else class="type-box">
+      <el-radio-group v-model="ruleForm.PartType">
+        <el-radio v-for="it in PartTypeEnumList" :key="it.ID" :label="it.ID">{{ it.Name }}</el-radio>
+      </el-radio-group>
     </el-form-item>
     <el-form-item label="包含物料类型：" prop="MaterialTypeGroups" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID">
       <MaterialTypeGroupSelector v-model="ruleForm.MaterialTypeGroups" />
@@ -27,7 +32,7 @@
 
 <script setup lang='ts'>
 import {
-  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj, resourceBundleMatchEnum,
+  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj, resourceBundleMatchEnum, PartTypeEnumList,
 } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
@@ -69,6 +74,9 @@ const rules = reactive<FormRules>({
     },
     { validator: checkMaterialTypeGroups, trigger: 'change' },
   ],
+  PartType: [
+    { required: true, message: '请选择半成品类型', trigger: 'blur' },
+  ],
 });
 
 const onFeatureChange = (e: number | string) => {
@@ -95,6 +103,7 @@ const getFormData = () => new Promise((resolve) => { // 校验 + 获取表单内
           ID: ruleForm.value.ID,
           Name: ruleForm.value.Name,
           Feature: ruleForm.value.Feature,
+          PartType: ruleForm.value.PartType,
         };
         resolve(temp);
         return;
@@ -126,11 +135,16 @@ defineExpose({
         width: 410px;
       }
 
-      &.set-is-plate-material-box {
+      :deep(.el-radio) {
+        min-width: 70px;
+        margin-right: 10px;
+      }
+
+      &.type-box {
         margin-top: -22px;
         margin-bottom: 22px;
 
-        :deep(.el-checkbox__label) {
+        :deep(.el-checkbox__label), :deep(.el-radio__label) {
           font-weight: 700;
           font-size: 14px;
           color: #444;

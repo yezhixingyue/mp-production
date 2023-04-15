@@ -2,19 +2,23 @@ import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
-import CommonClassType from '../../formattingTime/CommonClassType';
+import CommonClassType, { ISetConditionParams } from '../../formattingTime/CommonClassType';
 import { EquipmentGroupItemClass, EquipmentGroupItemType } from './EquipmentGroupItemClass';
 import { GroupColorLimitClass } from './GroupColorLimitClass';
 import { GroupListConditionClass } from './GroupListConditionClass';
-import { GroupSizeLimitClass } from './GroupSizeLimitClass';
+import { GripperSetupClass, GripperTypeEnum } from './GripperSetupClass';
+// import { GroupSizeLimitClass } from './GroupSizeLimitClass';
 
 export enum EquipmentGroupMenuEnumType {
-  size,
+  /** 叼口 */
+  gripper,
   material,
   color,
   edit,
   remove,
 }
+
+/** 设备组列表管理类 */
 export class EquipmentGroupTypeClass {
   condition = new GroupListConditionClass()
 
@@ -23,6 +27,14 @@ export class EquipmentGroupTypeClass {
   DataNumber = 0
 
   curEditItem: EquipmentGroupItemType | null = null
+
+  setConditon(e: ISetConditionParams) {
+    CommonClassType.setCondition(e, this.condition);
+  }
+
+  clearCondition() {
+    this.condition = new GroupListConditionClass();
+  }
 
   async getList(Page = 1) {
     this.condition.Page = Page;
@@ -79,21 +91,21 @@ export class EquipmentGroupTypeClass {
     }
   }
 
-  async setSizeLimit(data: GroupSizeLimitClass, closeDialogFunc: () => void) { // 设置尺寸限制
-    const resp = await api.getEquipmentGroupSizeLimit(data).catch(() => null);
-    if (resp?.data.isSuccess) {
-      const cb = () => {
-        const i = this.DataList.findIndex(it => it.ID === data.ID);
-        if (i > -1) {
-          const temp = { ...this.DataList[i], ...data };
-          this.DataList.splice(i, 1, temp);
-        }
-        if (closeDialogFunc) closeDialogFunc();
-      };
+  // async setSizeLimit(data: GroupSizeLimitClass, closeDialogFunc: () => void) { // 设置尺寸限制
+  //   const resp = await api.getEquipmentGroupSizeLimit(data).catch(() => null);
+  //   if (resp?.data.isSuccess) {
+  //     const cb = () => {
+  //       const i = this.DataList.findIndex(it => it.ID === data.ID);
+  //       if (i > -1) {
+  //         const temp = { ...this.DataList[i], ...data };
+  //         this.DataList.splice(i, 1, temp);
+  //       }
+  //       if (closeDialogFunc) closeDialogFunc();
+  //     };
 
-      MpMessage.dialogSuccess({ title: '尺寸限制设置成功', onOk: cb, onCancel: cb });
-    }
-  }
+  //     MpMessage.dialogSuccess({ title: '尺寸限制设置成功', onOk: cb, onCancel: cb });
+  //   }
+  // }
 
   async setColorLimit(data: GroupColorLimitClass, closeDialogFunc: () => void) { // 设置尺寸限制
     const resp = await api.getEquipmentGroupColorLimit(data).catch(() => null);
@@ -108,6 +120,24 @@ export class EquipmentGroupTypeClass {
       };
 
       MpMessage.dialogSuccess({ title: '印色数量限制设置成功', onOk: cb, onCancel: cb });
+    }
+  }
+
+  async setGripperLimit(data: GripperSetupClass, closeDialogFunc: () => void) { // 叼口设置
+    const _data: Omit<GripperSetupClass, '_validate'> = { ...data };
+    if (_data.BiteMouthType === GripperTypeEnum.empty) _data.BiteMouthSize = 0;
+    const resp = await api.getEquipmentGroupSetBiteMouth(_data).catch(() => null);
+    if (resp?.data.isSuccess) {
+      const cb = () => {
+        const i = this.DataList.findIndex(it => it.ID === data.ID);
+        if (i > -1) {
+          const temp = { ...this.DataList[i], ..._data };
+          this.DataList.splice(i, 1, temp);
+        }
+        if (closeDialogFunc) closeDialogFunc();
+      };
+
+      MpMessage.dialogSuccess({ title: '叼口设置成功', onOk: cb, onCancel: cb });
     }
   }
   // 其它方法： 设置物料限制、设置印色数量限制等  api.getEquipmentGroupSave
@@ -143,6 +173,7 @@ export class EquipmentGroupTypeClass {
   }
 
   fetchRequiredData() {
+    this.clearCondition();
     this.getList();
     this.getEquipmentClassList();
     this.getSubcontractorFactoryLis();

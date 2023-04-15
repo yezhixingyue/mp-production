@@ -1,13 +1,21 @@
 <template>
   <main>
     <el-table :data="props.EquipmentGroupData.DataList" stripe border :row-key="getRowKey" class="row-ft-12">
-      <mp-table-column min-width="120px" prop="ClassID" label="分类">
+      <mp-table-column min-width="100px" prop="ClassID" label="分类">
         <template #default="scope">{{formatListName(scope.row.ClassID, props.EquipmentGroupData.EquipmentClassList)}}</template>
       </mp-table-column>
-      <mp-table-column min-width="180px" prop="Name" label="组名称" />
+      <mp-table-column min-width="135px" prop="Name" label="组名称" />
       <mp-table-column min-width="170px" prop="Feature" label="可以外协工厂">
         <template #default="scope">
           {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}
+        </template>
+      </mp-table-column>
+      <mp-table-column width="150px" prop="Feature" label="叼口设置">
+        <template #default="scope">
+          <template v-if="scope.row.BiteMouthType !== GripperTypeEnum.empty">
+            {{getNameByIDAndList(scope.row.BiteMouthType, GripperTypeEnumList)}}
+            <i>( {{ scope.row.BiteMouthSize }}mm )</i>
+          </template>
         </template>
       </mp-table-column>
       <!-- <mp-table-column width="125px" prop="Feature" label="允许批量报工">
@@ -22,13 +30,15 @@
         <template #default="scope">{{formatMaterialLimit(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column width="140px" prop="ColorLimitContent" label="印色数量限制" />
-      <mp-table-column width="340px" label="操作">
+      <mp-table-column width="480px" label="操作">
         <template #default="scope">
-          <!-- <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.size)">尺寸限制</mp-button> -->
+          <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.gripper)">叼口设置</mp-button>
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.material)">物料限制</mp-button>
-          <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.color)">印色数量限制</mp-button>
-          <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)">编辑</mp-button>
-          <mp-button type="danger" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.remove)">删除</mp-button>
+          <mp-button type="primary" class="mr-35" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.color)">印色数量限制</mp-button>
+          <!-- <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)">编辑</mp-button> -->
+          <EditMenu style="margin-right:25px" @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)" />
+          <RemoveMenu style="margin-right:25px" @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.remove)" />
+          <!-- <mp-button type="danger" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.remove)">删除</mp-button> -->
         </template>
       </mp-table-column>
     </el-table>
@@ -43,6 +53,9 @@ import { EquipmentGroupMenuEnumType, EquipmentGroupTypeClass } from '@/store/mod
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
 import { getMaterialConstraintsListWithNames } from '@/store/modules/resource/utils/utils';
 import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
+import EditMenu from '@/components/common/menus/EditMenu.vue';
+import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
+import { GripperTypeEnumList, GripperTypeEnum } from '@/store/modules/resource/EquipmentGroupTypeClass/GripperSetupClass';
 
 const props = defineProps<{
   EquipmentGroupData: Required<EquipmentGroupTypeClass>
@@ -83,7 +96,10 @@ const formatListName = (id, list, options = { key: 'Name', value: 'ID' }) => get
 // };
 const formatMaterialLimit = (item: EquipmentGroupItemType) => {
   const list = getMaterialConstraintsListWithNames(item.MaterialConstraints, props.MaterialTypeGroup);
-  return list.map(it => (it.LimitNumber ? `${it.MaterialTypeName}（${it.LimitNumber}条）` : `${it.MaterialTypeName}`)).join('、');
+  return list
+    .map(it => (it.LimitNumber ? `${it.MaterialTypeName}（${it.LimitNumber}条）` : `${it.MaterialTypeName}`))
+    .sort((a, b) => a.localeCompare(b, 'zh-CN'))
+    .join('、');
 };
 
 const onMenuClick = (it: EquipmentGroupItemType, type: EquipmentGroupMenuEnumType) => {

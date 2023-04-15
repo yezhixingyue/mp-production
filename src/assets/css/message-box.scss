@@ -158,17 +158,18 @@
         justify-content: center;
         button {
             color: $--color-primary;
-            background-color: $--color-white;
+            background-color: $--color-white !important;
             border: 1px solid $--color-primary;
             &:hover {
-                background-color: $--color-white;
+                background-color: $--color-white !important;
                 transform: scale(1.005);
                 box-shadow: 0px 1px 3px #ddd;
             }
             &:active {
                 color: mix($--color-white, $--color-primary, 10%);
-                background-color: rgba(168, 168, 168, 0.1);
+                background-color: rgba(168, 168, 168, 0.1) !important;
             }
+            
         }
     }
 }
@@ -179,13 +180,13 @@
     .el-message-box__btns{
         button {
             color: $--color-white;
-            background-color: $--color-blue;
+            background-color: $--color-blue !important;
             border: none;
             &:hover {
-                background-color: $--color-primary;
+                background-color: $--color-primary !important;
             }
             &:active {
-                background-color: #35dff9;
+                background-color: #35dff9 !important;
                 color: $--color-white;
             }
         }

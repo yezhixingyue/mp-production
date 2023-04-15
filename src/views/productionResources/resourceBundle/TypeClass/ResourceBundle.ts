@@ -1,3 +1,4 @@
+import { getEnumList } from '@/assets/js/utils/getListByEnums';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 
 /**
@@ -48,6 +49,35 @@ export const resourceBundleMatchEnumObj = {
   },
 };
 
+/** 半成品类型枚举 */
+export enum PartTypeEnum {
+  /** 封面 */
+  cover = 0,
+  /** 内文 */
+  insidePage = 1,
+  /** 其他 */
+  other = 255,
+}
+
+/** 半成品类型枚举对象 */
+export const PartTypeEnumObj = {
+  cover: {
+    ID: PartTypeEnum.cover,
+    Name: '封面',
+  },
+  insidePage: {
+    ID: PartTypeEnum.insidePage,
+    Name: '内文',
+  },
+  other: {
+    ID: PartTypeEnum.other,
+    Name: '其他',
+  },
+};
+
+/** 半成品类型枚举列表 */
+export const PartTypeEnumList = getEnumList(PartTypeEnumObj);
+
 export interface IMaterialTypeItemInBundle {
   CategoryID: number
   MaterialTypeIDS: string[]
@@ -61,6 +91,9 @@ export class ResourceBundleClass {
   Feature = MakingGroupTypeFeatureEnum.main
 
   MatchType: number | '' = resourceBundleMatchEnum.single
+
+  /** 半成品类型 - 仅半成品使用 */
+  PartType: PartTypeEnum | '' = ''
 
   IsPlateMaterial = false
 

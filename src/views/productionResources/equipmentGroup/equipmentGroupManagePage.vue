@@ -1,10 +1,11 @@
 <template>
   <section class="equipment-group-list-page-wrap">
-    <Header @add="onItemSetupClick" />
+    <Header @add="onItemSetupClick" :EquipmentGroupData="EquipmentGroupData" :getList="getList" />
     <Main :EquipmentGroupData="EquipmentGroupData" :MaterialTypeGroup="MaterialTypeGroup" @menuClick="onMenuClick" />
-    <Footer :condition="EquipmentGroupData.condition" :total="EquipmentGroupData.DataNumber" :getList="getList" />
+    <Footer :EquipmentGroupData="EquipmentGroupData" :getList="getList" />
     <ItemSetupDialog v-model:visible="visible" :EquipmentGroupData="EquipmentGroupData" @submit="handleItemSetupSubmit" />
-    <SizeLimitDialog v-model:visible="sizeLimitVisible" :EquipmentGroupData="EquipmentGroupData" @submit="handleSizeLimitSubmit" />
+    <GripperEdgeSetupDialog v-model:visible="gripperVisible" @submit="handleSizeLimitSubmit" :EquipmentGroupData="EquipmentGroupData" />
+    <!-- <SizeLimitDialog v-model:visible="sizeLimitVisible" :EquipmentGroupData="EquipmentGroupData" @submit="handleSizeLimitSubmit" /> -->
     <ColorLimitDialog v-model:visible="colorLimitVisible" :EquipmentGroupData="EquipmentGroupData" @submit="handleColorLimitSubmit" />
   </section>
 </template>
@@ -14,20 +15,25 @@ import Header from '@/components/productionResources/EquipmentGroup/List/Equipme
 import Main from '@/components/productionResources/EquipmentGroup/List/EquipmentGroupListMain.vue';
 import Footer from '@/components/productionResources/EquipmentGroup/List/EquipmentGroupListFooter.vue';
 import ItemSetupDialog from '@/components/productionResources/EquipmentGroup/List/EquipmentGroupItemSetupDialog.vue';
-import SizeLimitDialog from '@/components/productionResources/EquipmentGroup/List/EquipmentGroupSizeLimitDialog.vue';
+// import SizeLimitDialog from '@/components/productionResources/EquipmentGroup/List/EquipmentGroupSizeLimitDialog.vue';
+import GripperEdgeSetupDialog from '@/components/productionResources/EquipmentGroup/List/GripperEdgeSetupDialog.vue';
 import ColorLimitDialog from '@/components/productionResources/EquipmentGroup/List/EquipmentGroupColorLimitDialog.vue';
 import { useResourceStore } from '@/store/modules/resource';
 import { storeToRefs } from 'pinia';
 import { EquipmentGroupItemClass, EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { EquipmentGroupMenuEnumType } from '@/store/modules/resource/EquipmentGroupTypeClass';
-import { GroupSizeLimitClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GroupSizeLimitClass';
+// import { GroupSizeLimitClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GroupSizeLimitClass';
 import { GroupColorLimitClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GroupColorLimitClass';
 import { useRouter } from 'vue-router';
+import { GripperSetupClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GripperSetupClass';
 
 const router = useRouter();
-const store = useResourceStore();
-const { EquipmentGroupData, MaterialTypeGroup } = storeToRefs(store);
+const resourceStore = useResourceStore();
+
+const { MaterialTypeGroup } = storeToRefs(resourceStore);
+
+const EquipmentGroupData = computed(() => resourceStore.EquipmentGroupData);
 
 /** 编辑|新增相关
 ---------------------------- */
@@ -43,17 +49,27 @@ const handleItemSetupSubmit = (item: EquipmentGroupItemClass) => { // 添加 和
   };
   EquipmentGroupData.value.save(item, closeDialogFunc);
 };
+/** 叼口设置相关
+---------------------------- */
+const gripperVisible = ref(false);
+
+const handleSizeLimitSubmit = (e: GripperSetupClass) => {
+  const closeDialogFunc = () => {
+    gripperVisible.value = false;
+  };
+  EquipmentGroupData.value.setGripperLimit(e, closeDialogFunc);
+};
 
 /** 尺寸限制相关
 ---------------------------- */
-const sizeLimitVisible = ref(false);
+// const sizeLimitVisible = ref(false);
 
-const handleSizeLimitSubmit = (e: GroupSizeLimitClass) => {
-  const closeDialogFunc = () => {
-    sizeLimitVisible.value = false;
-  };
-  EquipmentGroupData.value.setSizeLimit(e, closeDialogFunc);
-};
+// const handleSizeLimitSubmit = (e: GroupSizeLimitClass) => {
+//   const closeDialogFunc = () => {
+//     sizeLimitVisible.value = false;
+//   };
+//   EquipmentGroupData.value.setSizeLimit(e, closeDialogFunc);
+// };
 
 /** 印色数量限制相关
 ---------------------------- */
@@ -80,10 +96,13 @@ const onMenuClick = (item: EquipmentGroupItemType, type: EquipmentGroupMenuEnumT
     case EquipmentGroupMenuEnumType.remove:
       EquipmentGroupData.value.remove(item);
       break;
-    case EquipmentGroupMenuEnumType.size:
-      // 尺寸限制
-      sizeLimitVisible.value = true;
+    case EquipmentGroupMenuEnumType.gripper: // 叼口设置
+      gripperVisible.value = true;
       break;
+    // case EquipmentGroupMenuEnumType.size: // 该按钮功能已取消
+    //   // 尺寸限制
+    //   sizeLimitVisible.value = true;
+    //   break;
     case EquipmentGroupMenuEnumType.material:
       // 物料限制
       router.push({ name: 'equipmentGroupMaterialLimitList' });
@@ -101,7 +120,7 @@ const getList = (e) => EquipmentGroupData.value.getList(e);
 
 onMounted(() => {
   EquipmentGroupData.value.fetchRequiredData();
-  store.getMaterialTypeGroup();
+  resourceStore.getMaterialTypeGroup();
 });
 
 </script>
@@ -138,7 +157,7 @@ export default {
         font-size: 12px;
       }
       .el-button + .el-button {
-        margin-left: 15px;
+        margin-left: 30px;
       }
     }
   }

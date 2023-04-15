@@ -86,6 +86,9 @@ export const resourceApis = {
   getEquipmentGroupColorLimit(data) { // POST /Api/EquipmentGroup/ColorLimit   印色数量限制
     return request({ method: 'POST', url: '/Api/EquipmentGroup/ColorLimit', data });
   },
+  getEquipmentGroupSetBiteMouth(data) { // POST /Api/EquipmentGroup/SetBiteMouth 叼口设置
+    return request({ method: 'POST', url: '/Api/EquipmentGroup/SetBiteMouth', data });
+  },
 
   /** 生产资源 - 加工设备相关 Equipment
   --------------------------------------------- */

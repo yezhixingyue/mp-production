@@ -57,7 +57,7 @@ export class ValidatorTDClass {
   UseIntranet = false;
 
   _validate(this: ValidatorTDClass): Promise<ValidationError[]> { // 限制this指向 -- 添加此方法仅为告诉ts
-    // if (this._validate) { // 如果装饰器附加了_validate方法的话 则调用并返回其结果1
+    // if (this._validate) { // 如果装饰器附加了_validate方法的话 则调用并返回其结果
     //   return this._validate(obj);
     // }
 

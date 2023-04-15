@@ -1,17 +1,21 @@
 <template>
   <footer>
     <MpPagination style="width:100%"
-     center :nowPage="props.condition.Page" :pageSize="props.condition.PageSize" :total="total" :handlePageChange="props.getList" />
+     center
+     :nowPage="EquipmentGroupData.condition.Page"
+     :pageSize="EquipmentGroupData.condition.PageSize"
+     :total="EquipmentGroupData.DataNumber"
+     :handlePageChange="props.getList"
+    />
   </footer>
 </template>
 
 <script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
-import { ResourceBundleListCondition } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundleListCondition';
+import { EquipmentGroupTypeClass } from '@/store/modules/resource/EquipmentGroupTypeClass';
 
 const props = defineProps<{
-  condition: ResourceBundleListCondition,
-  total: number,
+  EquipmentGroupData: Required<EquipmentGroupTypeClass>,
   getList:(Page: number) => void,
 }>();
 </script>

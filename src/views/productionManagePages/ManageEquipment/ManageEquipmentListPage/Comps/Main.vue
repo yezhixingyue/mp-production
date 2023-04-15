@@ -16,7 +16,7 @@
       <mp-table-column min-width="280px" label="操作" class-name="ctrl">
         <template #default="scope">
           <mp-button type="primary" link @click="onTimeClick(scope.row)">运行时间</mp-button>
-          <mp-button type="primary" link @click="onOpenSwitchClick(scope.row)" :disabled="scope.row.MaintainInfo.IsAutomatic">
+          <mp-button :type="scope.row.IsOpen ? 'danger' : 'primary'" link @click="onOpenSwitchClick(scope.row)" :disabled="scope.row.MaintainInfo.IsAutomatic">
             {{ scope.row.IsOpen ? '关机' : '开机'}}
           </mp-button>
         </template>
