@@ -31,6 +31,7 @@
                     :value='Data.SizeSelects'
                     @change="SizeSelectChange"
                     :width="250"
+                    :filterable='true'
                     :placeholder="'请选择物料尺寸'"
                     ></OneLevelSelect>
                   <OneLevelSelect
@@ -76,6 +77,7 @@
                     :value='Data.inDeliveryForm.UnitID'
                     @change="(ID) => Data.inDeliveryForm.UnitID = ID"
                     :width="120"
+                    :filterable='true'
                     :placeholder="'请选择单位'"
                     ></OneLevelSelect>
                     <template v-if="Data.checkedMaterial">
@@ -105,6 +107,7 @@
                     :value='Data.inDeliveryForm.SupplierID'
                     @change="(ID) => Data.inDeliveryForm.SupplierID = ID"
                     :width="300"
+                    :filterable='true'
                     :placeholder="'请选择供应商'"
                     ></OneLevelSelect>
                     <el-form-item :label="`单价：`" v-if="Data.inDeliveryForm.InStockType === 1"
@@ -131,6 +134,7 @@
                     :value='Data.inDeliveryForm.Handler'
                     @change="(ID) => Data.inDeliveryForm.Handler = ID"
                     :width="300"
+                    :filterable='true'
                     :placeholder="'请选择退料人'"
                     ></OneLevelSelect>
                 </el-form-item>

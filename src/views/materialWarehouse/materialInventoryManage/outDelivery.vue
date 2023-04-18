@@ -31,6 +31,7 @@
                     :value='Data.SizeSelects'
                     @change="SizeSelectChange"
                     :width="250"
+                    :filterable='true'
                     :placeholder="'请选择物料尺寸'"
                     ></OneLevelSelect>
                   <OneLevelSelect
@@ -77,6 +78,7 @@
                     :value='Data.outDeliveryForm.UnitID'
                     @change="(ID) => Data.outDeliveryForm.UnitID = ID"
                     :width="120"
+                    :filterable='true'
                     :placeholder="'请选择单位'"
                     ></OneLevelSelect>
                     <template v-if="Data.checkedMaterial">
@@ -103,6 +105,7 @@
                     :value='Data.outDeliveryForm.Handler'
                     @change="(ID) => Data.outDeliveryForm.Handler = ID"
                     :width="300"
+                    :filterable='true'
                     :placeholder="'请选择领料人'"
                     ></OneLevelSelect>
                 </el-form-item>
