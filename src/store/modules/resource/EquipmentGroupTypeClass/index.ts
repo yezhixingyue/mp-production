@@ -147,7 +147,7 @@ export class EquipmentGroupTypeClass {
   //   if (resp?.data.isSuccess) {
   //     const callback = () => {
   //       console.log(resp, this.curEditItem, cb);
-  //       // 处理数据变动
+  //       // 处理数据变动1
   //       if (cb) cb();
   //     };
   //     MpMessage.success({ title: '添加成功', onOk: callback, onCancel: callback });
