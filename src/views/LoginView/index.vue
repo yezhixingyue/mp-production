@@ -72,9 +72,11 @@ import { getHasLoginPermission } from '@/router/modules/OrderAppRouteManage/util
 export default {
   name: 'LoginPage',
   setup() {
+    const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
+
     // const router = useRouter();
     const loginForm: ILoginSubmitForm = reactive({
-      Mobile: '', Password: '', Terminal: 1, Site: 1,
+      Mobile: '', Password: '', Terminal: 1, Site: isOrderApp ? 3 : 1,
     });
     const userStore = useUserStore();
     // const LayoutStore = useLayoutStore();
@@ -82,8 +84,6 @@ export default {
     const ruleForm = ref<FormInstance>();
     const logining = ref(false);
     const loadingUserInfo = ref(false);
-
-    const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
 
     const pageTitle = isOrderApp ? '生产下单与外协入库系统' : '名片之家 生产Erp系统';
 

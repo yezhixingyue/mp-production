@@ -68,6 +68,7 @@ import { IHoverTarget } from '../js/types';
 
 const props = defineProps<{
   hoverItemInfo: IHoverTarget
+  isLeftUse?: boolean
 }>();
 
 const oBox = ref<InstanceType<typeof HTMLElement>>();
@@ -86,7 +87,7 @@ watchEffect(() => {
 
   // 3. 获得差值
   const leftDiff = leftDistance > 0 ? 0 : leftDistance;
-  const bottomDiff = bottomDistance > 0 ? 0 : -BoxHeight - 40;
+  const bottomDiff = bottomDistance > 0 ? 0 : -BoxHeight - 40 + (props.isLeftUse ? 90 : 0);
 
   // 4. 最终结果
   const left = props.hoverItemInfo.position.offsetX + leftDiff + 20;

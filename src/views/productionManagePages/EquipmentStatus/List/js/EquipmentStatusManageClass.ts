@@ -97,10 +97,10 @@ export class EquipmentStatusManageClass {
     return this.boardDraw ? this.boardDraw.hoverTarget : null;
   }
 
-  init(canvas?: HTMLCanvasElement) {
+  init(canvas?: HTMLCanvasElement, oLeft?: HTMLElement) {
     this.getEquipmentClassList();
     if (canvas) {
-      this.boardDraw = new BoardDraw(canvas);
+      this.boardDraw = new BoardDraw(canvas, oLeft);
     }
   }
 

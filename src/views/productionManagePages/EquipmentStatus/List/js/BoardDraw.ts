@@ -10,24 +10,34 @@ const STRIPE_WHITE_COLOR = '#FFF';
 const STRIPE_GRAY_COLOR = '#F8F8F8';
 /** 每小时显示宽度 */
 const HOURWIDTH = 100;
+/** 设备状态行高 */
+export const RowHeight = 50;
+/** 顶部留白区域高度（填充时间点文字） */
+export const TOPWHITESPACE = 20;
+/** 底部留白区域高度（填充时间点文字） */
+export const BOTTOMWHITESPACE = 25;
+/** 标题单元格宽度 */
+export const TITLEWIDTH = 320;
+/** 标题单元格中左侧文字宽度（不含空白边距） */
+export const TITLELEFTWIDTH = 95;
 
 export class BoardDraw {
   /** 存放宽高等数据：标题单元格宽度、设备与任务介绍单元格宽度、任务列表中每小时单元格占位宽度、行高 */
   private layout = {
     /** 标题单元格宽度 */
-    TitleWidth: 180,
+    TitleWidth: 0,
     /** 任务单元格宽度 */
     IntroWidth: 210,
     /** 后面每小时单元格宽度 */
     HourCellWidth: HOURWIDTH,
     /** 行高 */
-    rowHeight: 50,
+    rowHeight: RowHeight,
     /** 标题单元格中左侧文字宽度（不含空白边距） */
-    TitleLeftWidth: 56,
+    TitleLeftWidth: TITLELEFTWIDTH,
     /** 标题单元格中右侧文字宽度（不含空白边距） */
     TaskNumberWidth: 115,
     /** 顶部留白区域高度（填充时间点文字） */
-    TopWhiteSpace: 20,
+    TopWhiteSpace: TOPWHITESPACE,
     /** 首个时间段长度 */
     firstTimeWidth: 0,
   }
@@ -49,14 +59,17 @@ export class BoardDraw {
 
   canvas: null | HTMLCanvasElement = null
 
+  oLeft?: HTMLElement
+
   ctx: CanvasRenderingContext2D | null = null
 
   list: ILocalEquipmentStatusItem[] = []
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, oLeft?: HTMLElement) {
     this.canvas = canvas;
+    this.oLeft = oLeft;
     this.canvas.width = this.boardWidth;
-    this.canvas.height = this.boardHeight;
+    this.canvas.height = this.boardHeight + BOTTOMWHITESPACE; // 25为底部时间刻度占用高度
     this.ctx = canvas.getContext('2d');
     /** 下一个整点时间节点时间戳 */
     const lastHourTime = new Date(new Date(new Date().setHours(new Date().getHours() + 1)).setMinutes(0)).setSeconds(0);
@@ -84,7 +97,11 @@ export class BoardDraw {
       this.ctx.moveTo(x + w, y);
     }
     this.ctx.lineTo(x + w, y + h);
-    this.ctx.lineTo(x, y + h);
+    if (i < this.list.length - 1) {
+      this.ctx.lineTo(x, y + h);
+    } else {
+      this.ctx.moveTo(x, y + h);
+    }
     this.ctx.lineTo(x, y);
     this.ctx.stroke();
     this.ctx.closePath();
@@ -121,7 +138,7 @@ export class BoardDraw {
     EquipmentStatusEnumItem: typeof EquipmentStatusEnumList[number],
     isHover = false,
   ) {
-    if (!this.ctx) return;
+    if (!this.ctx || !this.layout.TitleWidth) return;
     // 开始
     this.ctx.beginPath();
 
@@ -237,6 +254,15 @@ export class BoardDraw {
       this.ctx.textBaseline = 'top';
       this.ctx.font = '12px YaHei';
       this.ctx.fillText(point, left, 6);
+
+      this.ctx.closePath();
+
+      this.ctx.beginPath();
+
+      this.ctx.fillStyle = '#444';
+      this.ctx.textBaseline = 'top';
+      this.ctx.font = '12px YaHei';
+      this.ctx.fillText(point, left, this.boardHeight + 6);
 
       this.ctx.closePath();
     };
@@ -422,7 +448,7 @@ export class BoardDraw {
     if (!this.canvas || !this.ctx) return;
     if (isInit) this.list = list;
     this.canvas.width = this.boardWidth;
-    this.canvas.height = this.boardHeight;
+    this.canvas.height = this.boardHeight + BOTTOMWHITESPACE;
     this.clear();
     this.list.forEach((it, i) => {
       if (!this.ctx) return;
@@ -504,7 +530,7 @@ export class BoardDraw {
 
   private onmousemove(e:MouseEvent) {
     if (!this.hoverTarget || !this.canvas) return;
-    this.hoverTarget.position.offsetX = e.offsetX;
+    this.hoverTarget.position.offsetX = e.offsetX + TITLEWIDTH;
     this.hoverTarget.position.offsetY = e.offsetY;
     this.hoverTarget.position.clientX = e.clientX;
     this.hoverTarget.position.clientY = e.clientY;
@@ -586,5 +612,10 @@ export class BoardDraw {
     this.canvas.onmousemove = this.onmousemove.bind(this);
     this.canvas.onmouseleave = this.onmouseleave.bind(this);
     this.canvas.onclick = this.onmouseclick.bind(this);
+
+    if (this.oLeft) {
+      this.oLeft.onmousemove = this.onmousemove.bind(this);
+      this.oLeft.onmouseleave = this.onmouseleave.bind(this);
+    }
   }
 }
