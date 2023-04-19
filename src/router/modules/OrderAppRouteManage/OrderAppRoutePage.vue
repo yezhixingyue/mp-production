@@ -99,16 +99,25 @@ onMounted(() => {
             left: 0;
             top: -1px;
             color: #444;
+            font-weight: 400;
           }
           &:first-of-type {
             &::before {
               display: none;
             }
           }
+          &:hover {
+            color: #26bcf9;
+            text-decoration: underline;
+          }
         }
       }
       .active {
         color: #26bcf9;
+        font-weight: 700;
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
   }

@@ -14,7 +14,7 @@
           @mouseenter.prevent="curTitleItem = it"
          >
           <div class="l" :style="`width:${TITLELEFTWIDTH}px`">
-            <span>{{ it.Equipment.ClassName }}{{ it.Equipment.ClassName }}</span>
+            <span>{{ it.Equipment.ClassName }}</span>
             <span>{{ it.Equipment.GroupName }}</span>
           </div>
           <h2>{{ it.Equipment.Name }}</h2>
