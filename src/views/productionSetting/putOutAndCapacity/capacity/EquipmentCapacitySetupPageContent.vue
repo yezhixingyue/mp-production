@@ -150,7 +150,7 @@ onMounted(() => {
     Value: props.curConditionRow?.Value || props.curConditionRow?.Value === 0 ? props.curConditionRow?.Value : '',
     Type: props.curConditionRow?.Type || props.curCapacityType,
     Property: props.curConditionRow?.Property || null,
-    CalculateType: CalculateTypeEnum.UnitOutput,
+    CalculateType: props.curConditionRow?.CalculateType,
     _CalculateValue: '',
   };
 
