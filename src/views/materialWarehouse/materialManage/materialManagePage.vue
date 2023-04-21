@@ -656,6 +656,9 @@ export default {
         margin-left: 65px;
         &.attributes {
           .el-input, .el-select, .el-input-number{
+            input{
+              text-align: left;
+            }
             width: 150px;
           }
           p{
