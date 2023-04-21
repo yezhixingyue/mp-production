@@ -6,7 +6,7 @@
       </li>
       <li v-if="isCombineLine">
         <h4 class="mr-15">{{ item._originLineData?.Name }}</h4>
-        <h4 v-if="item.ForbitUnionMakeup">禁止印刷版合拼</h4>
+        <h4 v-if="item.ForbitUnionMakeup">禁止印刷版合拼 <i v-if="item.NeedSetPlateSize" style="font-weight: 400;font-size: 13px;">(手动设置拼版尺寸)</i> </h4>
       </li>
       <li class="summary">
         <span class="title is-pink" v-if="isCombineLine">{{ item.Number }}{{ item.Unit }}</span>
@@ -17,7 +17,7 @@
         <span class="title">印色：{{ getColorDisplayContent(item.ColorList) }}</span>
       </li>
       <li v-if="!isCombineLine && item.ForbitUnionMakeup">
-        <h4>禁止印刷版合拼</h4>
+        <h4>禁止印刷版合拼 <i v-if="item.NeedSetPlateSize" style="font-weight: 400;font-size: 13px;">(手动设置拼版尺寸)</i></h4>
       </li>
       <li>
         <span>{{ item._MaterialName }}</span>

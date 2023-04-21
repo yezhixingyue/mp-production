@@ -21,13 +21,7 @@
         <ConditionTextDisplayComp :conditionObj="it.Constraint" :content="it._Content" />
       </div>
       <!-- 计算数量添加进去 -->
-      <div class="pot-out"
-        :title="it.Value + (it.Property && Property.getPropertyName(it.Property) ? ` ( ${Property.getPropertyName(it.Property)} )` : '') + options.unit"
-      >
-        {{it.Value}}
-        {{it.Property && Property.getPropertyName(it.Property) ? ` ( ${Property.getPropertyName(it.Property)} )` : ''}}
-        {{options.unit}}
-      </div>
+      <div class="pot-out" :title="it._ValueContent">{{it._ValueContent}}</div>
       <div class="priority">{{it.Priority}}</div>
       <div class="ctrl">
         <mp-button type="info" class="menu" link @click="onSaveClick(it)">
@@ -49,7 +43,7 @@ import { TransformConstraintTableItemType } from '@/components/common/Constraint
 import { Property } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import { computed } from 'vue';
 import { CapacityConditionItemClass } from '../js/CapacityConditionItemClass';
-import { CapacityTypeEnum } from './enum';
+import { CalculateTypeEnum, CapacityTypeEnum } from './enum';
 
 const props = defineProps<{
   tableList: TransformConstraintTableItemType<CapacityConditionItemClass>[],
@@ -57,8 +51,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['rowRemove', 'rowSave']);
-
-const localTableList = computed(() => props.tableList.filter(it => it.Type === props.Type));
 
 const options = computed(() => {
   const temp = {
@@ -88,6 +80,13 @@ const options = computed(() => {
 
   return temp;
 });
+
+const localTableList = computed(() => props.tableList.filter(it => it.Type === props.Type).map(it => ({
+  ...it,
+  _ValueContent: it.Value
+     + (it.Type === CapacityTypeEnum.capacity && it.Property && Property.getPropertyName(it.Property) ? ` ( ${Property.getPropertyName(it.Property)} )` : '')
+     + (it.CalculateType === CalculateTypeEnum.FixedTime && it.Type === CapacityTypeEnum.capacity ? '小时' : options.value.unit),
+})));
 
 const onSaveClick = (e) => {
   emit('rowSave', e, props.Type);

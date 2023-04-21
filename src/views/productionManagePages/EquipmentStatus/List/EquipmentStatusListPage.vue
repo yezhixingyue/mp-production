@@ -2,7 +2,7 @@
   <section class="wrap">
     <Header :classList="EquipmentStatusManagePageData.EquipmentClassList" v-model="EquipmentStatusManagePageData.curClassID" />
     <main ref="oWrap">
-      <ul class="left-list" :style="`padding-top: ${TOPWHITESPACE}px;width:${TITLEWIDTH}px`" @mouseleave="curTitleItem = null">
+      <ul class="left-list" v-show="leftInfoList.length" :style="`padding-top: ${TOPWHITESPACE}px;width:${TITLEWIDTH}px`" @mouseleave="curTitleItem = null">
         <li
           v-for="it in leftInfoList" :key="it.Equipment.ID"
           class="left-item"
@@ -204,8 +204,9 @@ export default {
     }
 
     :deep(.el-empty) {
-      padding-top: 15vh;
+      padding-top: 8vh;
       padding-right: 50px;
+      margin: 0 auto;
 
       .el-empty__description p {
         font-size: 13px;

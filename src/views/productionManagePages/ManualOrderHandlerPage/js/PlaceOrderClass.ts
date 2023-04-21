@@ -176,6 +176,10 @@ export class PlaceOrderClass {
       delete _it._key;
       delete _it._CacheMaterialTypeIDs;
 
+      if (_it.ForbitUnionMakeup === false) {
+        _it.NeedSetPlateSize = false;
+      }
+
       return _it;
     });
 

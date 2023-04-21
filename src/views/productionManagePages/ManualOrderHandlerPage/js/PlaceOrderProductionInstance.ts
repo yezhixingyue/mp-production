@@ -73,6 +73,9 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   /** 允许合拼 */
   ForbitUnionMakeup = false
 
+  /** 手动设置拼版尺寸 禁止合拼后才可设置  */
+  NeedSetPlateSize = false
+
   /** 输出半成品, 仅属于组合生产线时使用 */
   SemiFinished = {
     ID: '',

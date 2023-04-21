@@ -12,19 +12,30 @@
           <p class="title mp-common-title-wrap black">
             <span>{{options.title}}：</span>
           </p>
+          <div v-if="rightPanelData.Type === CapacityTypeEnum.capacity" class="mt-10">
+            <el-radio-group v-model="rightPanelData.CalculateType">
+              <el-radio v-for="it in CalculateTypeEnumList" :key="it.ID" :label="it.ID">{{ it.Name }}</el-radio>
+            </el-radio-group>
+          </div>
           <p class="conent">
             <span v-if="options.rowTitle">
               {{options.rowTitle}}
             </span>
-            <el-input :class="{marginleft: !!options.rowTitle}" v-model.number="rightPanelData.Value" maxlength="9"></el-input>
-            <span>{{options.unit}}</span>
+            <template v-if="rightPanelData.Type !== CapacityTypeEnum.capacity || rightPanelData.CalculateType === CalculateTypeEnum.UnitOutput">
+              <el-input :class="{marginleft: !!options.rowTitle}" v-model.number="rightPanelData.Value" maxlength="9"></el-input>
+              <span>{{options.unit}}</span>
+            </template>
+            <template v-else>
+              <el-input :class="{marginleft: !!options.rowTitle}" v-model.number="rightPanelData._CalculateValue" maxlength="9"></el-input>
+              <span>小时</span>
+            </template>
           </p>
-          <p class="conent" v-if="rightPanelData.Type === CapacityTypeEnum.capacity">
+          <p class="conent" v-if="rightPanelData.Type === CapacityTypeEnum.capacity && rightPanelData.CalculateType === CalculateTypeEnum.UnitOutput">
             计算数量：
             <span class="calculate">{{rightPanelData.Property ? getName(rightPanelData.Property) : ''}}</span>
             <mp-button link type="primary" class="ml-8" @click="() => visible = true">选择计算数量</mp-button>
           </p>
-          <p class="conent is-gray" v-else>
+          <p class="conent is-gray" v-if="rightPanelData.Type !== CapacityTypeEnum.capacity">
             说明：作业次数是通过转换器转换而来
           </p>
         </div>
@@ -46,7 +57,8 @@ import { ElInput } from 'element-plus';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentListType } from '../js/types';
 import { CapacityConditionItemClass } from '../js/CapacityConditionItemClass';
-import { CapacityTypeEnum } from './enum';
+import { CalculateTypeEnum, CapacityTypeEnum } from './enum';
+import { CalculateTypeEnumList } from './EnumList';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
@@ -59,7 +71,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['save']);
 
-const rightPanelData = ref<null | Partial<CapacityConditionItemClass>>(null);
+const rightPanelData = ref<null | Partial<CapacityConditionItemClass> & { _CalculateValue: '' | number }>(null);
 
 const options = computed(() => {
   const temp = {
@@ -103,19 +115,32 @@ const onPropSelect = (e) => {
 };
 
 const submit = (e: CapacityConditionItemClass) => {
-  if (!rightPanelData.value?.Value && rightPanelData.value?.Value !== 0) {
+  const rightValues: Partial<typeof rightPanelData.value> = { ...rightPanelData.value };
+
+  if (props.curCapacityType !== CapacityTypeEnum.capacity) {
+    delete rightValues.CalculateType;
+  } else if (rightValues.CalculateType === CalculateTypeEnum.FixedTime) {
+    rightValues.Value = rightValues._CalculateValue;
+    rightValues.Property = null;
+  }
+
+  delete rightValues._CalculateValue;
+
+  if (!rightValues?.Value && rightValues?.Value !== 0) {
     MpMessage.error({ title: '保存失败', msg: `${options.value.simpleTitle}未设置` });
     return;
   }
-  if (!/^\d+$/.test(`${rightPanelData.value.Value}`)) {
+  if (!/^\d+$/.test(`${rightValues.Value}`)) {
     MpMessage.error({ title: '保存失败', msg: `${options.value.simpleTitle}设置不正确，请检查` });
     return;
   }
-  if (props.curCapacityType === CapacityTypeEnum.capacity && !rightPanelData.value.Property) {
+  if (props.curCapacityType === CapacityTypeEnum.capacity && rightValues.CalculateType === CalculateTypeEnum.UnitOutput && !rightValues.Property) {
     MpMessage.error({ title: '保存失败', msg: '请设置计算数量' });
     return;
   }
-  const temp = { ...e, ...rightPanelData.value };
+
+  const temp = { ...e, ...rightValues };
+
   emit('save', temp);
 };
 
@@ -125,7 +150,14 @@ onMounted(() => {
     Value: props.curConditionRow?.Value || props.curConditionRow?.Value === 0 ? props.curConditionRow?.Value : '',
     Type: props.curConditionRow?.Type || props.curCapacityType,
     Property: props.curConditionRow?.Property || null,
+    CalculateType: CalculateTypeEnum.UnitOutput,
+    _CalculateValue: '',
   };
+
+  if (props.curConditionRow?.Type === CapacityTypeEnum.capacity && props.curConditionRow.CalculateType === CalculateTypeEnum.FixedTime) {
+    rightPanelData.value._CalculateValue = props.curConditionRow?.Value || props.curConditionRow?.Value === 0 ? props.curConditionRow?.Value : '';
+    rightPanelData.value.Value = '';
+  }
 });
 </script>
 

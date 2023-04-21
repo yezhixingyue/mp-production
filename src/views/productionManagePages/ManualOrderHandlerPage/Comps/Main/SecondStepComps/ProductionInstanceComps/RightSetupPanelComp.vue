@@ -37,6 +37,8 @@
         <tr>
           <span class="title">拼版文件:</span>
           <el-checkbox :model-value="itemData.ForbitUnionMakeup" @change="e => itemData.ForbitUnionMakeup = e">禁止印刷版合拼</el-checkbox>
+          <el-checkbox v-if="itemData.ForbitUnionMakeup"
+           :model-value="itemData.NeedSetPlateSize" @change="e => itemData.NeedSetPlateSize = e">手动设置拼版尺寸</el-checkbox>
         </tr>
       </thead>
       <tbody>
@@ -171,6 +173,7 @@ interface IPropsModelValue extends Pick<PlaceOrderProductionInstance,
  'AssistList' | 'FileList' | 'WorkingList' | 'handleWorkingSelect' | 'handleNumbericChange'> {
   handleSpecialColorChange?: PlaceOrderProductionInstance['handleSpecialColorChange']
   ForbitUnionMakeup?: PlaceOrderProductionInstance['ForbitUnionMakeup']
+  NeedSetPlateSize?: PlaceOrderProductionInstance['NeedSetPlateSize']
   ColorList?: PlaceOrderProductionInstance['ColorList']
 }
 
