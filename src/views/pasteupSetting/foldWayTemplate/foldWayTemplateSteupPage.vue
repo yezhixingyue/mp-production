@@ -7,7 +7,7 @@
     <el-scrollbar class="main-scrollbar">
       <div class="left">
         <p class="title">{{Data.foldWayTemplateFrom.ID?'编辑' :'添加'}}折手模板</p>
-        <el-form :model="Data.foldWayTemplateFrom" label-width="64px">
+        <el-form :model="Data.foldWayTemplateFrom" label-width="64px" hide-required-asterisk>
           <el-form-item :label="`分类：`" class="form-item-required">
             <OneLevelSelect
               :options='PasteupSettingStore.FoldWayTemplateClassList'
@@ -164,16 +164,16 @@ function createMap() {
     messageBox.failSingleError('生成失败', '请输入列数', () => null, () => null);
   } else if (Number(Data.foldWayTemplateFrom.ColumnNumber) === 1 && Number(Data.foldWayTemplateFrom.RowNumber) === 1) {
     messageBox.failSingleError('生成失败', '行数列数不能同时为1', () => null, () => null);
-  } else if (Data.foldWayTemplateFrom.RowNumber > 100 || Data.foldWayTemplateFrom.ColumnNumber > 100) {
+  } else if (+Data.foldWayTemplateFrom.RowNumber > 100 || +Data.foldWayTemplateFrom.ColumnNumber > 100) {
     messageBox.failSingleError('生成失败', '请输入100以内的行数或列数', () => null, () => null);
   } else {
     let PageNumber = 1;
     // 行
     const Row:PositionListType[][] = [];
-    for (let Rowindex = 0; Rowindex < Data.foldWayTemplateFrom.RowNumber; Rowindex++) {
+    for (let Rowindex = 0; Rowindex < +Data.foldWayTemplateFrom.RowNumber; Rowindex++) {
       // 列
       const Col:PositionListType[] = [];
-      for (let Colindex = 0; Colindex < Data.foldWayTemplateFrom.ColumnNumber; Colindex++) {
+      for (let Colindex = 0; Colindex < +Data.foldWayTemplateFrom.ColumnNumber; Colindex++) {
         const PositionItem:PositionListType = {
           RowValue: Rowindex + 1,
           ColumnValue: Colindex + 1,
@@ -361,6 +361,9 @@ export default {
       >.el-form{
         margin-top: 36px;
         margin-left: 68px;
+        .el-form-item__label {
+          white-space: nowrap;
+        }
         .el-form-item__content{
           font-size: 12px;
         }
