@@ -747,9 +747,9 @@ onMounted(async () => {
     productionSettingStore.setPlateMakingWorkSetupHanderInit();
   }
   getProductionLineList();
-  if (!productionSettingStore.MaterialTypeGroup.length) {
-    await productionSettingStore.getMaterialTypeGroupAll();
-  }
+  // if (!productionSettingStore.MaterialTypeGroup.length) {
+  await productionSettingStore.getMaterialTypeGroupAll();
+  // }
   getPrcessList();
 });
 </script>

@@ -8,7 +8,7 @@
   </p>
 
   <!-- 待转换列表 -->
-  <TaskListTable v-if="curInstance.ErrorInfo && curInstance.ErrorInfo.TaskList.length > 0" useLittleHeight :TaskList="curInstance.ErrorInfo.TaskList" isError />
+  <TaskListTable v-if="curInstance.ErrorInfo && curInstance.ErrorInfo.TaskList?.length > 0" useLittleHeight :TaskList="curInstance.ErrorInfo.TaskList" isError/>
 </template>
 
 <script setup lang='ts'>

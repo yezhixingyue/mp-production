@@ -44,7 +44,8 @@ const unbindEvent = () => { // 释放事件绑定
 
 let begin = 0;
 
-const handleballmousedown = (e) => {
+const handleballmousedown = (e: MouseEvent) => {
+  if (e.button === 2) return; // 右键点击不予触发
   begin = Date.now();
   onballmousedown(e, ballRef.value);
 };

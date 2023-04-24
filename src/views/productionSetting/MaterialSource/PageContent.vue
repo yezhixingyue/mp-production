@@ -191,9 +191,9 @@ const getWorkingProcedureList = async () => {
 };
 
 const getMaterialTypeGroupAll = async () => {
-  if (!productionSettingStore.MaterialTypeGroup.length) {
-    await productionSettingStore.getMaterialTypeGroupAll('null');
-  }
+  // if (!productionSettingStore.MaterialTypeGroup.length) {
+  await productionSettingStore.getMaterialTypeGroupAll('null');
+  // }
 };
 
 onMounted(async () => {

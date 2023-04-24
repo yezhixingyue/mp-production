@@ -3,7 +3,7 @@ import { ProductiveTaskStatusEnum } from '../../enum';
 
 export class Condition {
   /** 设备信息 */
-  Catalog!: {
+  Catalog?: {
     ClassID: number
     GroupID: string
     ID: string
@@ -12,8 +12,11 @@ export class Condition {
   /** 需要获取到哪些状态的任务 */
   StatusList: ProductiveTaskStatusEnum[] = [ProductiveTaskStatusEnum.Producibility]
 
-  /** 是否要获取未送出任务列表 */
-  UnReceived = false
+  /** 是否为获取未送出任务列表 */
+  _UnReceived = false
+
+  /** 当前设备id --- 仅获取未送出任务列表时使用 */
+  SendEquipment?: string
 
   Page = 1
 
@@ -28,16 +31,44 @@ export class Condition {
 
     if (isUndelevered) {
       this.StatusList = [];
-      this.UnReceived = true;
+      this._UnReceived = true;
       this.PageSize = 20;
+      this.SendEquipment = Equipment.ID;
+    } else {
+      this.Catalog = {
+        ClassID: Equipment.ClassID || -777,
+        GroupID: Equipment.GroupID,
+        ID: Equipment.ID,
+      };
     }
   }
 
   setEquipment(Equipment: IManageEquipmentInfo) {
-    this.Catalog = {
-      ClassID: Equipment.ClassID || -777,
-      GroupID: Equipment.GroupID,
-      ID: Equipment.ID,
+    if (this._UnReceived) {
+      this.SendEquipment = Equipment.ID;
+    } else {
+      this.Catalog = {
+        ClassID: Equipment.ClassID || -777,
+        GroupID: Equipment.GroupID,
+        ID: Equipment.ID,
+      };
+    }
+  }
+
+  getParams() {
+    if (this._UnReceived) {
+      return {
+        Page: this.Page,
+        PageSize: this.PageSize,
+        SendEquipment: this.SendEquipment,
+      };
+    }
+
+    return {
+      Page: this.Page,
+      PageSize: this.PageSize,
+      Catalog: this.Catalog,
+      StatusList: this.StatusList,
     };
   }
 }

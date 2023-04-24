@@ -1,3 +1,6 @@
+# 项目所用node版本
+16.17.0   
+
 # 1.状态管理 - 使用pinia
    pinia中的状态可以在组件中直接修改或使用$patch修改，但推荐使用actions方法进行修改（pinia相比vuex取消了mutations对象，统一使用actions）
 

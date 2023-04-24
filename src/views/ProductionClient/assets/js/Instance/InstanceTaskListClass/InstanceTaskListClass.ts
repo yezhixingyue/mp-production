@@ -37,7 +37,7 @@ export class InstanceTaskListClass {
       this.condition.setEquipment(Equipment);
     }
 
-    const resp = await clientApi.getEquipmentTaskList(this.condition).catch(() => null);
+    const resp = await clientApi.getEquipmentTaskList(this.condition.getParams()).catch(() => null);
     this.loading = false;
 
     if (resp?.data.isSuccess) {
