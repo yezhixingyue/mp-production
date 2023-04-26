@@ -8,6 +8,7 @@
     isPlateMakingGroup
     @save="handleEquipmentSubmit"
     @remove="onRemoveClick"
+    @setWeight="setWeight"
     @toPutOut="ToPutOutPage"
     @tocCpacity="TocCpacityPage" />
 </template>
@@ -37,6 +38,10 @@ const { PlateMakingGroupManageData } = storeToRefs(ProductionSettingStore);
 
 const onRemoveClick = async (EquipmentItem: EquipmentListType) => {
   PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.handleEquipmentRemove(EquipmentItem.LineEquipmentID || EquipmentItem.ID);
+};
+
+const setWeight = (list: { ID: string, Weight: number }[]) => {
+  PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.handleWeightChange(list);
 };
 
 const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () => void) => {

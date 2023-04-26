@@ -35,6 +35,6 @@ export const outsourceApis = {
   },
   /** GET Api/Equipment/NextWorkingList */
   getEquipmentNextWorkingList(TaskWorkingID: string) {
-    return instance.get('Api/Equipment/NextWorkingList', { params: { TaskWorkingID } });
+    return instance.get('/Api/Equipment/NextWorkingList', { params: { TaskWorkingID } });
   },
 };

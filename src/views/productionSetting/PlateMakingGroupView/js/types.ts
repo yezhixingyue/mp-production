@@ -25,7 +25,7 @@ export interface IPlateMakingGroup {
   Name: string
   // WorkID: string
   // 欠缺其它数据？
-  Equipments: { ID: string, LineEquipmentID: string }[]
+  Equipments: { ID: string, LineEquipmentID: string, Weight: number | null }[]
   Materials: IMaterialSources[]
 }
 

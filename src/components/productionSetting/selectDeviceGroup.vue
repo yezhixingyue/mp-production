@@ -18,6 +18,7 @@
             <el-checkbox
               v-model="item.checkAll"
               :indeterminate="item.isIndeterminate"
+              :disabled="!item.EquipmentGroups.find(e => !activeEquipmentList.includes(e.ID))"
               @change="handleCheckAllChange(item.checkAll, index)"
             >{{item.ClassName}}</el-checkbox>
           </p>
@@ -26,8 +27,9 @@
             @change="handleCheckedCitiesChange(item.checks, index)"
           >
             <el-checkbox
-            v-for="EquipmentItem in item.EquipmentGroups"
-            :key="EquipmentItem.ID" :label="EquipmentItem.ID">
+              v-for="EquipmentItem in item.EquipmentGroups"
+              :disabled="activeEquipmentList.includes(EquipmentItem.ID)"
+              :key="EquipmentItem.ID" :label="EquipmentItem.ID">
               <el-tooltip
                 class="box-item"
                 effect="dark"
@@ -96,6 +98,7 @@ const Dialog = computed({
     props.changeVisible(newVal);
   },
 });
+
 function CloseClick() {
   props.changeVisible(false);
 }
@@ -132,9 +135,17 @@ function handleCheckAllChange(val: boolean, index) {
     const a = Data.applyEquipmentListFrom[index].EquipmentGroups.map(it => it.ID as string);
     Data.applyEquipmentListFrom[index].checks = a;
   } else {
-    Data.applyEquipmentListFrom[index].checks = [];
+    const a = Data.applyEquipmentListFrom[index].EquipmentGroups.map(it => it.ID as string).filter(id => props.activeEquipmentList.includes(id));
+    Data.applyEquipmentListFrom[index].checks = a;
   }
-  Data.applyEquipmentListFrom[index].isIndeterminate = false;
+  if (Data.applyEquipmentListFrom[index].checks.length > 0
+    && Data.applyEquipmentListFrom[index].checks.length === Data.applyEquipmentListFrom[index].EquipmentGroups.length) {
+    Data.applyEquipmentListFrom[index].checkAll = true;
+  } else {
+    Data.applyEquipmentListFrom[index].checkAll = false;
+  }
+  Data.applyEquipmentListFrom[index].isIndeterminate = Data.applyEquipmentListFrom[index].checks.length > 0
+    && Data.applyEquipmentListFrom[index].checks.length < Data.applyEquipmentListFrom[index].EquipmentGroups.length;
 }
 function handleCheckedCitiesChange(value:string[], index) {
   const checkedCount = value.length;
@@ -162,9 +173,9 @@ watch(() => Dialog.value, (newVal) => {
     const activeEquipmentList = props.activeEquipmentList as string[];
     Data.applyEquipmentListFrom.forEach((element, index) => {
       element.EquipmentGroups.forEach(item => {
-        const temp = activeEquipmentList.find(res => res === item.ID);
-        if (temp) {
-          Data.applyEquipmentListFrom[index].checks.push(temp);
+        const EquipmentID = activeEquipmentList.find(res => res === item.ID);
+        if (EquipmentID) {
+          Data.applyEquipmentListFrom[index].checks.push(EquipmentID);
           handleCheckedCitiesChange(Data.applyEquipmentListFrom[index].checks, index);
         }
       });

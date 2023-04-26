@@ -15,6 +15,7 @@ export interface EquipmentListType {
   ID:string
   Name:string
   LineEquipmentID?:string
+  Weight: number | null
 }
 
 /**

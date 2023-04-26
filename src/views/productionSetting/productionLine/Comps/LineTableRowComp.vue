@@ -5,11 +5,13 @@
       <span class="equipment ft-f-12" :title="item._EquipmentText ? item._EquipmentText.replaceAll(' | ', '\r\n') : ''">
         {{item._EquipmentText}}
       </span>
-      <span class="work" v-if="type==='normal'" :title="item._PlateMakingWorkContent">
+      <!-- <span class="work" v-if="type==='normal'" :title="item._PlateMakingWorkContent"> -->
+      <span class="work" :title="item._PlateMakingWorkContent">
         {{item._PlateMakingWorkContent}}
       </span>
       <span class="operate" :class="type">
-        <mp-button type="primary" class="ft-12" :class="{h: item._isSplit}" v-if="type==='normal'" link @click="setPlateMakingWork">设置制版工序</mp-button>
+        <!-- <mp-button type="primary" class="ft-12" :class="{h: item._isSplit}" v-if="type==='normal'" link @click="setPlateMakingWork">设置制版工序</mp-button> -->
+        <mp-button type="primary" class="ft-12" :class="{h: item._isSplit}" link @click="setPlateMakingWork">设置制版工序</mp-button>
         <mp-button type="primary" class="ft-12" link @click="ToEquipment">选择设备/工厂</mp-button>
         <mp-button type="primary" class="ft-12" link :class="{h: item._isSplit}"
         :disabled="!!(

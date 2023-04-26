@@ -54,7 +54,7 @@ const clientApi = {
   },
   /** GET Api/Equipment/NextWorkingList */
   getEquipmentNextWorkingList(TaskWorkingID: string) {
-    return instance.get('Api/Equipment/NextWorkingList', { params: { TaskWorkingID } });
+    return instance.get('/Api/Equipment/NextWorkingList', { params: { TaskWorkingID } });
   },
 };
 

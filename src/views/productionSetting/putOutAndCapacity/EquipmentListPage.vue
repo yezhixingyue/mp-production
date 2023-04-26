@@ -11,6 +11,7 @@
        @onRemoveClick="(e) => onRemoveClick(e, 'default')"
        @ToPutOutPage="(e) => ToPutOutPage(e, 'default')"
        @TocCpacityPage="(e) => TocCpacityPage(e, 'default')"
+       @setWeight="(e) => setWeight(e, 'default')"
        :isPlateMaking="isPlateMakingGroup"
        />
       <EquipmentTable
@@ -22,6 +23,7 @@
        @onRemoveClick="(e) => onRemoveClick(e, 'additional')"
        @ToPutOutPage="(e) => ToPutOutPage(e, 'additional')"
        @TocCpacityPage="(e) => TocCpacityPage(e, 'additional')"
+       @setWeight="(e) => setWeight(e, 'additional')"
        />
     </main>
     <EquipmentAddDialog v-model:visible="visible" :title="dialogTitle"
@@ -50,12 +52,12 @@ const props = defineProps<{
   ClassEquipmentGroups: IClassEquipmentGroups[]
   curLineWorkName: string
   PlateMakingEquipmentSetupData?: IPlateMakingEquipmentSetupData | null
-  Equipments?: { ID: string, LineEquipmentID: string }[]
+  Equipments?: { ID: string, LineEquipmentID: string, Weight: number | null }[]
   /** 是否为制版组使用 */
   isPlateMakingGroup?: boolean
 }>();
 
-const emit = defineEmits(['ToPutOut', 'TocCpacity', 'remove', 'save']);
+const emit = defineEmits(['ToPutOut', 'TocCpacity', 'remove', 'save', 'setWeight']);
 
 const EquipmentIDS = computed(() => (props.Equipments ? props.Equipments.map(it => it.ID) : []));
 
@@ -67,14 +69,17 @@ const _getEquipmentList = (ClassEquipmentGroups: IClassEquipmentGroups[]) => {
         lv2.Equipments.forEach(it => {
           if (it.LineEquipmentID || EquipmentIDS.value.includes(it.ID)) {
             let LineEquipmentID = it.LineEquipmentID || '';
+            let Weight = it.Weight || null;
             if (props.Equipments) {
               const t = props.Equipments.find(e => e.ID === it.ID);
               LineEquipmentID = t?.LineEquipmentID || '';
+              Weight = t?.Weight || null;
             }
             list.push({
               ID: it.ID,
               Name: it.Name,
               LineEquipmentID,
+              Weight,
               ClassID: lv1.ClassID,
               ClassName: lv1.ClassName,
               GroupID: lv2.GroupID,
@@ -145,6 +150,10 @@ const TocCpacityPage = (it: EquipmentListType, type: EquipmentSetupType) => { //
 
 const onRemoveClick = (it: EquipmentListType, type: EquipmentSetupType) => { // 本地保存？
   emit('remove', it, type);
+};
+
+const setWeight = (list: { ID: string, Weight: number }[], type: EquipmentSetupType) => { // 权重设置成功后的处理
+  emit('setWeight', list, type);
 };
 
 </script>

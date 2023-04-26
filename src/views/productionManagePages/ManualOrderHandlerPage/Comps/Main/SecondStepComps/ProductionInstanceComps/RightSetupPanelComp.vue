@@ -35,10 +35,14 @@
     <table v-if="itemData.WorkingList.length > 0 && !isCombine">
       <thead>
         <tr>
-          <span class="title">拼版文件:</span>
-          <el-checkbox :model-value="itemData.ForbitUnionMakeup" @change="e => itemData.ForbitUnionMakeup = e">禁止印刷版合拼</el-checkbox>
-          <el-checkbox v-if="itemData.ForbitUnionMakeup"
+          <th>
+            <span class="title">拼版文件:</span>
+            <el-checkbox :model-value="itemData.ForbitUnionMakeup" @change="e => itemData.ForbitUnionMakeup = e">禁止印刷版合拼</el-checkbox>
+          </th>
+          <th class="makeup-size">
+            <el-checkbox v-if="itemData.ForbitUnionMakeup"
            :model-value="itemData.NeedSetPlateSize" @change="e => itemData.NeedSetPlateSize = e">手动设置拼版尺寸</el-checkbox>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -309,14 +313,22 @@ const onNumbericalChangeSubmit = (data: { ID: string, Value: number }) => {
     width: 855px;
     border-collapse: collapse;
     > thead > tr {
-      display: flex;
-      align-items: center;
-      padding-bottom: 4px;
+      line-height: 32px;
       .title {
         font-weight: 700;
-        flex: none;
         margin-right: 10px;
         font-size: 14px;
+        line-height: 30px;
+        display: inline-block;
+        height: 30px;
+        vertical-align: top;
+      }
+
+      button {
+        padding: 0;
+        border: none;
+        line-height: 30px;
+        vertical-align: top;
       }
 
       :deep(.el-checkbox__label) {
@@ -332,6 +344,10 @@ const onNumbericalChangeSubmit = (data: { ID: string, Value: number }) => {
           margin-right: 5px;
           margin-left: 25px;
         }
+      }
+
+      .makeup-size {
+        padding-left: 20px;
       }
     }
     > tbody {

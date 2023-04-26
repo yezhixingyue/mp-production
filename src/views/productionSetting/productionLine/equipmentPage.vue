@@ -8,6 +8,7 @@
     :curLineWorkName="curLineWorkName"
     @save="handleEquipmentSubmit"
     @remove="handleRemove"
+    @setWeight="setWeight"
     @toPutOut="ToPutOutPage"
     @tocCpacity="TocCpacityPage" />
 </template>
@@ -73,9 +74,9 @@ const afterRemove = (ID, type: EquipmentSetupType = 'default') => {
     ClassIt.EquipmentGroups.forEach((GroupIt, GroupIti) => {
       GroupIt.Equipments.forEach((it, iti) => {
         if (it.ID === ID) {
-          console.log(it);
           const _it = it;
           _it.LineEquipmentID = '';
+          _it.Weight = null;
         }
       });
     });
@@ -91,6 +92,22 @@ const handleRemove = (item, type: EquipmentSetupType = 'default') => {
 
       MpMessage.success({ title: '删除成功', onOk: cb, onCancel: cb });
     }
+  });
+};
+const setWeight = (list: { ID: string, Weight: number }[], type: EquipmentSetupType) => {
+  setStorage();
+  const _ClassEquipmentGroups = type === 'default' ? processInfo.value?.ClassEquipmentGroups : processInfo.value?.PlateMakingClassEquipmentGroups;
+  if (!_ClassEquipmentGroups) return;
+  _ClassEquipmentGroups.forEach((ClassIt) => {
+    ClassIt.EquipmentGroups.forEach((GroupIt) => {
+      GroupIt.Equipments.forEach((it) => {
+        const t = list.find(_it => _it.ID === it.LineEquipmentID);
+        if (t) {
+          const _it = it;
+          _it.Weight = t.Weight;
+        }
+      });
+    });
   });
 };
 const setEquipment = (list, resultArr: ISaveResult[], WorkSourceType: WorkSourceTypeEnum) => {
