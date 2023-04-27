@@ -12,7 +12,7 @@
           <el-table-column
           show-overflow-tooltip prop="CategoryName" label="分类" min-width="288" />
           <el-table-column prop="name" label="操作" min-width="288">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="primary" link @click="editCategory(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="danger" link

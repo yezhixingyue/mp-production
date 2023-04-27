@@ -12,7 +12,7 @@
         <el-table border fit
         :data="Data.unitList" style="width: 600px">
           <el-table-column prop="date" label="单位换算" min-width="195">
-            <template #default="scope">
+            <template #default="scope:any">
               <span>
                 {{scope.row.ProportionUp}}
                 {{scope.row.Unit}} = {{scope.row.ProportionDown}}
@@ -21,12 +21,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" label="单位用途" min-width="195">
-            <template #default="scope">
+            <template #default="scope:any">
                 <span>{{scope.row.UnitPurpose === 1 ? '入库' : '出库'}}</span>
             </template>
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="167">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="info" link @click="editStorageUnit(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link @click="delStorageUnit(scope.row)">

@@ -9,14 +9,14 @@
       <mp-table-column min-width="140px" prop="Remark" label="情况说明" />
       <mp-table-column width="185px" prop="_SubmitContent" label="提交时间（提交人）" />
       <mp-table-column width="150px" label="状态">
-        <template #default="scope">
+        <template #default="scope:any">
           <span v-if="scope.row._processed" class="mr-10">已处理</span>
           <mp-button type="primary" v-if="scope.row._processed" link @click="onMenuClick(scope.row, 'Detail')">处理详情</mp-button>
         </template>
       </mp-table-column>
       <mp-table-column width="185px" prop="_HandlerContent" label="处理时间（处理人）" />
       <mp-table-column width="120px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="primary" v-if="!scope.row._processed" link @click="onMenuClick(scope.row, 'Setup')">处理</mp-button>
         </template>
       </mp-table-column>

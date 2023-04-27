@@ -3,7 +3,7 @@
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12">
       <mp-table-column min-width="270px" prop="Name" label="资源包名称" />
       <mp-table-column min-width="150px" prop="Feature" label="性质">
-        <template #default="scope">
+        <template #default="scope:any">
           {{formatFeatureType(scope.row.Feature)}}
           {{ scope.row.IsPlateMaterial ? '(版材)' : '' }}
           <template v-if="scope.row.Feature === MakingGroupTypeFeatureEnum.semifinished && typeof scope.row.PartType === 'number'">
@@ -12,13 +12,13 @@
         </template>
       </mp-table-column>
       <mp-table-column min-width="320px" prop="MaterialTypeGroups" label="包含物料类型">
-        <template #default="scope">{{formatMaterialTypeGroups(scope.row)}}</template>
+        <template #default="scope:any">{{formatMaterialTypeGroups(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column min-width="170px" prop="MatchType" label="满足方式">
-        <template #default="scope">{{formatMatchType(scope.row)}}</template>
+        <template #default="scope:any">{{formatMatchType(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column min-width="220px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="info" link @click="onEditClick(scope.row)"><i class="iconfont icon-bianji"></i>编辑</mp-button>
           <mp-button type="info" link @click="onRemoveClick(scope.row)"><i class="iconfont icon-delete"></i>删除</mp-button>
         </template>

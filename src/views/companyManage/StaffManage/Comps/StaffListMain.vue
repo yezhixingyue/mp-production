@@ -10,14 +10,14 @@
       <mp-table-column width="100px" prop="_Birthday" label="出生日期"></mp-table-column>
       <mp-table-column width="100px" prop="_JoinDate" label="入职日期"></mp-table-column>
       <mp-table-column min-width="160px" prop="_department" label="部门岗位">
-        <template #default="scope">
+        <template #default="scope:any">
           <span :title="scope.row._department.replaceAll(' | ', '\r\n')">{{scope.row._department || ''}}</span>
         </template>
       </mp-table-column>
       <mp-table-column width="80px" prop="_statusText" label="状态"></mp-table-column>
       <mp-table-column width="80px" prop="CheckUser.StaffName" label="审核人"></mp-table-column>
       <el-table-column width="185px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <div class="menus">
             <Menu title="审核" icon="icon-shenhe iconfont" isSuccess
                v-if="scope.row.Status===StaffStatusEnum.pending" @click="onChangeStatusClick(scope.row, scope.$index)"/>

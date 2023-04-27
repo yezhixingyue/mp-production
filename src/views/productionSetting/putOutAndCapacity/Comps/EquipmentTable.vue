@@ -14,7 +14,7 @@
     </mp-table-column>
     <mp-table-column prop="Name" label="设备" width="245" class-name="left" />
     <mp-table-column label="权重" width="165" class-name="left">
-      <template #default="scope">
+      <template #default="scope:any">
         <span style="line-height: 30px;">
           权重：{{ isWeightSetuping ? '' : (scope as any).row.Weight || '未设置' }}
         </span>
@@ -22,7 +22,7 @@
       </template>
     </mp-table-column>
     <mp-table-column prop="name" label="操作" width="220">
-      <template #default="scope">
+      <template #default="scope:any">
         <mp-button type="primary" class="ft-12" :class="{'v-hide': isPlateMaking}" link @click="ToPutOutPage((scope as any).row)">伸放</mp-button>
         <mp-button type="primary" class="ft-12" link @click="TocCpacityPage((scope as any).row)">设备产能</mp-button>
         <mp-button type="danger" class="ft-12" link @click="onRemoveClick((scope as any).row)">删除</mp-button>

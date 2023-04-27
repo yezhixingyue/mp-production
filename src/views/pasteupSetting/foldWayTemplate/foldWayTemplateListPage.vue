@@ -23,7 +23,7 @@
       :data="Data.FoldWayTemplateList" style="width: 100%">
         <el-table-column
         show-overflow-tooltip prop="Name" label="分类" min-width="180">
-          <template #default="scope">
+          <template #default="scope:any">
             {{getClassName(scope.row.ClassID)}}
           </template>
         </el-table-column>
@@ -32,14 +32,14 @@
         </el-table-column>
         <el-table-column
         show-overflow-tooltip prop="ShowColor" label="行列数" min-width="160">
-          <template #default="scope">
+          <template #default="scope:any">
             {{scope.row.RowNumber}}行 {{scope.row.ColumnNumber}}列
           </template>
         </el-table-column>
         <!-- show-overflow-tooltip prop="Linkman" label="适用设备" min-width="505"> -->
         <el-table-column
         show-overflow-tooltip prop="Linkman" label="适用设备" min-width="895">
-          <template #default="scope">
+          <template #default="scope:any">
             <span class="useable-equipment" v-for="(item) in getUseableEquipmentText(scope.row.UseableEquipmentGroupList)" :key="item.ClassID">
               <!-- {{index===0?'':';'}} -->
               <span class="group">{{item.ClassName}}：</span><span>{{item.EquipmentGroups.map(it => it.Name).join('、')}}</span>
@@ -47,7 +47,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="name" label="操作" min-width="277">
-          <template #default="scope">
+          <template #default="scope:any">
             <mp-button type="primary" link @click="setApplyEquipment(scope.row)">
               <!-- <i class="iconfont icon-bianji"></i> -->
               适用设备</mp-button>

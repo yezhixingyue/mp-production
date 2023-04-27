@@ -2,27 +2,27 @@
   <p class="mp-common-title-wrap black" v-show="props.title">{{props.title}}：</p>
   <el-table border fit stripe :data="tableList" style="width: 100%">
     <el-table-column prop="MaterialTypeID" label="资源包" width="210">
-      <template #default="scope">
+      <template #default="scope:any">
         <span class="title" :title="scope.row._MaterialTypeGroup?.Name">{{scope.row._MaterialTypeGroup?.Name}}
           <template v-if="scope.row._MaterialTypeGroup?.IsPlateMaterial">(版材)</template>
         </span>
       </template>
     </el-table-column>
     <el-table-column width="130">
-      <template #default="scope">
+      <template #default="scope:any">
         <el-checkbox v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnumObj.semifinished.ID
          && !(scope.row._MaterialTypeGroup?.IsPlateMaterial && HideByIsPlateMaterial)"
           v-model="scope.row.NeedResource" label="必须资源"></el-checkbox>
       </template>
     </el-table-column>
     <el-table-column width="170">
-      <template #default="scope">
+      <template #default="scope:any">
         <el-checkbox v-model="scope.row.FactoryProvide"
          v-show="!(scope.row._MaterialTypeGroup?.IsPlateMaterial && HideByIsPlateMaterial)" label="如外协则外协厂自备"></el-checkbox>
       </template>
     </el-table-column>
     <el-table-column width="145">
-      <template #default="scope">
+      <template #default="scope:any">
         <el-checkbox
           v-if="scope.row._MaterialTypeGroup?.Feature === resourceBundleFeatureEnumObj.semifinished.ID
           && !(scope.row._MaterialTypeGroup?.IsPlateMaterial && HideByIsPlateMaterial)"
@@ -31,7 +31,7 @@
       </template>
     </el-table-column>
     <el-table-column min-width="360">
-      <template #default="scope">
+      <template #default="scope:any">
         <span class="source" v-show="!(scope.row._MaterialTypeGroup?.IsPlateMaterial && HideByIsPlateMaterial)">
           <el-radio-group :class="{'other-line':scope.row._MaterialTypeGroup?.Feature !== resourceBundleFeatureEnumObj.semifinished.ID}"
             v-model="scope.row.SourceType">

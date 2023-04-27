@@ -13,7 +13,7 @@
           show-overflow-tooltip prop="StorehouseName" label="仓库" min-width="215" />
           <el-table-column
           show-overflow-tooltip prop="LastInventoryStatus" label="上次盘点状态" min-width="271">
-            <template #default="scope">
+            <template #default="scope:any">
               <span v-if="scope.row.LastInventoryStatus=== 1">盘库中</span>
               <span v-if="scope.row.LastInventoryStatus=== 50" style="color:#428DFA">完成</span>
               <span v-if="scope.row.LastInventoryStatus=== 49" style="color:#FF3769">强制完成</span>
@@ -21,20 +21,20 @@
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="LastInventoryStartTime" label="上次盘点开始时间" min-width="299">
-            <template #default="scope">
+            <template #default="scope:any">
               {{$format.format2MiddleLangTypeDateFunc2(scope.row.LastInventoryStartTime)}}
             </template>
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="LastInventoryEndTime" label="上次盘点结束时间" min-width="299">
-            <template #default="scope">
+            <template #default="scope:any">
               {{$format.format2MiddleLangTypeDateFunc2(scope.row.LastInventoryEndTime)}}
             </template>
           </el-table-column>
           <el-table-column prop="HandlerName" label="上次操作人"
           show-overflow-tooltip min-width="229" />
           <el-table-column prop="name" label="操作" min-width="243">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="primary" v-if="scope.row.LastInventoryStatus === 1"
               link @click="ToMakeAnInventory(scope.row)">
                 <i class="iconfont icon-ico_kufangguanli_wupinpandian" style="font-size:14px"></i>

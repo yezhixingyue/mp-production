@@ -13,7 +13,7 @@
           show-overflow-tooltip prop="StorehouseName" label="名称" min-width="302" />
           <el-table-column
           show-overflow-tooltip prop="goodsPositionDimensions" label="货位编号" min-width="702">
-            <template #default="scope">
+            <template #default="scope:any">
               <span
               v-for="item in scope.row.goodsPositionDimensions" :key="item.DimensionID">
               {{item.StartCode}}-{{item.EndCode}}{{item.DimensionUnit}}；
@@ -21,7 +21,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" label="操作" show-overflow-tooltip min-width="573">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="primary" link
               @click="ToSetPositionNumberPage(scope.row)">设置货位编号</mp-button>
               <mp-button type="primary" link :disabled="!scope.row.IsLockDimension"

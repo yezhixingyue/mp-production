@@ -7,6 +7,7 @@
    :originMaterialSources="originMaterialSources"
    :title="PlateMakingGroupManageData.ManageListData.curEditItemHandler?.itemData.Name || ''"
    withoutOtherPrcess
+   IsPlateMakingGroup
    @saved="handleSaved" />
 </template>
 

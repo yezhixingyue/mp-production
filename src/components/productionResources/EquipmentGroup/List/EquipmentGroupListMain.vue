@@ -2,16 +2,16 @@
   <main>
     <el-table :data="props.EquipmentGroupData.DataList" stripe border :row-key="getRowKey" class="row-ft-12">
       <mp-table-column min-width="100px" prop="ClassID" label="分类">
-        <template #default="scope">{{formatListName(scope.row.ClassID, props.EquipmentGroupData.EquipmentClassList)}}</template>
+        <template #default="scope:any">{{formatListName(scope.row.ClassID, props.EquipmentGroupData.EquipmentClassList)}}</template>
       </mp-table-column>
       <mp-table-column min-width="135px" prop="Name" label="组名称" />
       <mp-table-column min-width="170px" prop="Feature" label="可以外协工厂">
-        <template #default="scope">
+        <template #default="scope:any">
           {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}
         </template>
       </mp-table-column>
       <mp-table-column width="150px" prop="Feature" label="叼口设置">
-        <template #default="scope">
+        <template #default="scope:any">
           <template v-if="scope.row.BiteMouthType !== GripperTypeEnum.empty">
             {{getNameByIDAndList(scope.row.BiteMouthType, GripperTypeEnumList)}}
             <i>( {{ scope.row.BiteMouthSize }}mm )</i>
@@ -19,19 +19,19 @@
         </template>
       </mp-table-column>
       <!-- <mp-table-column width="125px" prop="Feature" label="允许批量报工">
-        <template #default="scope">
+        <template #default="scope:any">
           {{scope.row.AllowBatchReport ? '允许' : (scope.row.AllowBatchReport === false ? '不允许' : '' )}}
         </template>
       </mp-table-column> -->
       <!-- <mp-table-column min-width="200px" label="尺寸限制">
-        <template #default="scope">{{formatSizeLimit(scope.row)}}</template>
+        <template #default="scope:any">{{formatSizeLimit(scope.row)}}</template>
       </mp-table-column> -->
       <mp-table-column min-width="260px" label="物料限制（禁用条件）">
-        <template #default="scope">{{formatMaterialLimit(scope.row)}}</template>
+        <template #default="scope:any">{{formatMaterialLimit(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column width="140px" prop="ColorLimitContent" label="印色数量限制" />
       <mp-table-column width="480px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.gripper)">叼口设置</mp-button>
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.material)">物料限制</mp-button>
           <mp-button type="primary" class="mr-35" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.color)">印色数量限制</mp-button>

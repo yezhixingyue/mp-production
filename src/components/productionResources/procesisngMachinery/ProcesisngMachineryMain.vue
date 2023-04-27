@@ -2,20 +2,20 @@
   <main>
     <el-table :data="props.localEquipmentListClassData.list" stripe border :row-key="getRowKey" class="row-ft-12">
       <mp-table-column min-width="100px" prop="ClassID" label="分类">
-        <template #default="scope">{{formatListName(scope.row.ClassID, props.localEquipmentListClassData.EquipmentClassList)}}</template>
+        <template #default="scope:any">{{formatListName(scope.row.ClassID, props.localEquipmentListClassData.EquipmentClassList)}}</template>
       </mp-table-column>
       <mp-table-column min-width="100px" prop="ClassID" label="设备组">
-        <template #default="scope">{{formatListName(scope.row.GroupID, props.localEquipmentListClassData.EquipmentGroupList)}}</template>
+        <template #default="scope:any">{{formatListName(scope.row.GroupID, props.localEquipmentListClassData.EquipmentGroupList)}}</template>
       </mp-table-column>
       <mp-table-column min-width="135px" prop="Name" label="名称" />
       <mp-table-column min-width="100px" prop="Index" label="显示顺序" />
       <mp-table-column min-width="100px" prop="ClassID" label="状态">
-        <template #default="scope">
+        <template #default="scope:any">
           <span class="is-pink">{{scope.row.IsUseable ? '' : '已停用'}}</span>
         </template>
       </mp-table-column>
       <mp-table-column width="280px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentTableMenuEnumType.setState)">
             {{ scope.row.IsUseable ? '停用' : '启用' }}
           </mp-button>

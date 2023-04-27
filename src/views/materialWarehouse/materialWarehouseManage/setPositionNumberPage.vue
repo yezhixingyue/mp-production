@@ -25,7 +25,7 @@
         :data="Data.PalletDimensionsList" style="width: 100%">
           <el-table-column prop="DimensionUnit" label="维度单位" min-width="399" />
           <el-table-column prop="StorehouseName" label="起止编号" min-width="399">
-            <template #default="scope">
+            <template #default="scope:any">
               <span>
                 {{scope.row.StartCode}} 至 {{scope.row.EndCode}}
               </span>
@@ -33,7 +33,7 @@
           </el-table-column>
           <el-table-column prop="Sort" label="显示顺序" min-width="399" />
           <el-table-column prop="name" label="操作" min-width="371">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="info"
               :disabled="Data.LockStatus" link @click="editStorehouse(scope.row)">
               <i class="iconfont icon-bianji"></i>
