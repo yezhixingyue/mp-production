@@ -326,8 +326,6 @@ export default {
     }
 
     function addMaterialManageScroll() {
-      console.log(throttleBool.value);
-
       if (throttleBool.value) {
         NumberTypeItemRef.value?.forEach(it => {
           it.blur();

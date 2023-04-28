@@ -48,8 +48,6 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     getImpositionTemmplateList(callback = () => null) {
       api.getImpositionTemmplateList(this.getImpositionTemmplateData).then(res => {
         if (res.data.Status === 1000) {
-          console.log('aaaaaaaa');
-
           this.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
           callback(res.data.DataNumber);
           //
