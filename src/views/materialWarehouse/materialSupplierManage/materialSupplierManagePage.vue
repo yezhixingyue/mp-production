@@ -26,7 +26,7 @@
           show-overflow-tooltip prop="ContactWay" label="电话" min-width="209" />
           <el-table-column
           show-overflow-tooltip prop="MaterialTypeIDS" label="供应物料类型" min-width="178">
-            <template #default="scope">
+            <template #default="scope:any">
               <span v-if="scope.row.MaterialTypeIDS.length
               === Data.MaterialTypeList.length">
               全部分类
@@ -41,12 +41,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="Address" label="地址" show-overflow-tooltip min-width="551" >
-            <template #default="scope">
+            <template #default="scope:any">
               {{formatAddress(scope.row)}}
             </template>
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="info" link @click="editMaterialSupplier(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link

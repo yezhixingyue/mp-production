@@ -36,14 +36,14 @@
         <el-table border fit stripe
         :data="Data.StockWarnList" style="width: 100%">
           <el-table-column prop="CreateTime" label="预警时间" min-width="197">
-            <template #default="scope">
+            <template #default="scope:any">
               {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
             </template>
           </el-table-column>
           <el-table-column prop="MaterialCode" label="SKU编码" min-width="152"/>
           <el-table-column prop="AttributeDescribe" label="物料"
           show-overflow-tooltip min-width="190">
-            <!-- <template #default="scope">
+            <!-- <template #default="scope:any">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -59,7 +59,7 @@
             </template> -->
           </el-table-column>
           <el-table-column prop="SizeDescribe" label="可选尺寸" min-width="237">
-            <!-- <template #default="scope">
+            <!-- <template #default="scope:any">
               <template v-for="(it,i) in scope.row.MaterialSizes">
                 {{it.SizeName}}
                 {{it.SizeWidth}}x{{it.SizeLength}}
@@ -68,7 +68,7 @@
             </template> -->
           </el-table-column>
           <el-table-column prop="WarnThreshold" label="预警数量" min-width="121">
-            <!-- <template #default="scope">
+            <!-- <template #default="scope:any">
               <template v-for="(it,i) in scope.row.MaterialSizes">
                 {{it.SizeName}}
                 {{it.SizeWidth}}x{{it.SizeLength}}
@@ -77,7 +77,7 @@
             </template> -->
           </el-table-column>
           <el-table-column prop="NoticeMobile" label="接收号码" min-width="279">
-            <!-- <template #default="scope">
+            <!-- <template #default="scope:any">
               <template v-for="(it,i) in scope.row.MaterialSizes">
                 {{it.SizeName}}
                 {{it.SizeWidth}}x{{it.SizeLength}}
@@ -86,12 +86,12 @@
             </template> -->
           </el-table-column>
           <el-table-column prop="RelieveTime" label="解除时间" min-width="195">
-            <template #default="scope">
+            <template #default="scope:any">
               {{$format.format2MiddleLangTypeDateFunc2(scope.row.RelieveTime)}}
             </template>
           </el-table-column>
           <el-table-column prop="操作" label="解除方式" min-width="186">
-            <template #default="scope">
+            <template #default="scope:any">
               <span v-if="scope.row.HandleType===1">手动解除</span>
               <span v-if="scope.row.HandleType===2">补充库存</span>
               <span v-if="scope.row.HandleType===3">改动设置</span>

@@ -7,6 +7,7 @@
    :originMaterialSources="originMaterialSources"
    :title="PlateMakingGroupManageData.ManageListData.curEditItemHandler?.itemData.Name || ''"
    withoutOtherPrcess
+   IsPlateMakingGroup
    @saved="handleSaved" />
 </template>
 
@@ -30,8 +31,6 @@ const BreadcrumbList = computed(() => [
 
 const ProductionSettingStore = useProductionSettingStore();
 const { PlateMakingGroupManageData } = storeToRefs(ProductionSettingStore);
-
-console.log(PlateMakingGroupManageData.value);
 
 const originMaterialSources = computed(() => {
   const list = PlateMakingGroupManageData.value.ManageListData.MaterialSourcesData?.map(it => {

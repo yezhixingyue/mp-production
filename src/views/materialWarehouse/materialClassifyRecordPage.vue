@@ -123,7 +123,7 @@
           show-overflow-tooltip prop="TypeName" label="类型" min-width="66"/>
           <el-table-column
           show-overflow-tooltip prop="AttributeDescribe" label="物料" min-width="152">
-            <!-- <template #default="scope">
+            <!-- <template #default="scope:any">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -142,7 +142,7 @@
           show-overflow-tooltip prop="SizeDescribe" label="尺寸规格" min-width="199">
           </el-table-column>
           <el-table-column prop="Stock" label="数量" min-width="158">
-            <template #default="scope">
+            <template #default="scope:any">
               {{Math.abs(scope.row.StoreNumber)}} {{scope.row.StockUnit}}
               <mp-button link type="primary" @click="SeeGoodsAllocation(scope.row)">
                 {{Data.getRecordData.LogType === 1 ? '入库货位' : '出库货位'}}
@@ -151,24 +151,24 @@
           </el-table-column>
           <template v-if="Data.getRecordData.LogType === 1">
             <el-table-column prop="Price" label="单价" min-width="104">
-              <template #default="scope">
+              <template #default="scope:any">
                 {{scope.row.Price}}元/{{scope.row.StockUnit}}
               </template>
             </el-table-column>
             <el-table-column prop="amount" label="金额" min-width="112">
-              <template #default="scope">
+              <template #default="scope:any">
                 {{scope.row.amount}}元
               </template>
             </el-table-column>
             <el-table-column prop="HandleType" label="入库类型" min-width="88">
-              <template #default="scope">
+              <template #default="scope:any">
                 {{getHandleType(scope.row.HandleType)}}
               </template>
             </el-table-column>
           </template>
           <template v-if="Data.getRecordData.LogType === 2">
             <el-table-column prop="HandleType" label="出库类型" min-width="88">
-              <template #default="scope">
+              <template #default="scope:any">
                 {{getHandleType(scope.row.HandleType)}}
               </template>
             </el-table-column>
@@ -177,7 +177,7 @@
           <template v-if="Data.getRecordData.LogType === 1">
             <el-table-column
             show-overflow-tooltip prop="SupplierName" label="供应商/退料人" min-width="149">
-              <template #default="scope">
+              <template #default="scope:any">
                 {{scope.row.SupplierName}}{{scope.row.HandlerName}}
               </template>
             </el-table-column>
@@ -190,8 +190,8 @@
             <el-table-column prop="OperaterName" label="操作人" min-width="79"/>
             <el-table-column
             show-overflow-tooltip prop="CreateTime" label="入库时间" min-width="158">
-              <template #default="scope">
-                {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
+              <template #default="scope:any">
+                {{format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
               </template>
             </el-table-column>
           </template>
@@ -201,8 +201,8 @@
             <el-table-column prop="OperaterName" label="操作人" min-width="79"/>
             <el-table-column
             show-overflow-tooltip prop="CreateTime" label="出库时间" min-width="158">
-              <template #default="scope">
-                {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
+              <template #default="scope:any">
+                {{format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
               </template>
             </el-table-column>
           </template>
@@ -235,13 +235,13 @@
     <template #default>
       <div class="storehouse-stock-dialog">
         <div class="material-manage">
-          <p>物料：{{Data.materialManageInfo.AttributeDescribe}}
+          <p>物料：{{Data.materialManageInfo?.AttributeDescribe}}
           </p>
           <p>
-            尺寸规格：{{Data.materialManageInfo.SizeDescribe}}
+            尺寸规格：{{Data.materialManageInfo?.SizeDescribe}}
           </p>
           <p>
-            SKU编码：{{Data.materialManageInfo.MaterialCode}}
+            SKU编码：{{Data.materialManageInfo?.MaterialCode}}
           </p>
         </div>
         <el-scrollbar  max-height="350px">
@@ -253,7 +253,7 @@
                 <span>
                   {{Storehouseitem.StorehouseName}}：
                   {{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}
-                  {{Math.abs(getStorehouseInNumber(Storehouseitem.GoodsPositionStockInfos))}}{{Data.materialManageInfo.StockUnit}}
+                  {{Math.abs(getStorehouseInNumber(Storehouseitem.GoodsPositionStockInfos))}}{{Data.materialManageInfo?.StockUnit}}
                 </span>
               </p>
               <ul>
@@ -266,16 +266,16 @@
                   </span>
                   <span class="PCS">
                     {{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}
-                    {{Math.abs(GoodsPosition.StoreNumber)}}{{Data.materialManageInfo.StockUnit}}
+                    {{Math.abs(GoodsPosition.StoreNumber)}}{{Data.materialManageInfo?.StockUnit}}
                   </span>
                 </li>
               </ul>
             </div>
           </div>
         </el-scrollbar>
-            <p>合计{{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}：{{Math.abs(getStorehouseAllInNumber())}}{{Data.materialManageInfo.StockUnit}}
-              （{{Math.abs(Data.materialManageInfo.OutInNumber)}}
-              {{Data.materialManageInfo.OutInUnit}}）
+            <p>合计{{Data.getRecordData.LogType === 1 ? '入库' : '出库'}}：{{Math.abs(getStorehouseAllInNumber())}}{{Data.materialManageInfo?.StockUnit}}
+              （{{Math.abs(Data.materialManageInfo?.OutInNumber)}}
+              {{Data.materialManageInfo?.OutInUnit}}）
             </p>
         <!-- {{Data.StorehouseStockInfo}} -->
       </div>
@@ -299,6 +299,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
+import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -651,6 +652,7 @@ export default {
       SeeGoodsAllocation,
       getStorehouseAllInNumber,
       getStorehouseInNumber,
+      format2MiddleLangTypeDateFunc2,
     };
   },
 

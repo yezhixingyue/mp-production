@@ -5,7 +5,7 @@
     </header>
     <main>
       <PageContentTable v-if="tableList" :tableList="tableList" :withoutOtherPrcess="props.withoutOtherPrcess"
-       :hasPlateMakingWork="!!curEditItem?.PlateMakingWorkID" HideByIsPlateMaterial
+       :hasPlateMakingWork="!!curEditItem?.PlateMakingWorkID" :HideByIsPlateMaterial="!IsPlateMakingGroup"
        :title="props.title" :WorkingProcedureList="WorkingProcedureList" @select="selectProcess" />
       <PageContentTable v-if="tableList4PlateMaking && PlateMakingMaterialSourceSetupData"
        :tableList="tableList4PlateMaking" withoutOtherPrcess
@@ -60,6 +60,7 @@ const props = defineProps<{
   saveApiFunc?:(data: { Materials: ITableItem[] | null }) => Promise<AxiosResponse<IResponse<string>, unknown>>
   params?: object
   withoutOtherPrcess?: boolean // 列表中 物料来源是否可设置为来自其它工序 （ 制版组中不可以 ）
+  IsPlateMakingGroup?: boolean // 是否制版组在使用该组件
   title: string
   type: 'combine' | 'line' | 'PlateMakingGroup'
   PlateMakingMaterialSourceSetupData?: IPlateMakingMaterialSourceSetupData | null
@@ -109,7 +110,7 @@ const localWorkingProcedureList = computed(() => {
 const saveProcess = async () => {
   if (!tableList.value) return;
   const list = [...tableList.value].map(it => {
-    if (it._MaterialTypeGroup?.IsPlateMaterial) {
+    if (it._MaterialTypeGroup?.IsPlateMaterial && !props.IsPlateMakingGroup) {
       // 此处强制修改版材的物料来源为0以提交接口 （为版材时不用传递配置内容，原值传递的为null，现根据接口该传默认值为0）
       const _it = it;
       _it.SourceType = MaterialSourceTypeEnum._plateMaterialDefault;
@@ -120,7 +121,7 @@ const saveProcess = async () => {
   if (tableList4PlateMaking.value) {
     list.push(...tableList4PlateMaking.value);
   }
-  let t = list.find((it, i) => !it.SourceType && it.SourceType !== 0 && !(it._MaterialTypeGroup?.IsPlateMaterial && i < len));
+  let t = list.find((it, i) => !it.SourceType && it.SourceType !== 0 && !(it._MaterialTypeGroup?.IsPlateMaterial && i < len && !props.IsPlateMakingGroup));
   if (t) {
     MpMessage.error({
       title: '保存失败',
@@ -151,7 +152,7 @@ const saveProcess = async () => {
     : { LineWorkID: props.curEditItem?.LineWorkID || '', Materials, IsPlateMakingWork: false };
   let params: object | object[] = temp;
   if (props.type === 'line' || props.type === 'combine') params = [temp];
-  if (props.type === 'line' && props.PlateMakingMaterialSourceSetupData) {
+  if (props.PlateMakingMaterialSourceSetupData) {
     const Materials2 = tableList4PlateMaking.value?.map(it => {
       const _it = { ...it };
       delete _it._MaterialTypeGroup;
@@ -185,7 +186,6 @@ const getWorkingProcedureList = async () => {
   if (props.withoutOtherPrcess) return;
   const resp = await api.getWorkingProcedureSearch().catch(() => null);
   if (resp?.data.isSuccess) {
-    console.log(resp);
     WorkingProcedureList.value = resp.data.Data;
   }
 };

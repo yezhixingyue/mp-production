@@ -72,7 +72,8 @@
             <div class="process-item">
               <span class="process">工序</span>
               <span class="equipment">设备/外协工厂</span>
-              <span class="work" v-if="type==='normal'">制版工序</span>
+              <!-- <span class="work" v-if="type==='normal'">制版工序</span> -->
+              <span class="work">制版工序</span>
               <span class="operate" :class="type">操作</span>
             </div>
           </div>
@@ -152,7 +153,8 @@
             </div>
             <el-form-item class="form-item-required formatRadioCheckBox">
               <el-checkbox-group v-model="Data.addLineFrom.CombinationWordIDS">
-                <el-checkbox :label="it.ID" v-for="it in combinationPrcessList" :key="it.ID">{{it.Name}}</el-checkbox>
+                <el-checkbox :label="it.ID" v-for="it in combinationPrcessList" :disabled="initSelectedCombinationWordIDS.includes(it.ID)"
+                 :key="it.ID">{{it.Name}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <div class="notice">
@@ -176,7 +178,7 @@
         <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
             <el-checkbox-group v-model="Data.addPrcessFrom.WordIDS">
               <template v-for="item in PrcessList" :key="item.ClassID" >
-                <el-checkbox :label="item.ID" :title="item.Name">{{item.Name}}</el-checkbox>
+                <el-checkbox :label="item.ID" :title="item.Name" :disabled="Data.addPrcessFrom.WordIDS.includes(item.ID)">{{item.Name}}</el-checkbox>
               </template>
             </el-checkbox-group>
         </div>
@@ -204,7 +206,8 @@
     </template>
     </DialogContainerComp>
     <!-- 制版工序设置 -->
-    <PlateMakingWorkSetupDialog v-model:visible="PlateMakingVisible" :curWorkName="curWorkName" @submited="changeLineStatus" v-if="!isCombine" />
+    <!-- <PlateMakingWorkSetupDialog v-model:visible="PlateMakingVisible" :curWorkName="curWorkName" @submited="changeLineStatus" v-if="!isCombine" /> -->
+    <PlateMakingWorkSetupDialog v-model:visible="PlateMakingVisible" :curWorkName="curWorkName" @submited="changeLineStatus" />
   </div>
 </template>
 
@@ -586,6 +589,7 @@ const lineOpen = () => {
     }
   });
 };
+const initSelectedCombinationWordIDS = ref<string[]>([]);
 const editLine = () => {
   if (actionLine.value && ProductionLineData.value) {
     const _list = ProductionLineData.value.ProductionLineWorkings || [];
@@ -601,6 +605,7 @@ const editLine = () => {
       CombinationWordIDS,
     };
     Data.addLineFrom = temp;
+    initSelectedCombinationWordIDS.value = CombinationWordIDS;
   }
   addLineShow.value = true;
 };
@@ -720,7 +725,6 @@ const setSplitPrimaryClick = () => {
 const PlateMakingVisible = ref(false);
 const curWorkName = ref('');
 const setPlateMakingWork = (item: ILocalProductionLineWorkings) => {
-  console.log(item);
   PlateMakingWorkSetupHander.value.setCurWorkItem(item);
   curWorkName.value = item._WorkName || '';
   PlateMakingVisible.value = true;
@@ -744,8 +748,8 @@ onMounted(async () => {
     // }
     getsplitPrcessList();
     sessionStorage.removeItem('productionLinePage');
-    productionSettingStore.setPlateMakingWorkSetupHanderInit();
   }
+  productionSettingStore.setPlateMakingWorkSetupHanderInit();
   getProductionLineList();
   // if (!productionSettingStore.MaterialTypeGroup.length) {
   await productionSettingStore.getMaterialTypeGroupAll();
@@ -910,6 +914,7 @@ onMounted(async () => {
           flex: 1;
           overflow: auto;
           overflow: overlay;
+          padding-bottom: 1px;
           @include scroll;
           // border-top: 1px solid #D0D0D0;
           // border-bottom: 1px solid #D0D0D0;
@@ -930,7 +935,8 @@ onMounted(async () => {
                 width: 155px;
               }
               .operate{
-                width: 260px;
+                // width: 260px;
+                width: 340px;
                 &.normal {
                   width: 340px;
                 }
@@ -1220,7 +1226,8 @@ onMounted(async () => {
       width: 175px;
     }
     .operate{
-      width: 260px;
+      // width: 260px;
+      width: 340px;
       &.normal {
         width: 340px;
       }

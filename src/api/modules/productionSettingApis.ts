@@ -86,6 +86,9 @@ const api = {
   getProductionLinetEquipmentRemove(id) { // POST /Api/ProductionLine/Equipment/Remove  生产线设备删除
     return request({ method: 'DELETE', url: `/Api/ProductionLine/Equipment/Remove?id=${id}` });
   },
+  getProductionLinetEquipmentWeightSave(data) { // POST /Api/ProductionLine/EquipmentWeight/Save  生产线工序设备权重
+    return request({ method: 'POST', url: '/Api/ProductionLine/EquipmentWeight/Save', data });
+  },
   getProductionLineSetSplit(data) { // POST /Api/ProductionLine/SetSplit  工序删除
     return request({ method: 'POST', url: '/Api/ProductionLine/SetSplit', data });
   },

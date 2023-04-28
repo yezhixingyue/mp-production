@@ -58,7 +58,7 @@
           show-overflow-tooltip prop="TypeName" label="类型" min-width="97"/>
           <el-table-column
           show-overflow-tooltip prop="AttributeDescribe" label="物料" min-width="170">
-            <!-- <template #default="scope">
+            <!-- <template #default="scope:any">
               <template v-for="(item, index) in scope.row.MaterialAttributes"
               :key="item.AttributeID">
                 <template v-if="item.NumericValue">
@@ -75,7 +75,7 @@
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="SizeDescribe" label="尺寸规格" min-width="217">
-            <!-- <template #default="scope">
+            <!-- <template #default="scope:any">
               <template v-for="(it,i) in scope.row.MaterialSizes">
                 {{it.SizeName}}
                 {{it.SizeWidth}}x{{it.SizeLength}}
@@ -84,7 +84,7 @@
             </template> -->
           </el-table-column>
           <el-table-column prop="TotalStock" label="当前库存" min-width="145">
-            <template #default="scope">
+            <template #default="scope:any">
               <template v-if="scope.row.TotalStock">
                 {{scope.row.TotalStock}}
                 {{scope.row.StockUnit}}
@@ -97,7 +97,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="WarnThreshold" label="预警阀值" min-width="103">
-            <template #default="scope">
+            <template #default="scope:any">
               <template v-if="scope.row.WarnThreshold">
                 {{scope.row.WarnThreshold}}
                 {{scope.row.StockUnit}}
@@ -107,7 +107,7 @@
           <el-table-column
           show-overflow-tooltip prop="NoticeMobile" label="接收号码" min-width="259"/>
           <el-table-column label="预警状态" min-width="196">
-            <template #default="scope">
+            <template #default="scope:any">
               <span style="padding:0 5px;color:#FF3769" v-if="scope.row.IsWarn">预警中</span>
               <mp-button v-if="scope.row.IsOpenWarn" type="primary"
               style="margin-left:10px"
@@ -116,7 +116,7 @@
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="物料" label="操作" min-width="138">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button
               type="primary"
               link @click="SetSMSWarnClick(scope.row)">

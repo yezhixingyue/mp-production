@@ -4,9 +4,11 @@
     :BreadcrumbList="BreadcrumbList"
     :LineWorkID="processInfo.LineWorkID"
     :ClassEquipmentGroups="processInfo.ClassEquipmentGroups"
+    :PlateMakingEquipmentSetupData="PlateMakingEquipmentSetupData"
     :curLineWorkName="curLineWorkName"
     @save="handleEquipmentSubmit"
     @remove="handleRemove"
+    @setWeight="setWeight"
     @toPutOut="ToPutOutPage"
     @tocCpacity="TocCpacityPage" />
 </template>
@@ -18,10 +20,13 @@ import {
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import messageBox from '@/assets/js/utils/message';
+// import messageBox from '@/assets/js/utils/message';
 import { IProductionLineWorkings } from '@/store/modules/productionSetting/types';
+import { useProductionSettingStore } from '@/store/modules/productionSetting';
+import { storeToRefs } from 'pinia';
 import EquipmentListPage from '../putOutAndCapacity/EquipmentListPage.vue';
 import { ILineEquipmentSaveParams, IEquipmentGroupSaveResult } from '../putOutAndCapacity/js/types';
+import { EquipmentSetupType, IPlateMakingEquipmentSetupData } from '../productionLine/js/types';
 
 const route = useRoute();
 const router = useRouter();
@@ -38,42 +43,65 @@ const BreadcrumbList = computed(() => [
   },
 ]);
 
-const ToPutOutPage = (item) => {
-  const Name = curLineWorkName.value;
-  const ID = processInfo.value?.WorkID || '';
+const productionSettingStore = useProductionSettingStore();
+const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
+
+const PlateMakingEquipmentSetupData = computed<IPlateMakingEquipmentSetupData | null>(() => {
+  if (!processInfo.value) return null;
+  if (processInfo.value.PlateMakingWorkID && !processInfo.value.PlateMakingGroupID && processInfo.value.PlateMakingWorkIdentID) {
+    const t = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.find(it => it.ID === processInfo.value?.PlateMakingWorkID);
+
+    if (t && processInfo.value.PlateMakingClassEquipmentGroups) {
+      return {
+        WorkID: t.ID,
+        WorkName: t.Name,
+        PlateMakingClassEquipmentGroups: processInfo.value.PlateMakingClassEquipmentGroups,
+        PlateMakingWorkIdentID: processInfo.value.PlateMakingWorkIdentID,
+      };
+    }
+  }
+  return null;
+});
+
+const ToPutOutPage = (item, type: EquipmentSetupType = 'default') => {
+  const Name = type === 'default' ? curLineWorkName.value : PlateMakingEquipmentSetupData.value?.WorkName || '';
+  const ID = type === 'default' ? processInfo.value?.WorkID || '' : PlateMakingEquipmentSetupData.value?.WorkID || '';
   const Work = { ID, Name };
   router.push({
     name: 'combinationPutOut',
     params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work), lineName: curLineName.value },
   });
 };
-const TocCpacityPage = (item) => {
-  const Name = curLineWorkName.value;
-  const ID = processInfo.value?.WorkID || '';
+const TocCpacityPage = (item, type: EquipmentSetupType = 'default') => {
+  const Name = type === 'default' ? curLineWorkName.value : PlateMakingEquipmentSetupData.value?.WorkName || '';
+  const ID = type === 'default' ? processInfo.value?.WorkID || '' : PlateMakingEquipmentSetupData.value?.WorkID || '';
   const Work = { ID, Name };
   router.push({
     name: 'combinationCapacity',
     params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work), lineName: curLineName.value },
   });
 };
-const afterRemove = (ID) => {
-  processInfo.value?.ClassEquipmentGroups?.forEach((ClassIt, ClassIti) => {
-    ClassIt.EquipmentGroups.forEach((GroupIt, GroupIti) => {
-      GroupIt.Equipments.forEach((it, iti) => {
+const afterRemove = (ID, type: EquipmentSetupType) => {
+  const _ClassEquipmentGroups = type === 'default' ? processInfo.value?.ClassEquipmentGroups : processInfo.value?.PlateMakingClassEquipmentGroups;
+  if (!_ClassEquipmentGroups) return;
+  _ClassEquipmentGroups.forEach((ClassIt) => {
+    ClassIt.EquipmentGroups.forEach((GroupIt) => {
+      GroupIt.Equipments.forEach((it) => {
         if (it.ID === ID) {
           const _it = it;
           _it.LineEquipmentID = '';
+          _it.Weight = null;
         }
       });
     });
   });
 };
-const handleRemove = (item) => {
+const handleRemove = (item, type: EquipmentSetupType = 'default') => {
   api.getProductionLinetEquipmentRemove(item.LineEquipmentID).then(res => {
     if (res.data.Status === 1000) {
       const cb = () => {
         setStorage();
-        afterRemove(item.ID);
+        afterRemove(item.ID, type);
       };
 
       MpMessage.success({ title: '删除成功', onOk: cb, onCancel: cb });
@@ -98,6 +126,24 @@ const setEquipment = (list, resultArr: IEquipmentGroupSaveResult[]) => {
     });
   });
 };
+
+const setWeight = (list: { ID: string, Weight: number }[], type: EquipmentSetupType) => {
+  setStorage();
+  const _ClassEquipmentGroups = type === 'default' ? processInfo.value?.ClassEquipmentGroups : processInfo.value?.PlateMakingClassEquipmentGroups;
+  if (!_ClassEquipmentGroups) return;
+  _ClassEquipmentGroups.forEach((ClassIt) => {
+    ClassIt.EquipmentGroups.forEach((GroupIt) => {
+      GroupIt.Equipments.forEach((it) => {
+        const t = list.find(_it => _it.ID === it.LineEquipmentID);
+        if (t) {
+          const _it = it;
+          _it.Weight = t.Weight;
+        }
+      });
+    });
+  });
+};
+
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('combinationProductionLinePage', 'true');
 }
@@ -110,7 +156,11 @@ const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () =>
         callback();
       };
         // 保存成功
-      messageBox.successSingle('保存成功', cb, cb);
+      MpMessage.dialogSuccess({
+        title: '保存成功',
+        onOk: cb,
+        onCancel: cb,
+      });
     }
   });
 //

@@ -3,12 +3,12 @@
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12">
       <mp-table-column align="center" width="280px" prop="Name" label="名称" />
       <mp-table-column align="center" width="185px" prop="Type" label="类型">
-        <template #default="scope">
+        <template #default="scope:any">
           {{formatType(scope.row.Type)}}
         </template>
       </mp-table-column>
       <mp-table-column align="center" width="185px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="info" link @click="onEditClick(scope.row)">
             <i class="iconfont icon-bianji"></i>编辑
           </mp-button>

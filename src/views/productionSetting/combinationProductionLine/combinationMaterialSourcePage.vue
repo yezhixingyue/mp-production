@@ -1,5 +1,5 @@
 <template>
-  <PageContent v-if="processInfo" type="combine"
+  <PageContent v-if="processInfo" type="combine" :PlateMakingMaterialSourceSetupData="PlateMakingMaterialSourceSetupData"
     :title="curWorkName" :BreadcrumbList="BreadcrumbList" :cur-edit-item="processInfo" :workListRange="workListRange" @saved="setStorage" />
 </template>
 
@@ -9,7 +9,10 @@ import {
 } from 'vue';
 import { useRoute } from 'vue-router';
 import { IProductionLineWorkings, IWorkingProcedureList } from '@/store/modules/productionSetting/types';
+import { useProductionSettingStore } from '@/store/modules/productionSetting';
+import { storeToRefs } from 'pinia';
 import PageContent from '../MaterialSource/PageContent.vue';
+import { IPlateMakingMaterialSourceSetupData } from '../productionLine/js/types';
 
 const route = useRoute();
 const processInfo:Ref<IProductionLineWorkings|null> = ref(null);
@@ -32,6 +35,26 @@ function setStorage() { // 设置会话存储
 }
 
 const workListRange = ref<string[]>([]);
+
+const productionSettingStore = useProductionSettingStore();
+const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
+
+const PlateMakingMaterialSourceSetupData = computed<IPlateMakingMaterialSourceSetupData | null>(() => {
+  if (!processInfo.value) return null;
+  if (processInfo.value.PlateMakingWorkID && !processInfo.value.PlateMakingGroupID && processInfo.value.PlateMakingWorkIdentID) {
+    const t = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.find(it => it.ID === processInfo.value?.PlateMakingWorkID);
+
+    if (t && processInfo.value.PlateMakingMaterialSources) {
+      return {
+        WorkName: t.Name,
+        PlateMakingMaterialSources: processInfo.value.PlateMakingMaterialSources,
+        PlateMakingWorkIdentID: processInfo.value.PlateMakingWorkIdentID,
+        PlateMakingWorkID: processInfo.value.PlateMakingWorkID,
+      };
+    }
+  }
+  return null;
+});
 
 onMounted(() => {
   const temp = JSON.parse(route.params.processInfo as string) as IProductionLineWorkings;

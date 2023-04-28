@@ -21,54 +21,48 @@
        style="width: 100%">
         <el-table-column show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
         <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" width="120">
-          <template #default="scope">
-            <span v-if="scope.row.ReportMode === 0">块报工</span>
-            <span v-if="scope.row.ReportMode === 1">大版报工</span>
-            <span v-if="scope.row.ReportMode === 2">订单报工</span>
+          <template #default="scope: any">
+            <span>{{ getEnumNameByID(scope.row.ReportMode, ReportModeEnumList) }}</span>
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="工序类型" width="120">
-          <template #default="scope">
-            <span v-if="scope.row.Type === 0">普通工序</span>
-            <span v-if="scope.row.Type === 1">印刷工序</span>
-            <span v-if="scope.row.Type === 2">制版工序</span>
-            <span v-if="scope.row.Type === 3">组合工序</span>
-            <span v-if="scope.row.Type === 4">拆分工序</span>
+          <template #default="scope: any">
+            <span>{{ getEnumNameByID(scope.row.Type, WorkingTypeEnumList) }}</span>
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="220">
-          <template #default="scope">
+          <template #default="scope: any">
             {{getEquipmentGroupsNames(scope.row.EquipmentGroups)}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ReportMode" label="允许批量报工" width="120">
-          <template #default="scope">
+          <template #default="scope: any">
             {{ scope.row.AllowBatchReport ? '允许' : '不允许' }}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="160">
-          <template #default="scope">
+          <template #default="scope: any">
             {{getInfoName(scope.row.Relations, 0)}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="160">
-          <template #default="scope">
+          <template #default="scope: any">
             {{getInfoName(scope.row.Relations,1)}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="160">
-          <template #default="scope">
+          <template #default="scope: any">
             {{getMaterialName(scope.row.Relations)}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="大版类型" min-width="160">
-          <template #default="scope">
+          <template #default="scope: any">
             {{getTemplateName(scope.row.TemplateID)}}
           </template>
 
         </el-table-column>
         <el-table-column prop="name" label="操作" width="200">
-          <template #default="scope">
+          <template #default="scope: any">
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="ToProcess(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
@@ -106,6 +100,8 @@ import messageBox from '@/assets/js/utils/message';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import type { IRelationsType } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { ReportModeEnumList, WorkingTypeEnumList } from './enums';
 
 const productionSettingStore = useProductionSettingStore();
 

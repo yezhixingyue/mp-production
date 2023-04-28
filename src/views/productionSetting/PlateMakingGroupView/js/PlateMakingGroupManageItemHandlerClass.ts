@@ -31,10 +31,23 @@ export class PlateMakingGroupManageItemHandlerClass {
     const resp = await api.getPlateMakingGroupEquipmentSave(temp).catch(() => null);
     if (resp?.data.isSuccess) {
       const cb = () => {
-        this.itemData.Equipments = resp.data.Data.filter(it => !it.IsRemove).map(it => ({ ID: it.EquipmentID, LineEquipmentID: it.LineEquipmentID }));
+        this.itemData.Equipments = resp.data.Data
+          .filter(it => !it.IsRemove)
+          .map(it => ({ ID: it.EquipmentID, LineEquipmentID: it.LineEquipmentID, Weight: null }));
+
         callback();
       };
       MpMessage.dialogSuccess({ title: '保存成功', onOk: cb, onCancel: cb });
     }
+  }
+
+  handleWeightChange(list: { ID: string, Weight: number }[]) {
+    this.itemData.Equipments.forEach(equ => {
+      const t = list.find(it => it.ID === equ.LineEquipmentID);
+      if (t) {
+        const _equ = equ;
+        _equ.Weight = t.Weight;
+      }
+    });
   }
 }

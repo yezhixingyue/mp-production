@@ -33,18 +33,18 @@
         show-overflow-tooltip prop="AreaDescribe" label="区域" min-width="220"/>
         <el-table-column
         show-overflow-tooltip prop="ExpressList" label="配送方式" min-width="220" >
-          <template #default="scope">
+          <template #default="scope:any">
             {{}}
             {{scope.row.ExpressList.map(item => commonStore.ExpressList.find(it => it.ID === item.ID)?.Name).join('、')}}
           </template>
         </el-table-column>
         <el-table-column prop="Shift" label="发货班次" min-width="260">
-        <template #default="scope">
+        <template #default="scope:any">
             <span style="white-space: nowrap" :title="getShiftData(scope.row.Shift).replaceAll('；', '；\r\n')">{{getShiftData(scope.row.Shift)}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="操作" min-width="240">
-          <template #default="scope">
+          <template #default="scope:any">
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="onItemSetupClick(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>

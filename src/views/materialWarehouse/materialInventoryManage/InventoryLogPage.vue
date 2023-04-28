@@ -59,7 +59,7 @@
         <el-table border fit stripe
         :data="Data.InventoryLogList" style="width: 100%">
           <el-table-column prop="MaterialCode" label="时间" min-width="200">
-            <template #default="scope">
+            <template #default="scope:any">
               {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
             </template>
           </el-table-column>
@@ -69,7 +69,7 @@
           show-overflow-tooltip prop="HandlerName" label="操作人" min-width="122"/>
           <el-table-column
           show-overflow-tooltip prop="HandleType" label="动作" min-width="136">
-            <template #default="scope">
+            <template #default="scope:any">
               <span v-if="scope.row.HandleType === 1">开始盘点</span>
               <span v-if="scope.row.HandleType === 2">修改库存</span>
               <span v-if="scope.row.HandleType === 3">修改物料</span>

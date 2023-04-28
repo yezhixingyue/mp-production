@@ -3,7 +3,7 @@
     <el-table :data="localTaskList" border stripe class="table-wrap" @selection-change="handleSelectionChange" ref="multipleTableRef">
       <mp-table-column type="selection" width="40" class-name="check-box-row" />
       <mp-table-column width="180px" label="任务编号">
-        <template #default="scope">
+        <template #default="scope:any">
           <div>
             <p>{{ scope.row.Code }}</p>
             <p>{{ scope.row._TargetID }}</p>
@@ -12,7 +12,7 @@
       </mp-table-column>
       <mp-table-column width="70px" prop="_ProcessTimes" label="加工次数" />
       <mp-table-column min-width="200px" label="任务信息" :show-overflow-tooltip="false">
-        <template #default="scope">
+        <template #default="scope:any">
           <div class="info">
             <!-- 辅助文字信息 -->
             <p class="is-red">{{ scope.row._AssistText}}</p>
@@ -28,7 +28,7 @@
       </mp-table-column>
       <mp-table-column width="80px" prop="_StatusText" label="状态" />
       <mp-table-column width="300px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <div>
             <mp-button type="primary" link @click="onSingleCompleteClick(scope.row)">加工完成</mp-button>
             <mp-button type="primary" link @click="onErrorClick(scope.row)">报错</mp-button>

@@ -3,15 +3,15 @@
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12" empty-text="暂无数据">
       <mp-table-column prop="Name" min-width="200px" label="工厂名称" />
       <mp-table-column label="地址" min-width="260px">
-        <template #default="scope">{{formatAddress(scope.row)}}</template>
+        <template #default="scope:any">{{formatAddress(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column prop="LinkMan" label="联系人" min-width="120px" />
       <mp-table-column prop="Mobile" label="电话" min-width="120px" />
       <mp-table-column label="适用于设备分类" min-width="240px">
-        <template #default="scope">{{formatEquipments(scope.row)}}</template>
+        <template #default="scope:any">{{formatEquipments(scope.row)}}</template>
       </mp-table-column>
       <mp-table-column width="260px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="info" link @click="onEditClick(scope.row)">
             <i class="iconfont icon-bianji"></i>编辑
           </mp-button>

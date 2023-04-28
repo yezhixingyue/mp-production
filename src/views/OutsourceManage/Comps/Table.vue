@@ -8,7 +8,7 @@
     <mp-table-column width="110px" prop="_Number" label="数量" />
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
     <mp-table-column v-if="pageType !== 'undelivered'" width="146px" label="外协工厂">
-      <template #default="scope">
+      <template #default="scope:any">
         <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
          v-model="scope.row._ExternalSubmitParams.FactoryID" style="width:120px;" placeholder="指定外协工厂">
           <el-option
@@ -22,7 +22,7 @@
       </template>
     </mp-table-column>
     <mp-table-column width="115px" label="金额" v-if="pageType==='await'">
-      <template #default="scope">
+      <template #default="scope:any">
         <el-input style="width:70px;margin-right: 5px;" class="amount" placeholder="外协金额"
           v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
           v-model.trim="scope.row._ExternalSubmitParams.Amount" maxlength="9"/>
@@ -33,19 +33,19 @@
 
     <template v-if="pageType==='all'">
       <mp-table-column width="85px" label="金额" >
-        <template #default="scope">
+        <template #default="scope:any">
           <span>{{ (scope.row as Row).Working.ExternalAttribute.OrignalAmount }}</span>
           <i v-if="typeof (scope.row as Row).Working.ExternalAttribute.OrignalAmount === 'number'">元</i>
         </template>
       </mp-table-column>
       <mp-table-column width="85px" label="异常减款">
-        <template #default="scope">
+        <template #default="scope:any">
           <span>{{ (scope.row as Row).Working.ExternalAttribute.ReduceAmount }}</span>
           <i v-if="typeof (scope.row as Row).Working.ExternalAttribute.ReduceAmount === 'number'">元</i>
         </template>
       </mp-table-column>
       <mp-table-column width="85px" label="最终金额">
-        <template #default="scope">
+        <template #default="scope:any">
           <span>{{ (scope.row as Row).Working.ExternalAttribute.FinalAmount }}</span>
           <i v-if="typeof (scope.row as Row).Working.ExternalAttribute.FinalAmount === 'number'">元</i>
         </template>
@@ -54,7 +54,7 @@
 
     <!-- 下一道工序 未交接时展示 -->
     <mp-table-column min-width="100px" label="下一道工序" v-if="pageType === 'inTransition' || pageType === 'undelivered'">
-      <template #default="scope">
+      <template #default="scope:any">
         <h4 v-if="(scope.row as Row).NextWorkingList?.length === 1" class="is-red">
           {{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}
         </h4>
@@ -64,7 +64,7 @@
     <!-- 最晚送达时间 未交接时展示 -->
     <mp-table-column width="130px" prop="_LastestSendedTime" label="最晚送达时间" v-if="pageType === 'inTransition'" class-name="is-pink" />
     <mp-table-column width="146px" label="预计完成日期" v-if="pageType==='await'">
-      <template #default="scope">
+      <template #default="scope:any">
         <MpDateTimePicker style="width:120px;"
           v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
           v-model="scope.row._ExternalSubmitParams.WishFinishTime" disabledBeforeToday :clearable="false" />
@@ -75,19 +75,19 @@
     <mp-table-column width="130px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
     <!-- 预计完成时间 全部时显示 -->
     <mp-table-column width="130px" label="预计完成日期" v-if="pageType === 'all'">
-      <template #default="scope">
+      <template #default="scope:any">
         {{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}
       </template>
     </mp-table-column>
     <!-- 完成时间 非待外协时显示 -->
     <mp-table-column width="130px" label="完成时间" v-if="pageType !== 'await' && pageType !== 'undelivered'">
-      <template #default="scope">
+      <template #default="scope:any">
         {{ format2MiddleLangTypeDateFunc2((scope.row as Row).FinishTime) }}
       </template>
     </mp-table-column>
     <mp-table-column width="100px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
     <mp-table-column width="225px" label="操作" v-if="pageType==='await'">
-      <template #default="scope">
+      <template #default="scope:any">
         <mp-button type="primary" class='f' link @click="onMenuClick(scope.row, 'confirmExternal')"
           :disabled="![ExternalTaskStatusEnum.WaitFactoryReceive, ExternalTaskStatusEnum.FactoryReceived]
           .includes(scope.row.Working.ExternalAttribute.Status)">{{ scope.row._ExternalStatusCtrlText }}</mp-button>

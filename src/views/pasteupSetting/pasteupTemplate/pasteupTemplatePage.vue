@@ -22,7 +22,7 @@
         <el-table border fit stripe
         :data="PasteupSettingStore.ImpositionTemmplateList" style="width: 100%">
           <!-- <el-table-column show-overflow-tooltip prop="SupplierName" label="分类" min-width="224">
-            <template #default="scope">
+            <template #default="scope:any">
               <span >
                 {{getClassName(scope.row.ClassID) }}
               </span>
@@ -32,7 +32,7 @@
           show-overflow-tooltip prop="Name" label="名称" min-width="280" />
           <el-table-column
           show-overflow-tooltip prop="ContactWay" label="类型" min-width="308">
-            <template #default="scope">
+            <template #default="scope:any">
               <span v-if="scope.row.IsPrintingPlate">
                 印刷版
               </span>
@@ -43,14 +43,14 @@
           </el-table-column>
           <el-table-column
           show-overflow-tooltip prop="MaterialTypeIDS" label="尺寸" min-width="272">
-            <template #default="scope">
+            <template #default="scope:any">
               <template v-if="scope.row.List.length">
                 {{scope.row.List.length}}条记录
               </template>
             </template>
           </el-table-column>
           <!-- <el-table-column prop="Address" label="拼版方式" show-overflow-tooltip min-width="280" >
-            <template #default="scope">
+            <template #default="scope:any">
               <template v-if="!scope.row.IsSameSizeWithPrintingPlate">
               <span v-if="scope.row.ModeSizeAttribute && scope.row.ModeSizeAttribute.UseMode">
                 按模位（{{scope.row.ModeSizeAttribute.ModeItemList.length}}条记录）
@@ -59,7 +59,7 @@
             </template>
           </el-table-column> -->
           <el-table-column prop="name" label="操作" min-width="241">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="info" link @click="ToTemplateSetSize(scope.row)" :disabled="scope.row.IsSameSizeWithPrintingPlate">
                 <i class="iconfont icon-shengchanxian" :class="{'disabled':scope.row.IsSameSizeWithPrintingPlate}"></i>模板规格</mp-button>
               <mp-button type="info" link @click="EditTemplate(scope.row)">

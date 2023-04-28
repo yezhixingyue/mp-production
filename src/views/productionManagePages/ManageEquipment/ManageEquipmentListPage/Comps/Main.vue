@@ -5,16 +5,16 @@
       <mp-table-column width="160px" prop="_GroupName" label="设备组" />
       <mp-table-column width="180px" prop="Name" label="名称" />
       <mp-table-column width="108px" label="状态">
-        <template #default="scope">{{ scope.row.IsOpen ? '' : '已关闭' }}</template>
+        <template #default="scope:any">{{ scope.row.IsOpen ? '' : '已关闭' }}</template>
       </mp-table-column>
       <mp-table-column width="215px" label="绑定状态">
-        <template #default="scope">
+        <template #default="scope:any">
           <span v-show="scope.row.Terminal">已绑定主机</span>
           <mp-button v-show="scope.row.Terminal" link type="primary" class="ml-40" @click="onUnbindClick(scope.row)">解绑</mp-button>
         </template>
       </mp-table-column>
       <mp-table-column min-width="280px" label="操作" class-name="ctrl">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="primary" link @click="onTimeClick(scope.row)">运行时间</mp-button>
           <mp-button :type="scope.row.IsOpen ? 'danger' : 'primary'" link @click="onOpenSwitchClick(scope.row)" :disabled="scope.row.MaintainInfo.IsAutomatic">
             {{ scope.row.IsOpen ? '关机' : '开机'}}

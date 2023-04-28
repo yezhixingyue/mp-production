@@ -80,7 +80,7 @@ const onClick = () => {
       flex: none;
       & + span {
         line-height: 20px;
-        padding-top: 7px;
+        padding-top: 5px;
       }
     }
   }

@@ -11,12 +11,12 @@
         :data="Data.AttributesList" style="width: 100%">
           <el-table-column prop="AttributeName" label="名称" min-width="209" />
           <el-table-column prop="AttributeType" label="类型" min-width="218">
-            <template #default="scope">
+            <template #default="scope:any">
               {{scope.row.AttributeType === 1 ? '数字值' : '选择项'}}
             </template>
           </el-table-column>
           <el-table-column prop="RegularQuantity" label="描述" min-width="658">
-            <template #default="scope">
+            <template #default="scope:any">
               <template v-if="scope.row.AttributeType === 1">
                 单位：{{scope.row.AttributeUnit}}；
                 是否必填：{{scope.row.IsRequired?'必填':'非必填'}}；
@@ -32,7 +32,7 @@
           </el-table-column>
           <el-table-column prop="Sort" label="显示顺序" min-width="176" />
           <el-table-column prop="name" label="操作" min-width="295">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="info" link @click="editAttributes(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link

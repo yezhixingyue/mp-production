@@ -9,7 +9,7 @@
       <mp-table-column min-width="140px" prop="_CustomerInfo" label="客户（手机号）" />
       <mp-table-column width="125px" prop="_CreateTime" label="下单时间" />
       <mp-table-column width="140px" prop="_MaterialSource" label="物料来源">
-        <template #default="scope">
+        <template #default="scope:any">
           <span>{{ scope.row._MaterialSource }}</span>
           <mp-button v-if="scope.row.MaterialSource === PlaceOrderMaterialSourceEnum.homePickup "
            type="primary" class="ft-12 ml-10" link @click="onAddressDisplayClick(scope.row)">取料地址</mp-button>
@@ -21,7 +21,7 @@
       <mp-table-column width="100px" prop="Operator" label="操作人" />
       <mp-table-column width="85px" prop="_Status" label="状态" />
       <mp-table-column width="110px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="primary" class="ft-12" v-if="scope.row.Status === ExternalMaterialStatusEnum.WaitingDelivery"
            link @click="onDeliveryClick(scope.row)">到货</mp-button>
         </template>

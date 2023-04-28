@@ -20,7 +20,7 @@
       <mp-table-column v-if="showRowOptions.showStatus" width="100px" prop="_StatusText" label="当前状态" />
       <mp-table-column v-if="showRowOptions.showExternalStatus" width="100px" prop="_ExternalStatusText" label="状态" />
       <mp-table-column v-if="showRowOptions.showCtrlMenus.length > 0" width="185px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="primary" link @click="onMenuClick(scope.row, 'switchEqu')" v-if="showRowOptions.showCtrlMenus.includes('switchEqu')">
             <i class="iconfont icon-churukujilu"></i>更换设备
           </mp-button>

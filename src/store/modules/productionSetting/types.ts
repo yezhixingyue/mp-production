@@ -106,6 +106,8 @@ export interface IEquipments {
   ID: string,
   /** 设备名称 */
   Name: string,
+  /** 设备权重 */
+  Weight: number | null,
 }
 export interface IEquipmentGroups {
   /** 设备组ID  */

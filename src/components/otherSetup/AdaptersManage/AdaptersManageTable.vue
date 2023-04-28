@@ -13,7 +13,7 @@
     <el-table-column min-width="150px" prop="PublicKey" show-overflow-tooltip label="公钥"></el-table-column>
     <el-table-column min-width="150px" prop="PrivateKey" show-overflow-tooltip label="私钥"></el-table-column>
     <!-- <el-table-column width="160px" prop="Name" show-overflow-tooltip label="关联工厂数量">
-      <template #default="scope">{{scope.row.RelationNumber}}个</template>
+      <template #default="scope:any">{{scope.row.RelationNumber}}个</template>
     </el-table-column> -->
     <el-table-column min-width="140px" label="操作">
       <template #default="scope">

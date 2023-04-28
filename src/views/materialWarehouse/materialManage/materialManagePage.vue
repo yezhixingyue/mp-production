@@ -49,7 +49,7 @@
           show-overflow-tooltip min-width="608">
           </el-table-column>
           <el-table-column prop="操作" label="操作" min-width="238">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="info" link @click="editMaterial(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link @click="delMaterial(scope.row)">

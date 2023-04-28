@@ -4,7 +4,7 @@
     <el-table v-else-if="WorkID" :data="localList" stripe border class="row-ft-12 table">
       <mp-table-column width="200px" prop="Name" label="组名称" />
       <mp-table-column width="280px" prop="Type" label="设备/工厂组">
-        <template #default="scope">
+        <template #default="scope:any">
           <span class="is-gray" v-if="typeof scope.row._EquipmentsContent === 'string'">{{scope.row._EquipmentsContent}}</span>
           <template v-else>
             <template v-for="(it, i) in scope.row._EquipmentsContent" :key="it.label">
@@ -15,7 +15,7 @@
         </template>
       </mp-table-column>
       <mp-table-column width="180px" prop="Type" label="物料来源">
-        <template #default="scope">
+        <template #default="scope:any">
           <span class="is-gray" v-if="typeof scope.row._MaterialsContent === 'string'">{{scope.row._MaterialsContent}}</span>
           <template v-else>
             <template v-for="(it, i) in scope.row._MaterialsContent" :key="it.label">
@@ -26,7 +26,7 @@
         </template>
       </mp-table-column>
       <mp-table-column width="285px" label="操作">
-        <template #default="scope">
+        <template #default="scope:any">
           <mp-button type="primary" class="ft-12" :disabled="!(props.ClassEquipmentGroups?.length)"
            link @click="onEquipmentClick(scope.row)">选择设备/工厂</mp-button>
           <mp-button type="primary" class="ft-12" :disabled="!(props.MaterialSourcesData?.length)"

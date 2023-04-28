@@ -20,7 +20,7 @@
           show-overflow-tooltip label="属性" min-width="150" />
           <el-table-column prop="BrandDescribe" label="品牌属性"
           show-overflow-tooltip min-width="83">
-          <template #default="scope">
+          <template #default="scope:any">
             {{scope.row.BrandDescribe || (scope.row.BrandIsSet ? "无" : '')}}
           </template>
           </el-table-column>
@@ -29,7 +29,7 @@
           <el-table-column prop="OutInUnitDescribe" label="出入库单位"
           show-overflow-tooltip min-width="378" />
           <el-table-column prop="name" label="操作" min-width="428">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="primary" link
               @click="ToSetAttributesPage(scope.row)">设置属性</mp-button>
               <mp-button type="primary" link :disabled="Boolean(scope.row.BrandIsSet)"
@@ -50,7 +50,7 @@
       <div class="bottom-count-box">
         <MpPagination
         :nowPage="Data.getMaterialTypeData.Page"
-        :pageSize="Data.getMaterialTypeData.PageSize"
+        :pageSize="+Data.getMaterialTypeData.PageSize || 20"
         :total="Data.DataTotal"
         :handlePageChange="PaginationChange" />
       </div>

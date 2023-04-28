@@ -19,6 +19,7 @@
                       <div class="checkbox">
                         <el-checkbox @change="() => onChange(it.ID)"
                           :modelValue="ruleForm.EquipmentIDS.includes(it.ID)" v-for="it in GroupIt.Equipments"
+                          :disabled="initSelectedIds.includes(it.ID)"
                           :key="it.ID" :label="it.ID">{{ it.Name }}</el-checkbox>
                       </div>
                     </li>
@@ -37,7 +38,7 @@
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IClassEquipmentGroups } from '@/store/modules/productionSetting/types';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { filterClassEquipmentGroups } from '../../PlateMakingGroupView/js/utils';
 import { WorkSourceTypeEnum } from '../js/enum';
 import { ILineEquipmentSaveParams } from '../js/types';
@@ -59,6 +60,8 @@ const ruleForm = reactive<ILineEquipmentSaveParams>({
 
 const localClassEquipmentGroups = computed(() => filterClassEquipmentGroups(props.ClassEquipmentGroups));
 
+const initSelectedIds = ref<string[]>([]);
+
 const onOpen = () => {
   ruleForm.LineWorkID = props.curEditItem?.LineWorkID || '';
   const list = props.curEditItem ? [...props.curEditItem.EquipmentIDS] : [];
@@ -70,7 +73,8 @@ const onOpen = () => {
       });
     });
   });
-  ruleForm.EquipmentIDS = list.filter(id => ids.includes(id)); // 筛选掉已不在列表中的项目
+  initSelectedIds.value = list.filter(id => ids.includes(id));
+  ruleForm.EquipmentIDS = [...initSelectedIds.value]; // 筛选掉已不在列表中的项目
 };
 
 const localVisible = computed({

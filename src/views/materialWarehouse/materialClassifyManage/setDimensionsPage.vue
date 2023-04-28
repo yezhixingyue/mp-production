@@ -11,27 +11,27 @@
         :data="Data.dimensisnsList" style="width: 100%">
 
           <el-table-column prop="SizeName" label="尺寸名称" min-width="315">
-            <template #default="scope">
+            <template #default="scope:any">
               {{scope.row.SizeName}}
             </template>
           </el-table-column>
           <el-table-column prop="SizeCode" label="尺寸编码" min-width="315">
-            <template #default="scope">
+            <template #default="scope:any">
               {{scope.row.SizeCode}}
             </template>
           </el-table-column>
           <el-table-column prop="" label="宽度" min-width="287">
-            <template #default="scope">
+            <template #default="scope:any">
               {{scope.row.SizeWidth}}mm{{scope.row.SizeWidthIsChange?'（宽度可加工）':''}}
             </template>
           </el-table-column>
           <el-table-column prop="" label="高度" min-width="287">
-            <template #default="scope">
+            <template #default="scope:any">
               {{scope.row.SizeHeight}}mm{{scope.row.SizeHeightIsChange?'（高度可加工）':''}}
             </template>
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="287">
-            <template #default="scope">
+            <template #default="scope:any">
               <mp-button type="info" link @click="editDimensions(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link

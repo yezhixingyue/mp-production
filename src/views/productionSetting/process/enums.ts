@@ -17,15 +17,15 @@ export enum ReportModeEnum {
 export const ReportModeEnumObj = {
   block: {
     ID: ReportModeEnum.block,
-    Name: '块报工',
+    Name: '按块',
   },
   board: {
     ID: ReportModeEnum.board,
-    Name: '大版报工',
+    Name: '按版',
   },
   order: {
     ID: ReportModeEnum.order,
-    Name: '订单报工',
+    Name: '按订单',
   },
 };
 

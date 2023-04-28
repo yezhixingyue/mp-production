@@ -104,7 +104,7 @@
                 <el-scrollbar max-height="435px">
                   <li v-for="(equipment, index) in Data.processDataFrom.EquipmentGroups" :key="equipment.GroupID">
                     <div class="equipment" :title="getEquipmentNameByID(equipment.GroupID)">{{getEquipmentNameByID(equipment.GroupID)}}</div>
-                    <div class="state-percent">权重：<el-input v-model.trim="equipment.Weight" maxlength="9" placeholder="请输入"></el-input></div>
+                    <!-- <div class="state-percent">权重：<el-input v-model.trim="equipment.Weight" maxlength="9" placeholder="请输入"></el-input></div> -->
                     <div class="whether" :class="{hide:Data.processDataFrom.Type!==WorkingTypeEnum.print}">
                       <el-checkbox v-model="equipment.OneTimeTwoSide" label="可一次印双面" />
                     </div>
@@ -114,14 +114,14 @@
                   </li>
                 </el-scrollbar>
               </ul>
-              <p class="info-text">
+              <!-- <p class="info-text">
                 <span class="label">权重说明：</span>
                 <span class="content">列表中所有权重之和必须是100，权重越大，越优先分配订单</span>
               </p>
               <p class="info-text">
                 <span class="label">具体算法：</span>
                 <span class="content">例如有200个订单需要经过A工序进行加工，A工序有3种设备组 x、y、z，权重分别为 x:20；y:20；z:60，则200个订单分配方式为：x:40个订单、y:40个订单、z:120个订单</span>
-              </p>
+              </p> -->
               <p class="info-text">
                 <span class="label">操作说明：</span>
                 <span class="content">设置过设备组后，左侧 [ 允许批量报工 ] 将不允许修改</span>
@@ -196,7 +196,7 @@ const route = useRoute();
 interface IEquipmentGroupsType{
   GroupID: string,
   GroupName: string,
-  Weight: number|string,
+  // Weight: number|string,
   OneTimeTwoSide: boolean,
 }
 interface IRelationsType{
@@ -322,16 +322,16 @@ const showTemplate = computed(() => {
 });
 
 const activeEquipmentList = computed(() => Data.processDataFrom.EquipmentGroups.map(it => it.GroupID));
-const EquipmentGroupsSum = computed(() => {
-  let sum = 0;
-  Data.processDataFrom.EquipmentGroups.forEach(it => {
-    sum += Number(it.Weight);
-  });
-  if (sum) {
-    return sum;
-  }
-  return 0;
-});
+// const EquipmentGroupsSum = computed(() => {
+//   let sum = 0;
+//   Data.processDataFrom.EquipmentGroups.forEach(it => {
+//     sum += Number(it.Weight);
+//   });
+//   if (sum) {
+//     return sum;
+//   }
+//   return 0;
+// });
 
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('processSetupPage', 'true');
@@ -340,7 +340,7 @@ const saveEquipment = (Equipments) => {
   Data.processDataFrom.EquipmentGroups = Equipments.map(it => ({
     GroupID: it.ID,
     GroupName: it.Name,
-    Weight: '',
+    // Weight: '',
     OneTimeTwoSide: false,
   }));
   selectDeviceGroupShow.value = false;
@@ -417,9 +417,10 @@ const saveProcess = () => {
   } else if (!Data.processDataFrom.EquipmentGroups.length) {
     // 弹框提 请选择设备组
     messageBox.failSingleError('保存失败', '请选择设备组', () => null, () => null);
-  } else if (EquipmentGroupsSum.value !== 100) {
-    // 弹框提 权重之和不等于100
-    messageBox.failSingleError('保存失败', '权重之和不等于100', () => null, () => null);
+  //   else if (EquipmentGroupsSum.value !== 100) {
+  //   // 弹框提 权重之和不等于100
+  //   messageBox.failSingleError('保存失败', '权重之和不等于100', () => null, () => null);
+  // }
   } else {
     const temp = {
       ...Data.processDataFrom,
@@ -556,12 +557,12 @@ export default {
       margin-bottom: 20px;
       width: 660px;
       li+li{
-        margin-top: 25px;
+        margin-top: 15px;
       }
       li{
         display: flex;
         line-height: 32px;
-        width: 500px;
+        width: 360px;
         justify-content: flex-end;
         padding-left: 80px;
         overflow: hidden;
