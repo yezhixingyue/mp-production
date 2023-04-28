@@ -150,6 +150,7 @@ function delImpositionTemmplateSize(item) {
       if (res.data.Status === 1000) {
         // 删除成功
         PasteupSettingStore.getImpositionTemmplateList();
+        getImpositionTemmplateSizeList();
       }
     });
   }, () => undefined);

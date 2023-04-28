@@ -641,11 +641,11 @@ export default {
     function outVerifyPrimaryClick() {
       api.getStockOut(Data.outDeliveryForm).then(res => {
         if (res.data.Status === 1000) {
+          Data.outVerify = false;
           const cb = () => {
             Data.StorehouseStockInfo = [];
             GetGoodsAllocation(Data.checkedMaterial?.MaterialID);
             clearFrom();
-            Data.outVerify = false;
             printBtn.value.ref.click();
           };
           messageBox.successSingle('出库成功', cb, cb);

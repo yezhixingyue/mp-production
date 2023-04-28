@@ -20,70 +20,57 @@
     </el-option>
   </el-select>
 </template>
-<script lang='ts'>
-import { computed } from 'vue';
+<script lang='ts' setup>
+import {
+  computed, ref, Ref,
+} from 'vue';
 
-export default {
-  props: {
-    PropValue: {},
-    InputContent: { // 选项列表
-      type: String,
-      default: '',
-    },
-    Allow: { // 是否允许自定义
-      type: Boolean,
-      default: false,
-    },
-    AllowDecimal: { // 是否允许小数
-      type: Boolean,
-      default: false,
-    },
-    UpdateData: {
-      type: Function,
-      default: () => [],
-    },
-    IsRequired: { // 是否必填
-      type: Boolean,
-      default: false,
-    },
+const props = defineProps<{
+  PropValue:string|null,
+  InputContent:string,
+  Allow:boolean,
+  AllowDecimal:boolean,
+  UpdateData:(val:string|number|null) => void,
+  IsRequired:boolean,
+}>();
+const oSelect = ref<Ref|null>(null);
+const inpVal = computed({
+  get() {
+    if (props.InputContent) {
+      return String(props.PropValue === null ? '' : props.PropValue);
+    }
+    return props.PropValue;
   },
-  setup(props) {
-    const inpVal = computed({
-      get() {
-        if (props.InputContent) {
-          return String(props.PropValue === null ? '' : props.PropValue);
-        }
-        return props.PropValue;
-      },
-      set(value) {
-        if (value === '00000000-0000-0000-0000-000000000000') {
-          props.UpdateData('');
-        } else {
-          props.UpdateData((value));
-        }
-      },
-    });
-    const getNumberValueList = (valueList) => {
-      const reg = /\s|,|，/;
-      return valueList.split(reg).filter(it => it).map(it => ({
-        label: String(it),
-        value: String(it),
-      }));
-    };
-    const options = computed(() => {
-      if (!props.InputContent) return [];
-      if (!props.IsRequired) {
-        return [{
-          label: '请选择',
-          value: '00000000-0000-0000-0000-000000000000',
-        }, ...getNumberValueList(props.InputContent)];
-      }
-      return getNumberValueList(props.InputContent);
-    });
-    return {
-      inpVal,
-      options,
-    };
+  set(value) {
+    if (value === '00000000-0000-0000-0000-000000000000') {
+      props.UpdateData('');
+    } else {
+      props.UpdateData((value));
+    }
   },
+});
+const getNumberValueList = (valueList) => {
+  const reg = /\s|,|，/;
+  return valueList.split(reg).filter(it => it).map(it => ({
+    label: String(it),
+    value: String(it),
+  }));
 };
+const options = computed(() => {
+  if (!props.InputContent) return [];
+  if (!props.IsRequired) {
+    return [{
+      label: '请选择',
+      value: '00000000-0000-0000-0000-000000000000',
+    }, ...getNumberValueList(props.InputContent)];
+  }
+  return getNumberValueList(props.InputContent);
+});
+const blur = () => {
+  oSelect.value?.blur();
+};
+defineExpose({
+  blur,
+});
+
 </script>

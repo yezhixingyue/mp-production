@@ -14,6 +14,7 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
     },
     component: HomeView,
+    redirect: 'homePage',
   },
   {
     path: '/login',

@@ -16,7 +16,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       isNew: false,
       pageName: '',
     }],
-    editableTabsValue: '',
+    editableTabsValue: '1',
     leftMenuDefaultActive: '',
     otherTabPageNames: [],
     oldRoute: undefined,

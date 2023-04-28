@@ -78,7 +78,7 @@
     :top="'10vh'"
     >
     <template #default>
-        <el-scrollbar>
+        <el-scrollbar @scroll="addMaterialManageScroll">
       <div class="add-material-manage-dialog">
 
         <el-form :model="Data.addMaterialManageForm" label-width="200px">
@@ -87,6 +87,7 @@
           </el-form-item>
           <el-form-item :label="`编码：`" class="form-item-required" prop="MaterialCode">
             <el-input
+            maxlength="10" show-word-limit
             v-model.trim="Data.addMaterialManageForm.MaterialCode" />
           </el-form-item>
           <p>
@@ -98,6 +99,7 @@
           :key="item.AttributeID" :prop="['NumericValue','SelectID','InputSelectValue']">
           <p v-if="item.AttributeType === 1">
             <NumberTypeItemComp
+              ref="NumberTypeItemRef"
               :PropValue="item.NumericValue"
               :InputContent="item.RegularQuantity"
               :Allow="item.IsCustom"
@@ -108,6 +110,7 @@
             <span>{{item.AttributeUnit}}</span>
           </p>
             <OptionTypeItemComp
+              ref="OptionTypeItemRef"
               v-else
               :PropValue="item.InputSelectValue
               ||item.SelectID"
@@ -159,7 +162,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import NumberTypeItemComp from '@/components/common/ElementDisplayTypeComps/NumberTypeItemComp.vue';
 import OptionTypeItemComp from '@/components/common/ElementDisplayTypeComps/OptionTypeItemComp.vue';
 import {
-  reactive, onMounted, computed, ComputedRef, onActivated,
+  reactive, onMounted, computed, ComputedRef, onActivated, Ref, ref,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
@@ -235,6 +238,9 @@ export default {
     DialogContainerComp,
   },
   setup() {
+    const NumberTypeItemRef = ref<Ref|null>(null);
+    const OptionTypeItemRef = ref<Ref|null>(null);
+    const throttleBool = ref(true);
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -319,6 +325,22 @@ export default {
       };
     }
 
+    function addMaterialManageScroll() {
+      console.log(throttleBool.value);
+
+      if (throttleBool.value) {
+        NumberTypeItemRef.value?.forEach(it => {
+          it.blur();
+        });
+        OptionTypeItemRef.value?.forEach(it => {
+          it.blur();
+        });
+        throttleBool.value = false;
+        setTimeout(() => {
+          throttleBool.value = true;
+        }, 1000);
+      }
+    }
     // 添加物料;
     function addMaterialManage() {
       if (!Data.getMaterialManageData.TypeID) {
@@ -601,6 +623,9 @@ export default {
       addMaterialManageClosed,
       handleCheckedCitiesChange,
       handleCheckAllChange,
+      addMaterialManageScroll,
+      NumberTypeItemRef,
+      OptionTypeItemRef,
     };
   },
 
