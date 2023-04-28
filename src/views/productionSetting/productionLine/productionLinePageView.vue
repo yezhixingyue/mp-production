@@ -914,6 +914,7 @@ onMounted(async () => {
           flex: 1;
           overflow: auto;
           overflow: overlay;
+          padding-bottom: 1px;
           @include scroll;
           // border-top: 1px solid #D0D0D0;
           // border-bottom: 1px solid #D0D0D0;

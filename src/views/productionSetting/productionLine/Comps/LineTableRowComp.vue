@@ -11,7 +11,8 @@
       </span>
       <span class="operate" :class="type">
         <!-- <mp-button type="primary" class="ft-12" :class="{h: item._isSplit}" v-if="type==='normal'" link @click="setPlateMakingWork">设置制版工序</mp-button> -->
-        <mp-button type="primary" class="ft-12" :class="{h: item._isSplit}" link @click="setPlateMakingWork">设置制版工序</mp-button>
+        <mp-button type="primary" class="ft-12" link :class="{h: item._isSplit}" @click="setPlateMakingWork" :disabled="!canSetPMWork"
+          :title="!canSetPMWork ? '物料来源中设置有版材才可设置制版工序' : ''">设置制版工序</mp-button>
         <mp-button type="primary" class="ft-12" link @click="ToEquipment">选择设备/工厂</mp-button>
         <mp-button type="primary" class="ft-12" link :class="{h: item._isSplit}"
         :disabled="!!(
@@ -60,6 +61,7 @@
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 import { getSourceWork } from '../../js/utils';
 import { IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
 import { ILocalProductionLineWorkings } from '../js/types';
@@ -73,9 +75,15 @@ const props = defineProps<{
 const emit = defineEmits(['setPlateMakingWork', 'ToEquipment', 'ToMaterialSource', 'delLineWorking', 'onSplitWorkingRemove']);
 
 const productionSettingStore = useProductionSettingStore();
-const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
+const { PlateMakingWorkSetupHander, MaterialTypeGroup } = storeToRefs(productionSettingStore);
+
 // 获取物料名
 const getMaterialName = (ID) => productionSettingStore.MaterialTypeGroup.find(it => it.ID === ID)?.Name;
+
+const canSetPMWork = computed(() => props.item.MaterialSources.find(it => { // 该工序的物料来源中是否包含有版材
+  const t = MaterialTypeGroup.value.find(m => m.ID === it.MaterialTypeID);
+  return t && t.IsPlateMaterial;
+}));
 
 const setPlateMakingWork = () => {
   if (props.item._isSplit) return;
