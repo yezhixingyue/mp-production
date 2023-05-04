@@ -47,10 +47,15 @@
                 </div>
               </el-form-item>
               <!-- 仅制版工序时显示： 大版类型 -->
-              <el-form-item :label="`大版类型：`" :class="{'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking}" class="form-item-required">
+              <el-form-item :label="`大版类型：`" :class="{'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking}" class="form-item-required template">
                 <div style="width: 100%;">
                   <mp-button type="primary" link @click="selectTemplateGroupShow = true" style="transition: none;position:relative;top:-1px;">选择大版模板</mp-button>
                   <span class="ml-15" :title="showTemplate"> {{showTemplate}}</span>
+                  <!-- 暂不限制！！！ -->
+                  <!-- <p style="line-height: 20px;letter-spacing: 1px;">
+                    <span class="is-pink" v-show="Data.processDataFrom.ReportMode === ReportModeEnum.board">注：按版报工时仅能选择类型为印刷版或和印刷版保持一致的拼版模板</span>
+                    <span class="is-pink" v-show="Data.processDataFrom.ReportMode !== ReportModeEnum.board">注：非按版报工时仅能选择非印刷版且非和印刷版一致的拼版模板</span>
+                  </p> -->
                 </div>
               </el-form-item>
               <el-form-item :label="`其他：`">
@@ -155,6 +160,7 @@
     :MaterialListGroup="productionSettingStore.MaterialTypeGroup"
     :saveEquipment="saveMaterial"
     />
+    <!-- 制版工序 - 选择拼版模板弹窗 - 1.大版时仅能选择印刷版和印刷版一致的大版模板 2.非大版报工时仅能选择非印刷版和非一致的大版模板 - 需传递参数进行区分 -- 暂不限制！！！ -->
     <SelectTemplateGroup
       v-model:visible="selectTemplateGroupShow"
       v-model="Data.processDataFrom.TemplateID"
@@ -542,6 +548,7 @@ export default {
         font-size: 12px;
         .type-conent{
           line-height: 32px;
+          height: 34px;
           display: flex;
           .el-checkbox{
             margin-right: 20px;
@@ -551,6 +558,10 @@ export default {
             margin: 0 10px;
           }
         }
+      }
+
+      .template {
+        margin-top: -10px;
       }
     }
     .equipment-groups{

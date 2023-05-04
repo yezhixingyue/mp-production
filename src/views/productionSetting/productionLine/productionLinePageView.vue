@@ -370,7 +370,7 @@ const getEquipmentText = (item: IProductionLineWorkings) => {
         if (mainName) {
           mainContent = `[ ${mainName} ] ${mainContent}`;
           plateMakingContent = `[ ${plateMakingName} ] ${plateMakingContent}`;
-          mainContent = `${mainContent} | ${plateMakingContent}`;
+          mainContent = `${mainContent} ； ${plateMakingContent}`;
         }
       }
     }
@@ -1067,9 +1067,9 @@ onMounted(async () => {
                   font-weight: 400;
                 }
               }
-              p+p{
-                margin-left: 30px;
-              }
+              // p+p{
+              //   margin-left: 30px;
+              // }
               span{
                 font-size: 12px;
                 line-height: 14px;
