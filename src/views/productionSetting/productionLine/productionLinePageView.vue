@@ -370,7 +370,7 @@ const getEquipmentText = (item: IProductionLineWorkings) => {
         if (mainName) {
           mainContent = `[ ${mainName} ] ${mainContent}`;
           plateMakingContent = `[ ${plateMakingName} ] ${plateMakingContent}`;
-          mainContent = `${mainContent} ； ${plateMakingContent}`;
+          mainContent = `${mainContent} | ${plateMakingContent}`;
         }
       }
     }
