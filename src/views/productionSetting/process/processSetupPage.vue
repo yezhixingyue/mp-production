@@ -108,7 +108,7 @@
               <ul class="equipment-groups">
                 <el-scrollbar max-height="435px">
                   <li v-for="(equipment, index) in Data.processDataFrom.EquipmentGroups" :key="equipment.GroupID">
-                    <div class="equipment" :title="getEquipmentNameByID(equipment.GroupID)">{{getEquipmentNameByID(equipment.GroupID)}}</div>
+                    <div class="equipment" :title="equipment.GroupName">{{equipment.GroupName}}</div>
                     <!-- <div class="state-percent">权重：<el-input v-model.trim="equipment.Weight" maxlength="9" placeholder="请输入"></el-input></div> -->
                     <div class="whether" :class="{hide:Data.processDataFrom.Type!==WorkingTypeEnum.print}">
                       <el-checkbox v-model="equipment.OneTimeTwoSide" label="可一次印双面" />
@@ -158,7 +158,8 @@
     :changeVisible='(visble) => materialResourceShow = visble'
     :activeMaterialList="saveMaterialActive"
     :MaterialListGroup="productionSettingStore.MaterialTypeGroup"
-    :saveEquipment="saveMaterial"
+    :saveMaterial="saveMaterial"
+    :initRelations="initRelations"
     />
     <!-- 制版工序 - 选择拼版模板弹窗 - 1.大版时仅能选择印刷版和印刷版一致的大版模板 2.非大版报工时仅能选择非印刷版和非一致的大版模板 - 需传递参数进行区分 -- 暂不限制！！！ -->
     <SelectTemplateGroup
@@ -184,6 +185,7 @@ import SelectAssistInfo from '@/components/productionSetting/selectAssistInfo.vu
 import materialResource from '@/components/productionSetting/materialResource.vue';
 import SelectTemplateGroup from '@/components/productionSetting/SelectTemplateGroup.vue';
 import api from '@/api';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { useRouterStore } from '@/store/modules/routerStore';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
@@ -254,8 +256,9 @@ const Data:DataType = reactive({
   },
 });
 
-/** 初始选中设备组ID */
+/** 初始选中设备组ID和物料资源包ID */
 let initEquipmentGroupIDs: IEquipmentGroupsType['GroupID'][] = [];
+const initRelations = ref<IRelationsType[]>([]);
 
 const BreadcrumbList = computed(() => [
   { to: { path: '/processList' }, name: '工序' },
@@ -369,7 +372,21 @@ const saveMaterial = (infoList) => {
   materialResourceShow.value = false;
 };
 const EquipmentGroupsRemove = (index) => {
-  Data.processDataFrom.EquipmentGroups.splice(index, 1);
+  const target = Data.processDataFrom.EquipmentGroups[index];
+  if (!initEquipmentGroupIDs.includes(target.GroupID)) {
+    Data.processDataFrom.EquipmentGroups.splice(index, 1);
+    return;
+  }
+  MpMessage.warn({
+    title: `确定删除 [ ${target.GroupName} ] 设备组吗?`,
+    msg: `<span style="line-height:22px;margin-bottom:15px;display: block;font-size:13px">
+      删除该设备组<strong> 且 </strong>在下方保存后将可能会影响到对应<strong>生产线设备/工厂</strong>等数据，请谨慎操作！！
+    </span>`,
+    onOk() {
+      Data.processDataFrom.EquipmentGroups.splice(index, 1);
+    },
+    dangerouslyUseHTMLString: true,
+  });
 };
 const getEquipmentNameByID = (ID) => {
   let str = '';
@@ -455,9 +472,17 @@ onMounted(() => {
   const temp = JSON.parse(route.params.process as string) as processDataFromType;
 
   if (temp) {
-    Data.processDataFrom = { ...temp, isRestrict: !!temp.MaxProduceNumber };
+    Data.processDataFrom = {
+      ...temp,
+      isRestrict: !!temp.MaxProduceNumber,
+      EquipmentGroups: temp.EquipmentGroups.map(it => ({
+        ...it,
+        GroupName: getEquipmentNameByID(it.GroupID),
+      })),
+    };
   }
   initEquipmentGroupIDs = Data.processDataFrom.EquipmentGroups.map(it => it.GroupID);
+  initRelations.value = [...Data.processDataFrom.Relations];
 });
 </script>
 <script lang="ts">

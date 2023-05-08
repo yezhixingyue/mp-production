@@ -36,24 +36,24 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import {
   ref, Ref, computed, watch,
 } from 'vue';
-import type {
-  MaterialTypeGroupType,
-} from '@/store/modules/productionSetting/types';
+import type { IRelationsType, MaterialTypeGroupType } from '@/store/modules/productionSetting/types';
 import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { WorkingProcedureRelationEnum } from '@/views/productionSetting/process/enums';
 
 interface Props {
   visible: boolean
   changeVisible?: (bol:boolean) => void
-  saveEquipment?: (list:MaterialTypeGroupType[]) => void
+  saveMaterial?: (list:MaterialTypeGroupType[]) => void
   activeMaterialList?: string[]
   MaterialListGroup?: MaterialTypeGroupType[]
+  initRelations: IRelationsType[],
 }
 
 const props = withDefaults(defineProps<Props>(), {
   visible: false,
   changeVisible: () => null,
-  saveEquipment: () => null,
+  saveMaterial: () => null,
   activeMaterialList: () => [],
   MaterialListGroup: () => [],
 });
@@ -107,7 +107,25 @@ function PrimaryClick() {
     return;
   }
 
-  props.saveEquipment(returnData);
+  const ids = returnData.map(it => it.ID);
+  const list = props.initRelations.filter(it => it.Type === WorkingProcedureRelationEnum.material && !ids.includes(it.RelationID));
+
+  if (list.length > 0) {
+    let names = list.map(it => localMaterialListGroupList.value.find(_it => _it.ID === it.RelationID)).filter(it => it).map(it => it?._FullName).join('、');
+    names = names ? `[ <i style="color:#ff3769">${names}</i> ] 等` : '部分';
+    MpMessage.warn({
+      title: '确定保存物料资源包数据吗?',
+      msg: `<span style="line-height:22px;margin-bottom:15px;display: block;font-size:13px">
+        检测到相比最初数据，${names}资源包被移除，此操作在保存后将可能会影响到对应<strong>生产线物料来源</strong>等数据，请谨慎操作！！
+      </span>`,
+      onOk() {
+        props.saveMaterial(returnData);
+      },
+      dangerouslyUseHTMLString: true,
+    });
+  } else {
+    props.saveMaterial(returnData);
+  }
 }
 watch(() => Dialog.value, (newVal) => {
   if (newVal && props.activeMaterialList) {
