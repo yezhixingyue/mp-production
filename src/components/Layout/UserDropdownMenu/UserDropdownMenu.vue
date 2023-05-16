@@ -22,6 +22,7 @@
         <el-dropdown-menu class="mp-erp-user-drop-down-wrap">
           <el-dropdown-item v-if="user?.StaffName && showImgType" class="u-name">{{ user.StaffName }}</el-dropdown-item>
           <el-dropdown-item @click="visible = true" :icon="Lock" command='changePwd'>修改密码</el-dropdown-item>
+          <el-dropdown-item @click="onDocManageClick" :icon="Lock">文档管理</el-dropdown-item>
           <el-dropdown-item @click="logout" :icon="SwitchButton" command='logout'>退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -51,6 +52,11 @@ const { user } = storeToRefs(userStore);
 const router = useRouter();
 
 const visible = ref(false);
+
+const onDocManageClick = () => {
+  if (!user.value) return;
+  window.open(`http://127.0.0.1:5173/init?token=${user.value.Token}&type=2&target=manage`);
+};
 
 const logout = () => {
   userStore.token = '';
