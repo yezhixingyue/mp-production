@@ -11,8 +11,8 @@
                   <p>
                     <el-input v-model.trim="Data.getMaterialData.SKUCode"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
-                     @keyup.enter="getMaterial(false)" size="large"/>
-                    <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
+                     @keyup.enter="getMaterial()" size="large"/>
+                    <mp-button link type="primary" @click="getMaterial()">查询</mp-button>
                   </p>
                   <span>或者</span>
                 </el-form-item>
@@ -23,7 +23,7 @@
                   ></ThreeCascaderComp>
                   <OneLevelSelect
                   v-if="Data.itemSelectTempMaterial"
-                    :options='Data.itemSelectTempMaterial.SizeSelects'
+                    :options='SizeSelects'
                     :defaultProps="{
                       value:'SizeID',
                       label:'SizeDescribe',
@@ -139,7 +139,7 @@
                     ></OneLevelSelect>
                 </el-form-item>
                 <el-form-item :label="`共计：`" v-if="Data.inDeliveryForm.InStockType === 1">
-                  <p>￥  <span style="color:red">{{Data.inDeliveryForm.Price * Data.inDeliveryForm.Number}}元</span></p>
+                  <p>￥  <span style="color:red">{{(Data.inDeliveryForm.Price || 1) * (Data.inDeliveryForm.Number || 1)}}元</span></p>
                 </el-form-item>
                 <el-form-item :label="`备注：`" class="remark">
                   <el-input :maxlength="300" placeholder="请输入备注" v-model="Data.inDeliveryForm.Remark" size="large"/> (选填)
@@ -163,7 +163,7 @@
                       </span>
                     </p>
                     <ul>
-                      <li v-for="(GoodsPosition, i) in item.GoodsPositionList" :key="GoodsPosition">
+                      <li v-for="(GoodsPosition, i) in item.GoodsPositionList" :key="GoodsPosition.PositionID">
                         <span class="ranks">
                           {{GoodsPosition.LocationName}}
                           {{GoodsPosition.PositionName}}
@@ -373,14 +373,14 @@ export default {
       inStorehouseGoodsPosition: [],
       StorehouseID: '',
     });
-    // 选择物料
-    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial, TypeID) {
-      Data.SizeSelects = null;
-      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
-      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
-      Data.TypeID = TypeID;
-      Data.inDeliveryForm.UnitID = '';
-    }
+    const SizeSelects = computed(() => {
+      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
+        return [];
+      }
+      // Data.itemSelectTempMaterial.SizeSelects
+      return Data.itemSelectTempMaterial?.SizeSelects || [];
+    });
+
     function clearFrom() {
       Data.inDeliveryForm = {
         MaterialID: '',
@@ -402,7 +402,9 @@ export default {
     }
     // 格式化数据
     function SizeSelectChange(ID) {
-      Data.SizeSelects = ID;
+      if (ID !== '00000000-0000-0000-0000-000000000000') {
+        Data.SizeSelects = ID;
+      }
       const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
@@ -418,6 +420,18 @@ export default {
       Data.inDeliveryForm.UnitID = '';
       Data.getMaterialData.SKUCode = '';
       MaterialWarehouseStore.getSupplierSelectList(Data.checkedMaterial.TypeID);
+    }
+    // 选择物料
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial, TypeID) {
+      Data.SizeSelects = null;
+      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
+      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
+      Data.TypeID = TypeID;
+      Data.inDeliveryForm.UnitID = '';
+
+      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
+        SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
+      }
     }
     // 获取转换为库存单位的数量;
     const getTransitionNum = computed(() => {
@@ -666,6 +680,7 @@ export default {
     });
 
     return {
+      SizeSelects,
       Data,
       ThreeCascaderComp,
       CommonStore,

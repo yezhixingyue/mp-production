@@ -8,10 +8,10 @@
               <el-form label-width="120px">
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
-                    <el-input size="large" @keyup.enter="getMaterial(false)"
+                    <el-input size="large" @keyup.enter="getMaterial()"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
                      v-model.trim="Data.getMaterialData.SKUCode"/>
-                    <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
+                    <mp-button link type="primary" @click="getMaterial()">查询</mp-button>
                   </p>
                   <span>或者</span>
                 </el-form-item>
@@ -23,7 +23,7 @@
                   ></ThreeCascaderComp>
                   <OneLevelSelect
                   v-if="Data.itemSelectTempMaterial"
-                    :options='Data.itemSelectTempMaterial.SizeSelects'
+                    :options='SizeSelects'
                     :defaultProps="{
                       value:'SizeID',
                       label:'SizeDescribe',
@@ -193,10 +193,10 @@
           <div class="material"
           style="line-height: 32px;margin-left:50px;font-size:16px;font-weight: 600;padding-top:10px">
             <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">SKU：</span>
-              <span style="">{{Data.checkedMaterial.Code}}</span></p>
+              <span style="">{{Data.checkedMaterial?.Code}}</span></p>
             <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">物料：</span>
               <span style="">
-                {{Data.checkedMaterial.AttributeDescribe}}
+                {{Data.checkedMaterial?.AttributeDescribe}}
                       <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
                       :key="item.AttributeID">
                         <template v-if="item.NumericValue">
@@ -213,7 +213,7 @@
               </span>
             </p>
             <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;"></span>
-              <span style="">{{Data.checkedMaterial.SizeDescribe}}</span></p>
+              <span style="">{{Data.checkedMaterial?.SizeDescribe}}</span></p>
             <p style="color:#7a8b9c;margin-top:10px">
               出库数量：{{getStorehouseAllOutNumber()}}
                 {{Data.checkedMaterial?.StockUnit}}
@@ -470,6 +470,13 @@ export default {
       const staff = CommonStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
       return staff?.StaffName || '';
     });
+    const SizeSelects = computed(() => {
+      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
+        return [];
+      }
+      // Data.itemSelectTempMaterial.SizeSelects
+      return Data.itemSelectTempMaterial?.SizeSelects || [];
+    });
     function clearFrom() {
       Data.outDeliveryForm = {
         MaterialID: '',
@@ -506,17 +513,11 @@ export default {
         }
       });
     }
-    // 选择物料
-    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial, TypeID) {
-      Data.SizeSelects = null;
-      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
-      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
-      Data.TypeID = TypeID;
-      Data.outDeliveryForm.UnitID = '';
-    }
     // 格式化数据
     function SizeSelectChange(ID) {
-      Data.SizeSelects = ID;
+      if (ID !== '00000000-0000-0000-0000-000000000000') {
+        Data.SizeSelects = ID;
+      }
       const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
@@ -532,6 +533,18 @@ export default {
       Data.outDeliveryForm.UnitID = '';
       Data.getMaterialData.SKUCode = '';
       GetGoodsAllocation(Data.checkedMaterial.MaterialID);
+    }
+    // 选择物料
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial, TypeID) {
+      Data.SizeSelects = null;
+      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
+      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
+      Data.TypeID = TypeID;
+      Data.outDeliveryForm.UnitID = '';
+
+      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
+        SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
+      }
     }
     // 获取转换为库存单位的数量;
     const getTransitionNum = computed(() => {
@@ -659,7 +672,7 @@ export default {
         const inventoryMsgs:string[] = [];
         Data.StorehouseStockInfo.forEach(item => {
           item.GoodsPositionStockInfos.forEach(it => {
-            if (it.checked && Number(it.inputValue) > it.Number) {
+            if (it.checked && Number(it.inputValue) > Number(it.Number)) {
               inventoryMsgs.push(`${item.StorehouseName} ${it.UpperDimension} ${it.PositionName}`);
             }
           });
@@ -722,6 +735,7 @@ export default {
     });
 
     return {
+      SizeSelects,
       print,
       printBtn,
       Data,
