@@ -26,7 +26,7 @@ import { ManageEquipmentListPageData } from '../js/store';
 
 const router = useRouter();
 
-const getList = () => { ManageEquipmentListPageData.value.getList(); };
+const getList = (p?:number) => { ManageEquipmentListPageData.value.getList(p); };
 
 const handleUnbind = (item: IManageEquipmentInfo) => { ManageEquipmentListClass.handleItemUnbind(item); }; // 解绑
 
