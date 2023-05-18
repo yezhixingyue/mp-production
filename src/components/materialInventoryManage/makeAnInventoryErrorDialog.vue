@@ -12,18 +12,18 @@
     >
     <template #default>
       <div class="make-an-inventory-error-dialog">
-        <div>{{materialInfo.CurrentPositionName}}</div>
+        <div>{{materialInfo?.CurrentPositionName}}</div>
         <div>
           <div class="between">
             <span class="value">
-            {{materialInfo.AttributeDescribe}}&nbsp;
-             {{materialInfo.SizeDescribe}}
+            {{materialInfo?.AttributeDescribe}}&nbsp;
+             {{materialInfo?.SizeDescribe}}
             </span>
           </div>
         </div>
         <div>
-          {{materialInfo.Code}}&nbsp; &nbsp;
-          {{`${materialInfo.Stock}${materialInfo.StockUnit}`}}&nbsp;&nbsp;
+          {{materialInfo?.Code}}&nbsp; &nbsp;
+          {{`${materialInfo?.Stock}${materialInfo?.StockUnit}`}}&nbsp;&nbsp;
           <mp-button
           type="primary" @click="Data.editMaterialShow = true" link>修改物料</mp-button>
         </div>
@@ -66,18 +66,18 @@
           >
           <template #default>
             <div class="select-material-dialog">
-              <div>{{materialInfo.CurrentPositionName}}</div>
+              <div>{{materialInfo?.CurrentPositionName}}</div>
               <div>
                 <div class="between">
                   <span class="value">
-                  {{materialInfo.AttributeDescribe}}&nbsp;
-                  {{materialInfo.SizeDescribe}}
+                  {{materialInfo?.AttributeDescribe}}&nbsp;
+                  {{materialInfo?.SizeDescribe}}
                   </span>
                 </div>
               </div>
               <div>
-                {{materialInfo.Code}}&nbsp; &nbsp;
-                {{`${materialInfo.Stock}${materialInfo.StockUnit}`}}&nbsp;&nbsp;
+                {{materialInfo?.Code}}&nbsp; &nbsp;
+                {{`${materialInfo?.Stock}${materialInfo?.StockUnit}`}}&nbsp;&nbsp;
               </div>
               <div>
                 新物料：
@@ -92,10 +92,10 @@
                   SKU编码：
                 </span>
                   <p class="sku-code">
-                    <el-input @keyup.enter="getMaterial(false)"
+                    <el-input @keyup.enter="getMaterial()"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
                     v-model.trim="Data.getMaterialData.SKUCode"/>
-                    <mp-button link type="primary" @click="getMaterial(false)">查询</mp-button>
+                    <mp-button link type="primary" @click="getMaterial()">查询</mp-button>
                   </p>
               </div>
               <div>
@@ -115,7 +115,7 @@
                     ></ThreeCascaderComp>
                     <OneLevelSelect
                     v-if="Data.itemSelectTempMaterial"
-                      :options='Data.itemSelectTempMaterial.SizeSelects'
+                      :options='SizeSelects'
                       :defaultProps="{
                         value:'SizeID',
                         label:'SizeDescribe',
@@ -235,7 +235,13 @@ export default {
         props.changeVisible(newVal);
       },
     });
-
+    const SizeSelects = computed(() => {
+      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
+        return [];
+      }
+      // Data.itemSelectTempMaterial.SizeSelects
+      return Data.itemSelectTempMaterial?.SizeSelects || [];
+    });
     function errorSaveCloseClick() {
       props.changeVisible(false);
     }
@@ -292,18 +298,12 @@ export default {
       }
     }
 
-    // 选择物料
-    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
-      Data.SizeSelects = null;
-      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
-      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
-    }
     // 格式化数据
     function SizeSelectChange(ID) {
-      Data.SizeSelects = ID;
+      if (ID !== '00000000-0000-0000-0000-000000000000') {
+        Data.SizeSelects = ID;
+      }
       const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
-      console.log(SizeObj, 'SizeObj');
-
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         Code: SizeObj?.Code,
@@ -316,7 +316,16 @@ export default {
       Data.tempMaterialInfo = temp as MaterialInfoType;
       Data.getMaterialData.SKUCode = '';
     }
+    // 选择物料
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
+      Data.SizeSelects = null;
+      Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
+      Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
 
+      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
+        SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
+      }
+    }
     // 根据选项或sku编码查物料
     function getMaterial() {
       if (!Data.getMaterialData.SKUCode) {
@@ -338,6 +347,7 @@ export default {
     return {
       Data,
       Dialog,
+      SizeSelects,
       ThreeCascaderComp,
       getMaterial,
       errorSaveCloseClick,

@@ -139,7 +139,7 @@
                     ></OneLevelSelect>
                 </el-form-item>
                 <el-form-item :label="`共计：`" v-if="Data.inDeliveryForm.InStockType === 1">
-                  <p>￥  <span style="color:red">{{(Data.inDeliveryForm.Price || 1) * (Data.inDeliveryForm.Number || 1)}}元</span></p>
+                  <p>￥  <span style="color:red">{{Number(Data.inDeliveryForm.Price) * Number(Data.inDeliveryForm.Number)}}元</span></p>
                 </el-form-item>
                 <el-form-item :label="`备注：`" class="remark">
                   <el-input :maxlength="300" placeholder="请输入备注" v-model="Data.inDeliveryForm.Remark" size="large"/> (选填)

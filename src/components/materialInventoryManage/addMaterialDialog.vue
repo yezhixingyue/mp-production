@@ -20,10 +20,10 @@
             SKU编码：
           </span>
             <p class="sku-code">
-              <el-input @keyup.enter="getMaterial"
+              <el-input @keyup.enter="getMaterial()"
               placeholder="请输入完整SKU编码，包括尺寸编码"
               v-model.trim="Data.getMaterialData.SKUCode"/>
-              <mp-button link type="primary" @click="getMaterial">查询</mp-button>
+              <mp-button link type="primary" @click="getMaterial()">查询</mp-button>
             </p>
         </div>
         <div>
@@ -42,7 +42,7 @@
               :change="ThreeCascaderCompChange"
               ></ThreeCascaderComp>
               <OneLevelSelect
-                :options='Data.itemSelectTempMaterial?.SizeSelects || []'
+                :options='SizeSelects'
                 :defaultProps="{
                   value:'SizeID',
                   label:'SizeDescribe',
@@ -169,6 +169,14 @@ export default {
         props.changeVisible(newVal);
       },
     });
+
+    const SizeSelects = computed(() => {
+      if (Data.itemSelectTempMaterial?.SizeSelects?.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
+        return [];
+      }
+      return Data.itemSelectTempMaterial?.SizeSelects || [];
+    });
+
     function addMaterialCloseClick() {
       props.changeVisible(false);
     }
@@ -220,12 +228,6 @@ export default {
       // msg.push(`（${Data.checkedMaterial?.Code}）`);
     }
 
-    // 选择物料
-    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
-      Data.SizeSelects = null;
-      Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
-      Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;
-    }
     // 格式化数据
     function SizeSelectChange(ID) {
       const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
@@ -239,10 +241,21 @@ export default {
         AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = { ...temp } as MaterialInfoType;
-      Data.SizeSelects = ID;
+      if (ID !== '00000000-0000-0000-0000-000000000000') {
+        Data.SizeSelects = ID;
+      }
       Data.getMaterialData.SKUCode = '';
     }
+    // 选择物料
+    function ThreeCascaderCompChange(itemMaterial, allSellectMaterial) {
+      Data.SizeSelects = null;
+      Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
+      Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;
 
+      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
+        SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
+      }
+    }
     // 根据选项或sku编码查物料
     function getMaterial() {
       if (!Data.getMaterialData.SKUCode) {
@@ -264,6 +277,7 @@ export default {
     return {
       Data,
       Dialog,
+      SizeSelects,
       ThreeCascaderComp,
       getMaterial,
       ThreeCascaderCompChange,
