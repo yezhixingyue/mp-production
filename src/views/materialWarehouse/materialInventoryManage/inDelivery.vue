@@ -190,7 +190,7 @@
             </div>
           </div>
           <div class="btn">
-            <mp-button type="primary" @click="inDelivery">入库</mp-button>
+            <mp-button type="danger" @click="inDelivery">入库</mp-button>
           </div>
         </el-scrollbar>
       <!-- </MpCardContainer> -->
