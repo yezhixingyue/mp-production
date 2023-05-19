@@ -1,19 +1,26 @@
 <template>
   <div class="out-delivery-page">
     <main>
+      <p>出库信息</p>
       <!-- <MpCardContainer> -->
         <el-scrollbar>
           <div class="delivery-info">
             <div class="left">
-              <el-form label-width="120px">
+              <el-form label-width="84px">
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
                     <el-input size="large" @keyup.enter="getMaterial()"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
-                     v-model.trim="Data.getMaterialData.SKUCode"/>
-                    <mp-button link type="primary" @click="getMaterial()">查询</mp-button>
+                     v-model.trim="Data.getMaterialData.SKUCode">
+                     <template #append>
+                        <mp-button link type="primary" @click="getMaterial()">
+                          <el-icon><Search /></el-icon>
+                          查询</mp-button>
+                      </template>
+                     </el-input>
+                    <!-- <mp-button link type="primary" @click="getMaterial()">查询</mp-button> -->
                   </p>
-                  <span>或者</span>
+                  <span style="color: #C7C7C7;">或者</span>
                 </el-form-item>
                 <el-form-item :label="`选择物料：`" class="select-material">
                   <!-- <el-cascader :props="props" /> -->
@@ -30,35 +37,21 @@
                     }"
                     :value='Data.SizeSelects'
                     @change="SizeSelectChange"
-                    :width="250"
+                    :width="266"
                     :filterable='true'
                     :placeholder="'请选择物料尺寸'"
                     ></OneLevelSelect>
                   <OneLevelSelect
                     v-else
                     :options='[]'
-                    :width="250"
+                    :width="266"
                     :placeholder="'请选择物料尺寸'"
                     ></OneLevelSelect>
                 </el-form-item>
                 <p class="material-info">
                   <template v-if="Data.checkedMaterial">
-                    <!-- <span>{{Data.checkedMaterial.Code}}</span> -->
                     <span>
                       {{Data.checkedMaterial.AttributeDescribe}}
-                      <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
-                      :key="item.AttributeID">
-                        <template v-if="item.NumericValue">
-                          <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                        </template>
-                        <template v-else>
-                          <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                        </template>
-                        <template
-                        v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                          {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
-                        </template>
-                      </template> -->
                     </span>
                     <span>{{Data.checkedMaterial.SizeDescribe}}</span>
                     <span>{{Data.checkedMaterial.Code}}</span>
@@ -77,7 +70,7 @@
                     }"
                     :value='Data.outDeliveryForm.UnitID'
                     @change="(ID) => Data.outDeliveryForm.UnitID = ID"
-                    :width="120"
+                    :width="100"
                     :filterable='true'
                     :placeholder="'请选择单位'"
                     ></OneLevelSelect>
@@ -89,10 +82,10 @@
                 <el-form-item :label="`出库类型：`">
 
                   <el-radio-group v-model="Data.outDeliveryForm.OutStockType">
-                    <el-radio :label="51">领料</el-radio>
-                    <el-radio :label="52">补料</el-radio>
-                    <el-radio :label="53">无订单领料</el-radio>
-                    <el-radio :label="54">销售</el-radio>
+                    <el-radio-button :label="51">领料</el-radio-button>
+                    <el-radio-button :label="52">补料</el-radio-button>
+                    <el-radio-button :label="53">无订单领料</el-radio-button>
+                    <el-radio-button :label="54">销售</el-radio-button>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="`领取人：`">
@@ -123,7 +116,9 @@
                   v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
                     <p class="title">
                       <span>
-                        {{Storehouse.StorehouseName}}：{{getStorehouseAllNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
+                        <span class="StorehouseName">
+                          {{Storehouse.StorehouseName}}
+                        </span>：{{getStorehouseAllNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
                       </span>
                       <span>
                         出库：{{getStorehouseOutNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
@@ -153,7 +148,7 @@
                             </span>
                           </div>
                         </span>
-                        <mp-button type="primary" @click="seePosition(Storehouse,GoodsPosition)">位置</mp-button>
+                        <mp-button type="text" @click="seePosition(Storehouse,GoodsPosition)">位置</mp-button>
                       </li>
                     </ul>
                   </div>
@@ -515,6 +510,7 @@ export default {
     }
     // 格式化数据
     function SizeSelectChange(ID) {
+      clearFrom();
       if (ID !== '00000000-0000-0000-0000-000000000000') {
         Data.SizeSelects = ID;
       }
@@ -646,6 +642,7 @@ export default {
             .filter(it => it.UnitPurpose === 2);
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
           ThreeCascaderComp.value.reset();
+          clearFrom();
         } else {
           messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
@@ -766,20 +763,37 @@ export default {
 @import '@/assets/css/var.scss';
 .mp-erp-layout-page-content-comp-wrap{
   background-color: #F5F5F5;
-  padding: 50px;
+  // padding: 50px;
+  height: 100%;
+  max-height: 100%;
   >div{
     margin: 0;
   }
 }
 .out-delivery-page{
   height: 100%;
+  margin: 0;
+  overflow-x: auto;
+  background-color: #fff;
   >main{
+      >p{
+        color: #fff;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 60px;
+        background-color: #222B3A;
+      }
+      min-width: 1380px;
       height: 100%;
       background-color: #fff;
-      border-radius: 8px;
-      padding: 20px;
+      // border-radius: 8px;
+      // padding: 20px;
       box-sizing: border-box;
       overflow-x: auto;
+      .el-scrollbar{
+        height: calc(100% - 60px);
+      }
       .el-scrollbar__view{
         height: 100%;
         display: flex;
@@ -788,8 +802,11 @@ export default {
       .delivery-info{
         flex: 1;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         min-height: 480px;
+        padding: 0 24px;
+        padding-top: 40px;
+        box-sizing: border-box;
         .el-input-number{
           height: 40px;
           .el-input{
@@ -808,22 +825,55 @@ export default {
             min-width: 1px;
             width: 1px;
             height: 100%;
-            margin: 0 45px;
+            margin: 0 25px;
             background-color: #A6B6C6;
           }
         }
         .left{
+          min-width: 740px;
           .el-form{
             font-size: 20px;
             font-family: Microsoft YaHei;
             font-weight: bold;
             color: #7A8B9C;
             .el-form-item{
+              color: #444444;
               .el-form-item__label{
-                font-size: 20px;
+                font-size: 14px;
+                color: #C7C7C7;
+              }
+              .el-form-item__content{
+                font-size: 16px;
               }
               .el-input{
                 font-weight: 300;
+                font-size: 18px;
+                .el-input__inner{
+                  color: #444444;
+                  &::placeholder{
+                    color: #A8A8A8;
+                  }
+                }
+              }
+              .el-radio-group{
+                .el-radio-button{
+                  width: 147px;
+                  .el-radio-button__inner{
+                    height: 40px;
+                    line-height: 24px;
+                    background-color: #F5F5F5;
+                    width: 100%;
+                    color: #000;
+                  }
+                  &.is-active{
+                    .el-radio-button__inner{
+                      border-color: #222B3A;
+                      background-color:#222B3A;
+                      color: #fff;
+                      box-shadow:none;
+                    }
+                  }
+                }
               }
               &.sku{
                 margin-bottom: 0;
@@ -834,12 +884,19 @@ export default {
                   >p{
                     display: flex;
                     .el-input{
-                      width: 600px;
-                      margin-right: 20px;
+                      width: 476px;
+                      // margin-right: 20px;
+                      font-size: 18px;
+                      .el-input-group__append{
+                        background-color: #26BCF9;
+                        margin-left: -2px;
+                      }
                     }
                     .el-button{
                       font-size: 20px;
                       font-weight: 400;
+                      width: 109px;
+                      color: #fff;
                     }
                   }
                   >span{
@@ -849,17 +906,18 @@ export default {
               }
               &.select-material{
                 .el-cascader{
-                  width: 350px;
+                  width: 367px;
                   height: 40px;
-                  margin-right: 40px;
+                  margin-right: 17px;
                   .el-input{
                     height: 40px;
+                    font-size: 18px;
                   }
                 }
               }
               &.out-number{
                 .el-input-number{
-                  width: 300px;
+                  width: 200px;
                   input{
                     text-align: left;
                   }
@@ -870,7 +928,7 @@ export default {
               }
               &.remark{
                 .el-input{
-                  width: 600px;
+                  width: 533px;
                   margin-right: 20px;
                 }
               }
@@ -878,11 +936,13 @@ export default {
             >.material-info{
               align-items: center;
               margin-bottom: 18px;
-              padding-left: 120px;
+              padding-left: 82px;
               display: flex;
               flex-wrap: wrap;
               height: 80px;
               line-height: 40px;
+              font-size: 22px;
+              color: #444444;
               span{
                 margin-right: 15px;
               }
@@ -893,6 +953,7 @@ export default {
           display: flex;
           flex-direction: column;
           height: 100%;
+          min-width: 577px;
           .warehouse{
             height: calc(100% - 37px);
             overflow-x: auto;
@@ -900,7 +961,7 @@ export default {
             padding-top: 10px;
             .warehouse-item{
               .title{
-                font-size: 20px;
+                font-size: 16px;
                 font-weight: 400;
                 line-height: 17px;
                 display: flex;
@@ -908,8 +969,14 @@ export default {
                 margin-bottom: 10px;
                 padding: 0 10px;
                 margin-top: 10px;
+                .StorehouseName{
+                  font-weight: 700;
+                }
                 >span{
                   color: #566176;
+                }
+                .mp-button{
+                  font-size: 16px;
                 }
               }
                 &.warehouse-item + .warehouse-item {
@@ -928,6 +995,7 @@ export default {
                   align-items: center;
                   text-align: center;
                   justify-content: space-between;
+                  font-size: 16px;
                   &li:last-child{
                     display: flex;
                     border-bottom: none;
@@ -940,8 +1008,14 @@ export default {
                     width: 125px;
                   }
                   .number{
-                    width: 240px;
+                    width: 200px;
                     display: flex;
+                    .el-checkbox{
+                      .el-checkbox__label{
+
+                        font-size: 16px;
+                      }
+                    }
                     >div{
                       align-items: center;
                       display: flex;
@@ -952,17 +1026,15 @@ export default {
                           text-align: left;
                         }
                       }
-                      >span{
-                        margin-left: 15px;
-                      }
                       .el-input{
                         margin: 0 10px;
                       }
                     }
                   }
                   .el-button{
-                    width: 100px;
-                    margin: 0 20px;
+                    // width: 80px;
+                    height: 34px;
+                    font-size: 15px;
                   }
                 }
               }

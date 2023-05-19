@@ -1,20 +1,25 @@
 <template>
   <div class="in-delivery-page">
-
     <main>
+      <p>入库信息</p>
       <!-- <MpCardContainer> -->
         <el-scrollbar>
           <div class="delivery-info">
             <div class="left">
-              <el-form label-width="120px">
+              <el-form label-width="84px">
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
                     <el-input v-model.trim="Data.getMaterialData.SKUCode"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
-                     @keyup.enter="getMaterial()" size="large"/>
-                    <mp-button link type="primary" @click="getMaterial()">查询</mp-button>
+                     @keyup.enter="getMaterial()" size="large">
+                      <template #append>
+                        <mp-button link type="primary" @click="getMaterial()">
+                          <el-icon><Search /></el-icon>
+                          查询</mp-button>
+                      </template>
+                     </el-input>
                   </p>
-                  <span>或者</span>
+                  <span style="color: #C7C7C7;">或者</span>
                 </el-form-item>
                 <el-form-item :label="`选择物料：`" class="select-material">
                   <ThreeCascaderComp
@@ -30,34 +35,21 @@
                     }"
                     :value='Data.SizeSelects'
                     @change="SizeSelectChange"
-                    :width="250"
+                    :width="266"
                     :filterable='true'
                     :placeholder="'请选择物料尺寸'"
                     ></OneLevelSelect>
                   <OneLevelSelect
                     v-else
                     :options='[]'
-                    :width="250"
+                    :width="266"
                     :placeholder="'请选择物料尺寸'"
                     ></OneLevelSelect>
                 </el-form-item>
                 <p class="material-info">
                   <template v-if="Data.checkedMaterial">
-                    <!-- <span>{{Data.checkedMaterial.Code}}</span> -->
                     <span>
                       {{Data.checkedMaterial.AttributeDescribe}}
-                      <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
-                      :key="item.AttributeID">
-                        <template v-if="item.NumericValue">
-                          <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                        </template>
-                        <template v-else>
-                          <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                        </template>
-                      <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                        {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
-                      </template>
-                      </template> -->
                     </span>
                     <span>{{Data.checkedMaterial.SizeDescribe}}</span>
                     <span>{{Data.checkedMaterial.Code}}</span>
@@ -76,7 +68,7 @@
                     }"
                     :value='Data.inDeliveryForm.UnitID'
                     @change="(ID) => Data.inDeliveryForm.UnitID = ID"
-                    :width="120"
+                    :width="140"
                     :filterable='true'
                     :placeholder="'请选择单位'"
                     ></OneLevelSelect>
@@ -85,12 +77,12 @@
                       {{Data.checkedMaterial?.StockUnit}}
                     </template>
                 </el-form-item>
-                <el-form-item :label="`入库类型：`">
+                <el-form-item :label="`入库类型：`" class="StockType">
                   <el-radio-group v-model="Data.inDeliveryForm.InStockType" size="large">
-                    <el-radio :label="1">采购</el-radio>
-                    <el-radio :label="2">退料</el-radio>
-                    <el-radio :label="3">赠送</el-radio>
-                    <el-radio :label="4">成品</el-radio>
+                    <el-radio-button :label="1">采购</el-radio-button>
+                    <el-radio-button :label="2">退料</el-radio-button>
+                    <el-radio-button :label="3">赠送</el-radio-button>
+                    <el-radio-button :label="4">成品</el-radio-button>
                     <!-- <el-radio :label="5">盘库</el-radio> -->
                   </el-radio-group>
                 </el-form-item>
@@ -106,7 +98,7 @@
                     }"
                     :value='Data.inDeliveryForm.SupplierID'
                     @change="(ID) => Data.inDeliveryForm.SupplierID = ID"
-                    :width="300"
+                    :width="166"
                     :filterable='true'
                     :placeholder="'请选择供应商'"
                     ></OneLevelSelect>
@@ -114,11 +106,17 @@
                       size="large">
                       <el-input-number
                       :max="999999.99"
+                      placeholder="请输入单价"
                       :controls="false" v-model="Data.inDeliveryForm.Price"
                       size="large"/>
                       <template v-if="inUnitName">
                       元/{{inUnitName}}
                       </template>
+                    </el-form-item>
+                    <el-form-item :label="`共计：`" v-if="Data.inDeliveryForm.InStockType === 1">
+                      <p style="font-size: 16px;">
+                        ￥  <span style="color:red">{{Number(Data.inDeliveryForm.Price) * Number(Data.inDeliveryForm.Number)}}</span>元
+                      </p>
                     </el-form-item>
                 </el-form-item>
                 <el-form-item :label="`退料人：`"
@@ -138,9 +136,6 @@
                     :placeholder="'请选择退料人'"
                     ></OneLevelSelect>
                 </el-form-item>
-                <el-form-item :label="`共计：`" v-if="Data.inDeliveryForm.InStockType === 1">
-                  <p>￥  <span style="color:red">{{Number(Data.inDeliveryForm.Price) * Number(Data.inDeliveryForm.Number)}}元</span></p>
-                </el-form-item>
                 <el-form-item :label="`备注：`" class="remark">
                   <el-input :maxlength="300" placeholder="请输入备注" v-model="Data.inDeliveryForm.Remark" size="large"/> (选填)
                 </el-form-item>
@@ -149,14 +144,17 @@
             </div>
             <div class="line"></div>
             <div class="right">
-              <mp-button type="primary" @click="Data.SelectGoods = true">选择货位</mp-button>
+              <mp-button type="primary" @click="Data.SelectGoods = true">
+                <img src="@/assets/images/selectGoodsAllocation.png" alt="">
+                选择货位
+              </mp-button>
                 <div class="warehouse">
               <el-scrollbar>
                   <div class="warehouse-item"
                   v-for="(item, index) in Data.inStorehouseGoodsPosition" :key="item.StorehouseID">
                     <p class="title">
                       <span>
-                        {{item.StorehouseName}}：
+                        <b>{{item.StorehouseName}}</b>：
                         入库
                         {{getStorehouseInNumber(item.GoodsPositionList)}}
                         {{Data.checkedMaterial?.StockUnit}}
@@ -177,7 +175,9 @@
                           </span>
                         </span>
                         <mp-button type="danger"
-                        @click="delGoodsPosition(index, i, item.StorehouseID, GoodsPosition.selectedLocationID)">删除</mp-button>
+                        @click="delGoodsPosition(index, i, item.StorehouseID, GoodsPosition.selectedLocationID)">
+                        <i class="iconfont icon-delete"></i>删除
+                      </mp-button>
                       </li>
                     </ul>
                   </div>
@@ -185,7 +185,7 @@
                 </div>
               <p class="total" v-if="Data.inStorehouseGoodsPosition.length">
                 合计：{{getStorehouseAllInNumber()}}{{Data.checkedMaterial?.StockUnit}}
-                （{{getInUnitNum}} {{inUnitName}}）
+                （{{getInUnitNum}}{{inUnitName}}）
               </p>
             </div>
           </div>
@@ -402,6 +402,7 @@ export default {
     }
     // 格式化数据
     function SizeSelectChange(ID) {
+      clearFrom();
       if (ID !== '00000000-0000-0000-0000-000000000000') {
         Data.SizeSelects = ID;
       }
@@ -654,6 +655,7 @@ export default {
             .filter(it => it.UnitPurpose === 1);
           ThreeCascaderComp.value.reset();
           MaterialWarehouseStore.getSupplierSelectList(Data.checkedMaterial.TypeID);
+          clearFrom();
         } else {
           messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
@@ -710,8 +712,10 @@ export default {
 @import '@/assets/css/var.scss';
 .mp-erp-layout-page-content-comp-wrap{
   margin: 0;
-  background-color: #F5F5F5;
-  padding: 50px;
+  // background-color: #F5F5F5;
+  // padding: 50px;
+  height: 100%;
+  max-height: 100%;
   >div{
     margin: 0;
   }
@@ -719,13 +723,27 @@ export default {
 .in-delivery-page{
   height: 100%;
   margin: 0;
+  overflow-x: auto;
+  background-color: #fff;
   main{
-      height: 100%;
+    >p{
+      color: #fff;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 60px;
+      background-color: #222B3A;
+    }
+      min-width: 1340px;
+      height: calc(100%);
       background-color: #fff;
-      border-radius: 8px;
-      padding: 20px;
+      // border-radius: 8px;
+      // padding: 20px;
       box-sizing: border-box;
       overflow-x: auto;
+      .el-scrollbar{
+        height: calc(100% - 60px);
+      }
       .el-scrollbar__view{
         height: 100%;
         display: flex;
@@ -734,8 +752,10 @@ export default {
       .delivery-info{
         flex: 1;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         min-height: 480px;
+        padding: 40px 24px 0 40px;
+        box-sizing: border-box;
         .el-input-number{
           height: 40px;
           .el-input{
@@ -755,22 +775,53 @@ export default {
             min-width: 1px;
             width: 1px;
             height: 100%;
-            margin: 0 45px;
+            margin: 0 36px;
             background-color: #A6B6C6;
           }
         }
         .left{
+          min-width: 740px;
           .el-form{
             font-size: 20px;
             font-family: Microsoft YaHei;
             font-weight: bold;
             color: #7A8B9C;
             .el-form-item{
+              color: #444444;
               .el-form-item__label{
-                font-size: 20px;
+                font-size: 14px;
+                color: #C7C7C7;
+              }
+              .el-form-item__content{
+                font-size: 16px;
               }
               .el-input{
                 font-weight: 300;
+                font-size: 18px;
+                .el-input__inner{
+                  color: #444444;
+                  &::placeholder{
+                    color: #A8A8A8;
+                  }
+                }
+              }
+              .el-radio-group{
+                .el-radio-button{
+                  width: 147px;
+                  .el-radio-button__inner{
+                    background-color: #F5F5F5;
+                    width: 100%;
+                    color: #000;
+                    box-shadow: none;
+                  }
+                  &.is-active{
+                    .el-radio-button__inner{
+                      border-color: #222B3A;
+                      background-color:#222B3A;
+                      color: #fff;
+                    }
+                  }
+                }
               }
               &.sku{
                 margin-bottom: 0;
@@ -781,12 +832,19 @@ export default {
                   >p{
                     display: flex;
                     .el-input{
-                      width: 600px;
-                      margin-right: 20px;
+                      width: 476px;
+                      // margin-right: 20px;
+                      font-size: 18px;
+                      .el-input-group__append{
+                        background-color: #26BCF9;
+                        margin-left: -2px;
+                      }
                     }
                     .el-button{
                       font-size: 20px;
                       font-weight: 400;
+                      width: 109px;
+                      color: #fff;
                     }
                   }
                   >span{
@@ -796,17 +854,18 @@ export default {
               }
               &.select-material{
                 .el-cascader{
-                  width: 350px;
+                  width: 367px;
                   height: 40px;
-                  margin-right: 40px;
-                  .el-input{
-                    height: 40px;
-                  }
+                  margin-right: 17px;
+                }
+                .el-input{
+                  height: 40px;
+                  font-size: 18px;
                 }
               }
               &.in-number{
                 .el-input-number{
-                  width: 300px;
+                  width: 200px;
                   input{
                     text-align: left;
                   }
@@ -817,18 +876,27 @@ export default {
               }
               &.supplier{
                 >.el-form-item__content{
+                  .el-form-item__label{
+                    color: #444444;
+                  }
                   .el-input-number{
                     width: 136px;
                     margin-right: 20px;
                     input{
                       text-align: left;
+                      color: #f00;
+                      font-weight: 700;
+                      &::placeholder{
+                          color: #A8A8A8;
+                          font-weight: 300;
+                        }
                     }
                   }
                 }
               }
               &.remark{
                 .el-input{
-                  width: 600px;
+                  width: 533px;
                   margin-right: 20px;
                 }
               }
@@ -836,11 +904,13 @@ export default {
             >.material-info{
               align-items: center;
               margin-bottom: 18px;
-              padding-left: 120px;
+              padding-left: 82px;
               display: flex;
               flex-wrap: wrap;
               height: 80px;
               line-height: 40px;
+              font-size: 22px;
+              color: #444444;
               span{
                 margin-right: 15px;
               }
@@ -851,9 +921,16 @@ export default {
           display: flex;
           flex-direction: column;
           height: 100%;
+          min-width: 502px;
           >.el-button{
             width: 120px;
             height: 40px;
+            img{
+              width: 16px;
+              height: 16px;
+              margin-right: 4px;
+              margin-top: 1px;
+            }
           }
           .warehouse{
             // height: calc(100% - 37px);
@@ -862,7 +939,7 @@ export default {
             padding-top: 10px;
             .warehouse-item{
               .title{
-                font-size: 20px;
+                font-size: 16px;
                 font-weight: 400;
                 line-height: 17px;
                 display: flex;
@@ -890,6 +967,7 @@ export default {
                   align-items: center;
                   text-align: center;
                   justify-content: space-between;
+                  font-size: 16px;
                   &li:last-child{
                     display: flex;
                     border-bottom: none;
@@ -899,7 +977,7 @@ export default {
                     width: 180px;
                   }
                   .number{
-                    width: 240px;
+                    width: 200px;
                     align-items: center;
                     display: flex;
                     >span{
@@ -915,8 +993,9 @@ export default {
                     }
                   }
                   .el-button{
-                    width: 100px;
-                    margin: 0 20px;
+                    width: 80px;
+                    height: 34px;
+                    // margin: 0 20px;
                   }
                 }
               }
