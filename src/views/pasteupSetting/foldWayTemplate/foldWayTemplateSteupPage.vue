@@ -162,8 +162,8 @@ function createMap() {
     messageBox.failSingleError('生成失败', '请输入行数', () => null, () => null);
   } else if (!Data.foldWayTemplateFrom.ColumnNumber) {
     messageBox.failSingleError('生成失败', '请输入列数', () => null, () => null);
-  } else if (Number(Data.foldWayTemplateFrom.ColumnNumber) === 1 && Number(Data.foldWayTemplateFrom.RowNumber) === 1) {
-    messageBox.failSingleError('生成失败', '行数列数不能同时为1', () => null, () => null);
+  // } else if (Number(Data.foldWayTemplateFrom.ColumnNumber) === 1 && Number(Data.foldWayTemplateFrom.RowNumber) === 1) {
+  //   messageBox.failSingleError('生成失败', '行数列数不能同时为1', () => null, () => null);
   } else if (+Data.foldWayTemplateFrom.RowNumber > 100 || +Data.foldWayTemplateFrom.ColumnNumber > 100) {
     messageBox.failSingleError('生成失败', '请输入100以内的行数或列数', () => null, () => null);
   } else {
