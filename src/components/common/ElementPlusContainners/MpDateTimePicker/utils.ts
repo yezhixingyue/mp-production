@@ -1,12 +1,13 @@
 /** 获取日期字符串中的日期部分 */
 export const getDate = (dateString: string) => {
+  if (!dateString) return '';
   const _content = dateString.split('.')[0];
   return _content.split('T')[0];
 };
 
 /** 获取日期字符串中的时间点部分 ( 根据传入的配置信息进行生成 ) */
 export const getTime = (dateString: string, options?: { onlyDate: boolean, withTime: boolean, isBegin: boolean }) => {
-  if (options?.onlyDate) return '';
+  if (options?.onlyDate || !dateString) return '';
   const _content = dateString.split('.')[0];
   const _timeContent = _content.split('T')[1];
   if (!_timeContent && options && !options.withTime) { // 时间点不存在 或者 根据配置生成

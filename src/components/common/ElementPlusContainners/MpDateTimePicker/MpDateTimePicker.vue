@@ -47,7 +47,7 @@ const date = computed({
     return getDate(props.modelValue);
   },
   set(val) { // 格式为2022-12-24
-    const _date = val;
+    const _date = val || '';
     const _time = getTime(props.modelValue, props);
 
     const _value = _time ? `${_date}T${_time}` : _date;

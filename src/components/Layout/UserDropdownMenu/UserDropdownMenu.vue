@@ -55,7 +55,7 @@ const visible = ref(false);
 
 const onDocManageClick = () => {
   if (!user.value) return;
-  window.open(`http://127.0.0.1:5173/init?token=${user.value.Token}&type=2&target=manage`);
+  window.open(`http://192.168.1.92:3020/init?token=${user.value.Token}&siteType=2&target=manage`);
 };
 
 const logout = () => {

@@ -18,7 +18,7 @@
     <div class="process-content" v-loading="localOrderFlowchart.loading"
      :class="{single: localOrderFlowchart.LineFlowchartList.length === 1 && !localOrderFlowchart.UnionFlowchartData}"
      ref="oWrapRef">
-      <div class="left">
+      <div class="left" v-if="localOrderFlowchart.LineFlowchartList.length">
         <LineFlowchartComp v-for="(it, i) in localOrderFlowchart.LineFlowchartList" :key="i" :FlowchartData="it" />
       </div>
       <div class="right" v-if="localOrderFlowchart.UnionFlowchartData">

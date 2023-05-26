@@ -13,7 +13,7 @@
       <mp-table-column width="110px" prop="_StatusText" label="状态" />
       <mp-table-column width="280px" label="操作" class-name="ctrl">
         <template #default="scope:any">
-          <mp-button type="primary" class="ft-12" link @click="onProcessClick(scope.row, scope.$index)">生产流程</mp-button>
+          <mp-button type="primary" class="ft-12" link @click="onProcessClick(scope.row)">生产流程</mp-button>
           <mp-button type="primary" class="ft-12" link :disabled="!scope.row.FrontThumbil" @click="onThumbnailClick(scope.row)">查看缩略图</mp-button>
         </template>
       </mp-table-column>
@@ -55,8 +55,7 @@ const curRow = ref<null | typeof localList.value[number]>(null);
 
 /** 生产流程 */
 const processVisible = ref(false);
-const onProcessClick = (item: typeof localList.value[number], index: number) => { // 生产流程
-  console.log('onProcessClick', item, index);
+const onProcessClick = (item: typeof localList.value[number]) => { // 生产流程
   curRow.value = item;
   processVisible.value = true;
 };
