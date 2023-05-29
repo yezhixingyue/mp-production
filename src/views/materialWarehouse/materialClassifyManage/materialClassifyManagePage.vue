@@ -6,7 +6,7 @@
         <mp-button link type="primary" @click="ToMaterialClassifyManageList">管理物料分类</mp-button>
         <OneLevelSelect
          :title='"分类"'
-         :options='MaterialWarehouseStore.CategoryList'
+         :options='[{CategoryID: "", CategoryName:"不限"}, ...MaterialWarehouseStore.CategoryList]'
          :defaultProps="{
            value:'CategoryID',
            label:'CategoryName',
