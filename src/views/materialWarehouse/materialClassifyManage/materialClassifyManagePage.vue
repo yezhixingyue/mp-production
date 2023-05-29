@@ -4,12 +4,24 @@
       <div class="header-top">
         <mp-button type="primary" @click="addMaterialClassifyClick">+ 添加物料类型</mp-button>
         <mp-button link type="primary" @click="ToMaterialClassifyManageList">管理物料分类</mp-button>
+        <OneLevelSelect
+         :title='"分类"'
+         :options='MaterialWarehouseStore.CategoryList'
+         :defaultProps="{
+           value:'CategoryID',
+           label:'CategoryName',
+         }"
+         :value='Data.getMaterialTypeData.CategoryID'
+         :showLine='true'
+         @change="(ID) => Data.getMaterialTypeData.CategoryID = ID"
+         @requestFunc='getMaterialClassifyManage'
+         :width="130"
+         ></OneLevelSelect>
       </div>
     </header>
     <main>
         <el-table border fit stripe
         :data="Data.tableData" style="width: 100%">
-
           <el-table-column prop="CategoryName" label="分类"
           show-overflow-tooltip min-width="123" />
           <el-table-column prop="TypeName" label="类型"
@@ -126,6 +138,7 @@
 </template>
 
 <script lang='ts'>
+import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
   reactive, onMounted, computed, onActivated,
@@ -158,6 +171,7 @@ interface tableItemType {
   TypeName: string
 }
 interface getMaterialTypeDataType {
+  CategoryID:string,
   Page: number,
   KeyWords: string,
   PageSize: number|string,
@@ -182,6 +196,7 @@ export default {
   components: {
     MpPagination,
     DialogContainerComp,
+    OneLevelSelect,
   },
   setup() {
     const router = useRouter();
@@ -207,6 +222,7 @@ export default {
       brandShow: false,
       DataTotal: 0,
       getMaterialTypeData: {
+        CategoryID: '',
         Page: 1,
         KeyWords: '',
         PageSize: 20,
@@ -351,6 +367,7 @@ export default {
       Data,
       IsStock,
       MaterialWarehouseStore,
+      getMaterialClassifyManage,
       PaginationChange,
       ToMaterialClassifyManageList,
       ToSetTheStorageUnitPage,
@@ -379,6 +396,12 @@ export default {
   >header{
     background-color: #fff;
     padding: 20px;
+    .header-top{
+      display: flex;
+      .mp-one-level-select{
+        margin-left: 20px;
+      }
+    }
   }
   >main{
     flex: 1;
