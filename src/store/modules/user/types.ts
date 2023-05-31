@@ -15,7 +15,20 @@ export interface IUser {
     Token: string
   },
   Token: string,
-  PermissionList: object
+  PermissionList: object & {
+    /** 文章管理权限 */
+    PermissionManageArticle: {
+      HavePomission: boolean
+      Obj: {
+        Setup: boolean
+        ReadLevel1: boolean
+        ReadLevel2: boolean
+        ReadLevel3: boolean
+        ReadLevel4: boolean
+        ReadLevel5: boolean
+      }
+    },
+  }
   Mobile: string
   HeadPic: string
 }

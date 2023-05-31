@@ -22,7 +22,8 @@
         <el-dropdown-menu class="mp-erp-user-drop-down-wrap">
           <el-dropdown-item v-if="user?.StaffName && showImgType" class="u-name">{{ user.StaffName }}</el-dropdown-item>
           <el-dropdown-item @click="visible = true" :icon="Lock" command='changePwd'>修改密码</el-dropdown-item>
-          <el-dropdown-item @click="onDocManageClick" :icon="Lock">文档管理</el-dropdown-item>
+          <el-dropdown-item v-if="docPermissions?.manage" @click="onDocClick('manage')"><i class="iconfont icon-wendangguanli1"></i> 文档管理</el-dropdown-item>
+          <el-dropdown-item v-if="docPermissions?.read" @click="onDocClick('document')"><i class="iconfont icon-bangzhuzhongxin"></i> 帮助中心</el-dropdown-item>
           <el-dropdown-item @click="logout" :icon="SwitchButton" command='logout'>退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -37,7 +38,7 @@ import {
 } from '@element-plus/icons-vue';
 import { useUserStore } from '@/store/modules/user';
 import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { getImgGaussBlurUrl } from '@/assets/js/utils/gaussBlur';
 import ChangePwdDialog from './ChangePwdDialog.vue';
@@ -53,9 +54,22 @@ const router = useRouter();
 
 const visible = ref(false);
 
-const onDocManageClick = () => {
+const docPermissions = computed(() => {
+  if (!user.value) return null;
+
+  const {
+    ReadLevel1, ReadLevel2, ReadLevel3, ReadLevel4, ReadLevel5,
+  } = user.value.PermissionList.PermissionManageArticle.Obj;
+
+  return {
+    manage: user.value.PermissionList.PermissionManageArticle.Obj.Setup,
+    read: [ReadLevel1, ReadLevel2, ReadLevel3, ReadLevel4, ReadLevel5].includes(true),
+  };
+});
+
+const onDocClick = (target) => {
   if (!user.value) return;
-  window.open(`http://192.168.1.92:3020/init?token=${user.value.Token}&siteType=2&target=manage`);
+  window.open(`http://192.168.1.92:3020/init?token=${user.value.Token}&siteType=2&target=${target}`);
 };
 
 const logout = () => {
@@ -139,5 +153,15 @@ watch(() => user.value?.HeadPic, (newVal, oldVal) => {
   padding-top: 8px;
   padding-bottom: 8px;
   font-weight: 700;
+}
+</style>
+
+<style lang="scss">
+.mp-erp-user-drop-down-wrap {
+  .el-dropdown-menu__item {
+    .iconfont {
+      font-size: 15px;
+    }
+  }
 }
 </style>
