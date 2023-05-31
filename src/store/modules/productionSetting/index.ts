@@ -66,6 +66,8 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
             this.EquipmentListGroup.push({
               ClassID: item.ClassID,
               ClassName: item.ClassName,
+              ID: item.ClassID,
+              Name: item.ClassName,
               EquipmentGroups,
             });
           });

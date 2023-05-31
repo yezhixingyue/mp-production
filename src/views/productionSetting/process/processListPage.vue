@@ -5,6 +5,44 @@
         <mp-button type="primary" @click="ToProcess(null)">添加工序</mp-button>
         <span class="hint">说明：拼版为特殊工序，不用添加</span>
       </div>
+      <ul class="filter-box">
+        <li class="item">
+          <span class="title">报工方式：</span>
+          <el-select v-model="getProcessListData.ReportMode" class="mp-select" @change="() => PaginationChange()">
+            <el-option key="" label="不限" value="" />
+            <el-option v-for="item in ReportModeEnumList" :key="item.ID" :label="item.Name" :value="item.ID" />
+          </el-select>
+        </li>
+        <li class="item">
+          <span class="title">工序类型：</span>
+          <el-select v-model="getProcessListData.Type" class="mp-select" @change="() => PaginationChange()">
+            <el-option key="" label="不限" value="" />
+            <el-option v-for="item in WorkingTypeEnumList" :key="item.ID" :label="item.Name" :value="item.ID" />
+          </el-select>
+        </li>
+        <li>
+          <EpCascaderByLevel2
+            title="设备组"
+            showLine
+            onlyLastValid
+            :fiexdWidth="200"
+            :First="getProcessListData.ClassID"
+            :Second="getProcessListData.GroupID"
+            :type-list="[['ClassID', ''], ['GroupID', '']]"
+            :defaultProps="{ ID: 'ID', Name: 'Name', children: 'EquipmentGroups' }"
+            :list="productionSettingStore.EquipmentListGroup"
+            @getList="() => PaginationChange()"
+            @setCondition="(e) => CommonClassType.setCondition(e, getProcessListData)"
+          />
+        </li>
+        <li class="item">
+          <span class="title">物料资源包：</span>
+          <el-select v-model="getProcessListData.RelationID" class="mp-select" @change="() => PaginationChange()">
+            <el-option key="" label="不限" value="" />
+            <el-option v-for="item in productionSettingStore.MaterialTypeGroup" :key="item.ID" :label="item.Name" :value="item.ID" />
+          </el-select>
+        </li>
+      </ul>
       <SearchInputComp
         :word='getProcessListData.KeyWords'
         title="关键词搜索"
@@ -17,7 +55,7 @@
       />
     </header>
     <main>
-      <el-table fit stripe :data="Data.processList"
+      <el-table fit stripe :data="Data.processList" border
        style="width: 100%">
         <el-table-column show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
         <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" width="120">
@@ -98,6 +136,8 @@ import api from '@/api';
 import { IWorkingProcedureInfo } from '@/assets/Types/ProductionLineSet/types';
 import messageBox from '@/assets/js/utils/message';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
+import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
+import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
 import type { IRelationsType } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
@@ -116,10 +156,20 @@ const getProcessListData = ref({
   Page: 1,
   PageSize: 20,
   DataTotal: 0,
+  ReportMode: '', // 报工方式
+  Type: '', // 工序类型
+  ClassID: '',
+  GroupID: '',
+  RelationID: '',
   KeyWords: '',
 });
 const clearCondition = () => {
   getProcessListData.value.Page = 1;
+  getProcessListData.value.ReportMode = '';
+  getProcessListData.value.Type = '';
+  getProcessListData.value.ClassID = '';
+  getProcessListData.value.GroupID = '';
+  getProcessListData.value.RelationID = '';
   getProcessListData.value.KeyWords = '';
 };
 const ToProcess = (item) => {
@@ -252,12 +302,17 @@ export default {
   height: 100%;
   >header{
     padding: 20px;
+    padding-top: 10px;
     background-color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    white-space: nowrap;
+    flex-wrap: wrap;
     >.header-top{
       display: flex;
+      margin-right: 20px;
+      margin-top: 10px;
       >span{
         line-height: 30px;
         margin-left: 20px;
@@ -282,6 +337,25 @@ export default {
           top: 8px;
         }
       }
+    }
+
+    > .filter-box {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      > li {
+        margin-right: 10px;
+        margin-top: 10px;
+        > span.title {
+          font-weight: 700;
+        }
+      }
+    }
+
+    > section {
+      margin-top: 10px;
+      // flex: 1;
+      margin-left: 0;
     }
   }
   >main{

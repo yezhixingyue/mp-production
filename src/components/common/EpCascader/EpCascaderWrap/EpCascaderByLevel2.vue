@@ -4,7 +4,7 @@
     :list="localList"
     :title="props.title"
     :defaultProps="props.defaultProps"
-    :withEmpty="props.withEmpty && !props.onlyLastValid"
+    :withEmpty="props.withEmpty"
     :fiexdWidth="props.fiexdWidth"
     :onlyLastValid="props.onlyLastValid"
     :level="props.level"
@@ -66,8 +66,8 @@ const value = computed({
     let Second = _Second || _Second === 0 ? _Second : '';
     if (First !== '' && Second === '' && props.autoComplete) {
       const t = props.list.find(it => it[props.defaultProps.ID] === First);
-      if (t && t.children && t.children.length > 0) {
-        Second = t.children[0][props.defaultProps.ID];
+      if (t && t[props.defaultProps.children] && t[props.defaultProps.children].length > 0) {
+        Second = t[props.defaultProps.children][0][props.defaultProps.ID];
       }
     }
     emit('setCondition', [props.typeList[0], First]);
@@ -78,7 +78,7 @@ const value = computed({
 
 const localList = computed(() => {
   if (props.onlyLastValid) {
-    return props.list.filter(it => it.children && it.children.length > 0);
+    return props.list.filter(it => it[props.defaultProps.children] && it[props.defaultProps.children].length > 0);
   }
   return props.list;
 });

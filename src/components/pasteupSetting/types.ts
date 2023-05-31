@@ -6,5 +6,7 @@ export interface EquipmentGroups {
 export interface UseClassEquipmentGroupType {
   ClassID: 0,
   ClassName: string,
+  ID: number,
+  Name: string,
   EquipmentGroups: EquipmentGroups[]
 }
