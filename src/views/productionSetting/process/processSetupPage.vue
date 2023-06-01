@@ -61,7 +61,11 @@
               <el-form-item :label="`其他：`">
                 <div>
                   <el-checkbox @change="() => Data.processDataFrom.AllowBatchReport = false"
-                    v-model="Data.processDataFrom.AllowPartReport" :disabled="Data.processDataFrom.Type === WorkingTypeEnum.platemaking" label="允许部分报工" />
+                    v-model="Data.processDataFrom.AllowPartReport"
+                    :disabled="Data.processDataFrom.Type === WorkingTypeEnum.platemaking || (
+                      Data.processDataFrom.EquipmentGroups.length > 0 && Data.processDataFrom.AllowBatchReport
+                    )"
+                    label="允许部分报工" />
                   <el-checkbox @change="() => Data.processDataFrom.AllowPartReport = false"
                     v-model="Data.processDataFrom.AllowBatchReport"
                     :disabled="Data.processDataFrom.Type === WorkingTypeEnum.split
