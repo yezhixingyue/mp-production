@@ -69,7 +69,8 @@ const docPermissions = computed(() => {
 
 const onDocClick = (target) => {
   if (!user.value) return;
-  window.open(`http://192.168.1.92:3020/init?token=${user.value.Token}&siteType=2&target=${target}`);
+  const siteType = 2;
+  window.open(`http://192.168.1.92:3020/init?token=${user.value.Token}&siteType=${siteType}&target=${target}`);
 };
 
 const logout = () => {
