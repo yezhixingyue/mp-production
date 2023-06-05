@@ -1,6 +1,6 @@
 <template>
   <section class="assist-page-containner">
-    <Header v-model="condition.Type" @change="getList" @add="onItemSetupClick" />
+    <Header v-model="condition.Type" v-model:keywords="condition.KeyWords" :list="DataList" @change="getList" @add="onItemSetupClick" @clear="clearCondition" />
     <Main :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick" />
     <Footer :condition="condition" :total="DataNumber" :getList="getList" />
     <Dialog v-model:visible="visible" :item="curEditItem" :list="DataList" @submit="handleItemSubmit"  />
@@ -33,6 +33,10 @@ const getList = async (Page = 1) => { // 获取列表数据
     DataList.value = resp.data.Data;
     DataNumber.value = resp.data.DataNumber;
   }
+};
+
+const clearCondition = () => {
+  condition.value = new Condition();
 };
 
 onMounted(() => {

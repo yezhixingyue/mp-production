@@ -27,6 +27,8 @@ export const AssistInfoTypeEnums = {
 export class AssistListConditionClass {
   Type: localEnumValueIDType = ''
 
+  KeyWords = ''
+
   Page = 1
 
   PageSize = 20

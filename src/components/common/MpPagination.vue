@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { ElConfigProvider } from 'element-plus';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import zhCn from 'element-plus/lib/locale/lang/zh-cn';
 import NewDownLoadExcelComp from '@/components/common/General/DownLoadExcelComp/DownLoadExcelComp.vue';
 import { IExportExcelProps } from './General/DownLoadExcelComp/types';
@@ -77,10 +77,6 @@ export default {
     const localExportExcelProps = computed<IExportExcelProps | null>(() => (props.ExportExcelProps ? {
       ...(props.ExportExcelProps as IExportExcelProps),
     } : null));
-
-    watch(currentPage, (val) => {
-      console.log(val);
-    });
 
     return {
       currentPage,
