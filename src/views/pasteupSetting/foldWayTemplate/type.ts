@@ -1,7 +1,7 @@
 export interface PositionListType{
   RowValue: number,
   ColumnValue: number,
-  PageNumber: number,
+  FrontPage: number,
   ShowType: number,
 }
 export interface FoldWayTemplateType {

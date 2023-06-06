@@ -44,16 +44,16 @@
                 v-for="(PositionCol, ColIndex) in PositionRow" :key="`${RowIndex}-${ColIndex}`">
                   <!-- {{PositionCol.RowValue}}- {{PositionCol.ColumnValue}} -->
                   <span class="page" :class="{
-                    'is-even': isEven(PositionCol.PageNumber),
+                    'is-even': isEven(PositionCol.FrontPage),
                   }">
                     <!-- 如果翻转印面了 -->
-                    {{PositionCol.PageNumber}}
+                    {{PositionCol.FrontPage}}
                   </span>
-                  <!-- <span v-else class="page" :class="{'is-even': isEven(PositionCol.PageNumber)}">{{PositionCol.PageNumber}}</span> -->
+                  <!-- <span v-else class="page" :class="{'is-even': isEven(PositionCol.FrontPage)}">{{PositionCol.FrontPage}}</span> -->
 
                   <div class="btns">
                     <p><mp-button type="primary" link @click="rotate(RowIndex,ColIndex)">旋转</mp-button></p>
-                    <p><mp-button type="primary" link @click="setPage(RowIndex,ColIndex,PositionCol.PageNumber)">设置页码</mp-button></p>
+                    <p><mp-button type="primary" link @click="setPage(RowIndex,ColIndex,PositionCol.FrontPage)">设置页码</mp-button></p>
                   </div>
                 </li>
               </ul>
@@ -131,7 +131,7 @@ const Data:DataType = reactive({
       // {
       //   RowValue: 0,
       //   ColumnValue: 0,
-      //   PageNumber: 0,
+      //   FrontPage: 0,
       //   ShowType: 0,
       // },
     ],
@@ -167,7 +167,7 @@ function createMap() {
   } else if (+Data.foldWayTemplateFrom.RowNumber > 100 || +Data.foldWayTemplateFrom.ColumnNumber > 100) {
     messageBox.failSingleError('生成失败', '请输入100以内的行数或列数', () => null, () => null);
   } else {
-    let PageNumber = 1;
+    let FrontPage = 1;
     // 行
     const Row:PositionListType[][] = [];
     for (let Rowindex = 0; Rowindex < +Data.foldWayTemplateFrom.RowNumber; Rowindex++) {
@@ -177,10 +177,10 @@ function createMap() {
         const PositionItem:PositionListType = {
           RowValue: Rowindex + 1,
           ColumnValue: Colindex + 1,
-          PageNumber,
+          FrontPage,
           ShowType: 0,
         };
-        PageNumber += 2;
+        FrontPage += 2;
         Col.push(PositionItem);
       }
       Row.push(Col);
@@ -194,8 +194,8 @@ function rotate(RowIndex, ColIndex) {
   Data.FoldWayPositionList[RowIndex][ColIndex].ShowType = ShowType;
 }
 // 设置页码
-function setPage(RowIndex, ColIndex, PageNumber) {
-  Data.setPageInp = PageNumber;
+function setPage(RowIndex, ColIndex, FrontPage) {
+  Data.setPageInp = FrontPage;
   Data.setPageObj = {
     RowIndex,
     ColIndex,
@@ -269,16 +269,16 @@ function setPagePrimaryClick() {
   } else {
     Data.FoldWayPositionList.forEach((item, index) => {
       item.forEach((it, i) => {
-        const tempNum = isEven(it.PageNumber) ? it.PageNumber - 1 : it.PageNumber + 1;
-        if (Data.setPageInp === it.PageNumber || Data.setPageInp === tempNum) {
+        const tempNum = isEven(it.FrontPage) ? it.FrontPage - 1 : it.FrontPage + 1;
+        if (Data.setPageInp === it.FrontPage || Data.setPageInp === tempNum) {
           // 当前设置页码格子的页码
-          const nowPageNum = Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].PageNumber;
+          const nowPageNum = Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].FrontPage;
           // 和已经有此页码（组）交换页码
-          Data.FoldWayPositionList[index][i].PageNumber = nowPageNum;
+          Data.FoldWayPositionList[index][i].FrontPage = nowPageNum;
         }
       });
     });
-    Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].PageNumber = Data.setPageInp as number;
+    Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].FrontPage = Data.setPageInp as number;
     setPageCloseClick();
   }
 }
@@ -300,7 +300,7 @@ function rotatePage() {
     const temp = res;
     temp.RowValue = index + 1;
     temp.ColumnValue = i + 1;
-    temp.PageNumber = isEven(res.PageNumber) ? res.PageNumber - 1 : res.PageNumber + 1;
+    temp.FrontPage = isEven(res.FrontPage) ? res.FrontPage - 1 : res.FrontPage + 1;
     return temp;
   }));
 }
