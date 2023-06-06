@@ -11,3 +11,9 @@ export enum WorkSourceTypeEnum {
   /** 分切工序 */
   Split = 2,
 }
+
+/** 伸放类型： % | 张 */
+export enum PutOutTypeEnum {
+  number = 0,
+  percent = 1,
+}

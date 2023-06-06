@@ -23,7 +23,10 @@
             </span>
             <template v-if="rightPanelData.Type !== CapacityTypeEnum.capacity || rightPanelData.CalculateType === CalculateTypeEnum.UnitOutput">
               <el-input :class="{marginleft: !!options.rowTitle}" v-model.number="rightPanelData.Value" maxlength="9"></el-input>
-              <span>{{options.unit}}</span>
+              <span>
+                {{ rightPanelData.CalculateType === CalculateTypeEnum.UnitOutput && rightPanelData.Property ? rightPanelData.Property.Unit || '' : '' }}
+                {{options.unit}}
+              </span>
             </template>
             <template v-else>
               <el-input :class="{marginleft: !!options.rowTitle}" v-model.number="rightPanelData._CalculateValue" maxlength="9"></el-input>

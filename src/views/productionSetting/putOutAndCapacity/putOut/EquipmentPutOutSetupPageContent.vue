@@ -11,10 +11,10 @@
         <div class="right-class">
           <p class="title">则伸放为：</p>
           <p class="conent">
-            <el-input v-model.number="rightPanelData.Value" maxlength="9"></el-input>
+            <el-input v-model.trim="rightPanelData.Value" maxlength="9"></el-input>
             <el-select v-model="rightPanelData.Type" class="m-2" placeholder="Select">
-              <el-option label="张" :value="0"/>
-              <el-option label="%" :value="1"/>
+              <el-option label="张" :value="PutOutTypeEnum.number"/>
+              <el-option label="%" :value="PutOutTypeEnum.percent"/>
             </el-select>
           </p>
         </div>
@@ -34,6 +34,7 @@ import { ElInput, ElSelect, ElOption } from 'element-plus';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentListType } from '../js/types';
 import { PutOutConditionItemClass } from '../js/PutOutConditionItemClass';
+import { PutOutTypeEnum } from '../js/enum';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
@@ -47,19 +48,26 @@ const emit = defineEmits(['save']);
 const rightPanelData = ref<null | Partial<PutOutConditionItemClass>>(null);
 
 const submit = (e: PutOutConditionItemClass) => {
-  if (!rightPanelData.value?.Value && rightPanelData.value?.Value !== 0) {
+  const { Value, Type } = rightPanelData.value || {};
+  if (!Value && Value !== 0) {
     MpMessage.error({ title: '保存失败', msg: '伸放数值未设置' });
     return;
   }
-  if (!/^\d+$/.test(`${rightPanelData.value.Value}`)) {
-    MpMessage.error({ title: '保存失败', msg: '伸放数值设置不正确，请检查' });
+  if (Type !== PutOutTypeEnum.percent && !/^\d+$/.test(`${Value}`)) {
+    MpMessage.error({ title: '保存失败', msg: '非百分比时伸放数值必须为0或正整数类型' });
     return;
   }
-  if (rightPanelData.value.Type === 1 && rightPanelData.value.Value > 100) {
-    MpMessage.error({ title: '保存失败', msg: '百分比时，伸放数值不能超过100' });
-    return;
+  if (Type === PutOutTypeEnum.percent) {
+    if (!/^\d{1,3}(\.\d{0,2})?$/.test(`${Value}`)) {
+      MpMessage.error({ title: '保存失败', msg: '伸放数值设置不正确，必须为数值类型，百分比时范围必须在[0,100]之间，最多两位小数' });
+      return;
+    }
+    if (+Value > 100) {
+      MpMessage.error({ title: '保存失败', msg: '百分比时，伸放数值不能超过100' });
+      return;
+    }
   }
-  const temp = { ...e, ...rightPanelData.value };
+  const temp = { ...e, ...rightPanelData.value, Value: Number(Value) };
   emit('save', temp);
 };
 
@@ -67,7 +75,7 @@ onMounted(() => {
   rightPanelData.value = {
     LineEquipmentID: props.curLineEquipment?.LineEquipmentID || '',
     Value: props.curConditionRow?.Value || props.curConditionRow?.Value === 0 ? props.curConditionRow?.Value : '',
-    Type: props.curConditionRow?.Type || 0,
+    Type: props.curConditionRow?.Type || PutOutTypeEnum.number,
   };
 });
 </script>

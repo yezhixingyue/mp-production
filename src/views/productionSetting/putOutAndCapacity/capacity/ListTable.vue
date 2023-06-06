@@ -84,7 +84,8 @@ const options = computed(() => {
 const localTableList = computed(() => props.tableList.filter(it => it.Type === props.Type).map(it => ({
   ...it,
   _ValueContent: it.Value
-     + (it.Type === CapacityTypeEnum.capacity && it.Property && Property.getPropertyName(it.Property) ? ` ( ${Property.getPropertyName(it.Property)} )` : '')
+     + (it.Type === CapacityTypeEnum.capacity && it.Property && Property.getPropertyName(it.Property)
+       ? ` ( ${Property.getPropertyName(it.Property)} ) ${it.Property.Unit || ''}` : '')
      + (it.CalculateType === CalculateTypeEnum.FixedTime && it.Type === CapacityTypeEnum.capacity ? '小时' : options.value.unit),
 })));
 
