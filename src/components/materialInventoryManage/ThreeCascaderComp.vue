@@ -1,6 +1,6 @@
 <template>
   <!-- 三级级联选择框 用于选择物料 -->
-  <el-cascader v-if="!reseta && MaterialWarehouseStore.MaterialTypeGroup.length"
+  <el-cascader v-if="!reseta && MaterialTypeGroup.length"
   no-data-text="无数据" :props="cascaderProps" @change="cascaderChange" filterable placeholder="请选择物料">
     <template #empty>
       <div style="color:#c0c4cc;line-height:30px">
@@ -18,7 +18,6 @@
 </template>
 
 <script lang='ts'>
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api';
 import { onMounted, ref } from 'vue';
 
@@ -58,6 +57,17 @@ interface MaterialDataItemType {
   UnitSelects: UnitSelectsType[],
   MaterialSelects: MaterialSelectsType[]
 }
+
+interface MaterialTypes {
+  TypeID: string,
+  TypeName: string
+}
+interface MaterialTypeGroupType {
+  CategoryID: number,
+  CategoryName: string,
+  MaterialTypes: MaterialTypes[]
+}
+
 export default {
   props: {
     change: {
@@ -66,7 +76,7 @@ export default {
     },
   },
   setup(props) {
-    const MaterialWarehouseStore = useMaterialWarehouseStore();
+    const MaterialTypeGroup = ref<MaterialTypeGroupType[]>([]);
     const MaterialData:MaterialDataItemType[] = [];
     const reseta = ref(false);
     const cascaderProps = {
@@ -77,9 +87,12 @@ export default {
         const { level } = node;
         // 没有值时为第一层级
         if (level === 0) {
-          const nodes = MaterialWarehouseStore.MaterialTypeGroup.map(res => ({
+          // 二级没有的时候一级也不显示
+          const temp = MaterialTypeGroup.value.filter(res => res.MaterialTypes.length);
+          const nodes = temp.map(res => ({
             value: res.CategoryID,
             label: res.CategoryName,
+            disabled: !res.MaterialTypes.length,
           }));
           resolve(nodes);
           // const callback = () => {
@@ -91,11 +104,10 @@ export default {
 
         // 第二层级
         if (level === 1) {
-          const CategoryGroup = MaterialWarehouseStore.MaterialTypeGroup.find(it => it.CategoryID === node.value);
+          const CategoryGroup = MaterialTypeGroup.value.find(it => it.CategoryID === node.value);
           const nodes = CategoryGroup?.MaterialTypes.map(res => ({
             value: res.TypeID,
             label: res.TypeName,
-            disabled: node.loaded && node.chchildren === 0,
           }));
           resolve(nodes || []);
           // const callback = () => {
@@ -141,6 +153,8 @@ export default {
           });
         });
         props.change(itemMaterial, allMaterial, vaslus[1] || '');
+      } else {
+        props.change('', '', '');
       }
     }
     function reset() {
@@ -151,9 +165,11 @@ export default {
       }, 5);
     }
     onMounted(() => {
-      if (!MaterialWarehouseStore.MaterialTypeGroup.length) {
-        MaterialWarehouseStore.getMaterialTypeGroup();
-      }
+      api.getMaterialTypeGroup(true).then(res => {
+        if (res.data.isSuccess) {
+          MaterialTypeGroup.value = res.data.Data as MaterialTypeGroupType[];
+        }
+      });
     });
 
     return {
@@ -161,7 +177,7 @@ export default {
       cascaderProps,
       cascaderChange,
       reset,
-      MaterialWarehouseStore,
+      MaterialTypeGroup,
     };
   },
 

@@ -113,7 +113,7 @@
                 <div class="warehouse">
               <el-scrollbar>
                   <div class="warehouse-item"
-                  v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
+                  v-for="(Storehouse, StorehouseIndex) in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
                     <p class="title">
                       <span>
                         <span class="StorehouseName">
@@ -129,7 +129,7 @@
                       </span>
                     </p>
                     <ul>
-                      <li v-for="GoodsPosition in Storehouse.GoodsPositionStockInfos"
+                      <li v-for="(GoodsPosition, GoodsPositionIndex) in Storehouse.GoodsPositionStockInfos"
                       :key="GoodsPosition.PositionID">
                         <span class="ranks">
                           {{GoodsPosition.UpperDimension}}
@@ -140,7 +140,8 @@
                           {{GoodsPosition.Number}}{{Data.checkedMaterial?.StockUnit}}
                         </span>
                         <span class="number">
-                          <el-checkbox v-model="GoodsPosition.checked" label="出库" size="large" />
+                          <el-checkbox v-model="GoodsPosition.checked"
+                          @change="checkedChange(GoodsPosition, [StorehouseIndex,GoodsPositionIndex])" label="出库" size="large" />
                           <div v-if="GoodsPosition.checked"><el-input-number :max="999999"
                           :controls="false" v-model="GoodsPosition.inputValue"></el-input-number>
                             <span class="unit">
@@ -351,7 +352,7 @@ interface GoodsPositionStockInfosType {
   PositionID: string,
   Number: number | string,
   checked: boolean,
-  inputValue:string,
+  inputValue:string|number,
   UpperDimension: string
 }
 interface StorehouseStockInfoType {
@@ -476,7 +477,7 @@ export default {
       Data.outDeliveryForm = {
         MaterialID: '',
         Number: null,
-        UnitID: '',
+        UnitID: Data.outDeliveryForm.UnitID,
         OutStockType: 51,
         Handler: '',
         Remark: '',
@@ -526,17 +527,23 @@ export default {
         AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = temp as MaterialInfoType;
-      Data.outDeliveryForm.UnitID = '';
+      if (Data.checkedMaterial.UnitSelects.length) {
+        Data.outDeliveryForm.UnitID = Data.checkedMaterial.UnitSelects[0].UnitID;
+      }
       Data.getMaterialData.SKUCode = '';
       GetGoodsAllocation(Data.checkedMaterial.MaterialID);
     }
     // 选择物料
     function ThreeCascaderCompChange(itemMaterial, allSellectMaterial, TypeID) {
+      if (allSellectMaterial === '') {
+        ThreeCascaderComp.value.reset();
+        return;
+      }
       Data.SizeSelects = null;
       Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
       Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
       Data.TypeID = TypeID;
-      Data.outDeliveryForm.UnitID = '';
+      // Data.outDeliveryForm.UnitID = '';
 
       if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
         SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
@@ -637,9 +644,12 @@ export default {
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
         if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
-          Data.outDeliveryForm.UnitID = '';
+          // Data.outDeliveryForm.UnitID = '';
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 2);
+          if (Data.checkedMaterial.UnitSelects.length) {
+            Data.outDeliveryForm.UnitID = Data.checkedMaterial.UnitSelects[0].UnitID;
+          }
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
           ThreeCascaderComp.value.reset();
           clearFrom();
@@ -718,6 +728,26 @@ export default {
       Data.seePositionShow = true;
     }
 
+    function checkedChange(GoodsPosition, [StorehouseIndex, GoodsPositionIndex]) {
+      if (!GoodsPosition.checked) {
+        Data.StorehouseStockInfo[StorehouseIndex].GoodsPositionStockInfos[GoodsPositionIndex].inputValue = '';
+      }
+      if (!GoodsPosition.checked || GoodsPosition.inputValue) return;
+      if (!Data.outDeliveryForm.Number) return;
+      // 需要出库的总数量
+      const TransitionNum = getTransitionNum.value;
+      // 出库总数量
+      const AllOutNumber = getStorehouseAllOutNumber();
+      // 还需出库数量
+      const residualQuantity = TransitionNum - AllOutNumber;
+      // 如果库存数量小于等于还需出库数量则默认值为库存数量
+      if (GoodsPosition.Number <= residualQuantity) {
+        Data.StorehouseStockInfo[StorehouseIndex].GoodsPositionStockInfos[GoodsPositionIndex].inputValue = GoodsPosition.Number;
+      } else {
+        Data.StorehouseStockInfo[StorehouseIndex].GoodsPositionStockInfos[GoodsPositionIndex].inputValue = residualQuantity;
+      }
+    }
+
     onMounted(() => {
       const MaterialCode = JSON.parse(route.query.MaterialCode as string);
       if (MaterialCode) {
@@ -754,6 +784,7 @@ export default {
       getStorehouseAllOutNumber,
       ThreeCascaderCompChange,
       SizeSelectChange,
+      checkedChange,
     };
   },
 

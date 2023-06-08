@@ -60,8 +60,8 @@ export const resourceApis = {
   getMaterialGroupRemove(id) { // DELETE /Api/MaterialGroup/Remove  资源包删除
     return request({ method: 'DELETE', url: '/Api/MaterialGroup/Remove', params: { id } });
   },
-  getMaterialTypeGroup() { // GET /Api/MaterialType/Group  根据类别分组查询返回物料类型数据
-    return request({ method: 'GET', url: '/Api/MaterialType/Group' });
+  getMaterialTypeGroup(isHaveMaterial?) { // GET /Api/MaterialType/Group  根据类别分组查询返回物料类型数据
+    return request({ method: 'GET', url: `/Api/MaterialType/Group?isHaveMaterial=${isHaveMaterial}` });
   },
   getMaterialTypeGroupAll(feature) { // GET /Api/MaterialGroup/All  所有物料资源
     return request({ method: 'GET', url: `/Api/MaterialGroup/All?feature=${feature}` });

@@ -40,7 +40,7 @@
           <ul class="rows">
             <li v-for="(PositionRow, RowIndex) in Data.FoldWayPositionList" :key="RowIndex">
               <ul class="cols" >
-                <li :class="{ 'rotate':PositionCol.ShowType === 1 }"
+                <li :class="{ 'rotate':PositionCol.FrontRotate}"
                 v-for="(PositionCol, ColIndex) in PositionRow" :key="`${RowIndex}-${ColIndex}`">
                   <!-- {{PositionCol.RowValue}}- {{PositionCol.ColumnValue}} -->
                   <span class="page" :class="{
@@ -157,6 +157,21 @@ const BreadcrumbList = computed(() => [
 function isEven(num) {
   return num % 2 === 0;
 }
+//
+function setBackPage() {
+  Data.FoldWayPositionList.map((item, index) => {
+    const reverseItem:PositionListType[] = [];
+    item.forEach((element) => {
+      reverseItem.unshift(element);
+    });
+    return item.map((res, i) => {
+      const temp = res;
+      const { FrontPage } = reverseItem[i];
+      temp.BackPage = isEven(FrontPage) ? FrontPage - 1 : FrontPage + 1;
+      return temp;
+    });
+  });
+}
 function createMap() {
   if (!Data.foldWayTemplateFrom.RowNumber) {
     messageBox.failSingleError('生成失败', '请输入行数', () => null, () => null);
@@ -178,7 +193,9 @@ function createMap() {
           RowValue: Rowindex + 1,
           ColumnValue: Colindex + 1,
           FrontPage,
-          ShowType: 0,
+          FrontRotate: false,
+          BackPage: 0,
+          BackRotate: false,
         };
         FrontPage += 2;
         Col.push(PositionItem);
@@ -186,12 +203,16 @@ function createMap() {
       Row.push(Col);
     }
     Data.FoldWayPositionList = Row;
+    setBackPage();
   }
 }
 // 旋转
 function rotate(RowIndex, ColIndex) {
-  const ShowType = Data.FoldWayPositionList[RowIndex][ColIndex].ShowType ? 0 : 1;
-  Data.FoldWayPositionList[RowIndex][ColIndex].ShowType = ShowType;
+  const Rotate = !Data.FoldWayPositionList[RowIndex][ColIndex].FrontRotate;
+  Data.FoldWayPositionList[RowIndex][ColIndex].FrontRotate = Rotate;
+  const Col = Data.FoldWayPositionList[RowIndex];
+  const setBackRotateIndex = Col.length - 1 - ColIndex;
+  Data.FoldWayPositionList[RowIndex][setBackRotateIndex].BackRotate = Rotate;
 }
 // 设置页码
 function setPage(RowIndex, ColIndex, FrontPage) {
@@ -279,6 +300,7 @@ function setPagePrimaryClick() {
       });
     });
     Data.FoldWayPositionList[Data.setPageObj.RowIndex][Data.setPageObj.ColIndex].FrontPage = Data.setPageInp as number;
+    setBackPage();
     setPageCloseClick();
   }
 }
@@ -301,6 +323,7 @@ function rotatePage() {
     temp.RowValue = index + 1;
     temp.ColumnValue = i + 1;
     temp.FrontPage = isEven(res.FrontPage) ? res.FrontPage - 1 : res.FrontPage + 1;
+    temp.BackPage = isEven(res.BackPage) ? res.BackPage - 1 : res.BackPage + 1;
     return temp;
   }));
 }

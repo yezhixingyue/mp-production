@@ -11,9 +11,9 @@ const api = {
   getMaterialTypeAll({ categoryID, isStock }) { // POST /Api/MaterialType/All  所有物料类型
     return request({ method: 'GET', url: `/Api/MaterialType/All?categoryID=${categoryID}&isStock=${isStock}` });
   },
-  getMaterialTypeGroup() { // GET /Api/MaterialType/Group  所有物料分类及类型
-    return request({ method: 'GET', url: '/Api/MaterialType/Group' });
-  },
+  // getMaterialTypeGroup(isHaveMaterial) { // GET /Api/MaterialType/Group  所有物料分类及类型
+  //   return request({ method: 'GET', url: `/Api/MaterialType/Group?isHaveMaterial=${isHaveMaterial}` });
+  // },
   getMaterialTypeRemove(typeID) { // DELETE /Api/MaterialType/Remove  物料分类删除
     return request({ method: 'DELETE', url: `/Api/MaterialType/Remove?typeID=${typeID}` });
   },

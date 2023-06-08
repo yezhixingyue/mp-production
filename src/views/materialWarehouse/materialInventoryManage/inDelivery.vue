@@ -288,7 +288,7 @@ interface GoodsPositionListType {
 }
 interface GoodsPositionItemType {
   PositionID: string,
-  Number: number|string,
+  Number: number|string | null,
   PositionName: number|string,
   LocationName: number|string,
   selectedLocationID: number|string,
@@ -384,7 +384,7 @@ export default {
     function clearFrom() {
       Data.inDeliveryForm = {
         MaterialID: '',
-        UnitID: '',
+        UnitID: Data.inDeliveryForm.UnitID,
         Number: null,
         InStockType: 1,
         Handler: '',
@@ -418,7 +418,10 @@ export default {
         AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = temp as MaterialInfoType;
-      Data.inDeliveryForm.UnitID = '';
+      if (Data.checkedMaterial.UnitSelects.length) {
+        Data.inDeliveryForm.UnitID = Data.checkedMaterial.UnitSelects[0].UnitID;
+      }
+      // Data.inDeliveryForm.UnitID = '';
       Data.getMaterialData.SKUCode = '';
       MaterialWarehouseStore.getSupplierSelectList(Data.checkedMaterial.TypeID);
     }
@@ -428,7 +431,7 @@ export default {
       Data.allSelectTempMaterial = allSellectMaterial as MaterialDataItemType;
       Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
       Data.TypeID = TypeID;
-      Data.inDeliveryForm.UnitID = '';
+      // Data.inDeliveryForm.UnitID = '';
 
       if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
         SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
@@ -611,7 +614,7 @@ export default {
               StorehouseID: Storehouse?.StorehouseID || '',
               GoodsPositionList: list.map(it => ({
                 PositionID: it.PositionID,
-                Number: '',
+                Number: null,
                 PositionName: it.PositionName,
                 LocationName: it.LocationName,
                 selectedLocationID: it.selectedLocationID,
@@ -650,9 +653,12 @@ export default {
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
         if (res.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
-          Data.inDeliveryForm.UnitID = '';
+          // Data.inDeliveryForm.UnitID = '';
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 1);
+          if (Data.checkedMaterial.UnitSelects.length) {
+            Data.inDeliveryForm.UnitID = Data.checkedMaterial.UnitSelects[0].UnitID;
+          }
           ThreeCascaderComp.value.reset();
           MaterialWarehouseStore.getSupplierSelectList(Data.checkedMaterial.TypeID);
           clearFrom();

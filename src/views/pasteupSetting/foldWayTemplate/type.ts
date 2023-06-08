@@ -2,7 +2,9 @@ export interface PositionListType{
   RowValue: number,
   ColumnValue: number,
   FrontPage: number,
-  ShowType: number,
+  FrontRotate: boolean,
+  BackPage: number,
+  BackRotate:boolean
 }
 export interface FoldWayTemplateType {
   ClassID: number | string,
