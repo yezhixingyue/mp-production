@@ -17,7 +17,7 @@
     <div v-if="operatContent && OptionList.length > 4" class="op-d-box">
       <span class="is-blue-span mr-10" @click="visible = true">选择</span>
       <span class="d-content" :title="localValueListContent.replaceAll('、', '\r\n')">{{localValueListContent}}</span>
-      <OptionSelectDialog v-model:visible="visible" v-model="localValueList" :OptionList="OptionList" />
+      <OptionSelectDialog v-model:visible="visible" v-model="localValueList" :FixedType="item.Property?.FixedType" :OptionList="OptionList" />
     </div>
     <!-- 为选项类型时 复选框选择 -->
     <div v-if="operatContent && OptionList.length <= 4" class="op-c-box">
@@ -30,7 +30,7 @@
 
 <script setup lang='ts'>
 import { computed, ref } from 'vue';
-import OptionSelectDialog from './OptionSelectDialog.vue';
+import OptionSelectDialog from './OptionSelectDialog/OptionSelectDialog.vue';
 import { OperatorMpEnumList, PropertyValueTypeEnum } from '../../TypeClass/enum';
 import { ConstraintsItemClass } from '../ConstraintsItemClass';
 import { getConstraintsItemValue, getgetConstraintsItemSubmitValue } from './utils';
