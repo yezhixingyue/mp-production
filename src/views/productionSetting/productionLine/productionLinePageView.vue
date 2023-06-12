@@ -6,7 +6,7 @@
         <span class="title" :title="actionLine?.Name || ''">
           {{actionLine?.Name || ''}}
         </span>
-        <span class="fold-the-hand" v-show="actionLine && actionLine.NeedFoldWay">需要折手</span>
+        <!-- <span class="fold-the-hand" v-show="actionLine && actionLine.NeedFoldWay">需要折手</span> -->
         <span class="btn">
           <EditMenu @click="editLine">编辑</EditMenu>
           <RemoveMenu @click="delLine">删除</RemoveMenu>
@@ -129,7 +129,7 @@
           <el-form-item label="名称：" class="form-item-required">
             <div class="name">
               <el-input :maxlength="30" v-model="Data.addLineFrom.Name" />
-              <el-checkbox v-if="!isCombine" v-model="Data.addLineFrom.NeedFoldWay" label="需要折手" />
+              <!-- <el-checkbox v-if="!isCombine" v-model="Data.addLineFrom.NeedFoldWay" label="需要折手" /> -->
             </div>
           </el-form-item>
           <template v-if="!isCombine">
