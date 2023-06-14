@@ -85,7 +85,7 @@ export default {
     const logining = ref(false);
     const loadingUserInfo = ref(false);
 
-    const pageTitle = isOrderApp ? '生产下单与外协入库系统' : '名片之家 生产Erp系统';
+    const pageTitle = isOrderApp ? '生产下单与外协入库系统' : '凌顶揽众 生产Erp系统';
 
     const buttonTitle = computed(() => {
       if (loadingUserInfo.value) return '正在获取用户信息...';

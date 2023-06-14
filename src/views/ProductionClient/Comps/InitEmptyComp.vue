@@ -1,6 +1,6 @@
 <template>
   <div class="client-empty-comp-wrap">
-    <p class="mp-common-title-wrap black">名片之家生产报工系统</p>
+    <p class="mp-common-title-wrap black">凌顶揽众生产报工系统</p>
     <div>
       <img src="../assets/images/empty.png" alt="" />
     </div>

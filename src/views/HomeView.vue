@@ -11,7 +11,7 @@
           fill="#ffffff" p-id="8186" data-spm-anchor-id="a313x.7781069.0.i8" class="selected"></path>
       </svg>
       <span>你好，</span>
-      <span>欢迎使用名片之家后台管理系统</span>
+      <span>欢迎使用凌顶揽众生产管理系统</span>
       <span v-if="dateString">，今天是{{dateString}}，{{weekString}}</span>
       <span>，开始今天的工作吧！</span>
       <!-- <i>!</i> -->

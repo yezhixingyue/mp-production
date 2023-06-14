@@ -2,7 +2,8 @@
 <template>
   <div class="mp-erp-layout-left-menu-comp-wrap" :class="isCollapse ? 'collapsed':'unfold'">
     <div class="logo-box" @click="onMenuItemClick(homeRouteInfo, '0')" @keyup="() => null">
-      <img src="@/assets/images/logo.png" alt="" class="broad">
+      <!-- <img src="@/assets/images/logo.png" alt="" class="broad"> -->
+      <img src="@/assets/images/lingding.png" style="width: 155px;margin-right: 8px;margin-bottom: 1px;" alt="" class="broad">
     </div>
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu :default-active="defaultActive" :default-openeds='defaultOpeneds' background-color="#222B3A" :collapse="isCollapse"
