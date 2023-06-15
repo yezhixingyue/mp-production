@@ -81,7 +81,7 @@
         <el-scrollbar @scroll="addMaterialManageScroll">
       <div class="add-material-manage-dialog">
 
-        <el-form :model="Data.addMaterialManageForm" label-width="200px">
+        <el-form :model="Data.addMaterialManageForm" label-width="255px">
           <el-form-item :label="`类型：`">
             <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
           </el-form-item>
@@ -676,7 +676,8 @@ export default {
         margin: 0 auto;
         margin-bottom: 20px;
         width: 370px;
-        margin-left: 65px;
+        margin-left: 10px;
+        align-items: flex-end;
         &.attributes {
           .el-input, .el-select, .el-input-number{
             input{
@@ -691,6 +692,11 @@ export default {
               white-space: nowrap;
             }
           }
+        }
+        .el-form-item__label{
+          min-height: 32px;
+          height: auto;
+          text-align: right;
         }
       }
 

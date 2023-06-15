@@ -4,6 +4,8 @@
     :closeClick="SeeImgCloseClick"
     :showPrimary="false"
     :closeBtnText="'关闭'"
+    top="5vh"
+
     >
     <template #header>
       <slot name="header">
@@ -13,10 +15,12 @@
       </slot>
     </template>
     <template #default>
-      <el-image v-if="imgUrl" :src="imgUrl" fit="contain" />
-      <p v-else style="text-align: center;">
-        {{noImgText}}
-      </p>
+      <div style="height:calc(100vh - 300px); text-align: center;">
+        <el-image v-if="imgUrl" :src="imgUrl" style="height:100%"/>
+        <p v-else style="text-align: center; line-height: calc(100vh - 400px);">
+          {{noImgText}}
+        </p>
+      </div>
     </template>
   </DialogContainerComp>
 </template>

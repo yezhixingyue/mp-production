@@ -9,13 +9,13 @@
     <main>
         <el-table border fit
         :data="Data.AttributesList" style="width: 100%">
-          <el-table-column prop="AttributeName" label="名称" min-width="209" />
+          <el-table-column prop="AttributeName" label="名称" show-overflow-tooltip min-width="209" />
           <el-table-column prop="AttributeType" label="类型" min-width="218">
             <template #default="scope:any">
               {{scope.row.AttributeType === 1 ? '数字值' : '选择项'}}
             </template>
           </el-table-column>
-          <el-table-column prop="RegularQuantity" label="描述" min-width="658">
+          <el-table-column prop="RegularQuantity" label="描述" show-overflow-tooltip min-width="658">
             <template #default="scope:any">
               <template v-if="scope.row.AttributeType === 1">
                 单位：{{scope.row.AttributeUnit}}；

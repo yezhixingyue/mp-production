@@ -58,9 +58,9 @@
                   </template>
                 </p>
                 <el-form-item :label="`出库数量：`" class="out-number">
-                  <el-input-number size="large"
+                  <mp-input-number size="large"
                   :max="999999" placeholder="请输入出库数量"
-                  :controls="false" v-model="Data.outDeliveryForm.Number" />
+                  :controls="false" :min="0" :step="0.01" step-strictly v-model="Data.outDeliveryForm.Number" />
                   <OneLevelSelect
                     v-if="Data.checkedMaterial"
                     :options='Data.checkedMaterial.UnitSelects'
@@ -115,7 +115,7 @@
                   <div class="warehouse-item"
                   v-for="(Storehouse, StorehouseIndex) in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
                     <p class="title">
-                      <span>
+                      <span class="StorehouseNameBox" >
                         <span class="StorehouseName">
                           {{Storehouse.StorehouseName}}
                         </span>：{{getStorehouseAllNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
@@ -123,7 +123,7 @@
                       <span>
                         出库：{{getStorehouseOutNumber(Storehouse)}}{{Data.checkedMaterial?.StockUnit}}
                       </span>
-                      <span>
+                      <span style="flex: 1; text-align: right;">
                         <mp-button link type="primary"
                         @click="SeeImg(Storehouse.StorehouseImg)">查看平面布局图</mp-button>
                       </span>
@@ -132,8 +132,14 @@
                       <li v-for="(GoodsPosition, GoodsPositionIndex) in Storehouse.GoodsPositionStockInfos"
                       :key="GoodsPosition.PositionID">
                         <span class="ranks">
-                          {{GoodsPosition.UpperDimension}}
-                          {{GoodsPosition.PositionName}}
+                          <MpTip
+                          effect="dark"
+                          :content="`${GoodsPosition.UpperDimension} ${GoodsPosition.PositionName}`"
+                          placement="top"
+                          :disabled="`${GoodsPosition.UpperDimension} ${GoodsPosition.PositionName}`.length < 10">
+                            {{GoodsPosition.UpperDimension}}
+                            {{GoodsPosition.PositionName}}
+                          </MpTip>
                           <!-- A区 001柜 3行 2列 -->
                         </span>
                         <span class="PCS">
@@ -142,8 +148,8 @@
                         <span class="number">
                           <el-checkbox v-model="GoodsPosition.checked"
                           @change="checkedChange(GoodsPosition, [StorehouseIndex,GoodsPositionIndex])" label="出库" size="large" />
-                          <div v-if="GoodsPosition.checked"><el-input-number :max="999999"
-                          :controls="false" v-model="GoodsPosition.inputValue"></el-input-number>
+                          <div v-if="GoodsPosition.checked"><mp-input-number :max="999999"
+                          :controls="false" v-model="GoodsPosition.inputValue" :step="0.01" step-strictly :min="0"></mp-input-number>
                             <span class="unit">
                               {{Data.checkedMaterial?.StockUnit}}
                             </span>
@@ -239,11 +245,12 @@
                 <template v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
                   <template v-for="GoodsPosition in Storehouse.GoodsPositionStockInfos" :key="GoodsPosition.PositionID">
 
-                    <li v-if="GoodsPosition.checked"
-                      style="line-height: 45px;border-bottom:1px solid #F2F6FC;display: flex;justify-content: space-between;">
-                      <span style="width:33.33%;text-align:center;">{{Storehouse.StorehouseName}}</span>
-                      <span style="width:33.33%;text-align:center;">{{GoodsPosition.UpperDimension}} {{GoodsPosition.PositionName}}</span>
-                      <span style="width:33.33%;text-align:center;">{{GoodsPosition.inputValue}}{{Data.checkedMaterial?.StockUnit}}</span>
+                    <li v-if="GoodsPosition.checked && GoodsPosition.inputValue"
+                      style="line-height: 20px;border-bottom:1px solid #F2F6FC;display: flex;justify-content: space-between;align-items: center;
+                      min-height: 45px;">
+                      <span style="width:30%;text-align:center;">{{Storehouse.StorehouseName}}</span>
+                      <span style="width:33.33%;text-align:center;margin: 0 3.33%;">{{GoodsPosition.UpperDimension}} {{GoodsPosition.PositionName}}</span>
+                      <span style="width:30%;text-align:center;">{{GoodsPosition.inputValue}}{{Data.checkedMaterial?.StockUnit}}</span>
                     </li>
                   </template>
                 </template>
@@ -570,7 +577,7 @@ export default {
           num += Number(it.inputValue) || 0;
         }
       });
-      return num;
+      return Math.floor(num * 100) / 100;
     }
     // 获取仓库的出库总数量
     function getStorehouseAllNumber(list) {
@@ -578,7 +585,7 @@ export default {
       list.GoodsPositionStockInfos.forEach(it => {
         num += Number(it.Number) || 0;
       });
-      return num;
+      return Math.floor(num * 100) / 100;
     }
     // 获取全部仓库的出库总数量
     function getStorehouseAllOutNumber() {
@@ -590,7 +597,7 @@ export default {
           }
         });
       });
-      return num;
+      return Math.floor(num * 100) / 100;
     }
     // 获取转换为出入库单位的数量;
     const getOutUnitNum = computed(() => {
@@ -603,7 +610,7 @@ export default {
       } else {
         return 0;
       }
-      return num / ratio;
+      return Math.floor((num / ratio) * 100) / 100;
     });
     // 出入库单位名;
     const outUnitName = computed(() => {
@@ -690,6 +697,8 @@ export default {
         messageBox.failSingleError('出库失败', '请选择物料', () => null, () => null);
       } else if (!Data.outDeliveryForm.Number) {
         messageBox.failSingleError('出库失败', '请输入出库数量', () => null, () => null);
+      } else if (Data.outDeliveryForm.Number < 0) {
+        messageBox.failSingleError('出库失败', '出库数量请输入正数', () => null, () => null);
       } else if (!reg.test(String(Data.outDeliveryForm.Number))) {
         messageBox.failSingleError('出库失败', '出库数量不能超过两位小数', () => null, () => null);
       } else if (!Data.outDeliveryForm.UnitID) {
@@ -714,6 +723,11 @@ export default {
             }
           });
         });
+        // temp.some(it => it.Number < 0);
+        if (temp.some(it => it.Number < 0)) {
+          messageBox.failSingleError('出库失败', '请输入正数', () => null, () => null);
+          return;
+        }
         Data.outDeliveryForm.MaterialGoodsPositions = temp;
         // 设置出库货位及数量
         Data.outVerify = true;
@@ -968,9 +982,9 @@ export default {
               align-items: center;
               margin-bottom: 18px;
               padding-left: 82px;
-              display: flex;
+              // display: flex;
               flex-wrap: wrap;
-              height: 80px;
+              min-height: 80px;
               line-height: 40px;
               font-size: 22px;
               color: #444444;
@@ -990,6 +1004,9 @@ export default {
             overflow-x: auto;
             flex: 1;
             padding-top: 10px;
+            .el-scrollbar__wrap{
+              padding-right: 10px;
+            }
             .warehouse-item{
               .title{
                 font-size: 16px;
@@ -997,9 +1014,15 @@ export default {
                 line-height: 17px;
                 display: flex;
                 justify-content: space-between;
+                align-items: flex-end;
                 margin-bottom: 10px;
                 padding: 0 10px;
                 margin-top: 10px;
+                .StorehouseNameBox{
+                  width: 50%;
+                  padding-right: 10px;
+                  box-sizing: border-box;
+                }
                 .StorehouseName{
                   font-weight: 700;
                 }

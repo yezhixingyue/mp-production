@@ -129,13 +129,6 @@ export class LocationMapClass {
       });
       this.rows.push(arr);
     });
-    // this.xAxis.forEach((DimensionX, xIndex) => {
-    //   const arr:Square[] = [];
-    //   this.yAxis.forEach((DimensionY, yIndex) => {
-    //     arr.push(new Square(DimensionX, xIndex, DimensionY, yIndex, this.squareWidth, this.squareHeight));
-    //   });
-    //   this.rows.push(arr);
-    // });
     // 4. 生成locationSet -- 使用模拟数据 -- 后面需从外部传递入
     this.locationSet = originData.UsePositionDetails
       .map(it => new LocationSetClass(
@@ -179,7 +172,6 @@ export class LocationMapClass {
           this.selectedLocation[i].color = LocationColorEnums.isSetSelected;
         }
       });
-      // this.selectedLocation.color = LocationColorEnums.isSetSelected;
       viewer.locationSetViewer(this.selectedLocation);
     }
   }
@@ -208,6 +200,7 @@ export class LocationMapClass {
     const x = Math.floor((e.offsetX - MapConditionEnum.labelGapWidth) / this.squareWidth);
     const y = Math.floor((e.offsetY - MapConditionEnum.labelGapHeight) / this.squareHeight);
     if (this.rows[y] && this.rows[y][x]) {
+      // 调用单元格点击事件
       const set = this.rows[y][x].onclick(viewer, this);
       // 如果是多选（入库选择货位 此时不用设置货位所以没有货位的单元格都为禁用）并且点击的单元格没有货位信息
       if (this.isMultiSelect && !set) {
@@ -230,14 +223,15 @@ export class LocationMapClass {
             this.selectedLocation[i].color = LocationColorEnums.normal;
           }
         });
-        // this.selectedLocation.color = LocationColorEnums.normal;
         viewer.locationSetViewer(this.selectedLocation);
         const old = this.selectedLocation.find(it => it.PositionID === set?.PositionID);
-        // const old = this.selectedLocation;
         // 因为响应式 使用 noSelected 转换一下
         const noSelected = this.selectedLocation.filter(it => it.PositionID !== set?.PositionID);
         this.selectedLocation = [...noSelected];
         if (old?.PositionID === set?.PositionID || !set) {
+          if (!this.isMultiSelect) {
+            this.selectedLocation = [];
+          }
           return;
         }
       }
@@ -254,7 +248,6 @@ export class LocationMapClass {
             this.selectedLocation[i].color = LocationColorEnums.isSetSelected;
           }
         });
-        // this.selectedLocation.color = LocationColorEnums.isSetSelected;
         viewer.locationSetViewer(this.selectedLocation);
       }
     }
@@ -264,8 +257,6 @@ export class LocationMapClass {
   onMapMove(e: MouseEvent, viewer: Viewer, DimensionUnit:DimensionUnitType) {
     const x = Math.floor((e.offsetX - MapConditionEnum.labelGapWidth) / this.squareWidth);
     const y = Math.floor((e.offsetY - MapConditionEnum.labelGapHeight) / this.squareHeight);
-
-    // console.log(this.rows, 'e');
     this.hoverHtml = [];
     if (this.rows[y] && this.rows[y][x]) {
       const set = this.rows[y][x].onmousemove(viewer, this, DimensionUnit);
@@ -275,13 +266,6 @@ export class LocationMapClass {
           this.hoverHtml = set.goodsPositionStockDetails.map((res => {
             const msg:string[] = [];
             msg.push(res.AttributeDescribe);
-            // res.MaterialRelationAttributes.forEach(res => {
-            //   if (res.NumericValue) {
-            //     msg.push(`${res.NumericValue || ''}${res.AttributeUnit || ''}`);
-            //   } else {
-            //     msg.push(String(res.InputSelectValue || res.SelectValue || ''));
-            //   }
-            // });
             msg.push(res.SizeDescribe || '');
             msg.push(`${res.Stock}${res.StockUnit || ''}`);
             return msg.join(' ');

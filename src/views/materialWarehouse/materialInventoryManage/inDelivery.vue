@@ -56,9 +56,9 @@
                   </template>
                 </p>
                 <el-form-item :label="`入库数量：`" class="in-number">
-                  <el-input-number
+                  <mp-input-number
                   :max="999999.99" placeholder="请输入入库数量"
-                   :controls="false" v-model="Data.inDeliveryForm.Number" />
+                   :controls="false" :step="0.01" step-strictly :min="0" v-model="Data.inDeliveryForm.Number" />
                   <OneLevelSelect
                     v-if="Data.checkedMaterial"
                     :options='Data.checkedMaterial.UnitSelects'
@@ -104,10 +104,10 @@
                     ></OneLevelSelect>
                     <el-form-item :label="`单价：`" v-if="Data.inDeliveryForm.InStockType === 1"
                       size="large">
-                      <el-input-number
+                      <mp-input-number
                       :max="999999.99"
                       placeholder="请输入单价"
-                      :controls="false" v-model="Data.inDeliveryForm.Price"
+                      :controls="false" :min="0" v-model="Data.inDeliveryForm.Price"
                       size="large"/>
                       <template v-if="inUnitName">
                       元/{{inUnitName}}
@@ -115,7 +115,7 @@
                     </el-form-item>
                     <el-form-item :label="`共计：`" v-if="Data.inDeliveryForm.InStockType === 1">
                       <p style="font-size: 16px;">
-                        ￥  <span style="color:red">{{Number(Data.inDeliveryForm.Price) * Number(Data.inDeliveryForm.Number)}}</span>元
+                        ￥  <span style="color:red">{{Math.floor(Number(Data.inDeliveryForm.Price) * Number(Data.inDeliveryForm.Number) * 1000) / 1000}}</span>元
                       </p>
                     </el-form-item>
                 </el-form-item>
@@ -163,14 +163,20 @@
                     <ul>
                       <li v-for="(GoodsPosition, i) in item.GoodsPositionList" :key="GoodsPosition.PositionID">
                         <span class="ranks">
-                          {{GoodsPosition.LocationName}}
-                          {{GoodsPosition.PositionName}}
+                          <MpTip
+                          effect="dark"
+                          :content="`${GoodsPosition.LocationName} ${GoodsPosition.PositionName}`"
+                          placement="top"
+                          :disabled="`${GoodsPosition.LocationName} ${GoodsPosition.PositionName}`.length < 10">
+                            {{GoodsPosition.LocationName}}
+                            {{GoodsPosition.PositionName}}
+                          </MpTip>
                         </span>
                         <span class="number">
                           <span>
                           入库
-                            <el-input-number :max="999999.99" :controls="false"
-                            v-model="GoodsPosition.Number"></el-input-number>
+                            <mp-input-number :max="999999.99" :controls="false"
+                            v-model="GoodsPosition.Number" :min="0" :step="0.01" step-strictly></mp-input-number>
                             {{Data.checkedMaterial?.StockUnit}}
                           </span>
                         </span>
@@ -455,7 +461,7 @@ export default {
       list.forEach(it => {
         num += Number(it.Number);
       });
-      return num;
+      return Math.floor(num * 100) / 100;
     }
     // 获取全部仓库的入库总数量
     function getStorehouseAllInNumber() {
@@ -465,7 +471,7 @@ export default {
           num += Number(it.Number);
         });
       });
-      return num;
+      return Math.floor(num * 100) / 100;
     }
     // 获取转换为出入库单位的数量;
     const getInUnitNum = computed(() => {
@@ -478,7 +484,8 @@ export default {
       } else {
         return 0;
       }
-      return num / ratio;
+      // return num / ratio;
+      return Math.floor((num / ratio) * 100) / 100;
     });
     function ToOutDelivery() {
       const routeData = router.resolve({
@@ -511,6 +518,8 @@ export default {
         messageBox.failSingleError('入库失败', '请选择物料', () => null, () => null);
       } else if (!Data.inDeliveryForm.Number) {
         messageBox.failSingleError('入库失败', '请输入入库数量', () => null, () => null);
+      } else if (Data.inDeliveryForm.Number < 0) {
+        messageBox.failSingleError('入库失败', '入库数量请输入正数', () => null, () => null);
       } else if (!reg.test(String(Data.inDeliveryForm.Number))) {
         messageBox.failSingleError('入库失败', '入库数量不能超过两位小数', () => null, () => null);
       } else if (!Data.inDeliveryForm.UnitID) {
@@ -598,7 +607,7 @@ export default {
               noHave.forEach(noHaveIt => {
                 haveStorehouse.GoodsPositionList.push({
                   PositionID: noHaveIt.PositionID,
-                  Number: '',
+                  Number: null,
                   PositionName: noHaveIt.PositionName,
                   LocationName: noHaveIt.LocationName,
                   selectedLocationID: noHaveIt.selectedLocationID,
@@ -911,9 +920,9 @@ export default {
               align-items: center;
               margin-bottom: 18px;
               padding-left: 82px;
-              display: flex;
+              // display: flex;
               flex-wrap: wrap;
-              height: 80px;
+              min-height: 80px;
               line-height: 40px;
               font-size: 22px;
               color: #444444;
@@ -943,6 +952,9 @@ export default {
             overflow-x: auto;
             flex: 1;
             padding-top: 10px;
+            .el-scrollbar__wrap{
+              padding-right: 10px;
+            }
             .warehouse-item{
               .title{
                 font-size: 16px;

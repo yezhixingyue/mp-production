@@ -795,11 +795,12 @@ export default {
         overflow-x: auto;
         flex: 1;
         padding-top: 10px;
+        padding-right: 10px;
         .warehouse-item{
           .title{
             font-size: 20px;
             font-weight: 400;
-            line-height: 17px;
+            // line-height: 17px;
             display: flex;
             justify-content: space-between;
             span{
@@ -820,7 +821,7 @@ export default {
             li{
               display: flex;
               border-bottom: 1px solid #F2F6FC;
-              height: 70px;
+              min-height: 70px;
               align-items: center;
               text-align: center;
               justify-content: space-between;

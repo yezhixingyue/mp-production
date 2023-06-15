@@ -67,11 +67,11 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="单位换算：" class="form-item-required">
-            <el-input-number :maxlength="4"
+            <el-input-number :maxlength="4" :min="0"
              v-model="Data.addUnitForm.ProportionUp" :controls="false"/>
             <span class="unit">{{Data.addUnitForm.Unit}}</span>
             <span>=</span>
-            <el-input-number :maxlength="4"
+            <el-input-number :maxlength="4" :min="0"
              v-model="Data.addUnitForm.ProportionDown" :controls="false"/>
             <span class="unit">{{Data.currentStoreUnit}}</span>
           </el-form-item>
@@ -89,7 +89,7 @@
     >
     <template #default>
       <div class="set-storage-unit-dialog">
-        <el-form :model="Data.setStoreUnitForm" label-width="100px">
+        <el-form :model="Data.setStoreUnitForm" label-width="100px" @submit.prevent>
           <el-form-item label="库存单位：">
             <el-input v-model="Data.setStoreUnitForm.StockUnit" />
           </el-form-item>
@@ -134,7 +134,7 @@ export default {
         Unit: '',
         UnitPurpose: 1,
         ProportionUp: 1,
-        ProportionDown: 1,
+        ProportionDown: null,
       },
       DataTotal: 0,
       getUnitListData: {
@@ -176,7 +176,7 @@ export default {
         Unit: '',
         UnitPurpose: 1,
         ProportionUp: 1,
-        ProportionDown: 1,
+        ProportionDown: null,
       };
     }
     function addUnitCloseClick() {
@@ -213,13 +213,16 @@ export default {
     function addUnitPrimaryClick() {
       if (!Data.addUnitForm.Unit) {
         // 报错
-        messageBox.failSingle('请输入单位', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入单位', () => null, () => null);
       } else if (!Data.addUnitForm.ProportionUp) {
         // 报错
-        messageBox.failSingle('请输入单位换算', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入单位换算', () => null, () => null);
       } else if (!Data.addUnitForm.ProportionDown) {
         // 报错
-        messageBox.failSingle('请输入单位换算', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入单位换算', () => null, () => null);
+      } else if (Data.addUnitForm.ProportionUp < 0 || Data.addUnitForm.ProportionDown < 0) {
+        // 报错
+        messageBox.failSingleError('保存失败', '单位换算请输入正数', () => null, () => null);
       } else {
         api.getMaterialTypeUnitSave(Data.addUnitForm).then(res => {
           if (res.data.Status === 1000) {
@@ -238,7 +241,7 @@ export default {
     function setStoreUnitPrimaryClick() {
       if (!Data.setStoreUnitForm.StockUnit) {
         // 报错
-        messageBox.failSingle('请输入库存单位', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入库存单位', () => null, () => null);
       } else {
         api.getMaterialTypeSetStockUnit(Data.setStoreUnitForm).then(res => {
           if (res.data.Status === 1000) {

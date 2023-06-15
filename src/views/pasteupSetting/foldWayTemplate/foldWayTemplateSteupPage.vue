@@ -423,7 +423,7 @@ export default {
       }
       .rows{
         display: inline-block;
-        margin: 2px 0 0 2px;
+        margin: 2px;
       }
       .cols{
         display: flex;
