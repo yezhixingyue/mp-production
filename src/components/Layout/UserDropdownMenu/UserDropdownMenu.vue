@@ -119,9 +119,18 @@ watch(() => user.value?.HeadPic, (newVal, oldVal) => {
     user-select: none;
     span{
       margin: 0 5px;
+      transition: color 0.1s ease-in-out;
+      max-width: 6em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    color: #888e99;
+    color: #ddd;
     &:hover {
+      color: #26bcf9;
+    }
+
+    i {
       color: #26bcf9;
     }
 

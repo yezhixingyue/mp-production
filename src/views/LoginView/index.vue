@@ -156,7 +156,7 @@ export default {
       height: 91px;
       box-sizing: border-box;
       > img {
-        width: 228px;
+        width: 165px;
       }
     }
     > main {
