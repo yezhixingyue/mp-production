@@ -13,6 +13,8 @@ import store from './store';
 import './assets/css/index.scss';
 import './assets/css/el-table-reset.scss';
 import MpButton from './components/common/MpButton.vue';
+import MpInputNumber from './components/common/MpInputNumber.vue';
+import MpTip from './components/common/MpTip.vue';
 import MpEmpty from './components/common/ElementPlusContainners/MpEmpty.vue';
 import MpTableColumn from './components/common/ElementPlusContainners/MpTableColumn.vue';
 
@@ -24,6 +26,8 @@ Object.keys(ElementPlusIconsVue).forEach(key => {
 });
 
 app.component('MpButton', MpButton);
+app.component('MpInputNumber', MpInputNumber);
+app.component('MpTip', MpTip);
 app.component('MpEmpty', MpEmpty);
 app.component('MpTableColumn', MpTableColumn);
 

@@ -52,9 +52,8 @@
         </dd>
       </dl>
       <template v-if="!isMultiSelect">
-        <mp-button :disabled="locationMap.newLocation.length===0" type="primary" @click="onSetNewClick">设置新货位</mp-button>
-        <!-- <el-button :disabled="!locationMap.selectedLocation" type="primary" @click="onRenameClick">修改货位名称</el-button> -->
-        <mp-button :disabled="!locationMap.selectedLocation" type="danger" @click="onRemoveClick">删除货位</mp-button>
+        <mp-button v-if="locationMap.newLocation.length" type="primary" @click="onSetNewClick">设置新货位</mp-button>
+        <mp-button v-if="locationMap.selectedLocation.length" type="danger" @click="onRemoveClick">删除货位</mp-button>
       </template>
     </aside>
   </section>
@@ -270,7 +269,7 @@ export default {
       props.selectedLocationChange(val);
     });
     const onRemoveClick = () => {
-      if (!locationMap.value.selectedLocation) return;
+      if (!locationMap.value.selectedLocation.length) return;
       message.warnCancelBox(
         '确定删除该货位吗',
         `货位名称: [ ${locationMap.value.selectedLocation[0].PositionName} ]`,

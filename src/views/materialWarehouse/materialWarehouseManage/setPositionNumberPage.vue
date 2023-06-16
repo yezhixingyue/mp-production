@@ -75,8 +75,8 @@
             style="width:100px"/>
           </el-form-item>
           <el-form-item label="显示顺序：">
-            <el-input :maxlength="3" v-model.number="Data.addPalletDimensionsForm.Sort"
-            style="width:100px" />
+            <el-input-number :step-strictly="true" :step="1" :controls="false" :maxlength="3" v-model.number="Data.addPalletDimensionsForm.Sort"
+            style="width:100px;" />
             <span class="hint">数字越小显示越靠前</span>
           </el-form-item>
           <div class="explain">
@@ -253,8 +253,11 @@ export default {
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
           if (res.data.Status === 1000) {
-            setStorage();
-            getLockStatus();
+            const cb = () => {
+              setStorage();
+              getLockStatus();
+            };
+            MpMessage.dialogSuccess('锁定成功', cb, cb);
           }
         });
       }, () => undefined);
@@ -270,8 +273,11 @@ export default {
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
           if (res.data.Status === 1000) {
-            setStorage();
-            getLockStatus();
+            const cb = () => {
+              setStorage();
+              getLockStatus();
+            };
+            MpMessage.dialogSuccess('解锁成功', cb, cb);
           }
         });
       }, () => undefined);
@@ -385,6 +391,9 @@ export default {
     .el-form{
       .el-input{
         width: 200px;
+        input{
+          text-align: left;
+        }
       }
       .to{
         margin: 0 10px;

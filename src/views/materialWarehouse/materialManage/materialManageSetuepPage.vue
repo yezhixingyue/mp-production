@@ -50,7 +50,7 @@
     <template #default>
       <div class="add-Generative-Rule-dialog">
         <el-scrollbar>
-        <el-form :model="Data.generativeRule" label-width="300px">
+        <el-form :model="Data.generativeRule" >
           <el-form-item :label="`${item.AttributeName}：`"
           :class="{'form-item-required': item.IsRequired}"
           v-for="(item) in Data.generativeRule.Attributes" :key="item.AttributeID">

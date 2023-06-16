@@ -40,10 +40,25 @@ export class Viewer {
       return;
     }
     if (square.x === 0 && ((square.y + 1) % 5 === 0 || square.y === 0)) {
+      const text = `${square.DimensionY}${DimensionUnit.DimensionUnitY}`;
       this.cxs.font = 'bold 13px yahei';
       this.cxs.fillStyle = '#444';
       this.cxs.textAlign = 'right';
-      this.cxs.fillText(`${square.DimensionY}${DimensionUnit.DimensionUnitY}`, square.points[0][0] - 4, square.points[0][1] + square.height / 1.67, 50);
+      // this.cxs.fillText(`${square.DimensionY}${DimensionUnit.DimensionUnitY}`, square.points[0][0] - 4, square.points[0][1] + square.height / 1.67, 50);
+      // 用于处理文字数量过多挤到一块的问题 begin
+      const lineHeight = 15; // 行高
+      const lineNum = square.height / lineHeight; // 可以放下的行数
+      const allLine = Math.ceil(text.length / 4); // 文字总行数
+      const cycleIndex = allLine <= lineNum ? allLine : lineNum; // 循环次数
+      const initCoordinate = (square.points[0][1] + square.height / 1.67) - (cycleIndex * lineHeight) / 2;
+      for (let index = 0; index < cycleIndex; index++) {
+        let msg = text.slice(index, index + 4);
+        if (index >= cycleIndex && text.slice(index).length > 4) {
+          msg = `${text.slice(index, index + 2)}...`;
+        }
+        this.cxs.fillText(msg, square.points[0][0] - 3, initCoordinate + index * lineHeight, 50);
+      }
+      // 用于处理文字数量过多挤到一块的问题 end
     }
     if (square.y === 0 && ((square.x + 1) % 5 === 0 || square.x === 0)) {
       this.cxs.font = 'bold 13px yahei';

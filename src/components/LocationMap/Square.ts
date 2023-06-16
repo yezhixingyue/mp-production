@@ -40,6 +40,7 @@ export class Square {
   }
 
   onclick(viewer: Viewer, locationMap: LocationMapClass): LocationSetClass | null {
+    // 如果在货位中 返回货位数据
     if (this.belongTo || this.isMultiSelect) {
       // 已在货位中，执行货位操作
       return this.belongTo;

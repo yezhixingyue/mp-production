@@ -184,7 +184,7 @@
             </div>
           </el-form-item>
           <el-form-item :label="`预警阈值：`">
-            <el-input
+            <el-input-number :controls="false" :min="0"
             style="width:100px; margin-right:10px"
             maxlength="6"
             v-model="Data.SetSMSWarnForm.WarnThreshold" /> {{Data.SetSMSWarnForm.StockUnit}}
@@ -734,11 +734,12 @@ export default {
         overflow-x: auto;
         flex: 1;
         padding-top: 10px;
+        padding-right: 10px;
         .warehouse-item{
           .title{
             font-size: 20px;
             font-weight: 400;
-            line-height: 17px;
+            // line-height: 17px;
             display: flex;
             justify-content: space-between;
             >span{
@@ -759,7 +760,7 @@ export default {
             li{
               display: flex;
               border-bottom: 1px solid #F2F6FC;
-              height: 70px;
+              min-height: 70px;
               align-items: center;
               text-align: center;
               justify-content: space-between;
