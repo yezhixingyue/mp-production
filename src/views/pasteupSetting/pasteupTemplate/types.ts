@@ -13,14 +13,17 @@ interface ModeItemList {
   ColumnNumber: number|null|'',
   key: string,
 }
-interface PlateInfo {
+// interface PlateInfo {
+//   FilePath: string,
+//   Width: number,
+//   Height: number,
+//   AreaList: AreaList[],
+// }
+interface ModeSizeAttribute {
   FilePath: string,
   Width: number,
   Height: number,
   AreaList: AreaList[],
-}
-interface ModeSizeAttribute {
-  PlateInfo: PlateInfo
   // 是否按模位
   UseMode: boolean,
   ModeItemList: ModeItemList[],

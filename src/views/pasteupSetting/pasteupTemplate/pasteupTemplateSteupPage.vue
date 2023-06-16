@@ -70,11 +70,11 @@
                 </template>
                 <template #tip>
                   <div class="el-upload__tip text-red">
-                    {{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath? '已上传模板文件':'未上传'}}
+                    {{Data.addPasteupTemplateFrom.ModeSizeAttribute.FilePath? '已上传模板文件':'未上传'}}
                   </div>
                 </template>
               </el-upload>
-              <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath" target="_blank">
+              <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.FilePath" target="_blank">
                 下载当前模板文件</el-link>
             </div>
             <p class="hint">
@@ -93,12 +93,12 @@
                 - <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MinValue"/> mm
               </p>
             </div> -->
-            <p class="template-info" v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.PlateInfo.FilePath">
+            <p class="template-info" v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.FilePath">
               <ul>
-                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width}}mm</span>
-                          <span>高:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Height}}mm</span></li>
+                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.Width}}mm</span>
+                          <span>高:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.Height}}mm</span></li>
                 <el-scrollbar max-height="100px">
-                <li v-for="(Area,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList" :key="index">
+                <li v-for="(Area,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.AreaList" :key="index">
                 版芯：<span>X:{{Area.XCoordinate}}mm</span>
                 <span>Y:{{Area.YCoordinate}}mm</span>
                 <span>宽:{{Area.Width}}mm</span>
@@ -220,19 +220,17 @@ const Data: DataType = reactive({
     // 尺寸
     SizeType: 0,
     ModeSizeAttribute: {
-      PlateInfo: {
-        FilePath: '',
-        Width: 0,
-        Height: 0,
-        AreaList: [
-          // {
-          //   XCoordinate: 0,
-          //   YCoordinate: 0,
-          //   Length: 0,
-          //   Width: 0,
-          // },
-        ],
-      },
+      FilePath: '',
+      Width: 0,
+      Height: 0,
+      AreaList: [
+        // {
+        //   XCoordinate: 0,
+        //   YCoordinate: 0,
+        //   Length: 0,
+        //   Width: 0,
+        // },
+      ],
       // 是否按模位
       UseMode: false,
       ModeItemList: [
@@ -316,7 +314,7 @@ function verification() {
       return false;
     }
     // 按模板尺寸 没有上传模板
-    if (Data.addPasteupTemplateFrom.SizeType === 0 && !Data.addPasteupTemplateFrom.ModeSizeAttribute?.PlateInfo.FilePath) {
+    if (Data.addPasteupTemplateFrom.SizeType === 0 && !Data.addPasteupTemplateFrom.ModeSizeAttribute?.FilePath) {
       messageBox.failSingleError('保存失败', '请上传模板文件', () => null, () => null);
       return false;
     }
@@ -350,7 +348,7 @@ function verification() {
           return false;
         }
 
-        const { AreaList } = Data.addPasteupTemplateFrom.ModeSizeAttribute ? Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo : { AreaList: [] };
+        const { AreaList } = Data.addPasteupTemplateFrom.ModeSizeAttribute ? Data.addPasteupTemplateFrom.ModeSizeAttribute : { AreaList: [] };
         // 当前模位起点所在可拼版区域
         const Area = AreaList.find(area => {
           // 分别找到横轴和竖轴的起点是否都在此可拼版区域
@@ -410,10 +408,10 @@ function savePasteupTemplateSize() {
 function handlleUploaded(e) {
   if (e.Status === 1000) {
     if (Data.addPasteupTemplateFrom.ModeSizeAttribute) {
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.FilePath = e.Data.FilePath;
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.AreaList = e.Data.AreaList;
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Width = e.Data.Width;
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.PlateInfo.Height = e.Data.Height;
+      Data.addPasteupTemplateFrom.ModeSizeAttribute.FilePath = e.Data.FilePath;
+      Data.addPasteupTemplateFrom.ModeSizeAttribute.AreaList = e.Data.AreaList;
+      Data.addPasteupTemplateFrom.ModeSizeAttribute.Width = e.Data.Width;
+      Data.addPasteupTemplateFrom.ModeSizeAttribute.Height = e.Data.Height;
     }
   } else {
     messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
@@ -446,19 +444,17 @@ onMounted(() => {
   Data.addPasteupTemplateFrom.TemplateID = pasteupTemplateData.value.ID;
   if (!temp.ModeSizeAttribute) {
     Data.addPasteupTemplateFrom.ModeSizeAttribute = {
-      PlateInfo: {
-        FilePath: '',
-        Width: 0,
-        Height: 0,
-        AreaList: [
-          {
-            XCoordinate: 0,
-            YCoordinate: 0,
-            Width: 0,
-            Height: 0,
-          },
-        ],
-      },
+      FilePath: '',
+      Width: 0,
+      Height: 0,
+      AreaList: [
+        {
+          XCoordinate: 0,
+          YCoordinate: 0,
+          Width: 0,
+          Height: 0,
+        },
+      ],
       // 是否按模位
       UseMode: false,
       ModeItemList: [
