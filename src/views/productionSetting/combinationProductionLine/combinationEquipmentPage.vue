@@ -27,6 +27,7 @@ import { storeToRefs } from 'pinia';
 import EquipmentListPage from '../putOutAndCapacity/EquipmentListPage.vue';
 import { ILineEquipmentSaveParams, IEquipmentGroupSaveResult } from '../putOutAndCapacity/js/types';
 import { EquipmentSetupType, IPlateMakingEquipmentSetupData } from '../productionLine/js/types';
+import { WorkSourceTypeEnum } from '../putOutAndCapacity/js/enum';
 
 const route = useRoute();
 const router = useRouter();
@@ -108,9 +109,11 @@ const handleRemove = (item, type: EquipmentSetupType = 'default') => {
     }
   });
 };
-const setEquipment = (list, resultArr: IEquipmentGroupSaveResult[]) => {
-  if (!processInfo.value?.ClassEquipmentGroups) return;
-  processInfo.value?.ClassEquipmentGroups?.forEach((ClassIt, index) => {
+const setEquipment = (list, resultArr: IEquipmentGroupSaveResult[], WorkSourceType: WorkSourceTypeEnum) => {
+  const targetClassEquipmentGroups = WorkSourceType === WorkSourceTypeEnum.PlateMaking
+    ? processInfo.value?.PlateMakingClassEquipmentGroups : processInfo.value?.ClassEquipmentGroups;
+  if (!targetClassEquipmentGroups) return;
+  targetClassEquipmentGroups?.forEach((ClassIt, index) => {
     ClassIt.EquipmentGroups.forEach((GroupIt, i) => {
       GroupIt.Equipments.forEach((it, num) => {
         const _it = it;
@@ -151,7 +154,7 @@ const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () =>
   api.getProductionLinetEquipmentSave(params).then(res => {
     if (res.data.Status === 1000) {
       const cb = () => {
-        setEquipment([...params.EquipmentIDS], res.data.Data as IEquipmentGroupSaveResult[]);
+        setEquipment([...params.EquipmentIDS], res.data.Data as IEquipmentGroupSaveResult[], params.WorkSourceType);
         setStorage();
         callback();
       };
