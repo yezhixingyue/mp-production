@@ -87,6 +87,7 @@
           </el-form-item>
           <el-form-item :label="`编码：`" class="form-item-required" prop="MaterialCode">
             <el-input
+            style="width: 100px;"
             maxlength="10" show-word-limit
             v-model.trim="Data.addMaterialManageForm.MaterialCode" />
           </el-form-item>
@@ -429,6 +430,15 @@ export default {
           NoNumber.push(item.AttributeName);
         }
       });
+      // 过滤必填项
+      const IsRequired = Data.addMaterialManageForm.MaterialRelationAttributes.some(res => res.IsRequired);
+      if (!IsRequired) {
+        const noAction = Data.addMaterialManageForm.MaterialRelationAttributes.some(res => !(res.NumericValue || res.InputSelectValue || res.SelectID));
+        if (noAction) {
+          messageBox.failSingleError('保存失败', '请至少输入一个属性的值', () => null, () => null);
+          return;
+        }
+      }
       if (!Data.addMaterialManageForm.MaterialCode) {
         messageBox.failSingleError('保存失败', '请输入编码', () => null, () => null);
       } else if (NoNumber.length) {
@@ -675,7 +685,7 @@ export default {
       .el-form-item{
         margin: 0 auto;
         margin-bottom: 20px;
-        width: 370px;
+        // width: ;
         margin-left: 10px;
         align-items: flex-end;
         &.attributes {

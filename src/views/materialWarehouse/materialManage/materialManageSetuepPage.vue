@@ -417,7 +417,15 @@ export default {
           }
         }
       });
-
+      // 过滤必填项
+      const IsRequired = Data.generativeRule.Attributes.some(res => res.IsRequired);
+      if (!IsRequired) {
+        const noAction = Data.generativeRule.Attributes.some(res => !res.actionsValue.length);
+        if (noAction) {
+          messageBox.failSingleError('保存失败', '请至少选择一个属性的值', () => null, () => null);
+          return;
+        }
+      }
       if (msg.length) {
         messageBox.failSingleError('保存失败', `请选择属性 ${msg.join('、')} 的值`, () => null, () => null);
       } else if (CustomMsg.length) {
