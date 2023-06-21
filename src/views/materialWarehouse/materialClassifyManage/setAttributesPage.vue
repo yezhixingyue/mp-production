@@ -261,7 +261,7 @@ export default {
       const _AttributesItem = AttributesItem;
       _AttributesItem.TypeID = Data.addAttributesForm.TypeID;
       Data.addAttributesForm = { ..._AttributesItem };
-      Data.addAttributesForm.AttributeSelects = [...AttributesItem.AttributeSelects || []] || [];
+      Data.addAttributesForm.AttributeSelects = [..._AttributesItem.AttributeSelects.map(res => ({ ...res })) || []] || [];
       Data.dialogShow = true;
     }
     function setStorage() { // 设置会话存储
