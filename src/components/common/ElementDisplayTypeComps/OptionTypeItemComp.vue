@@ -7,6 +7,7 @@
    :filterable='Allow'
    no-data-text="无数据"
     ref="oSelect"
+    @keyup="keyup"
    v-if="options && options.length"
    class="mp-erp-option-type-element-display-select-comp">
     <el-option
@@ -62,6 +63,15 @@ const checkVal = computed({
 });
 const blur = () => {
   oSelect.value?.blur();
+};
+const keyup = (E) => {
+  const val = E.target.value;
+  const temp = props.options?.find(it => it.SelectItemValue === val);
+  if (temp) {
+    checkVal.value = temp.SelectID;
+  } else {
+    checkVal.value = E.target.value;
+  }
 };
 defineExpose({
   blur,

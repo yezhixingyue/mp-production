@@ -11,6 +11,7 @@
     no-data-text="无数据"
     placeholder="请选择"
     ref="oSelect"
+    @keyup="keyup"
     class="mp-erp-number-type-element-display-select-comp">
     <el-option
       v-for="(item,index) in options"
@@ -66,6 +67,16 @@ const options = computed(() => {
   }
   return getNumberValueList(props.InputContent);
 });
+
+const keyup = (E) => {
+  const val = E.target.value;
+  const temp = options.value?.find(it => it.label === val);
+  if (temp) {
+    inpVal.value = temp.value;
+  } else {
+    inpVal.value = E.target.value;
+  }
+};
 const blur = () => {
   oSelect.value?.blur();
 };
