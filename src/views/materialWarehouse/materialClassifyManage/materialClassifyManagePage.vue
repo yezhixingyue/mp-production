@@ -26,8 +26,8 @@
           show-overflow-tooltip min-width="123" />
           <el-table-column prop="TypeName" label="类型"
           show-overflow-tooltip min-width="98" />
-          <el-table-column prop="TypeCode" label="编码"
-          show-overflow-tooltip min-width="81" />
+          <!-- <el-table-column prop="TypeCode" label="编码"
+          show-overflow-tooltip min-width="81" /> -->
           <el-table-column prop="AttributeDescribe"
           show-overflow-tooltip label="属性" min-width="150" />
           <el-table-column prop="BrandDescribe" label="品牌属性"
