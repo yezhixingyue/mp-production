@@ -83,3 +83,23 @@ export enum PlaceStepEnum {
   Third = 3,
   Fourth = 4,
 }
+
+/** 爬移类型枚举 */
+export enum MoveTypeEnum {
+  /** 无 */
+  None = 0,
+  /** 偏移 */
+  Skewing = 1,
+  /** 缩放 */
+  Zoom = 2
+}
+
+/** 叼口类型枚举 */
+export enum FeedEdgePositionEnum {
+  /** 无 */
+  None = 0,
+  /** 前叼口 */
+  Front = 1,
+  /** 后叼口 */
+  Back = 2,
+}

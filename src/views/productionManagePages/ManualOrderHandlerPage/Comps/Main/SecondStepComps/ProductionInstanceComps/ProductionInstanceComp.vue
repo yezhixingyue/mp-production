@@ -92,7 +92,8 @@
         <RemoveMenu class="remove" @click="onSemiFinisiedRemoveClick" title="删除此半成品" />
       </li>
     </ul>
-    <RightSetupPanelComp v-model="itemData" :index="index" :WorkingProcedures="itemData._originLineData?.Detail.WorkingProcedures || []" />
+    <RightSetupPanelComp v-model="itemData" :index="index" :WorkingProcedures="itemData._originLineData?.Detail.WorkingProcedures || []"
+     @folding-click="onFoldingClick" />
     <!-- 物料选择弹窗 -->
     <InstanceMaterialSelectDialog
       v-model:visible="materialVisible"
@@ -102,6 +103,8 @@
     />
     <!-- 设置生产线弹窗 -->
     <LineSelectDialog v-model:visible="selectVisible" @submit="onLineSelect" isLineInstanceUse :curInstanceLineID="itemData._originLineData?.ID" />
+    <!-- 折手参数设置弹窗 -->
+    <FoldingSetupDialog v-model:visible="foldVisible" :instanceData="itemData" @submit="onFoldingSubmit" />
   </div>
 </template>
 
@@ -118,6 +121,7 @@ import { PlaceOrderProductionInstance } from '../../../../js/PlaceOrderProductio
 import InstanceMaterialSelectDialog from './InstanceMaterialSelectDialog.vue';
 import LineSelectDialog from '../LineSelectDialog.vue';
 import RightSetupPanelComp from './RightSetupPanelComp.vue';
+import FoldingSetupDialog from './FoldingSetupDialog.vue';
 import { ManualOrderHandlerPageData } from '../../../../js';
 
 const props = defineProps<{
@@ -166,6 +170,15 @@ const onSemiFinisiedRemoveClick = () => {
       }, 50);
     },
   });
+};
+
+const foldVisible = ref(false);
+const onFoldingClick = () => { // 折手设置
+  foldVisible.value = true;
+};
+const onFoldingSubmit = (params: object) => {
+  itemData.value.handleFoldingSubmit(params);
+  foldVisible.value = false;
 };
 
 </script>

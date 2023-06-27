@@ -57,6 +57,22 @@
           </p>
         </div>
       </li>
+      <li v-if="props.item.NeedFolding" class="fold-set">
+        <div class="f">
+          <h4>需要折手 </h4>
+          <span v-if="item.NeedSheetIndex">{{ item.NeedSheetIndex ? '添加帖标' : '不添加帖标' }}</span>
+          <span v-if="item.FeedEdgePosition !== FeedEdgePositionEnum.None">
+            <template v-if="item.FeedEdgePosition === FeedEdgePositionEnum.Front">前叼口空白尺寸：{{ item.FeedEdgeValue }}mm</template>
+            <template v-if="item.FeedEdgePosition === FeedEdgePositionEnum.Back">后叼口空白尺寸：{{ item.FeedEdgeValue }}mm</template>
+          </span>
+          <span v-if="item.MillingValue">铣背深度：{{ item.MillingValue }}mm</span>
+        </div>
+        <div v-if="item.MoveType !== MoveTypeEnum.None">
+          <h4>爬移使用{{ getEnumNameByID(item.MoveType, MoveTypeEnumList) }} </h4>
+          <span v-if="item._CheckedMoveIn">内爬移：{{ item.MoveInValue }}mm </span>
+          <span v-if="item._CheckedMoveOut">外爬移：{{ item.MoveOutValue }}mm</span>
+        </div>
+      </li>
       <li v-if="_AssistFileList.length > 0">
         <span class="title">辅助文件:</span>
         <div class="f-list">
@@ -95,8 +111,10 @@
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { computed } from 'vue';
-import { PlaceOrderMaterialSourceEnumList } from '../../../js/EnumList';
-import { PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum } from '../../../js/enums';
+import { MoveTypeEnumList, PlaceOrderMaterialSourceEnumList } from '../../../js/EnumList';
+import {
+  FeedEdgePositionEnum, MoveTypeEnum, PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum,
+} from '../../../js/enums';
 import { PlaceOrderProductionInstance } from '../../../js/PlaceOrderProductionInstance';
 
 const props = defineProps<{
@@ -220,6 +238,33 @@ const _SpecialColorFileList = computed(() => props.item.FileList.filter(it => it
                   white-space: nowrap;
                   text-overflow: ellipsis;
                 }
+              }
+            }
+          }
+        }
+
+        &.fold-set {
+          display: flex;
+          flex-direction: column;
+          margin-top: -8px;
+          > div:not(:last-of-type) {
+            padding-bottom: 10px;
+          }
+
+          > div {
+            display: flex;
+            align-items: center;
+            > span:not(:last-of-type) {
+              margin-left: 2px;
+              &::after {
+                content: '，';
+                display: inline-block;
+              }
+            }
+            > span:first-of-type {
+              &::before {
+                content: "：";
+                display: inline-block;
               }
             }
           }

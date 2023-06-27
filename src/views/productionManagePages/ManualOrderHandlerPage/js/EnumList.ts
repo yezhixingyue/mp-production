@@ -1,4 +1,6 @@
-import { PlaceOrderMaterialSourceEnum, PrintColorEnum, ReceiveTypeEnum } from './enums';
+import {
+  FeedEdgePositionEnum, MoveTypeEnum, PlaceOrderMaterialSourceEnum, PrintColorEnum, ReceiveTypeEnum,
+} from './enums';
 
 export const ReceiveTypeEnumList = [
   {
@@ -52,5 +54,37 @@ export const PlaceOrderMaterialSourceEnumList = [
   {
     ID: PlaceOrderMaterialSourceEnum.logisticsExpress,
     Name: '物流/快递',
+  },
+];
+
+/** 爬移使用枚举类型列表 */
+export const MoveTypeEnumList = [
+  {
+    ID: MoveTypeEnum.None,
+    Name: '无',
+  },
+  {
+    ID: MoveTypeEnum.Skewing,
+    Name: '偏移',
+  },
+  {
+    ID: MoveTypeEnum.Zoom,
+    Name: '缩放',
+  },
+];
+
+/** 叼口空白枚举类型列表 */
+export const FeedEdgePositionList = [
+  {
+    ID: FeedEdgePositionEnum.None,
+    Name: '无',
+  },
+  {
+    ID: FeedEdgePositionEnum.Front,
+    Name: '前折页叼口',
+  },
+  {
+    ID: FeedEdgePositionEnum.Back,
+    Name: '后折页叼口',
   },
 ];
