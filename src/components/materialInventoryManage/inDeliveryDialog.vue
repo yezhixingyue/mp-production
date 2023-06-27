@@ -431,6 +431,8 @@ export default {
           });
         }
         getGoodsPositionDimensionSelect();
+      } else {
+        selectStorehouseGoodsPosition.value = {};
       }
     });
 

@@ -54,8 +54,8 @@
         <!-- 是否为 按模板尺寸 -->
         <template v-if="Data.addPasteupTemplateFrom.SizeType === 0">
           <el-form-item :label="`模板文件：`" class="form-item-required upload-form">
-            <!-- Data.addPasteupTemplateFrom.ModeSizeAttribute.FilePath -->
-            <div v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute">
+            <!-- Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath -->
+            <div v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
 
               <el-upload
                 ref="upload"
@@ -70,11 +70,11 @@
                 </template>
                 <template #tip>
                   <div class="el-upload__tip text-red">
-                    {{Data.addPasteupTemplateFrom.ModeSizeAttribute.FilePath? '已上传模板文件':'未上传'}}
+                    {{Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath? '已上传模板文件':'未上传'}}
                   </div>
                 </template>
               </el-upload>
-              <el-link type="primary" :href="Data.addPasteupTemplateFrom.ModeSizeAttribute.FilePath" target="_blank">
+              <el-link type="primary" :href="Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath" target="_blank">
                 下载当前模板文件</el-link>
             </div>
             <p class="hint">
@@ -93,12 +93,12 @@
                 - <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MinValue"/> mm
               </p>
             </div> -->
-            <p class="template-info" v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.FilePath">
+            <p class="template-info" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute?.FilePath">
               <ul>
-                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.Width}}mm</span>
-                          <span>高:{{Data.addPasteupTemplateFrom.ModeSizeAttribute.Height}}mm</span></li>
+                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.TemplateSizeAttribute.Width}}mm</span>
+                          <span>高:{{Data.addPasteupTemplateFrom.TemplateSizeAttribute.Height}}mm</span></li>
                 <el-scrollbar max-height="100px">
-                <li v-for="(Area,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.AreaList" :key="index">
+                <li v-for="(Area,index) in Data.addPasteupTemplateFrom.TemplateSizeAttribute.AreaList" :key="index">
                 版芯：<span>X:{{Area.XCoordinate}}mm</span>
                 <span>Y:{{Area.YCoordinate}}mm</span>
                 <span>宽:{{Area.Width}}mm</span>
@@ -108,9 +108,10 @@
             </p>
           </el-form-item>
           <el-form-item :label="`拼版方式：`">
-            <el-checkbox v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute" v-model="Data.addPasteupTemplateFrom.ModeSizeAttribute.UseMode" label="按模位" />
+            <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute"
+            v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.UseMode" label="按模位" />
           </el-form-item>
-          <div v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.UseMode" class="template-location-list">
+          <div v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute?.UseMode" class="template-location-list">
             <mp-button type="primary" link @click="addModeItem">+ 添加一行</mp-button>
             <div class="table-title">
               <span class="coord">
@@ -127,8 +128,8 @@
               </span>
               <span class="handle"></span>
             </div>
-            <ul v-if="Data.addPasteupTemplateFrom.ModeSizeAttribute?.ModeItemList.length">
-              <li v-for="(ModeItem,index) in Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList" :key="ModeItem.key">
+            <ul v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute?.ModeItemList.length">
+              <li v-for="(ModeItem,index) in Data.addPasteupTemplateFrom.TemplateSizeAttribute.ModeItemList" :key="ModeItem.key">
                 <span class="coord">
                   <span class="coord-item">
                     <span class="dark">x：</span>
@@ -219,7 +220,7 @@ const Data: DataType = reactive({
     ReproductionType: 0,
     // 尺寸
     SizeType: 0,
-    ModeSizeAttribute: {
+    TemplateSizeAttribute: {
       FilePath: '',
       Width: 0,
       Height: 0,
@@ -273,7 +274,7 @@ const BreadcrumbList = computed(() => [
   },
 ]);
 function addModeItem() {
-  Data.addPasteupTemplateFrom.ModeSizeAttribute?.ModeItemList.push({
+  Data.addPasteupTemplateFrom.TemplateSizeAttribute?.ModeItemList.push({
     XCoordinate: null,
     YCoordinate: null,
     Width: null,
@@ -284,7 +285,7 @@ function addModeItem() {
   });
 }
 function delModeItem(i) {
-  Data.addPasteupTemplateFrom.ModeSizeAttribute?.ModeItemList.splice(i, 1);
+  Data.addPasteupTemplateFrom.TemplateSizeAttribute?.ModeItemList.splice(i, 1);
 }
 function verification() {
   if (!Data.addPasteupTemplateFrom.Name) {
@@ -314,7 +315,7 @@ function verification() {
       return false;
     }
     // 按模板尺寸 没有上传模板
-    if (Data.addPasteupTemplateFrom.SizeType === 0 && !Data.addPasteupTemplateFrom.ModeSizeAttribute?.FilePath) {
+    if (Data.addPasteupTemplateFrom.SizeType === 0 && !Data.addPasteupTemplateFrom.TemplateSizeAttribute?.FilePath) {
       messageBox.failSingleError('保存失败', '请上传模板文件', () => null, () => null);
       return false;
     }
@@ -332,10 +333,10 @@ function verification() {
     //   return false;
     // }
     // 按模板尺寸 并且按模位
-    if (Data.addPasteupTemplateFrom.SizeType === 0 && Data.addPasteupTemplateFrom.ModeSizeAttribute?.UseMode) {
+    if (Data.addPasteupTemplateFrom.SizeType === 0 && Data.addPasteupTemplateFrom.TemplateSizeAttribute?.UseMode) {
       // 验证模位合法性
-      for (let index = 0; index < Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList.length; index++) {
-        const ModeItem = Data.addPasteupTemplateFrom.ModeSizeAttribute.ModeItemList[index];
+      for (let index = 0; index < Data.addPasteupTemplateFrom.TemplateSizeAttribute.ModeItemList.length; index++) {
+        const ModeItem = Data.addPasteupTemplateFrom.TemplateSizeAttribute.ModeItemList[index];
         if (
           ModeItem.XCoordinate === null
             || ModeItem.YCoordinate === null
@@ -348,7 +349,7 @@ function verification() {
           return false;
         }
 
-        const { AreaList } = Data.addPasteupTemplateFrom.ModeSizeAttribute ? Data.addPasteupTemplateFrom.ModeSizeAttribute : { AreaList: [] };
+        const { AreaList } = Data.addPasteupTemplateFrom.TemplateSizeAttribute ? Data.addPasteupTemplateFrom.TemplateSizeAttribute : { AreaList: [] };
         // 当前模位起点所在可拼版区域
         const Area = AreaList.find(area => {
           // 分别找到横轴和竖轴的起点是否都在此可拼版区域
@@ -388,7 +389,7 @@ function savePasteupTemplateSize() {
       Data.addPasteupTemplateFrom.ActualSizeAttribute = null;
     }
     if (Data.addPasteupTemplateFrom.SizeType === 1) {
-      Data.addPasteupTemplateFrom.ModeSizeAttribute = null;
+      Data.addPasteupTemplateFrom.TemplateSizeAttribute = null;
       Data.addPasteupTemplateFrom.LengthErrorRange = null;
       Data.addPasteupTemplateFrom.WidthErrorRange = null;
     }
@@ -407,11 +408,11 @@ function savePasteupTemplateSize() {
 }
 function handlleUploaded(e) {
   if (e.Status === 1000) {
-    if (Data.addPasteupTemplateFrom.ModeSizeAttribute) {
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.FilePath = e.Data.FilePath;
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.AreaList = e.Data.AreaList;
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.Width = e.Data.Width;
-      Data.addPasteupTemplateFrom.ModeSizeAttribute.Height = e.Data.Height;
+    if (Data.addPasteupTemplateFrom.TemplateSizeAttribute) {
+      Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath = e.Data.FilePath;
+      Data.addPasteupTemplateFrom.TemplateSizeAttribute.AreaList = e.Data.AreaList;
+      Data.addPasteupTemplateFrom.TemplateSizeAttribute.Width = e.Data.Width;
+      Data.addPasteupTemplateFrom.TemplateSizeAttribute.Height = e.Data.Height;
     }
   } else {
     messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
@@ -442,8 +443,8 @@ onMounted(() => {
     Data.addPasteupTemplateFrom = temp;
   }
   Data.addPasteupTemplateFrom.TemplateID = pasteupTemplateData.value.ID;
-  if (!temp.ModeSizeAttribute) {
-    Data.addPasteupTemplateFrom.ModeSizeAttribute = {
+  if (!temp.TemplateSizeAttribute) {
+    Data.addPasteupTemplateFrom.TemplateSizeAttribute = {
       FilePath: '',
       Width: 0,
       Height: 0,

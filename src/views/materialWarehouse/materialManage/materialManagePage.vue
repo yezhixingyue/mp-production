@@ -103,7 +103,7 @@
           </el-form-item>
           <el-form-item :label="`编码：`" class="form-item-required" prop="MaterialCode">
             <el-input
-            style="width: 100px;"
+            style="width: 150px;"
             maxlength="10" show-word-limit
             v-model.trim="Data.addMaterialManageForm.MaterialCode" />
           </el-form-item>
@@ -509,6 +509,7 @@ export default {
       Data.editTypeID = item.TypeID;
       Data.dialogTypeData.TypeName = item.TypeName;
       Data.dialogTypeData.CategoryName = item.CategoryName;
+      Data.dialogTypeData.TypeCode = item.TypeCode;
       if (!Data.editTypeID) {
         // 请选择物料类型
       } else {
