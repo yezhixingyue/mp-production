@@ -225,7 +225,6 @@ export class HandleExceptionRuleForm {
 
       // 2. 块报工 或 订单报工： 获取大版设置列表
       const PlateList = getSubmitInfoFromPlateList(this.RedoInfo.PlateList);
-      console.log(PlateList);
       if (this._ReportMode === ReportModeEnum.block) {
         if (PlateList.length === 0) {
           MpMessage.error('保存失败', '请选择要重做的内容');

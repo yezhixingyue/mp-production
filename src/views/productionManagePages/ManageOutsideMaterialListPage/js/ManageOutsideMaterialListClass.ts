@@ -45,8 +45,6 @@ export class ManageOutsideMaterialListClass {
 
   /** 设置到货 */
   async setReceived(item: IExternalMaterialDetail) {
-    console.log(item);
-
     const resp = await api.productionManageApis.getExternalMaterialReceived(item.ID).catch(() => null);
 
     if (resp?.data.isSuccess) {

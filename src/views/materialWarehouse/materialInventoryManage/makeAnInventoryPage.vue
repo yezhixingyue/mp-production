@@ -275,8 +275,6 @@ export default {
       messageBox.warnCancelBox('操作确认', '确定要重新盘点上一个', () => {
         api.getInventoryAgainPrev(Data.InventoryDetail?.DetailID).then(res => {
           if (res.data.Status === 1000) {
-            console.log(Data.InventoryDetail?.PrevDetailID, 'aaa Data.InventoryDetail?.PrevDetailID');
-
             setDetail(Data.InventoryDetail?.PrevDetailID);
             getInventoryDetail();
           }

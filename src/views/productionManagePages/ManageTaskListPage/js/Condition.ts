@@ -49,7 +49,6 @@ export class Condition {
   }
 
   setConditon(e: ISetConditionParams) {
-    console.log(this);
     return CommonClassType.setCondition(e, this);
   }
 }
