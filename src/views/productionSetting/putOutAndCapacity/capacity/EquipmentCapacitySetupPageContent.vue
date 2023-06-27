@@ -28,7 +28,7 @@
                 {{options.unit}}
               </span>
             </template>
-            <template v-else>
+            <template v-else-if="rightPanelData.CalculateType === CalculateTypeEnum.FixedTime">
               <el-input :class="{marginleft: !!options.rowTitle}" v-model.number="rightPanelData._CalculateValue" maxlength="9"></el-input>
               <span>小时</span>
             </template>

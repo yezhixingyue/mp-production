@@ -1,12 +1,14 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum } from './enums';
 import { ILineDetailWorkingProcedure, ILineWorkingMaterialSources } from './ProductionLineDetailTypes';
 import {
   IConvertAssistInfo, IConvertOrderFile, IFactoryMaterialList, IPrintColor, IProductionInstanceOriginData,
 } from './types';
 import { checkIsPositiveInteger, checkMobile } from './utils';
+import { InstanceFoldingSetupClass } from './InstanceFoldingSetupClass';
 
 /**
  * 手动下单生产线实例，组合生产线由多个该实例组成
@@ -14,7 +16,7 @@ import { checkIsPositiveInteger, checkMobile } from './utils';
  * @export
  * @class PlaceOrderProductionInstance
  */
-export class PlaceOrderProductionInstance { // 区分普通和组合生产线 ？
+export class PlaceOrderProductionInstance extends InstanceFoldingSetupClass { // 区分普通和组合生产线 ？
   // ID = ''
 
   // Name = '' // 需要把半成品名称赋值给该属性 ---------- 后续待处理 暂不需处理
@@ -96,6 +98,8 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   _MaterialSource: null | ILineWorkingMaterialSources = null
 
   constructor(isCombine: boolean, originData: IProductionInstanceOriginData | null, MaterialSource?: ILineWorkingMaterialSources) {
+    super();
+
     this._isBelongToCombineLine = isCombine;
     if (originData) {
       this._originLineData = originData;
@@ -200,6 +204,11 @@ export class PlaceOrderProductionInstance { // 区分普通和组合生产线 �
   handleNumbericChange(list: IConvertAssistInfo[]) {
     const textList = this.AssistList.filter(it => it.Type === AssistInfoTypeEnum.text);
     this.AssistList = [...textList, ...list];
+  }
+
+  /** 折手设置 */
+  handleFoldingSubmit(params: object) {
+    restoreInitDataByOrigin(this, params);
   }
 
   _MaterialList: IFactoryMaterialList[] = []

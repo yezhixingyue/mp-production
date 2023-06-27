@@ -32,33 +32,33 @@
       </tbody>
     </table>
     <!-- 拼版文件列表 -->
-    <table v-if="itemData.WorkingList.length > 0 && !isCombine">
-      <thead>
-        <tr>
-          <th>
-            <span class="title">拼版文件:</span>
-            <el-checkbox :model-value="itemData.ForbitUnionMakeup" @change="e => itemData.ForbitUnionMakeup = e">禁止印刷版合拼</el-checkbox>
-          </th>
-          <th class="makeup-size">
-            <el-checkbox v-if="itemData.ForbitUnionMakeup"
+    <template v-if="itemData.WorkingList.length > 0 && !isCombine && _MakeupFileList.length > 0">
+      <div class="header makeup_header">
+        <span class="title">拼版文件:</span>
+        <el-checkbox :model-value="itemData.ForbitUnionMakeup" @change="e => itemData.ForbitUnionMakeup = e">禁止印刷版合拼</el-checkbox>
+        <div class="makeup_size">
+          <el-checkbox v-if="itemData.ForbitUnionMakeup"
            :model-value="itemData.NeedSetPlateSize" @change="e => itemData.NeedSetPlateSize = e">手动设置拼版尺寸</el-checkbox>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="it in _MakeupFileList" :key="it.Template?.ID || ''">
-          <td class="w-title" :title="it._PlateTemplate?.Name">{{ it._PlateTemplate?.Name }}</td>
-          <td class="w-content file" :title="it._File?.name || ''">
-            <i v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(0, -6) }}</i>
-            <i v-else>{{ it._File?.name || '' }}</i>
-            <em v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
-          </td>
-          <td class="w-operator">
-            <MpFileSelectButton link :accept="ManualOrderHandlerPageData?._fileAccept.pdf" @change="(file) => handleFileChange(file, it, itemData.FileList)"/>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        </div>
+        <el-checkbox :model-value="itemData.NeedFolding" @change="e => itemData.NeedFolding = e">需要折手</el-checkbox>
+        <mp-button type="primary" link v-show="itemData.NeedFolding" @click="onFoldingClick">设置折手参数</mp-button>
+      </div>
+      <table>
+        <tbody>
+          <tr v-for="it in _MakeupFileList" :key="it.Template?.ID || ''">
+            <td class="w-title" :title="it._PlateTemplate?.Name">{{ it._PlateTemplate?.Name }}</td>
+            <td class="w-content file" :title="it._File?.name || ''">
+              <i v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(0, -6) }}</i>
+              <i v-else>{{ it._File?.name || '' }}</i>
+              <em v-if="it._File && it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
+            </td>
+            <td class="w-operator">
+              <MpFileSelectButton link :accept="ManualOrderHandlerPageData?._fileAccept.pdf" @change="(file) => handleFileChange(file, it, itemData.FileList)"/>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </template>
     <!-- 辅助文件列表 -->
     <table v-if="itemData.WorkingList.length > 0 && _AssistFileList.length > 0">
       <thead>
@@ -166,15 +166,16 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IConvertAssistInfo, IConvertOrderFile, IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { handleFileChange } from '@/views/productionManagePages/ManualOrderHandlerPage/js/utils';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
+import MpFileSelectButton from '@/components/common/General/MpFileSelectButton.vue';
 import WorkingSelectDialog from './WorkingSelectDialog.vue';
 import AssistInfoSetupDialog from './AssistInfoSetupDialog.vue';
 import SpecialColorSelectDialog from './SpecialColorSelectDialog.vue';
 import AssistNumbericSelectDialog from './AssistNumbericSelectDialog.vue';
 import AssistNumbericChangeDialog from './AssistNumbericChangeDialog.vue';
-import MpFileSelectButton from '../../../../../../../components/common/General/MpFileSelectButton.vue';
 
 interface IPropsModelValue extends Pick<PlaceOrderProductionInstance,
- 'AssistList' | 'FileList' | 'WorkingList' | 'handleWorkingSelect' | 'handleNumbericChange'> {
+ 'AssistList' | 'FileList' | 'WorkingList' | 'handleWorkingSelect' | 'handleNumbericChange'
+ | 'NeedFolding'> {
   handleSpecialColorChange?: PlaceOrderProductionInstance['handleSpecialColorChange']
   ForbitUnionMakeup?: PlaceOrderProductionInstance['ForbitUnionMakeup']
   NeedSetPlateSize?: PlaceOrderProductionInstance['NeedSetPlateSize']
@@ -187,6 +188,8 @@ const props = defineProps<{
   WorkingProcedures: ILineDetailWorkingProcedure[]
   isCombine?: boolean
 }>();
+
+const emit = defineEmits(['foldingClick']);
 
 const itemData = computed(() => props.modelValue);
 
@@ -201,6 +204,10 @@ const _SpecialColorFileList = computed(() => itemData.value.FileList.filter(it =
 
 /** 数值列表 */
 const _NumbericalList = computed(() => itemData.value.AssistList.filter(it => it.Type === AssistInfoTypeEnum.numerical));
+
+const onFoldingClick = () => {
+  emit('foldingClick');
+};
 
 /* 选择工序相关
 ----------------------------------- */
@@ -314,16 +321,6 @@ const onNumbericalChangeSubmit = (data: { ID: string, Value: number }) => {
     border-collapse: collapse;
     > thead > tr {
       line-height: 32px;
-      .title {
-        font-weight: 700;
-        margin-right: 10px;
-        font-size: 14px;
-        line-height: 30px;
-        display: inline-block;
-        height: 30px;
-        vertical-align: top;
-      }
-
       button {
         padding: 0;
         border: none;
@@ -344,10 +341,6 @@ const onNumbericalChangeSubmit = (data: { ID: string, Value: number }) => {
           margin-right: 5px;
           margin-left: 25px;
         }
-      }
-
-      .makeup-size {
-        padding-left: 20px;
       }
     }
     > tbody {
@@ -429,6 +422,43 @@ const onNumbericalChangeSubmit = (data: { ID: string, Value: number }) => {
           }
         }
       }
+    }
+  }
+  .title {
+    font-weight: 700;
+    margin-right: 10px;
+    font-size: 14px;
+    line-height: 30px;
+    display: inline-block;
+    height: 30px;
+    vertical-align: top;
+  }
+
+  .header.makeup_header {
+    display: flex;
+    align-items: center;
+    margin-top: 18px;
+    & + table {
+      margin-top: 2px;
+    }
+
+    > label {
+      margin-right: 0;
+      margin-left: 15px;
+    }
+
+    .makeup_size {
+      padding-left: 16px;
+      width: 160px;
+    }
+
+    button {
+      font-size: 13px;
+      margin-left: 16px;
+    }
+    :deep(.el-checkbox__label) {
+      color: #444;
+      font-size: 13px;
     }
   }
 }
