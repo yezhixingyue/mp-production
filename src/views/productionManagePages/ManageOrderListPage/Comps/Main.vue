@@ -47,29 +47,27 @@
               </mp-button>
             </td>
           </tr>
-          <template v-if="row._isSpread">
-            <tr class="combine-line-info" :style="`width:${totalWidth}px`">
-              <td>
-                <span>组合生产线：</span>
-                <h4>{{ row.Line || '' }}</h4>
-              </td>
-            </tr>
-            <tr v-for="(instance, i) in row.InstanceList" :key="i" class="instance-list" :style="`width:${totalWidth}px`">
-              <td class="name">
-                <span class="title">{{ instance.SemiFinishedName ? `${instance.SemiFinishedName}：` : ''}}</span>
-                <span class="m">{{ instance.Material }}</span>
-              </td>
-              <td class="number">{{ instance.Number }}{{ instance.Unit }}</td>
-              <td v-for="line in instance.LineList" :key="line.ID" v-show="line.PlateList.length > 0" class="line"
-                :title="`${line.Name}\r\n大版ID：\r\n${line.PlateList.join('\r\n')}`">
-                <h4>{{ line.Name }}</h4>
-                <span class="ml-15">大版ID：</span>
-                <span>{{ line.PlateList.join('、') }}</span>
-              </td>
-            </tr>
-          </template>
+          <tr class="combine-line-info" :style="`width:${totalWidth}px`" v-show="row._isSpread">
+            <td>
+              <span>组合生产线：</span>
+              <h4>{{ row.Line || '' }}</h4>
+            </td>
+          </tr>
+          <tr v-for="(instance, i) in row.InstanceList" :key="i" class="instance-list" :style="`width:${totalWidth}px`" v-show="row._isSpread">
+            <td class="name">
+              <span class="title">{{ instance.SemiFinishedName ? `${instance.SemiFinishedName}：` : ''}}</span>
+              <span class="m">{{ instance.Material }}</span>
+            </td>
+            <td class="number">{{ instance.Number }}{{ instance.Unit }}</td>
+            <td v-for="line in instance.LineList" :key="line.ID" v-show="line.PlateList.length > 0" class="line"
+              :title="`${line.Name}\r\n大版ID：\r\n${line.PlateList.join('\r\n')}`">
+              <h4>{{ line.Name }}</h4>
+              <span class="ml-15">大版ID：</span>
+              <span>{{ line.PlateList.join('、') }}</span>
+            </td>
+          </tr>
         </template>
-        <tr class="empty" v-if="localList.length === 0 && !loading" :style="`width:${totalWidth}px`">
+        <tr class="empty" v-show="localList.length === 0 && !loading" :style="`width:${totalWidth}px`">
           <span>暂无数据</span>
         </tr>
       </tbody>
