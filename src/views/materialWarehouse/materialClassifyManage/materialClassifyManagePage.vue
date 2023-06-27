@@ -237,7 +237,8 @@ export default {
       },
     });
     // 获取物料类型列表
-    function getMaterialClassifyManage() {
+    function getMaterialClassifyManage(Page = 1) {
+      Data.getMaterialTypeData.Page = Page;
       api.getMaterialTypeList(Data.getMaterialTypeData).then(res => {
         if (res.data.Status === 1000) {
           Data.tableData = res.data.Data as tableItemType[];
@@ -246,9 +247,9 @@ export default {
       });
     }
     function PaginationChange(newVal) {
-      if (Data.getMaterialTypeData.Page === newVal) return;
-      Data.getMaterialTypeData.Page = newVal;
-      getMaterialClassifyManage();
+      // if (Data.getMaterialTypeData.Page === newVal) return;
+      // Data.getMaterialTypeData.Page = newVal;
+      getMaterialClassifyManage(newVal);
     }
     function materialClassifyCloseedClick() {
       Data.materialClassifyDialogForm = {

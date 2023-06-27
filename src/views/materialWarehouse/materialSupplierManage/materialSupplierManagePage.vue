@@ -251,7 +251,8 @@ export default {
       const temp = Data.MaterialTypeList.find(res => res.TypeID === ID);
       return temp?.TypeName || '';
     };
-    function getMaterialSupplierList() {
+    function getMaterialSupplierList(Page = 1) {
+      Data.getMaterialSupplierData.Page = Page;
       api.getMaterialSupplierList(Data.getMaterialSupplierData).then(res => {
         if (res.data.Status === 1000) {
           Data.MaterialSupplierList = res.data.Data as MaterialSupplierFormType[];
@@ -260,9 +261,9 @@ export default {
       });
     }
     function PaginationChange(newVal) {
-      if (Data.getMaterialSupplierData.Page === newVal) return;
-      Data.getMaterialSupplierData.Page = newVal;
-      getMaterialSupplierList();
+      // if (Data.getMaterialSupplierData.Page === newVal) return;
+      // Data.getMaterialSupplierData.Page = newVal;
+      getMaterialSupplierList(newVal);
     }
     function clearCondition() {
       Data.getMaterialSupplierData = {

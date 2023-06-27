@@ -101,7 +101,8 @@ export default {
       { to: { path: '/materialClassifyManage' }, name: '物料类型管理' },
       { name: '管理物料分类' },
     ]);
-    function getMaterialCategoryList() {
+    function getMaterialCategoryList(Page = 1) {
+      Data.getMaterialCategoryData.Page = Page;
       api.getMaterialCategoryList(Data.getMaterialCategoryData).then(res => {
         if (res.data.Status === 1000) {
           Data.tableData = res.data.Data as tableItem[];
@@ -110,9 +111,9 @@ export default {
       });
     }
     function PaginationChange(newVal) {
-      if (Data.getMaterialCategoryData.Page === newVal) return;
-      Data.getMaterialCategoryData.Page = newVal;
-      getMaterialCategoryList();
+      // if (Data.getMaterialCategoryData.Page === newVal) return;
+      // Data.getMaterialCategoryData.Page = newVal;
+      getMaterialCategoryList(newVal);
     }
     function editCategory(CategoryItem:tableItem) {
       Data.classifyInfo = JSON.parse(JSON.stringify(CategoryItem));

@@ -40,7 +40,11 @@
         <el-table border fit stripe
         :data="MaterialWarehouseStore.MaterialManageList" style="width: 100%">
           <el-table-column prop="CategoryName" label="分类" min-width="208"/>
-          <el-table-column prop="TypeName" label="类型" min-width="157"/>
+          <el-table-column prop="TypeName" label="类型" min-width="157">
+            <template #default="scope:any">
+              {{scope.row.TypeName}}（{{scope.row.TypeCode}}）
+            </template>
+          </el-table-column>
           <el-table-column prop="Code" label="编码" min-width="157"/>
           <el-table-column prop="AttributeDescribe" label="物料"
           show-overflow-tooltip min-width="192">
@@ -83,7 +87,19 @@
 
         <el-form :model="Data.addMaterialManageForm" label-width="255px">
           <el-form-item :label="`类型：`">
-            <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span>
+            <span style="height: 32px;max-width: 100%;">
+              <MpTip
+              effect="dark"
+              :content="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}`"
+              placement="top"
+              :disabled="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}`.length < 30">
+              {{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}
+              </MpTip>
+            </span>
+            <!-- <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span> -->
+          </el-form-item>
+          <el-form-item :label="`类型编码：`">
+            <span>{{Data.dialogTypeData.TypeCode}}</span>
           </el-form-item>
           <el-form-item :label="`编码：`" class="form-item-required" prop="MaterialCode">
             <el-input
@@ -98,6 +114,18 @@
           :class="item.IsRequired?'form-item-required':''"
           v-for="(item, index) in Data.addMaterialManageForm.MaterialRelationAttributes"
           :key="item.AttributeID" :prop="['NumericValue','SelectID','InputSelectValue']">
+            <template #label>
+              <span style="height: 32px;max-width: 100%;">
+                <MpTip
+                effect="dark"
+                :content="item.AttributeName"
+                placement="top"
+                :disabled="item.AttributeName.length < 11">
+                {{item.AttributeName}}：
+                </MpTip>
+              </span>
+            </template>
+
           <p v-if="item.AttributeType === 1">
             <NumberTypeItemComp
               ref="NumberTypeItemRef"
@@ -216,6 +244,7 @@ interface addMaterialManageFormType {
 interface dialogTypeDataType {
   CategoryName: string,
   TypeName: string,
+  TypeCode:string,
 }
 interface DataType {
   checkAll:boolean,
@@ -260,6 +289,7 @@ export default {
       dialogTypeData: {
         CategoryName: '',
         TypeName: '',
+        TypeCode: '',
       },
       DataTotal: 0,
       getMaterialManageData: {
@@ -277,6 +307,7 @@ export default {
       const noType = {
         TypeID: '',
         TypeName: '全部类型',
+        TypeCode: '',
       };
       const MaterialType = CategoryList.value.find(it => it.CategoryID === Data.getMaterialManageData.CategoryID);
       if (MaterialType && MaterialType.CategoryID) {
@@ -293,15 +324,16 @@ export default {
       });
     }
 
-    function getMaterialManageList() {
+    function getMaterialManageList(Page = 1) {
+      Data.getMaterialManageData.Page = Page;
       MaterialWarehouseStore.getMaterialManageList(Data.getMaterialManageData, (DataNumber) => {
         Data.DataTotal = DataNumber as number;
       });
     }
     function PaginationChange(newVal) {
-      if (Data.getMaterialManageData.Page === newVal) return;
-      Data.getMaterialManageData.Page = newVal;
-      getMaterialManageList();
+      // if (Data.getMaterialManageData.Page === newVal) return;
+      // Data.getMaterialManageData.Page = newVal;
+      getMaterialManageList(newVal);
     }
     function addMaterialManageCloseClick() {
       // 关闭得时候清空弹框
@@ -323,6 +355,7 @@ export default {
       Data.dialogTypeData = {
         CategoryName: '',
         TypeName: '',
+        TypeCode: '',
       };
     }
 
@@ -378,6 +411,7 @@ export default {
         Data.dialogTypeData.CategoryName = Categoryresp[0].CategoryName;
         const Typeresp = MaterialTypeList.value.filter(res => res.TypeID === Data.getMaterialManageData.TypeID);
         Data.dialogTypeData.TypeName = Typeresp[0].TypeName;
+        Data.dialogTypeData.TypeCode = Typeresp[0].TypeCode;
 
         Data.addMaterialManageShow = true;
       }
@@ -448,7 +482,7 @@ export default {
       } else if (MaterialWarehouseStore
         .MaterialTypeSizeAllList.length && !Data
         .addMaterialManageForm.SizeIDS.length) {
-        messageBox.failSingleError('保存失败', '请选择可选尺寸属性', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请选择物料尺寸', () => null, () => null);
       } else {
         // 发送请求
         api.getMaterialSave({

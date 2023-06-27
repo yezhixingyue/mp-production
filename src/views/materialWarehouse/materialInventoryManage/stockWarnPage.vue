@@ -40,15 +40,14 @@
               {{$format.format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
             </template>
           </el-table-column>
-          <el-table-column prop="MaterialCode" label="SKU编码" min-width="152"/>
-          <el-table-column prop="AttributeDescribe" label="物料"
-          show-overflow-tooltip min-width="190">
+          <el-table-column show-overflow-tooltip prop="MaterialCode" label="SKU编码" min-width="152"/>
+          <el-table-column show-overflow-tooltip prop="AttributeDescribe" label="物料" min-width="190">
           </el-table-column>
-          <el-table-column prop="SizeDescribe" label="可选尺寸" min-width="237">
+          <el-table-column show-overflow-tooltip prop="SizeDescribe" label="可选尺寸" min-width="237">
           </el-table-column>
           <el-table-column prop="WarnThreshold" label="预警数量" min-width="121">
           </el-table-column>
-          <el-table-column prop="NoticeMobile" label="接收号码" min-width="279">
+          <el-table-column show-overflow-tooltip prop="NoticeMobile" label="接收号码" min-width="279">
           </el-table-column>
           <el-table-column prop="RelieveTime" label="解除时间" min-width="195">
             <template #default="scope:any">

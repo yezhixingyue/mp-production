@@ -79,7 +79,7 @@
 
 <script lang='ts'>
 import {
-  reactive, computed, watch,
+  reactive, computed, watch, ref,
 } from 'vue';
 import SeeImageDialogComp from '@/components/common/DialogComps/SeeImageDialogComp.vue';
 
@@ -227,7 +227,7 @@ export default {
       selectedLocation: {},
     });
     // 选择仓库货位弹框的表单数据
-    const selectStorehouseGoodsPosition = reactive({});
+    const selectStorehouseGoodsPosition = ref({});
     const DialogVisible = computed({
       get() {
         return props.visible;
@@ -237,9 +237,9 @@ export default {
       },
     });
     const getDimensionIDS = computed(() => {
-      if (selectStorehouseGoodsPosition[Data.StorehouseID]) {
-        if (selectStorehouseGoodsPosition[Data.StorehouseID].selectData.map(res => res.inputValue).length) {
-          return selectStorehouseGoodsPosition[Data.StorehouseID].selectData.map(res => res.inputValue);
+      if (selectStorehouseGoodsPosition.value[Data.StorehouseID]) {
+        if (selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData.map(res => res.inputValue).length) {
+          return selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData.map(res => res.inputValue);
         }
         return [Data.StorehouseID];
       }
@@ -260,13 +260,13 @@ export default {
     const getSelectedLocationList = computed(() => {
       const list:LocationSetClass[] = [];
 
-      const StorehouseKeys = Object.keys(selectStorehouseGoodsPosition);
+      const StorehouseKeys = Object.keys(selectStorehouseGoodsPosition.value);
       StorehouseKeys.forEach(StorehouseKey => {
-        if (selectStorehouseGoodsPosition[StorehouseKey].selectedLocation) {
-          const selectedLocationKeys = Object.keys(selectStorehouseGoodsPosition[StorehouseKey].selectedLocation);
+        if (selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation) {
+          const selectedLocationKeys = Object.keys(selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation);
           selectedLocationKeys.forEach(selectedLocationKey => {
-            if (selectStorehouseGoodsPosition[StorehouseKey].selectedLocation[selectedLocationKey]) {
-              list.push(...selectStorehouseGoodsPosition[StorehouseKey].selectedLocation[selectedLocationKey]);
+            if (selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey]) {
+              list.push(...selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey]);
             }
           });
         }
@@ -284,13 +284,13 @@ export default {
       if (!getSelectedLocationList.value.length) {
         messageBox.failSingle('请选择货位', () => null, () => null);
       } else {
-        props.primaryClick(selectStorehouseGoodsPosition);
+        props.primaryClick(selectStorehouseGoodsPosition.value);
         SelectGoodsCloseClick();
       }
     }
     function getLocaName() {
       const msg:string[] = [];
-      selectStorehouseGoodsPosition[Data.StorehouseID].selectData.forEach(item => {
+      selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData.forEach(item => {
         item.list.forEach(it => {
           if (it.DimensionID === item.inputValue) {
             msg.push(`${it.Dimension}`);
@@ -332,16 +332,16 @@ export default {
       const temp = list.map(res => ({ ...res, LocationName: getLocaName().join(' '), selectedLocationID: getDimensionIDS.value.join('') }));
       // 设置选中的仓库;
 
-      selectStorehouseGoodsPosition[Data.StorehouseID].selectedLocation[getDimensionIDS.value.join('')] = temp;
+      selectStorehouseGoodsPosition.value[Data.StorehouseID].selectedLocation[getDimensionIDS.value.join('')] = temp;
     }
     // 获取货位详情
     function getGoodsPosition() {
       // 如果有选择维度的项
-      if (selectStorehouseGoodsPosition[Data.StorehouseID]
-      && selectStorehouseGoodsPosition[Data.StorehouseID].selectData.length) {
+      if (selectStorehouseGoodsPosition.value[Data.StorehouseID]
+      && selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData.length) {
         // 最后一个没有值则不请求
-        if (!selectStorehouseGoodsPosition[Data.StorehouseID]
-          .selectData[selectStorehouseGoodsPosition[Data.StorehouseID].selectData.length - 1].inputValue) return;
+        if (!selectStorehouseGoodsPosition.value[Data.StorehouseID]
+          .selectData[selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData.length - 1].inputValue) return;
       }
       const temp = {
         StorehouseID: Data.StorehouseID as string,
@@ -361,10 +361,10 @@ export default {
     }
     watch(() => Data.GoodsPositionDimensionSelect, (newValue) => {
       // 根据选择项给选择货位的表单赋值
-      if (!selectStorehouseGoodsPosition[Data.StorehouseID]) {
-        selectStorehouseGoodsPosition[Data.StorehouseID] = {};
+      if (!selectStorehouseGoodsPosition.value[Data.StorehouseID]) {
+        selectStorehouseGoodsPosition.value[Data.StorehouseID] = {};
       }
-      if (!selectStorehouseGoodsPosition[Data.StorehouseID].selectData) {
+      if (!selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData) {
         const returnData:DimensionsFromType[] = [];
 
         if (newValue && newValue.DimensionSelects) {
@@ -380,14 +380,14 @@ export default {
             });
           });
         }
-        selectStorehouseGoodsPosition[Data.StorehouseID].selectData = returnData;
+        selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData = returnData;
       }
       // 初始化选中的数据
-      if (!selectStorehouseGoodsPosition[Data.StorehouseID].selectedLocation) {
-        selectStorehouseGoodsPosition[Data.StorehouseID].selectedLocation = {};
+      if (!selectStorehouseGoodsPosition.value[Data.StorehouseID].selectedLocation) {
+        selectStorehouseGoodsPosition.value[Data.StorehouseID].selectedLocation = {};
         // 如果没有维度选择项 直接把仓库的id作为选项的key值
-        if (!selectStorehouseGoodsPosition[Data.StorehouseID].selectData.length) {
-          selectStorehouseGoodsPosition[Data.StorehouseID].selectedLocation[getDimensionIDS.value.join('')] = [];
+        if (!selectStorehouseGoodsPosition.value[Data.StorehouseID].selectData.length) {
+          selectStorehouseGoodsPosition.value[Data.StorehouseID].selectedLocation[getDimensionIDS.value.join('')] = [];
         }
       }
       // 处理第二次进入时没有获取货位信息的情况
@@ -427,7 +427,7 @@ export default {
         Data.StorehouseID = _StorehouseList[0].StorehouseID;
         if (props._selectStorehouseGoodsPosition) {
           Object.keys(props._selectStorehouseGoodsPosition).forEach(res => {
-            selectStorehouseGoodsPosition[res] = { ...props._selectStorehouseGoodsPosition[res] };
+            selectStorehouseGoodsPosition.value[res] = { ...props._selectStorehouseGoodsPosition[res] };
           });
         }
         getGoodsPositionDimensionSelect();
