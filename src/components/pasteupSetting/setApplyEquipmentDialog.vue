@@ -191,7 +191,6 @@ watch(() => props.applyEquipmentList, (newVal) => {
 watch(() => Dialog.value, (newVal) => {
   if (newVal && props.haveSetApplyEquipmentList) {
     const haveSetApplyEquipmentList = props.haveSetApplyEquipmentList as EquipmentGroups[];
-    console.log(props.haveSetApplyEquipmentList, 'Dialog');
     Data.applyEquipmentListFrom.forEach((element, index) => {
       element.EquipmentGroups.forEach(item => {
         const temp = haveSetApplyEquipmentList.find(res => res.ID === item.ID);

@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const { defineConfig } = require('@vue/cli-service');
+require('events').EventEmitter.defaultMaxListeners = 20; // 将MaxListeners的限制数增加到20
 
 const isDev = process.env.NODE_ENV === 'development';
 

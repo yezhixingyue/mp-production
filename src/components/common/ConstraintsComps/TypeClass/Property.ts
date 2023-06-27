@@ -45,7 +45,6 @@ export class Property {
 
   constructor(data) {
     if (data) restoreInitDataByOrigin(this, data);
-    console.log(data, this);
   }
 
   // eslint-disable-next-line no-use-before-define
