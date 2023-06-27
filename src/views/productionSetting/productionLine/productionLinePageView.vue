@@ -178,7 +178,7 @@
         <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
             <el-checkbox-group v-model="Data.addPrcessFrom.WordIDS">
               <template v-for="item in PrcessList" :key="item.ClassID" >
-                <el-checkbox :label="item.ID" :title="item.Name" :disabled="Data.addPrcessFrom.WordIDS.includes(item.ID)">{{item.Name}}</el-checkbox>
+                <el-checkbox :label="item.ID" :title="item.Name" :disabled="originWordIDS.includes(item.ID)">{{item.Name}}</el-checkbox>
               </template>
             </el-checkbox-group>
         </div>
@@ -559,12 +559,15 @@ const getCombinationPrcessList = () => {
 const AddLine = () => {
   addLineShow.value = true;
 };
+// 原始WordIDS
+const originWordIDS = ref<string[]>([]);
 // 添加工序
 const addPrcess = () => {
   Data.addPrcessFrom.ID = actionLine.value?.ID || '';
   const _list = ProductionLineData.value?.ProductionLineWorkings || [];
   Data.addPrcessFrom.WordIDS = _list.filter(it => PrcessList.value.find(item => item.ID === it.WorkID) || !isCombine.value).map(it => it.WorkID);
   // 格式化已经添加的工序
+  originWordIDS.value = [...Data.addPrcessFrom.WordIDS];
   addPrcessShow.value = true;
 };
 const setSplit = () => {
