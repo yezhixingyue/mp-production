@@ -51,7 +51,7 @@
             <tr class="combine-line-info" :style="`width:${totalWidth}px`">
               <td>
                 <span>组合生产线：</span>
-                <h4>{{ row.Line || '未知生产线' }}</h4>
+                <h4>{{ row.Line || '' }}</h4>
               </td>
             </tr>
             <tr v-for="(instance, i) in row.InstanceList" :key="i" class="instance-list" :style="`width:${totalWidth}px`">
