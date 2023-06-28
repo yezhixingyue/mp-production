@@ -40,12 +40,12 @@
         <el-table border fit stripe
         :data="MaterialWarehouseStore.MaterialManageList" style="width: 100%">
           <el-table-column prop="CategoryName" label="分类" min-width="208"/>
-          <el-table-column prop="TypeName" label="类型" min-width="157">
+          <el-table-column show-overflow-tooltip prop="TypeName" label="类型" min-width="157">
             <template #default="scope:any">
               {{scope.row.TypeName}}（{{scope.row.TypeCode}}）
             </template>
           </el-table-column>
-          <el-table-column prop="Code" label="编码" min-width="157"/>
+          <el-table-column show-overflow-tooltip prop="Code" label="编码" min-width="157"/>
           <el-table-column prop="AttributeDescribe" label="物料"
           show-overflow-tooltip min-width="192">
           </el-table-column>
