@@ -207,6 +207,7 @@
     :StorehouseList="Data.StorehouseList"
     :currentMaterialID="Data.checkedMaterial?.MaterialID"
     :_selectStorehouseGoodsPosition="selectStorehouseGoodsPosition"
+    ref="InDeliveryDialogRef"
     >
     </InDeliveryDialog>
     </main>
@@ -336,6 +337,7 @@ export default {
   setup() {
     const router = useRouter();
     const ThreeCascaderComp:Ref = ref(null);
+    const InDeliveryDialogRef:Ref = ref(null);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const CommonStore = useCommonStore();
     // 选择仓库货位弹框的表单数据
@@ -548,6 +550,7 @@ export default {
         Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
         api.getStockIn(Data.inDeliveryForm).then(res => {
           if (res.data.Status === 1000) {
+            // InDeliveryDialogRef.value.clearselectStorehouseGoodsPosition();
             messageBox.successSingle('入库成功', () => {
               clearFrom();
             }, () => {
@@ -599,23 +602,24 @@ export default {
           // 如果有了就添加货位
           if (haveStorehouse) { // haveStorehouse已经有的仓库
           // 查找新选择的货位
-
-            if (selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKeys]) {
-              const noHave = selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKeys]
-                .filter(actionIt => !haveStorehouse.GoodsPositionList
-                  .find(PositionIt => PositionIt.PositionID === actionIt.PositionID));
-              // 把没有的货位添加上去
-              noHave.forEach(noHaveIt => {
-                haveStorehouse.GoodsPositionList.push({
-                  PositionID: noHaveIt.PositionID,
-                  Number: null,
-                  PositionName: noHaveIt.PositionName,
-                  LocationName: noHaveIt.LocationName,
-                  selectedLocationID: noHaveIt.selectedLocationID,
+            selectedLocationKeys.forEach(selectedLocationKey => {
+              if (selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey]) {
+                const noHave = selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey]
+                  .filter(actionIt => !haveStorehouse.GoodsPositionList
+                    .find(PositionIt => PositionIt.PositionID === actionIt.PositionID));
+                // 把没有的货位添加上去
+                noHave.forEach(noHaveIt => {
+                  haveStorehouse.GoodsPositionList.push({
+                    PositionID: noHaveIt.PositionID,
+                    Number: null,
+                    PositionName: noHaveIt.PositionName,
+                    LocationName: noHaveIt.LocationName,
+                    selectedLocationID: noHaveIt.selectedLocationID,
+                  });
                 });
-              });
-              // list.push(...);
-            }
+                // list.push(...);
+              }
+            });
           // 如果没有就添加仓库和货位
           } else if (list.length) {
             const Storehouse = Data.StorehouseList.find(it => it.StorehouseID === StorehouseKey);
@@ -698,6 +702,7 @@ export default {
     });
 
     return {
+      InDeliveryDialogRef,
       SizeSelects,
       Data,
       ThreeCascaderComp,

@@ -77,7 +77,7 @@
       <div class="add-material-supplier-dialog">
         <el-form :model="Data.MaterialSupplierForm" label-width="112px">
           <el-form-item label="供应商名称：" class="form-item-required">
-            <el-input :maxlength="30" v-model="Data.MaterialSupplierForm.SupplierName" />
+            <el-input :maxlength="30" v-model.trim="Data.MaterialSupplierForm.SupplierName" />
           </el-form-item>
           <el-form-item label="所在城市：" class="form-item-required">
             <TowLevelSelect
@@ -93,13 +93,13 @@
             ></TowLevelSelect>
           </el-form-item>
           <el-form-item label="详细地址：" class="form-item-required">
-            <el-input :maxlength="100" v-model="Data.MaterialSupplierForm.Address" />
+            <el-input :maxlength="100" v-model.trim="Data.MaterialSupplierForm.Address" />
           </el-form-item>
           <el-form-item label="联系人：" class="form-item-required">
-            <el-input :maxlength="20" v-model="Data.MaterialSupplierForm.Linkman" />
+            <el-input :maxlength="20" v-model.trim="Data.MaterialSupplierForm.Linkman" />
           </el-form-item>
           <el-form-item label="联系电话：" class="form-item-required">
-            <el-input v-model="Data.MaterialSupplierForm.ContactWay" />
+            <el-input v-model.trim="Data.MaterialSupplierForm.ContactWay" />
           </el-form-item>
         </el-form>
         <div class="material-type">
