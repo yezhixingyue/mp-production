@@ -91,13 +91,13 @@ function Closed() {
 function PrimaryClick() {
   const returnData = props.MaterialListGroup.filter(res => checkList.value.find(it => it === res.ID));
 
-  if (returnData.filter(it => it.Feature === MakingGroupTypeFeatureEnum.main).length > 1) {
-    MpMessage.error({
-      title: '操作失败',
-      msg: '仅能包含一个主料',
-    });
-    return;
-  }
+  // if (returnData.filter(it => it.Feature === MakingGroupTypeFeatureEnum.main).length > 1) {
+  //   MpMessage.error({
+  //     title: '操作失败',
+  //     msg: '仅能包含一个主料',
+  //   });
+  //   return;
+  // }
 
   if (returnData.filter(it => it.IsPlateMaterial).length > 1) {
     MpMessage.error({

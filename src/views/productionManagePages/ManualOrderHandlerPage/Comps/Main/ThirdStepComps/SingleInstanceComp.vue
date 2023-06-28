@@ -268,6 +268,10 @@ const _SpecialColorFileList = computed(() => props.item.FileList.filter(it => it
               }
             }
           }
+
+          h4 {
+            font-size: 14px;
+          }
         }
       }
     }

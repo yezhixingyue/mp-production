@@ -41,12 +41,17 @@ const localVisible = computed({
   },
 });
 
-const localWorkingList = computed(() => props.workingList.map(it => ({ ...it, WorkTimes: it.WorkTimes || '' })));
+const localWorkingList = ref<ILineDetailWorkingProcedure[]>([]);
 
 const checkList = ref<string[]>([]);
 
 const onOpen = () => {
   checkList.value = [...props.modelValue.map(it => it.ID)];
+
+  localWorkingList.value = props.workingList.map(it => ({
+    ...it,
+    WorkTimes: props.modelValue.find(_it => _it.ID === it.ID)?.WorkTimes || '',
+  }));
 };
 
 const checkedIds = computed(() => props.modelValue.map(it => it.ID));

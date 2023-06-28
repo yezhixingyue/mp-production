@@ -229,6 +229,10 @@ const onWorkRemoveClick = (work: ILineDetailWorkingProcedure) => {
     title: '确定删除该工序吗',
     msg: `工序名称: [ ${work.Name} ]`,
     onOk: () => {
+      const t = itemData.value.WorkingList.find(it => it.ID === work.ID);
+      if (t) {
+        t.WorkTimes = '';
+      }
       itemData.value.WorkingList = itemData.value.WorkingList.filter(it => it.ID !== work.ID);
       handleWorkingSelect();
     },
