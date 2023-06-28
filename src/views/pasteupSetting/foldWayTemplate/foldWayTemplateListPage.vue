@@ -74,7 +74,11 @@
     </SetApplyEquipmentDialog>
     <footer>
       <div class="bottom-count-box">
-        <MpPagination :total="Data.DataTotal"/>
+        <MpPagination
+        :nowPage="Data.getFoldWayTemplateData.Page"
+        :pageSize="Data.getFoldWayTemplateData.PageSize"
+        :total="Data.DataTotal"
+        :handlePageChange="PaginationChange"/>
       </div>
     </footer>
   </div>
@@ -146,7 +150,8 @@ const RadioGroupCompValue = computed(() => ({
 }));
 
 // 获取折手模板列表
-function getFoldWayTemplateList() {
+function getFoldWayTemplateList(Page = 1) {
+  Data.getFoldWayTemplateData.Page = Page;
   api.getFoldWayTemplateList(Data.getFoldWayTemplateData).then(res => {
     if (res.data.Status === 1000) {
       Data.FoldWayTemplateList = res.data.Data as FoldWayTemplateType[];
@@ -154,6 +159,9 @@ function getFoldWayTemplateList() {
       //
     }
   });
+}
+function PaginationChange(newVal) {
+  getFoldWayTemplateList(newVal);
 }
 function RadioGroupCompChange(levelData) {
   const { level1Val } = levelData;

@@ -19,7 +19,7 @@ interface ModeItemList {
 //   Height: number,
 //   AreaList: AreaList[],
 // }
-interface ModeSizeAttribute {
+interface ITemplateSizeAttribute{
   FilePath: string,
   Width: number,
   Height: number,
@@ -42,7 +42,7 @@ export interface SizeListType{
   TemplateID: string,
   ReproductionType: number,
   SizeType: number,
-  ModeSizeAttribute: ModeSizeAttribute | null,
+  TemplateSizeAttribute: ITemplateSizeAttribute | null,
   ActualSizeAttribute: ActualSizeAttribute | null,
   LengthErrorRange: RangeType | null,
   WidthErrorRange: RangeType | null,

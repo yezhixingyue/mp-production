@@ -12,7 +12,7 @@
             库存盘点</mp-button>
           <mp-button link type="primary" @click="seeSMSShow">查看短信(仅测试用)</mp-button>
           <p>
-            <el-checkbox @change="getStockList"
+            <el-checkbox @change="() => getStockList()"
             v-model="Data.getStockData.IsWarn" label="仅显示预警中物料" size="large" />
           </p>
         </div>
@@ -451,7 +451,8 @@ export default {
       level2Val: Data.getStockData.TypeID,
     }));
 
-    function getStockList() {
+    function getStockList(Page = 1) {
+      Data.getStockData.Page = Page;
       api.getStockList(Data.getStockData).then(res => {
         if (res.data.Status === 1000) {
           Data.StockList = res.data.Data as StockListType[];
@@ -460,9 +461,9 @@ export default {
       });
     }
     function PaginationChange(newVal) {
-      if (Data.getStockData.Page === newVal) return;
-      Data.getStockData.Page = newVal;
-      getStockList();
+      // if (Data.getStockData.Page === newVal) return;
+      // Data.getStockData.Page = newVal;
+      getStockList(newVal);
     }
     function ToOutDelivery(materialManageInfo) {
       // const routeData = router.resolve({

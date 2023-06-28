@@ -70,6 +70,7 @@ export interface getMaterialType {
 export interface MaterialTypes {
   TypeID: string,
   TypeName: string
+  TypeCode: string
 }
 export interface MaterialTypeGroupType {
   CategoryID: number,

@@ -49,15 +49,6 @@
               </template>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="Address" label="拼版方式" show-overflow-tooltip min-width="280" >
-            <template #default="scope:any">
-              <template v-if="!scope.row.IsSameSizeWithPrintingPlate">
-              <span v-if="scope.row.ModeSizeAttribute && scope.row.ModeSizeAttribute.UseMode">
-                按模位（{{scope.row.ModeSizeAttribute.ModeItemList.length}}条记录）
-              </span>
-              </template>
-            </template>
-          </el-table-column> -->
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope:any">
               <mp-button type="info" link @click="ToTemplateSetSize(scope.row)" :disabled="scope.row.IsSameSizeWithPrintingPlate">
@@ -99,8 +90,8 @@
     <footer>
       <div class="bottom-count-box">
         <MpPagination
-        :nowPage="Data.getImpositionTemmplateData.Page"
-        :pageSize="Data.getImpositionTemmplateData.PageSize"
+        :nowPage="PasteupSettingStore.getImpositionTemmplateData.Page"
+        :pageSize="PasteupSettingStore.getImpositionTemmplateData.PageSize"
         :total="Data.DataTotal"
         :handlePageChange="PaginationChange" />
       </div>
@@ -122,25 +113,15 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ImpositionTemmplate } from './types';
 
-interface getImpositionTemmplateDataType {
-  Page: number,
-  PageSize: number,
-}
-
 interface DataType {
   DataTotal: number,
   addTemplateFromShow:boolean,
-  getImpositionTemmplateData:getImpositionTemmplateDataType,
   addTemplateFrom:ImpositionTemmplate,
 }
 const router = useRouter();
 const PasteupSettingStore = usePasteupSettingStore();
 const Data:DataType = reactive({
   DataTotal: 0,
-  getImpositionTemmplateData: {
-    Page: 1,
-    PageSize: 20,
-  },
   addTemplateFromShow: false,
   addTemplateFrom: {
     ID: '',
@@ -152,38 +133,13 @@ const Data:DataType = reactive({
     List: [],
   },
 });
-// const ImpositionTemmplateClassList = computed(() => [{
-//   ID: '',
-//   Name: '所有分类',
-// }, ...PasteupSettingStore.ImpositionTemmplateClassList]);
-// const RadioGroupCompValue = computed(() => ({
-//   level1Val: Data.getImpositionTemmplateData.ClassID,
-//   level2Val: '',
-// }));
 
 function getImpositionTemmplateList() {
   PasteupSettingStore.getImpositionTemmplateList((DataNumber) => {
     Data.DataTotal = DataNumber as number;
   });
-  // api.getImpositionTemmplateList(Data.getImpositionTemmplateData).then(res => {
-  //   if (res.data.Status === 1000) {
-  //     Data.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
-  //   }
-  // });
 }
-// function RadioGroupCompChange(levelData) {
-//   const { level1Val } = levelData;
-//   if (level1Val !== undefined) {
-//     Data.getImpositionTemmplateData.ClassID = level1Val;
-//     getImpositionTemmplateList();
-//   }
-// }
-// 管理分类
-// function ManagementClass() {
-//   router.push({
-//     name: 'impositionTemmplateClass',
-//   });
-// }
+
 // 添加修改拼版模板
 function ToTemplateSetSize(item = null) {
   router.push({

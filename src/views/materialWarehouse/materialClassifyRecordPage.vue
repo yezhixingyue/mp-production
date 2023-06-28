@@ -325,6 +325,8 @@ interface StockListType {
   SizeDescribe: string,
   AttributeDescribe: string,
   SizeID: string
+  OutInNumber:number,
+  OutInUnit:number,
 }
 interface getRecordDataType {
   DateType:string
@@ -508,7 +510,8 @@ export default {
       StaffName: '不限',
     }, ...CommonStore.StaffSelectList]);
 
-    function getRecordList() {
+    function getRecordList(Page = 1) {
+      Data.getRecordData.Page = Page;
       ClassType.setDate(Data.getRecordData, 'CreateTime');
       const _obj = ClassType.filter(Data.getRecordData, true);
 
@@ -533,9 +536,9 @@ export default {
       return '';
     }
     function PaginationChange(newVal) {
-      if (Data.getRecordData.Page === newVal) return;
-      Data.getRecordData.Page = newVal;
-      getRecordList();
+      // if (Data.getRecordData.Page === newVal) return;
+      // Data.getRecordData.Page = newVal;
+      getRecordList(newVal);
     }
     // 获取全部仓库的出库总数量
     function getStorehouseAllInNumber() {

@@ -207,6 +207,7 @@
     :StorehouseList="Data.StorehouseList"
     :currentMaterialID="Data.checkedMaterial?.MaterialID"
     :_selectStorehouseGoodsPosition="selectStorehouseGoodsPosition"
+    ref="InDeliveryDialogRef"
     >
     </InDeliveryDialog>
     </main>
@@ -336,10 +337,11 @@ export default {
   setup() {
     const router = useRouter();
     const ThreeCascaderComp:Ref = ref(null);
+    const InDeliveryDialogRef:Ref = ref(null);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const CommonStore = useCommonStore();
     // 选择仓库货位弹框的表单数据
-    const selectStorehouseGoodsPosition = reactive({});
+    const selectStorehouseGoodsPosition = ref({});
     const Data:DataType = reactive({
       TypeID: '',
       SizeSelects: null,
@@ -405,6 +407,7 @@ export default {
         ],
       };
       Data.inStorehouseGoodsPosition = [];
+      selectStorehouseGoodsPosition.value = {};
     }
     // 格式化数据
     function SizeSelectChange(ID) {
@@ -547,6 +550,7 @@ export default {
         Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
         api.getStockIn(Data.inDeliveryForm).then(res => {
           if (res.data.Status === 1000) {
+            // InDeliveryDialogRef.value.clearselectStorehouseGoodsPosition();
             messageBox.successSingle('入库成功', () => {
               clearFrom();
             }, () => {
@@ -578,18 +582,18 @@ export default {
     }
     function SelectGoodsPrimaryClick(_selectStorehouseGoodsPosition) {
       Object.keys(_selectStorehouseGoodsPosition).forEach(res => {
-        selectStorehouseGoodsPosition[res] = { ..._selectStorehouseGoodsPosition[res] };
+        selectStorehouseGoodsPosition.value[res] = { ..._selectStorehouseGoodsPosition[res] };
       });
 
-      const StorehouseKeys = Object.keys(selectStorehouseGoodsPosition);
+      const StorehouseKeys = Object.keys(selectStorehouseGoodsPosition.value);
       StorehouseKeys.forEach(StorehouseKey => {
-        if (selectStorehouseGoodsPosition[StorehouseKey].selectedLocation) {
-          const selectedLocationKeys = Object.keys(selectStorehouseGoodsPosition[StorehouseKey].selectedLocation);
+        if (selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation) {
+          const selectedLocationKeys = Object.keys(selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation);
 
           const list:GoodsPositionItemType[] = [];
           selectedLocationKeys.forEach(selectedLocationKey => {
-            if (selectStorehouseGoodsPosition[StorehouseKey].selectedLocation[selectedLocationKey].length) {
-              list.push(...selectStorehouseGoodsPosition[StorehouseKey].selectedLocation[selectedLocationKey]);
+            if (selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey].length) {
+              list.push(...selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey]);
             }
           });
           // 是否已经有这个仓库
@@ -598,23 +602,24 @@ export default {
           // 如果有了就添加货位
           if (haveStorehouse) { // haveStorehouse已经有的仓库
           // 查找新选择的货位
-
-            if (selectStorehouseGoodsPosition[StorehouseKey].selectedLocation[selectedLocationKeys]) {
-              const noHave = selectStorehouseGoodsPosition[StorehouseKey].selectedLocation[selectedLocationKeys]
-                .filter(actionIt => !haveStorehouse.GoodsPositionList
-                  .find(PositionIt => PositionIt.PositionID === actionIt.PositionID));
-              // 把没有的货位添加上去
-              noHave.forEach(noHaveIt => {
-                haveStorehouse.GoodsPositionList.push({
-                  PositionID: noHaveIt.PositionID,
-                  Number: null,
-                  PositionName: noHaveIt.PositionName,
-                  LocationName: noHaveIt.LocationName,
-                  selectedLocationID: noHaveIt.selectedLocationID,
+            selectedLocationKeys.forEach(selectedLocationKey => {
+              if (selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey]) {
+                const noHave = selectStorehouseGoodsPosition.value[StorehouseKey].selectedLocation[selectedLocationKey]
+                  .filter(actionIt => !haveStorehouse.GoodsPositionList
+                    .find(PositionIt => PositionIt.PositionID === actionIt.PositionID));
+                // 把没有的货位添加上去
+                noHave.forEach(noHaveIt => {
+                  haveStorehouse.GoodsPositionList.push({
+                    PositionID: noHaveIt.PositionID,
+                    Number: null,
+                    PositionName: noHaveIt.PositionName,
+                    LocationName: noHaveIt.LocationName,
+                    selectedLocationID: noHaveIt.selectedLocationID,
+                  });
                 });
-              });
-              // list.push(...);
-            }
+                // list.push(...);
+              }
+            });
           // 如果没有就添加仓库和货位
           } else if (list.length) {
             const Storehouse = Data.StorehouseList.find(it => it.StorehouseID === StorehouseKey);
@@ -639,8 +644,8 @@ export default {
     }
     function delGoodsPosition(index, i, StorehouseID, selectedLocationID) {
       // 删除货位选择 StorehouseID
-      selectStorehouseGoodsPosition[StorehouseID]
-        .selectedLocation[selectedLocationID] = selectStorehouseGoodsPosition[StorehouseID]
+      selectStorehouseGoodsPosition.value[StorehouseID]
+        .selectedLocation[selectedLocationID] = selectStorehouseGoodsPosition.value[StorehouseID]
           .selectedLocation[selectedLocationID]
           .filter(res => res.PositionID !== Data.inStorehouseGoodsPosition[index]
             .GoodsPositionList[i].PositionID);
@@ -697,6 +702,7 @@ export default {
     });
 
     return {
+      InDeliveryDialogRef,
       SizeSelects,
       Data,
       ThreeCascaderComp,
