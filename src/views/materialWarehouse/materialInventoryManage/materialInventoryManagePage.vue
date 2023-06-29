@@ -42,7 +42,7 @@
             }"
             :value='twoSelecValue'
             @change="twoSelectChange"
-            @requestFunc='getStockList'
+            @requestFunc='() => getStockList()'
             ></RadioGroupComp>
         </div>
     </header>

@@ -14,7 +14,7 @@
           placeholder="请输入搜索关键词"
           resetWords="清空所有筛选条件"
           :changePropsFunc="(words) => Data.getMaterialManageData.KeyWords = words"
-          :requestFunc='getMaterialManageList'
+          :requestFunc='() => getMaterialManageList()'
           @reset='clearCondition'
           >
         </SearchInputComp>

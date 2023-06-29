@@ -27,7 +27,7 @@
             }"
             :value='twoSelecValue'
             @change="twoSelectChange"
-            @requestFunc='getRecordList'
+            @requestFunc='()=>getRecordList()'
             ></RadioGroupComp>
         </div>
         <div class="top-main">
@@ -38,7 +38,7 @@
               :value='Data.getRecordData.HandleType'
               :showLine='true'
               @change="(ID) => Data.getRecordData.HandleType = ID"
-              @requestFunc='getRecordList'
+              @requestFunc='()=>getRecordList()'
               ></OneLevelSelect>
           </template>
           <template v-if="Data.getRecordData.LogType === 1">
@@ -48,7 +48,7 @@
               :value='Data.getRecordData.HandleType'
               :showLine='true'
               @change="(ID) => Data.getRecordData.HandleType = ID"
-              @requestFunc='getRecordList'
+              @requestFunc='()=>getRecordList()'
               ></OneLevelSelect>
             <OneLevelSelect
               :title='"供应商"'
@@ -60,7 +60,7 @@
               :value='Data.getRecordData.SupplierID'
               :showLine='true'
               @change="(ID) => Data.getRecordData.SupplierID = ID"
-              @requestFunc='getRecordList'
+              @requestFunc='()=>getRecordList()'
               ></OneLevelSelect>
           </template>
           <OneLevelSelect
@@ -73,7 +73,7 @@
             :value='Data.getRecordData.Handler'
             :showLine='true'
             @change="(ID) => Data.getRecordData.Handler = ID"
-            @requestFunc='getRecordList'
+            @requestFunc='()=>getRecordList()'
             ></OneLevelSelect>
           <OneLevelSelect
             :title='"操作人"'
@@ -85,13 +85,13 @@
             :value='Data.getRecordData.Operater'
             :showLine='true'
             @change="(ID) => Data.getRecordData.Operater = ID"
-            @requestFunc='getRecordList'
+            @requestFunc='()=>getRecordList()'
             ></OneLevelSelect>
         </div>
         <div class="top-main flex-between">
           <LineDateSelectorComp
           :changePropsFunc='setCondition4DataList'
-          :requestFunc='getRecordList'
+          :requestFunc='()=>getRecordList()'
           :isFull="true"
           :typeList="[['DateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
           :dateValue='Data.getRecordData.DateType'
@@ -106,7 +106,7 @@
               placeholder="请输入搜索关键词"
               resetWords="清空所有筛选条件"
               :changePropsFunc="(words) => Data.getRecordData.KeyWords = words"
-              :requestFunc='getRecordList'
+              :requestFunc='()=>getRecordList()'
               @reset='clearCondition'
               >
             </SearchInputComp>

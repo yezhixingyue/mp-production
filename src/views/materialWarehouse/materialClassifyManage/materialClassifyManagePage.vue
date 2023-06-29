@@ -14,7 +14,7 @@
          :value='Data.getMaterialTypeData.CategoryID'
          :showLine='true'
          @change="(ID) => Data.getMaterialTypeData.CategoryID = ID"
-         @requestFunc='getMaterialClassifyManage'
+         @requestFunc='() => getMaterialClassifyManage()'
          :width="130"
          ></OneLevelSelect>
       </div>

@@ -11,7 +11,7 @@
           </el-radio-button>
         </el-radio-group> -->
         <el-scrollbar>
-          <el-radio-group @change="getInventoryLogList"
+          <el-radio-group @change="() => getInventoryLogList()"
           v-model="Data.getInventoryLogListData.StorehouseID">
             <el-radio-button :label="''">
               所有仓库
@@ -32,7 +32,7 @@
             { name: '前年记录', ID: 'beforeyesterYear' },
           ]"
           :changePropsFunc='setCondition4DataList'
-          :requestFunc='getInventoryLogList'
+          :requestFunc='() => getInventoryLogList()'
           :isFull="true"
           :typeList="[['DateType', ''], ['CheckTime', 'First'], ['CheckTime', 'Second']]"
           :dateValue='Data.getInventoryLogListData.DateType'
@@ -51,7 +51,7 @@
             :value='Data.getInventoryLogListData.Handler'
             :showLine='true'
             @change="(ID) => Data.getInventoryLogListData.Handler = ID"
-            @requestFunc='getInventoryLogList'
+            @requestFunc='() => getInventoryLogList()'
             ></OneLevelSelect>
         </div>
     </header>
