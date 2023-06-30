@@ -70,13 +70,13 @@
 import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { PlaceOrderProductionInstance } from '@/views/productionManagePages/ManualOrderHandlerPage/js/PlaceOrderProductionInstance';
-import { InstanceFoldingSetupClass } from '@/views/productionManagePages/ManualOrderHandlerPage/js/InstanceFoldingSetupClass';
+import { InstanceSettingsOnMakeupFileClass } from '@/views/productionManagePages/ManualOrderHandlerPage/js/InstanceSettingsOnMakeupFileClass';
 import { MoveTypeEnum, FeedEdgePositionEnum } from '@/views/productionManagePages/ManualOrderHandlerPage/js/enums';
 import { MoveTypeEnumList, FeedEdgePositionList } from '@/views/productionManagePages/ManualOrderHandlerPage/js/EnumList';
 
 const props = defineProps<{
   visible: boolean
-  instanceData: PlaceOrderProductionInstance
+  instanceData: Required<PlaceOrderProductionInstance>
 }>();
 
 const emit = defineEmits(['update:visible', 'submit']);
@@ -90,10 +90,10 @@ const localVisible = computed({
   },
 });
 
-const ruleForm = ref<null | InstanceFoldingSetupClass>(null);
+const ruleForm = ref<null | InstanceSettingsOnMakeupFileClass>(null);
 
 const onOpen = () => {
-  ruleForm.value = new InstanceFoldingSetupClass(props.instanceData);
+  ruleForm.value = new InstanceSettingsOnMakeupFileClass(props.instanceData);
 };
 
 const submit = () => {

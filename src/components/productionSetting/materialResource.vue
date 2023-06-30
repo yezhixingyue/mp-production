@@ -25,7 +25,7 @@
           </el-checkbox-group>
         </div>
         </el-scrollbar>
-        <p class="tips-box"><el-icon><WarningFilled /></el-icon> 主料和版材均最多包含一个</p>
+        <p class="tips-box"><el-icon><WarningFilled /></el-icon> 版材最多包含一个</p>
       </div>
     </template>
     </DialogContainerComp>
@@ -174,7 +174,7 @@ watch(() => Dialog.value, (newVal) => {
     }
   }
   .tips-box {
-    width: 220px;
+    width: 180px;
     margin: 35px auto;
     margin-bottom: -15px;
     i {

@@ -16,7 +16,7 @@ export const checkExTaskIsComplete = (row: ReturnType<typeof getLocalTaskList>[n
 
   if (!Amount && Amount !== 0) return '请输入外协金额';
 
-  if (!/^\d+(.\d)?$/.test(`${Amount}`)) return '外协金额不正确，请输入数字类型，最多1位小数';
+  if (!/^\d+(\.\d)?$/.test(`${Amount}`)) return '外协金额不正确，请输入数字类型，最多1位小数';
 
   if (!WishFinishTime) return '请设置预计完成日期';
 

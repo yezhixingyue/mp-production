@@ -263,6 +263,8 @@ onMounted(() => {
           ClassID: item.ClassID,
           ClassName: item.ClassName,
           EquipmentGroups,
+          ID: item.ClassID,
+          Name: item.ClassName,
         });
       });
     }

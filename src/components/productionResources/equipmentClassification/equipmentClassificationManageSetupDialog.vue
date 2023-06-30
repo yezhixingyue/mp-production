@@ -2,7 +2,7 @@
   <DialogContainerComp v-model:visible='localVisible' autoClose :title="dialogTitle" @submit="submit" @open="onOpen" :width="600">
     <ul v-if="ruleForm" class="content-wrap">
       <li>
-        <span class="label">分类名称：</span>
+        <span class="label star">分类名称：</span>
         <el-input v-model.trim="ruleForm.Name" maxlength="10" show-word-limit></el-input>
       </li>
     </ul>

@@ -8,10 +8,10 @@
         <el-radio v-for="it in FeatureMenuList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item prop="IsPlateMaterial" v-if="ruleForm.Feature!==resourceBundleFeatureEnumObj.semifinished.ID" class="type-box">
+    <el-form-item prop="IsPlateMaterial" v-if="ruleForm.Feature===resourceBundleFeatureEnumObj.sup.ID" class="type-box">
       <el-checkbox v-model="ruleForm.IsPlateMaterial" @change="onIsPlateMaterialChange">版材</el-checkbox>
     </el-form-item>
-    <el-form-item prop="PartType" v-else class="type-box">
+    <el-form-item prop="PartType" v-if="ruleForm.Feature===resourceBundleFeatureEnumObj.semifinished.ID" class="type-box">
       <el-radio-group v-model="ruleForm.PartType">
         <el-radio v-for="it in PartTypeEnumList" :key="it.ID" :label="it.ID">{{ it.Name }}</el-radio>
       </el-radio-group>

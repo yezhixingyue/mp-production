@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang='ts'>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { PlaceOrderProductionInstance } from '@/views/productionManagePages/ManualOrderHandlerPage/js/PlaceOrderProductionInstance';
 import { ManualOrderHandlerPageData } from '@/views/productionManagePages/ManualOrderHandlerPage/js';
 import { ILineDetailWorkingProcedure } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
@@ -174,12 +174,13 @@ import AssistNumbericSelectDialog from './AssistNumbericSelectDialog.vue';
 import AssistNumbericChangeDialog from './AssistNumbericChangeDialog.vue';
 
 interface IPropsModelValue extends Pick<PlaceOrderProductionInstance,
- 'AssistList' | 'FileList' | 'WorkingList' | 'handleWorkingSelect' | 'handleNumbericChange'
- | 'NeedFolding'> {
+ 'AssistList' | 'FileList' | 'WorkingList' | 'handleWorkingSelect' | 'handleNumbericChange'> {
+  clearInfoWhenClearPlateTemplate?: PlaceOrderProductionInstance['clearInfoWhenClearPlateTemplate']
   handleSpecialColorChange?: PlaceOrderProductionInstance['handleSpecialColorChange']
   ForbitUnionMakeup?: PlaceOrderProductionInstance['ForbitUnionMakeup']
   NeedSetPlateSize?: PlaceOrderProductionInstance['NeedSetPlateSize']
   ColorList?: PlaceOrderProductionInstance['ColorList']
+  NeedFolding?: PlaceOrderProductionInstance['NeedFolding']
 }
 
 const props = defineProps<{
@@ -208,6 +209,13 @@ const _NumbericalList = computed(() => itemData.value.AssistList.filter(it => it
 const onFoldingClick = () => {
   emit('foldingClick');
 };
+
+watch(() => _MakeupFileList.value, (newVal, oldVal) => {
+  if (newVal.length === 0 && oldVal.length > 0) { // 印刷工序被删除 不再显示拼版文件 清除拼版文件上面相关设置
+    console.log('印刷工序被删除 不再显示拼版文件');
+    if (itemData.value.clearInfoWhenClearPlateTemplate) itemData.value.clearInfoWhenClearPlateTemplate();
+  }
+});
 
 /* 选择工序相关
 ----------------------------------- */

@@ -101,7 +101,7 @@
                   </template>
                 </li>
               </ul>
-              <p class="title b">可选物料资源包：<mp-button type="primary" link @click="materialResourceShow = true">选择物料资源包</mp-button><span>（选填）</span></p>
+              <p class="title b">可选物料资源包：<mp-button type="primary" link @click="materialResourceShow = true">选择物料资源包</mp-button></p>
               <div class="info">{{showInfoMaterial.join('、')}}</div>
             </el-form>
           </div>
@@ -404,18 +404,34 @@ const getEquipmentNameByID = (ID) => {
   return str;
 };
 const saveProcess = () => {
-  // 检查 如果当前工序类型为制版工序的话 物料资源包中不允许有半成品
-  const checkPlatemakingMaterialSource = () => {
-    if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking) {
-      const list = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.material);
-      if (list.length > 0) {
-        const t = list.find(it => {
-          const m = productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.RelationID);
-          return m?.Feature === MakingGroupTypeFeatureEnum.semifinished;
-        });
-        if (t) return false;
+  // 检查可选物料资源包是否符合标准
+  const checkMaterialSource = () => {
+    const list = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.material)
+      .map(it => productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.RelationID))
+      .filter(it => it);
+    if (list.length === 0) {
+      messageBox.failSingleError('保存失败', '未设置可选物料资源包', () => null, () => null);
+      return false;
+    }
+    if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking) { // 检查 如果当前工序类型为制版工序的话 物料资源包中不允许有半成品和主料 且必须包含有版材
+      let t = list.find(it => it?.Feature !== MakingGroupTypeFeatureEnum.sup);
+      if (t) {
+        messageBox.failSingleError('保存失败', '制版工序可选物料资源包中不允许有主料和半成品', () => null, () => null);
+        return false;
+      }
+      t = list.find(it => it?.IsPlateMaterial);
+      if (!t) {
+        messageBox.failSingleError('保存失败', '制版工序可选物料资源包中必须包含有版材', () => null, () => null);
+        return false;
+      }
+    } else { // 其它工序中至少有一个主料或半成品，可以有版材
+      const t = list.find(it => it?.Feature !== MakingGroupTypeFeatureEnum.sup);
+      if (!t) {
+        messageBox.failSingleError('保存失败', '非制版工序可选物料资源包中必须包含有主料或半成品', () => null, () => null);
+        return false;
       }
     }
+
     return true;
   };
 
@@ -433,8 +449,8 @@ const saveProcess = () => {
   } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && !Data.processDataFrom.TemplateID) {
     messageBox.failSingleError('保存失败', '请选择大版模板', () => null, () => null);
     // 弹框提 其他时 大阪模板为空
-  } else if (!checkPlatemakingMaterialSource()) { // 如果当前工序类型为制版工序的话 物料资源包中不允许有半成品
-    messageBox.failSingleError('保存失败', '制版工序物料来源中不允许有半成品', () => null, () => null);
+  } else if (!checkMaterialSource()) { // 验证可选物料资源包
+    // messageBox.failSingleError('保存失败', '制版工序可选物料资源包中不允许有半成品', () => null, () => null);
   } else if (Data.processDataFrom.AllowPartReport && !Data.processDataFrom.MinPartReportNumber && Data.processDataFrom.MinPartReportNumber !== 0) {
     // 弹框提醒 允许部分报工 最大数量
     messageBox.failSingleError('保存失败', '请输入允许部分报工时最大数量', () => null, () => null);

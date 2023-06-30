@@ -25,7 +25,7 @@
       }}生产线</mp-button>
     </div>
     <!-- 单一生产线实例 -->
-    <ProductionInstanceComp
+    <ProductionInstanceComp v-if="ManualOrderHandlerPageData.CreateOrderInfo._SingleInstanceList[0]"
       v-show="curLineData.Type===LineTypeEnum.normal" :index="0" v-model="ManualOrderHandlerPageData.CreateOrderInfo._SingleInstanceList[0]" />
     <!-- 组合生产线公共部分 -->
     <CombineLineCommonInfo v-show="curLineData.Type === LineTypeEnum.combine" />
@@ -70,7 +70,7 @@ const onLineSelect = (e: ProductLineSimpleType) => {
 };
 
 const curLineData = computed(() => {
-  const temp: { Line: null | ProductLineSimpleType, InstanceList: PlaceOrderProductionInstance[], Type: LineTypeEnum } = {
+  const temp: { Line: null | ProductLineSimpleType, InstanceList: Required<PlaceOrderProductionInstance>[], Type: LineTypeEnum } = {
     Line: null,
     InstanceList: [],
     Type: ManualOrderHandlerPageData.value?.CreateOrderInfo._curLineType || LineTypeEnum.normal,
@@ -93,7 +93,9 @@ const curLineData = computed(() => {
 
 const semiFinishedVisible = ref(false);
 
-const selectedMaterialSourceIds = computed(() => ManualOrderHandlerPageData.value?.CreateOrderInfo._CombineInstanceList.map(it => it.SemiFinished.ID) || []);
+const selectedMaterialSourceIds = computed(
+  () => ManualOrderHandlerPageData.value?.CreateOrderInfo._CombineInstanceList.map(it => it.SemiFinished?.ID).filter(it => it) as string[] || [],
+);
 
 const onSemiFinishedSelect = (item: ILineWorkingMaterialSources) => {
   semiFinishedVisible.value = false;

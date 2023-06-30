@@ -212,23 +212,28 @@ const handleCheckAllChange = () => {
 const clearTreeData = () => {
   treeComp.value.setCheckedKeys([]);
   selectKeys.value = [];
+  checkAll.value = false;
 };
-defineExpose({ clearTreeData });
+
+const redrawTreeData = () => {
+  const list = props.defaultCheckedKeys;
+  if (list && Array.isArray(list) && list.length === 0 && selectKeys.value.length > 0) {
+    clearTreeData();
+  } else if (list && Array.isArray(list) && list.length > 0 && list.length !== selectKeys.value.length) {
+    treeComp.value.setCheckedKeys(list);
+    selectKeys.value = list;
+  }
+};
+
+defineExpose({ clearTreeData, redrawTreeData });
 watch(() => props.watchValue, () => {
   localDisabled2CheckAll.value = true;
 }, {
   immediate: true,
 });
-watch(() => props.defaultCheckedKeys, (newVal) => {
+watch(() => props.defaultCheckedKeys, () => {
   localDisabled2CheckAll.value = true;
-  if (newVal && Array.isArray(newVal) && newVal.length === 0 && selectKeys.value.length > 0) {
-    treeComp.value.setCheckedKeys([]);
-    selectKeys.value = [];
-    checkAll.value = false;
-  } else if (newVal && Array.isArray(newVal) && newVal.length > 0 && newVal.length !== selectKeys.value.length) {
-    treeComp.value.setCheckedKeys(newVal);
-    selectKeys.value = newVal;
-  }
+  redrawTreeData();
 });
 </script>
 
@@ -347,7 +352,7 @@ watch(() => props.defaultCheckedKeys, (newVal) => {
                   position: relative;
                   top: 4px;
                   left: 4px;
-                  transition: 0.05s ease-in-out;
+                  // transition: 0.05s ease-in-out;
                   transform-origin: center;
                   display: inline-block;
                   width: 0;
@@ -355,7 +360,7 @@ watch(() => props.defaultCheckedKeys, (newVal) => {
                   border: 6px solid rgba($color: #000000, $alpha: 0);
                   border-top-color: #cbcbcb;
                   border-top-width: 7px;
-                  transform-origin: 50% 25% 0 ;
+                  transform-origin: 50% 38% 0 ;
                   &.close {
                     transform: rotate(180deg);
                     // top: 3px;

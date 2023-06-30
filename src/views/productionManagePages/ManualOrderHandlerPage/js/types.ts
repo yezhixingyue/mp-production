@@ -28,7 +28,7 @@ export interface IConvertAssistInfo {
   /** 数值信息 */
   Value: number | ''
   /** 文件路径  */
-  FilePath: string
+  FilePath?: string
   /** 该文件是否为图片文件 */
   IsImage?: boolean
   TaskWorkingID?: string
@@ -64,9 +64,7 @@ export interface IConvertOrderFile {
   /** 存放辅助文件信息 仅辅助文件有 */
   _NoteInfo?: ILineWorkingNoteInfo
   /** 拼版模版id */
-  Template?: {
-    ID: string
-  }
+  Template?: { ID: string } | null
   /** 存放拼版模板信息 仅拼版文件有 */
   _PlateTemplate?: IImpositionTemplate
   /** 专色列表 [单个颜色id] */

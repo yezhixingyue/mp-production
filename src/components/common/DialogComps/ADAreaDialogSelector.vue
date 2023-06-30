@@ -6,7 +6,7 @@
     :title="`选择区域`"
     class="mp-erp-ad-area-dialog-selector-comp-wrap"
     primaryText="确定"
-
+    @open="onOpen"
     :primaryClick="onSubmit"
     :closeClick="() => localVisible = false"
     :closed="onClosed"
@@ -14,8 +14,7 @@
     <!-- @open="onOpen" -->
     <ADAreaTreeContentComp
       ref="oTreeWrap"
-      :value="localAreaList"
-      @change="(list) => localAreaList = list"
+      v-model="localAreaList"
       :treeType='treeType'
       :displayLevel2='displayLevel2'
       :productClassifyType='productClassifyType'
@@ -24,9 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  ref, onMounted, computed, watch,
-} from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IAreaList } from '@/views/productionSetting/deliveryTimeManage/types';
 import { useCommonStore } from '@/store/modules/common/index';
@@ -34,7 +31,7 @@ import ADAreaTreeContentComp from '../ADAreaTreeContentComp.vue';
 
 interface Props {
   visible: boolean
-  value:IAreaList[]
+  modelValue:IAreaList[]
   treeType?:string
   AreaDescribe:string
   productClassifyType?:number
@@ -43,14 +40,14 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   visible: false,
-  value: () => [],
+  modelValue: () => [],
   treeType: 'area',
   AreaDescribe: '',
   productClassifyType: 0,
   displayLevel2: false,
 });
 
-const emit = defineEmits(['update:visible', 'change', 'update:AreaDescribe']);
+const emit = defineEmits(['update:visible', 'update:modelValue', 'update:AreaDescribe']);
 const commonStore = useCommonStore();
 
 // const oTreeWrap:Ref = ref(null);
@@ -73,15 +70,18 @@ const onClosed = () => {
 };
 
 const onSubmit = () => {
-  emit('change', [...localAreaList.value]);
+  emit('update:modelValue', [...localAreaList.value]);
   emit('update:AreaDescribe', oTreeWrap.value?.getTextDisplayContent());
   localVisible.value = false;
 };
-watch(() => localVisible.value, (newVal) => {
-  if (newVal) {
-    localAreaList.value = [...props.value];
+
+const onOpen = () => {
+  localAreaList.value = [...props.modelValue];
+
+  if (oTreeWrap.value && oTreeWrap.value?.TreeCompRef) {
+    oTreeWrap.value?.TreeCompRef.redrawTreeData();
   }
-});
+};
 onMounted(() => {
   if (!commonStore.DistrictTreeList.length) {
     commonStore.getDistrictList();

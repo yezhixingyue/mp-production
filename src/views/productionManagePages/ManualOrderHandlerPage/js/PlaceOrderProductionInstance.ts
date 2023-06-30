@@ -1,14 +1,13 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
-import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum } from './enums';
 import { ILineDetailWorkingProcedure, ILineWorkingMaterialSources } from './ProductionLineDetailTypes';
 import {
   IConvertAssistInfo, IConvertOrderFile, IFactoryMaterialList, IPrintColor, IProductionInstanceOriginData,
 } from './types';
 import { checkIsPositiveInteger, checkMobile } from './utils';
-import { InstanceFoldingSetupClass } from './InstanceFoldingSetupClass';
+import { InstanceSettingsOnMakeupFileClass } from './InstanceSettingsOnMakeupFileClass';
 
 /**
  * 手动下单生产线实例，组合生产线由多个该实例组成
@@ -16,7 +15,7 @@ import { InstanceFoldingSetupClass } from './InstanceFoldingSetupClass';
  * @export
  * @class PlaceOrderProductionInstance
  */
-export class PlaceOrderProductionInstance extends InstanceFoldingSetupClass { // 区分普通和组合生产线 ？
+export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileClass { // 区分普通和组合生产线 ？
   // ID = ''
 
   // Name = '' // 需要把半成品名称赋值给该属性 ---------- 后续待处理 暂不需处理
@@ -72,17 +71,8 @@ export class PlaceOrderProductionInstance extends InstanceFoldingSetupClass { //
   /** 文件列表 在展示中分为拼版文件、辅助文件和专色文件 专色文件可以为空 | 拼版文件和专色文件 只能PDF */
   FileList: IConvertOrderFile[] = []
 
-  /** 允许合拼 */
-  ForbitUnionMakeup = false
-
-  /** 手动设置拼版尺寸 禁止合拼后才可设置  */
-  NeedSetPlateSize = false
-
   /** 输出半成品, 仅属于组合生产线时使用 */
-  SemiFinished = {
-    ID: '',
-    Name: '',
-  }
+  SemiFinished: null | { ID: string, Name: string } = null
 
   /* 特殊情况处理及其需要用到的一些数据支撑
   ------------------------------------------------------- */
@@ -106,8 +96,7 @@ export class PlaceOrderProductionInstance extends InstanceFoldingSetupClass { //
       this.LineList = [{ ID: originData.ID, Name: originData.Name }];
     }
     if (MaterialSource) {
-      this.SemiFinished.ID = MaterialSource.MaterialTypeID;
-      this.SemiFinished.Name = MaterialSource.MaterialTypeName;
+      this.SemiFinished = { ID: MaterialSource.MaterialTypeID, Name: MaterialSource.MaterialTypeName };
       this._MaterialSource = MaterialSource;
     }
   }
@@ -208,7 +197,16 @@ export class PlaceOrderProductionInstance extends InstanceFoldingSetupClass { //
 
   /** 折手设置 */
   handleFoldingSubmit(params: object) {
-    restoreInitDataByOrigin(this, params);
+    Object.entries(params).forEach(([key, value]) => {
+      if (Object.prototype.hasOwnProperty.call(this, key)) {
+        this[key] = value;
+      }
+    });
+  }
+
+  /** 当印刷工序取消时 清除掉一些信息 */
+  clearInfoWhenClearPlateTemplate() {
+    this.handleFoldingSubmit(new InstanceSettingsOnMakeupFileClass().getParams() || {});
   }
 
   _MaterialList: IFactoryMaterialList[] = []
@@ -237,7 +235,7 @@ export class PlaceOrderProductionInstance extends InstanceFoldingSetupClass { //
   /** 当前生产线实例名称 */
   get _LineInstanceName() {
     if (!this._isBelongToCombineLine) return '';
-    return this.SemiFinished.Name || '';
+    return this.SemiFinished?.Name || '';
   }
 
   /** 合法性校验 */

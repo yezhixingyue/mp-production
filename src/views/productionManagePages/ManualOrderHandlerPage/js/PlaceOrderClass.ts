@@ -128,9 +128,7 @@ export class PlaceOrderClass {
         temp.FileList = temp.FileList.map(f => {
           const t = {
             UniqueName: f.UniqueName,
-            Template: {
-              ID: f.Template?.ID || '',
-            },
+            Template: f.Template ? { ID: f.Template.ID } : null,
             AssistList: f.AssistList,
             SpecialColorList: f.SpecialColorList,
           };
@@ -156,9 +154,7 @@ export class PlaceOrderClass {
         FileList: it.FileList?.map(f => {
           const t = {
             UniqueName: f.UniqueName,
-            Template: {
-              ID: f.Template?.ID || '',
-            },
+            Template: f.Template ? { ID: f.Template.ID } : null,
             AssistList: f.AssistList,
             SpecialColorList: f.SpecialColorList,
           };
@@ -336,7 +332,7 @@ export class PlaceOrderClass {
       return false;
     }
 
-    const reg = /^\d+(.\d)?$/;
+    const reg = /^\d+(\.\d)?$/;
 
     if (!reg.test(FinalPrice)) {
       MpMessage.error({ title: '操作失败', msg: '价格输入不正确，请输入数字类型，不能小于0，最多1位小数' });
@@ -452,7 +448,7 @@ export class PlaceOrderClass {
 
     // 3. 生成半成品实例数据 _CombineInstanceList  1. 必需的半成品必须生成  2. 原已经添加的非必需半成品数据给予保留
     _AllMaterialSources.forEach((m) => {
-      const t = this._CombineInstanceList.find(it => it.SemiFinished.ID === m.MaterialTypeID);
+      const t = this._CombineInstanceList.find(it => it.SemiFinished?.ID === m.MaterialTypeID);
       if (t) {
         list.push(t);
       } else if (m.NeedResource) {
@@ -474,14 +470,14 @@ export class PlaceOrderClass {
   }
 
   /** 组合生产线实例选中或切换生产线 */
-  setCombineSingleLineInstance(itemData: PlaceOrderProductionInstance, originData: IProductionInstanceOriginData) {
+  setCombineSingleLineInstance(itemData: Required<PlaceOrderProductionInstance>, originData: IProductionInstanceOriginData) {
     const i = this._CombineInstanceList.findIndex(it => it === itemData);
     if (i < 0) return;
     this._CombineInstanceList[i] = new PlaceOrderProductionInstance(itemData._isBelongToCombineLine, originData, itemData._MaterialSource || undefined);
   }
 
   /** 删除半成品实例 */
-  removeCombineSingleLineInstance(itemData: PlaceOrderProductionInstance) {
+  removeCombineSingleLineInstance(itemData: Required<PlaceOrderProductionInstance>) {
     const i = this._CombineInstanceList.findIndex(it => it === itemData);
     if (i < 0) return;
     this._CombineInstanceList.splice(i, 1);

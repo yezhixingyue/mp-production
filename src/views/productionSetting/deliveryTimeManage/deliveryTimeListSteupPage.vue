@@ -61,8 +61,7 @@
     <ADAreaDialogSelector
       v-model:visible="visible"
       v-model:AreaDescribe='ruleForm.AreaDescribe'
-      :value="ruleForm.AreaList"
-      @change="(list) => ruleForm.AreaList = list"
+      v-model="ruleForm.AreaList"
     />
     <ShiftTimeSetupDialog v-model:visible="shiftTimeVisible" :curEditShiftTime="curEditShiftTime" @submit="onShiftTimeSubmit" />
     <footer>

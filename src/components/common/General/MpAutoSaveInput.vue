@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue']);
 
-const _Regxp = props.useFloat ? /^\d+(.\d{1,2})?$/ : /^\d+$/;
+const _Regxp = props.useFloat ? /^\d+(\.\d{1,2})?$/ : /^\d+$/;
 
 const inpVal = ref(_Regxp.test(`${props.modelValue}`) ? +props.modelValue : '');
 

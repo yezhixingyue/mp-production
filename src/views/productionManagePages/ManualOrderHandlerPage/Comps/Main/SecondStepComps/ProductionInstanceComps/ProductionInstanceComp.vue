@@ -3,7 +3,7 @@
     <ul class="left">
       <!-- 半成品信息 -->
       <li v-if="itemData._isBelongToCombineLine">
-        <h3 class="ft-16">半成品:{{ itemData.SemiFinished.Name }}</h3>
+        <h3 class="ft-16">半成品:{{ itemData.SemiFinished?.Name || '' }}</h3>
       </li>
       <!-- 半成品生产线信息 -->
       <li v-if="itemData._isBelongToCombineLine">
@@ -125,7 +125,7 @@ import FoldingSetupDialog from './FoldingSetupDialog.vue';
 import { ManualOrderHandlerPageData } from '../../../../js';
 
 const props = defineProps<{
-  modelValue: PlaceOrderProductionInstance
+  modelValue: Required<PlaceOrderProductionInstance>
   index: number
 }>();
 
@@ -163,7 +163,7 @@ const getMaterialList = async (TypeID: string) => {
 const onSemiFinisiedRemoveClick = () => {
   MpMessage.warn({
     title: '确定删除该半成品吗 ?',
-    msg: `半成品名称：[ ${itemData.value.SemiFinished.Name} ]`,
+    msg: `半成品名称：[ ${itemData.value.SemiFinished?.Name || ''} ]`,
     onOk: () => {
       setTimeout(() => {
         ManualOrderHandlerPageData.value?.CreateOrderInfo.removeCombineSingleLineInstance(itemData.value);

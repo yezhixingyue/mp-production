@@ -48,7 +48,7 @@ const submit = () => {
     MpMessage.error({ title: '操作失败', msg: '请输入值' });
     return;
   }
-  if (!/^\d+(.\d{1,2})?$/.test(num.value)) {
+  if (!/^\d+(\.\d{1,2})?$/.test(num.value)) {
     MpMessage.error({ title: '操作失败', msg: '值设置不正确，必须为数字类型，不能小于0，最多两位小数' });
     return;
   }

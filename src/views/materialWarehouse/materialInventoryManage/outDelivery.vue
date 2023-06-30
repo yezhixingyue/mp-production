@@ -29,7 +29,7 @@
                   :change="ThreeCascaderCompChange"
                   ></ThreeCascaderComp>
                   <OneLevelSelect
-                  v-if="Data.itemSelectTempMaterial"
+                    v-if="Data.itemSelectTempMaterial"
                     :options='SizeSelects'
                     :defaultProps="{
                       value:'SizeID',

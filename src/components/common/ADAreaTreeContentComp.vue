@@ -30,16 +30,16 @@ interface AreaListType {
   CountyID: number,
 }
 interface Props {
-  value:AreaListType[]
+  modelValue:AreaListType[]
   treeType?:string
   productClassifyType?:number
   displayLevel2?:boolean
   defaultLabels?:boolean
 }
-const emit = defineEmits(['change']);
+const emit = defineEmits(['update:modelValue']);
 const TreeCompRef = ref<InstanceType<typeof TreeComp>>();
 const props = withDefaults(defineProps<Props>(), {
-  value: () => [],
+  modelValue: () => [],
   treeType: 'area',
   productClassifyType: 0,
   displayLevel2: false,
@@ -115,7 +115,7 @@ const createItem = (rootVal, lv1Val, lv2Val, lv3Val) => {
 };
 const allStateItem = computed(() => createItem(1, 0, 0, lv3KeyEmptyValue.value));
 
-const defaultCheckedKeys = computed(() => getDefaultCheckedKeys(props.value)); // 差还原keys 还原后该组件即可使用
+const defaultCheckedKeys = computed(() => getDefaultCheckedKeys(props.modelValue)); // 差还原keys 还原后该组件即可使用
 const Level1AreaList = computed(() => {
   if (spreadList.value.length === 0) return [];
   return spreadList.value.filter((it) => it.Level === 1);
@@ -127,11 +127,11 @@ const Level2AreaList = computed(() => {
 
 const handleAreaChangeFunc = (checkedNodes, checkedKeys, isAll) => {
   if (checkedNodes.length === 0) {
-    emit('change', []);
+    emit('update:modelValue', []);
     return;
   }
   if (isAll) {
-    emit('change', [{ ...allStateItem.value }]);
+    emit('update:modelValue', [{ ...allStateItem.value }]);
     return;
   }
   interface _lvList {
@@ -145,7 +145,7 @@ const handleAreaChangeFunc = (checkedNodes, checkedKeys, isAll) => {
     _lv1List.push(createItem(1, lv1.ID, 0, lv3KeyEmptyValue.value));
   });
   if (Level1AreaList.value.length === _lv1List.length && _lv1List.length > 0) {
-    emit('change', [{ ...allStateItem.value }]);
+    emit('update:modelValue', [{ ...allStateItem.value }]);
     return;
   }
   const _level1IDList = _level1List.map(it => it.ID);
@@ -165,7 +165,7 @@ const handleAreaChangeFunc = (checkedNodes, checkedKeys, isAll) => {
     }
   });
   const list = [..._lv1List, ..._lv2List, ..._lv3List];
-  emit('change', list);
+  emit('update:modelValue', list);
 };
 const getTreeTextDisplayContent = (value, allAdAreaTreeList, type, defaultLabels) => {
   let defaultPropKeys = {
@@ -257,7 +257,7 @@ const getTreeTextDisplayContent = (value, allAdAreaTreeList, type, defaultLabels
   }).join('\r\n');
 };
 
-const getTextDisplayContent = () => getTreeTextDisplayContent(props.value, allLevelList.value, props.treeType, defaultPropKeys.value);// 获取选中区域文字展示
+const getTextDisplayContent = () => getTreeTextDisplayContent(props.modelValue, allLevelList.value, props.treeType, defaultPropKeys.value);// 获取选中区域文字展示
 defineExpose({ getTextDisplayContent, TreeCompRef });
 onMounted(() => {
   if (!commonStore.DistrictTreeList.length) {

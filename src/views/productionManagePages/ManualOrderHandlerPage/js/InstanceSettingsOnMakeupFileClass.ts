@@ -3,7 +3,14 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { PlaceOrderProductionInstance } from './PlaceOrderProductionInstance';
 import { FeedEdgePositionEnum, MoveTypeEnum } from './enums';
 
-export class InstanceFoldingSetupClass {
+/** 在拼版文件上面绑定的一些设置 */
+export class InstanceSettingsOnMakeupFileClass {
+  /** 允许合拼 */
+  ForbitUnionMakeup = false
+
+  /** 手动设置拼版尺寸 禁止合拼后才可设置  */
+  NeedSetPlateSize = false
+
   /** 是否需要折手 */
   NeedFolding = false
 
@@ -34,7 +41,7 @@ export class InstanceFoldingSetupClass {
   /** 勾选了外爬移 */
   _CheckedMoveOut = false
 
-  constructor(data?: PlaceOrderProductionInstance) {
+  constructor(data?: Required<PlaceOrderProductionInstance>) {
     if (data) {
       restoreInitDataByOrigin(this, data);
     }
@@ -56,7 +63,7 @@ export class InstanceFoldingSetupClass {
           MpMessage.error('保存失败', '内爬移量未设置');
           return false;
         }
-        if (!/^\d+(.\d{1})?$/.test(`${this.MoveInValue}`)) {
+        if (!/^\d+(\.\d{1})?$/.test(`${this.MoveInValue}`) || this.MoveInValue <= 0) {
           MpMessage.error('保存失败', '内爬移设置不正确，必须为大于0的数字类型且最多1位小数');
           return false;
         }
@@ -66,7 +73,7 @@ export class InstanceFoldingSetupClass {
           MpMessage.error('保存失败', '外爬移量未设置');
           return false;
         }
-        if (!/^\d+(.\d{1})?$/.test(`${this.MoveOutValue}`)) {
+        if (!/^\d+(\.\d{1})?$/.test(`${this.MoveOutValue}`) || this.MoveOutValue <= 0) {
           MpMessage.error('保存失败', '外爬移设置不正确，必须为大于0的数字类型且最多1位小数');
           return false;
         }
@@ -79,15 +86,15 @@ export class InstanceFoldingSetupClass {
         MpMessage.error('保存失败', '叼口空白尺寸未设置');
         return false;
       }
-      if (!/^\d+(.\d{1})?$/.test(`${this.FeedEdgeValue}`)) {
+      if (!/^\d+(\.\d{1})?$/.test(`${this.FeedEdgeValue}`) || this.FeedEdgeValue <= 0) {
         MpMessage.error('保存失败', '叼口空白尺寸设置不正确，必须为大于0的数字类型且最多1位小数');
         return false;
       }
     }
 
     // 4. 铣背设置
-    if (this.MillingValue && !/^\d+(.\d{1})?$/.test(`${this.MillingValue}`)) {
-      MpMessage.error('保存失败', '叼口空白尺寸设置不正确，必须为大于0的数字类型且最多1位小数');
+    if (this.MillingValue && (!/^\d+(\.\d{1})?$/.test(`${this.MillingValue}`) || this.MillingValue <= 0)) {
+      MpMessage.error('保存失败', '铣背值设置不正确，必须为大于0的数字类型且最多1位小数');
       return false;
     }
 

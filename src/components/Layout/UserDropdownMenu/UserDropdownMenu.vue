@@ -70,7 +70,7 @@ const docPermissions = computed(() => {
 const onDocClick = (target) => {
   if (!user.value) return;
   const siteType = 2;
-  window.open(`http://192.168.1.92:3020/init?token=${user.value.Token}&siteType=${siteType}&target=${target}`);
+  window.open(`http://file.ybz888.com:7006/init?token=${user.value.Token}&siteType=${siteType}&target=${target}`);
 };
 
 const logout = () => {

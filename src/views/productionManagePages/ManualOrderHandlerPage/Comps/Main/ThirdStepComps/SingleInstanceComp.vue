@@ -2,7 +2,7 @@
   <div class="single-instance-comp-wrap">
     <ul class="left">
       <li>
-        <h2>{{ isCombineLine ? item.SemiFinished.Name : item._originLineData?.Name }}</h2>
+        <h2>{{ isCombineLine ? item.SemiFinished?.Name : item._originLineData?.Name }}</h2>
       </li>
       <li v-if="isCombineLine">
         <h4 class="mr-15">{{ item._originLineData?.Name }}</h4>
@@ -118,7 +118,7 @@ import {
 import { PlaceOrderProductionInstance } from '../../../js/PlaceOrderProductionInstance';
 
 const props = defineProps<{
-  item: PlaceOrderProductionInstance
+  item: Required<PlaceOrderProductionInstance>
 }>();
 
 const getColorDisplayContent = (ColorList: PrintColorEnum[]) => {

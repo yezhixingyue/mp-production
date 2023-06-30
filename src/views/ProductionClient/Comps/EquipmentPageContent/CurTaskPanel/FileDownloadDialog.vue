@@ -8,10 +8,12 @@
     closeBtnText="关闭"
     >
     <div class="dialog-content">
-      <a :href="it.FilePath" :download="it.Name + it.FilePath.slice(it.FilePath.lastIndexOf('.'))"
-       class="is-blue-span" target="_blank" v-for="it in files" :key="it.ID">
-        {{ it.Name }}{{ it.FilePath.slice(it.FilePath.lastIndexOf('.')) }}
-      </a>
+      <template v-for="it in files" :key="it.ID">
+        <a v-if="it.FilePath" :href="it.FilePath" :download="it.Name + it.FilePath.slice(it.FilePath.lastIndexOf('.'))"
+          class="is-blue-span" target="_blank">
+          {{ it.Name }}{{ it.FilePath.slice(it.FilePath.lastIndexOf('.')) }}
+        </a>
+      </template>
     </div>
   </DialogContainerComp>
 </template>

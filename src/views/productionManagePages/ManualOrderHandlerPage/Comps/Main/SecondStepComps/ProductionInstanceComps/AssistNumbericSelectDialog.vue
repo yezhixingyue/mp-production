@@ -81,7 +81,7 @@ const submit = () => {
     MpMessage.error({ title: '操作失败', msg: `[${t.Name}] 未设置值` });
     return;
   }
-  t = checkList.find(it => (!/^\d+(.\d{1,2})?$/.test(`${it.Value}`)));
+  t = checkList.find(it => (!/^\d+(\.\d{1,2})?$/.test(`${it.Value}`)));
   if (t) {
     MpMessage.error({ title: '操作失败', msg: `[${t.Name}] 值设置不正确，必须为数字类型，不能小于0，最多两位小数` });
     return;

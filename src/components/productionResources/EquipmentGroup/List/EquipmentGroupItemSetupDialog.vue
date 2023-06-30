@@ -2,7 +2,7 @@
   <DialogContainerComp v-model:visible='localVisible' autoClose :title="dialogTitle" @submit="submit" @open="onOpen" :width="700">
     <ul v-if="ruleForm" class="content-wrap">
       <li>
-        <span class="label">分类：</span>
+        <span class="label star">分类：</span>
         <el-select v-model="ruleForm.ClassID" @change="onClassChange">
           <el-option v-for="it in EquipmentGroupData.EquipmentClassList" :key="it.ID" :label="it.Name" :value="it.ID"></el-option>
         </el-select>
@@ -15,7 +15,7 @@
         </el-tooltip>
       </li>
       <li>
-        <span class="label">组名称：</span>
+        <span class="label star">组名称：</span>
         <el-input v-model.trim="ruleForm.Name" maxlength="20" show-word-limit></el-input>
       </li>
       <li>

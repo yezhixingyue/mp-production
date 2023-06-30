@@ -1,7 +1,7 @@
 export interface EquipmentGroups {
   ID: string,
   Name: string,
-  AllowBatchReport: null | boolean
+  AllowBatchReport?: null | boolean
 }
 export interface UseClassEquipmentGroupType {
   ClassID: 0,

@@ -2,11 +2,12 @@
   <DialogContainerComp v-model:visible='localVisible' autoClose :title="dialogTitle" @submit="submit" @open="onOpen" :width="700">
     <ul v-if="ruleForm" class="content-wrap">
       <li>
-        <span class="label">设备组：</span>
+        <span class="label star">设备组：</span>
         <span class="tip is-pink ml-10" v-if="props.localEquipmentListClassData.EquipmentClassAndGroupLevelList.length === 0">暂无数据</span>
         <EpCascaderByLevel2
            v-else
            onlyLastValid
+          :withEmpty="false"
           :showTitle="false"
           :First="ruleForm.ClassID"
           :Second="ruleForm.GroupID"
@@ -16,11 +17,11 @@
         />
       </li>
       <li>
-        <span class="label">设备名称：</span>
+        <span class="label star">设备名称：</span>
         <el-input v-model.trim="ruleForm.Name" maxlength="20" show-word-limit></el-input>
       </li>
       <li>
-        <span class="label">显示顺序：</span>
+        <span class="label star">设备状态显示顺序：</span>
         <el-input class="num" v-model.number="ruleForm.Index" maxlength="9"></el-input>
         <span class="tip is-orange"><el-icon><WarningFilled /></el-icon>数字越小显示越靠前</span>
       </li>
@@ -90,7 +91,7 @@ const submit = () => {
       color: $--color-gray;
       font-weight: 700;
       margin-right: 6px;
-      width: 120px;
+      width: 140px;
       text-align: right;
       line-height: 32px;
     }

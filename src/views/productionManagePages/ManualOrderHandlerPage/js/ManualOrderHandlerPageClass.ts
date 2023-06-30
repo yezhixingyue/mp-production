@@ -27,7 +27,7 @@ export class ManualOrderHandlerPageClass {
         break;
 
       case PlaceStepEnum.Third: // 从第三步回退至第二步 --  如果已输入价格 则此时提示 确定回退至上一步吗 回退将会清空已输入的价格
-        if (/^\d+(.\d+)?$/.test(this.CreateOrderInfo.Funds.FinalPrice) || /^\d+(.\d+)?$/.test(this.CreateOrderInfo.Funds.Freight)) {
+        if (/^\d+(\.\d+)?$/.test(this.CreateOrderInfo.Funds.FinalPrice) || /^\d+(\.\d+)?$/.test(this.CreateOrderInfo.Funds.Freight)) {
           MpMessage.warn({
             title: '确定返回上一步吗?',
             msg: '该操作将会清除已输入的价格运费信息',

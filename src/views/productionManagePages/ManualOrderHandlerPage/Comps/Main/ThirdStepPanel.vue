@@ -36,21 +36,21 @@
     </header>
     <main>
       <template v-if="!isCombineLine">
-        <SingleInstanceComp v-for="it in ManualOrderHandlerPageData.CreateOrderInfo._SingleInstanceList" :key="it.SemiFinished.ID" :item="it" />
+        <SingleInstanceComp v-for="it in ManualOrderHandlerPageData.CreateOrderInfo._SingleInstanceList" :key="it._key" :item="it" />
       </template>
       <template v-else>
-        <SingleInstanceComp v-for="it in ManualOrderHandlerPageData.CreateOrderInfo._CombineInstanceList" :key="it.SemiFinished.ID" :item="it" />
+        <SingleInstanceComp v-for="it in ManualOrderHandlerPageData.CreateOrderInfo._CombineInstanceList" :key="it.SemiFinished?.ID" :item="it" />
       </template>
     </main>
     <footer>
       <div>
         <span class="title">价格:</span>
-        <el-input v-model.trim="ManualOrderHandlerPageData.CreateOrderInfo.Funds.FinalPrice" maxlength="9"></el-input>
+        <el-input v-model.trim="price" maxlength="9"></el-input>
         <em>元</em>
       </div>
       <div>
         <span class="title">运费:</span>
-        <el-input v-model.trim="ManualOrderHandlerPageData.CreateOrderInfo.Funds.Freight" maxlength="9"></el-input>
+        <el-input v-model.trim="freight" maxlength="9"></el-input>
         <em>元</em>
       </div>
       <div>
@@ -70,18 +70,32 @@ import SingleInstanceComp from './ThirdStepComps/SingleInstanceComp.vue';
 /** 当前生产线类型：单一或组合 */
 const isCombineLine = computed(() => ManualOrderHandlerPageData.value?.CreateOrderInfo._curLineType === LineTypeEnum.combine);
 
+const price = computed({
+  get() {
+    return ManualOrderHandlerPageData.value?.CreateOrderInfo.Funds.FinalPrice || '';
+  },
+  set(val) {
+    if (ManualOrderHandlerPageData.value && /^(\d+(\.\d{0,2})?)?$/.test(val)) ManualOrderHandlerPageData.value.CreateOrderInfo.Funds.FinalPrice = val;
+  },
+});
+
+const freight = computed({
+  get() {
+    return ManualOrderHandlerPageData.value?.CreateOrderInfo.Funds.Freight || '';
+  },
+  set(val) {
+    if (ManualOrderHandlerPageData.value && /^(\d+(\.\d{0,2})?)?$/.test(val)) ManualOrderHandlerPageData.value.CreateOrderInfo.Funds.Freight = val;
+  },
+});
+
 const totalPrice = computed(() => {
   if (!ManualOrderHandlerPageData.value) return '';
   const { FinalPrice, Freight } = ManualOrderHandlerPageData.value.CreateOrderInfo.Funds;
   if (!FinalPrice && !Freight) return '';
-  const reg = /^\d+(.\d+)?$/; // 校验时使用 /^\d+(.\d)?$/ 最多允许1位小数
-  if ((!FinalPrice || reg.test(FinalPrice)) && (!Freight || reg.test(Freight))) {
-    const p = FinalPrice ? +FinalPrice : 0;
-    const f = Freight ? +Freight : 0;
+  const p = FinalPrice ? +FinalPrice : 0;
+  const f = Freight ? +Freight : 0;
 
-    return +(p + f).toFixed(1);
-  }
-  return '';
+  return +(p + f).toFixed(1);
 });
 
 </script>

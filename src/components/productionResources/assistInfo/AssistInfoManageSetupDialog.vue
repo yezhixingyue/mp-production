@@ -2,11 +2,11 @@
   <DialogContainerComp v-model:visible='localVisible' autoClose :title="dialogTitle" @submit="submit" @open="onOpen" :width="600">
     <ul v-if="ruleForm" class="content-wrap">
       <li>
-        <span class="label">名称：</span>
+        <span class="label star">名称：</span>
         <el-input v-model.trim="ruleForm.Name" maxlength="20" show-word-limit></el-input>
       </li>
       <li>
-        <span class="label">类型：</span>
+        <span class="label star">类型：</span>
         <el-radio-group v-model="ruleForm.Type" size="small">
           <el-radio class="ft-12" v-for="it in radioMenus" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
         </el-radio-group>

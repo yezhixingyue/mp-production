@@ -47,7 +47,7 @@ export class RightExternalClass {
   }
 
   getSubmitData(TaskExceptionDetail: ITaskExceptionDetail | null) {
-    if (!/^\d+(.\d{1,2})?$/.test(this.ReduceAmount) && this.ReduceAmount !== '') {
+    if (!/^\d+(\.\d{1,2})?$/.test(this.ReduceAmount) && this.ReduceAmount !== '') {
       MpMessage.error('保存失败', '外协减款金额输入不正确，请输入数字类型且小数不能超过2位');
       return null;
     }
@@ -81,7 +81,7 @@ export class RightExternalClass {
         MpMessage.error('保存失败', '请输入要锁定的外协金额');
         return null;
       }
-      if (!/^\d+(.\d{1,2})?$/.test(this.FixedAmount)) {
+      if (!/^\d+(\.\d{1,2})?$/.test(this.FixedAmount)) {
         MpMessage.error('保存失败', '要锁定的外协金额输入不正确，请输入数字类型且小数不能超过2位');
         return null;
       }

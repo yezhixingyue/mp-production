@@ -214,7 +214,7 @@ export default {
             initMarginTop = el.getBoundingClientRect().top;
           }
 
-          const transformTop = el.style.transform.match(/translate\(-?\d+(.\d+)?px, (-?\d+(.\d+)?)px\)/)?.[2];
+          const transformTop = el.style.transform.match(/translate\(-?\d+(\.\d+)?px, (-?\d+(\.\d+)?)px\)/)?.[2];
 
           if (transformTop && +transformTop < -initMarginTop) {
             el.style.transform = '';

@@ -272,3 +272,12 @@ input[type='number'] {
     color: #ff3769dc !important;
   }
 }
+
+.star {
+  &::before {
+    content: "*";
+    color: #ff3769;
+    margin-right: 4px;
+    display: inline-block;
+  }
+}
