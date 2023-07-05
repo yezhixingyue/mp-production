@@ -12,7 +12,6 @@
         <LineDateSelectorComp
           :changePropsFunc='setCondition'
           :requestFunc='getList'
-          :isFull="true"
           :typeList="[['DateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
           :dateList="dateList"
           :dateValue='condition.DateType'
