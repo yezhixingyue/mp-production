@@ -7,6 +7,9 @@
       <mp-table-column width="108px" label="状态">
         <template #default="scope:any">{{ scope.row.IsOpen ? '' : '已关闭' }}</template>
       </mp-table-column>
+      <mp-table-column width="215px" label="运行时间设置">
+        <template #default="scope:any">{{ scope.row._RunningTime }}</template>
+      </mp-table-column>
       <mp-table-column width="215px" label="绑定状态">
         <template #default="scope:any">
           <span v-show="scope.row.Terminal">已绑定主机</span>
@@ -34,7 +37,8 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { computed } from 'vue';
-import { IManageEquipmentInfo } from '../js/types';
+import { getPeriodDateContent, getPeriodListContent } from '@/assets/js/utils/getPeriodContent';
+import { IEquipmentMaintainInfo, IManageEquipmentInfo } from '../js/types';
 
 const props = defineProps<{
   list: IManageEquipmentInfo[]
@@ -47,10 +51,29 @@ const emit = defineEmits(['unbind', 'switchIsOpen', 'setTime']);
 
 const formatListName = (id, list, options = { key: 'Name', value: 'ID' }) => getNameByIDAndList(id, list, options);
 
+const formatRunningTime = (MaintainInfo: IEquipmentMaintainInfo) => {
+  if (!MaintainInfo.IsAutomatic) return '手动开关机';
+  const arr: string[] = [];
+  // PeriodType
+
+  const { LimitOff, PeriodType, ItemList, PeriodList } = MaintainInfo;
+
+  const _LimitOffText = `以下时间段${LimitOff ? '关机' : '开机'}：`;
+
+  const _PeriodTypeText = getPeriodDateContent(PeriodType, ItemList);
+
+  const _PeriodListText = getPeriodListContent(PeriodList);
+
+  arr.push(_LimitOffText, _PeriodTypeText, _PeriodListText);
+
+  return arr.join('');
+};
+
 const localList = computed(() => props.list.map(it => ({
   ...it,
   _ClassName: formatListName(it.ClassID, props.EquipmentClassList),
   _GroupName: formatListName(it.GroupID, props.EquipmentGroupList),
+  _RunningTime: formatRunningTime(it.MaintainInfo),
 })));
 
 const onUnbindClick = (row: IManageEquipmentInfo) => {

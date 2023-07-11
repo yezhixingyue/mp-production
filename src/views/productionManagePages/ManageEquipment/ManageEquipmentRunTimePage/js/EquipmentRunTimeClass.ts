@@ -3,25 +3,10 @@ import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import api from '@/api';
 import { getGoBackFun } from '@/router';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { getFormatValue } from '@/assets/js/utils/getPeriodContent';
 import { IEquipmentMaintainInfo, IManageEquipmentTableListItem } from '../../ManageEquipmentListPage/js/types';
 import { IKeyValuePairInEdit } from './types';
 import { ManageEquipmentListPageData } from '../../js/store';
-
-const getFormatValue = (it: IKeyValuePairInEdit) => {
-  let _First = '';
-  let _Second = '';
-  if (it) {
-    const { Key, Value } = it;
-    if (Key || Key === 0) {
-      _First = `${`0${Math.floor(Key / 60)}`.slice(-2)}:${`0${Key % 60}`.slice(-2)}`;
-    }
-    if (Value || Value === 0) {
-      _Second = `${`0${Math.floor(Value / 60)}`.slice(-2)}:${`0${Value % 60}`.slice(-2)}`;
-    }
-  }
-
-  return { _First, _Second };
-};
 
 export class EquipmentRunTimeClass {
   ID = ''
