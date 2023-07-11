@@ -50,7 +50,7 @@ export const getPeriodDateContent = (PeriodType: ShiftTypeEnum, ItemList: number
             break;
           }
         }
-        content += `${arr.join('、')}号除外`;
+        content += `${arr.join('、')}号除外所有天`;
       } else {
         content += `${ItemList.join('、')}号`;
       }
