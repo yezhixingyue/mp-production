@@ -75,31 +75,29 @@
     <DialogContainerComp
     :title="`${Data.editTypeID ? '修改' : '添加'}物料`"
     :visible='Data.addMaterialManageShow'
-    :width="700"
+    :width="760"
     :primaryClick="addMaterialManagePrimaryClick"
     :closeClick="addMaterialManageCloseClick"
     :closed="addMaterialManageClosed"
-    :top="'10vh'"
+    :top="'4vh'"
+    class="add-material-manage-dialog-box"
     >
     <template #default>
         <el-scrollbar @scroll="addMaterialManageScroll">
       <div class="add-material-manage-dialog">
 
-        <el-form :model="Data.addMaterialManageForm" label-width="255px">
+        <el-form :model="Data.addMaterialManageForm" label-width="305px">
           <el-form-item :label="`类型：`">
             <span style="height: 32px;max-width: 100%;">
               <MpTip
               effect="dark"
-              :content="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}`"
+              :content="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}（${Data.dialogTypeData.TypeCode}）`"
               placement="top"
-              :disabled="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}`.length < 30">
-              {{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}
+              :disabled="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}（${Data.dialogTypeData.TypeCode}）`.length < 30">
+              {{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}（编码：{{Data.dialogTypeData.TypeCode}}）
               </MpTip>
             </span>
             <!-- <span>{{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}</span> -->
-          </el-form-item>
-          <el-form-item :label="`类型编码：`">
-            <span>{{Data.dialogTypeData.TypeCode}}</span>
           </el-form-item>
           <el-form-item :label="`编码：`" class="form-item-required" prop="MaterialCode">
             <el-input
@@ -714,8 +712,12 @@ export default {
     justify-content: flex-end;
     align-items: center;
   }
+  .add-material-manage-dialog-box{
+    margin-bottom: 0;
+  }
   .add-material-manage-dialog{
-    max-height: 500px;
+    min-height: 670px;
+    max-height: 670px;
     .el-form{
       .el-form-item{
         margin: 0 auto;
@@ -746,11 +748,18 @@ export default {
       }
 
       >p{
+        margin: 0 auto;
         margin-bottom:10px;
         font-size: 12px;
-        line-height: 30px;
+        line-height: 20px;
         color: #F4A307;
+        width: 60%;
+        margin-top: -14px;
+        margin-bottom: 20px;
       }
+    }
+    .material-type{
+      padding: 0 30px;
     }
       .el-checkbox-group{
         width: 100%;
