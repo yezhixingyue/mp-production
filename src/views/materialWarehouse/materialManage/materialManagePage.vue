@@ -91,9 +91,9 @@
             <span style="height: 32px;max-width: 100%;">
               <MpTip
               effect="dark"
-              :content="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}（${Data.dialogTypeData.TypeCode}）`"
+              :content="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}（编码：${Data.dialogTypeData.TypeCode}）`"
               placement="top"
-              :disabled="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}（${Data.dialogTypeData.TypeCode}）`.length < 30">
+              :disabled="`${Data.dialogTypeData.CategoryName} ${Data.dialogTypeData.TypeName}（编码：${Data.dialogTypeData.TypeCode}）`.length < 30">
               {{Data.dialogTypeData.CategoryName}} {{Data.dialogTypeData.TypeName}}（编码：{{Data.dialogTypeData.TypeCode}}）
               </MpTip>
             </span>
