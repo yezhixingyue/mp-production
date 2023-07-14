@@ -1,5 +1,5 @@
 import { IProductionLineDetail } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
-import { IFactoryMaterialList } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
+import { IFactoryMaterialList, SourceOrderData } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import request from '../request/request';
 
 export const ManualOrderHandlerApis = {
@@ -15,5 +15,9 @@ export const ManualOrderHandlerApis = {
   /** 获取生产线详细信息 GET /Api/ProductionLine/Detail */
   getProductionLineDetail(id: string) {
     return request<IProductionLineDetail>({ method: 'GET', url: '/Api/ProductionLine/Detail', params: { id } });
+  },
+  /** GET /Api/SellPart/OrderDetail  获取销售端订单详情 */
+  getSellPartOrderDetail(serverID: number | string, orderID: number | string) {
+    return request<SourceOrderData>({ method: 'GET', url: '/Api/SellPart/OrderDetail', params: { serverID, orderID } });
   },
 };

@@ -1,12 +1,13 @@
 <template>
   <div class="mp-date-time-picker">
     <!-- 日期选择 -->
-    <el-date-picker v-model="date" class="date" type="date" :placeholder="placeholder" :clearable="clearable"
+    <el-date-picker v-model="date" class="date" type="date" :placeholder="placeholder" :clearable="clearable" :disabled="disabled"
        format="YYYY-MM-DD" value-format="YYYY-MM-DD" :disabled-date="getDisabledDate" />
     <!-- 时间选择 select方式 -->
-    <el-time-select v-model="time" start="00:00" :step="timeSelectStep" end="23:59" v-if="(useTimeSelect && withTime && !onlyDate)"  placeholder=""/>
+    <el-time-select v-model="time" start="00:00" :step="timeSelectStep"
+     end="23:59" :disabled="disabled" v-if="(useTimeSelect && withTime && !onlyDate)"  placeholder=""/>
     <!-- 时间选择 picker方式 -->
-    <el-time-picker v-model="time" format="HH:mm" value-format="HH:mm" :default-value="pickTimeDefaultValue"
+    <el-time-picker v-model="time" format="HH:mm" value-format="HH:mm" :default-value="pickTimeDefaultValue" :disabled="disabled"
      v-if="(useTimePicker && withTime && !onlyDate)" placeholder="" />
   </div>
 </template>
@@ -26,6 +27,7 @@ const props = withDefaults(defineProps<{
   timeSelectStep?: string
   disabledBeforeToday?: boolean // 是否禁用当天之前的时间
   clearable?: boolean
+  disabled?: boolean
 }>(), {
   placeholder: '年/月/日',
   withTime: false,

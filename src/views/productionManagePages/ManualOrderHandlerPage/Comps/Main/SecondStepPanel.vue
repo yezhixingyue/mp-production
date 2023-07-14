@@ -1,5 +1,9 @@
 <template>
   <div class="second-panel-wrap" v-if="ManualOrderHandlerPageData">
+    <p class="pb-20 ft-13" style="max-width: 1140px;margin: 0 auto;"
+     v-if="!ManualOrderHandlerPageData.source.isManual && ManualOrderHandlerPageData.source.sourceOrderData?.Attribute?.Remark">
+      <span>{{ ManualOrderHandlerPageData.source.sourceOrderData.Attribute.Remark }}</span>
+    </p>
     <p class="p-attr">
       <span class="title">产品数量:</span>
       <el-input v-model.number="ManualOrderHandlerPageData.CreateOrderInfo.Attribute.ProductAmount" maxlength="8"></el-input>

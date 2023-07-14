@@ -3,8 +3,8 @@ import { instance } from '../request/instance';
 export const otherSettingApis = {
   /* 转换服务器相关
   --------------------------------- */
-  getConvertServerList(data) { // POST /Api/ConvertServer/List 转换服务器列表
-    return instance({ method: 'POST', url: '/Api/ConvertServer/List', data });
+  getConvertServerList() { // POST /Api/ConvertServer/List 转换服务器列表
+    return instance({ method: 'POST', url: '/Api/ConvertServer/List' });
   },
   getConvertServerRemove(id) { // DELETE /Api/ConvertServer/Remove 转换服务器删除
     return instance({ method: 'DELETE', url: '/Api/ConvertServer/Remove', params: { id } });
