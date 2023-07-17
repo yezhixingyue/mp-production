@@ -32,7 +32,8 @@
 
 <script setup lang='ts'>
 import {
-  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj, resourceBundleMatchEnum, PartTypeEnumList,
+  IMaterialTypeItemInBundle, ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj,
+  resourceBundleMatchEnum, PartTypeEnumList, MakingGroupTypeFeatureEnum,
 } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
@@ -108,7 +109,11 @@ const getFormData = () => new Promise((resolve) => { // 校验 + 获取表单内
         resolve(temp);
         return;
       }
-      resolve(ruleForm.value);
+      const temp = { ...ruleForm.value };
+      if (ruleForm.value.Feature === MakingGroupTypeFeatureEnum.main) {
+        temp.IsPlateMaterial = false;
+      }
+      resolve(temp);
     } else {
       resolve(null);
     }
