@@ -19,6 +19,7 @@
         :placeholder="placeholder"
         :filterable='filterable'
         no-data-text="无数据"
+        :disabled="disabled"
         :style="`width:${width}px`">
         <el-option
           v-for="item in options"
@@ -47,6 +48,7 @@ interface Props {
   defaultProps?: defaultPropsType
   filterable?: boolean
   showLine?: boolean
+  disabled?:boolean
 }
 const emit = defineEmits(['change', 'requestFunc']);
 
@@ -65,6 +67,7 @@ const props = withDefaults(defineProps<Props>(), {
   }),
   filterable: false,
   showLine: false,
+  disabled: false,
 });
 const result = computed({
   get() {

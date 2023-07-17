@@ -471,7 +471,7 @@ export default {
       // });
       const routeData = router.resolve({
         name: 'outDelivery',
-        query: { MaterialCode: JSON.stringify(materialManageInfo.MaterialCode || null) },
+        query: { MaterialCode: JSON.stringify(materialManageInfo.MaterialCode || '') },
       });
       window.open(routeData.href, '_blank');
     }

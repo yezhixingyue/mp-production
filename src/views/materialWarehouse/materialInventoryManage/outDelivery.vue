@@ -11,9 +11,9 @@
                   <p>
                     <el-input size="large" @keyup.enter="getMaterial()"
                     placeholder="请输入完整SKU编码，包括尺寸编码"
-                     v-model.trim="Data.getMaterialData.SKUCode">
+                     v-model.trim="Data.getMaterialData.SKUCode" :disabled="!!StoresRequisitionInfo">
                      <template #append>
-                        <mp-button link type="primary" @click="getMaterial()">
+                        <mp-button link type="primary" @click="getMaterial()" :disabled="!!StoresRequisitionInfo">
                           <el-icon><Search /></el-icon>
                           查询</mp-button>
                       </template>
@@ -27,9 +27,11 @@
                   <ThreeCascaderComp
                   ref="ThreeCascaderComp"
                   :change="ThreeCascaderCompChange"
+                  :disabled="!!StoresRequisitionInfo"
                   ></ThreeCascaderComp>
                   <OneLevelSelect
                     v-if="Data.itemSelectTempMaterial"
+                    :disabled="!!StoresRequisitionInfo"
                     :options='SizeSelects'
                     :defaultProps="{
                       value:'SizeID',
@@ -46,6 +48,7 @@
                     :options='[]'
                     :width="266"
                     :placeholder="'请选择物料尺寸'"
+                    :disabled="!!StoresRequisitionInfo"
                     ></OneLevelSelect>
                 </el-form-item>
                 <p class="material-info">
@@ -60,7 +63,7 @@
                 <el-form-item :label="`出库数量：`" class="out-number">
                   <mp-input-number size="large"
                   :max="999999" placeholder="请输入出库数量"
-                  :controls="false" :min="0" :step="0.01" step-strictly v-model="Data.outDeliveryForm.Number" />
+                  :controls="false" :min="0" :step="0.01" step-strictly v-model="Data.outDeliveryForm.Number" :disabled="!!StoresRequisitionInfo"/>
                   <OneLevelSelect
                     v-if="Data.checkedMaterial"
                     :options='Data.checkedMaterial.UnitSelects'
@@ -73,6 +76,7 @@
                     :width="100"
                     :filterable='true'
                     :placeholder="'请选择单位'"
+                    :disabled="!!StoresRequisitionInfo"
                     ></OneLevelSelect>
                     <template v-if="Data.checkedMaterial">
                       {{getTransitionNum}}
@@ -82,10 +86,10 @@
                 <el-form-item :label="`出库类型：`">
 
                   <el-radio-group v-model="Data.outDeliveryForm.OutStockType">
-                    <el-radio-button :label="51">领料</el-radio-button>
-                    <el-radio-button :label="52">补料</el-radio-button>
-                    <el-radio-button :label="53">无订单领料</el-radio-button>
-                    <el-radio-button :label="54">销售</el-radio-button>
+                    <el-radio-button :disabled="!!StoresRequisitionInfo" :label="51">领料</el-radio-button>
+                    <el-radio-button :disabled="!!StoresRequisitionInfo" :label="52">补料</el-radio-button>
+                    <el-radio-button :disabled="!!StoresRequisitionInfo" :label="53">无订单领料</el-radio-button>
+                    <el-radio-button :disabled="!!StoresRequisitionInfo" :label="54">销售</el-radio-button>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="`领取人：`">
@@ -103,7 +107,7 @@
                     ></OneLevelSelect>
                 </el-form-item>
                 <el-form-item :label="`备注：`" class="remark">
-                  <el-input :maxlength="300" placeholder="请输入备注" size="large" v-model="Data.outDeliveryForm.Remark" /> (选填)
+                  <el-input :disabled="!!StoresRequisitionInfo" :maxlength="300" placeholder="请输入备注" size="large" v-model="Data.outDeliveryForm.Remark" /> (选填)
                 </el-form-item>
               </el-form>
 
@@ -296,6 +300,7 @@ import messageBox from '@/assets/js/utils/message';
 import { useRouter, useRoute } from 'vue-router';
 import { MaterialInfoType } from '@/assets/Types/common';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
+import type { IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
 
 interface MaterialGoodsPositionsType {
   PositionID: string,
@@ -313,6 +318,7 @@ interface outDeliveryFormType {
   OutStockType: number,
   Handler: string,
   Remark: string,
+  TaskMaterialID: string,
   MaterialGoodsPositions: MaterialGoodsPositionsType[],
 }
 interface UnitSelectsType {
@@ -424,6 +430,7 @@ export default {
     });
     const printBtn:Ref = ref(null);
     const ThreeCascaderComp:Ref = ref(null);
+    const StoresRequisitionInfo = ref<IList|null>(null);
     // const h = ref(0);
     const router = useRouter();
     const route = useRoute();
@@ -453,6 +460,7 @@ export default {
         OutStockType: 51,
         Handler: '',
         Remark: '',
+        TaskMaterialID: '',
         MaterialGoodsPositions: [
           {
             PositionID: '',
@@ -488,6 +496,7 @@ export default {
         OutStockType: 51,
         Handler: '',
         Remark: '',
+        TaskMaterialID: '',
         MaterialGoodsPositions: [
           {
             PositionID: '',
@@ -495,6 +504,7 @@ export default {
           },
         ],
       };
+      StoresRequisitionInfo.value = null;
     }
     // 获取物料货位数据信息
     function GetGoodsAllocation(MaterialID) {
@@ -659,7 +669,9 @@ export default {
           }
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
           ThreeCascaderComp.value.reset();
-          clearFrom();
+          if (!StoresRequisitionInfo.value) {
+            clearFrom();
+          }
         } else {
           messageBox.failSingleError('查询失败', '该SKU编码未查到物料', () => null, () => null);
         }
@@ -670,10 +682,14 @@ export default {
         if (res.data.Status === 1000) {
           Data.outVerify = false;
           const cb = () => {
-            Data.StorehouseStockInfo = [];
-            GetGoodsAllocation(Data.checkedMaterial?.MaterialID);
-            clearFrom();
-            printBtn.value.ref.click();
+            if (StoresRequisitionInfo.value) {
+              window.close();
+            } else {
+              Data.StorehouseStockInfo = [];
+              GetGoodsAllocation(Data.checkedMaterial?.MaterialID);
+              clearFrom();
+              printBtn.value.ref.click();
+            }
           };
           messageBox.successSingle('出库成功', cb, cb);
         }
@@ -712,6 +728,7 @@ export default {
       } else {
       // 设置物料id
         Data.outDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
+        Data.outDeliveryForm.TaskMaterialID = StoresRequisitionInfo.value?.ID || '';
         const temp: MaterialGoodsPositionsType[] = [];
         Data.StorehouseStockInfo.forEach(StorehouseIt => {
           StorehouseIt.GoodsPositionStockInfos.forEach(PositionIt => {
@@ -763,12 +780,20 @@ export default {
     }
 
     onMounted(() => {
-      const MaterialCode = JSON.parse(route.query.MaterialCode as string);
+      const MaterialCode = route.query.MaterialCode ? JSON.parse(route.query.MaterialCode as string) : '';
+      StoresRequisitionInfo.value = route.query.StoresRequisitionInfo ? JSON.parse(route.query.StoresRequisitionInfo as string) : '';
       if (MaterialCode) {
         Data.getMaterialData.SKUCode = MaterialCode;
         getMaterial();
       }
-
+      if (StoresRequisitionInfo.value) {
+        Data.getMaterialData.SKUCode = StoresRequisitionInfo.value.SKU;
+        Data.outDeliveryForm.Number = StoresRequisitionInfo.value.Number;
+        // Data.outDeliveryForm.Number = 1;
+        Data.outDeliveryForm.OutStockType = 51;
+        Data.outDeliveryForm.Remark = String(StoresRequisitionInfo.value.PlateCode);
+        getMaterial();
+      }
       MaterialWarehouseStore.getMaterialManageList({});
       if (!CommonStore.StaffSelectList.length) {
         CommonStore.getStaffSelect();
@@ -776,6 +801,7 @@ export default {
     });
 
     return {
+      StoresRequisitionInfo,
       SizeSelects,
       print,
       printBtn,
