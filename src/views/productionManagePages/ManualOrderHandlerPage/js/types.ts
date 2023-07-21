@@ -138,5 +138,6 @@ export type SourceOrderData = Pick<PlaceOrderClass, 'Address' | 'Customer' | 'Pr
         CountyName: string
       }
     }
-  }
+  },
+  CreateTime: string
 }

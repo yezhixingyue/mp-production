@@ -69,6 +69,7 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue';
 import { format2LangTypeDate } from '@/assets/js/filters/dateFilters';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ManualOrderHandlerPageData } from '../../js';
 
 defineProps<{
@@ -82,7 +83,7 @@ const formatData = computed(() => {
   const { RegionalName, CityName, CountyName } = ExpressArea || {};
   const address = [RegionalName, CityName, CountyName, AddressDetail].filter(it => it).join('');
 
-  const date = format2LangTypeDate(ProducePeriod.ShiftTime);
+  const date = format2LangTypeDate(ProducePeriod?.ShiftTime || '');
 
   return { address, date };
 });
@@ -110,9 +111,13 @@ const onSearchClick = async (e: MouseEvent) => {
     (e.target as HTMLInputElement).blur();
   }
   if (ManualOrderHandlerPageData.value?.source.orderID) {
-    loading.value = true;
-    await ManualOrderHandlerPageData.value.getSourceOrderInfo();
-    loading.value = false;
+    if (/^\d+$/.test(ManualOrderHandlerPageData.value.source.orderID)) {
+      loading.value = true;
+      await ManualOrderHandlerPageData.value.getSourceOrderInfo();
+      loading.value = false;
+    } else {
+      MpMessage.error('检索失败', '订单号格式输入不正确');
+    }
   }
 };
 

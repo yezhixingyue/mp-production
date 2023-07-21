@@ -25,13 +25,37 @@
         </li>
         <li>
           <span class="title">生产工序:</span>
-          <span :title="ManualOrderHandlerPageData.CreateOrderInfo.WorkingList.map(it => it.Name).join('、')"
-            >{{ ManualOrderHandlerPageData.CreateOrderInfo.WorkingList.map(it => it.Name).join('、') }}</span>
+          <span >
+            <i v-for="(it, i) in worksDisplayList" :key="i">
+              <template v-if="i > 0">、</template>
+              {{ it.Name }}
+              <em v-show="it.Content" class="is-gray ft-12">({{ it.Content }})</em>
+            </i>
+          </span>
         </li>
-        <li>
+        <li v-if="_AssistFileList.length > 0" style="display: flex; flex-wrap: wrap;">
           <span class="title">辅助文件:</span>
-          <span>暂无此字段</span>
+          <div class="f-list">
+            <p v-for="it in _AssistFileList" :key="it._NoteInfo?.ID">
+              <span class="file-type-name" :title="it._NoteInfo?.Name">{{ it._NoteInfo?.Name }}</span>
+              <span class="file-name" :title='it._File?.name' v-if="it._File">
+                <i v-if="it._File.name.length > 6">{{ it._File.name.slice(0, -6) }}</i>
+                <i v-else>{{ it._File.name }}</i>
+                <em v-if="it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
+              </span>
+            </p>
+          </div>
         </li>
+        <li v-if="_NumbericalList && _NumbericalList.length > 0">
+        <span class="title">数值设置:</span>
+        <span>
+          <i v-for="(it, i) in _NumbericalList" :key="it.ID">
+            <template v-if="i > 0">、</template>
+            {{ it._Name }}
+            <i class="ft-12 is-gray">({{ it.Value }})</i>
+          </i>
+        </span>
+      </li>
       </ul>
     </header>
     <main>
@@ -64,8 +88,10 @@
 <script setup lang='ts'>
 import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { computed } from 'vue';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { ManualOrderHandlerPageData } from '../../js';
 import SingleInstanceComp from './ThirdStepComps/SingleInstanceComp.vue';
+import { getWorkProcessContent } from './ThirdStepComps/utils';
 
 /** 当前生产线类型：单一或组合 */
 const isCombineLine = computed(() => ManualOrderHandlerPageData.value?.CreateOrderInfo._curLineType === LineTypeEnum.combine);
@@ -98,6 +124,16 @@ const totalPrice = computed(() => {
   return +(p + f).toFixed(1);
 });
 
+const worksDisplayList = computed(() => getWorkProcessContent(
+  ManualOrderHandlerPageData.value?.CreateOrderInfo.WorkingList || [],
+  ManualOrderHandlerPageData.value?.CreateOrderInfo.AssistList || [],
+));
+
+/** 辅助文件列表 */
+const _AssistFileList = computed(() => (ManualOrderHandlerPageData.value?.CreateOrderInfo.FileList || []).filter(it => it._NoteInfo));
+
+/** 数值列表 */
+const _NumbericalList = computed(() => ManualOrderHandlerPageData.value?.CreateOrderInfo.AssistList.filter(it => it.Type === AssistInfoTypeEnum.numerical));
 </script>
 
 <style scoped lang='scss'>
@@ -128,6 +164,37 @@ const totalPrice = computed(() => {
   .title {
     font-weight: 700;
     margin-right: 10px;
+  }
+
+  .f-list {
+    flex: 1;
+    overflow: hidden;
+    p {
+      display: flex;
+      width: 100%;
+      padding-bottom: 10px;
+      > span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        &.file-type-name {
+          flex: none;
+          width: 165px;
+          padding-right: 15px;
+        }
+        &.file-name {
+          display: flex;
+          > i {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+      &:last-of-type {
+        padding-bottom: 0;
+      }
+    }
   }
 
   > footer {

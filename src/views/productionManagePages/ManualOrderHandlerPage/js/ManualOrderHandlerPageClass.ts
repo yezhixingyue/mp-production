@@ -18,7 +18,7 @@ export class ManualOrderHandlerPageClass {
 
   curStep = PlaceStepEnum.First
 
-  source: { isManual: boolean, serverID: string | number, orderID: string | number, sourceOrderData: null | SourceOrderData } = {
+  source: { isManual: boolean, serverID: string | number, orderID: string, sourceOrderData: null | SourceOrderData } = {
     isManual: true, // 是否为手动下单  手动下单|来自销售系统
     serverID: '',
     orderID: '',
@@ -103,7 +103,7 @@ export class ManualOrderHandlerPageClass {
         // 4. 数据整理 - 提交
 
         // 5. 提交成功后跳转至第四步
-        result = await this.CreateOrderInfo.submit((!this.source.isManual && this.source.sourceOrderData) ? this.source.sourceOrderData : undefined);
+        result = await this.CreateOrderInfo.submit((!this.source.isManual && this.source.sourceOrderData) ? this.source : undefined);
         if (cb) cb();
         if (result) this.curStep = PlaceStepEnum.Fourth;
         // 是否进行相关处理 -- 或许不需要
@@ -190,7 +190,7 @@ export class ManualOrderHandlerPageClass {
   /** 获取物料类型数据 */
   async getFactoryMaterialClassList() {
     if (this.FactoryMaterialClassList.length > 0) return;
-    const result = await getMaterialTypeGroup();
+    const result = await getMaterialTypeGroup(true);
     const list = result.filter(it => it.MaterialTypes.length > 0);
     this.FactoryMaterialClassList = list;
   }

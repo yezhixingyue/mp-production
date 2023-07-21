@@ -18,8 +18,8 @@
 
 <script setup lang='ts'>
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useLayoutStore } from '@/store/modules/layout/index';
+// import { useRouter } from 'vue-router';
+// import { useLayoutStore } from '@/store/modules/layout/index';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { ManualOrderHandlerPageData } from '../../js';
 import { ManualOrderHandlerPageClass } from '../../js/ManualOrderHandlerPageClass';
@@ -36,33 +36,41 @@ const totalPrice = computed(() => {
   return +num.toFixed(1);
 });
 
-const router = useRouter();
+// const router = useRouter();
 
 const onCloseClick = () => {
-  const LayoutStore = useLayoutStore();
-
-  const tabs = LayoutStore.editableTabs;
-  let activeName = LayoutStore.editableTabsValue;
-  const itemName = activeName;
-
-  if (activeName === itemName) {
-    tabs.forEach((tab, index) => {
-      if (tab.name === itemName) {
-        const nextTab = tabs[index + 1] || tabs[index - 1];
-        if (nextTab) {
-          activeName = nextTab.name;
-        }
-      }
-    });
+  const { userAgent } = navigator;
+  if (userAgent.indexOf('Firefox') !== -1 || userAgent.indexOf('Chrome') !== -1) {
+    window.location.replace('about:blank');
+  } else {
+    window.opener = null;
+    window.open('', '_self');
   }
-  LayoutStore.removeTabItem(itemName || '1');
+  window.close();
+  // const LayoutStore = useLayoutStore();
 
-  const t = LayoutStore.editableTabs.find((it) => it.name === activeName);
-  if (t) {
-    LayoutStore.setEditableTabsValue(t.name);
-    LayoutStore.setLeftMenuDefaultActive(t.name);
-    router.push(t.path);
-  }
+  // const tabs = LayoutStore.editableTabs;
+  // let activeName = LayoutStore.editableTabsValue;
+  // const itemName = activeName;
+
+  // if (activeName === itemName) {
+  //   tabs.forEach((tab, index) => {
+  //     if (tab.name === itemName) {
+  //       const nextTab = tabs[index + 1] || tabs[index - 1];
+  //       if (nextTab) {
+  //         activeName = nextTab.name;
+  //       }
+  //     }
+  //   });
+  // }
+  // LayoutStore.removeTabItem(itemName || '1');
+
+  // const t = LayoutStore.editableTabs.find((it) => it.name === activeName);
+  // if (t) {
+  //   LayoutStore.setEditableTabsValue(t.name);
+  //   LayoutStore.setLeftMenuDefaultActive(t.name);
+  //   router.push(t.path);
+  // }
 };
 
 const onCreateNewClick = () => {

@@ -23,7 +23,7 @@ const setCondition = (e) => { ManageOrderListPageData.value.setCondition(e); };
 
 const clearCondition = () => { ManageOrderListPageData.value.clearCondition(); };
 
-const getList = () => { ManageOrderListPageData.value.getList(); };
+const getList = (e) => { ManageOrderListPageData.value.getList(e); };
 
 const handleOrderToTop = (id: string) => { ManageOrderListPageData.value.handleOrderToTop(id); }; // 订单置顶
 
