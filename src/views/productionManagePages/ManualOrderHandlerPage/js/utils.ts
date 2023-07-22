@@ -35,13 +35,19 @@ export const checkIsPositiveInteger = (num: number | string, title: string) => {
 };
 
 export const handleFileChange = (file: File, item: IConvertOrderFile, FileList: IConvertOrderFile[]) => {
-  const t = FileList.find(it => it._File?.name === file.name
+  // const t = FileList.find(it => it._File?.name === file.name
+  //   && it._File.lastModified === file.lastModified
+  //   && it._File.size === file.size
+  //   && ((!it._NoteInfo && !item._NoteInfo) || (it._NoteInfo && item._NoteInfo && it._NoteInfo !== item._NoteInfo))
+  //   && ((!it._PlateTemplate && !item._PlateTemplate) || (it._PlateTemplate && item._PlateTemplate && it._PlateTemplate !== item._PlateTemplate))
+  //   && ((!it._SpecialColorInfo && !item._SpecialColorInfo)
+  //    || (it._SpecialColorInfo && item._SpecialColorInfo && it._SpecialColorInfo !== item._SpecialColorInfo)));
+
+  const t = FileList.find(it => it._PlateTemplate
+    && item._PlateTemplate
+    && it._File?.name === file.name
     && it._File.lastModified === file.lastModified
-    && it._File.size === file.size
-    && ((!it._NoteInfo && !item._NoteInfo) || (it._NoteInfo && item._NoteInfo && it._NoteInfo !== item._NoteInfo))
-    && ((!it._PlateTemplate && !item._PlateTemplate) || (it._PlateTemplate && item._PlateTemplate && it._PlateTemplate !== item._PlateTemplate))
-    && ((!it._SpecialColorInfo && !item._SpecialColorInfo)
-     || (it._SpecialColorInfo && item._SpecialColorInfo && it._SpecialColorInfo !== item._SpecialColorInfo)));
+    && it._File.size === file.size);
 
   const _item = item;
 
@@ -51,7 +57,7 @@ export const handleFileChange = (file: File, item: IConvertOrderFile, FileList: 
       _item.UniqueName = '';
     };
     MpMessage.error({
-      title: '文件选择失败', msg: '相同生产线相同条目下文件不能重复，请重新选择', onOk: cb, onCancel: cb,
+      title: '文件选择失败', msg: '拼版文件不能重复', onOk: cb, onCancel: cb,
     });
     return;
   }

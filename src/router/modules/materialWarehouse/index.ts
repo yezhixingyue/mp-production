@@ -15,6 +15,17 @@ const routes: RouteRecordRaw = {
   },
   children: [
     {
+      path: '/storesRequisition',
+      name: 'storesRequisition',
+      meta: {
+        title: '订单领料',
+        requiresAuth: true,
+        icon: 'iconfont icon-zhanghulingqu',
+        pageName: 'storesRequisitionPage',
+      },
+      component: () => import('@/views/materialWarehouse/storesRequisitionPage.vue'),
+    },
+    {
       path: '/materialInventoryManage',
       name: 'materialInventoryManage',
       meta: {

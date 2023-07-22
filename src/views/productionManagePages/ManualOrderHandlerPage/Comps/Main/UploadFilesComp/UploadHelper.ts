@@ -34,10 +34,16 @@ export class UploadHelper {
     let type = 0;
     if (this.target._PlateTemplate) type = 1;
     if (this.target._SpecialColorInfo) type = 2;
+
+    let _id = '';
+    if (this.target.AssistList && this.target.AssistList.length === 1) _id = this.target.AssistList[0].ID;
+    // eslint-disable-next-line prefer-destructuring
+    if (this.target.SpecialColorList && this.target.SpecialColorList.length === 1) _id = this.target.SpecialColorList[0];
+
     const UniqueName = FileTypeClass.getUniqueFileName({
       file: this.target._File,
       Terminal: 3,
-      aside: `${this.target._LineInfo.ID}${this.target._LineInfo.Index}${type}`,
+      aside: `${this.target._LineInfo.ID}${this.target._LineInfo.Index}${type}${_id}`,
       CustomerID: userStore.user?.StaffID || '',
     });
 

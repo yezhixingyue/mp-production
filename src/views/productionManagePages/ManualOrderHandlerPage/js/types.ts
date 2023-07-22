@@ -123,3 +123,21 @@ export interface ISubmitParams extends Omit<PlaceOrderClass, 'InstanceList' | 'F
   FileList?: Partial<IConvertOrderFile>[]
   InstanceList: Partial<ISubmitParamsInstanceList>[]
 }
+
+/** 从销售系统检索引入获取到的订单信息类型 */
+export type SourceOrderData = Pick<PlaceOrderClass, 'Address' | 'Customer' | 'ProducePeriod' | 'Attribute' | 'Content' | 'Funds'> & {
+  Attribute: {
+    Remark: null | string
+  }
+  SellOrderID: number | string
+  Address: {
+    Address: {
+      ExpressArea: {
+        RegionalName: string
+        CityName: string
+        CountyName: string
+      }
+    }
+  },
+  CreateTime: string
+}

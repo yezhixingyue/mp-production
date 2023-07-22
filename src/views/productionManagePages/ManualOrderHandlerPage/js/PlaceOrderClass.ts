@@ -9,12 +9,19 @@ import { ReceiveTypeEnum } from './enums';
 import { PlaceOrderProductionInstance } from './PlaceOrderProductionInstance';
 import { ILineDetailWorkingProcedure, ILineWorkingMaterialSources, IProductionLineDetail } from './ProductionLineDetailTypes';
 import {
-  IConvertAssistInfo, IConvertOrderFile, IProductionInstanceOriginData, ISubmitParams, ProductLineSimpleType,
+  IConvertAssistInfo, IConvertOrderFile, IProductionInstanceOriginData, ISubmitParams, ProductLineSimpleType, SourceOrderData,
 } from './types';
 import { checkMobile } from './utils';
 
 export class PlaceOrderClass {
   OrderID = ''
+
+  /** 以下三个仅引入方式需要传递 */
+  SellOrderID: number | string = ''
+
+  SalesPlatfrom: null | { ID: number | string } = null
+
+  CreateTime = ''
 
   /** 工期时间 */
   ProducePeriod = {
@@ -101,10 +108,24 @@ export class PlaceOrderClass {
   /** 当前组合生产线半成品列表（必需的半成品自动填充到列表中，剩余的可以在其中选择） */
   _AllMaterialSources: ILineWorkingMaterialSources[] = []
 
-  async submit() {
+  async submit(data?: { isManual: boolean, serverID: string | number, orderID: string | number, sourceOrderData: null | SourceOrderData }) {
     const temp: Partial<ISubmitParams> = {
       ...this,
     };
+    if (data) {
+      const { Address, Customer, ProducePeriod, CreateTime } = data.sourceOrderData || {};
+      temp.Address = Address;
+      temp.Customer = Customer;
+      temp.ProducePeriod = ProducePeriod;
+      temp.ReceiveType = ReceiveTypeEnum.logisticsExpress;
+      temp.SellOrderID = data.orderID;
+      temp.SalesPlatfrom = { ID: data.serverID };
+      temp.CreateTime = CreateTime;
+    } else {
+      delete temp.SellOrderID;
+      delete temp.SalesPlatfrom;
+      delete temp.CreateTime;
+    }
 
     if (temp.ReceiveType === ReceiveTypeEnum.pickupBySelf) {
       delete temp.Address;
@@ -228,6 +249,10 @@ export class PlaceOrderClass {
       msg = checkMobile(this.Address.Address.Mobile, '收货人');
       if (typeof msg === 'string') {
         MpMessage.error({ title: '操作失败', msg });
+        return false;
+      }
+      if (this.ReceiveType === ReceiveTypeEnum.logisticsExpress && !this.Address.Express.Second && `${this.Address.Express.Second}` !== '0') {
+        MpMessage.error({ title: '操作失败', msg: '请选择物流/快递' });
         return false;
       }
     }

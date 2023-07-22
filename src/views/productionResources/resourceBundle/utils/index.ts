@@ -12,10 +12,10 @@ export interface IMaterialTypeGroupItemType {
   innerIds?: string[]
 }
 
-export const getMaterialTypeGroup = async () => {
+export const getMaterialTypeGroup = async (bool?: boolean) => {
   let list:IMaterialTypeGroupItemType[] = [];
 
-  const resp = await api.getMaterialTypeGroup().catch(() => null);
+  const resp = await api.getMaterialTypeGroup(bool).catch(() => null);
   if (resp?.data.isSuccess) {
     list = resp.data.Data as IMaterialTypeGroupItemType[];
   }

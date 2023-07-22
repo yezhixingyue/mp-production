@@ -40,7 +40,13 @@
     <ul class="right">
       <li>
         <span class="title">生产工序:</span>
-        <span>{{ worksDisplayContent }}</span>
+        <span>
+          <i v-for="(it, i) in worksDisplayList" :key="i">
+            <template v-if="i > 0">、</template>
+            {{ it.Name }}
+            <em v-show="it.Content" class="is-gray ft-12">({{ it.Content }})</em>
+          </i>
+        </span>
       </li>
       <li v-if="_MakeupFileList.length > 0">
         <span class="title">拼版文件:</span>
@@ -103,19 +109,30 @@
           </p>
         </div>
       </li>
+      <li v-if="_NumbericalList.length > 0">
+        <span class="title">数值设置:</span>
+        <div class="f-list">
+          <span v-for="(it, i) in _NumbericalList" :key="it.ID">
+            <template v-if="i > 0">、</template>
+            {{ it._Name }}
+            <i class="ft-12 is-gray">({{ it.Value }})</i>
+          </span>
+        </div>
+      </li>
     </ul>
   </div>
 </template>
 
 <script setup lang='ts'>
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { computed } from 'vue';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { MoveTypeEnumList, PlaceOrderMaterialSourceEnumList } from '../../../js/EnumList';
 import {
   FeedEdgePositionEnum, MoveTypeEnum, PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum,
 } from '../../../js/enums';
 import { PlaceOrderProductionInstance } from '../../../js/PlaceOrderProductionInstance';
+import { getWorkProcessContent } from './utils';
 
 const props = defineProps<{
   item: Required<PlaceOrderProductionInstance>
@@ -131,20 +148,7 @@ const getColorDisplayContent = (ColorList: PrintColorEnum[]) => {
   return list.join('');
 };
 
-const worksDisplayContent = computed(() => {
-  const list = props.item.WorkingList.map(it => {
-    const { Name } = it;
-    const content = it.NoteInfos
-      .filter(it => it.Type === AssistInfoTypeEnum.text)
-      .map(it => props.item.AssistList.find(_it => _it.ID === it.ID))
-      .filter(it => it && it.Content)
-      .map(it => it?.Content)
-      .join(',');
-    if (content) return `${Name}（${content}）`;
-    return Name;
-  });
-  return list.join('、');
-});
+const worksDisplayList = computed(() => getWorkProcessContent(props.item.WorkingList, props.item.AssistList));
 
 /** 当前生产线类型：单一或组合 */
 const isCombineLine = computed(() => props.item._isBelongToCombineLine);
@@ -157,6 +161,9 @@ const _AssistFileList = computed(() => props.item.FileList.filter(it => it._Note
 
 /** 专色文件列表 */
 const _SpecialColorFileList = computed(() => props.item.FileList.filter(it => it.SpecialColorList));
+
+/** 数值列表 */
+const _NumbericalList = computed(() => props.item.AssistList.filter(it => it.Type === AssistInfoTypeEnum.numerical));
 
 </script>
 

@@ -24,24 +24,24 @@
         <ul class="list">
           <li v-for="(it, i) in localEquipmentSetupData.localEquipmentSetupList" :key="it._key">
             <!-- 设备分类 -->
-            <el-select v-model="it.ClassID" @change="() => { it.GroupID = ''; it.ID = '' }">
+            <el-select v-model="it.ClassID" @change="() => { it.GroupID = ''; it.ID = '' }" :disabled="loggedEquipmentIDs.includes(it.ID)">
               <el-option v-for="item in localEquipmentSetupData.EquipmentClassList" :key="item.ID" :label="item.Name" :value="item.ID" />
             </el-select>
             <!-- 设备组 -->
-            <el-select v-model="it.GroupID" @change="() => { it.ID = '' }">
+            <el-select v-model="it.GroupID" @change="() => { it.ID = '' }" :disabled="loggedEquipmentIDs.includes(it.ID)">
               <el-option v-for="item in getEquipmentGroupList(it.ClassID)" :key="item.ID" :label="item.Name" :value="item.ID" />
             </el-select>
             <!-- 设备 -->
-            <el-select v-model="it.ID">
+            <el-select v-model="it.ID" :disabled="loggedEquipmentIDs.includes(it.ID)">
               <el-option
                 v-for="item in getEquipmentList(it.ClassID, it.GroupID)"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID"
-                :disabled="!!(item.Terminal && item.Terminal !== terminal)"
+                :disabled="!!(item.Terminal && item.Terminal !== terminal) || selectedEquipmentIDs.includes(item.ID)"
                />
             </el-select>
-            <RemoveMenu @click="onRowRemoveClick(i)" v-show="localEquipmentSetupData.localEquipmentSetupList.length > 1" />
+            <RemoveMenu :disabled="loggedEquipmentIDs.includes(it.ID)" @click="onRowRemoveClick(i)" />
           </li>
         </ul>
         <p class="footer">
@@ -133,6 +133,9 @@ const onRowAddClick = () => { // 添加一行
 const onRowRemoveClick = (i: number) => {
   localEquipmentSetupData.value.localEquipmentSetupList.splice(i, 1);
 };
+
+const loggedEquipmentIDs = computed(() => ManageClientPageData.value.InstanceList.filter(it => it.loginData.token).map(it => it.Equipment.ID));
+const selectedEquipmentIDs = computed(() => localEquipmentSetupData.value.localEquipmentSetupList.map(it => it.ID).filter(id => id));
 
 const submit = () => {
   if (!sign.value) { // 验证管理密码

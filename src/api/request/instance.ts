@@ -93,7 +93,7 @@ const axios = new Axios({
         } else {
           MpMessage.error({
             title: '操作失败',
-            msg: result.data.Message,
+            msg: `[ ${result.data.Message} ]`,
             onCancel: result.config.msgCallback || undefined,
             onOk: result.config.msgCallback || undefined,
           });
