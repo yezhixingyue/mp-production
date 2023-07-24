@@ -58,14 +58,19 @@
       <el-table fit stripe :data="Data.processList" border
        style="width: 100%">
         <el-table-column show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
-        <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" width="120">
+        <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" width="95">
           <template #default="scope: any">
             <span>{{ getEnumNameByID(scope.row.ReportMode, ReportModeEnumList) }}</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="工序类型" width="120">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="工序类型" width="95">
           <template #default="scope: any">
             <span>{{ getEnumNameByID(scope.row.Type, WorkingTypeEnumList) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="允许合拼" width="85">
+          <template #default="scope: any">
+            <span>{{ scope.row.AllowUnionImposition ? '允许' : '' }}</span>
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="220">
@@ -73,7 +78,7 @@
             {{getEquipmentGroupsNames(scope.row.EquipmentGroups)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ReportMode" label="允许批量报工" width="120">
+        <el-table-column show-overflow-tooltip prop="ReportMode" label="允许批量报工" width="110">
           <template #default="scope: any">
             {{ scope.row.AllowBatchReport ? '允许' : '不允许' }}
           </template>
@@ -93,7 +98,7 @@
             {{getMaterialName(scope.row.Relations)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="大版类型" min-width="160">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="大版模板" width="160">
           <template #default="scope: any">
             {{getTemplateName(scope.row.TemplateID)}}
           </template>
