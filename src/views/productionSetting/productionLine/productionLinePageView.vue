@@ -175,12 +175,23 @@
       top="10vh"
       >
       <template #default>
+        <div style="margin-top: -20px;margin-bottom: 25px;">
+          <span class="title">工序类型：</span>
+          <el-select v-model="Data.addPrcessFrom._filterType" class="mp-select">
+            <el-option
+              v-for="item in [{ID: '', Name: '不限'}, ...WorkingTypeEnumList]
+              .filter(it => ![WorkingTypeEnum.platemaking, WorkingTypeEnum.combine].includes(it.ID as number))"
+               :key="item.ID" :label="item.Name" :value="item.ID" />
+          </el-select>
+        </div>
         <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
             <el-checkbox-group v-model="Data.addPrcessFrom.WordIDS">
-              <template v-for="item in PrcessList" :key="item.ClassID" >
+              <template v-for="item in PrcessList.filter(it => [it.Type, ''].includes(Data.addPrcessFrom._filterType))" :key="item.ClassID" >
                 <el-checkbox :label="item.ID" :title="item.Name" :disabled="originWordIDS.includes(item.ID)">{{item.Name}}</el-checkbox>
               </template>
             </el-checkbox-group>
+            <div v-show="!PrcessList.filter(it => [it.Type, ''].includes(Data.addPrcessFrom._filterType)).length"
+               class="ft-12 is-gray" style="text-align: center;">暂无数据</div>
         </div>
       </template>
     </DialogContainerComp>
@@ -235,7 +246,7 @@ import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getSourceWork } from '../js/utils';
 import PlateMakingWorkSetupDialog from './Comps/PlateMakingWorkSetupDialog.vue';
 import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
-import { ReportModeEnumList, WorkingTypeEnumList } from '../process/enums';
+import { ReportModeEnumList, WorkingTypeEnum, WorkingTypeEnumList } from '../process/enums';
 import { ILocalProductionLineWorkings } from './js/types';
 import LineTableRowComp from './Comps/LineTableRowComp.vue';
 import {
@@ -268,6 +279,7 @@ interface addLineFromType {
 interface addPrcessFromType {
   ID: string,
   WordIDS: string[],
+  _filterType: '' | WorkingTypeEnum
 }
 interface setSplitFromType {
   ID: string,
@@ -315,6 +327,7 @@ const Data:DataType = reactive({
   addPrcessFrom: {
     ID: '',
     WordIDS: [],
+    _filterType: '',
   },
   setSplitFrom: {
     ID: '',
@@ -566,6 +579,7 @@ const addPrcess = () => {
   Data.addPrcessFrom.ID = actionLine.value?.ID || '';
   const _list = ProductionLineData.value?.ProductionLineWorkings || [];
   Data.addPrcessFrom.WordIDS = _list.filter(it => PrcessList.value.find(item => item.ID === it.WorkID) || !isCombine.value).map(it => it.WorkID);
+  Data.addPrcessFrom._filterType = '';
   // 格式化已经添加的工序
   originWordIDS.value = [...Data.addPrcessFrom.WordIDS];
   addPrcessShow.value = true;
@@ -673,6 +687,7 @@ const addPrcessCloseedClick = () => {
   Data.addPrcessFrom = {
     ID: '',
     WordIDS: [],
+    _filterType: '',
   };
 };
 const addPrcessCloseClick = () => {

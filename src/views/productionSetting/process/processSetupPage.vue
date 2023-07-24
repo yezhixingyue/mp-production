@@ -38,7 +38,10 @@
                      >{{it.Name}}</el-radio>
                   </el-radio-group>
                   <!-- 仅制版工序时显示： 每套版限制加工数量 -->
-                  <div class="type-conent" :class="{'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking}">
+                  <div class="type-conent" :class="{
+                    'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking,
+                    'dislayNone': !hideAllowUnionImpositionItem,
+                    }">
                     <el-checkbox v-model="Data.processDataFrom.isRestrict" label="限制每套版加工数量" />
                     <span v-show="Data.processDataFrom.isRestrict">
                       每套版最大可加工<el-input v-model.number="Data.processDataFrom.MaxProduceNumber" maxlength="9"></el-input>次
@@ -46,8 +49,18 @@
                   </div>
                 </div>
               </el-form-item>
+              <!-- 仅按大版报工且工序类型为普通类型时展示 AllowUnionImposition -->
+              <el-form-item :label="`允许合拼：`"
+               :class="{'dislayNone': hideAllowUnionImpositionItem}"
+               style="margin-bottom: 0px;">
+                <div style="width: 100%;">
+                  <el-checkbox v-model="Data.processDataFrom.AllowUnionImposition" label="允许和其它大版工序合拼" />
+                </div>
+              </el-form-item>
               <!-- 仅制版工序时显示： 大版类型 -->
-              <el-form-item :label="`大版类型：`" :class="{'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking}" class="form-item-required template">
+              <el-form-item :label="`大版模板：`" :class="{
+                'v-hide': Data.processDataFrom.Type !== WorkingTypeEnum.platemaking,
+                }" class="form-item-required template">
                 <div style="width: 100%;">
                   <mp-button type="primary" link @click="selectTemplateGroupShow = true" style="transition: none;position:relative;top:-1px;">选择大版模板</mp-button>
                   <span class="ml-15" :title="showTemplate"> {{showTemplate}}</span>
@@ -232,6 +245,7 @@ interface processDataFromType{
   AllowBatchReport: boolean,
   EquipmentGroups: IEquipmentGroupsType[],
   Relations: IRelationsType[],
+  AllowUnionImposition: boolean,
 }
 
 interface DataType {
@@ -257,6 +271,8 @@ const Data:DataType = reactive({
     AllowBatchReport: false,
     EquipmentGroups: [],
     Relations: [],
+    /** 是否合拼 */
+    AllowUnionImposition: false,
   },
 });
 
@@ -335,16 +351,10 @@ const showTemplate = computed(() => {
 });
 
 const activeEquipmentList = computed(() => Data.processDataFrom.EquipmentGroups.map(it => it.GroupID));
-// const EquipmentGroupsSum = computed(() => {
-//   let sum = 0;
-//   Data.processDataFrom.EquipmentGroups.forEach(it => {
-//     sum += Number(it.Weight);
-//   });
-//   if (sum) {
-//     return sum;
-//   }
-//   return 0;
-// });
+
+/** 在该情况下隐藏 允许合拼 设置 */
+const hideAllowUnionImpositionItem = computed(() => Data.processDataFrom.Type !== WorkingTypeEnum.normal
+|| Data.processDataFrom.ReportMode !== ReportModeEnum.board);
 
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('processSetupPage', 'true');
@@ -469,6 +479,9 @@ const saveProcess = () => {
       ...Data.processDataFrom,
       MaxProduceNumber: Data.processDataFrom.isRestrict ? Data.processDataFrom.MaxProduceNumber : '',
     };
+    if (hideAllowUnionImpositionItem.value) { // 当允许合拼设置被隐藏时 把其值修改为false进行提交
+      temp.AllowUnionImposition = false;
+    }
     api.getWorkingProcedureSave(temp).then(res => {
       if (res.data.Status === 1000) {
         const cb = () => {
@@ -682,6 +695,9 @@ export default {
     }
     .v-hide {
       visibility: hidden;
+    }
+    .dislayNone {
+      display: none !important;
     }
   }
   >footer{

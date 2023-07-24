@@ -19,40 +19,30 @@
   </section>
 </template>
 
-<script lang='ts'>
+<script lang='ts' setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-export default {
-  setup() {
-    // console.log('setup');
-    const dateString = ref('');
-    const weekString = ref('');
-    const weekTextList = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-    function getCurDate() {
-      const date = new Date();
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-      const w = date.getDay();
-      dateString.value = `${year}年${month}月${day}日`;
-      weekString.value = weekTextList[w];
-    }
-    const router = useRouter();
+const dateString = ref('');
+const weekString = ref('');
+const weekTextList = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+function getCurDate() {
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const w = date.getDay();
+  dateString.value = `${year}年${month}月${day}日`;
+  weekString.value = weekTextList[w];
+}
+const router = useRouter();
 
-    onMounted(() => {
-      getCurDate();
-      if (process.env.VUE_APP_TARGET === 'My Order App') { // 跳转页面
-        router.replace('/orderAppRoutes');
-      }
-    });
-    return {
-      dateString,
-      weekString,
-      weekTextList,
-    };
-  },
-};
+onMounted(() => {
+  getCurDate();
+  if (process.env.VUE_APP_TARGET === 'My Order App') { // 跳转页面
+    router.replace('/orderAppRoutes');
+  }
+});
 </script>
 <style lang='scss' scoped>
 .mp-erp-home-page-wrap {
