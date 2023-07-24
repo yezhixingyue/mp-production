@@ -178,7 +178,10 @@
         <div style="margin-top: -20px;margin-bottom: 25px;">
           <span class="title">工序类型：</span>
           <el-select v-model="Data.addPrcessFrom._filterType" class="mp-select">
-            <el-option v-for="item in [{ID: '', Name: '不限'}, ...WorkingTypeEnumList]" :key="item.ID" :label="item.Name" :value="item.ID" />
+            <el-option
+              v-for="item in [{ID: '', Name: '不限'}, ...WorkingTypeEnumList]
+              .filter(it => ![WorkingTypeEnum.platemaking, WorkingTypeEnum.combine].includes(it.ID as number))"
+               :key="item.ID" :label="item.Name" :value="item.ID" />
           </el-select>
         </div>
         <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
