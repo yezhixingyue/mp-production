@@ -182,8 +182,8 @@ function createMap() {
   //   messageBox.failSingleError('生成失败', '行数列数不能同时为1', () => null, () => null);
   } else if (!r.test(String(Data.foldWayTemplateFrom.RowNumber)) || !r.test(String(Data.foldWayTemplateFrom.ColumnNumber))) {
     messageBox.failSingleError('生成失败', '请输入正整数的行列数', () => null, () => null);
-  } else if (+Data.foldWayTemplateFrom.RowNumber > 100 || +Data.foldWayTemplateFrom.ColumnNumber > 100) {
-    messageBox.failSingleError('生成失败', '请输入100以内的行数或列数', () => null, () => null);
+  } else if (+Data.foldWayTemplateFrom.RowNumber > 8 || +Data.foldWayTemplateFrom.ColumnNumber > 8) {
+    messageBox.failSingleError('生成失败', '请输入8以内的行数或列数', () => null, () => null);
   } else {
     let FrontPage = 1;
     // 行
@@ -244,12 +244,15 @@ function foldWayTemplateSave() {
     messageBox.failSingleError('保存失败', '请选择分类', () => null, () => null);
   } else if (!Data.foldWayTemplateFrom.Name) {
     messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
-  } else if (!Data.foldWayTemplateFrom.RowNumber) {
-    messageBox.failSingleError('保存失败', '请输入行数', () => null, () => null);
-  } else if (!Data.foldWayTemplateFrom.ColumnNumber) {
-    messageBox.failSingleError('保存失败', '请输入列数', () => null, () => null);
+  } else if (!Data.foldWayTemplateFrom.RowNumber || Number(Data.foldWayTemplateFrom.RowNumber) > 8) {
+    messageBox.failSingleError('保存失败', `请输入${Number(Data.foldWayTemplateFrom.RowNumber) > 8 ? '小于8的' : ''}行数`, () => null, () => null);
+  } else if (!Data.foldWayTemplateFrom.ColumnNumber || Number(Data.foldWayTemplateFrom.ColumnNumber) > 8) {
+    messageBox.failSingleError('保存失败', `请输入${Number(Data.foldWayTemplateFrom.ColumnNumber) > 8 ? '小于8的' : ''}列数`, () => null, () => null);
   } else if (!Data.FoldWayPositionList.length) {
     messageBox.failSingleError('保存失败', '请生成模板图', () => null, () => null);
+  } else if (Data.FoldWayPositionList.length !== Data.foldWayTemplateFrom.RowNumber
+            || Data.FoldWayPositionList[0].length !== Data.foldWayTemplateFrom.ColumnNumber) {
+    messageBox.failSingleError('保存失败', '行/列数已改变，请重新生成模板图', () => null, () => null);
   } else {
     Data.foldWayTemplateFrom.PositionList = [];
     Data.FoldWayPositionList.forEach(res => {
