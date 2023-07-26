@@ -18,7 +18,8 @@
                     v-for="it in ReportModeEnumList"
                     :key="it.ID"
                     :label="it.ID"
-                    :disabled="Data.processDataFrom.Type === WorkingTypeEnum.combine && it.ID !== ReportModeEnum.order"
+                    :disabled="(Data.processDataFrom.Type === WorkingTypeEnum.combine && it.ID !== ReportModeEnum.order)
+                     || (Data.processDataFrom.Type === WorkingTypeEnum.split && it.ID !== ReportModeEnum.board)"
                    >{{it.Name}}</el-radio>
                 </el-radio-group>
               </el-form-item>
@@ -33,6 +34,7 @@
                       :key="it.ID"
                       :label="it.ID"
                       :disabled="(it.ID === WorkingTypeEnum.combine && Data.processDataFrom.ReportMode !== ReportModeEnum.order)
+                        ||(it.ID === WorkingTypeEnum.split && Data.processDataFrom.ReportMode !== ReportModeEnum.board)
                         ||(it.ID === WorkingTypeEnum.split && Data.processDataFrom.AllowBatchReport)
                         ||(it.ID === WorkingTypeEnum.platemaking && Data.processDataFrom.AllowPartReport)"
                      >{{it.Name}}</el-radio>
