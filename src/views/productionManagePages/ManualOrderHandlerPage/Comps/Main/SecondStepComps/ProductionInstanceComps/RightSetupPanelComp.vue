@@ -54,6 +54,8 @@
             </td>
             <td class="w-operator">
               <MpFileSelectButton link :accept="ManualOrderHandlerPageData?._fileAccept.pdf" @change="(file) => handleFileChange(file, it, itemData.FileList)"/>
+              <mp-button type="primary" link class="ft-12" style="padding: 0;" @click="onBleedSetupClick(it)">设置出血</mp-button>
+              <span class="is-gray ml-5" :title="getBleedContent(it)">{{ getBleedContent(it) }}</span>
             </td>
           </tr>
         </tbody>
@@ -153,6 +155,8 @@
       @submit="onNumbericSubmit"
     />
     <AssistNumbericChangeDialog v-model:visible="numbericalChangeVisible" :item="curNumbericalItem" @submit="onNumbericalChangeSubmit" />
+    <!-- 出血设置 -->
+    <BleedSetupDialog v-model:visible="fileBleedVisible" :fileItem="curFileItem" @submit="onBleedSetupSubmit" />
   </div>
 </template>
 
@@ -164,7 +168,7 @@ import { ILineDetailWorkingProcedure } from '@/views/productionManagePages/Manua
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IConvertAssistInfo, IConvertOrderFile, IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { handleFileChange } from '@/views/productionManagePages/ManualOrderHandlerPage/js/utils';
+import { handleFileChange, getBleedContent } from '@/views/productionManagePages/ManualOrderHandlerPage/js/utils';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import MpFileSelectButton from '@/components/common/General/MpFileSelectButton.vue';
 import WorkingSelectDialog from './WorkingSelectDialog.vue';
@@ -172,6 +176,7 @@ import AssistInfoSetupDialog from './AssistInfoSetupDialog.vue';
 import SpecialColorSelectDialog from './SpecialColorSelectDialog.vue';
 import AssistNumbericSelectDialog from './AssistNumbericSelectDialog.vue';
 import AssistNumbericChangeDialog from './AssistNumbericChangeDialog.vue';
+import BleedSetupDialog from './BleedSetupDialog.vue';
 
 interface IPropsModelValue extends Pick<PlaceOrderProductionInstance,
  'AssistList' | 'FileList' | 'WorkingList' | 'handleWorkingSelect' | 'handleNumbericChange'> {
@@ -318,6 +323,25 @@ const onNumbericalChangeSubmit = (data: { ID: string, Value: number }) => {
   }
 };
 
+/* 设置数值相关
+----------------------------------- */
+const curFileItem = ref<null | IConvertOrderFile>(null);
+const fileBleedVisible = ref(false);
+const onBleedSetupClick = (item: IConvertOrderFile) => {
+  curFileItem.value = item;
+  fileBleedVisible.value = true;
+};
+const onBleedSetupSubmit = (e: Required<Pick<IConvertOrderFile, 'BleedBottom' | 'BleedLeft' | 'BleedRight' | 'BleedTop'>>) => {
+  if (!curFileItem.value) return;
+
+  curFileItem.value.BleedBottom = +e.BleedBottom;
+  curFileItem.value.BleedLeft = +e.BleedLeft;
+  curFileItem.value.BleedRight = +e.BleedRight;
+  curFileItem.value.BleedTop = +e.BleedTop;
+
+  fileBleedVisible.value = false;
+};
+
 </script>
 
 <style scoped lang='scss'>
@@ -430,6 +454,15 @@ const onNumbericalChangeSubmit = (data: { ID: string, Value: number }) => {
             }
             :deep(.select-file-button-dom) {
               font-size: 12px;
+            }
+
+            > span {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              display: inline-block;
+              vertical-align: middle;
+              max-width: 100px;
             }
           }
         }

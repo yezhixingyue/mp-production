@@ -131,6 +131,29 @@ export class PlaceOrderClass {
       delete temp.Address;
     }
 
+    const handleFileListMap = (FileList?: Partial<IConvertOrderFile>[]) => FileList?.map(f => {
+      const t = {
+        UniqueName: f.UniqueName,
+        Template: f.Template ? { ID: f.Template.ID } : null,
+        AssistList: f.AssistList,
+        SpecialColorList: f.SpecialColorList,
+        BleedBottom: f.BleedBottom,
+        BleedLeft: f.BleedLeft,
+        BleedRight: f.BleedRight,
+        BleedTop: f.BleedTop,
+      };
+        // if (f.Template?.ID) delete t.Template;
+      if (!f.AssistList?.length) delete t.AssistList;
+      if (!f.SpecialColorList?.length) delete t.SpecialColorList;
+
+      if (t.BleedBottom === '' || t.BleedBottom === undefined) delete t.BleedBottom;
+      if (t.BleedLeft === '' || t.BleedLeft === undefined) delete t.BleedLeft;
+      if (t.BleedRight === '' || t.BleedRight === undefined) delete t.BleedRight;
+      if (t.BleedTop === '' || t.BleedTop === undefined) delete t.BleedTop;
+
+      return t;
+    }) || [];
+
     if (this._curLineType === LineTypeEnum.normal) {
       temp.Attribute = {
         ...this.Attribute,
@@ -146,18 +169,7 @@ export class PlaceOrderClass {
     } else {
       temp.InstanceList = this._CombineInstanceList;
       if (temp.FileList) {
-        temp.FileList = temp.FileList.map(f => {
-          const t = {
-            UniqueName: f.UniqueName,
-            Template: f.Template ? { ID: f.Template.ID } : null,
-            AssistList: f.AssistList,
-            SpecialColorList: f.SpecialColorList,
-          };
-          // if (f.Template?.ID) delete t.Template;
-          if (!f.AssistList?.length) delete t.AssistList;
-          if (!f.SpecialColorList?.length) delete t.SpecialColorList;
-          return t;
-        });
+        temp.FileList = handleFileListMap(temp.FileList);
       }
       temp.WorkingList = temp.WorkingList?.map(it => ({ ...it, WorkingID: it.ID })) || [];
     }
@@ -172,18 +184,7 @@ export class PlaceOrderClass {
     temp.InstanceList = temp.InstanceList.map(it => {
       const _it = {
         ...it,
-        FileList: it.FileList?.map(f => {
-          const t = {
-            UniqueName: f.UniqueName,
-            Template: f.Template ? { ID: f.Template.ID } : null,
-            AssistList: f.AssistList,
-            SpecialColorList: f.SpecialColorList,
-          };
-          // if (!f.TemplateID) delete t.TemplateID;
-          if (!f.AssistList?.length) delete t.AssistList;
-          if (!f.SpecialColorList?.length) delete t.SpecialColorList;
-          return t;
-        }) || [],
+        FileList: handleFileListMap(it.FileList),
         WorkingList: it.WorkingList?.map(it => ({ ...it, WorkingID: it.ID })),
       };
       delete _it._MaterialSource;

@@ -64,3 +64,13 @@ export const handleFileChange = (file: File, item: IConvertOrderFile, FileList: 
   _item._File = file;
   _item.UniqueName = '';
 };
+
+export const getBleedContent = (item: IConvertOrderFile) => {
+  const { BleedTop, BleedBottom, BleedLeft, BleedRight } = item;
+
+  if ([BleedTop, BleedBottom, BleedLeft, BleedRight].filter(it => typeof it === 'number').length === 4) {
+    return `上:${BleedTop}mm,下:${BleedBottom}mm,左:${BleedLeft}mm,右:${BleedRight}mm`;
+  }
+
+  return '';
+};
