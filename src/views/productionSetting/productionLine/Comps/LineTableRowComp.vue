@@ -1,7 +1,7 @@
 <template>
   <li class="table-main" :class="{hs: item._isAfterSplitFirst, split: item._isSplit}">
     <div class="process-item">
-      <span class="process" :title="`${item._WorkName}\r\n报工方式：${item._ReportModeContent}\r\n工序类型：${item._WorkingTypeContent}`">{{item._WorkName}}</span>
+      <span class="process" :title="getProcessTips(item)">{{item._WorkName}}</span>
       <span class="equipment ft-f-12" :title="item._EquipmentText ? item._EquipmentText.replaceAll(' | ', '\r\n') : ''">
         {{item._EquipmentText}}
       </span>
@@ -65,6 +65,7 @@ import { computed } from 'vue';
 import { getSourceWork } from '../../js/utils';
 import { IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
 import { ILocalProductionLineWorkings } from '../js/types';
+import { getIsOrNotShowAllowUnionImposition } from '../../process/getIsOrNotShowAllowUnionImposition';
 
 const props = defineProps<{
   item: ILocalProductionLineWorkings,
@@ -111,6 +112,16 @@ const delLineWorking = () => {
       emit('delLineWorking', props.item);
     },
   });
+};
+
+const getProcessTips = (item: ILocalProductionLineWorkings) => {
+  let _AllowUnionImpositionText = '';
+
+  if (item._WorkItemInfo && getIsOrNotShowAllowUnionImposition(item._WorkItemInfo)) {
+    _AllowUnionImpositionText = `\r\n是否允许合拼：${item._WorkItemInfo.AllowUnionImposition ? '允许' : '不允许'}`;
+  }
+
+  return `${item._WorkName}\r\n报工方式：${item._ReportModeContent}\r\n工序类型：${item._WorkingTypeContent}${_AllowUnionImpositionText}`;
 };
 
 </script>

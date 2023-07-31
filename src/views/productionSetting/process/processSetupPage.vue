@@ -220,6 +220,7 @@ import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resource
 import {
   ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, WorkingProcedureRelationEnum,
 } from './enums';
+import { getIsOrNotShowAllowUnionImposition } from './getIsOrNotShowAllowUnionImposition';
 
 const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
@@ -361,8 +362,7 @@ const showTemplate = computed(() => {
 const activeEquipmentList = computed(() => Data.processDataFrom.EquipmentGroups.map(it => it.GroupID));
 
 /** 在该情况下隐藏 允许合拼 设置 */
-const hideAllowUnionImpositionItem = computed(() => ![WorkingTypeEnum.normal, WorkingTypeEnum.split].includes(Data.processDataFrom.Type)
-|| Data.processDataFrom.ReportMode !== ReportModeEnum.board);
+const hideAllowUnionImpositionItem = computed(() => !getIsOrNotShowAllowUnionImposition(Data.processDataFrom));
 
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('processSetupPage', 'true');

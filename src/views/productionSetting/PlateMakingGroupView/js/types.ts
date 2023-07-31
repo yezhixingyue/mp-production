@@ -49,6 +49,8 @@ export interface IWorkingProcedureSearch {
   IsSameSizeWithPrintingPlate: boolean | null
   /** 模板类型是否印刷版 */
   IsPrintingPlate: boolean | null
+  /** 是否允许合拼 */
+  AllowUnionImposition: boolean
 }
 
 export interface IPlateMakingGroupMaterialSourceSaveData {
