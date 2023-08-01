@@ -107,9 +107,9 @@
               </ul>
             </p>
           </el-form-item>
-          <el-form-item :label="`纸张尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
-            <span>宽：<el-input v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
-            <span>高：<el-input v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
+          <el-form-item :label="`用料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
+            <span>宽：<el-input maxlength="6" v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
+            <span>高：<el-input maxlength="6" v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
           </el-form-item>
           <el-form-item :label="`拼版方式：`">
             <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute"
@@ -327,11 +327,19 @@ function verification() {
         return false;
       }
       if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialWidth)) {
-        messageBox.failSingleError('保存失败', '请输入纸张尺寸(宽)', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入用料尺寸(宽)', () => null, () => null);
+        return false;
+      }
+      if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialWidth) < 0) {
+        messageBox.failSingleError('保存失败', '请输入正整数用料尺寸(宽)', () => null, () => null);
         return false;
       }
       if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight)) {
-        messageBox.failSingleError('保存失败', '请输入纸张尺寸(高)', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入用料尺寸(高)', () => null, () => null);
+        return false;
+      }
+      if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight) < 0) {
+        messageBox.failSingleError('保存失败', '请输入正整数用料尺寸(高)', () => null, () => null);
         return false;
       }
       return true;
@@ -722,6 +730,7 @@ export default {
             margin-right: 20px;
             .el-input{
               margin-right: 4px;
+              width: 70px;
             }
           }
         }
