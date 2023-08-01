@@ -27,6 +27,8 @@ interface ITemplateSizeAttribute{
   // 是否按模位
   UseMode: boolean,
   ModeItemList: ModeItemList[],
+  MaterialWidth:number | null,
+  MaterialHeight:number | null,
 }
 interface ActualSizeAttribute {
   BleedTop: number|null|'',
