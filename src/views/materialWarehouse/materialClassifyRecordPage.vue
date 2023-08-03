@@ -144,7 +144,7 @@
           <el-table-column prop="Stock" label="数量" min-width="158">
             <template #default="scope:any">
               {{Math.abs(scope.row.StoreNumber)}} {{scope.row.StockUnit}}
-              <mp-button link type="primary" @click="SeeGoodsAllocation(scope.row)">
+              <mp-button style="vertical-align: text-top; font-size: 12px;" link type="primary" @click="SeeGoodsAllocation(scope.row)">
                 {{Data.getRecordData.LogType === 1 ? '入库货位' : '出库货位'}}
               </mp-button>
             </template>
