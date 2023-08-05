@@ -66,6 +66,7 @@ const submit = () => {
   }
 
   const list = checkList.value.map(id => localWorkingList.value.find(it => it.ID === id)).filter(it => it) as ILineDetailWorkingProcedure[];
+  console.log(list);
   const _PrintingPlateLength = list.filter(it => it.Template && it.Template.IsPrintingPlate).length;
 
   // if (_PrintingPlateLength === 0) {

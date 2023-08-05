@@ -1,13 +1,13 @@
 <template>
   <DialogContainerComp :title="title" :visible='localVisible' :width="660" top="10vh" @submit="submit" @open="onOpen" @cancel="localVisible = false">
     <ul class="content">
-      <li>
+      <li :class="{full: PlateMakingWorkSetupHander.curWorkItem?._WorkItemInfo?.Type === WorkingTypeEnum.print}">
         <h4>设置制版工序：</h4>
         <el-radio-group v-model="ruleForm.PlateMakingWorkID" @change="ruleForm.PlateMakingGroupID = ''">
           <el-radio v-for="it in localPlateMakingWorkAllList" :key="it.ID" :label="it.ID" :title="it.Name">{{it.Name}}</el-radio>
         </el-radio-group>
       </li>
-      <li v-show="showGroup">
+      <li v-show="showGroup && PlateMakingWorkSetupHander.curWorkItem?._WorkItemInfo?.Type !== WorkingTypeEnum.print">
         <h4>选择制版组：</h4>
         <el-radio-group v-model="ruleForm.PlateMakingGroupID">
           <el-radio v-for="it in _PlateMakingGroupList" :key="it.ID" :label="it.ID" :title="it.Name">{{it.Name}}</el-radio>
@@ -25,7 +25,7 @@ import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { storeToRefs } from 'pinia';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ISetPlateMakingWorkParams } from '../js/types';
-import { ReportModeEnum } from '../../process/enums';
+import { ReportModeEnum, WorkingTypeEnum } from '../../process/enums';
 
 const props = defineProps<{
   visible: boolean,
@@ -49,14 +49,21 @@ const { PlateMakingWorkSetupHander } = storeToRefs(productionSettingStore);
 const title = computed(() => `设置制版工序：${props.curWorkName}`);
 
 const localPlateMakingWorkAllList = computed(() => {
+  let list = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList;
   if (PlateMakingWorkSetupHander.value.curWorkItem) {
     const curReportMode = PlateMakingWorkSetupHander.value.curWorkItem._WorkItemInfo?.ReportMode; // 报工方式
     if (curReportMode === ReportModeEnum.board) { // 大版报工
-      return PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.filter(it => it.ReportMode === ReportModeEnum.board);
+      list = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.filter(it => it.ReportMode === ReportModeEnum.board);
+    }
+
+    if (PlateMakingWorkSetupHander.value.curWorkItem._WorkItemInfo?.Type === WorkingTypeEnum.print) {
+      list = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.filter(it => it.IsPrintingPlate || it.ID === '');
+    } else {
+      list = PlateMakingWorkSetupHander.value.PlateMakingWorkAllList.filter(it => !it.IsPrintingPlate);
     }
   }
 
-  return PlateMakingWorkSetupHander.value.PlateMakingWorkAllList;
+  return list;
 });
 
 const ruleForm: ISetPlateMakingWorkParams = reactive({
@@ -79,6 +86,12 @@ const onOpen = () => {
   ruleForm.LineWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.LineWorkID || '';
   ruleForm.PlateMakingWorkID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingWorkID || '';
   ruleForm.PlateMakingGroupID = PlateMakingWorkSetupHander.value.curWorkItem?.PlateMakingGroupID || '';
+
+  // const t = localPlateMakingWorkAllList.value.find(it => it.ID === ruleForm.PlateMakingWorkID);
+  // if (!t) {
+  //   ruleForm.PlateMakingWorkID = '';
+  //   ruleForm.PlateMakingGroupID = '';
+  // }
 
   _originData.LineWorkID = ruleForm.LineWorkID;
   _originData.PlateMakingWorkID = ruleForm.PlateMakingWorkID;
@@ -134,6 +147,7 @@ const submit = () => {
   > li {
     padding-bottom: 20px;
     max-height: 185px;
+    margin-right: -10px;
     overflow: auto;
     overflow: overlay;
     @include scroll;
@@ -147,6 +161,10 @@ const submit = () => {
     .is-gray {
       line-height: 28px;
       color: #989898;
+    }
+
+    &.full {
+      max-height: 400px;
     }
   }
 }

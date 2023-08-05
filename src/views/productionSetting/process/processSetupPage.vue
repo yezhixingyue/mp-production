@@ -18,7 +18,8 @@
                     v-for="it in ReportModeEnumList"
                     :key="it.ID"
                     :label="it.ID"
-                    :disabled="Data.processDataFrom.Type === WorkingTypeEnum.combine && it.ID !== ReportModeEnum.order"
+                    :disabled="(Data.processDataFrom.Type === WorkingTypeEnum.combine && it.ID !== ReportModeEnum.order)
+                     || (Data.processDataFrom.Type === WorkingTypeEnum.split && it.ID !== ReportModeEnum.board)"
                    >{{it.Name}}</el-radio>
                 </el-radio-group>
               </el-form-item>
@@ -33,6 +34,7 @@
                       :key="it.ID"
                       :label="it.ID"
                       :disabled="(it.ID === WorkingTypeEnum.combine && Data.processDataFrom.ReportMode !== ReportModeEnum.order)
+                        ||(it.ID === WorkingTypeEnum.split && Data.processDataFrom.ReportMode !== ReportModeEnum.board)
                         ||(it.ID === WorkingTypeEnum.split && Data.processDataFrom.AllowBatchReport)
                         ||(it.ID === WorkingTypeEnum.platemaking && Data.processDataFrom.AllowPartReport)"
                      >{{it.Name}}</el-radio>
@@ -185,8 +187,14 @@
       :ImpositionTemmplateList="productionSettingStore.ImpositionTemmplateList"
     />
     <footer>
-      <mp-button type="primary" class="gradient" @click="saveProcess">保存</mp-button>
-      <mp-button class="blue" @click="$goback">返回</mp-button>
+      <div>
+        <mp-button type="primary" class="gradient" @click="saveProcess" :disabled="!!canNotChangeReason.Reason || canNotChangeReason.loading">保存</mp-button>
+        <mp-button class="blue" @click="$goback">返回</mp-button>
+      </div>
+      <div v-if="canNotChangeReason.Reason" class="tips-box is-pink">
+        <i class="iconfont icon-baoting"></i>
+        {{ canNotChangeReason.Reason }}
+      </div>
     </footer>
   </div>
 </template>
@@ -212,6 +220,7 @@ import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resource
 import {
   ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, WorkingProcedureRelationEnum,
 } from './enums';
+import { getIsOrNotShowAllowUnionImposition } from './getIsOrNotShowAllowUnionImposition';
 
 const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
@@ -353,8 +362,7 @@ const showTemplate = computed(() => {
 const activeEquipmentList = computed(() => Data.processDataFrom.EquipmentGroups.map(it => it.GroupID));
 
 /** 在该情况下隐藏 允许合拼 设置 */
-const hideAllowUnionImpositionItem = computed(() => Data.processDataFrom.Type !== WorkingTypeEnum.normal
-|| Data.processDataFrom.ReportMode !== ReportModeEnum.board);
+const hideAllowUnionImpositionItem = computed(() => !getIsOrNotShowAllowUnionImposition(Data.processDataFrom));
 
 function setStorage() { // 设置会话存储
   sessionStorage.setItem('processSetupPage', 'true');
@@ -500,6 +508,28 @@ const saveProcess = () => {
     });
   }
 };
+
+const canNotChangeReason = ref({
+  Reason: '',
+  loading: false,
+});
+
+const getProcessUsedInfo = async (id: string) => {
+  if (!id) {
+    return;
+  }
+
+  canNotChangeReason.value.loading = true;
+
+  const resp = await api.getWorkingProcedureProductionLineUsed(id).catch(() => null);
+
+  if (!resp?.data.isSuccess) {
+    canNotChangeReason.value.Reason = resp?.data.Message || '当前工序暂不可更改';
+  }
+
+  canNotChangeReason.value.loading = false;
+};
+
 onMounted(() => {
   // sessionStorage.removeItem('foldWayTemplateSteupPage');
   const temp = JSON.parse(route.params.process as string) as processDataFromType;
@@ -513,6 +543,7 @@ onMounted(() => {
         GroupName: getEquipmentNameByID(it.GroupID),
       })),
     };
+    getProcessUsedInfo(temp.ID);
   }
   initEquipmentGroupIDs = Data.processDataFrom.EquipmentGroups.map(it => it.GroupID);
   initRelations.value = [...Data.processDataFrom.Relations];
@@ -703,10 +734,18 @@ export default {
   >footer{
     min-height: 50px;
     height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding-bottom: 50px;
+    > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      padding-top: 10px;
+      &:last-of-type {
+        line-height: 16px;
+        letter-spacing: 0.5px;
+      }
+    }
     .el-button{
       width: 120px;
     }

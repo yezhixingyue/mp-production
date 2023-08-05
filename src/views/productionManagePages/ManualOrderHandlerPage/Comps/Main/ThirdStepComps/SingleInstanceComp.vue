@@ -60,6 +60,7 @@
               <i v-else>{{ it._File.name }}</i>
               <em v-if="it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
             </span>
+            <span :title="getBleedContent(it)" style="flex: 1 0 auto;margin-left: 20px;font-size: 12px;color: #888;">出血:{{ getBleedContent(it) }}</span>
           </p>
         </div>
       </li>
@@ -133,6 +134,7 @@ import {
 } from '../../../js/enums';
 import { PlaceOrderProductionInstance } from '../../../js/PlaceOrderProductionInstance';
 import { getWorkProcessContent } from './utils';
+import { getBleedContent } from '../../../js/utils';
 
 const props = defineProps<{
   item: Required<PlaceOrderProductionInstance>
@@ -235,7 +237,7 @@ const _NumbericalList = computed(() => props.item.AssistList.filter(it => it.Typ
               text-overflow: ellipsis;
               &.file-type-name {
                 flex: none;
-                width: 165px;
+                width: 150px;
                 padding-right: 15px;
               }
               &.file-name {

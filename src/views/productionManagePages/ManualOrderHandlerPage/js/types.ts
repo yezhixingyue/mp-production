@@ -78,6 +78,10 @@ export interface IConvertOrderFile {
     Name: string,
     Index: '' | number
   }
+  BleedTop?: '' | number
+  BleedBottom?: '' | number
+  BleedLeft?: '' | number
+  BleedRight?: '' | number
 }
 
 interface IAddressAreaCell {
