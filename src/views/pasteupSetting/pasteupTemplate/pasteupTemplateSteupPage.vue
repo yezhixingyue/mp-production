@@ -108,8 +108,10 @@
             </p>
           </el-form-item>
           <el-form-item :label="`用料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
-            <span>宽：<el-input maxlength="6" v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
-            <span>高：<el-input maxlength="6" v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
+            <span>宽：<el-input-number max="999999" :controls="false"
+               v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
+            <span>高：<el-input-number max="999999" :controls="false"
+               v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
           </el-form-item>
           <el-form-item :label="`拼版方式：`">
             <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute"
@@ -728,9 +730,12 @@ export default {
             justify-content: left;
             align-items: center;
             margin-right: 20px;
-            .el-input{
+            .el-input-number{
               margin-right: 4px;
               width: 70px;
+              input{
+                text-align: left;
+              }
             }
           }
         }
