@@ -107,6 +107,12 @@
               </ul>
             </p>
           </el-form-item>
+          <el-form-item :label="`用料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
+            <span>宽：<el-input-number max="999999" :controls="false"
+               v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
+            <span>高：<el-input-number max="999999" :controls="false"
+               v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
+          </el-form-item>
           <el-form-item :label="`拼版方式：`">
             <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute"
             v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.UseMode" label="按模位" />
@@ -245,6 +251,8 @@ const Data: DataType = reactive({
           key: '1',
         },
       ],
+      MaterialWidth: null,
+      MaterialHeight: null,
     },
     ActualSizeAttribute: {
       BleedTop: null,
@@ -315,9 +323,28 @@ function verification() {
       return false;
     }
     // 按模板尺寸 没有上传模板
-    if (Data.addPasteupTemplateFrom.SizeType === 0 && !Data.addPasteupTemplateFrom.TemplateSizeAttribute?.FilePath) {
-      messageBox.failSingleError('保存失败', '请上传模板文件', () => null, () => null);
-      return false;
+    if (Data.addPasteupTemplateFrom.SizeType === 0) {
+      if (!Data.addPasteupTemplateFrom.TemplateSizeAttribute?.FilePath) {
+        messageBox.failSingleError('保存失败', '请上传模板文件', () => null, () => null);
+        return false;
+      }
+      if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialWidth)) {
+        messageBox.failSingleError('保存失败', '请输入用料尺寸(宽)', () => null, () => null);
+        return false;
+      }
+      if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialWidth) < 0) {
+        messageBox.failSingleError('保存失败', '请输入正整数用料尺寸(宽)', () => null, () => null);
+        return false;
+      }
+      if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight)) {
+        messageBox.failSingleError('保存失败', '请输入用料尺寸(高)', () => null, () => null);
+        return false;
+      }
+      if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight) < 0) {
+        messageBox.failSingleError('保存失败', '请输入正整数用料尺寸(高)', () => null, () => null);
+        return false;
+      }
+      return true;
     }
     // 按模板尺寸 没有输入允许误差
     // if (Data.addPasteupTemplateFrom.SizeType === 0
@@ -438,6 +465,7 @@ onMounted(() => {
   // pasteupTemplateData
   pasteupTemplateData.value = JSON.parse(route.params.Template as string) as ImpositionTemmplate;
   const temp = JSON.parse(route.params.SizeItem as string) as SizeListType;
+  console.log(temp, 'aaaaaaaaa');
 
   if (temp.ID) {
     Data.addPasteupTemplateFrom = temp;
@@ -469,6 +497,9 @@ onMounted(() => {
           key: '1',
         },
       ],
+
+      MaterialWidth: null,
+      MaterialHeight: null,
     };
   }
   if (!temp.ActualSizeAttribute) {
@@ -688,6 +719,23 @@ export default {
             }
             .coord-item+.coord-item{
               margin-left: 10px;
+            }
+          }
+        }
+      }
+      .paper-size{
+        .el-form-item__content{
+          >span{
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            margin-right: 20px;
+            .el-input-number{
+              margin-right: 4px;
+              width: 70px;
+              input{
+                text-align: left;
+              }
             }
           }
         }

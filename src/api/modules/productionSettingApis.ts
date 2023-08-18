@@ -48,6 +48,10 @@ const api = {
   getWorkingProcedureRemove(ID) { // POST /Api/WorkingProcedure/Remove  工序删除
     return request({ method: 'DELETE', url: `/Api/WorkingProcedure/Remove?id=${ID}` });
   },
+  // Api/WorkingProcedure/ProductionLineUsed?id=3101d3f7-8b72-48d1-a23e-b04c00fcdddf
+  getWorkingProcedureProductionLineUsed(id) { // 获取工序在生产线中被使用情况
+    return request({ method: 'GET', url: '/Api/WorkingProcedure/ProductionLineUsed', params: { id }, closeTips: true });
+  },
 
   // 生产线 ------------------------ ProductionLine
   getProductionLinOpen(id) { // POST /Api/ProductionLine/Open  生产线设为可用

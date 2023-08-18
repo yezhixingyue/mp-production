@@ -83,6 +83,7 @@ export class PlateMakingWorkSetupClass {
         ID: '',
         Name: '[无]',
         IsSameSizeWithPrintingPlate: null,
+        AllowUnionImposition: false,
       };
       this.PlateMakingWorkAllList = [temp, ...resp.data.Data];
     }

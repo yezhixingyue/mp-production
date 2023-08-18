@@ -124,6 +124,10 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
             Name: this._originLineData?.Name || '',
             Index: index,
           },
+          BleedBottom: t?.BleedBottom || '',
+          BleedLeft: t?.BleedLeft || '',
+          BleedRight: t?.BleedRight || '',
+          BleedTop: t?.BleedTop || '',
         });
       }
 

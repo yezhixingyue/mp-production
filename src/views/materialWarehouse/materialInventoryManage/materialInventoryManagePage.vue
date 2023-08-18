@@ -88,7 +88,7 @@
               <template v-if="scope.row.TotalStock">
                 {{scope.row.TotalStock}}
                 {{scope.row.StockUnit}}
-                <mp-button link type="primary" :disabled="!scope.row.TotalStock"
+                <mp-button link style="vertical-align: text-top;" type="primary" :disabled="!scope.row.TotalStock"
                 @click="SeeGoodsAllocation(scope.row)">货位</mp-button>
               </template>
               <template v-else>

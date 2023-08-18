@@ -24,6 +24,10 @@ export class ManageEquipmentListClass {
 
   public EquipmentClassAndGroupLevelList:IListItemType[] = []
 
+  clearCondition() {
+    this.condition = new Condition();
+  }
+
   /** 解除绑定 */
   static async handleItemUnbind(item: IManageEquipmentInfo) {
     const resp = await api.getEquipmentUnbind(item.ID).catch(() => null);

@@ -7,7 +7,7 @@
       <mp-table-column width="108px" label="状态">
         <template #default="scope:any">{{ scope.row.IsOpen ? '' : '已关闭' }}</template>
       </mp-table-column>
-      <mp-table-column width="215px" label="运行时间设置">
+      <mp-table-column min-width="215px" label="运行时间设置">
         <template #default="scope:any">{{ scope.row._RunningTime }}</template>
       </mp-table-column>
       <mp-table-column width="215px" label="绑定状态">
@@ -16,10 +16,12 @@
           <mp-button v-show="scope.row.Terminal" link type="primary" class="ml-40" @click="onUnbindClick(scope.row)">解绑</mp-button>
         </template>
       </mp-table-column>
-      <mp-table-column min-width="280px" label="操作" class-name="ctrl">
+      <!-- <mp-table-column width="280px" label="操作" class-name="ctrl"> -->
+      <mp-table-column width="280px" label="操作">
         <template #default="scope:any">
           <mp-button type="primary" link @click="onTimeClick(scope.row)">运行时间</mp-button>
-          <mp-button :type="scope.row.IsOpen ? 'danger' : 'primary'" link @click="onOpenSwitchClick(scope.row)" :disabled="scope.row.MaintainInfo.IsAutomatic">
+          <mp-button :type="scope.row.IsOpen ? 'danger' : 'primary'" link @click="onOpenSwitchClick(scope.row)" :disabled="scope.row.MaintainInfo.IsAutomatic"
+            style="margin-left: 25px;">
             {{ scope.row.IsOpen ? '关机' : '开机'}}
           </mp-button>
         </template>

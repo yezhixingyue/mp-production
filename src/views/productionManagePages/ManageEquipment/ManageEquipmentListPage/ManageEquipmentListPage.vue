@@ -3,6 +3,8 @@
     <Header
       :condition="ManageEquipmentListPageData.condition"
       :EquipmentClassAndGroupLevelList="ManageEquipmentListPageData.EquipmentClassAndGroupLevelList"
+      :list="ManageEquipmentListPageData.list"
+      :clearCondition="clearCondition"
       :getList="getList" />
     <Main
       :list="ManageEquipmentListPageData.list"
@@ -27,6 +29,10 @@ import { ManageEquipmentListPageData } from '../js/store';
 const router = useRouter();
 
 const getList = (p?:number) => { ManageEquipmentListPageData.value.getList(p); };
+
+const clearCondition = () => {
+  ManageEquipmentListPageData.value.clearCondition();
+};
 
 const handleUnbind = (item: IManageEquipmentInfo) => { ManageEquipmentListClass.handleItemUnbind(item); }; // 解绑
 
