@@ -33,9 +33,9 @@
             <td :style="`width:${widthList[10].width}px`">
               <span class="top-text" v-show="row.IsTop" :class="{'v-hide': !row.IsTop}">已置顶</span>
               <mp-button link type="primary" @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
-              <mp-button link type="primary" style="margin-left:8px"
+              <!-- <mp-button link type="primary" style="margin-left:8px"
                :disabled="row._isMakeuped"
-               @click="onTestClick(row)" >_临时拼版</mp-button>
+               @click="onTestClick(row)" >_临时拼版</mp-button> -->
             </td>
             <td :style="`width:${widthList[11].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
@@ -79,8 +79,8 @@
 </template>
 
 <script setup lang='ts'>
-import api from '@/api';
-import { MpMessage } from '@/assets/js/utils/MpMessage';
+// import api from '@/api';
+// import { MpMessage } from '@/assets/js/utils/MpMessage';
 import {
   computed, onMounted, onUnmounted, ref,
 } from 'vue';
@@ -147,13 +147,13 @@ const localList = computed(() => props.list.map(it => ({
   _isMakeuped: getIsMakeuped(it),
 })));
 
-const onTestClick = async (it: typeof localList.value[number]) => {
-  const resp = await api.productionManageApis.getOrderDistributeWithTest(it.ID).catch(() => null);
+// const onTestClick = async (it: typeof localList.value[number]) => {
+//   const resp = await api.productionManageApis.getOrderDistributeWithTest(it.ID).catch(() => null);
 
-  if (resp?.data.isSuccess) {
-    MpMessage.success('拼版成功，自行刷新');
-  }
-};
+//   if (resp?.data.isSuccess) {
+//     MpMessage.success('拼版成功，自行刷新');
+//   }
+// };
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
   if (!it._isCombineLine) return;
