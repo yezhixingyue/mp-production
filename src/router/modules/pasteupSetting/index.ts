@@ -19,7 +19,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '拼版模板',
         requiresAuth: true,
-        icon: 'iconfont icon-xinxi',
+        icon: 'iconfont icon-pintu scale-8',
         pageName: 'pasteupTemplatePage',
       },
       component: () => import('@/views/pasteupSetting/pasteupTemplate/pasteupTemplatePage.vue'),
@@ -64,7 +64,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '折手模板',
         requiresAuth: true,
-        icon: 'iconfont icon-wuliaoziyuanbao',
+        icon: 'iconfont icon-foldzhedie scale-8',
         pageName: 'foldWayTemplateListPage',
       },
       component: () => import('@/views/pasteupSetting/foldWayTemplate/foldWayTemplateListPage.vue'),
@@ -98,7 +98,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '印色管理',
         requiresAuth: true,
-        icon: 'iconfont icon-gongsishebei',
+        icon: 'iconfont icon-yanse',
         pageName: 'printingColorManagementPage',
       },
       component: () => import('@/views/pasteupSetting/printingColorManagementPage.vue'),

@@ -60,7 +60,8 @@
               <i v-else>{{ it._File.name }}</i>
               <em v-if="it._File.name.length > 6">{{ it._File.name.slice(-6) }}</em>
             </span>
-            <span :title="getBleedContent(it)" style="flex: 1 0 auto;margin-left: 20px;font-size: 12px;color: #888;">出血:{{ getBleedContent(it) }}</span>
+            <span :title="getBleedContent(it)" v-if="getBleedContent(it)"
+             style="flex: 1 0 auto;margin-left: 20px;">出血:{{ getBleedContent(it) }}</span>
           </p>
         </div>
       </li>

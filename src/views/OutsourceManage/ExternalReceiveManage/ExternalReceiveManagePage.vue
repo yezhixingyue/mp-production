@@ -3,7 +3,7 @@
     <div class="input-box">
       <h2>外协加工入库</h2>
       <div class="search">
-        <span class="title">ID：</span>
+        <span class="title">外协任务ID：</span>
         <el-input class="input" v-model.trim="inputValue" maxlength="10" @keydown.enter="search" ref="oInp"></el-input>
         <mp-button class="button" type="primary" @click="search"><el-icon><Search /></el-icon></mp-button>
       </div>
