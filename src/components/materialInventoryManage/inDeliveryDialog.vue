@@ -14,18 +14,20 @@
     >
     <template #default>
       <div class="select-goods-dialog-main">
-        <el-scrollbar>
-          <div class="goods-position-select">
-            <el-radio-group @change="getGoodsPositionDimensionSelect" v-model="Data.StorehouseID">
-              <el-radio-button v-for="item in StorehouseList" :key="item.StorehouseID"
-              :label="item.StorehouseID">
-                {{item.StorehouseName}}
-              </el-radio-button>
-            </el-radio-group>
-             <mp-button type="primary" link
-              @click="seeImg()">查看平面布局图</mp-button>
-          </div>
-        </el-scrollbar>
+        <div style="display: flex; align-items: flex-start;">
+          <el-scrollbar>
+            <div class="goods-position-select">
+              <el-radio-group @change="getGoodsPositionDimensionSelect" v-model="Data.StorehouseID">
+                <el-radio-button v-for="item in StorehouseList" :key="item.StorehouseID"
+                :label="item.StorehouseID">
+                  {{item.StorehouseName}}
+                </el-radio-button>
+              </el-radio-group>
+            </div>
+          </el-scrollbar>
+          <mp-button type="primary" link style="margin: 6px 0 0 10px;"
+           @click="seeImg()">查看平面布局图</mp-button>
+        </div>
         <div class="top-main">
           <template v-if="selectStorehouseGoodsPosition[Data.StorehouseID]">
             <template v-for="(item, index) in selectStorehouseGoodsPosition[Data.StorehouseID].selectData" :key="item.id">

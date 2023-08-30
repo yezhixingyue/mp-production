@@ -139,24 +139,24 @@
                 <span class="coord">
                   <span class="coord-item">
                     <span class="dark">x：</span>
-                    <el-input v-model.number="ModeItem.XCoordinate"/> mm
+                    <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.XCoordinate"/> mm
                   </span>
                   <span class="coord-item">
                     <span class="dark">y：</span>
-                    <el-input v-model.number="ModeItem.YCoordinate"/> mm
+                    <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.YCoordinate"/> mm
                   </span>
                 </span>
                 <span class="size">
                   <span class="dark">宽：</span>
-                  <el-input v-model.number="ModeItem.Width"/>
+                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.Width"/>
                   mm <i>X</i> <span class="dark">高：</span>
-                  <el-input v-model.number="ModeItem.Height"/> mm
+                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.Height"/> mm
                 </span>
                 <span class="row">
-                  <el-input v-model.number="ModeItem.RowNumber"/> 行
+                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.RowNumber"/> 行
                 </span>
                 <span class="col">
-                  <el-input v-model.number="ModeItem.ColumnNumber"/> 列
+                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.ColumnNumber"/> 列
                 </span>
                 <span class="handle">
                   <mp-button type="danger" link @click="delModeItem(index)">删除</mp-button>
@@ -710,7 +710,7 @@ export default {
             i{
               margin: 0 5px;
             }
-            .el-input{
+            .el-input-number{
               width: 60px;
               height: 28px;
               input{
