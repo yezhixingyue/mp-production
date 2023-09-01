@@ -29,5 +29,6 @@ export interface IList {
   Unit: string,
   Equipment: IEquipment,
   Status: number,
-  CreateTime: string
+  CreateTime: string,
+  ProductionLine:string
 }

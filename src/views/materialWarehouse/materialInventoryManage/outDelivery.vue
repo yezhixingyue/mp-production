@@ -61,9 +61,8 @@
                   </template>
                 </p>
                 <el-form-item :label="`出库数量：`" class="out-number">
-                  <mp-input-number size="large"
-                  :max="999999" placeholder="请输入出库数量"
-                  :controls="false" :min="0" :step="0.01" step-strictly v-model="Data.outDeliveryForm.Number" :disabled="!!StoresRequisitionInfo"/>
+                  <mp-input-number size="large" placeholder="请输入出库数量"
+                  :controls="false" v-model="Data.outDeliveryForm.Number" :disabled="!!StoresRequisitionInfo"/>
                   <OneLevelSelect
                     v-if="Data.checkedMaterial"
                     :options='Data.checkedMaterial.UnitSelects'
@@ -194,7 +193,7 @@
             <div>
               <img style="width:120px;height:120px" src="https://img-blog.csdnimg.cn/a2830dd85a9e4cc990b3fd999bf323a7.png" alt="">
             </div>
-            <span>ID:</span>
+            <span>出库编号:</span>
           </div>
           <div class="material"
           style="line-height: 32px;margin-left:50px;font-size:16px;font-weight: 600;padding-top:10px">
@@ -203,19 +202,6 @@
             <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">物料：</span>
               <span style="">
                 {{Data.checkedMaterial?.AttributeDescribe}}
-                      <!-- <template v-for="(item, index) in Data.checkedMaterial.MaterialAttributes"
-                      :key="item.AttributeID">
-                        <template v-if="item.NumericValue">
-                          <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-                        </template>
-                        <template v-else>
-                          <span>{{item.InputSelectValue || item.SelectValue}}</span>
-                        </template>
-                        <template
-                        v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                          {{index === Data.checkedMaterial.MaterialAttributes.length-1 ? '' : ' ' }}
-                        </template>
-                      </template> -->
               </span>
             </p>
             <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;"></span>
@@ -229,21 +215,26 @@
         </div>
         <div style="border-top: 1px dashed #A6B6C6;height:1px;margin:40px 0"></div>
         <div class="storehouse-stock" style="display: flex;padding:0 20px">
-          <div style="display: flex;flex-wrap: wrap;width:156px;">
+          <div v-if="StoresRequisitionInfo" style="display: flex;flex-wrap: wrap;width:156px; margin-right: 30px;">
             <div>
-              <img style="width:156px;height:156px" src="https://img-blog.csdnimg.cn/a2830dd85a9e4cc990b3fd999bf323a7.png" alt="">
+              <img style="width:156px;height:156px" :src="MaterialRequisitionCodeSrc" alt="">
             </div>
-            <span>ID:</span>
+            <span>领料编号:{{ StoresRequisitionInfo.Code }}</span>
           </div>
           <div style="display: flex;flex-direction: column;flex:1">
 
-            <div style="line-height: 32px;margin-left:50px;font-size:16px;font-weight: 600;">
+            <div style="line-height: 32px;font-size:16px;font-weight: 600;">
               <p style="display: flex;text-align: right;"><span style="color:#7A8B9C;">领料人：</span>
                 <span style="">{{getReceiptorName}}</span></p>
-              <p style="display: flex;text-align: right;">
-                <span style="">名片生产线  印刷机 CD102  3号机</span></p>
+              <p style="display: flex;text-align: right;" v-if="StoresRequisitionInfo">
+                <span style="">
+                  {{StoresRequisitionInfo?.ProductionLine}}
+                  {{StoresRequisitionInfo?.Equipment.ClassName}}
+                  {{StoresRequisitionInfo?.Equipment.GroupName}}
+                  {{StoresRequisitionInfo?.Equipment.Name}}
+                </span></p>
             </div>
-            <div style="padding-left:40px;margin:5px 0">
+            <div style="margin:5px 0">
               <p style="color:#7A8B9C;">出库位置：</p>
               <ul :style="`border: 1px solid #A6B6C6;border-radius: 8px;padding:0 18px;color:#566176`">
                 <template v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
@@ -301,6 +292,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { MaterialInfoType } from '@/assets/Types/common';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 import type { IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
+import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 
 interface MaterialGoodsPositionsType {
   PositionID: string,
@@ -431,6 +423,7 @@ export default {
     const printBtn:Ref = ref(null);
     const ThreeCascaderComp:Ref = ref(null);
     const StoresRequisitionInfo = ref<IList|null>(null);
+    const MaterialRequisitionCodeSrc = ref('');
     // const h = ref(0);
     const router = useRouter();
     const route = useRoute();
@@ -715,6 +708,8 @@ export default {
         messageBox.failSingleError('出库失败', '请输入出库数量', () => null, () => null);
       } else if (Data.outDeliveryForm.Number < 0) {
         messageBox.failSingleError('出库失败', '出库数量请输入正数', () => null, () => null);
+      } else if (Data.outDeliveryForm.Number > 999999.99) {
+        messageBox.failSingleError('出库失败', '请输入小于1000000的出库数量', () => null, () => null);
       } else if (!reg.test(String(Data.outDeliveryForm.Number))) {
         messageBox.failSingleError('出库失败', '出库数量不能超过两位小数', () => null, () => null);
       } else if (!Data.outDeliveryForm.UnitID) {
@@ -748,6 +743,9 @@ export default {
         Data.outDeliveryForm.MaterialGoodsPositions = temp;
         // 设置出库货位及数量
         Data.outVerify = true;
+        getQRCodeSrc(StoresRequisitionInfo.value?.Code || '').then(res => {
+          MaterialRequisitionCodeSrc.value = res || '';
+        });
       }
     }
 
@@ -801,6 +799,7 @@ export default {
     });
 
     return {
+      MaterialRequisitionCodeSrc,
       StoresRequisitionInfo,
       SizeSelects,
       print,

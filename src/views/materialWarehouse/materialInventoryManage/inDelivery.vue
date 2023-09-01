@@ -56,9 +56,8 @@
                   </template>
                 </p>
                 <el-form-item :label="`入库数量：`" class="in-number">
-                  <mp-input-number
-                  :max="999999.99" placeholder="请输入入库数量"
-                   :controls="false" :step="0.01" step-strictly :min="0" v-model="Data.inDeliveryForm.Number" />
+                  <mp-input-number placeholder="请输入入库数量"
+                   :controls="false" v-model="Data.inDeliveryForm.Number" />
                   <OneLevelSelect
                     v-if="Data.checkedMaterial"
                     :options='Data.checkedMaterial.UnitSelects'
@@ -523,6 +522,8 @@ export default {
         messageBox.failSingleError('入库失败', '请输入入库数量', () => null, () => null);
       } else if (Data.inDeliveryForm.Number < 0) {
         messageBox.failSingleError('入库失败', '入库数量请输入正数', () => null, () => null);
+      } else if (Data.inDeliveryForm.Number > 999999.99) {
+        messageBox.failSingleError('入库失败', '请输入小于1000000的入库数量', () => null, () => null);
       } else if (!reg.test(String(Data.inDeliveryForm.Number))) {
         messageBox.failSingleError('入库失败', '入库数量不能超过两位小数', () => null, () => null);
       } else if (!Data.inDeliveryForm.UnitID) {

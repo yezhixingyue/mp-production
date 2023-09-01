@@ -1,4 +1,4 @@
-import { ElMessage } from 'element-plus';
+// import { ElMessage } from 'element-plus';
 import { LocationSetClass } from './LocationSetClass';
 import { Square } from './Square';
 import {
@@ -104,15 +104,15 @@ export class LocationMapClass {
 
     this.squareWidth = Math.floor(this.width / this.xAxis.length);
     this.squareHeight = Math.floor(this.height / this.yAxis.length);
-    if (this.squareWidth <= 5 || this.squareHeight <= 5) {
-      ElMessage({
-        message: '单元格宽高过小，可能无法正常渲染货位图',
-        showClose: true,
-        duration: 10000,
-        offset: 120,
-        type: 'warning',
-      });
-    }
+    // if (this.squareWidth <= 5 || this.squareHeight <= 5) {
+    //   ElMessage({
+    //     message: '单元格宽高过小，可能无法正常渲染货位图',
+    //     showClose: true,
+    //     duration: 10000,
+    //     offset: 120,
+    //     type: 'warning',
+    //   });
+    // }
     // 3. 生成square集合rows
     originData.DyadicArrayDimensionData.forEach((item, yIndex) => {
       const arr:Square[] = [];

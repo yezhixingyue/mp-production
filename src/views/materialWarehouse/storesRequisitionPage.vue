@@ -60,21 +60,9 @@
     <main>
       <el-table border fit stripe
         :data="Data.List" style="width: 100%">
+        <el-table-column show-overflow-tooltip prop="Code" label="领料编号" min-width="143">
+        </el-table-column>
         <el-table-column show-overflow-tooltip prop="PlateCode" label="大版ID" min-width="143">
-          <!-- <template #default="scope:any">
-            <template v-for="(item, index) in scope.row.MaterialAttributes"
-            :key="item.AttributeID">
-              <template v-if="item.NumericValue">
-                <span>{{item.NumericValue}}{{item.AttributeUnit}}</span>
-              </template>
-              <template v-else>
-                <span>{{item.InputSelectValue || item.SelectValue}}</span>
-              </template>
-              <template v-if="item.NumericValue||item.InputSelectValue || item.SelectValue">
-                {{index === scope.row.MaterialAttributes.length-1 ? '' : ' ' }}
-              </template>
-            </template>
-          </template> -->
         </el-table-column>
         <el-table-column
         show-overflow-tooltip prop="SKU" label="SKU编码" min-width="146">
@@ -234,7 +222,6 @@ export default {
       const _obj = ClassType.filter(Data.getListData, true);
       api.productionManageApis.getMaterialRequisitionList(_obj).then(res => {
         if (res.data.Status === 1000) {
-          console.log(res);
           Data.List = res.data.Data as IList[];
           Data.DataTotal = res.data.DataNumber;
         }

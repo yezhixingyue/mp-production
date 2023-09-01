@@ -9,6 +9,7 @@
     :showPrimary="false"
     closeBtnText="关闭"
     top="3vh"
+    class="out-delivery-dialog"
     >
     <template #default>
       <div class="see-goods-dialog">
@@ -18,8 +19,8 @@
           :allDimensionData="Data.allDimensionData"
           :isMultiSelect="true"
           :currentMaterialID="currentMaterialID"
-          :width="800"
-          :height="500"
+          :width="1000"
+          :height="600"
           :readonly="true"
         />
       </div>
@@ -222,6 +223,16 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
+.out-delivery-dialog{
+  .el-dialog__body{
+    padding: 20px;
+    padding-bottom: 0;
+    padding-top: 20px;
+  }
+  .el-dialog__footer{
+    padding-bottom: 20px;
+  }
+}
 .see-goods-dialog{
   .title{
     text-align: left;

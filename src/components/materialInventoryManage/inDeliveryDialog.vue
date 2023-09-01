@@ -56,8 +56,8 @@
             :isMultiSelect="true"
             :DefaultAction="selectStorehouseGoodsPosition[Data.StorehouseID]?.selectedLocation[getDimensionIDS.join('')] "
             :currentMaterialID="currentMaterialID"
-            :width="800"
-            :height="500"
+            :width="1000"
+            :height="600"
           />
         </div>
         <div class="bottom" >
@@ -461,6 +461,11 @@ export default {
 .select-goods-dialog{
   .el-dialog__body{
     padding: 20px;
+    padding-bottom: 0;
+    padding-top: 10px;
+  }
+  .el-dialog__footer{
+    padding-bottom: 20px;
   }
   .select-goods-dialog-main{
     .goods-position-select{
@@ -476,13 +481,10 @@ export default {
       }
     }
     .top-main{
-      min-height: 32px;
-      .el-select+.el-select{
-        margin-left: 20px;
-      }
+      min-height: 4px;
     }
     .canvas-main{
-      min-height: 580px;
+      min-height: 680px;
     }
     .bottom{
       min-height: 30px;
