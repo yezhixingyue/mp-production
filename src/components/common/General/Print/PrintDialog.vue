@@ -14,7 +14,7 @@
     <div class='dialog-content print-area' ref="oArea">
       <slot></slot>
     </div>
-    </DialogContainerComp>
+  </DialogContainerComp>
  </div>
 </template>
 
@@ -30,7 +30,7 @@ const props = defineProps<{
   noAutoPrint?: boolean
 }>();
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(['submit', 'close']);
 
 const visible = ref(false);
 
@@ -41,6 +41,7 @@ const open = () => {
 };
 const close = () => {
   visible.value = false;
+  emit('close');
 };
 
 const print = async (title?: string) => { // 直接调用打印时 应传递onlyPrint为true

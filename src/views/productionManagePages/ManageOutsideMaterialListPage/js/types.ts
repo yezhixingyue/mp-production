@@ -10,6 +10,8 @@ import { ExternalMaterialStatusEnum } from './enum';
  */
 export interface IExternalMaterialDetail {
   ID: string
+  /** 编号 */
+  Code: string
   /** 销售端 */
   Server: string
   /** 订单编码 */

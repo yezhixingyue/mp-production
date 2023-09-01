@@ -14,7 +14,7 @@
           :changePropsFunc='setCondition'
           :requestFunc='getList'
           :isFull="true"
-          :typeList="[['DateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
+          :typeList="[['DateType', ''], ['FinishTime', 'First'], ['FinishTime', 'Second']]"
           :dateList="dateList"
           :dateValue='condition.DateType'
           :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
