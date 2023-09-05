@@ -6,7 +6,7 @@
         <el-scrollbar>
           <div class="delivery-info">
             <div class="left">
-              <el-form label-width="84px">
+              <el-form label-width="84px" :rules="rules" :model="Data.outDeliveryForm">
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
                     <el-input size="large" @keyup.enter="getMaterial()"
@@ -60,28 +60,33 @@
                     <span>{{Data.checkedMaterial.Code}}</span>
                   </template>
                 </p>
-                <el-form-item :label="`出库数量：`" class="out-number">
-                  <mp-input-number size="large" placeholder="请输入出库数量"
-                  :controls="false" v-model="Data.outDeliveryForm.Number" :disabled="!!StoresRequisitionInfo"/>
-                  <OneLevelSelect
-                    v-if="Data.checkedMaterial"
-                    :options='Data.checkedMaterial.UnitSelects'
-                    :defaultProps="{
-                      value:'UnitID',
-                      label:'Unit',
-                    }"
-                    :value='Data.outDeliveryForm.UnitID'
-                    @change="(ID) => Data.outDeliveryForm.UnitID = ID"
-                    :width="100"
-                    :filterable='true'
-                    :placeholder="'请选择单位'"
-                    :disabled="!!StoresRequisitionInfo"
-                    ></OneLevelSelect>
-                    <template v-if="Data.checkedMaterial">
-                      {{getTransitionNum}}
-                      {{Data.checkedMaterial?.StockUnit}}
-                    </template>
-                </el-form-item>
+                <div style="display: flex;">
+                  <el-form-item :label="`出库数量：`" class="out-number" prop="Number">
+                    <el-input size="large" placeholder="请输入出库数量"
+                     v-model="Data.outDeliveryForm.Number" :disabled="!!StoresRequisitionInfo"/>
+                  </el-form-item>
+                  <p style="margin-bottom: 18px;display: flex; align-items: center;">
+                    <OneLevelSelect
+                      v-if="Data.checkedMaterial"
+                      :options='Data.checkedMaterial.UnitSelects'
+                      :defaultProps="{
+                        value:'UnitID',
+                        label:'Unit',
+                      }"
+                      :value='Data.outDeliveryForm.UnitID'
+                      @change="(ID) => Data.outDeliveryForm.UnitID = ID"
+                      :width="100"
+                      :filterable='true'
+                      :placeholder="'请选择单位'"
+                      :disabled="!!StoresRequisitionInfo"
+                      style="margin: 0 10px;"
+                      ></OneLevelSelect>
+                      <template v-if="Data.checkedMaterial">
+                        {{getTransitionNum}}
+                        {{Data.checkedMaterial?.StockUnit}}
+                      </template>
+                  </p>
+                </div>
                 <el-form-item :label="`出库类型：`">
 
                   <el-radio-group v-model="Data.outDeliveryForm.OutStockType">
@@ -151,8 +156,12 @@
                         <span class="number">
                           <el-checkbox v-model="GoodsPosition.checked"
                           @change="checkedChange(GoodsPosition, [StorehouseIndex,GoodsPositionIndex])" label="出库" size="large" />
-                          <div v-if="GoodsPosition.checked"><mp-input-number :max="999999"
-                          :controls="false" v-model="GoodsPosition.inputValue" :step="0.01" step-strictly :min="0"></mp-input-number>
+                          <div v-if="GoodsPosition.checked">
+                            <el-form :rules="formRules" :model="GoodsPosition">
+                              <el-form-item prop="inputValue" style="margin: 0 10px;">
+                                <el-input v-model="GoodsPosition.inputValue"></el-input>
+                              </el-form-item>
+                            </el-form>
                             <span class="unit">
                               {{Data.checkedMaterial?.StockUnit}}
                             </span>
@@ -416,6 +425,8 @@ export default {
     OutDeliveryDialog,
   },
   setup() {
+    // 两位小数
+    const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
     const print = ref({
       id: 'print',
       preview: false,
@@ -474,6 +485,24 @@ export default {
       const staff = CommonStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
       return staff?.StaffName || '';
     });
+    const numberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
+      if (!value) {
+        callback(new Error('请输入出库数量'));
+      } else if (value && Number(value) > 999999.99) {
+        callback(new Error('请输入小于1000000的出库数量'));
+      } else if (value && !reg.test(String(value))) {
+        callback(new Error('出库数量不能超过两位小数'));
+      } else {
+        callback();
+      }
+    };
+
+    const rules = reactive({
+      Number: [
+        { validator: numberRules, trigger: 'change' },
+      ],
+    });
+
     const SizeSelects = computed(() => {
       if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
         return [];
@@ -570,6 +599,24 @@ export default {
         return 0;
       }
       return ratio * Number(Data.outDeliveryForm.Number);
+    });
+
+    const outNumberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
+      if (!value) {
+        callback(new Error('请输入出库数量'));
+      } else if (value && Number(value) > getTransitionNum.value) {
+        callback(new Error(`请小于${getTransitionNum.value}`));
+      } else if (value && !reg.test(String(value))) {
+        callback(new Error('不能超过两位小数'));
+      } else {
+        callback();
+      }
+    };
+
+    const formRules = reactive({
+      inputValue: [
+        { validator: outNumberRules, trigger: 'change' },
+      ],
     });
 
     // 获取仓库的出库总数量
@@ -689,8 +736,6 @@ export default {
       });
     }
     function outDelvery() {
-      // 两位小数
-      const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
       const inventory = () => {
         const inventoryMsgs:string[] = [];
         Data.StorehouseStockInfo.forEach(item => {
@@ -799,6 +844,9 @@ export default {
     });
 
     return {
+      formRules,
+      outNumberRules,
+      rules,
       MaterialRequisitionCodeSrc,
       StoresRequisitionInfo,
       SizeSelects,
@@ -1099,14 +1147,11 @@ export default {
                       align-items: center;
                       display: flex;
                       justify-content: space-between;
-                      .el-input-number{
+                      .el-input{
                         width: 100px;
                         input{
                           text-align: left;
                         }
-                      }
-                      .el-input{
-                        margin: 0 10px;
                       }
                     }
                   }

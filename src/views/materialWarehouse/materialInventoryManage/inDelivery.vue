@@ -6,7 +6,7 @@
         <el-scrollbar>
           <div class="delivery-info">
             <div class="left">
-              <el-form label-width="84px">
+              <el-form label-width="84px" :rules="rules" :model="Data.inDeliveryForm">
                 <el-form-item :label="`SKU编码：`" class="sku">
                   <p>
                     <el-input v-model.trim="Data.getMaterialData.SKUCode"
@@ -55,27 +55,33 @@
                     <span>{{Data.checkedMaterial.Code}}</span>
                   </template>
                 </p>
-                <el-form-item :label="`入库数量：`" class="in-number">
-                  <mp-input-number placeholder="请输入入库数量"
-                   :controls="false" v-model="Data.inDeliveryForm.Number" />
-                  <OneLevelSelect
-                    v-if="Data.checkedMaterial"
-                    :options='Data.checkedMaterial.UnitSelects'
-                    :defaultProps="{
-                      value:'UnitID',
-                      label:'Unit',
-                    }"
-                    :value='Data.inDeliveryForm.UnitID'
-                    @change="(ID) => Data.inDeliveryForm.UnitID = ID"
-                    :width="140"
-                    :filterable='true'
-                    :placeholder="'请选择单位'"
-                    ></OneLevelSelect>
-                    <template v-if="Data.checkedMaterial">
-                      {{getTransitionNum}}
-                      {{Data.checkedMaterial?.StockUnit}}
-                    </template>
-                </el-form-item>
+                <div style="display: flex;">
+                  <el-form-item :label="`入库数量：`" class="in-number" prop="Number">
+                    <el-input placeholder="请输入入库数量"
+                    class="number" v-model="Data.inDeliveryForm.Number" />
+                    </el-form-item>
+                    <p style="margin-bottom: 18px;display: flex; align-items: center;">
+                      <OneLevelSelect
+                        v-if="Data.checkedMaterial"
+                        :options='Data.checkedMaterial.UnitSelects'
+                        :defaultProps="{
+                          value:'UnitID',
+                          label:'Unit',
+                        }"
+                        :value='Data.inDeliveryForm.UnitID'
+                        @change="(ID) => Data.inDeliveryForm.UnitID = ID"
+                        :width="140"
+                        :filterable='true'
+                        :placeholder="'请选择单位'"
+                        style="margin: 0 10px;"
+                        ></OneLevelSelect>
+                        <template v-if="Data.checkedMaterial">
+                          {{getTransitionNum}}
+                          {{Data.checkedMaterial?.StockUnit}}
+                        </template>
+                    </p>
+
+                </div>
                 <el-form-item :label="`入库类型：`" class="StockType">
                   <el-radio-group v-model="Data.inDeliveryForm.InStockType" size="large">
                     <el-radio-button :label="1">采购</el-radio-button>
@@ -102,8 +108,9 @@
                     :placeholder="'请选择供应商'"
                     ></OneLevelSelect>
                     <el-form-item :label="`单价：`" v-if="Data.inDeliveryForm.InStockType === 1"
-                      size="large">
-                      <mp-input-number
+                      size="large" prop="Price">
+                      <el-input
+                      class="price-number"
                       :max="999999.99"
                       placeholder="请输入单价"
                       :controls="false" :min="0" v-model="Data.inDeliveryForm.Price"
@@ -174,8 +181,13 @@
                         <span class="number">
                           <span>
                           入库
-                            <mp-input-number :max="999999.99" :controls="false"
-                            v-model="GoodsPosition.Number" :min="0" :step="0.01" step-strictly></mp-input-number>
+                              <el-form :rules="formRules" :model="GoodsPosition">
+                                <el-form-item prop="Number" style="margin: 0 10px;">
+                                  <el-input :disabled="!Data.checkedMaterial || !getTransitionNum"
+                                  v-model="GoodsPosition.Number"
+                                  ></el-input>
+                                </el-form-item>
+                              </el-form>
                             {{Data.checkedMaterial?.StockUnit}}
                           </span>
                         </span>
@@ -338,6 +350,8 @@ export default {
     const ThreeCascaderComp:Ref = ref(null);
     const InDeliveryDialogRef:Ref = ref(null);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
+    // 两位小数
+    const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
     const CommonStore = useCommonStore();
     // 选择仓库货位弹框的表单数据
     const selectStorehouseGoodsPosition = ref({});
@@ -379,6 +393,37 @@ export default {
       // 入库数据表单
       inStorehouseGoodsPosition: [],
       StorehouseID: '',
+    });
+    const numberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
+      if (!value) {
+        callback(new Error('请输入入库数量'));
+      } else if (value && Number(value) > 999999.99) {
+        callback(new Error('请输入小于1000000的入库数量'));
+      } else if (value && !reg.test(String(value))) {
+        callback(new Error('入库数量不能超过两位小数'));
+      } else {
+        callback();
+      }
+    };
+    const priceRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
+      if (!value) {
+        callback(new Error('请输入单价'));
+      } else if (value && Number(value) > 999999.99) {
+        callback(new Error('请输入小于1000000的单价'));
+      } else if (value && !reg.test(String(value))) {
+        callback(new Error('单价不能超过两位小数'));
+      } else {
+        callback();
+      }
+    };
+
+    const rules = reactive({
+      Number: [
+        { validator: numberRules, trigger: 'change' },
+      ],
+      Price: [
+        { validator: priceRules, trigger: 'change' },
+      ],
     });
     const SizeSelects = computed(() => {
       if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
@@ -489,6 +534,23 @@ export default {
       // return num / ratio;
       return Math.floor((num / ratio) * 100) / 100;
     });
+    const inNumberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
+      if (!value) {
+        callback(new Error('请输入入库数量'));
+      } else if (value && Number(value) > getTransitionNum.value) {
+        callback(new Error(`请小于${getTransitionNum.value}`));
+      } else if (value && !reg.test(String(value))) {
+        callback(new Error('不能超过两位小数'));
+      } else {
+        callback();
+      }
+    };
+
+    const formRules = reactive({
+      Number: [
+        { validator: inNumberRules, trigger: 'change' },
+      ],
+    });
     function ToOutDelivery() {
       const routeData = router.resolve({
         name: 'outDelivery',
@@ -503,8 +565,6 @@ export default {
 
     // 入库
     function inDelivery() {
-      // 两位小数
-      const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
       const getMsgs = () => {
         const Msgs:string[] = [];
         Data.inStorehouseGoodsPosition.forEach(item => {
@@ -640,6 +700,11 @@ export default {
 
         // }
       });
+      if (Data.inStorehouseGoodsPosition.length === 1
+      && Data.inStorehouseGoodsPosition[0].GoodsPositionList.length === 1
+      && !Data.inStorehouseGoodsPosition[0].GoodsPositionList[0].Number) {
+        Data.inStorehouseGoodsPosition[0].GoodsPositionList[0].Number = getTransitionNum.value;
+      }
       SelectGoodsCloseClick();
       // 入库
     }
@@ -703,6 +768,9 @@ export default {
     });
 
     return {
+      formRules,
+      inNumberRules,
+      rules,
       InDeliveryDialogRef,
       SizeSelects,
       Data,
@@ -886,8 +954,9 @@ export default {
                 }
               }
               &.in-number{
-                .el-input-number{
+                .number{
                   width: 200px;
+                  height: 40px;
                   input{
                     text-align: left;
                   }
@@ -901,7 +970,7 @@ export default {
                   .el-form-item__label{
                     color: #444444;
                   }
-                  .el-input-number{
+                  .price-number{
                     width: 136px;
                     margin-right: 20px;
                     input{
@@ -1008,8 +1077,7 @@ export default {
                     >span{
                       align-items: center;
                       display: flex;
-                      .el-input-number{
-                        margin: 0 10px;
+                      .el-input{
                         width: 100px;
                         input{
                           text-align: left;
