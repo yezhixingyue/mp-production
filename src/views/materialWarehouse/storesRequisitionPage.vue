@@ -62,7 +62,7 @@
         :data="Data.List" style="width: 100%">
         <el-table-column show-overflow-tooltip prop="Code" label="领料编号" min-width="143">
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="PlateCode" label="大版ID" min-width="143">
+        <el-table-column show-overflow-tooltip prop="PlateCode" label="大版ID" min-width="90">
         </el-table-column>
         <el-table-column
         show-overflow-tooltip prop="SKU" label="SKU编码" min-width="146">
@@ -79,7 +79,11 @@
         show-overflow-tooltip prop="SizeName" label="尺寸规格" min-width="218">
         </el-table-column>
 
-        <el-table-column prop="Number" label="数量" min-width="121"/>
+        <el-table-column prop="Number" label="数量" min-width="100">
+          <template #default="scope:any">
+            {{scope.row.Number}}{{scope.row.Unit}}
+          </template>
+        </el-table-column>
         <el-table-column
         show-overflow-tooltip prop="OperaterName" label="机器设备" min-width="285">
           <template #default="scope:any">
@@ -89,13 +93,13 @@
           </template>
         </el-table-column>
         <el-table-column
-        show-overflow-tooltip prop="CreateTime" label="下单时间" min-width="179">
+        show-overflow-tooltip prop="CreateTime" label="下单时间" min-width="130">
           <template #default="scope:any">
             {{format2MiddleLangTypeDateFunc2(scope.row.CreateTime)}}
           </template>
         </el-table-column>
         <el-table-column
-        show-overflow-tooltip prop="CreateTime" label="状态" min-width="116">
+        show-overflow-tooltip prop="CreateTime" label="状态" min-width="80">
           <template #default="scope:any">
             {{scope.row.Status ? '已出库' : '未出库'}}
           </template>
@@ -453,7 +457,7 @@ export default {
       }
     }
     .bottom-count-box{
-      width: calc((100% - 100px) / 2);
+      width: 100%;
       justify-content: flex-end;
       display: flex;
       align-items: center;
