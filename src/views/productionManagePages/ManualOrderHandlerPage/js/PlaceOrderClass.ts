@@ -136,7 +136,7 @@ export class PlaceOrderClass {
         UniqueName: f.UniqueName,
         Template: f.Template ? { ID: f.Template.ID } : null,
         AssistList: f.AssistList,
-        SpecialColorList: f.SpecialColorList,
+        ColorList: f.ColorList,
         BleedBottom: f.BleedBottom,
         BleedLeft: f.BleedLeft,
         BleedRight: f.BleedRight,
@@ -144,7 +144,7 @@ export class PlaceOrderClass {
       };
         // if (f.Template?.ID) delete t.Template;
       if (!f.AssistList?.length) delete t.AssistList;
-      if (!f.SpecialColorList?.length) delete t.SpecialColorList;
+      if (!f.ColorList?.length) delete t.ColorList;
 
       if (t.BleedBottom === '' || t.BleedBottom === undefined) delete t.BleedBottom;
       if (t.BleedLeft === '' || t.BleedLeft === undefined) delete t.BleedLeft;

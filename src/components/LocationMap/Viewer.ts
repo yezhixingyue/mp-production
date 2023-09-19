@@ -278,9 +278,14 @@ export class Viewer {
     // 每行文字最大宽度
     const maxWidth = temp.length * temp[0].width - fontsize * 1.2;
     // 每行最多字数
-    const lineMaxTexts = maxWidth / fontsize;
+    const lineMaxTexts = Math.floor(maxWidth / fontsize) || 1;
     for (let index = 0; index < (PositionName.length / lineMaxTexts < 1 ? 1 : PositionName.length / lineMaxTexts); index++) {
-      this.cxs.fillText(PositionName.slice(index * lineMaxTexts, (index + 1) * lineMaxTexts), pointx, pointy + (index * fontsize), temp.length * temp[0].width);
+      this.cxs.fillText(
+        PositionName.slice(index * lineMaxTexts, (index + 1) * lineMaxTexts),
+        pointx,
+        pointy + (index * fontsize) + fontsize,
+        temp.length * temp[0].width,
+      );
     }
   }
 
@@ -351,19 +356,30 @@ export class Viewer {
 
   allSquare(locationMap, Details) {
     const temp:Square[] = [];
-    Details.forEach((item, yIndex) => {
-      item.forEach((it, xIndex) => {
-        temp.push(new Square(
-          it.DimensionX,
-          xIndex,
-          it.DimensionY,
-          yIndex,
-          locationMap.squareWidth,
-          locationMap.squareHeight,
-          true,
-        ));
-      });
-    });
+    // Details.forEach((item, yIndex) => {
+    //   item.forEach((it, xIndex) => {
+    //     temp.push(new Square(
+    //       it.DimensionX,
+    //       xIndex,
+    //       it.DimensionY,
+    //       yIndex,
+    //       locationMap.squareWidth,
+    //       locationMap.squareHeight,
+    //       true,
+    //     ));
+    //   });
+    // });
+    // 用于渲染禁用单元格
+    temp.push(new Square(
+      Details[0][0].DimensionX,
+      0,
+      Details[0][0].DimensionY,
+      0,
+      locationMap.squareWidth * Details[0].length,
+      locationMap.squareHeight * Details.length,
+      true,
+    ));
+
     const allSquare = new LocationSetClass(
       '',
       '',

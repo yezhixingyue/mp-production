@@ -1,5 +1,5 @@
 <template>
-  <section class="mp-pd-location-map-comp-wrap" :style="`width:${width + 270}px;height:${height + 70}px`">
+  <section class="mp-pd-location-map-comp-wrap" :style="`width:${width + 220}px;height:${height + 70}px`">
     <div class="content">
       <template v-if="locationMap">
         <canvas id="location-map" ref="canvas" :width="`${width + 60}`" :height="`${height + 60}`">

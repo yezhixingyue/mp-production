@@ -27,6 +27,8 @@
             :allDimensionData="Data.allDimensionData"
             :add="handleAdd"
             :remove="handleRemove"
+            :width="Data.allDimensionData.AllPositionDetails.DimensionXS.length > 100 ? 2800 : 1400"
+            :height="Data.allDimensionData.AllPositionDetails.DimensionYS.length > 100 ? 1700 : 850"
           />
         </el-scrollbar>
     </main>

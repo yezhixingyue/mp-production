@@ -45,7 +45,7 @@ const checkedIds = ref<string[]>([]);
 const checkList = ref<string[]>([]);
 
 const onOpen = () => {
-  checkedIds.value = [...props.FileList.map(it => it.SpecialColorList?.[0] || '')].filter(id => id);
+  checkedIds.value = [...props.FileList.map(it => it.ColorList?.[0] || '')].filter(id => id);
   checkList.value = [...checkedIds.value];
 };
 

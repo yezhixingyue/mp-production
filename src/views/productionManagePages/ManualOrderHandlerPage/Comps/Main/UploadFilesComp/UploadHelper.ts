@@ -38,7 +38,7 @@ export class UploadHelper {
     let _id = '';
     if (this.target.AssistList && this.target.AssistList.length === 1) _id = this.target.AssistList[0].ID;
     // eslint-disable-next-line prefer-destructuring
-    if (this.target.SpecialColorList && this.target.SpecialColorList.length === 1) _id = this.target.SpecialColorList[0];
+    if (this.target.ColorList && this.target.ColorList.length === 1) _id = this.target.ColorList[0];
 
     const UniqueName = FileTypeClass.getUniqueFileName({
       file: this.target._File,
