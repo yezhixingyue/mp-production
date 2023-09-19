@@ -18,7 +18,7 @@
           <el-scrollbar>
             <div class="goods-position-select">
               <el-radio-group @change="getGoodsPositionDimensionSelect" v-model="Data.StorehouseID">
-                <el-radio-button v-for="item in StorehouseList" :key="item.StorehouseID"
+                <el-radio-button v-for="item in (StorehouseList as StorehouseType[])" :key="item.StorehouseID"
                 :label="item.StorehouseID">
                   {{item.StorehouseName}}
                 </el-radio-button>
@@ -35,7 +35,7 @@
                 v-model="item.inputValue"
                 placeholder="请选择"
                 no-data-text="无数据"
-                @change="getGoodsPosition(index)"
+                @change="getGoodsPosition()"
                 :filterable='true'>
                 <el-option
                   v-for="optionitem in (index === 0 ? item.list :
@@ -53,17 +53,15 @@
             v-if="Data.allDimensionData.UsePositionDetails"
             :allDimensionData="Data.allDimensionData"
             :selectedLocationChange="selectedLocationChange"
-            :isMultiSelect="true"
+            isMultiSelect
             :DefaultAction="selectStorehouseGoodsPosition[Data.StorehouseID]?.selectedLocation[getDimensionIDS.join('')] "
             :currentMaterialID="currentMaterialID"
-            :width="1000"
-            :height="600"
           />
         </div>
         <div class="bottom" >
           <span>已选：</span>
           <span class="location" v-for="(item,i) in getSelectedLocationList" :key="item.PositionID">
-            {{item.LocationName}} {{item.PositionName}}{{i<getSelectedLocationList.length-1 ? '，' : ''}}
+            {{item.LocationName}} {{item.PositionName}}{{i<getSelectedLocationList.length-1 ? '， ' : ''}}
           </span>
         </div>
       </div>
@@ -188,7 +186,7 @@ export default {
     },
     StorehouseList: {
       type: Array,
-      default: () => [],
+      default: () => ([] as StorehouseType[]),
     },
     currentMaterialID: {
       type: String,
@@ -484,15 +482,18 @@ export default {
       min-height: 4px;
     }
     .canvas-main{
-      min-height: 680px;
+      height: 550px;
     }
     .bottom{
       min-height: 30px;
       font-weight: 600;
-      line-height: 30px;
-      margin-top: -30px;
-      .location+.location{
-        margin-left: 20px;
+      line-height: 18px;
+      color: #585858;
+
+      .location {
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: 0.5px;
       }
     }
   }
