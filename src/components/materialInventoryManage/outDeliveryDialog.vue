@@ -17,12 +17,11 @@
         <LocationMap
           v-if="Data.allDimensionData.UsePositionDetails"
           :allDimensionData="Data.allDimensionData"
-          :isMultiSelect="true"
+          isMultiSelect
           :currentMaterialID="currentMaterialID"
-          :width="1000"
-          :height="600"
-          :readonly="true"
+          readonly
         />
+        <!-- <div v-else style="font-size: 12px;margin-top: 20px;padding-right: 150px;text-align: center;">加载中...</div> -->
       </div>
     </template>
     </DialogContainerComp>
