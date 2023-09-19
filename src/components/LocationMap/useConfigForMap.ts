@@ -86,12 +86,12 @@ export const useConfigForMap = (locationMap: Ref<LocationMapClass>, readonly: bo
     zoomIn() {
       config.value.scale += 0.1;
 
-      if (config.value.scale > 2) config.value.scale = 2;
+      if (config.value.scale > 3) config.value.scale = 3;
     },
     zoomOut() {
       config.value.scale -= 0.1;
-
-      if (config.value.scale < 0.4) config.value.scale = 0.4;
+      const min = locationMap.value.isMultiSelect ? 0.1 : 0.4;
+      if (config.value.scale < min) config.value.scale = min;
     },
     zoomReset() {
       config.value.scale = 1;
