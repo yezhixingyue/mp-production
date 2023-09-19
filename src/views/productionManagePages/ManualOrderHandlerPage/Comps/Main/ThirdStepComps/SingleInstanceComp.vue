@@ -163,7 +163,7 @@ const _MakeupFileList = computed(() => props.item.FileList.filter(it => it._Plat
 const _AssistFileList = computed(() => props.item.FileList.filter(it => it._NoteInfo));
 
 /** 专色文件列表 */
-const _SpecialColorFileList = computed(() => props.item.FileList.filter(it => it.SpecialColorList));
+const _SpecialColorFileList = computed(() => props.item.FileList.filter(it => it.ColorList));
 
 /** 数值列表 */
 const _NumbericalList = computed(() => props.item.AssistList.filter(it => it.Type === AssistInfoTypeEnum.numerical));
