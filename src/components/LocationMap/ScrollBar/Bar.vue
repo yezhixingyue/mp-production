@@ -117,7 +117,7 @@ const clearBtnMousedown = () => {
 };
 
 const onWheelChange = (e: WheelEvent) => { // 滑轮滚动事件
-  if (e.x <= 186 || (e.target as HTMLElement).tagName !== 'CANVAS') return; // 此时在左边按钮区域
+  if (e.x <= 186 || ((e.target as HTMLElement).tagName !== 'CANVAS' && !(e.target as HTMLElement).className.includes('canvas-box'))) return; // 此时在左边按钮区域
 
   if (e.ctrlKey && !props.vertical) { // 横向
     onArrowClick(e.deltaY < 0 ? -1 : 1);

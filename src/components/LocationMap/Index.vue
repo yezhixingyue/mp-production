@@ -29,43 +29,74 @@
       </template>
     </div>
     <aside>
-      <dl>
-        <dt>图例</dt>
-        <dd v-if="!isMultiSelect">
-          <i
-            :style="`background:${LocationColorEnums.squareEmptyColor};border-color:${LocationColorEnums.strokeStyle}`"></i>
-          <span>可选</span>
-        </dd>
-        <dd v-if="isMultiSelect">
-          <i :style="`background:${LocationColorEnums.vacancy};border-color:${LocationColorEnums.vacancy}`"></i>
-          <span>空货位</span>
-        </dd>
-        <dd v-if="isMultiSelect">
-          <i :style="`background:${LocationColorEnums.normal};border-color:${LocationColorEnums.normal}`"></i>
-          <span>其他物料</span>
-        </dd>
-        <dd v-if="isMultiSelect">
-          <i :style="`background:${LocationColorEnums.identical};border-color:${LocationColorEnums.identical}`"></i>
-          <span>{{ readonly ? '当前物料' : '与入库物料一致' }}</span>
-        </dd>
-        <dd v-if="!readonly">
-          <i
-            :style="`background:${LocationColorEnums.isSetSelected};border-color:${LocationColorEnums.isSetSelected}`"></i>
-          <span v-if="isMultiSelect">已选择</span>
-          <span v-else>选中已有货位</span>
-        </dd>
-        <dd>
-          <i
-            :style="`background:${LocationColorEnums.squareFillColor};border-color:${LocationColorEnums.squareFillColor}`"></i>
-          <span v-if="isMultiSelect && !readonly">禁用</span>
-          <span v-else-if="readonly && readonly">不可选</span>
-          <span v-else>选中单元格</span>
-        </dd>
-      </dl>
-      <template v-if="!isMultiSelect">
-        <mp-button v-if="locationMap.newLocation.length" type="primary" @click="onSetNewClick">设置新货位</mp-button>
-        <mp-button v-if="locationMap.selectedLocation.length" type="danger" @click="onRemoveClick">删除货位</mp-button>
-      </template>
+      <div class="menu-box">
+        <dl>
+          <dt>图例</dt>
+          <dd v-if="!isMultiSelect">
+            <i
+              :style="`background:${LocationColorEnums.squareEmptyColor};border-color:${LocationColorEnums.strokeStyle}`"></i>
+            <span>可选</span>
+          </dd>
+          <dd v-if="isMultiSelect">
+            <i :style="`background:${LocationColorEnums.vacancy};border-color:${LocationColorEnums.vacancy}`"></i>
+            <span>空货位</span>
+          </dd>
+          <dd v-if="isMultiSelect">
+            <i :style="`background:${LocationColorEnums.normal};border-color:${LocationColorEnums.normal}`"></i>
+            <span>其他物料</span>
+          </dd>
+          <dd v-if="isMultiSelect">
+            <i :style="`background:${LocationColorEnums.identical};border-color:${LocationColorEnums.identical}`"></i>
+            <span>{{ readonly ? '当前物料' : '与入库物料一致' }}</span>
+          </dd>
+          <dd v-if="!readonly">
+            <i
+              :style="`background:${LocationColorEnums.isSetSelected};border-color:${LocationColorEnums.isSetSelected}`"></i>
+            <span v-if="isMultiSelect">已选择</span>
+            <span v-else>选中已有货位</span>
+          </dd>
+          <dd>
+            <i
+              :style="`background:${LocationColorEnums.squareFillColor};border-color:${LocationColorEnums.squareFillColor}`"></i>
+            <span v-if="isMultiSelect && !readonly">禁用</span>
+            <span v-else-if="readonly && readonly">不可选</span>
+            <span v-else>选中单元格</span>
+          </dd>
+        </dl>
+        <template v-if="!isMultiSelect">
+          <mp-button v-if="locationMap.newLocation.length" type="primary" @click="onSetNewClick">设置新货位</mp-button>
+          <mp-button v-if="locationMap.selectedLocation.length" type="danger" @click="onRemoveClick">删除货位</mp-button>
+        </template>
+      </div>
+      <!-- 快捷键介绍 -->
+      <ul class="shortcut-key">
+        <li>
+          <h4>快捷键：</h4>
+        </li>
+        <li v-show="!locationMap.isMultiSelect">
+          <label for="">批量选中：</label>
+          <span>shift <i class="gray">+</i> 鼠标</span>
+        </li>
+        <li v-show="!locationMap.isMultiSelect">
+          <label for="">批量清除：</label>
+          <span>ctrl <i class="gray">+</i> shift <i class="gray">+</i> 鼠标</span>
+        </li>
+        <li>
+          <label for="">拖动：</label>
+          <span>空格 <i class="gray">+</i> 鼠标</span>
+        </li>
+        <li class="m">
+          <label for="">缩放：</label>
+          <div>
+            <span>ctrl <i class="gray">+</i> +<i class="gray">/</i>-<i class="gray">/</i>1 ;</span>
+            <span>alt <i class="gray">+</i> 滚轮</span>
+          </div>
+        </li>
+        <li>
+          <label for="">左右滚动：</label>
+          <span>ctrl <i class="gray">+</i> 滚轮</span>
+        </li>
+      </ul>
     </aside>
   </section>
 </template>
@@ -155,6 +186,7 @@ const reflowOnLocationChange = async (l: IUsePositionDetailsItem | LocationSetCl
   } else if (!isRemove && !(l instanceof LocationSetClass)) {
     originData.UsePositionDetails.push(l);
   }
+
   locationMap.value.init();
   initDraw();
 };
@@ -327,37 +359,79 @@ const onRemoveClick = () => {
     padding-left: 10px;
     user-select: none;
 
-    >dl {
-      padding-bottom: 50px;
+    > .menu-box {
+      flex: 1;
+      overflow: auto;
+      @include scroll;
 
-      >dt {
-        font-weight: 700;
+      dl {
+        padding-bottom: 50px;
+
+        >dt {
+          font-weight: 700;
+        }
+
+        >dd {
+          display: flex;
+          align-items: center;
+          margin-top: 15px;
+
+          >i {
+            display: inline-block;
+            width: 36px;
+            height: 18px;
+            border: 1px solid #888;
+            margin-right: 10px;
+            border-radius: 2px;
+          }
+        }
       }
 
-      >dd {
-        display: flex;
-        align-items: center;
-        margin-top: 15px;
+      .el-button {
+        width: 120px;
+        padding: 0;
+        height: 30px;
+        margin: 0;
 
-        >i {
-          display: inline-block;
-          width: 36px;
-          height: 18px;
-          border: 1px solid #888;
-          margin-right: 10px;
-          border-radius: 2px;
+        &+.el-button {
+          margin-top: 10px;
         }
       }
     }
 
-    .el-button {
-      width: 120px;
-      padding: 0;
-      height: 30px;
-      margin: 0;
+    > .shortcut-key {
+      flex: none;
+      font-size: 12px;
+      white-space: nowrap;
+      color: #585858;
+      padding-bottom: 20px;
+      line-height: 18px;
 
-      &+.el-button {
-        margin-top: 10px;
+      > li {
+        padding: 4px 0;
+
+        .gray {
+          color: #aaa;
+          font-size: 12px;
+        }
+
+        label {
+          display: inline-block;
+          width: 5em;
+          text-align: right;
+        }
+
+        &.m {
+          display: flex;
+
+          label {
+            flex: none;
+          }
+
+          span {
+            display: block;
+          }
+        }
       }
     }
   }
