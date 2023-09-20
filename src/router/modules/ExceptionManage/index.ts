@@ -88,6 +88,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/ExceptionManage/OutsourceException/OutsourceExceptionDetailPage.vue'),
     },
+    /* 排程异常
+    -------------------------------------- */
+    {
+      path: '/ScheduleExceptionList',
+      name: 'ScheduleExceptionList',
+      meta: {
+        title: '排程异常',
+        requiresAuth: true,
+        icon: 'icon-paichengyichang iconfont',
+        pageName: 'ScheduleExceptionListPage',
+        // PermissionInfo: ['Developing', 'None'],
+      },
+      component: () => import('@/views/ExceptionManage/ScheduleException/ScheduleExceptionListPage.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {

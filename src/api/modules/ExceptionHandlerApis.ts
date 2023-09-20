@@ -1,6 +1,7 @@
 import { ITaskExceptionHandlingDetail } from '@/views/ExceptionManage/_ExceptionCommonViews/DetailView/js/type';
 import { ITaskExceptionDetail, ITaskExceptionInfo } from '@/views/ExceptionManage/_ExceptionCommonViews/js/type';
 import { IRevocationChunk } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/type';
+import { ISchedulingExceptionListItem } from '@/views/ExceptionManage/ScheduleException/js/type';
 import { instance } from '../request/instance';
 
 /**
@@ -30,5 +31,14 @@ export const ExceptionHandlerApis = {
   /** GET /Api/ProductionException/DealDetail  获取任务异常处理详情 */
   getProductionExceptionDealDetail(id: string) {
     return instance.get<ITaskExceptionHandlingDetail>('/Api/ProductionException/DealDetail', { params: { id } });
+  },
+
+  /** POST /Api/SchedulingException/List  排程异常列表 */
+  getSchedulingExceptionList(condition) {
+    return instance.post<ISchedulingExceptionListItem[]>('/Api/SchedulingException/List', condition);
+  },
+  /** PUT /Api/SchedulingException/Deal  排程异常处理 */
+  getSchedulingExceptionDeal(id: number) {
+    return instance.put('/Api/SchedulingException/Deal', null, { params: { id } });
   },
 };

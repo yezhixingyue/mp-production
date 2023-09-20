@@ -3,9 +3,12 @@
     <div class="first">
       <div class="menu">
         <h4>状态筛选：</h4>
-        <span v-for="it in localStatusEnumList" :key="it.ID" :class="{active:it.ID===condition.Status}" @click="onMenuClick(it)">{{it.Name}}</span>
+        <span v-for="it in localStatusEnumList" :key="it.ID" :class="{active:it.ID===condition.HaveDeal}" @click="onMenuClick(it,'HaveDeal')">{{it.Name}}</span>
       </div>
-      <StaffSelector v-model="_Operator" title="处理人" />
+      <div class="menu">
+        <h4>异常类型：</h4>
+        <span v-for="it in localTypeEnumList" :key="it.ID" :class="{active:it.ID===condition.Type}" @click="onMenuClick(it, 'Type')">{{it.Name}}</span>
+      </div>
     </div>
     <div class="second">
       <div class="left">
@@ -35,32 +38,21 @@
 
 <script setup lang='ts'>
 import { ILocalEnumValue } from '@/assets/js/utils/getListByEnums';
-import StaffSelector from '@/components/common/ElementPlusContainners/StaffSelector.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { computed } from 'vue';
-import { ConditionForList } from '../../js/ConditionForList';
-import { ExceptionHandlerStatusEnumList } from '../../js/EnumList';
-import { ITaskExceptionInfo } from '../../js/type';
+import { Condition } from '../js/Condition';
+import { SchedulingExceptionTypeEnumList } from '../js/EnumList';
+import { ISchedulingExceptionListItem } from '../js/type';
 
 const props = defineProps<{
-  condition: ConditionForList
+  condition: Condition
   setCondition:(e: ISetConditionParams) => void
   clearCondition:() => void
   getList:(Page?: number) => void
-  list: ITaskExceptionInfo[]
+  list: ISchedulingExceptionListItem[]
 }>();
-
-const _Operator = computed({
-  get() {
-    return props.condition.Operator;
-  },
-  set(val) {
-    props.setCondition([['Operator', ''], val]);
-    props.getList();
-  },
-});
 
 const dateList = [
   { name: '近7天异常', ID: 'last7Date' },
@@ -73,12 +65,13 @@ const dateList = [
 
 const UserDefinedTimeIsActive = computed(() => props.condition.DateType === '' && !!props.condition.CreateTime.First && !!props.condition.CreateTime.Second);
 
-const onMenuClick = (it: ILocalEnumValue) => {
-  props.setCondition([['Status', ''], it.ID]);
+const onMenuClick = (it: ILocalEnumValue, key: keyof Condition) => {
+  props.setCondition([[key, ''], it.ID]);
   props.getList();
 };
 
-const localStatusEnumList: ILocalEnumValue[] = [{ ID: '', Name: '不限' }, ...ExceptionHandlerStatusEnumList];
+const localStatusEnumList = [{ ID: '', Name: '不限' }, { ID: false, Name: '未处理' }, { ID: true, Name: '已处理' }] as ILocalEnumValue[];
+const localTypeEnumList: ILocalEnumValue[] = [{ ID: '', Name: '不限' }, ...SchedulingExceptionTypeEnumList];
 
 </script>
 
@@ -139,7 +132,7 @@ const localStatusEnumList: ILocalEnumValue[] = [{ ID: '', Name: '不限' }, ...E
   :deep(.mp-line-date-selector-wrap) {
     margin-right: 20px;
     margin-top: 15px;
-    line-height: 29px;
+    line-height: 30px;
     min-width: 800px;
     .title {
       min-width: 6em;

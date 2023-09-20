@@ -22,7 +22,7 @@ const setCondition = (e) => { ManagePlateListPageData.value.setCondition(e); };
 
 const clearCondition = () => { ManagePlateListPageData.value.clearCondition(); };
 
-const getList = () => { ManagePlateListPageData.value.getList(); };
+const getList = (e?: number) => { ManagePlateListPageData.value.getList(e); };
 
 onMounted(() => { ManagePlateListPageData.value.getInitData(); });
 </script>

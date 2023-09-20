@@ -348,7 +348,7 @@ const onRemoveClick = () => {
   }
 
   >aside {
-    width: 160px;
+    width: 172px;
     height: 100%;
     padding-top: 6px;
     box-sizing: border-box;
