@@ -1,6 +1,7 @@
 <template>
   <section class="mp-pd-location-map-comp-wrap">
-    <div class="content" @mousedown="onwrapmousedown" ref="oWrap">
+    <div class="content" @mousedown="onwrapmousedown" ref="oWrap" :class="{loading: !inited}">
+      <span class="loading" v-if="!inited"><el-icon><Loading /></el-icon>加载中，请稍候...</span>
       <template v-if="locationMap">
         <!-- 货位图 图片 -->
         <div class="canvas-box" :class="{moving: config.isKeydown.space || config.moving}">
@@ -163,8 +164,14 @@ const canvasStyle = computed(() => `
     scale(${config.value.scale});
 `);
 
+const inited = ref(false);
+
 onMounted(() => {
-  initDraw();
+  setTimeout(() => {
+    initDraw();
+
+    inited.value = true;
+  }, 0);
 });
 
 const visible = ref(false);
@@ -287,19 +294,40 @@ const onRemoveClick = () => {
     box-sizing: border-box;
 
     overflow: hidden;
+    span.loading {
+      top: 60px;
+      font-size: 12px;
+      display: block;
+      width: 100%;
+      text-align: center;
+      position: absolute;
+      z-index: 9;
+      color: #585858;
 
+      i {
+        font-size: 17px;
+        color: #428dfa;
+        vertical-align: -3px;
+        margin-right: 4px;
+        animation: rotate 2s infinite steps(60,end);
+        transform: rotate(0deg);
+        font-weight: 700;
+
+        @keyframes rotate {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      }
+    }
     .canvas-box {
       width: 100%;
       height: 100%;
       white-space: nowrap;
       overflow: hidden;
-
-      > span {
-        margin-top: 50px;
-        font-size: 13px;
-        display: block;
-        text-align: center;
-      }
 
       // 当采用renderScale方式进行缩放时，保留下方几行样式（至伪元素结尾）
       // text-align: center;
@@ -344,6 +372,12 @@ const onRemoveClick = () => {
 
     .el-dialog__body {
       padding-right: 40px;
+    }
+
+    &.loading {
+      :deep(.scroll-bar) {
+        visibility: hidden;
+      }
     }
   }
 

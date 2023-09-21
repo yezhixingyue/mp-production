@@ -99,6 +99,7 @@ export class Viewer {
       // 新方案货位图 方案为：先把货位画上 然后获取所有边（如：单元格上方的单元格不是此货位的单元格就把此单元格的上边线获取到）
       //                    然后绘制所有边线
       if (!this.cxs) return;
+
       this.cxs.strokeStyle = LocationColorEnums.strokeStyle;
       this.cxs.lineWidth = 1;
       this.cxs.lineCap = 'square';
