@@ -329,7 +329,13 @@ export default {
     }
     //
     function selectedLocationChange(list:LocationSetClass[]) {
-      const temp = list.map(res => ({ ...res, LocationName: getLocaName().join(' '), selectedLocationID: getDimensionIDS.value.join('') }));
+      const temp = list.map(res => {
+        const _res = res;
+        _res.LocationName = getLocaName().join(' ');
+        _res.selectedLocationID = getDimensionIDS.value.join('');
+
+        return _res;
+      });
       // 设置选中的仓库;
 
       selectStorehouseGoodsPosition.value[Data.StorehouseID].selectedLocation[getDimensionIDS.value.join('')] = temp;

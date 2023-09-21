@@ -152,7 +152,7 @@ const originData = JSON.parse(JSON.stringify(props.allDimensionData)) as ILocati
 const locationMap = ref(new LocationMapClass(
   originData,
   props.isMultiSelect,
-  props.DefaultAction as LocationSetClass[],
+  props.DefaultAction,
   props.currentMaterialID,
 )) as Ref<LocationMapClass>;
 
@@ -172,6 +172,8 @@ onMounted(() => {
 
     inited.value = true;
   }, 0);
+
+  console.log('Index onMounted');
 });
 
 const visible = ref(false);

@@ -14,6 +14,8 @@ export class LocationSetClass {
 
   LocationName = ''
 
+  selectedLocationID?: string
+
   constructor(PositionID, PositionName, status, points, goodsPositionStockDetails, LocationName = '') {
     this.PositionID = PositionID;
     this.PositionName = PositionName;

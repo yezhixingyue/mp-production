@@ -188,7 +188,7 @@ export class LocationMapClass {
     });
   }
 
-  setDefaultAction(viewer) {
+  setDefaultAction(viewer: Viewer) {
     if (this.DefaultAction.length) {
       this.selectedLocation = this.DefaultAction;
     }
@@ -198,6 +198,10 @@ export class LocationMapClass {
         if (this.selectedLocation) {
           this.selectedLocation[i].color = LocationColorEnums.isSetSelected;
         }
+      });
+      console.log(this.selectedLocation);
+      this.selectedLocation.forEach((it) => {
+        console.log('it', it, it instanceof LocationSetClass);
       });
       viewer.locationSetViewer(this.selectedLocation);
     }
