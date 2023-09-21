@@ -1,6 +1,7 @@
 <template>
   <main>
     <el-table :data="localList" border stripe class="table-wrap">
+      <mp-table-column width="120px" prop="ID" label="序号" />
       <mp-table-column width="120px" prop="Code" label="编号" />
       <mp-table-column width="120px" prop="_Type" label="异常类型" />
       <mp-table-column width="150px" prop="_CreateTime" label="异常时间" />
