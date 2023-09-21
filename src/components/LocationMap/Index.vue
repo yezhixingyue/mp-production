@@ -103,7 +103,7 @@
 
 <script setup lang='ts'>
 import {
-  computed, onMounted, ref, watch,
+  Ref, computed, onMounted, ref, watch,
 } from 'vue';
 import { message } from '@/assets/js/utils/message';
 import { LocationMapClass } from './LocationMapClass';
@@ -153,7 +153,7 @@ const locationMap = ref(new LocationMapClass(
   props.isMultiSelect,
   props.DefaultAction as LocationSetClass[],
   props.currentMaterialID,
-));
+)) as Ref<LocationMapClass>;
 
 const { config, oWrap, canvas, initDraw, onwrapmousedown, selectArea } = useConfigForMap(locationMap, props.readonly);
 

@@ -16,12 +16,36 @@
       <span>，开始今天的工作吧！</span>
       <!-- <i>!</i> -->
     </header>
+    <main>
+      <canvas ref="canvas" width="800" height="800"></canvas>
+    </main>
   </section>
 </template>
 
 <script lang='ts' setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+const canvas = ref<HTMLCanvasElement>();
+const draw = () => {
+  if (canvas.value) {
+    const ctx = canvas.value.getContext('2d');
+    if (!ctx) return;
+
+    ctx.beginPath();
+
+    // ctx.arc(200, 200, 100, 0, Math.PI * 1.8);
+
+    // ctx.lineTo(200, 200);
+
+    // ctx.stroke();
+
+    // ctx.fillStyle = 'red';
+    // ctx.fill();
+
+    ctx.closePath();
+  }
+};
 
 const dateString = ref('');
 const weekString = ref('');
@@ -42,6 +66,8 @@ onMounted(() => {
   if (process.env.VUE_APP_TARGET === 'My Order App') { // 跳转页面
     router.replace('/orderAppRoutes');
   }
+
+  draw(); // 试验canvas功能  - 可注销
 });
 </script>
 <style lang='scss' scoped>

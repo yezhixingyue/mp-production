@@ -253,7 +253,9 @@ export class LocationMapClass {
             this.selectedLocation[i].color = LocationColorEnums.normal;
           }
         });
+
         viewer.locationSetViewer(this.selectedLocation);
+
         const old = this.selectedLocation.find(it => it.PositionID === set?.PositionID);
         // 因为响应式 使用 noSelected 转换一下
         const noSelected = this.selectedLocation.filter(it => it.PositionID !== set?.PositionID);
@@ -278,6 +280,7 @@ export class LocationMapClass {
             this.selectedLocation[i].color = LocationColorEnums.isSetSelected;
           }
         });
+
         viewer.locationSetViewer(this.selectedLocation);
       }
     }
@@ -350,8 +353,6 @@ export class LocationMapClass {
 
     const squares = _getSquares();
     if (squares.length === 0) return;
-
-    // console.log(_area, squares.length);
 
     // 3. 从块列表中筛选出没有货位的块列表，修改每个块的状态
     const emptySquares = squares.filter(it => !it.belongTo);
