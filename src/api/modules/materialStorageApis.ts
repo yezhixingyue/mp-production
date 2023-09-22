@@ -160,6 +160,10 @@ const api = {
     // POST /Api/Stock/Out
     return request({ method: 'POST', url: '/Api/Stock/Out', data });
   },
+  getStockOutCode() {
+    // POST /Api/Stock/OutCode
+    return request({ method: 'GET', url: '/Api/Stock/OutCode' });
+  },
   getStockList(data) {
     // POST /Api/StockLog/List  获取库存信息
     return request({ method: 'POST', url: '/Api/Stock/List', data });

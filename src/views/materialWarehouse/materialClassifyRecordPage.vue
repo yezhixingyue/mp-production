@@ -210,18 +210,19 @@
         </el-table>
     </main>
     <footer>
-      <p>
-        <template  v-if="Data.getRecordData.LogType === 1">
-        总金额：<span>￥{{Data.aggregateAmount}}元</span>
-        </template>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getRecordData.Page"
+      :pageSize="Data.getRecordData.PageSize"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange">
+        <p>
+          <template  v-if="Data.getRecordData.LogType === 1">
+          总金额：<span>￥{{Data.aggregateAmount}}元</span>
+          </template>
         </p>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getRecordData.Page"
-        :pageSize="Data.getRecordData.PageSize"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange" />
-      </div>
+      </MpPagination>
     </footer>
     <!-- 仓库货位信息 -->
     <DialogContainerComp
@@ -760,21 +761,15 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    >p{
+    p{
       font-size: 12px;
       font-weight: 600;
       padding-left: 40px;
+      line-height: 36px;
       span{
         color: #FF3769;
       }
-    }
-    .bottom-count-box{
-      width: calc((100% - 100px) / 2);
-      justify-content: flex-end;
-      display: flex;
-      align-items: center;
     }
   }
   .storehouse-stock-dialog{

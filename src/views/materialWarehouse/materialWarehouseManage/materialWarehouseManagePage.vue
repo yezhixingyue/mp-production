@@ -41,13 +41,13 @@
       <!-- </MpCardContainer> -->
     </main>
     <footer>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getStorehouseData.Page"
-        :pageSize="Data.getStorehouseData.PageSize"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange" />
-      </div>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getStorehouseData.Page"
+      :pageSize="Data.getStorehouseData.PageSize"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange" />
     </footer>
     <DialogContainerComp
     :title="`${Data.SaveStorehouseForm.StorehouseID ? '修改' : '添加'}仓库`"
@@ -357,12 +357,7 @@ export default {
     background-color: #fff;
     height: 50px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    .bottom-count-box{
-      display: flex;
-      align-items: center;
-    }
   }
   .add-storehouse-dialog{
     .upload-demo{

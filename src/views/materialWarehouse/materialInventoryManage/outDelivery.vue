@@ -194,71 +194,75 @@
     :primaryText="'打印并出库'"
     :closeBtnText="'取消出库'"
     :width="600"
+    class="out-verify-dialog"
     >
     <template #default>
-      <div class="out-verify-dialog" id="print">
-        <div class="material-info" style="padding:0 20px;display: flex;color:#566176;display: flex;">
-          <div style="display: flex;flex-wrap: wrap;width:120px">
-            <div>
-              <img style="width:120px;height:120px" src="https://img-blog.csdnimg.cn/a2830dd85a9e4cc990b3fd999bf323a7.png" alt="">
+      <div id="print">
+        <div style="padding:20px;padding-top: 40px;">
+          <div class="material-info" style="padding:0 20px;display: flex;color:#566176;display: flex;">
+            <div style="width:170px;">
+              <div style="display: flex;width:120px;height:120px">
+                <img style="width:120px;height:120px" :src="OutCodeSrc" alt="">
+              </div>
+              <span>出库编号:{{ Data.outDeliveryForm.OutCode }}</span>
             </div>
-            <span>出库编号:</span>
-          </div>
-          <div class="material"
-          style="line-height: 32px;margin-left:50px;font-size:16px;font-weight: 600;padding-top:10px">
-            <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">SKU：</span>
-              <span style="">{{Data.checkedMaterial?.Code}}</span></p>
-            <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;">物料：</span>
-              <span style="">
-                {{Data.checkedMaterial?.AttributeDescribe}}
-              </span>
-            </p>
-            <p style="display: flex;text-align: right;"><span style="width:70px;color:#7A8B9C;"></span>
-              <span style="">{{Data.checkedMaterial?.SizeDescribe}}</span></p>
-            <p style="color:#7a8b9c;margin-top:10px">
-              出库数量：{{getStorehouseAllOutNumber()}}
-                {{Data.checkedMaterial?.StockUnit}}
-                （{{getOutUnitNum}} {{outUnitName}}）
-            </p>
-          </div>
-        </div>
-        <div style="border-top: 1px dashed #A6B6C6;height:1px;margin:40px 0"></div>
-        <div class="storehouse-stock" style="display: flex;padding:0 20px">
-          <div v-if="StoresRequisitionInfo" style="display: flex;flex-wrap: wrap;width:156px; margin-right: 30px;">
-            <div>
-              <img style="width:156px;height:156px" :src="MaterialRequisitionCodeSrc" alt="">
-            </div>
-            <span>领料编号:{{ StoresRequisitionInfo.Code }}</span>
-          </div>
-          <div style="display: flex;flex-direction: column;flex:1">
-
-            <div style="line-height: 32px;font-size:16px;font-weight: 600;">
-              <p style="display: flex;text-align: right;"><span style="color:#7A8B9C;">领料人：</span>
-                <span style="">{{getReceiptorName}}</span></p>
-              <p style="display: flex;text-align: right;" v-if="StoresRequisitionInfo">
+            <div class="material"
+            style="line-height: 32px;font-size:16px;font-weight: 600;">
+              <p style="display: flex;"><span style="min-width:70px;color:#7A8B9C; text-align: right;">SKU：</span>
+                <span style="">{{Data.checkedMaterial?.Code}}</span></p>
+              <p style="display: flex;line-height: 1.3em;"><span style="min-width:70px;color:#7A8B9C; text-align: right;">物料：</span>
                 <span style="">
-                  {{StoresRequisitionInfo?.ProductionLine}}
-                  {{StoresRequisitionInfo?.Equipment.ClassName}}
-                  {{StoresRequisitionInfo?.Equipment.GroupName}}
-                  {{StoresRequisitionInfo?.Equipment.Name}}
-                </span></p>
+                  {{Data.checkedMaterial?.AttributeDescribe}}
+                </span>
+              </p>
+              <p style="display: flex;"><span style="width:70px;color:#7A8B9C; text-align: right;"></span>
+                <span style="">{{Data.checkedMaterial?.SizeDescribe}}</span></p>
+              <p style="color:#7a8b9c;margin-top:10px; line-height: 1.3em;">
+                出库数量：{{getStorehouseAllOutNumber()}}
+                  {{Data.checkedMaterial?.StockUnit}}
+                  （{{getOutUnitNum}} {{outUnitName}}）
+              </p>
             </div>
-            <div style="margin:5px 0">
-              <p style="color:#7A8B9C;">出库位置：</p>
-              <ul :style="`border: 1px solid #A6B6C6;border-radius: 8px;padding:0 18px;color:#566176`">
-                <template v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
-                  <template v-for="GoodsPosition in Storehouse.GoodsPositionStockInfos" :key="GoodsPosition.PositionID">
+          </div>
+          <div style="border-top: 1px dashed #A6B6C6;height:1px;margin:40px 0"></div>
+          <div class="storehouse-stock" style="display: flex;padding:0 20px">
+            <div v-if="StoresRequisitionInfo" style="width:156px; margin-right: 30px;">
+              <div>
+                <img style="width:156px;height:156px" :src="MaterialRequisitionCodeSrc" alt="">
+              </div>
+              <span>领料编号:{{ StoresRequisitionInfo.Code }}</span>
+            </div>
+            <div style="display: flex;flex-direction: column;flex:1">
 
-                    <li v-if="GoodsPosition.checked && GoodsPosition.inputValue"
-                      style="line-height: 20px;border-bottom:1px solid #F2F6FC;display: flex;justify-content: space-between;align-items: center;
-                      min-height: 45px;">
-                      <span style="width:30%;text-align:center;">{{Storehouse.StorehouseName}}</span>
-                      <span style="width:33.33%;text-align:center;margin: 0 3.33%;">{{GoodsPosition.UpperDimension}} {{GoodsPosition.PositionName}}</span>
-                      <span style="width:30%;text-align:center;">{{GoodsPosition.inputValue}}{{Data.checkedMaterial?.StockUnit}}</span>
-                    </li>
+              <div style="line-height: 32px;font-size:16px;font-weight: 600;">
+                <p style="display: flex;"><span style="color:#7A8B9C;text-align: right;">领料人：</span>
+                  <span style="">{{getReceiptorName}}</span></p>
+                <p style="display: flex;" v-if="StoresRequisitionInfo">
+                  <span style="">
+                    {{StoresRequisitionInfo?.ProductionLine}}
+                    {{StoresRequisitionInfo?.Equipment.ClassName}}
+                    {{StoresRequisitionInfo?.Equipment.GroupName}}
+                    {{StoresRequisitionInfo?.Equipment.Name}}
+                  </span>
+                </p>
+              </div>
+              <div style="margin:5px 0">
+                <p style="color:#7A8B9C;">出库位置：</p>
+                <ul :style="`border: 1px solid #A6B6C6;border-radius: 8px;padding:0 3%;color:#566176`">
+                  <template v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
+                    <template v-for="GoodsPosition in Storehouse.GoodsPositionStockInfos" :key="GoodsPosition.PositionID">
+
+                      <li v-if="GoodsPosition.checked && GoodsPosition.inputValue"
+                        style="line-height: 20px;border-bottom:1px solid #F2F6FC;display: flex;justify-content: space-between;align-items: center;
+                        min-height: 45px;">
+                        <span style="width:30%;text-align:center;">{{Storehouse.StorehouseName}}</span>
+                        <span style="width:33.33%;text-align:center;margin: 0 3.33%;">{{GoodsPosition.UpperDimension}} {{GoodsPosition.PositionName}}</span>
+                        <span style="width:30%;text-align:center;">{{GoodsPosition.inputValue}}{{Data.checkedMaterial?.StockUnit}}</span>
+                      </li>
+                    </template>
                   </template>
-                </template>
-              </ul>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -321,6 +325,7 @@ interface outDeliveryFormType {
   Remark: string,
   TaskMaterialID: string,
   MaterialGoodsPositions: MaterialGoodsPositionsType[],
+  OutCode:string|number
 }
 interface UnitSelectsType {
   UnitID: string,
@@ -435,6 +440,7 @@ export default {
     const ThreeCascaderComp:Ref = ref(null);
     const StoresRequisitionInfo = ref<IList|null>(null);
     const MaterialRequisitionCodeSrc = ref('');
+    const OutCodeSrc = ref('');
     // const h = ref(0);
     const router = useRouter();
     const route = useRoute();
@@ -471,6 +477,7 @@ export default {
             Number: 0,
           },
         ],
+        OutCode: '',
       },
       StorehouseStockInfo: [],
 
@@ -525,6 +532,7 @@ export default {
             Number: 0,
           },
         ],
+        OutCode: '',
       };
       StoresRequisitionInfo.value = null;
     }
@@ -723,7 +731,10 @@ export default {
           Data.outVerify = false;
           const cb = () => {
             if (StoresRequisitionInfo.value) {
-              window.close();
+              printBtn.value.ref.click();
+              setTimeout(() => {
+                window.close();
+              }, 1000);
             } else {
               Data.StorehouseStockInfo = [];
               GetGoodsAllocation(Data.checkedMaterial?.MaterialID);
@@ -732,6 +743,17 @@ export default {
             }
           };
           messageBox.successSingle('出库成功', cb, cb);
+        }
+      });
+    }
+    function getOutCode() {
+      api.getStockOutCode().then(res => {
+        if (res.data.Status === 1000) {
+          Data.outDeliveryForm.OutCode = res.data.Data as string;
+          // 获取订单领料 大阪id 二维码 出库
+          getQRCodeSrc(Data.outDeliveryForm.OutCode || '').then(res => {
+            OutCodeSrc.value = res || '';
+          });
         }
       });
     }
@@ -785,12 +807,16 @@ export default {
           messageBox.failSingleError('出库失败', '请输入正数', () => null, () => null);
           return;
         }
-        Data.outDeliveryForm.MaterialGoodsPositions = temp;
-        // 设置出库货位及数量
-        Data.outVerify = true;
+        // 获取订单领料 大阪id 二维码 出库
         getQRCodeSrc(StoresRequisitionInfo.value?.Code || '').then(res => {
           MaterialRequisitionCodeSrc.value = res || '';
         });
+        if (!Data.outDeliveryForm.OutCode) {
+          getOutCode();
+        }
+        Data.outDeliveryForm.MaterialGoodsPositions = temp;
+        // 设置出库货位及数量
+        Data.outVerify = true;
       }
     }
 
@@ -847,6 +873,7 @@ export default {
       formRules,
       outNumberRules,
       rules,
+      OutCodeSrc,
       MaterialRequisitionCodeSrc,
       StoresRequisitionInfo,
       SizeSelects,
@@ -1191,6 +1218,11 @@ export default {
 
   .see-goods-dialog{
     min-height: 600px;
+  }
+  .out-verify-dialog{
+    .el-dialog__body{
+      padding: 0;
+    }
   }
 }
 </style>
