@@ -172,8 +172,6 @@ onMounted(() => {
 
     inited.value = true;
   }, 0);
-
-  console.log('Index onMounted');
 });
 
 const visible = ref(false);

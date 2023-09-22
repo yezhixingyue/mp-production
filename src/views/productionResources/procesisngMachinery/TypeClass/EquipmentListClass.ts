@@ -81,6 +81,7 @@ export class EquipmentListClass {
       GroupID: data.GroupID,
       Name: data.Name,
       Index: data.Index,
+      IsDoubleBite: data.IsDoubleBite,
     };
     const resp = await api.getEquipmentSave(temp).catch(() => null);
     if (resp?.data.isSuccess) {
