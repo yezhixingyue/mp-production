@@ -54,15 +54,15 @@ export class LocationMapClass {
 
   DimensionUnit:DimensionUnitType
 
+  _originData: ILocationMapOriginData
+
   constructor(
     originData: ILocationMapOriginData,
-    option: { width: number, height: number },
     isMultiSelect:boolean,
     DefaultAction:LocationSetClass[],
     currentMaterialID,
   ) {
-    this.width = option.width;
-    this.height = option.height;
+    this._originData = originData;
     this.isMultiSelect = isMultiSelect;
     this.DefaultAction = DefaultAction;
     this.currentMaterialID = currentMaterialID;
@@ -70,7 +70,7 @@ export class LocationMapClass {
       DimensionUnitX: originData.AllPositionDetails.DimensionUnitX || '',
       DimensionUnitY: originData.AllPositionDetails.DimensionUnitY || '',
     };
-    this.init(originData);
+    this.init();
   }
 
   // isLocation 是否入库时候的多选
@@ -91,19 +91,31 @@ export class LocationMapClass {
     return LocationColorEnums.normal;
   }
 
-  init(originData: ILocationMapOriginData) {
+  _setSize(renderScale) {
+    this.squareWidth = 30 * renderScale;
+    this.squareHeight = 30 * renderScale;
+
+    this.width = this.xAxis.length * this.squareWidth;
+    this.height = this.yAxis.length * this.squareHeight;
+  }
+
+  init(renderScale = 1) {
     // 0. 数据初始化
     this.newLocation = [];
     this.selectedLocation = [];
     this.rows = [];
 
     // 1. 生成xAxis和yAxis数据 -- 使用模拟数据
-    this.xAxis = [...new Set(originData.AllPositionDetails.DimensionXS.map(it => it.Dimension))];
-    this.yAxis = [...new Set(originData.AllPositionDetails.DimensionYS.map(it => it.Dimension))];
-    // 2. 计算出宽高数据
+    this.xAxis = [...new Set(this._originData.AllPositionDetails.DimensionXS.map(it => it.Dimension))];
+    this.yAxis = [...new Set(this._originData.AllPositionDetails.DimensionYS.map(it => it.Dimension))];
 
-    this.squareWidth = Math.floor(this.width / this.xAxis.length);
-    this.squareHeight = Math.floor(this.height / this.yAxis.length);
+    // 1.5 此处进行一些设置用于固定每个单元格的宽高尺寸
+    // this.width = this.xAxis.length * 30;
+    // this.height = this.yAxis.length * 30;
+
+    // 2. 计算出宽高数据
+    // this.squareWidth = Math.floor(this.width / this.xAxis.length);
+    // this.squareHeight = Math.floor(this.height / this.yAxis.length);
     // if (this.squareWidth <= 5 || this.squareHeight <= 5) {
     //   ElMessage({
     //     message: '单元格宽高过小，可能无法正常渲染货位图',
@@ -113,8 +125,12 @@ export class LocationMapClass {
     //     type: 'warning',
     //   });
     // }
+
+    // 设置尺寸
+    this._setSize(renderScale);
+
     // 3. 生成square集合rows
-    originData.DyadicArrayDimensionData.forEach((item, yIndex) => {
+    this._originData.DyadicArrayDimensionData.forEach((item, yIndex) => {
       const arr:Square[] = [];
       item.forEach((it, xIndex) => {
         arr.push(new Square(
@@ -129,8 +145,9 @@ export class LocationMapClass {
       });
       this.rows.push(arr);
     });
+
     // 4. 生成locationSet -- 使用模拟数据 -- 后面需从外部传递入
-    this.locationSet = originData.UsePositionDetails
+    this.locationSet = this._originData.UsePositionDetails
       .map(it => new LocationSetClass(
         it.PositionID,
         it.PositionName,
@@ -138,7 +155,7 @@ export class LocationMapClass {
         it.PositionDetails.map(p => {
           // 根据保存的xy值获得位置信息
           let coord;
-          originData.DyadicArrayDimensionData.forEach(item => {
+          this._originData.DyadicArrayDimensionData.forEach(item => {
             item.forEach(it => {
               if (it.DimensionX === p.DimensionX && it.DimensionY === p.DimensionY) {
                 coord = it;
@@ -149,6 +166,7 @@ export class LocationMapClass {
         }),
         it.goodsPositionStockDetails,
       ));
+
     // 5. 为rows中belongTo进行赋值
     this.rows.forEach(row => {
       row.forEach(square => {
@@ -161,7 +179,16 @@ export class LocationMapClass {
     });
   }
 
-  setDefaultAction(viewer) {
+  handleRenderScaleChange(renderScale: number) {
+    this._setSize(renderScale);
+    this.rows.forEach(row => {
+      row.forEach(square => {
+        square.setSizeAndPoints(this.squareWidth, this.squareHeight);
+      });
+    });
+  }
+
+  setDefaultAction(viewer: Viewer) {
     if (this.DefaultAction.length) {
       this.selectedLocation = this.DefaultAction;
     }
@@ -171,6 +198,10 @@ export class LocationMapClass {
         if (this.selectedLocation) {
           this.selectedLocation[i].color = LocationColorEnums.isSetSelected;
         }
+      });
+      console.log(this.selectedLocation);
+      this.selectedLocation.forEach((it) => {
+        console.log('it', it, it instanceof LocationSetClass);
       });
       viewer.locationSetViewer(this.selectedLocation);
     }
@@ -203,16 +234,19 @@ export class LocationMapClass {
       // 调用单元格点击事件
       const set = this.rows[y][x].onclick(viewer, this);
       // 如果是多选（入库选择货位 此时不用设置货位所以没有货位的单元格都为禁用）并且点击的单元格没有货位信息
+
       if (this.isMultiSelect && !set) {
         return;
       }
-      if (set) {
+
+      if (set) { // 如果点击的目标方块属于一个货位集合，就清空掉newLocation并把其中方块的状态由选中重新渲染至未选中状态
         this.newLocation.forEach(it => {
           viewer.squareViewer(it, this.DimensionUnit);
         });
         this.newLocation = [];
       }
       this.clickLocation = set;
+
       if (this.selectedLocation) {
         this.selectedLocation.forEach((it, i) => {
           // 多选得时候全部画空
@@ -223,7 +257,9 @@ export class LocationMapClass {
             this.selectedLocation[i].color = LocationColorEnums.normal;
           }
         });
+
         viewer.locationSetViewer(this.selectedLocation);
+
         const old = this.selectedLocation.find(it => it.PositionID === set?.PositionID);
         // 因为响应式 使用 noSelected 转换一下
         const noSelected = this.selectedLocation.filter(it => it.PositionID !== set?.PositionID);
@@ -248,9 +284,106 @@ export class LocationMapClass {
             this.selectedLocation[i].color = LocationColorEnums.isSetSelected;
           }
         });
+
         viewer.locationSetViewer(this.selectedLocation);
       }
     }
+  }
+
+  // 区域选择 - 不处理多选
+  areaSelect(area: { left: number, top: number, width: number, height: number }, viewer: Viewer, ctrlKey: boolean) {
+    if (this.isMultiSelect) return;
+
+    // 1. 去除边界 转换坐标和宽高
+    const _getTransformedArea = () => {
+      const diff = {
+        left: MapConditionEnum.labelGapWidth - area.left > 0 ? MapConditionEnum.labelGapWidth - area.left : 0,
+        top: MapConditionEnum.labelGapHeight - area.top > 0 ? MapConditionEnum.labelGapHeight - area.top : 0,
+      };
+
+      if (area.width - diff.left <= 0) return null;
+      if (area.height - diff.top <= 0) return null;
+
+      const _area = {
+        left: area.left - MapConditionEnum.labelGapWidth,
+        top: area.top - MapConditionEnum.labelGapHeight,
+        width: area.width,
+        height: area.height,
+      };
+
+      if (_area.left < 0) {
+        _area.width += _area.left;
+        _area.left = 0;
+      }
+
+      if (_area.top < 0) {
+        _area.height += _area.top;
+        _area.top = 0;
+      }
+
+      return _area;
+    };
+
+    const _area = _getTransformedArea();
+    if (!_area) return;
+
+    // 2. 从所有的方块中筛选出来和该范围有交叉的块列表
+    const _getSquares = () => {
+      const squares: Square[] = [];
+
+      const _row = {
+        start: Math.floor(_area.top / this.squareHeight),
+        end: Math.floor((_area.top + _area.height) / this.squareHeight),
+      };
+
+      const _column = {
+        start: Math.floor(_area.left / this.squareWidth),
+        end: Math.floor((_area.left + _area.width) / this.squareWidth),
+      };
+
+      for (let rowIndex = _row.start; rowIndex <= _row.end; rowIndex += 1) {
+        const row = this.rows[rowIndex];
+
+        if (row) {
+          for (let columnIndex = _column.start; columnIndex <= _column.end; columnIndex += 1) {
+            const square = row[columnIndex];
+            if (square) squares.push(square);
+          }
+        }
+      }
+
+      return squares;
+    };
+
+    const squares = _getSquares();
+    if (squares.length === 0) return;
+
+    // 3. 从块列表中筛选出没有货位的块列表，修改每个块的状态
+    const emptySquares = squares.filter(it => !it.belongTo);
+    if (emptySquares.length === 0) return;
+
+    emptySquares.forEach(square => { // 渲染颜色
+      if (this.newLocation.includes(square) && !ctrlKey) return;
+      if (!this.newLocation.includes(square) && ctrlKey) return;
+      const color = ctrlKey ? LocationColorEnums.squareEmptyColor : LocationColorEnums.squareFillColor;
+      viewer.squareViewer(square, '', color);
+    });
+
+    if (ctrlKey) { // 清除选中
+      this.newLocation = this.newLocation.filter(it => !emptySquares.includes(it));
+    } else { // 选中
+      this.newLocation.push(...emptySquares);
+      this.newLocation = [...new Set(this.newLocation)];
+    }
+
+    // 4. 清除之前选中货位
+    this.selectedLocation.forEach((it, i) => {
+      this.selectedLocation[i].color = LocationColorEnums.normal;
+    });
+
+    viewer.locationSetViewer(this.selectedLocation);
+
+    this.selectedLocation = [];
   }
 
   // 鼠标移动事件

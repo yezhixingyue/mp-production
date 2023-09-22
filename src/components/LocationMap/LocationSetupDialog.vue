@@ -10,7 +10,7 @@
     >
     <template #default>
       <div class="name-dialog">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" @submit.prevent>
           <el-form-item :label="`货位名称：`" prop="PositionName">
             <el-input v-model="ruleForm.PositionName" maxlength="10" show-word-limit />
           </el-form-item>

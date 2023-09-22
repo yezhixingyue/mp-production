@@ -8,8 +8,13 @@
         <template #default="scope:any">{{formatListName(scope.row.GroupID, props.localEquipmentListClassData.EquipmentGroupList)}}</template>
       </mp-table-column>
       <mp-table-column min-width="135px" prop="Name" label="名称" />
-      <mp-table-column min-width="120px" prop="Index" label="设备状态显示顺序" />
-      <mp-table-column min-width="100px" prop="ClassID" label="状态">
+      <mp-table-column width="140px" prop="ClassID" label="咬口">
+        <template #default="scope:{ row: IManageEquipmentInfo }">
+          <span>{{scope.row.IsDoubleBite ? '双咬口' : ''}}</span>
+        </template>
+      </mp-table-column>
+      <mp-table-column width="160px" prop="Index" label="设备状态显示顺序" />
+      <mp-table-column width="150px" prop="ClassID" label="状态">
         <template #default="scope:any">
           <span class="is-pink">{{scope.row.IsUseable ? '' : '已停用'}}</span>
         </template>

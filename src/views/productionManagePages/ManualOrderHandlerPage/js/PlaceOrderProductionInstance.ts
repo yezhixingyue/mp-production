@@ -163,7 +163,7 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
     });
 
     // 4. 补充原专色文件
-    const list = this.FileList.filter(it => it.SpecialColorList && it.SpecialColorList.length > 0);
+    const list = this.FileList.filter(it => it.ColorList && it.ColorList.length > 0);
     _FileList.push(...list);
 
     this.AssistList = _AssistList;
@@ -181,7 +181,7 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
     const newColorFiles = newColors.map(it => ({
       UniqueName: '',
       _File: null,
-      SpecialColorList: [it.ID],
+      ColorList: [it.ID],
       _SpecialColorInfo: it,
       _LineInfo: {
         ID: this._originLineData?.ID || '',

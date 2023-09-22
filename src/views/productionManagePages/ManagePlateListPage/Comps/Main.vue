@@ -48,7 +48,7 @@
               <td class="number">含订单：{{ child.ChunkNumber }}个</td>
               <td :style="`width:${widthList[10].width}px`">
                 <mp-button link type="primary" @click="onProcessClick(row, child)">进度详情</mp-button>
-                <mp-button link type="primary" @click="onBarCodePrintClick(row, child)" :disabled="!child.MapFilePath">打印条码稿</mp-button>
+                <!-- <mp-button link type="primary" @click="onBarCodePrintClick(row, child)" :disabled="!child.MapFilePath">打印条码稿</mp-button> -->
               </td>
             </tr>
           </template>

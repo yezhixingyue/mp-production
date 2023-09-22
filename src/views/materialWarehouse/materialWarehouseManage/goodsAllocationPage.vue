@@ -7,7 +7,7 @@
             <el-select
               no-data-text="无数据"
               v-model="item.inputValue"
-              @change="getGoodsPosition(index)"
+              @change="getGoodsPosition()"
               :filterable='true'>
               <!-- 如果前一个选择的有，就显示下拉数据，否则不显示 -->
               <el-option
@@ -21,19 +21,15 @@
         </div>
     </header>
     <main>
-        <el-scrollbar>
-          <LocationMap
-            v-if="Data.allDimensionData.UsePositionDetails"
-            :allDimensionData="Data.allDimensionData"
-            :add="handleAdd"
-            :remove="handleRemove"
-            :width="Data.allDimensionData.AllPositionDetails.DimensionXS.length > 100 ? 2800 : 1400"
-            :height="Data.allDimensionData.AllPositionDetails.DimensionYS.length > 100 ? 1700 : 850"
-          />
-        </el-scrollbar>
+      <LocationMap
+        v-if="Data.allDimensionData.UsePositionDetails"
+        :allDimensionData="Data.allDimensionData"
+        :add="handleAdd"
+        :remove="handleRemove"
+      />
     </main>
     <footer>
-      <mp-button class="blue" @click="$goback">返回</mp-button>
+      <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
     </footer>
   </div>
 </template>
@@ -45,6 +41,7 @@ import {
 import { useRoute } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import api from '@/api';
+import { getGoBackFun } from '@/router';
 import messageBox from '@/assets/js/utils/message';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import LocationMap from '../../../components/LocationMap/Index.vue';
@@ -271,10 +268,10 @@ export default {
           PositionID: resp.data.Data,
         };
       }
-      return false;
+      return null;
     }
 
-    async function handleRemove(id) {
+    async function handleRemove(id): Promise<boolean> {
       const resp = await api.getGoodsPositionRemove(id).catch(() => null);
       if (resp?.data.Status === 1000) {
         return new Promise((resolve) => {
@@ -342,6 +339,7 @@ export default {
       setPositionNameClosed,
       handleAdd,
       handleRemove,
+      getGoBackFun,
     };
   },
 

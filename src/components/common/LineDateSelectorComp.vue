@@ -161,6 +161,7 @@ onDeactivated(() => {
   min-width: 760px;
   display: flex;
   align-items: center;
+  line-height: 30px !important;
 
   .el-radio-button:last-child .el-radio-button__inner {
     border-radius: 0;
@@ -281,6 +282,7 @@ onDeactivated(() => {
 
   >.define-btn {
     cursor: pointer;
+    height: 28px;
     // margin-left: -1px;
   }
 

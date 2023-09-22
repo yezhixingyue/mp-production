@@ -68,7 +68,7 @@ export interface IConvertOrderFile {
   /** 存放拼版模板信息 仅拼版文件有 */
   _PlateTemplate?: IImpositionTemplate
   /** 专色列表 [单个颜色id] */
-  SpecialColorList?: string[]
+  ColorList?: string[]
   /** 存放专色信息 仅专色文件有 */
   _SpecialColorInfo?: IPrintColor
   _File: null | File

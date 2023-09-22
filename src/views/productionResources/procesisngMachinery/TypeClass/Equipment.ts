@@ -14,9 +14,12 @@ export class Equipment {
 
   Index: number | '' = ''
 
+  IsDoubleBite = false
+
   constructor(data) {
     if (data) {
       restoreInitDataByOrigin(this, data);
+      if (data.IsDoubleBite) this.IsDoubleBite = data.IsDoubleBite;
     }
   }
 
@@ -53,4 +56,4 @@ export class Equipment {
 }
 
 export type EquipmentListItemType = Omit<Equipment, 'getSubmitData' | 'validate'>
-export type EquipmentSubmitDataType = Pick<Required<Equipment>, 'ID'|'Name'|'GroupID'|'Index'>;
+export type EquipmentSubmitDataType = Pick<Required<Equipment>, 'ID'|'Name'|'GroupID'|'Index' | 'IsDoubleBite'>;

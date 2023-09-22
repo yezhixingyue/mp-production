@@ -1217,7 +1217,7 @@ export default {
   }
 
   .see-goods-dialog{
-    min-height: 600px;
+    height: 600px;
   }
   .out-verify-dialog{
     .el-dialog__body{
