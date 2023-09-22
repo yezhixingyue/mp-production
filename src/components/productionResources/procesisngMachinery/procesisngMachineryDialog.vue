@@ -21,6 +21,10 @@
         <el-input v-model.trim="ruleForm.Name" maxlength="20" show-word-limit></el-input>
       </li>
       <li>
+        <span class="label star">咬口：</span>
+        <el-checkbox v-model="ruleForm.IsDoubleBite">双咬口（选中时正反版大版的反面旋转180度）</el-checkbox>
+      </li>
+      <li>
         <span class="label star">设备状态显示顺序：</span>
         <el-input class="num" v-model.number="ruleForm.Index" maxlength="9"></el-input>
         <span class="tip is-orange"><el-icon><WarningFilled /></el-icon>数字越小显示越靠前</span>

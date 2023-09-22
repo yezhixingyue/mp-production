@@ -29,9 +29,16 @@ export class Square {
     this.x = xIndex;
     this.DimensionY = DimensionY;
     this.y = yIndex;
+    this.isMultiSelect = isMultiSelect;
+
+    this.setSizeAndPoints(width, height);
+  }
+
+  setSizeAndPoints(width: number, height: number) {
     this.width = width;
     this.height = height;
-    this.isMultiSelect = isMultiSelect;
+
+    this.points = [];
 
     this.points.push([this.x * width + this.lineWidth + MapConditionEnum.labelGapWidth, this.y * height + this.lineWidth + MapConditionEnum.labelGapHeight]);
     this.points.push([(this.x + 1) * width + MapConditionEnum.labelGapWidth, this.y * height + this.lineWidth + MapConditionEnum.labelGapHeight]);
@@ -39,21 +46,23 @@ export class Square {
     this.points.push([this.x * width + this.lineWidth + MapConditionEnum.labelGapWidth, (this.y + 1) * height + MapConditionEnum.labelGapHeight]);
   }
 
-  onclick(viewer: Viewer, locationMap: LocationMapClass): LocationSetClass | null {
+  onclick(viewer: Viewer, locationMap: LocationMapClass, isAdd?: boolean): LocationSetClass | null { // isAdd 指定该块状态是否选定还是取消选定
     // 如果在货位中 返回货位数据
     if (this.belongTo || this.isMultiSelect) {
       // 已在货位中，执行货位操作
       return this.belongTo;
     }
+
     // 新增
-    if (locationMap.newLocation.includes(this)) {
+    if (!locationMap.newLocation.includes(this) && [undefined, true].includes(isAdd)) {
+      locationMap.newLocation.push(this);
+      viewer.squareViewer(this, '', LocationColorEnums.squareFillColor);
+    } else if (locationMap.newLocation.includes(this) && [undefined, false].includes(isAdd)) {
       const _locationMap = locationMap;
       _locationMap.newLocation = _locationMap.newLocation.filter(it => it !== this);
       viewer.squareViewer(this, '', LocationColorEnums.squareEmptyColor);
-    } else {
-      locationMap.newLocation.push(this);
-      viewer.squareViewer(this, '', LocationColorEnums.squareFillColor);
     }
+
     return null;
   }
 
@@ -62,26 +71,11 @@ export class Square {
       // 已在货位中，执行货位操作
       return this.belongTo;
     }
-    // console.log(
-    //   this,
-    //   viewer,
-    //   locationMap,
-    //   'item onmousemove',
-    // );
 
     if (!locationMap.isMultiSelect) {
       locationMap.hoverHtml.push(`${this.DimensionX}${DimensionUnit.DimensionUnitX}-${this.DimensionY}${DimensionUnit.DimensionUnitY}`);
     }
 
-    // // 新增
-    // if (locationMap.newLocation.includes(this)) {
-    //   const _locationMap = locationMap;
-    //   _locationMap.newLocation = _locationMap.newLocation.filter(it => it !== this);
-    //   console.log(_locationMap.newLocation.length);
-    //   viewer.squareViewer(this, LocationColorEnums.squareEmptyColor);
-    // } else {
-    //   viewer.squareViewer(this, LocationColorEnums.squareFillColor);
-    // }
     return null;
   }
 

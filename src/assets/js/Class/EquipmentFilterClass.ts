@@ -38,7 +38,6 @@ export class EquipmentFilterClass {
     const temp = {
       Page: 1,
       PageSize: 10000,
-      FieldType: 1,
     };
     const resp = await api.getEquipmentList(temp).catch(() => null);
     if (resp?.data?.isSuccess) {

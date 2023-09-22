@@ -206,7 +206,7 @@ const _MakeupFileList = computed(() => itemData.value.FileList.filter(it => it._
 const _AssistFileList = computed(() => itemData.value.FileList.filter(it => it._NoteInfo));
 
 /** 专色文件列表 */
-const _SpecialColorFileList = computed(() => itemData.value.FileList.filter(it => it.SpecialColorList));
+const _SpecialColorFileList = computed(() => itemData.value.FileList.filter(it => it.ColorList));
 
 /** 数值列表 */
 const _NumbericalList = computed(() => itemData.value.AssistList.filter(it => it.Type === AssistInfoTypeEnum.numerical));
