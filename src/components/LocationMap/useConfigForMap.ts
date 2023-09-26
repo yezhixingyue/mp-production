@@ -327,12 +327,18 @@ export const useConfigForMap = (locationMap: Ref<LocationMapClass>, readonly: bo
   });
 
   onUnmounted(() => {
-    if (unbindFunc) unbindFunc();
+    if (unbindFunc) {
+      unbindFunc();
+      unbindFunc = undefined;
+    }
     if (canvas.value) canvas.value.removeEventListener('mousedown', oncanvasmousedown);
   });
 
   onDeactivated(() => {
-    if (unbindFunc) unbindFunc();
+    if (unbindFunc) {
+      unbindFunc();
+      unbindFunc = undefined;
+    }
   });
 
   return { config, canvas, initDraw, onwrapmousedown, selectArea, oWrap };

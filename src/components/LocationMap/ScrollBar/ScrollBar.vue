@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onActivated, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue';
 import Bar from './Bar.vue';
 import { useConfigForMap } from '../useConfigForMap';
 
@@ -78,6 +78,16 @@ onMounted(() => {
   getWrapSize();
 
   window.addEventListener('resize', getWrapSize);
+});
+
+onActivated(() => {
+  if (!wrapSize.value.width && !wrapSize.value.height) getWrapSize();
+
+  window.addEventListener('resize', getWrapSize);
+});
+
+onDeactivated(() => {
+  window.removeEventListener('resize', getWrapSize);
 });
 
 onUnmounted(() => {
