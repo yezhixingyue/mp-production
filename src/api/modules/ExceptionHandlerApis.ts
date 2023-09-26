@@ -37,8 +37,12 @@ export const ExceptionHandlerApis = {
   getSchedulingExceptionList(condition) {
     return instance.post<ISchedulingExceptionListItem[]>('/Api/SchedulingException/List', condition);
   },
-  /** PUT /Api/SchedulingException/Deal  排程异常处理 */
-  getSchedulingExceptionDeal(id: number) {
-    return instance.put('/Api/SchedulingException/Deal', null, { params: { id } });
+  /** POST /Api/SchedulingException/Deal  排程异常处理 */
+  getSchedulingExceptionDeal(List: number[]) {
+    // return new Promise((resolve, reject) => {
+    //   if (Math.random() > 0.1) resolve({ data: { isSuccess: true } });
+    //   else reject(new Error('123'));
+    // });
+    return instance.post('/Api/SchedulingException/Deal', { List });
   },
 };
