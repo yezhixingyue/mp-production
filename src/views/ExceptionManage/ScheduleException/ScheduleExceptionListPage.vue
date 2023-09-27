@@ -7,8 +7,14 @@
       :getList="ManageListData.getList.bind(ManageListData)"
       :list="ManageListData.list"
     />
-    <Main :list="ManageListData.list" :loading="ManageListData.loading" @setHaveDeal="(row) => ManageListData.setHaveDeal(row)" />
-    <Footer :condition="ManageListData.condition" :total="ManageListData.listNumber" :getList="ManageListData.getList.bind(ManageListData)" />
+    <Main
+      :list="ManageListData.list"
+      :loading="ManageListData.loading"
+      @setTableRef="(multipleTableRef) => ManageListData.setMultipleTableRef(multipleTableRef)"
+      @select="(rows) => ManageListData.setSelectList(rows)"
+      @setHaveDeal="(row) => ManageListData.setRowsHaveDeal([row])"
+     />
+    <Footer :ManageListData="ManageListData" />
   </section>
 </template>
 

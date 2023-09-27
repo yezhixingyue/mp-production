@@ -1,6 +1,7 @@
 <template>
   <main>
-    <el-table :data="localList" border stripe class="table-wrap">
+    <el-table :data="list" border stripe class="table-wrap" @selection-change="handleSelectionChange" ref="multipleTableRef">
+      <el-table-column type="selection" width="42" :selectable="(row: ISchedulingExceptionListItem) => !row.DealTime" />
       <mp-table-column width="120px" prop="ID" label="序号" />
       <mp-table-column width="120px" prop="Code" label="编号" />
       <mp-table-column width="120px" prop="_Type" label="异常类型" />
@@ -22,31 +23,17 @@
 </template>
 
 <script setup lang='ts'>
-import { computed } from 'vue';
-import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
-import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { onMounted, ref } from 'vue';
+import { ElTable } from 'element-plus';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ISchedulingExceptionListItem } from '../js/type';
-import { SchedulingExceptionTypeEnumList } from '../js/EnumList';
 
-const props = defineProps<{
+defineProps<{
   list: ISchedulingExceptionListItem[]
   loading: boolean
 }>();
 
-const emit = defineEmits(['setHaveDeal']);
-
-const localList = computed(() => {
-  const list = props.list.map(it => ({
-    ...it,
-    _Type: getEnumNameByID(it.Type, SchedulingExceptionTypeEnumList),
-    _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
-    _HaveDeal: it.DealTime ? '已处理' : '未处理',
-    _DealContent: `${format2MiddleLangTypeDateFunc2(it.DealTime)}${it.Operator ? ` （${it.Operator?.Name}）` : ''}`,
-  }));
-
-  return list;
-});
+const emit = defineEmits(['setHaveDeal', 'select', 'setTableRef']);
 
 const onDealClick = (row: ISchedulingExceptionListItem) => {
   MpMessage.warn('确定标记为已处理吗 ?', `编号：[ ${row.Code} ]`, () => {
@@ -54,6 +41,15 @@ const onDealClick = (row: ISchedulingExceptionListItem) => {
   });
 };
 
+const multipleTableRef = ref<InstanceType<typeof ElTable>>();
+
+const handleSelectionChange = async (val: ISchedulingExceptionListItem[]) => {
+  emit('select', val, multipleTableRef.value || null);
+};
+
+onMounted(() => {
+  emit('setTableRef', multipleTableRef.value || null);
+});
 </script>
 
 <style scoped lang='scss'>
@@ -78,6 +74,8 @@ const onDealClick = (row: ISchedulingExceptionListItem) => {
       padding-left: 12px;
       color: #585858;
     }
+
+    --el-fill-color-light: #eee;
   }
 }
 </style>
