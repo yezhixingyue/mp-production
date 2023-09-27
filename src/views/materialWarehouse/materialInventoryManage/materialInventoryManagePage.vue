@@ -127,13 +127,13 @@
         </el-table>
     </main>
     <footer>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getStockData.Page"
-        :pageSize="Data.getStockData.PageSize"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange" />
-      </div>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getStockData.Page"
+      :pageSize="Data.getStockData.PageSize"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange" />
     </footer>
     <!-- 设置库存预警 -->
     <DialogContainerComp
@@ -712,12 +712,7 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    .bottom-count-box{
-      display: flex;
-      align-items: center;
-    }
   }
   .storehouse-stock-dialog{
     &.storehouse-stock-dialog{

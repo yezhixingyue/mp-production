@@ -63,13 +63,13 @@
         </el-table>
     </main>
     <footer>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getMaterialManageData.Page"
-        :pageSize="Data.getMaterialManageData.PageSize"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange" />
-      </div>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getMaterialManageData.Page"
+      :pageSize="Data.getMaterialManageData.PageSize"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange" />
     </footer>
     <!-- 添加物料 -->
     <DialogContainerComp
@@ -709,7 +709,6 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
   }
   .add-material-manage-dialog-box{

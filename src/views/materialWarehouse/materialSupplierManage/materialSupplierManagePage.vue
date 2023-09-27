@@ -57,13 +57,13 @@
         </el-table>
     </main>
     <footer>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getMaterialSupplierData.Page"
-        :pageSize="Data.getMaterialSupplierData.PageSize"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange" />
-      </div>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getMaterialSupplierData.Page"
+      :pageSize="Data.getMaterialSupplierData.PageSize"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange" />
     </footer>
     <DialogContainerComp v-if="ProvinceList.length"
     :title="`${Data.MaterialSupplierForm.SupplierID ? '修改' : '添加'}供应商`"
@@ -441,7 +441,6 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
   }
   .add-material-supplier-dialog{
@@ -457,6 +456,8 @@ export default {
       .el-checkbox-group{
         display: flex;
         flex-wrap: wrap;
+        max-height: 200px;
+        overflow-y: auto;
         .el-checkbox{
           width: 25%;
           margin: 0;

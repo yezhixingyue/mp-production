@@ -59,13 +59,13 @@
         </el-table>
     </main>
     <footer>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getMaterialTypeData.Page"
-        :pageSize="+Data.getMaterialTypeData.PageSize || 20"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange" />
-      </div>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getMaterialTypeData.Page"
+      :pageSize="+Data.getMaterialTypeData.PageSize || 20"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange" />
     </footer>
     <!-- 添加、编辑物料类型 -->
     <DialogContainerComp
@@ -422,7 +422,6 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
   }
   .add-material-classify-dialog{

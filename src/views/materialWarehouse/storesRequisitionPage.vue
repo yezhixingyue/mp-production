@@ -114,13 +114,13 @@
       </el-table>
     </main>
     <footer>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getListData.Page"
-        :pageSize="Data.getListData.PageSize"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange" />
-      </div>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getListData.Page"
+      :pageSize="Data.getListData.PageSize"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange" />
     </footer>
   </div>
 </template>
@@ -443,22 +443,7 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    >p{
-      font-size: 12px;
-      font-weight: 600;
-      padding-left: 40px;
-      span{
-        color: #FF3769;
-      }
-    }
-    .bottom-count-box{
-      width: 100%;
-      justify-content: flex-end;
-      display: flex;
-      align-items: center;
-    }
   }
   .storehouse-stock-dialog{
     > p{

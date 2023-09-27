@@ -73,13 +73,13 @@
     >
     </SetApplyEquipmentDialog>
     <footer>
-      <div class="bottom-count-box">
-        <MpPagination
-        :nowPage="Data.getFoldWayTemplateData.Page"
-        :pageSize="Data.getFoldWayTemplateData.PageSize"
-        :total="Data.DataTotal"
-        :handlePageChange="PaginationChange"/>
-      </div>
+      <MpPagination
+      style="width: 100%;"
+      center
+      :nowPage="Data.getFoldWayTemplateData.Page"
+      :pageSize="Data.getFoldWayTemplateData.PageSize"
+      :total="Data.DataTotal"
+      :handlePageChange="PaginationChange"/>
     </footer>
   </div>
 </template>
@@ -330,7 +330,6 @@ export default {
     min-height: 50px;
     height: 50px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
   }
   .add-printing-color-dialog{
