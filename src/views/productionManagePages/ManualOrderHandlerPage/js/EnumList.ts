@@ -55,6 +55,11 @@ export const PlaceOrderMaterialSourceEnumList = [
     ID: PlaceOrderMaterialSourceEnum.logisticsExpress,
     Name: '物流/快递',
   },
+  {
+    ID: PlaceOrderMaterialSourceEnum.tempMova,
+    Name: '临时调纸',
+    ManualOrderUse: false,
+  },
 ];
 
 /** 爬移使用枚举类型列表 */

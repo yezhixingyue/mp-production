@@ -3,11 +3,11 @@
     <el-table :data="list" border stripe class="table-wrap" @selection-change="handleSelectionChange" ref="multipleTableRef">
       <el-table-column type="selection" width="42" :selectable="(row: ISchedulingExceptionListItem) => !row.DealTime" />
       <mp-table-column width="120px" prop="ID" label="序号" />
-      <mp-table-column width="120px" prop="Code" label="编号" />
       <mp-table-column width="120px" prop="_Type" label="异常类型" />
-      <mp-table-column width="150px" prop="_CreateTime" label="异常时间" />
+      <mp-table-column width="120px" prop="Code" label="编号" />
       <!-- '情况说明'列 如果需要靠左对齐时，在下面行上添加右侧属性以设置列的类名： class-name="content" -->
       <mp-table-column min-width="150px" prop="Content" label="情况说明" />
+      <mp-table-column width="150px" prop="_CreateTime" label="异常时间" />
       <mp-table-column width="120px" prop="_HaveDeal" label="处理状态" />
       <mp-table-column width="200px" prop="_DealContent" label="处理时间（处理人）" />
       <mp-table-column width="150px" label="操作">

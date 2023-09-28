@@ -1,3 +1,4 @@
+import { INextWorkingProduction } from '@/views/ProductionClient/assets/js/types';
 import { PlaceOrderMaterialSourceEnum } from '../../ManualOrderHandlerPage/js/enums';
 import { ICustomerAddress } from '../../ManualOrderHandlerPage/js/types';
 import { ExternalMaterialStatusEnum } from './enum';
@@ -14,12 +15,12 @@ export interface IExternalMaterialDetail {
   Code: string
   /** 销售端 */
   Server: string
-  /** 订单编码 */
-  OrderCode: string
+  /** 订单/大版编码 */
+  TargetCode: string
   /** 生产线  */
   Line: string
   /** 尺寸 */
-  Size: string
+  // Size: string
   /** 数量 */
   Number: number
   /** 单位 */
@@ -42,4 +43,6 @@ export interface IExternalMaterialDetail {
   CreateTime: string
   /** 到货时间 */
   ReceiveTime: string
+  /** 下一道工序 */
+  NextWorking: INextWorkingProduction
 }

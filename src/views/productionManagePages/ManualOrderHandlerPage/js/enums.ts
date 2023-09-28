@@ -68,7 +68,9 @@ export enum PlaceOrderMaterialSourceEnum {
   /** 上门取料 */
   homePickup = 2,
   /** 物流/快递 */
-  logisticsExpress = 4,
+  logisticsExpress = 3,
+  /** 临时调纸 */
+  tempMova = 4,
 }
 
 /**
