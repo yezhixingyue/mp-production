@@ -2,13 +2,18 @@
   <main>
     <el-table :data="localList" border stripe class="table-wrap">
       <mp-table-column width="75px" prop="Code" label="编号" />
+      <mp-table-column width="75px" prop="_TargetTypeText" label="类型" />
       <!-- <mp-table-column width="115px" prop="Server" label="销售端" /> -->
       <mp-table-column width="110px" prop="TargetCode" label="订单/大版ID" />
       <mp-table-column width="130px" prop="Line" label="生产线" />
       <mp-table-column width="160px" prop="Material" label="物料" />
       <!-- <mp-table-column min-width="120px" prop="Size" label="尺寸" /> -->
       <mp-table-column min-width="140px" prop="MaterialSize" label="物料尺寸" />
-      <mp-table-column width="100px" prop="_Number" label="数量" />
+      <mp-table-column width="100px" prop="_Number" label="数量">
+        <template #default="scope:any">
+          {{ scope.row._Number }}<i style="color: #aaa;">({{ scope.row._NumberType }})</i>
+        </template>
+      </mp-table-column>
       <mp-table-column min-width="140px" prop="_CustomerInfo" label="客户（手机号）" />
       <mp-table-column width="125px" prop="_CreateTime" label="下单时间" />
       <mp-table-column width="120px" prop="_MaterialSource" label="物料来源">

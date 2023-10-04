@@ -1,4 +1,5 @@
 import { INextWorkingProduction } from '@/views/ProductionClient/assets/js/types';
+import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 import { PlaceOrderMaterialSourceEnum } from '../../ManualOrderHandlerPage/js/enums';
 import { ICustomerAddress } from '../../ManualOrderHandlerPage/js/types';
 import { ExternalMaterialStatusEnum } from './enum';
@@ -45,4 +46,6 @@ export interface IExternalMaterialDetail {
   ReceiveTime: string
   /** 下一道工序 */
   NextWorking: INextWorkingProduction
+  /** 类型 */
+  TargetType: TargetTypeEnum
 }
