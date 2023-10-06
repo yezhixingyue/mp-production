@@ -16,7 +16,7 @@
             }"
             :value='twoSelecValue'
             @change="twoSelectChange"
-            @requestFunc='()=>getList()'
+            @requestFunc='()=>storesRequisition.getList()'
             ></RadioGroupComp>
           <span>
             <b>状态：</b>
@@ -29,29 +29,29 @@
               }"
               :value='StatesValue'
               @change="StatesChange"
-              @requestFunc='()=>getList()'
+              @requestFunc='()=>storesRequisition.getList()'
               ></RadioGroupComp>
           </span>
       </div>
       <div class="top-main flex-between">
           <LineDateSelectorComp
-          :changePropsFunc='setCondition4DataList'
-          :requestFunc='()=>getList()'
+          :changePropsFunc='storesRequisition.setCondition4DataList'
+          :requestFunc='()=>storesRequisition.getList()'
           :isFull="true"
           :typeList="[['DateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
-          :dateValue='Data.getListData.DateType'
+          :dateValue='storesRequisition.getListData.DateType'
           :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
           :label="'时间筛选'"
           >
           <!-- :dateList="dateList" -->
           </LineDateSelectorComp>
             <SearchInputComp
-              :word='Data.getListData.KeyWords'
+              :word='storesRequisition.getListData.KeyWords'
               title="关键词搜索"
               placeholder="请输入搜索关键词"
               resetWords="清空所有筛选条件"
-              :changePropsFunc="(words) => Data.getListData.KeyWords = words"
-              :requestFunc='()=>getList()'
+              :changePropsFunc="(words) => storesRequisition.ChangeCondition(['KeyWords', words])"
+              :requestFunc='()=>storesRequisition.getList()'
               @reset='clearCondition'
               >
             </SearchInputComp>
@@ -59,7 +59,7 @@
     </header>
     <main>
       <el-table border fit stripe
-        :data="Data.List" style="width: 100%">
+        :data="storesRequisition.List" style="width: 100%">
         <el-table-column show-overflow-tooltip prop="Code" label="领料编号" min-width="143">
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="PlateCode" label="大版ID" min-width="90">
@@ -107,7 +107,7 @@
         <el-table-column
         show-overflow-tooltip prop="CreateTime" label="操作" min-width="102">
           <template #default="scope:any">
-            <mp-button type="primary" :disabled="scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
+            <mp-button type="primary" :disabled="!scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
             <!-- <el-button :disabled="scope.row.Status" type="primary" link @click="toOut(scope.row)">出库</el-button> -->
           </template>
         </el-table-column>
@@ -117,9 +117,9 @@
       <MpPagination
       style="width: 100%;"
       center
-      :nowPage="Data.getListData.Page"
-      :pageSize="Data.getListData.PageSize"
-      :total="Data.DataTotal"
+      :nowPage="storesRequisition.getListData.Page"
+      :pageSize="storesRequisition.getListData.PageSize"
+      :total="storesRequisition.DataTotal"
       :handlePageChange="PaginationChange" />
     </footer>
   </div>
@@ -135,6 +135,7 @@ import {
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
+import { useStoresRequisition } from '@/store/modules/storesRequisition';
 import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
@@ -175,65 +176,28 @@ export default {
   setup() {
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
-    const Data:DataType = reactive({
-      DataTotal: 0,
-      List: [],
-      // 获取领料单列表
-      getListData: {
-        DateType: 'today',
-        Material: {
-          ClassID: 0,
-          ClassName: '',
-          TypeID: '',
-          TypeName: '',
-          MaterialID: '',
-          MaterialName: '',
-        },
-        Status: '',
+    const storesRequisition = useStoresRequisition();
+    // function setCondition4DataList([[key1, key2], value]) {
+    //   if (key2) storesRequisition.getListData[key1][key2] = value;
+    //   else storesRequisition.getListData[key1] = value;
+    // }
 
-        CreateTime: {
-          First: '',
-          Second: '',
-        },
-        Page: 1,
-        KeyWords: '',
-        PageSize: 20,
-      },
-    });
-
-    function setCondition4DataList([[key1, key2], value]) {
-      if (key2) Data.getListData[key1][key2] = value;
-      else Data.getListData[key1] = value;
-    }
-
-    const UserDefinedTimeIsActive = computed(() => Data.getListData.DateType === ''
-      && !!Data.getListData.CreateTime.First && !!Data.getListData.CreateTime.Second);
+    const UserDefinedTimeIsActive = computed(() => storesRequisition.getListData.DateType === ''
+      && !!storesRequisition.getListData.CreateTime.First && !!storesRequisition.getListData.CreateTime.Second);
 
     const twoSelecValue:ComputedRef<twoSelecValueType> = computed(() => ({
-      level1Val: Data.getListData.Material.ClassID,
+      level1Val: storesRequisition.getListData.Material.ClassID,
       level2Val: '',
     }));
     const StatesValue:ComputedRef<twoSelecValueType> = computed(() => ({
-      level1Val: Data.getListData.Status,
+      level1Val: storesRequisition.getListData.Status,
       level2Val: '',
     }));
-
-    function getList(Page = 1) {
-      Data.getListData.Page = Page;
-      ClassType.setDate(Data.getListData, 'CreateTime');
-      const _obj = ClassType.filter(Data.getListData, true);
-      api.productionManageApis.getMaterialRequisitionList(_obj).then(res => {
-        if (res.data.Status === 1000) {
-          Data.List = res.data.Data as IList[];
-          Data.DataTotal = res.data.DataNumber;
-        }
-      });
-    }
 
     function PaginationChange(newVal) {
       // if (Data.getListData.Page === newVal) return;
       // Data.getListData.Page = newVal;
-      getList(newVal);
+      storesRequisition.getList(newVal);
     }
 
     const StatesList = computed(() => [{ StatusID: '', StatusName: '不限' },
@@ -255,39 +219,20 @@ export default {
     // });
     // 清空筛选项
     function clearCondition() {
-      Data.getListData = {
-        DateType: 'today',
-        Material: {
-          ClassID: 0,
-          ClassName: '',
-          TypeID: '',
-          TypeName: '',
-          MaterialID: '',
-          MaterialName: '',
-        },
-        Status: '',
-
-        CreateTime: {
-          First: '',
-          Second: '',
-        },
-        Page: 1,
-        KeyWords: '',
-        PageSize: 20,
-      };
+      storesRequisition.clearCondition();
     }
 
     function twoSelectChange(levelData) {
       const { level1Val } = levelData;
       if (level1Val !== undefined) {
-        Data.getListData.Material.ClassID = level1Val;
+        storesRequisition.ChangeMaterialClassID(level1Val);
         // Data.getListData.TypeID = level2Val;
       }
     }
     function StatesChange(levelData) {
       const { level1Val } = levelData;
       if (level1Val !== undefined) {
-        Data.getListData.Status = level1Val;
+        storesRequisition.ChangeCondition(['States', level1Val]);
         // Data.getListData.TypeID = level2Val;
       }
     }
@@ -303,23 +248,28 @@ export default {
       if (!MaterialWarehouseStore.MaterialTypeGroup.length) {
         MaterialWarehouseStore.getMaterialTypeGroup();
       }
-      getList();
+      storesRequisition.getList();
       MaterialWarehouseStore.getSupplierSelectList();
+      setInterval(() => {
+        const bool = localStorage.getItem('getStoresRequisitionList') === 'true';
+        if (!bool) return;
+        storesRequisition.getList();
+        localStorage.removeItem('getStoresRequisitionList');
+      }, 800);
     });
 
     return {
+      storesRequisition,
       StatesValue,
       StatesChange,
-      setCondition4DataList,
+      // setCondition4DataList,
       UserDefinedTimeIsActive,
       StatesList,
-      Data,
       twoSelecValue,
       CategoryList,
       // MaterialTypeList,
       PaginationChange,
       twoSelectChange,
-      getList,
       clearCondition,
       MaterialWarehouseStore,
       format2MiddleLangTypeDateFunc2,

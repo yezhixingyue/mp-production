@@ -733,6 +733,7 @@ export default {
         if (res.data.Status === 1000) {
           Data.outVerify = false;
           const cb = () => {
+            localStorage.setItem('getStoresRequisitionList', 'true');
             if (StoresRequisitionInfo.value) {
               printBtn.value.ref.click();
               setTimeout(() => {
