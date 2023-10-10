@@ -60,7 +60,8 @@
           <span class="title">物料来源:</span>
           <div class="content">
             <el-radio-group v-model="itemData.MaterialSource">
-              <el-radio v-for="it in PlaceOrderMaterialSourceEnumList" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
+              <el-radio v-for="it in PlaceOrderMaterialSourceEnumList.filter(it => it.ManualOrderUse !== false)"
+                 :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
             </el-radio-group>
           </div>
         </li>

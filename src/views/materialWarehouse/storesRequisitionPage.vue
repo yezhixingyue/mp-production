@@ -107,7 +107,7 @@
         <el-table-column
         show-overflow-tooltip prop="CreateTime" label="操作" min-width="102">
           <template #default="scope:any">
-            <el-button type="primary" link @click="toOut(scope.row)">出库</el-button>
+            <mp-button type="primary" :disabled="scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
             <!-- <el-button :disabled="scope.row.Status" type="primary" link @click="toOut(scope.row)">出库</el-button> -->
           </template>
         </el-table-column>

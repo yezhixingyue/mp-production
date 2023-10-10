@@ -323,7 +323,8 @@ interface outDeliveryFormType {
   OutStockType: number,
   Handler: string,
   Remark: string,
-  TaskMaterialID: string,
+  // TaskMaterialID: string,
+  RequisitionID: string,
   MaterialGoodsPositions: MaterialGoodsPositionsType[],
   OutCode:string|number
 }
@@ -470,7 +471,8 @@ export default {
         OutStockType: 51,
         Handler: '',
         Remark: '',
-        TaskMaterialID: '',
+        // TaskMaterialID: '',
+        RequisitionID: '',
         MaterialGoodsPositions: [
           {
             PositionID: '',
@@ -525,7 +527,8 @@ export default {
         OutStockType: 51,
         Handler: '',
         Remark: '',
-        TaskMaterialID: '',
+        // TaskMaterialID: '',
+        RequisitionID: '',
         MaterialGoodsPositions: [
           {
             PositionID: '',
@@ -790,7 +793,8 @@ export default {
       } else {
       // 设置物料id
         Data.outDeliveryForm.MaterialID = Data.checkedMaterial.MaterialID;
-        Data.outDeliveryForm.TaskMaterialID = StoresRequisitionInfo.value?.ID || '';
+        // Data.outDeliveryForm.TaskMaterialID = StoresRequisitionInfo.value?.ID || '';
+        Data.outDeliveryForm.RequisitionID = StoresRequisitionInfo.value?.ID || '';
         const temp: MaterialGoodsPositionsType[] = [];
         Data.StorehouseStockInfo.forEach(StorehouseIt => {
           StorehouseIt.GoodsPositionStockInfos.forEach(PositionIt => {
