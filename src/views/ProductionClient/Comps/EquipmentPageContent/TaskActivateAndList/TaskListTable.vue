@@ -21,7 +21,8 @@
       <mp-table-column v-if="showRowOptions.showExternalStatus" width="100px" prop="_ExternalStatusText" label="状态" />
       <mp-table-column v-if="showRowOptions.showCtrlMenus.length > 0" width="185px" label="操作">
         <template #default="scope:any">
-          <mp-button type="primary" link @click="onMenuClick(scope.row, 'switchEqu')" v-if="showRowOptions.showCtrlMenus.includes('switchEqu')">
+          <mp-button type="primary" link @click="onMenuClick(scope.row, 'switchEqu')"
+           v-if="showRowOptions.showCtrlMenus.includes('switchEqu')" :disabled="!canSwitchEqu(scope.row)">
             <i class="iconfont icon-churukujilu"></i>更换设备
           </mp-button>
           <mp-button type="primary" link @click="onMenuClick(scope.row, 'confirmExternal')" v-if="showRowOptions.showCtrlMenus.includes('confirmExternal')">
@@ -45,6 +46,7 @@ import { ExternalTaskStatusEnum } from '@/views/OutsourceManage/js/enum';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { ElTable } from 'element-plus';
 import { computed, ref, watch } from 'vue';
+import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
 import { getLocalTaskList } from './BatchReport/getLocalTaskList';
 
 const emit = defineEmits(['switchEqu', 'confirmExternal', 'loadFile', 'setMultipleSelection']);
@@ -133,6 +135,10 @@ const onMenuClick = (row: typeof localTaskList.value[number], type: Parameters<t
       emit(type, row);
       break;
   }
+};
+const canSwitchEqu = (row: typeof localTaskList.value[number]) => {
+  const _canSwitchList = [ProductiveTaskStatusEnum.Initial, ProductiveTaskStatusEnum.Producibility];
+  return _canSwitchList.includes(row.Status);
 };
 </script>
 
