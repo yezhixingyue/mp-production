@@ -44,12 +44,12 @@
         </div>
       </li>
       <!-- 报工数量 仅允许部分报工时显示 -->
-      <li class="count" :class="{'pt-8': TaskData.Working.AllowPartReport}">
+      <li class="count" :class="{'pt-8': _CanPartReport}">
         <span>报工数量：</span>
-        <el-input v-model.number="count" maxlength="8" v-if="TaskData.Working.AllowPartReport" />
+        <el-input v-model.number="count" maxlength="8" v-if="_CanPartReport" />
         <h4 v-else>{{ TaskData.UnFinishNumber }}</h4>
         <i>{{ localInfo.Unit }}/共</i>
-        <h4 v-if="TaskData.Working.AllowPartReport">{{ TaskData.UnFinishNumber }}</h4>
+        <h4 v-if="_CanPartReport">{{ TaskData.UnFinishNumber }}</h4>
         <span v-else>{{ TaskData.UnFinishNumber }}</span>
         <i>{{ localInfo.Unit }}</i>
       </li>
@@ -111,6 +111,10 @@ const isMultiple = computed(() => props.TaskData && props.TaskData.NextWorkingLi
 /** 下一道工序文字信息 */
 const _NextWorkContent = computed(() => getNextWorkContent(props.TaskData));
 
+/** 是否可以部分报工 */
+// const _CanPartReport = computed(() => props.TaskData?.Working.AllowPartReport && props.TaskData.Working.Number > props.TaskData.Working.MinPartReportNumber);
+const _CanPartReport = computed(() => !!(props.TaskData?.Working.AllowPartReport));
+
 const count = ref<number | ''>('');
 const _NextWorkingList = ref<INextWorkingProduction[]>([]);
 const onOpen = async () => {
@@ -121,7 +125,7 @@ const onOpen = async () => {
 };
 
 const submit = () => {
-  if (props.TaskData?.Working.AllowPartReport) { // 允许部分报工
+  if (props.TaskData && _CanPartReport.value) { // 允许部分报工
     if (!count.value && count.value !== 0) {
       MpMessage.error({ title: '操作失败', msg: '请输入本次报工数量' });
       return;

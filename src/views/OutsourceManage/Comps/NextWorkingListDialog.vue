@@ -4,8 +4,10 @@
    :width='960'
    title='查看列表'
    top='12vh'
+   primaryText="确定"
+   :showClose="false"
    @open='onOpen'
-   @cancel='localVisible = false'
+   @submit='localVisible = false'
    >
    <div class='dialog-content'>
     <ul class="header" v-if="row">
