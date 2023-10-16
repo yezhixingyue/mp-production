@@ -11,10 +11,10 @@
     >
     <ul class="list">
       <li class="item" v-for="it in sectionList" :key="it.NextWorkName + it.EquipmentName">
-        <div class="title">
+        <div class="title" v-show="it.NextWorkName || it.EquipmentName">
           <h4>下一道工序：</h4>
           <h4 class="red">{{ it.NextWorkName || '' }}</h4>
-          <h2 class="red">{{ it.EquipmentName || '未知' }}</h2>
+          <h2 class="red">{{ it.EquipmentName || '' }}</h2>
         </div>
         <el-table :data="it.list" border stripe class="table-wrap">
           <mp-table-column width="105px" prop="Code" label="任务编号" class-name="code" />

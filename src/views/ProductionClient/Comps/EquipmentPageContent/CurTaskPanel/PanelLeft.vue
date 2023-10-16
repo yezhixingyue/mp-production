@@ -17,6 +17,13 @@
           <span>{{ TaskData.Working.OrderInfo.OrderID }}</span>
         </div>
       </li>
+      <!-- 大版序号 -->
+      <li class="code">
+        <div v-if="TaskData.Working.ReportMode === ReportModeEnum.board && TaskData.Working.PlateInfo?.Index">
+          <span class="label">大版序号：</span>
+          <span>{{ TaskData.Working.PlateInfo.Index }}</span>
+        </div>
+      </li>
       <!-- 标题信息  大版显示物料和模板信息   订单和块显示产品、块名称、销售尺寸信息 -->
       <li class="title">
         <div>
