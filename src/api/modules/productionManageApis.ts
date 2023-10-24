@@ -4,7 +4,7 @@ import { IManagePlateInfo } from '@/views/productionManagePages/ManagePlateListP
 import { IManageOrderListItem } from '@/views/productionManagePages/ManageOrderListPage/js/type';
 // import { IManageTaskListItem } from '@/views/productionManagePages/ManageTaskListPage/js/type';
 import { IExternalMaterialDetail } from '@/views/productionManagePages/ManageOutsideMaterialListPage/js/types';
-import { IOrderFlowchartNode } from '@/views/productionManagePages/ManageOrderListPage/js/OrderFlowchart/types';
+import { IOrderFlowchartNode } from '@/components/common/NodePicDialog/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import request from '../request/request';
@@ -57,7 +57,7 @@ export const productionManageApis = {
     return instance.get('/Api/Order/Distribute', { params: { orderID } });
   },
   /** GET /Api/Process/List  获取订单、大版、块的流程信息列表 */
-  getProcessList(targetID: string, targetType: ReportModeEnum) {
+  getProcessList(targetID: string | number, targetType: ReportModeEnum) {
     return instance.get<IOrderFlowchartNode[]>('/Api/Process/List', { params: { targetID, targetType } });
   },
   /** PUT /Api/Order/PushTop  订单置顶 */

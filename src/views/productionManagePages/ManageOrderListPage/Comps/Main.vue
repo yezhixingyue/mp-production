@@ -74,7 +74,7 @@
     </table>
     <SetOrderTopDialog v-model:visible="topVisible" @submit="onTopSubmit" />
     <TimeLineDisplayDialog v-model:visible="timeLineVisible" :row="curRow" />
-    <ProcessDisplayDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.order" />
+    <NodePicDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.order" />
   </main>
 </template>
 
@@ -86,9 +86,9 @@ import {
 } from 'vue';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
+import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
 import SetOrderTopDialog from './SetOrderTopDialog.vue';
 import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
-import ProcessDisplayDialog from './ProcessDisplayDialog/ProcessDisplayDialog.vue';
 import { IManageOrderListItem } from '../js/type';
 
 const props = defineProps<{

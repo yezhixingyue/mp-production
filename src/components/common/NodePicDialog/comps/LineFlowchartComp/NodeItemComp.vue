@@ -1,20 +1,22 @@
 <template>
-  <div class="mp-line-flow-chart-item-comp-wrap item" :style="boxStyle" :data-taskworkingid="item.TaskWorkingID">
-    <div class="square" :style="squareStyle" :title="item.WorkingName">{{ item.WorkingName }}</div>
-    <p v-if="item.Equipment?.Name" :title="EquipmentMixName">{{ EquipmentMixName }}</p>
-    <p v-if="item.FinishTime">{{ format2MiddleLangTypeDateFunc2(item.FinishTime).slice(2) }}</p>
-    <p v-if="item.Operator" :title="OperatorName">{{ OperatorName }}</p>
+  <div>
+    <div class="mp-line-flow-chart-item-comp-wrap item" :style="boxStyle" :data-taskworkingid="item.TaskWorkingID">
+      <div class="square" :style="squareStyle" :title="item.WorkingName">{{ item.WorkingName }}</div>
+      <p v-if="item.Equipment?.Name" :title="EquipmentMixName">{{ EquipmentMixName }}</p>
+      <p v-if="item.FinishTime">{{ format2MiddleLangTypeDateFunc2(item.FinishTime).slice(2) }}</p>
+      <p v-if="item.Operator" :title="OperatorName">{{ OperatorName }}</p>
+    </div>
+    <NodeArrow v-for="(arrow, index) in props.item._ArrowList" :key="arrow.rotate" :arrow="arrow" :index="index" :total="props.item._ArrowList.length" />
   </div>
-  <NodeArrow v-for="(arrow, index) in props.item._ArrowList" :key="arrow.rotate" :arrow="arrow" :index="index" :total="props.item._ArrowList.length" />
 </template>
 
 <script setup lang='ts'>
 import { computed } from 'vue';
-import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
-import { NodeWidth, NodeHeight, PanelPadding } from '../../../js/OrderFlowchart/OrderFlowchart';
-import { IOrderFlowchartDiaplayNode } from '../../../js/OrderFlowchart/types';
-import { FlowchartNodeStatusEnumList } from '../../../js/OrderFlowchart/EnumList';
 import NodeArrow from './NodeArrow.vue';
+import { FlowchartNodeStatusEnumList } from '../../js/EnumList';
+import { PanelPadding, NodeWidth, NodeHeight } from '../../js/OrderFlowchart';
+import { IOrderFlowchartDiaplayNode } from '../../js/types';
+import { format2MiddleLangTypeDateFunc2 } from '../../_difference';
 
 const props = defineProps<{
   item: IOrderFlowchartDiaplayNode,

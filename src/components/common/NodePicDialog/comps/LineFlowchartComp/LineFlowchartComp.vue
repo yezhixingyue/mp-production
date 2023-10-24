@@ -7,8 +7,8 @@
 
 <script setup lang='ts'>
 import { computed } from 'vue';
-import { OrderFlowchart, PanelPadding } from '../../../js/OrderFlowchart/OrderFlowchart';
 import NodeItemComp from './NodeItemComp.vue';
+import { OrderFlowchart, PanelPadding } from '../../js/OrderFlowchart';
 
 const props = defineProps<{
   FlowchartData: Required<OrderFlowchart>,

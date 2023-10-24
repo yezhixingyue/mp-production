@@ -56,24 +56,22 @@
 </template>
 
 <script setup lang='ts'>
-import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
-import { IManageChunkInfo } from '@/views/productionManagePages/ManageChunkListPage/js/type';
-import { IManagePlateInfo, IPlateListChild } from '@/views/productionManagePages/ManagePlateListPage/js/type';
-import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { computed } from 'vue';
-import { IManageOrderListItem } from '../../js/type';
+import {
+  INodePicManageChunkInfo, format2MiddleLangTypeDateFunc2, INodePicManageOrderListItem, INodePicManagePlateInfo, INodePicPlateListChild, ReportModeEnum,
+} from '../_difference';
 
 const props = defineProps<{
-  item: IManageChunkInfo | IManageOrderListItem | IManagePlateInfo | IPlateListChild
+  item: INodePicManageChunkInfo | INodePicManageOrderListItem | INodePicManagePlateInfo | INodePicPlateListChild
   ReportMode: ReportModeEnum
 }>();
 
-const orderInfo = computed(() => (props.ReportMode === ReportModeEnum.order && props.item as IManageOrderListItem) || null);
+const orderInfo = computed(() => (props.ReportMode === ReportModeEnum.order && props.item as INodePicManageOrderListItem) || null);
 
 const getTimeDifference = (dateString: string) => { // 获取剩余或超时时间
   const now = Date.now();
 
-  const target = new Date(dateString.replaceAll('Z', '')).getTime();
+  const target = new Date(dateString.replace('Z', '')).getTime();
 
   const text = target > now ? '剩余' : '已超时';
 
@@ -93,7 +91,7 @@ const getTimeDifference = (dateString: string) => { // 获取剩余或超时时�
 const getIsTimeout = (dateString: string) => { // 获取剩余或超时时间
   const now = Date.now();
 
-  const target = new Date(dateString.replaceAll('Z', '')).getTime();
+  const target = new Date(dateString.replace('Z', '')).getTime();
 
   return target < now;
 };
@@ -101,9 +99,9 @@ const getIsTimeout = (dateString: string) => { // 获取剩余或超时时间
 const reg = /(?=(\B)(\d{3})+$)/g;
 
 /** 版信息  可能为大版 也可能为大版上的子版 */
-const plateInfo = computed(() => (props.ReportMode === ReportModeEnum.board && props.item as IPlateListChild | IManagePlateInfo) || null);
+const plateInfo = computed(() => (props.ReportMode === ReportModeEnum.board && props.item as INodePicPlateListChild | INodePicManagePlateInfo) || null);
 
-const chunkInfo = computed(() => (props.ReportMode === ReportModeEnum.block && props.item as IManageChunkInfo) || null);
+const chunkInfo = computed(() => (props.ReportMode === ReportModeEnum.block && props.item as INodePicManageChunkInfo) || null);
 
 </script>
 

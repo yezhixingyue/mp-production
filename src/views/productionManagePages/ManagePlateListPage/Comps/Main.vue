@@ -60,7 +60,7 @@
         </tr>
       </tbody>
     </table>
-    <ProcessDisplayDialog v-model:visible="processVisible" :item="curRowChildPlat || curRow" :targetType="ReportModeEnum.board" />
+    <NodePicDialog v-model:visible="processVisible" :item="curRowChildPlat || curRow" :targetType="ReportModeEnum.board" />
 
     <!-- 打印工单 -->
     <PrintDialog ref="oPrintDialog" :title="`${curRow?.Code}（大版）`">
@@ -94,9 +94,9 @@ import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { loadBarcode } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/utils';
 import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
+import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
 import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
-import ProcessDisplayDialog from '../../ManageOrderListPage/Comps/ProcessDisplayDialog/ProcessDisplayDialog.vue';
 
 const props = defineProps<{
   list: IManagePlateInfo[]

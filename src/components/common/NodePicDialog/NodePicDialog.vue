@@ -4,12 +4,14 @@
     title="生产流程"
     :showPrimary="false"
     :draggable="false"
+    :showSubmit="false"
     closeOnClickModal
     top='8vh'
     @open="onOpen"
     @cancel="onClose"
     @closed="onClosed"
     closeBtnText="关闭"
+    cancelText="关闭"
     class="mp-prod-erp-flowchart-manage-dialog-comp-wrap"
     :class="{'loading': localOrderFlowchart.loading || !opened, 'loaded': loaded}"
     >
@@ -39,20 +41,19 @@
 
 <script setup lang='ts'>
 import { computed, ref } from 'vue';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { ReportModeEnum } from '@/views/productionSetting/process/enums';
-import LineFlowchartComp from './LineFlowchartComp/LineFlowchartComp.vue';
-import { OrderFlowchartManageClass } from '../../js/OrderFlowchart/OrderFlowchartManageClass';
-import { FlowchartNodeStatusEnumList } from '../../js/OrderFlowchart/EnumList';
-import { IManageChunkInfo } from '../../../ManageChunkListPage/js/type';
-import { IManageOrderListItem } from '../../js/type';
-import { IManagePlateInfo, IPlateListChild } from '../../../ManagePlateListPage/js/type';
-import RowDetailComp from './RowDetailComp.vue';
+import { OrderFlowchartManageClass } from './comps/OrderFlowchartManageClass';
+import { FlowchartNodeStatusEnumList } from './js/EnumList';
+import LineFlowchartComp from './comps/LineFlowchartComp/LineFlowchartComp.vue';
+import RowDetailComp from './comps/RowDetailComp.vue';
+import {
+  DialogContainerComp, ReportModeEnum, INodePicManageChunkInfo, INodePicManageOrderListItem, INodePicManagePlateInfo, INodePicPlateListChild,
+} from './_difference'; // 弹窗组件
 
 const props = defineProps<{
   visible: boolean
-  item: IManageChunkInfo | IManageOrderListItem | IManagePlateInfo | IPlateListChild | null
+  item: INodePicManageChunkInfo | INodePicManageOrderListItem | INodePicManagePlateInfo | INodePicPlateListChild | null
   targetType: ReportModeEnum
+  targetID?: number | string
 }>();
 
 const emit = defineEmits(['update:visible']);
@@ -75,8 +76,9 @@ const loaded = ref(false);
 const opened = ref(false);
 
 const onOpen = async () => {
-  if (!props.item) return;
-  const id = props.item.ID;
+  const id = props.targetID || props.item?.ID;
+  if (!id) return;
+
   await localOrderFlowchart.value.getProcessListAndGenerateData(id, props.targetType, oWrapRef.value);
 
   loaded.value = true;
@@ -104,10 +106,18 @@ const onClosed = () => {
   display: table;
   width: auto;
   margin-bottom: 25px;
+
+  &.mpzj-sell-lib-comps-dialog-comp-wrap {
+    width: 100%;
+    margin-bottom: 0;
+    display: block;
+
+    .el-dialog {
+      display: table;
+      width: auto !important;
+    }
+  }
   .el-dialog__body {
-    // overflow: auto;
-    // max-width: 1450px;
-    // max-height: 550px;
     min-width: 535px;
     min-height: 220px;
     padding: 14px 28px 10px 24px;
@@ -116,9 +126,6 @@ const onClosed = () => {
       justify-content: center;
       min-height: 145px;
       position: relative;
-      // overflow: auto;
-      // max-width: 80vw;
-      // max-height: 56vh;
 
       > .left {
         z-index: 9;
@@ -159,12 +166,14 @@ const onClosed = () => {
     .legend {
       display: flex;
       justify-content: center;
+      align-items: center;
       margin-top: 50px;
       > span {
         margin-right: 15px;
       }
       > div.item {
         display: flex;
+        align-items: center;
         > div {
           width: 35px;
           height: 22px;
@@ -190,16 +199,6 @@ const onClosed = () => {
   &.loading {
     pointer-events: none;
     opacity: 0;
-    // .el-dialog__footer {
-    //   display: none;
-    // }
-    // .el-dialog__body {
-    //   min-height: 150px;
-    //   min-width: 360px;
-    //   .close {
-    //     display: none;
-    //   }
-    // }
     transform: translateY(-20px);
   }
   &.loaded {
