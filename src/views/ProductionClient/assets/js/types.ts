@@ -92,6 +92,7 @@ export interface ITaskPlateInfo {
   /** 大版是否可重新生产 */
   Redoable: boolean
   MapFilePath: string
+  Index: string
 }
 
 /** 任务中工序上的块信息类型 */

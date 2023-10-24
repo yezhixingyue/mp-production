@@ -114,8 +114,8 @@ const widthList = ref([
   { width: 160 },
   { width: 120 },
   { width: 110 },
-  { width: 140 },
-  { width: 120 },
+  { width: 135 },
+  { width: 100 },
   { width: 230 },
 ]);
 
@@ -133,7 +133,7 @@ const localList = computed(() => props.list.map(it => ({
   ...it,
   /** 销售端产品 */
   _SellSideProductName: getSellSideProductName(it),
-  _Count: `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${it.Unit}`,
+  _Count: [`${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${it.Unit}`, it.KindCount ? `${it.KindCount}款` : ''].filter(it => it).join(' '),
   _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
   _ProduceEndTime: format2MiddleLangTypeDateFunc2(it.WishFinishTime),
   _isSpread: spreadList.value.includes(it.ID),

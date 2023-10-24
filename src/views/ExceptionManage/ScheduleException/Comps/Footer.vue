@@ -12,6 +12,7 @@
 <script setup lang='ts'>
 import { computed } from 'vue';
 import MpPagination from '@/components/common/MpPagination.vue';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ManageListClass } from '../js/ManageListClass';
 
 const props = defineProps<{
@@ -19,7 +20,9 @@ const props = defineProps<{
 }>();
 
 const onclick = () => {
-  props.ManageListData.setRowsHaveDeal(props.ManageListData.selectList);
+  MpMessage.warn('确定批量标记为已处理吗 ?', `共选中 ${props.ManageListData.selectList.length} 个订单`, () => {
+    props.ManageListData.setRowsHaveDeal(props.ManageListData.selectList);
+  });
 };
 
 const status = computed(() => {

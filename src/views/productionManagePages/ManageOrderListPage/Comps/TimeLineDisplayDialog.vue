@@ -22,7 +22,7 @@
 
       <!-- 时间线展示列表 -->
       <ul v-else class="list">
-        <li v-for="(node, i) in lineData" :key="i" class="item" :class="{active: node.ShowFocus}">
+        <li v-for="(node, i) in lineData" :key="i" class="item" :class="{active: node.ShowFocus, complete: !node.ShowFocus && node._IsBegin}">
           <div class="left">
             <div class="f">
               <span v-if="node.Operator">{{ node.Operator }}</span>
@@ -200,6 +200,14 @@ const onOpen = () => {
         }
       }
 
+      &.complete {
+        .right {
+          :deep(.el-progress-bar__inner) {
+            background: linear-gradient(to right, rgba(#35dff9, 0.6), rgba(#63f9d5, 0.6));
+          }
+        }
+      }
+
       &.active {
         color: #444;
         .center {
@@ -214,7 +222,7 @@ const onOpen = () => {
         }
         .right {
           :deep(.el-progress-bar__inner) {
-            background: linear-gradient(90deg, #80E6F5 0%, #96F2E3 100%);
+            background: linear-gradient(to right, #26bcf9, #35dff9);
           }
         }
       }
