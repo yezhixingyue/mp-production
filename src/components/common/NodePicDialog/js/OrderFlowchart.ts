@@ -1,4 +1,4 @@
-import { MpMessage } from '@/assets/js/utils/MpMessage';
+/* eslint-disable no-alert */
 import { IOrderFlowchartDiaplayNode, IOrderFlowchartNode } from './types';
 import { getArrowWidthRotate, getIsOrNotTheEndNode, getIsOrNotTheStartNode } from './utils';
 
@@ -54,13 +54,13 @@ export class OrderFlowchart {
     this.StartNodes = list.filter(it => getIsOrNotTheStartNode(it, list));
 
     if (this.StartNodes.length === 0) {
-      MpMessage.error({ title: '渲染出错', msg: '未找到流程开始节点' });
+      alert('渲染出错, 未找到流程开始节点');
       return;
     }
 
     const _EndNodeList = list.filter(it => getIsOrNotTheEndNode(it, list));
     if (_EndNodeList.length === 0) {
-      MpMessage.error({ title: '渲染出错', msg: '未找到流程结束节点' });
+      alert('渲染出错, 未找到流程结束节点');
       return;
     }
 
@@ -239,8 +239,8 @@ export class OrderFlowchart {
         }
       }
 
-      unrestList.forEach((n, i) => {
-        const top = i === 0 ? this.TotalHeight - 50 + TopBottomSpacing : pipeList[pipeList.length - 1]._Coordinate.top + NodeHeight + TopBottomSpacing;
+      unrestList.forEach((n, _i) => {
+        const top = _i === 0 ? this.TotalHeight - 50 + TopBottomSpacing : pipeList[pipeList.length - 1]._Coordinate.top + NodeHeight + TopBottomSpacing;
         pipeList.push(createDisplayItem(n, left, top, rowIndex));
         if (top + NodeHeight + 50 > this.TotalHeight) this.TotalHeight = top + NodeHeight + 50;
       });

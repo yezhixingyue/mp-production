@@ -1,8 +1,7 @@
-import api from '@/api';
-import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { nextTick } from 'vue';
-import { OrderFlowchart } from './OrderFlowchart';
-import { IOrderFlowchartNode } from './types';
+import { OrderFlowchart } from '../js/OrderFlowchart';
+import { IOrderFlowchartNode } from '../js/types';
+import { ReportModeEnum, getProcessListApi } from '../_difference';
 
 /**
  * 流程图数据 - 内部处理半成品列表（大版、块）和组合工序列表
@@ -21,7 +20,7 @@ export class OrderFlowchartManageClass {
 
   _originalList: IOrderFlowchartNode[] = []
 
-  public async getProcessListAndGenerateData(targetID: string, targetType: ReportModeEnum, oWrap: HTMLElement | undefined) {
+  public async getProcessListAndGenerateData(targetID: string | number, targetType: ReportModeEnum, oWrap: HTMLElement | undefined) {
     if (!targetID) return;
 
     this.LineFlowchartList = [];
@@ -30,11 +29,11 @@ export class OrderFlowchartManageClass {
 
     this.loading = true;
 
-    const resp = await api.productionManageApis.getProcessList(targetID, targetType).catch(() => null);
+    const resp = await getProcessListApi(targetID, targetType).catch(() => null);
 
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data.Status === 1000) {
       // resp.data.Data 对数据进行处理 根据SemiFinish字段： 如果为null则是组合工序流程，否则为单生产线、大版、块，还需要继续进行筛选组合成具体实例列表
       const _lineChartsList:IOrderFlowchartNode[][] = [];
       const _unionCharts: IOrderFlowchartNode[] = [];
@@ -81,7 +80,7 @@ export class OrderFlowchartManageClass {
               if (!start) return;
               const targets = node._OutsideNextNodeIds
                 .map(id => oRight.querySelector(`.mp-line-flow-chart-item-comp-wrap[data-taskworkingid="${id}"]`))
-                .filter(it => it);
+                .filter(el => el);
 
               targets.forEach(target => {
                 if (!target) return;

@@ -4,8 +4,8 @@
 
 <script setup lang='ts'>
 import { computed } from 'vue';
-import { PanelPadding } from '../../../js/OrderFlowchart/OrderFlowchart';
-import { IOrderFlowchartDiaplayNode } from '../../../js/OrderFlowchart/types';
+import { PanelPadding } from '../../js/OrderFlowchart';
+import { IOrderFlowchartDiaplayNode } from '../../js/types';
 
 const props = defineProps<{
   arrow: IOrderFlowchartDiaplayNode['_ArrowList'][number],

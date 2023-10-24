@@ -1,7 +1,6 @@
 // import { IUser } from '@/store/modules/user/types';
-import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
-import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { FlowchartNodeStatusEnum } from './enum';
+import { INodePicBaseProperty, INodePicEquipmentBaseInfo } from '../_difference';
 
 /**
  * 订单流程图中的一个工序节点的接口类型
@@ -23,10 +22,10 @@ export interface IOrderFlowchartNode {
   // EquipmentName: string | null
 
   /** 设备信息 */
-  Equipment?: IEquipmentBaseInfo
+  Equipment?: INodePicEquipmentBaseInfo
 
   /** 半成品 */
-  SemiFinished?: IBaseProperty<string>
+  SemiFinished?: INodePicBaseProperty<string>
 
   /** 节点（工序）状态 */
   Status: FlowchartNodeStatusEnum
