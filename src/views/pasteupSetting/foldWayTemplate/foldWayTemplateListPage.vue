@@ -12,10 +12,10 @@
           :value='RadioGroupCompValue'
           @change="RadioGroupCompChange"
           ></RadioGroupComp>
-        <mp-button type="primary" link @click="ManagementClass">管理分类</mp-button>
+        <mp-button type="primary" v-if="localPermission?.ManageCatergry" link @click="ManagementClass">管理分类</mp-button>
       </div>
       <div class="header-top">
-        <mp-button type="primary" @click="TofoldWayTemplate">+ 添加折手模板</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" @click="TofoldWayTemplate">+ 添加折手模板</mp-button>
       </div>
     </header>
     <main>
@@ -51,10 +51,10 @@
             <mp-button type="primary" link @click="setApplyEquipment(scope.row)">
               <!-- <i class="iconfont icon-bianji"></i> -->
               适用设备</mp-button>
-            <mp-button type="primary" link @click="TofoldWayTemplate(scope.row)">
+            <mp-button type="primary" v-if="localPermission?.Setup" link @click="TofoldWayTemplate(scope.row)">
               <!-- <i class="iconfont icon-bianji"></i> -->
               编辑</mp-button>
-            <mp-button type="danger" link
+            <mp-button type="danger" v-if="localPermission?.Setup" link
               @click="delFoldWayTemplate(scope.row)">
               <!-- <i class="iconfont icon-delete"></i> -->
               删除</mp-button>
@@ -97,6 +97,7 @@ import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
+import { useUserStore } from '@/store/modules/user';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { FoldWayTemplateType } from './type';
 
@@ -124,6 +125,11 @@ interface DataType {
   FoldWayTemplateList:FoldWayTemplateType[]
   DataTotal:number
 }
+
+const userStore = useUserStore();
+const { user } = userStore;
+const localPermission = computed(() => user?.PermissionList?.PermissionManageFolding?.Obj);
+
 const router = useRouter();
 const PasteupSettingStore = usePasteupSettingStore();
 const Data:DataType = reactive({

@@ -3,8 +3,8 @@
     <header>
       <div class="header-top">
         <el-tabs type="border-card" v-model="Data.getRecordData.LogType" @tab-change="LogTypeChange">
-          <el-tab-pane label="入库记录" :name="1"></el-tab-pane>
-          <el-tab-pane label="出库记录" :name="2"></el-tab-pane>
+          <el-tab-pane v-if="localPermission?.Intored" label="入库记录" :name="1"></el-tab-pane>
+          <el-tab-pane v-if="localPermission?.OutStored" label="出库记录" :name="2"></el-tab-pane>
         </el-tabs>
         <!-- <el-radio-group v-model="Data.getRecordData.LogType"
         @change="LogTypeChange">
@@ -301,6 +301,7 @@ import api from '@/api';
 import ClassType from '@/store/modules/formattingTime/CommonClassType';
 import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
+import { useUserStore } from '@/store/modules/user';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -407,6 +408,10 @@ export default {
     LineDateSelectorComp,
   },
   setup() {
+    const userStore = useUserStore();
+    const { user } = userStore;
+    const localPermission = computed(() => user?.PermissionList?.PermissionInOutStored?.Obj);
+
     const CommonStore = useCommonStore();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     // 入库类型
@@ -635,9 +640,9 @@ export default {
     });
 
     return {
+      localPermission,
       setCondition4DataList,
       UserDefinedTimeIsActive,
-
       Data,
       getHandleType,
       twoSelecValue,

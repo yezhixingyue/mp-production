@@ -2,7 +2,7 @@
   <div class="material-supplier-manage-page">
     <header>
       <div class="header-top">
-        <mp-button type="primary" @click="addMaterialSupplier">+ 添加供应商</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" @click="addMaterialSupplier">+ 添加供应商</mp-button>
         <SearchInputComp
           :word='Data.getMaterialSupplierData.KeyWords'
           title="关键词搜索"
@@ -47,9 +47,9 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope:any">
-              <mp-button type="info" link @click="editMaterialSupplier(scope.row)">
+              <mp-button v-if="localPermission?.Setup" type="info" link @click="editMaterialSupplier(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
-              <mp-button type="info" link
+              <mp-button v-if="localPermission?.Setup" type="info" link
                 @click="delMaterialSupplier(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
@@ -149,6 +149,7 @@ import TowLevelSelect from '@/components/common/SelectComps/TowLevelSelect.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { useUserStore } from '@/store/modules/user';
 
 interface MaterialSupplierFormType {
   SupplierID: string,
@@ -197,6 +198,10 @@ export default {
     DialogContainerComp,
   },
   setup() {
+    const userStore = useUserStore();
+    const { user } = userStore;
+    const localPermission = computed(() => user?.PermissionList?.PermissionSupplier?.Obj);
+
     const commonStore = useCommonStore();
     const { DistrictTreeList } = storeToRefs(commonStore);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
@@ -380,6 +385,7 @@ export default {
       });
     });
     return {
+      localPermission,
       ProvinceList,
       CityList,
       Data,

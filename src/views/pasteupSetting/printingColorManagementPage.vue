@@ -2,7 +2,7 @@
   <div class="printing-color-management-page">
     <header>
       <div class="header-top">
-        <mp-button type="primary" @click="addPrintingColor">+ 添加印色</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" @click="addPrintingColor">+ 添加印色</mp-button>
       </div>
     </header>
     <main>
@@ -19,7 +19,7 @@
         </el-table-column>
         <el-table-column
         show-overflow-tooltip prop="ShowColor" label="显示颜色" min-width="158" />
-        <el-table-column prop="name" label="操作" min-width="240">
+        <el-table-column prop="name" label="操作" min-width="240" v-if="localPermission?.Setup">
           <template #default="scope:any">
             <template v-if="scope.row.IsSpecialColor && scope.row.ID !== '00000000-0000-0000-0000-000000000000'">
               <mp-button type="info" link @click="editPrintColor(scope.row)">
@@ -66,12 +66,13 @@
 
 <script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
 
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { useUserStore } from '@/store/modules/user';
 
 interface addPrintingColorShowFromType {
 IsSpecialColor:boolean,
@@ -109,6 +110,11 @@ const getPrintColorList = () => {
     }
   });
 };
+
+const userStore = useUserStore();
+const { user } = userStore;
+const localPermission = computed(() => user?.PermissionList?.PermissionManageColor?.Obj);
+
 const addColorCloseClick = () => {
   Data.addPrintingColorShow = false;
 };

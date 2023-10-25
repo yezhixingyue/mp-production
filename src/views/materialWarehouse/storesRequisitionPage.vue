@@ -107,7 +107,7 @@
         <el-table-column
         show-overflow-tooltip prop="CreateTime" label="操作" min-width="102">
           <template #default="scope:any">
-            <mp-button type="primary" :disabled="!scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
+            <mp-button v-if="localPermission?.Setup" type="primary" :disabled="!scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
             <!-- <el-button :disabled="scope.row.Status" type="primary" link @click="toOut(scope.row)">出库</el-button> -->
           </template>
         </el-table-column>
@@ -131,39 +131,38 @@ import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue
 import MpPagination from '@/components/common/MpPagination.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
-  reactive, onMounted, computed, ComputedRef,
+  onMounted, computed, ComputedRef,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useStoresRequisition } from '@/store/modules/storesRequisition';
-import api from '@/api';
-import ClassType from '@/store/modules/formattingTime/CommonClassType';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
-import type { IMaterial, IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
+// import type { IMaterial, IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
+import { useUserStore } from '@/store/modules/user';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
   level2Val:null|string|number,
 }
 
-interface IgetListData {
-  DateType:string
-  Material: IMaterial,
-  CreateTime: {
-    First: string,
-    Second: string,
-  },
-  Status:number | string,
-  Page:number,
-  KeyWords: string,
-  PageSize:number,
-}
+// interface IgetListData {
+//   DateType:string
+//   Material: IMaterial,
+//   CreateTime: {
+//     First: string,
+//     Second: string,
+//   },
+//   Status:number | string,
+//   Page:number,
+//   KeyWords: string,
+//   PageSize:number,
+// }
 
-interface DataType {
-  DataTotal: number,
-  List:IList[],
-  getListData: IgetListData,
-}
+// interface DataType {
+//   DataTotal: number,
+//   List:IList[],
+//   getListData: IgetListData,
+// }
 
 export default {
   name: 'storesRequisitionPage',
@@ -174,6 +173,9 @@ export default {
     LineDateSelectorComp,
   },
   setup() {
+    const userStore = useUserStore();
+    const { user } = userStore;
+    const localPermission = computed(() => user?.PermissionList?.PermissionRequisition?.Obj);
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const storesRequisition = useStoresRequisition();
@@ -259,6 +261,7 @@ export default {
     });
 
     return {
+      localPermission,
       storesRequisition,
       StatesValue,
       StatesChange,

@@ -3,8 +3,8 @@
     <header>
       <div class="header-top">
         <div class="btns">
-          <mp-button @click="ToOutDelivery" type="primary">出库</mp-button>
-          <mp-button @click="ToInDelivery" type="danger">入库</mp-button>
+          <mp-button v-if="localPermission?.Operate" @click="ToOutDelivery" type="primary">出库</mp-button>
+          <mp-button v-if="localPermission?.Operate" @click="ToInDelivery" type="danger">入库</mp-button>
           <mp-button link type="primary" @click="ToStockWarnPage">
             <i class="iconfont icon-zengsongjilu"></i> 预警记录</mp-button>
           <mp-button link type="primary" @click="ToInventoryPage">
@@ -109,7 +109,7 @@
           <el-table-column label="预警状态" min-width="196">
             <template #default="scope:any">
               <span style="padding:0 5px;color:#FF3769" v-if="scope.row.IsWarn">预警中</span>
-              <mp-button v-if="scope.row.IsOpenWarn" type="primary"
+              <mp-button v-if="scope.row.IsOpenWarn" v-show="localPermission?.Operate" type="primary"
               style="margin-left:10px"
               link @click="CancelSMSWarnClick(scope.row)">解除短信预警</mp-button>
             </template>
@@ -118,7 +118,7 @@
           show-overflow-tooltip prop="物料" label="操作" min-width="138">
             <template #default="scope:any">
               <mp-button
-              type="primary"
+              type="primary" v-if="localPermission?.Operate"
               link @click="SetSMSWarnClick(scope.row)">
               <i class="iconfont icon-xiangmuyujingshezhi" style="font-size:16px"></i>
               设置预警</mp-button>
@@ -317,6 +317,7 @@ import { useRouter } from 'vue-router';
 import { MaterialAttributesType } from '@/assets/Types/common';
 import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 import messageBox from '@/assets/js/utils/message';
+import { useUserStore } from '@/store/modules/user';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -410,6 +411,10 @@ export default {
     SeeImageDialogComp,
   },
   setup() {
+    const userStore = useUserStore();
+    const { user } = userStore;
+    const localPermission = computed(() => user?.PermissionList?.PermissionStorage?.Obj);
+
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -628,7 +633,7 @@ export default {
 
     return {
       seeSMSShow,
-
+      localPermission,
       Data,
       SeeImg,
       getStorehouseInNumber,
