@@ -1,14 +1,16 @@
 <template>
   <section class="subcontractor-manage-page-wrap">
-    <Header :condition="condition" :setKeywords="setKeywords" :clearCondition="clearCondition" :getList="getList" :list="DataList" @add="onItemSetupClick" />
-    <Main :list="DataList" :DistrictTreeList="DistrictTreeList" :EquipmentClassList="EquipmentClassList" @edit="onItemSetupClick" @remove="onRemoveClick" />
+    <Header :localPermission="localPermission" :condition="condition" :setKeywords="setKeywords"
+     :clearCondition="clearCondition" :getList="getList" :list="DataList" @add="onItemSetupClick" />
+    <Main :localPermission="localPermission" :list="DataList" :DistrictTreeList="DistrictTreeList"
+     :EquipmentClassList="EquipmentClassList" @edit="onItemSetupClick" @remove="onRemoveClick" />
     <Footer :condition="condition" :total="DataNumber" :getList="getList" />
     <Dialog v-model:visible="visible" :item="curEditItem" :EquipmentClassList="EquipmentClassList" @submit="handleItemSetupSubmit" />
   </section>
 </template>
 
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Header from '@/components/productionResources/subcontractor/subcontractorHeader.vue';
 import Main from '@/components/productionResources/subcontractor/subcontractorMain.vue';
 import Footer from '@/components/productionResources/subcontractor/subcontractorFooter.vue';
@@ -18,9 +20,13 @@ import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { storeToRefs } from 'pinia';
 import { useCommonStore } from '@/store/modules/common/index';
+import { useUserStore } from '@/store/modules/user';
 import { ISubcontractorFactoryListItemType, SubcontractorFactory } from './TypeClass/SubcontractorFactory';
 import { SubcontractorListCondition as Condition } from './TypeClass/SubcontractorListCondition';
 import { EquipmentClassificationListItem } from '../equipmentClassification/types';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageExternalFactory.Obj);
 
 const commonStore = useCommonStore();
 const { DistrictTreeList } = storeToRefs(commonStore);

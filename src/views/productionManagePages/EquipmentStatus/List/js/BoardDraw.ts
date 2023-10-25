@@ -1,6 +1,8 @@
 import { getLimitWords, getWordsWidth } from '@/assets/js/utils/getLimitWords';
 // import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { router } from '@/router';
+import { useUserStore } from '@/store/modules/user';
+import { IUser } from '@/store/modules/user/types';
 import { EquipmentStatusEnumList, EquipmentTaskStatusEnumList } from './EnumList';
 import { EquipmentStatusForBoardEnum } from './enums';
 import { IHoverTarget, ILocalEquipmentStatusItem, IPopupDataItemData } from './types';
@@ -168,9 +170,18 @@ export class BoardDraw {
     this.ctx.closePath();
   }
 
+  private _user: null | IUser = null
+
   /** 渲染任务详情按钮 */
   private _renderDetailBtn(disabled: boolean, x: number, y: number, isHover = false) {
     if (!this.ctx) return;
+
+    if (!this._user) {
+      const userStore = useUserStore();
+      this._user = userStore.user || null;
+    }
+
+    if (!this._user?.PermissionList.PermissionEquipmentStatus.Obj.QueryTask) return;
 
     this.ctx.beginPath();
 

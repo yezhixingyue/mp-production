@@ -10,7 +10,7 @@
       <mp-table-column label="适用于设备分类" min-width="240px">
         <template #default="scope:any">{{formatEquipments(scope.row)}}</template>
       </mp-table-column>
-      <mp-table-column width="260px" label="操作">
+      <mp-table-column width="260px" label="操作" v-if="localPermission?.Setup">
         <template #default="scope:any">
           <mp-button type="info" link @click="onEditClick(scope.row)">
             <i class="iconfont icon-bianji"></i>编辑
@@ -27,6 +27,7 @@
 <script setup lang='ts'>
 import MpButton from '@/components/common/MpButton.vue';
 import { IDistrictTreeListItemType } from '@/store/modules/common/types';
+import { IUser } from '@/store/modules/user/types';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 
@@ -34,6 +35,7 @@ const props = defineProps<{
   list: ISubcontractorFactoryListItemType[],
   DistrictTreeList: IDistrictTreeListItemType[],
   EquipmentClassList: EquipmentClassificationListItem[],
+  localPermission?: IUser['PermissionList']['PermissionManageExternalFactory']['Obj']
 }>();
 
 const emit = defineEmits(['edit', 'remove']);

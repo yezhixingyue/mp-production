@@ -6,12 +6,12 @@
         <span class="label">当前密码:</span>
         <span class="content" >{{ loading ? '获取中' :  oldPwd || '' }}</span>
       </div>
-      <div>
+      <div v-if="localPermission?.Setup">
         <span class="label">新密码:</span>
         <el-input v-model.trim="newPwd" autocomplete="none" type="new-password" show-password maxlength="16" show-word-limit></el-input>
       </div>
     </main>
-    <footer>
+    <footer v-if="localPermission?.Setup">
       <mp-button type="primary" class="gradient" @click="submit">保存</mp-button>
     </footer>
   </section>
@@ -20,7 +20,11 @@
 <script setup lang='ts'>
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { onMounted, ref } from 'vue';
+import { useUserStore } from '@/store/modules/user';
+import { onMounted, ref, computed } from 'vue';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionPassword.Obj);
 
 const oldPwd = ref('');
 

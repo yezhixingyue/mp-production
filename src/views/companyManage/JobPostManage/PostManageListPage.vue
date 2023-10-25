@@ -10,7 +10,8 @@
       <ul ref="oScrollBox">
         <li v-for="(it, i) in JobPostManagePageData.list" :key="it.PositionID || it.key">
           <el-input :modelValue="it.PositionName" @input="e => onInput(e, i)" placeholder="" maxlength="10" />
-          <span class="is-blue-span ft-13 mr-25" @click="onPermissionSetupClick(it)" :class="{disabled: !it.PositionID}">权限设置</span>
+          <span v-if="localPermission?.SetupPermission" class="is-blue-span ft-13 mr-25" @click="onPermissionSetupClick(it)"
+           :class="{disabled: !it.PositionID}">权限设置</span>
           <RemoveMenu @click='onRemoveClick(it, i)' />
           <AddMenu title="添加一行" @click="onAddClick" />
         </li>
@@ -35,9 +36,13 @@ import AddMenu from '@/components/common/menus/AddMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import { useCompanyStore } from '@/store/modules/companyManage';
 import { storeToRefs } from 'pinia';
-import { nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
+import { useUserStore } from '@/store/modules/user';
 import { useRouter } from 'vue-router';
 import { IJobPost } from './js/types';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageJob.Obj);
 
 const router = useRouter();
 

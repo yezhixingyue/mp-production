@@ -7,14 +7,14 @@
           {{actionLine?.Name || ''}}
         </span>
         <!-- <span class="fold-the-hand" v-show="actionLine && actionLine.NeedFoldWay">需要折手</span> -->
-        <span class="btn">
+        <span class="btn" v-if="localPermission?.Setup">
           <EditMenu @click="editLine">编辑</EditMenu>
           <RemoveMenu @click="delLine">删除</RemoveMenu>
         </span>
       </p>
-      <mp-button type="primary" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
+      <mp-button type="primary" v-if="localPermission?.Setup" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
       <!-- 生产线： -->
-      <p class="set-slit" v-if="!isCombine">
+      <p class="set-slit" v-if="!isCombine && localPermission?.Setup">
         <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-14"></i>设置分切工序</mp-button>
       </p>
       <p class="templates" v-if="!isCombine && ProductionLineData">
@@ -33,7 +33,8 @@
       <p class="status">
         当前状态：<span :class="ProductionLineData?.Status === LineStatusEnum.usable ? 'is-success' : 'is-pink'"
         >{{ProductionLineData?.Status === LineStatusEnum.usable ? '可用' : '不可用'}}</span>
-        <mp-button type="primary" link @click="lineOpen" v-show="ProductionLineData && ProductionLineData?.Status !== LineStatusEnum.usable">
+        <mp-button type="primary" link @click="lineOpen" v-if="localPermission?.Setup"
+         v-show="ProductionLineData && ProductionLineData?.Status !== LineStatusEnum.usable">
           <el-icon class="mr-5" style="transform: rotate(90deg)"><Operation /></el-icon>
           设为可用
         </mp-button>
@@ -57,9 +58,9 @@
             <span v-for="it in ProductionLineList" :key="it.ID" :class="{active:it.ID===Data.getPocessFrom.LineID}" @click="onMenuClick(it)">{{it.Name}}</span>
             <em v-if="ProductionLineList.length === 0" class="is-pink ft-12"><el-icon class="ft-14"><WarningFilled /></el-icon> 暂无生产线!</em>
           </div> -->
-          <mp-button type="primary" link @click="AddLine">+添加生产线</mp-button>
+          <mp-button type="primary" link @click="AddLine" v-if="localPermission?.Setup">+添加生产线</mp-button>
           <!-- 组合生产线显示内容： -->
-          <template v-if="isCombine && ProductionLineList.length > 0">
+          <template v-if="isCombine && ProductionLineList.length > 0 && localPermission?.Setup">
             <mp-button type="primary" link @click="editLine">编辑当前生产线 </mp-button>
             <mp-button type="danger" link @click="delLine">删除当前生产线</mp-button>
           </template>
@@ -83,6 +84,7 @@
               :key="(it.WorkID + i)"
               :item="it"
               :type="type"
+              :localPermission="localPermission"
               :_summaryWorkList="_summaryWorkList"
               @setPlateMakingWork="setPlateMakingWork"
               @ToEquipment="ToEquipment"
@@ -243,6 +245,7 @@ import { FetchWorkingProcedureSearchEnum } from '@/views/productionSetting/js/en
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { LineStatusEnum, LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
+import { useUserStore } from '@/store/modules/user';
 import { getSourceWork } from '../js/utils';
 import PlateMakingWorkSetupDialog from './Comps/PlateMakingWorkSetupDialog.vue';
 import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
@@ -260,6 +263,11 @@ const props = withDefaults(defineProps<{
 });
 
 const isCombine = computed(() => props.type === 'combine');
+
+const userStore = useUserStore();
+const localPermission = computed(() => (isCombine.value
+  ? userStore.user?.PermissionList.PermissionManageUnionLine.Obj
+  : userStore.user?.PermissionList.PermissionManageNormalLine.Obj));
 
 const router = useRouter();
 interface getMaxDataType {

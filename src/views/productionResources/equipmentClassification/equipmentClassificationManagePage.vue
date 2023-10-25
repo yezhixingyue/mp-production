@@ -1,22 +1,26 @@
 <template>
   <section class="equipment-classification-page-containner">
-    <Header @add="onItemSetupClick" />
-    <Main :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick" />
+    <Header :localPermission="localPermission" @add="onItemSetupClick" v-if="localPermission?.Setup" />
+    <Main :localPermission="localPermission" :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick" />
     <Footer :total="DataNumber" />
     <Dialog v-model:visible="visible" :item="curEditItem" :list="DataList" @submit="handleItemSubmit"  />
   </section>
 </template>
 
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Header from '@/components/productionResources/equipmentClassification/equipmentClassificationManageHeader.vue';
 import Main from '@/components/productionResources/equipmentClassification/equipmentClassificationManageMain.vue';
 import Footer from '@/components/productionResources/equipmentClassification/equipmentClassificationManageFooter.vue';
 import Dialog from '@/components/productionResources/equipmentClassification/equipmentClassificationManageSetupDialog.vue';
 import api from '@/api';
+import { useUserStore } from '@/store/modules/user';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import type { EquipmentClassificationItemClassType } from './TypeClass/EquipmentClassificationItemClassType';
 import type { EquipmentClassificationListItem } from './types';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageEquipmentCatergry.Obj);
 
 const DataList = ref<EquipmentClassificationListItem[]>([]);
 const DataNumber = ref(0);

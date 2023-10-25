@@ -1,24 +1,29 @@
 <template>
   <section class="assist-page-containner">
-    <Header v-model="condition.Type" v-model:keywords="condition.KeyWords" :list="DataList" @change="getList" @add="onItemSetupClick" @clear="clearCondition" />
-    <Main :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick" />
+    <Header :localPermission="localPermission" v-model="condition.Type" v-model:keywords="condition.KeyWords" :list="DataList"
+     @change="getList" @add="onItemSetupClick" @clear="clearCondition" />
+    <Main :localPermission="localPermission" :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick" />
     <Footer :condition="condition" :total="DataNumber" :getList="getList" />
     <Dialog v-model:visible="visible" :item="curEditItem" :list="DataList" @submit="handleItemSubmit"  />
   </section>
 </template>
 
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Header from '@/components/productionResources/assistInfo/AssistInfoManageHeader.vue';
 import Main from '@/components/productionResources/assistInfo/AssistInfoManageMain.vue';
 import Footer from '@/components/productionResources/assistInfo/AssistInfoManageFooter.vue';
 import Dialog from '@/components/productionResources/assistInfo/AssistInfoManageSetupDialog.vue';
 import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
 import api from '@/api';
+import { useUserStore } from '@/store/modules/user';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistListConditionClass as Condition } from './TypeClass/assistListConditionClass';
 import type { AssistInfoItem } from './TypeClass/assistInfoItem';
 import type { IAssistListItem } from './types';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageAssist.Obj);
 
 const condition = ref(new Condition());
 const DataList = ref<IAssistListItem[]>([]);

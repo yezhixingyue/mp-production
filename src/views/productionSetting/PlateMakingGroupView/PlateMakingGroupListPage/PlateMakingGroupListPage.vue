@@ -4,6 +4,7 @@
       v-model="PlateMakingGroupManageData.WorkID"
       :WorkingList="PlateMakingGroupManageData.WorkingList"
       :loading="PlateMakingGroupManageData.loading"
+      :localPermission="localPermission"
       @add="onSaveClick(null)"
       />
     <Main
@@ -13,6 +14,7 @@
       :tabLoading="PlateMakingGroupManageData.loading"
       :MaterialSourcesData="PlateMakingGroupManageData.ManageListData.MaterialSourcesData"
       :ClassEquipmentGroups="PlateMakingGroupManageData.ManageListData.ClassEquipmentGroups"
+      :localPermission="localPermission"
       @edit="onSaveClick"
       @remove="onRemoveClick"
       @equipment="onEquipmentClick"
@@ -26,13 +28,17 @@
 <script setup lang='ts'>
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/modules/user';
 import Header from './comps/Header.vue';
 import Main from './comps/Main.vue';
 import Footer from './comps/Footer.vue';
 import Dialog from './comps/ItemChangeDialog.vue';
 import { IPlateMakingGroup } from '../js/types';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManagePlateMakeGroup.Obj);
 
 const router = useRouter();
 const ProductionSettingStore = useProductionSettingStore();

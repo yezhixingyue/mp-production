@@ -137,7 +137,7 @@ export interface IUser {
       HavePomission: boolean
       Obj: {
         Query: boolean
-        Setup: boolean
+        // Setup: boolean
       };
     };
     /** 外协管理 */
@@ -340,6 +340,7 @@ export interface IUser {
         Delete: boolean
         Dimission: boolean
         Check: boolean
+        ImpositionUnLock: boolean
       };
     };
     /** 部门管理 */

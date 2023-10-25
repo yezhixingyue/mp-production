@@ -32,7 +32,8 @@
             <td :style="`width:${widthList[9].width}px`" :title="row._ProduceEndTime">{{ row._ProduceEndTime || '' }}</td>
             <td :style="`width:${widthList[10].width}px`">
               <span class="top-text" v-show="row.IsTop" :class="{'v-hide': !row.IsTop}">已置顶</span>
-              <mp-button link type="primary" @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.TopShow"
+               @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
               <!-- <mp-button link type="primary" style="margin-left:8px"
                :disabled="row._isMakeuped"
                @click="onTestClick(row)" >_临时拼版</mp-button> -->
@@ -40,6 +41,8 @@
             <td :style="`width:${widthList[11].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
+              <!-- 取消功能待开发 -->
+              <mp-button v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle" link type="primary" @click="onTimeLineClick(row)">取消</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="!row._isCombineLine">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
@@ -87,6 +90,8 @@ import {
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
 import SetOrderTopDialog from './SetOrderTopDialog.vue';
 import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
 import { IManageOrderListItem } from '../js/type';
@@ -97,6 +102,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['top']);
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const getSellSideProductName = (it: IManageOrderListItem) => {
   const { FirstLevel, SecondLevel, ProductName } = it;

@@ -29,9 +29,10 @@
       <mp-table-column width="75px" prop="_Status" label="状态" />
       <mp-table-column width="100px" label="操作">
         <template #default="scope:any">
-          <mp-button type="primary" class="ft-12" v-if="scope.row.Status === ExternalMaterialStatusEnum.WaitingDelivery"
+          <mp-button type="primary" class="ft-12" v-if="localPermission?.Receive && scope.row.Status === ExternalMaterialStatusEnum.WaitingDelivery"
            link @click="onDeliveryClick(scope.row)">到货</mp-button>
-          <mp-button type="primary" class="ft-12" v-else link @click="onPrintClick(scope.row)">打印</mp-button>
+          <mp-button type="primary" class="ft-12" v-if="localPermission?.Print && scope.row.Status !== ExternalMaterialStatusEnum.WaitingDelivery"
+           link @click="onPrintClick(scope.row)">打印</mp-button>
         </template>
       </mp-table-column>
       <template #empty>
@@ -46,6 +47,7 @@
 
 <script setup lang='ts'>
 import { computed, ref } from 'vue';
+import { useUserStore } from '@/store/modules/user';
 import { IExternalMaterialDetail } from '../js/types';
 import { PlaceOrderMaterialSourceEnum } from '../../ManualOrderHandlerPage/js/enums';
 import DeliveryConfirmDialog from './DeliveryConfirmDialog.vue';
@@ -63,6 +65,9 @@ const props = defineProps<{
 const localList = computed(() => formatTableList(props.list));
 
 const ActiveItem = ref<null | ReturnType<typeof formatTableList>[number]>(null);
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionExternalMaterial.Obj);
 
 /** 确认到货相关 */
 const DeliveryVisible = ref(false);

@@ -1,10 +1,12 @@
 <template>
   <footer class="footer-wrap" :class="{await: pageType === 'await'}">
     <div class="ctrl" v-if="pageType === 'await'">
-      <div class="left">
-        <span>批量操作选中文件:</span>
-        <mp-button type="primary" :disabled="loadDisabled" :title="loadDisabledTitle" link @click="onBatchDownloadClick">批量下载已选工单文件</mp-button>
-        <mp-button type="primary" :disabled="confirmDisabled" :title="confirmDisabledTitle" link @click="onBatchConfirmClick">批量确认已选工单外协</mp-button>
+      <div class="left" >
+        <template v-if="localPermission?.WaitSetup">
+          <span>批量操作选中文件:</span>
+          <mp-button type="primary" :disabled="loadDisabled" :title="loadDisabledTitle" link @click="onBatchDownloadClick">批量下载已选工单文件</mp-button>
+          <mp-button type="primary" :disabled="confirmDisabled" :title="confirmDisabledTitle" link @click="onBatchConfirmClick">批量确认已选工单外协</mp-button>
+        </template>
       </div>
       <div class="right">
         <span>共检索出</span><i class="is-blue is-bold ml-2 mr-2"> {{ManageListData.listNumber}} </i><span>条记录</span>
@@ -20,6 +22,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpPagination from '@/components/common/MpPagination.vue';
 import { IExportExcelCondition, IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
 import { computed, ComputedRef } from 'vue';
+import { useUserStore } from '@/store/modules/user';
 import { ExternalTaskStatusEnum } from '../js/enum';
 import { ManageListClass } from '../js/ManageListClass';
 import { OutsourceManagePageType } from '../js/type';
@@ -30,6 +33,9 @@ const props = defineProps<{
   ManageListData: Required<ManageListClass>
   pageType: OutsourceManagePageType
 }>();
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageExternalTask.Obj);
 
 const getList = (page: number) => {
   props.ManageListData.getList(page);
@@ -106,7 +112,7 @@ const onBatchConfirmClick = () => { // 批量确认
 };
 
 const downloadExcelObj: ComputedRef<IExportExcelProps | undefined> = computed(() => { // 导出Excel
-  if (props.pageType === 'all') {
+  if (props.pageType === 'all' && localPermission.value?.Excel) {
     const condition = props.ManageListData.condition.filter() as IExportExcelCondition;
     const fileDate = {
       First: (condition.FinishTime as Condition['FinishTime']).First,

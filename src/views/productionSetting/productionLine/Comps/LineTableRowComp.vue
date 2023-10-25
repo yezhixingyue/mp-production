@@ -12,15 +12,15 @@
       <span class="operate" :class="type">
         <!-- <mp-button type="primary" class="ft-12" :class="{h: item._isSplit}" v-if="type==='normal'" link @click="setPlateMakingWork">设置制版工序</mp-button> -->
         <mp-button type="primary" class="ft-12" link :class="{h: item._isSplit}" @click="setPlateMakingWork" :disabled="!canSetPMWork"
-          :title="!canSetPMWork ? '物料来源中设置有版材才可设置制版工序' : ''">设置制版工序</mp-button>
-        <mp-button type="primary" class="ft-12" link @click="ToEquipment">选择设备/工厂</mp-button>
-        <mp-button type="primary" class="ft-12" link :class="{h: item._isSplit}"
+         v-if="localPermission?.Setup" :title="!canSetPMWork ? '物料来源中设置有版材才可设置制版工序' : ''">设置制版工序</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" class="ft-12" link @click="ToEquipment">选择设备/工厂</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" class="ft-12" link :class="{h: item._isSplit}"
         :disabled="!!(
           (!item.MaterialSources || item.MaterialSources.length===0)
           &&
           (item.PlateMakingGroupID||!item.PlateMakingMaterialSources||item.PlateMakingMaterialSources.length===0))"
           @click="ToMaterialSource">物料来源</mp-button>
-        <mp-button type="danger" class="ft-12" link @click="delLineWorking">删除</mp-button>
+        <mp-button type="danger" v-if="localPermission?.Setup" class="ft-12" link @click="delLineWorking">删除</mp-button>
       </span>
     </div>
     <!-- 物料来源 -->
@@ -62,6 +62,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
+import { IUser } from '@/store/modules/user/types';
 import { getSourceWork } from '../../js/utils';
 import { IWorkingProcedureSearch } from '../../PlateMakingGroupView/js/types';
 import { ILocalProductionLineWorkings } from '../js/types';
@@ -71,6 +72,7 @@ const props = defineProps<{
   item: ILocalProductionLineWorkings,
   type: 'combine' | 'normal'
   _summaryWorkList: IWorkingProcedureSearch[]
+  localPermission: IUser['PermissionList']['PermissionManageUnionLine']['Obj'] | IUser['PermissionList']['PermissionManageNormalLine']['Obj'] | undefined
 }>();
 
 const emit = defineEmits(['setPlateMakingWork', 'ToEquipment', 'ToMaterialSource', 'delLineWorking', 'onSplitWorkingRemove']);

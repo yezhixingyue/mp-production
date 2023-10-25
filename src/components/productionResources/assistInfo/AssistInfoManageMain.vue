@@ -7,7 +7,7 @@
           {{formatType(scope.row.Type)}}
         </template>
       </mp-table-column>
-      <mp-table-column align="center" width="185px" label="操作">
+      <mp-table-column align="center" width="185px" label="操作" v-if="localPermission?.Setup">
         <template #default="scope:any">
           <mp-button type="info" link @click="onEditClick(scope.row)">
             <i class="iconfont icon-bianji"></i>编辑
@@ -25,9 +25,11 @@
 import type { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { IUser } from '@/store/modules/user/types';
 
 const props = defineProps<{
   list: IAssistListItem[],
+  localPermission?: IUser['PermissionList']['PermissionManageAssist']['Obj']
 }>();
 
 const emit = defineEmits(['edit', 'remove']);

@@ -33,11 +33,13 @@
       <mp-table-column width="400px" label="操作">
         <template #default="scope:any">
           <!-- <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.gripper)">叼口设置</mp-button> -->
-          <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.material)">物料限制</mp-button>
-          <mp-button type="primary" class="mr-35" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.color)">印色数量限制</mp-button>
+          <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.material)"
+           v-if='localPermission?.MaterialTypeLimit'>物料限制</mp-button>
+          <mp-button type="primary" class="mr-35" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.color)"
+           v-if='localPermission?.ColorLimit'>印色数量限制</mp-button>
           <!-- <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)">编辑</mp-button> -->
-          <EditMenu style="margin-right:25px" @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)" />
-          <RemoveMenu style="margin-right:25px" @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.remove)" />
+          <EditMenu style="margin-right:25px" @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.edit)" v-if='localPermission?.Setup' />
+          <RemoveMenu style="margin-right:25px" @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.remove)" v-if='localPermission?.Setup' />
           <!-- <mp-button type="danger" link @click="onMenuClick(scope.row, EquipmentGroupMenuEnumType.remove)">删除</mp-button> -->
         </template>
       </mp-table-column>
@@ -55,11 +57,13 @@ import { getMaterialConstraintsListWithNames } from '@/store/modules/resource/ut
 import { IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
 import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
+import { IUser } from '@/store/modules/user/types';
 // import { GripperTypeEnumList, GripperTypeEnum } from '@/store/modules/resource/EquipmentGroupTypeClass/GripperSetupClass';
 
 const props = defineProps<{
   EquipmentGroupData: Required<EquipmentGroupTypeClass>
   MaterialTypeGroup: IMaterialTypeGroupItemType[]
+  localPermission?: IUser['PermissionList']['PermissionManageEquipmentGroup']['Obj']
 }>();
 
 const emit = defineEmits(['menuClick']);

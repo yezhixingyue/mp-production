@@ -1,6 +1,6 @@
 <template>
   <el-table :data="TaskList" border stripe class="table-wrap" ref="oTableRef" @selection-change="onSelectionChange">
-    <mp-table-column type="selection" width="70" label-class-name="check-title" class-name='check' v-if="pageType==='await'" />
+    <mp-table-column type="selection" width="70" label-class-name="check-title" class-name='check' v-if="pageType==='await' && localPermission?.WaitSetup" />
     <mp-table-column width="110px" prop="Code" label="任务ID" />
     <mp-table-column width="160px" prop="_TargetID" label="关联ID" />
     <mp-table-column v-if="pageType !== 'undelivered'" width="170px" prop="_WorkingName" label="工序" />
@@ -9,7 +9,7 @@
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
     <mp-table-column v-if="pageType !== 'undelivered'" width="146px" label="外协工厂">
       <template #default="scope:any">
-        <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
+        <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive" :disabled="!localPermission?.WaitSetup"
          v-model="scope.row._ExternalSubmitParams.FactoryID" style="width:120px;" placeholder="指定外协工厂">
           <el-option
             v-for="item in scope.row.Working.UseableEquipmentList || []"
@@ -25,6 +25,7 @@
       <template #default="scope:any">
         <el-input style="width:70px;margin-right: 5px;" class="amount" placeholder="外协金额"
           v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
+          :disabled="!localPermission?.WaitSetup"
           v-model.trim="scope.row._ExternalSubmitParams.Amount" maxlength="9"/>
         <span v-else>{{ scope.row._ExternalSubmitParams.Amount }}</span>
         <i>元</i>
@@ -65,7 +66,7 @@
     <mp-table-column width="130px" prop="_LastestSendedTime" label="最晚送达时间" v-if="pageType === 'inTransition'" class-name="is-pink" />
     <mp-table-column width="146px" label="预计完成日期" v-if="pageType==='await'">
       <template #default="scope:any">
-        <MpDateTimePicker style="width:120px;"
+        <MpDateTimePicker style="width:120px;" :disabled="!localPermission?.WaitSetup"
           v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
           v-model="scope.row._ExternalSubmitParams.WishFinishTime" disabledBeforeToday :clearable="false" />
         <span v-else>{{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}</span>
@@ -86,7 +87,7 @@
       </template>
     </mp-table-column>
     <mp-table-column width="100px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
-    <mp-table-column width="225px" label="操作" v-if="pageType==='await'">
+    <mp-table-column width="225px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
       <template #default="scope:any">
         <mp-button type="primary" class='f' link @click="onMenuClick(scope.row, 'confirmExternal')"
           :disabled="![ExternalTaskStatusEnum.WaitFactoryReceive, ExternalTaskStatusEnum.FactoryReceived]
@@ -111,7 +112,8 @@
 <script setup lang='ts'>
 import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
 import { ElTable } from 'element-plus';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useUserStore } from '@/store/modules/user';
 import { format2MiddleLangTypeDateFunc2, formatOnlyDate } from '@/assets/js/filters/dateFilters';
 import { getNextWorkContentOnlySingle } from '@/views/ProductionClient/assets/js/utils';
 import MpDateTimePicker from '@/components/common/ElementPlusContainners/MpDateTimePicker/MpDateTimePicker.vue';
@@ -129,6 +131,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print']);
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageExternalTask.Obj);
 
 /* 多选相关处理 ↓
 -------------------------------------------*/

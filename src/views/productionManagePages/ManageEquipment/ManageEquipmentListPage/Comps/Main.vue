@@ -13,11 +13,12 @@
       <mp-table-column width="215px" label="绑定状态">
         <template #default="scope:any">
           <span v-show="scope.row.Terminal">已绑定主机</span>
-          <mp-button v-show="scope.row.Terminal" link type="primary" class="ml-40" @click="onUnbindClick(scope.row)">解绑</mp-button>
+          <mp-button v-if="localPermission?.Relieve" v-show="scope.row.Terminal"
+           link type="primary" class="ml-40" @click="onUnbindClick(scope.row)">解绑</mp-button>
         </template>
       </mp-table-column>
       <!-- <mp-table-column width="280px" label="操作" class-name="ctrl"> -->
-      <mp-table-column width="280px" label="操作">
+      <mp-table-column width="280px" label="操作" v-if="localPermission?.Setup">
         <template #default="scope:any">
           <mp-button type="primary" link @click="onTimeClick(scope.row)">运行时间</mp-button>
           <mp-button :type="scope.row.IsOpen ? 'danger' : 'primary'" link @click="onOpenSwitchClick(scope.row)" :disabled="scope.row.MaintainInfo.IsAutomatic"
@@ -39,6 +40,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
 import { EquipmentClassificationListItem } from '@/views/productionResources/equipmentClassification/types';
 import { computed } from 'vue';
+import { useUserStore } from '@/store/modules/user';
 import { getPeriodDateContent, getPeriodListContent } from '@/assets/js/utils/getPeriodContent';
 import { IEquipmentMaintainInfo, IManageEquipmentInfo } from '../js/types';
 
@@ -50,6 +52,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['unbind', 'switchIsOpen', 'setTime']);
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageEquipment.Obj);
 
 const formatListName = (id, list, options = { key: 'Name', value: 'ID' }) => getNameByIDAndList(id, list, options);
 

@@ -1,7 +1,7 @@
 <template>
   <section class="resource-bundle-list-page-wrap">
-    <Header @add="onItemSetupClick" />
-    <Main :list="resourceBundleList" :MaterialTypeGroup="MaterialTypeGroup" @edit="onItemSetupClick" @remove="handleRemove" />
+    <Header @add="onItemSetupClick" :localPermission="localPermission" v-if="localPermission?.Setup" />
+    <Main :list="resourceBundleList" :MaterialTypeGroup="MaterialTypeGroup" @edit="onItemSetupClick" @remove="handleRemove" :localPermission="localPermission"/>
     <Footer :condition="resourceBundleCondition" :total="resourceBundleListNumber" :getList="store.getResourceBundleList" />
   </section>
 </template>
@@ -12,14 +12,18 @@ import Main from '@/components/productionResources/resourceBundle/List/resourceB
 import Footer from '@/components/productionResources/resourceBundle/List/resourceBundleListFooter.vue';
 import { useResourceStore } from '@/store/modules/resource';
 import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
+import { useUserStore } from '@/store/modules/user';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ResourceBundleClass } from './TypeClass/ResourceBundle';
 
 const router = useRouter();
 const store = useResourceStore();
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageResourceGroup.Obj);
 
 const {
   resourceBundleCondition, resourceBundleList, resourceBundleListNumber, MaterialTypeGroup,

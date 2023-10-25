@@ -1,8 +1,8 @@
 <template>
   <div class="process-list-page">
     <header>
-      <div class="header-top">
-        <mp-button type="primary" @click="ToProcess(null)">添加工序</mp-button>
+      <div class="header-top" v-if='localPermission?.Setup'>
+        <mp-button type="primary" @click="ToProcess(null)" v-if='localPermission?.Setup'>添加工序</mp-button>
         <span class="hint">说明：拼版为特殊工序，不用添加</span>
       </div>
       <ul class="filter-box">
@@ -104,7 +104,7 @@
           </template>
 
         </el-table-column>
-        <el-table-column prop="name" label="操作" width="200">
+        <el-table-column prop="name" label="操作" width="200" v-if='localPermission?.Setup'>
           <template #default="scope: any">
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="ToProcess(scope.row)">
@@ -120,10 +120,11 @@
     <footer>
       <div class="bottom-count-box">
         <MpPagination
-        :nowPage="getProcessListData.Page"
-        :pageSize="getProcessListData.PageSize"
-        :total="getProcessListData.DataTotal"
-        :handlePageChange="PaginationChange"
+          center
+          :nowPage="getProcessListData.Page"
+          :pageSize="getProcessListData.PageSize"
+          :total="getProcessListData.DataTotal"
+          :handlePageChange="PaginationChange"
         />
       </div>
     </footer>
@@ -135,7 +136,7 @@ import MpPagination from '@/components/common/MpPagination.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { useRouter } from 'vue-router';
 import {
-  onMounted, ref, reactive, onActivated,
+  onMounted, ref, reactive, onActivated, computed,
 } from 'vue';
 import api from '@/api';
 import { IWorkingProcedureInfo } from '@/assets/Types/ProductionLineSet/types';
@@ -146,9 +147,13 @@ import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/Ep
 import type { IRelationsType } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { useUserStore } from '@/store/modules/user';
 import { ReportModeEnumList, WorkingTypeEnumList } from './enums';
 
 const productionSettingStore = useProductionSettingStore();
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageWorking.Obj);
 
 interface DataType{
   processList: IWorkingProcedureInfo[],
@@ -385,6 +390,10 @@ export default {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+
+    .bottom-count-box {
+      width: 100%;
+    }
   }
 }
 </style>

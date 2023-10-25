@@ -10,20 +10,29 @@
     <Main
       :list="ManageListData.list"
       :loading="ManageListData.loading"
+      :Permission="Permission"
       @setTableRef="(multipleTableRef) => ManageListData.setMultipleTableRef(multipleTableRef)"
       @select="(rows) => ManageListData.setSelectList(rows)"
       @setHaveDeal="(row) => ManageListData.setRowsHaveDeal([row])"
      />
-    <Footer :ManageListData="ManageListData" />
+    <Footer :ManageListData="ManageListData" :Permission="Permission" />
   </section>
 </template>
 
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useUserStore } from '@/store/modules/user';
 import Header from './Comps/Header.vue';
 import Main from './Comps/Main.vue';
 import Footer from './Comps/Footer.vue';
 import { ManageListClass } from './js/ManageListClass';
+
+const userStore = useUserStore();
+
+const Permission = computed(() => {
+  const { user } = userStore;
+  return user ? user.PermissionList.PermissionScheduleException.Obj : null;
+});
 
 // eslint-disable-next-line no-undef
 defineOptions({

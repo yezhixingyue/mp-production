@@ -32,9 +32,10 @@
             <td :style="`width:${widthList[9].width}px`" :title="row.Position">{{ row.Position || '' }}</td>
             <td :style="`width:${widthList[10].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
             <td :style="`width:${widthList[11].width}px`">
-              <mp-button link type="primary" @click="onOrderPrintClick(row)">打印工单</mp-button>
-              <mp-button link type="primary" @click="onBarCodePrintClick(row)" :disabled="!row.MapFilePath">打印条码稿</mp-button>
-              <mp-button link type="primary" @click="onProcessClick(row)">进度详情</mp-button>
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onOrderPrintClick(row)">打印工单</mp-button>
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
+               :disabled="!row.MapFilePath">打印条码稿</mp-button>
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query" @click="onProcessClick(row)">进度详情</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
@@ -49,7 +50,7 @@
               </td>
               <td class="number">含订单：{{ child.ChunkNumber }}个</td>
               <td :style="`width:${widthList[10].width}px`">
-                <mp-button link type="primary" @click="onProcessClick(row, child)">进度详情</mp-button>
+                <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query" @click="onProcessClick(row, child)">进度详情</mp-button>
                 <!-- <mp-button link type="primary" @click="onBarCodePrintClick(row, child)" :disabled="!child.MapFilePath">打印条码稿</mp-button> -->
               </td>
             </tr>
@@ -87,6 +88,7 @@
 import {
   computed, onMounted, onUnmounted, ref,
 } from 'vue';
+import { storeToRefs } from 'pinia';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { format2LangTypeDate, format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
@@ -95,6 +97,7 @@ import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { loadBarcode } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/utils';
 import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
 import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
+import { useUserStore } from '@/store/modules/user';
 import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
 
@@ -102,6 +105,9 @@ const props = defineProps<{
   list: IManagePlateInfo[]
   loading: boolean
 }>();
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const widthList = ref([
   { width: 85 },
