@@ -3,7 +3,7 @@
     <header>
       <MpBreadcrumb :list="BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
-        <mp-button type="primary" @click="ToPasteupTemplateSteupPagePage">添加规格</mp-button>
+        <mp-button type="primary" v-if="localPermission?.SpecSetup" @click="ToPasteupTemplateSteupPagePage">添加规格</mp-button>
       </div>
     </header>
     <main>
@@ -55,7 +55,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="操作" min-width="241">
+          <el-table-column prop="name" label="操作" min-width="241" v-if="localPermission?.SpecSetup">
             <template #default="scope:any">
               <mp-button type="info" link @click="ToPasteupTemplateSteupPagePage(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
@@ -88,7 +88,12 @@ import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import MpPagination from '@/components/common/MpPagination.vue';
+import { useUserStore } from '@/store/modules/user';
 import { ImpositionTemmplate, SizeListType } from './types';
+
+const userStore = useUserStore();
+const { user } = userStore;
+const localPermission = computed(() => user?.PermissionList?.PermissionManageImposition?.Obj);
 
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 const route = useRoute();

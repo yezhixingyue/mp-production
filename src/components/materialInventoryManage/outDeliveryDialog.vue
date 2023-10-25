@@ -8,7 +8,7 @@
     :closed="SelectGoodsClosed"
     :showPrimary="false"
     closeBtnText="关闭"
-    top="3vh"
+    top="5vh"
     class="out-delivery-dialog"
     >
     <template #default>
