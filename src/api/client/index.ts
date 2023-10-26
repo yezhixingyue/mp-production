@@ -24,9 +24,9 @@ const clientApi = {
   getEquipmentReceive(data, msgCallback) {
     return instance.post('/Api/Equipment/Receive', data, { msgCallback });
   },
-  /** POST /Api/Equipment/TaskList   获取设备未开始任务信息列表 */
+  /** POST /Api/Task/List   获取设备未开始任务信息列表 */
   getEquipmentTaskList(data) {
-    return instance.post('/Api/Equipment/TaskList', data);
+    return instance.post('/Api/Task/List', data);
   },
   /** GET /Api/Equipment/Renew   设备恢复生产 */
   getEquipmentRenew(equipmentID: string) {

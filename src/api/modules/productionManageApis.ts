@@ -18,9 +18,9 @@ export const productionManageApis = {
       method: 'POST', url: '/Api/EquipmentStatus/List', data, closeLoading,
     });
   },
-  /** POST /Api/Equipment/TaskList   获取设备信息列表 */
+  /** POST /Api/Task/List   获取设备信息列表 */
   getEquipmentTaskList(data) {
-    return instance.post<ITaskDetail[]>('/Api/Equipment/TaskList', data);
+    return instance.post<ITaskDetail[]>('/Api/Task/List', data);
   },
   /* 订单列表
   --------------------------------- */

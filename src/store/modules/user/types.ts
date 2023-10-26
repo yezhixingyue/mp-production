@@ -137,7 +137,7 @@ export interface IUser {
       HavePomission: boolean
       Obj: {
         Query: boolean
-        // Setup: boolean
+        Excel: boolean
       };
     };
     /** 外协管理 */
