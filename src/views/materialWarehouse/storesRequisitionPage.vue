@@ -107,7 +107,7 @@
         <el-table-column
         show-overflow-tooltip prop="CreateTime" label="操作" min-width="102">
           <template #default="scope:any">
-            <mp-button v-if="localPermission?.Setup" type="primary" :disabled="!scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
+            <mp-button v-if="localPermission?.Setup" type="primary" :disabled="scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
             <!-- <el-button :disabled="scope.row.Status" type="primary" link @click="toOut(scope.row)">出库</el-button> -->
           </template>
         </el-table-column>
@@ -234,7 +234,7 @@ export default {
     function StatesChange(levelData) {
       const { level1Val } = levelData;
       if (level1Val !== undefined) {
-        storesRequisition.ChangeCondition(['States', level1Val]);
+        storesRequisition.ChangeCondition(['Status', level1Val]);
         // Data.getListData.TypeID = level2Val;
       }
     }

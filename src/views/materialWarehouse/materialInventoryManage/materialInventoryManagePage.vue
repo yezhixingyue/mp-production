@@ -3,14 +3,13 @@
     <header>
       <div class="header-top">
         <div class="btns">
-          <mp-button v-if="localPermission?.Operate" @click="ToOutDelivery" type="primary">出库</mp-button>
-          <mp-button v-if="localPermission?.Operate" @click="ToInDelivery" type="danger">入库</mp-button>
-          <mp-button link type="primary" @click="ToStockWarnPage">
+          <mp-button v-if="localPermission?.Out" @click="ToOutDelivery" type="primary">出库</mp-button>
+          <mp-button v-if="localPermission?.In" @click="ToInDelivery" type="danger">入库</mp-button>
+          <mp-button v-if="localPermission?.StockWarnQuery" link type="primary" @click="ToStockWarnPage">
             <i class="iconfont icon-zengsongjilu"></i> 预警记录</mp-button>
-          <mp-button link type="primary" @click="ToInventoryPage">
+          <mp-button link v-if="localPermission?.Inventory" type="primary" @click="ToInventoryPage">
             <i class="iconfont icon-kucunpandian-"></i>
             库存盘点</mp-button>
-          <mp-button link type="primary" @click="seeSMSShow">查看短信(仅测试用)</mp-button>
           <p>
             <el-checkbox @change="() => getStockList()"
             v-model="Data.getStockData.IsWarn" label="仅显示预警中物料" size="large" />
@@ -109,16 +108,16 @@
           <el-table-column label="预警状态" min-width="196">
             <template #default="scope:any">
               <span style="padding:0 5px;color:#FF3769" v-if="scope.row.IsWarn">预警中</span>
-              <mp-button v-if="scope.row.IsOpenWarn" v-show="localPermission?.Operate" type="primary"
+              <mp-button v-if="scope.row.IsOpenWarn" type="primary"
               style="margin-left:10px"
               link @click="CancelSMSWarnClick(scope.row)">解除短信预警</mp-button>
             </template>
           </el-table-column>
           <el-table-column
-          show-overflow-tooltip prop="物料" label="操作" min-width="138">
+          show-overflow-tooltip prop="物料" label="操作" min-width="138" v-if="localPermission?.StockWarnSetup">
             <template #default="scope:any">
               <mp-button
-              type="primary" v-if="localPermission?.Operate"
+              type="primary"
               link @click="SetSMSWarnClick(scope.row)">
               <i class="iconfont icon-xiangmuyujingshezhi" style="font-size:16px"></i>
               设置预警</mp-button>
@@ -135,23 +134,6 @@
       :total="Data.DataTotal"
       :handlePageChange="PaginationChange" />
     </footer>
-    <!-- 设置库存预警 -->
-    <DialogContainerComp
-    title="预警短信"
-    :visible='Data.seeSMSShow'
-    :showPrimary="false"
-    :closeClick="() => Data.seeSMSShow = false"
-    :width="900"
-    >
-    <template #default>
-      <div class="set-sms-marn-dialog">
-        <p v-for="(item,index) in Data.SMSList" :key="index">
-          物料：{{item.Material}}；库存：{{item.Stock}}{{item.StockUnit}}; 电话：{{item.Mobiles.join(',')}}
-        </p>
-        <span v-if="!Data.SMSList.length">无短信</span>
-      </div>
-    </template>
-    </DialogContainerComp>
 
     <!-- 设置库存预警 -->
     <DialogContainerComp
@@ -378,17 +360,7 @@ interface StorehouseStockInfoType {
   StorehouseImg: string,
   GoodsPositionStockInfos: GoodsPositionStockInfosType[],
 }
-interface ISMSList {
-  Material: string,
-  Stock: number,
-  StockUnit: string,
-  Mobiles: string[],
-}
 interface DataType {
-
-  seeSMSShow:boolean,
-  SMSList:ISMSList[],
-
   SetSMSWarnShow:boolean,
   StorehouseStockShow:boolean,
   SeeImageShow:boolean,
@@ -418,9 +390,6 @@ export default {
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
-
-      seeSMSShow: false,
-      SMSList: [],
 
       SetSMSWarnShow: false,
       StorehouseStockShow: false,
@@ -514,15 +483,6 @@ export default {
     function SeeImg(url) {
       Data.SeeImageShow = true;
       Data.SeeImageUrl = url;
-    }
-    function seeSMSShow() {
-      Data.seeSMSShow = true;
-      // 获取所有短信
-      api.getIStockSMSList({}).then(res => {
-        if (res.data.Status === 1000) {
-          Data.SMSList = res.data.Data as ISMSList[];
-        }
-      });
     }
     // 获取各个仓库的入库总数量
     function getStorehouseInNumber(GoodsPositionStockInfo:GoodsPositionStockInfosType[]) {
@@ -632,7 +592,6 @@ export default {
     });
 
     return {
-      seeSMSShow,
       localPermission,
       Data,
       SeeImg,

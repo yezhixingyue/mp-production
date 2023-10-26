@@ -281,8 +281,11 @@ export interface IUser {
     PermissionStorage: {
       HavePomission: boolean
       Obj: {
-        Query: boolean
-        Operate: boolean
+        Out: boolean
+        In: boolean
+        StockWarnQuery: boolean
+        Inventory: boolean
+        StockWarnSetup: boolean
       };
     };
     /** 出入库管理 */
