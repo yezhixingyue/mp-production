@@ -52,7 +52,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
         break;
     }
 
-    const _ProcessTimes = it.Index ? `第${it.Index}次` : '';
+    const _ProcessTimes = it.Index && it.Working.WorkTimes > 1 ? `第${it.Index}次` : '';
     const _AssistText = it.Working.ExternalAttribute?.ProcessContent
      || it.Working.AssistList.filter(it => it.Type === AssistInfoTypeEnum.text).map(it => it.Content).filter(Content => Content).join('；');
 

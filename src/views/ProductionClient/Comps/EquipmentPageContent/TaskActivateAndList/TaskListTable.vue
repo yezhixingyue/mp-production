@@ -10,7 +10,7 @@
       <mp-table-column v-if="showRowOptions.showProcessTimes" width="100px" prop="_ProcessTimes" label="操作次序" />
       <mp-table-column v-if="showRowOptions.showContent" prop="_DetailText" min-width="120px" label="内容" />
       <mp-table-column v-if="showRowOptions.showMaterial" min-width="120px" prop="_Material" label="物料" />
-      <mp-table-column width="110px" prop="_UnFinishNumber" label="数量" />
+      <mp-table-column width="110px" prop="_Number" label="数量" />
       <mp-table-column min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
       <slot name="ExternalHandle"></slot>
       <mp-table-column v-if="showRowOptions.showEquAndOperator" prop="_EquAndOperator" min-width="100px" label="设备 (操作人)" />
