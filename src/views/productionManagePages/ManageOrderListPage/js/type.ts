@@ -1,3 +1,5 @@
+import { OrderStatus } from './enum';
+
 /**
  * 订单管理列表 - 实例列表 - 生产线列表
  *
@@ -63,6 +65,8 @@ export interface IManageOrderListItem {
   Unit: string
   /** 尺寸 */
   Size: string
+  /** 订单状态 */
+  Status: OrderStatus
   /** 下单时间 */
   CreateTime: string
   /** 预计完成时间 */
@@ -85,4 +89,14 @@ export interface IOrderTimelineItem {
   OperateTime: string
   SystemFill: boolean
   _IsBegin?: boolean
+}
+
+export interface IOrderCancelRelation {
+  ID: string
+  PlateList: {
+    ID: string
+    Code: string
+    /** 取消整个大版 */
+    IsWholePlate: boolean | ''
+  }[]
 }
