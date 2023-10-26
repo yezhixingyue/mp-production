@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="left">
-      <mp-button type="primary" @click="onClick">+添加设备组</mp-button>
+      <mp-button type="primary" @click="onClick" v-if="localPermission?.Setup">+添加设备组</mp-button>
       <div>
         <span class="title bold mr-10">设备分类：</span>
         <el-select v-model="ClassIDFilter"  class="mp-select">
@@ -27,10 +27,12 @@ import MpButton from '@/components/common/MpButton.vue';
 import { EquipmentGroupTypeClass } from '@/store/modules/resource/EquipmentGroupTypeClass';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { computed } from 'vue';
+import { IUser } from '@/store/modules/user/types';
 
 const props = defineProps<{
   EquipmentGroupData: Required<EquipmentGroupTypeClass>,
   getList:(Page: number) => void,
+  localPermission?: IUser['PermissionList']['PermissionManageEquipmentGroup']['Obj']
 }>();
 
 const emit = defineEmits(['add']);

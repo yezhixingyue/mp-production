@@ -65,6 +65,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    localPermission: {
+      type: Object,
+      default: null,
+    },
   },
   components: {
     DialogContainerComp,
@@ -115,10 +119,11 @@ export default {
       return _title;
     },
     showRemove() {
+      if (!this.localPermission || !this.localPermission.Delete) return false;
       return this.editData && this.editData.Status === StaffStatusEnumObj.pending.ID;
     },
-    disabled() { // 离职状态时禁止设置岗位
-      return this.editData?.Status === StaffStatusEnumObj.leaved.ID;
+    disabled() { // 离职状态时禁止设置岗位 - 或者无审核权限时
+      return this.editData?.Status === StaffStatusEnumObj.leaved.ID || !this.localPermission || !this.localPermission.Check;
     },
   },
   methods: {

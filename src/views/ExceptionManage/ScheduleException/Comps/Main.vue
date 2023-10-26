@@ -1,7 +1,7 @@
 <template>
   <main>
     <el-table :data="list" border stripe class="table-wrap" @selection-change="handleSelectionChange" ref="multipleTableRef">
-      <el-table-column type="selection" width="42" :selectable="(row: ISchedulingExceptionListItem) => !row.DealTime" />
+      <el-table-column type="selection" width="42" v-if="Permission?.Deal" :selectable="(row: ISchedulingExceptionListItem) => !row.DealTime" />
       <mp-table-column width="120px" prop="ID" label="序号" />
       <mp-table-column width="120px" prop="_Type" label="异常类型" />
       <mp-table-column width="120px" prop="Code" label="编号" />
@@ -10,7 +10,7 @@
       <mp-table-column width="150px" prop="_CreateTime" label="异常时间" />
       <mp-table-column width="120px" prop="_HaveDeal" label="处理状态" />
       <mp-table-column width="200px" prop="_DealContent" label="处理时间（处理人）" />
-      <mp-table-column width="150px" label="操作">
+      <mp-table-column width="150px" label="操作" v-if="Permission?.Deal">
         <template #default="scope:{ row: ISchedulingExceptionListItem }">
           <mp-button type="primary" v-if="!scope.row.DealTime" link @click="onDealClick(scope.row)">标记为已处理</mp-button>
         </template>
@@ -26,11 +26,13 @@
 import { onMounted, ref } from 'vue';
 import { ElTable } from 'element-plus';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { IUser } from '@/store/modules/user/types';
 import { ISchedulingExceptionListItem } from '../js/type';
 
 defineProps<{
   list: ISchedulingExceptionListItem[]
   loading: boolean
+  Permission: null | IUser['PermissionList']['PermissionScheduleException']['Obj']
 }>();
 
 const emit = defineEmits(['setHaveDeal', 'select', 'setTableRef']);

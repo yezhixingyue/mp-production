@@ -1,10 +1,10 @@
 import { IEquipmentStatusItem } from '@/views/productionManagePages/EquipmentStatus/List/js/types';
 import { IManageChunkInfo } from '@/views/productionManagePages/ManageChunkListPage/js/type';
 import { IManagePlateInfo } from '@/views/productionManagePages/ManagePlateListPage/js/type';
-import { IManageOrderListItem } from '@/views/productionManagePages/ManageOrderListPage/js/type';
+import { IManageOrderListItem, IOrderCancelRelation } from '@/views/productionManagePages/ManageOrderListPage/js/type';
 // import { IManageTaskListItem } from '@/views/productionManagePages/ManageTaskListPage/js/type';
 import { IExternalMaterialDetail } from '@/views/productionManagePages/ManageOutsideMaterialListPage/js/types';
-import { IOrderFlowchartNode } from '@/views/productionManagePages/ManageOrderListPage/js/OrderFlowchart/types';
+import { IOrderFlowchartNode } from '@/components/common/NodePicDialog/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import request from '../request/request';
@@ -18,9 +18,9 @@ export const productionManageApis = {
       method: 'POST', url: '/Api/EquipmentStatus/List', data, closeLoading,
     });
   },
-  /** POST /Api/Equipment/TaskList   获取设备信息列表 */
+  /** POST /Api/Task/List   获取设备信息列表 */
   getEquipmentTaskList(data) {
-    return instance.post<ITaskDetail[]>('/Api/Equipment/TaskList', data);
+    return instance.post<ITaskDetail[]>('/Api/Task/List', data);
   },
   /* 订单列表
   --------------------------------- */
@@ -57,7 +57,7 @@ export const productionManageApis = {
     return instance.get('/Api/Order/Distribute', { params: { orderID } });
   },
   /** GET /Api/Process/List  获取订单、大版、块的流程信息列表 */
-  getProcessList(targetID: string, targetType: ReportModeEnum) {
+  getProcessList(targetID: string | number, targetType: ReportModeEnum) {
     return instance.get<IOrderFlowchartNode[]>('/Api/Process/List', { params: { targetID, targetType } });
   },
   /** PUT /Api/Order/PushTop  订单置顶 */
@@ -67,6 +67,14 @@ export const productionManageApis = {
   /** GET /Api/Order/GetTimeLine  获取订单时间线 */
   getOrderGetTimeLine(orderID: string) {
     return instance.get('/Api/Order/GetTimeLine', { params: { orderID }, closeLoading: true });
+  },
+  /** GET /Api/Order/CancleRelation  获取订单取消相关 */
+  getOrderCancleRelation(orderID: string) {
+    return instance.get<IOrderCancelRelation>('/Api/Order/CancleRelation', { params: { orderID }, closeLoading: true });
+  },
+  /** POST /Api/Order/Cancle  订单取消 */
+  getOrderCancle(data) {
+    return instance.post('/Api/Order/Cancle', data);
   },
   /** GET /Api/Task/UseableEquipmentList  获取任务可用设备列表 taskWorkingID */
   getTaskUseableEquipmentList(taskWorkingID: string) {

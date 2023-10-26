@@ -1,7 +1,7 @@
 <template>
   <section class="procesisng-machinery-page-wrap">
-    <Header @add="onItemSetupClick" :localEquipmentListClassData="localEquipmentListClassData" />
-    <Main :local-equipment-list-class-data="localEquipmentListClassData" @menu-click="onMenuClick" />
+    <Header :localPermission="localPermission" @add="onItemSetupClick" :localEquipmentListClassData="localEquipmentListClassData" />
+    <Main :localPermission="localPermission" :local-equipment-list-class-data="localEquipmentListClassData" @menu-click="onMenuClick" />
     <Footer :condition="localEquipmentListClassData.condition" :total="localEquipmentListClassData.listNumber" :getList="getList" />
     <Dialog :localEquipmentListClassData="localEquipmentListClassData" v-model:visible="localEquipmentListClassData.visible" @submit="submit" />
   </section>
@@ -12,10 +12,14 @@ import Header from '@/components/productionResources/procesisngMachinery/Procesi
 import Main from '@/components/productionResources/procesisngMachinery/ProcesisngMachineryMain.vue';
 import Footer from '@/components/productionResources/procesisngMachinery/procesisngMachineryFooter.vue';
 import Dialog from '@/components/productionResources/procesisngMachinery/procesisngMachineryDialog.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useUserStore } from '@/store/modules/user';
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { EquipmentListClass, EquipmentTableMenuEnumType } from './TypeClass/EquipmentListClass';
 import { Equipment } from './TypeClass/Equipment';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageProduceEquipment.Obj);
 
 const localEquipmentListClassData = ref(new EquipmentListClass());
 

@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="mb-8">
-      <MpButton type="primary" @click="onAddClick">+ 添加员工</MpButton>
+      <MpButton type="primary" @click="onAddClick" v-if="localPermission?.Add">+ 添加员工</MpButton>
       <span class="is-blue-span ml-21" v-if="props.StaffManagePageData.showIntranet" @click="onNetWorkClick">设置内部网络IP</span>
     </div>
     <div class="select-box">
@@ -63,6 +63,7 @@
 <script setup lang='ts'>
 import { computed, onMounted } from 'vue';
 import { useCommonStore } from '@/store/modules/common';
+import { IUser } from '@/store/modules/user/types';
 import { storeToRefs } from 'pinia';
 import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
@@ -75,6 +76,7 @@ const { DistrictTreeList } = storeToRefs(commonStore);
 
 const props = defineProps<{
   StaffManagePageData: StaffManageClass
+  localPermission?: IUser['PermissionList']['PermissionManageStaffBase']['Obj']
 }>();
 
 const emit = defineEmits(['add', 'network']);

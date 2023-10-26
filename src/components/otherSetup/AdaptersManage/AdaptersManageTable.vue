@@ -15,7 +15,7 @@
     <!-- <el-table-column width="160px" prop="Name" show-overflow-tooltip label="关联工厂数量">
       <template #default="scope:any">{{scope.row.RelationNumber}}个</template>
     </el-table-column> -->
-    <el-table-column min-width="140px" label="操作">
+    <el-table-column min-width="140px" label="操作" v-if="canSetup">
       <template #default="scope">
         <mp-button type="info" link @click="onEditClick(scope.row, scope.$index)">
           <i class="iconfont icon-bianji"></i>编辑
@@ -43,6 +43,10 @@ export default {
       default: () => [],
     },
     loading: {
+      type: Boolean,
+      default: false,
+    },
+    canSetup: {
       type: Boolean,
       default: false,
     },

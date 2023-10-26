@@ -4,15 +4,18 @@
       <span v-for="it in props.WorkingList" :key="it.ID" :class="{active:it.ID===props.modelValue}" @click="onMenuClick(it)">{{it.Name}}</span>
       <em v-if="!props.loading && props.WorkingList.length === 0" class="is-pink ft-12"><el-icon class="ft-14"><WarningFilled /></el-icon> 暂无相关制版工序!</em>
     </div>
-    <mp-button type="primary" v-show="props.modelValue" @click="onClick">+ 添加制版组</mp-button>
+    <mp-button type="primary" v-if="localPermission?.Setup" v-show="props.modelValue" @click="onClick">+ 添加制版组</mp-button>
   </header>
 </template>
 
 <script setup lang='ts'>
+import { IUser } from '@/store/modules/user/types';
+
 const props = defineProps<{
   WorkingList: { ID: string, Name: string }[],
   modelValue: string
   loading: boolean
+  localPermission: IUser['PermissionList']['PermissionManagePlateMakeGroup']['Obj'] | undefined
 }>();
 
 const emit = defineEmits(['update:modelValue', 'add']);

@@ -1,6 +1,6 @@
 <template>
   <header>
-    <mp-button type="primary" @click="onClick">+添加加工设备</mp-button>
+    <mp-button type="primary" @click="onClick" v-if="localPermission?.Setup">+添加加工设备</mp-button>
     <EpCascaderByLevel2
       title="设备组"
       showLine
@@ -23,11 +23,13 @@
 
 <script setup lang='ts'>
 import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
+import { IUser } from '@/store/modules/user/types';
 import { EquipmentListClass } from '@/views/productionResources/procesisngMachinery/TypeClass/EquipmentListClass';
 import { computed } from 'vue';
 
 const props = defineProps<{
   localEquipmentListClassData: Required<EquipmentListClass>,
+  localPermission?: IUser['PermissionList']['PermissionManageProduceEquipment']['Obj']
 }>();
 
 const emit = defineEmits(['add']);

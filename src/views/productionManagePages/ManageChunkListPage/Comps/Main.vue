@@ -2,16 +2,16 @@
   <main>
     <el-table :data="localList" border stripe class="table-wrap">
       <mp-table-column width="130px" prop="ServerName" label="销售端" />
-      <mp-table-column width="100px" prop="ChunkID" label="块ID" />
-      <mp-table-column width="100px" prop="ChunkCode" label="块编号" />
+      <mp-table-column width="120px" prop="ChunkID" label="块ID" />
+      <mp-table-column width="110px" prop="ChunkCode" label="块编号" />
       <mp-table-column width="100px" prop="PlateCode" label="所在大版ID" />
-      <mp-table-column min-width="160px" prop="Material" label="物料" />
+      <mp-table-column min-width="170px" prop="Material" label="物料" />
       <mp-table-column min-width="140px" prop="Size" label="尺寸" />
       <mp-table-column width="110px" prop="_Number" label="数量" />
       <mp-table-column width="130px" prop="Line" label="生产线" />
       <mp-table-column width="130px" prop="Position" label="当前位置" />
       <mp-table-column width="110px" prop="_StatusText" label="状态" />
-      <mp-table-column width="280px" label="操作" class-name="ctrl">
+      <mp-table-column width="228px" label="操作" class-name="ctrl">
         <template #default="scope:any">
           <mp-button type="primary" class="ft-12" link @click="onProcessClick(scope.row)">生产流程</mp-button>
           <mp-button type="primary" class="ft-12" link :disabled="!scope.row.FrontThumbil" @click="onThumbnailClick(scope.row)">查看缩略图</mp-button>
@@ -21,7 +21,7 @@
         <span class="ft-12" v-show="!loading">暂无数据</span>
       </template>
     </el-table>
-    <ProcessDisplayDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.block" />
+    <NodePicDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.block" />
     <PictureDisplayDialog v-model:visible="ThumbnailVisible" :title="`缩略图：${curRow?.ChunkCode || ''} (${curRow?.ChunkID || ''})`" :picSrcList="ThumbnailList" />
   </main>
 </template>
@@ -31,9 +31,9 @@ import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { computed, ref } from 'vue';
 import PictureDisplayDialog from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/PictureDisplayDialog.vue';
+import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
 import { ChunkStatusEnumList } from '../js/EnumList';
 import { IManageChunkInfo } from '../js/type';
-import ProcessDisplayDialog from '../../ManageOrderListPage/Comps/ProcessDisplayDialog/ProcessDisplayDialog.vue';
 
 const props = defineProps<{
   list: IManageChunkInfo[]

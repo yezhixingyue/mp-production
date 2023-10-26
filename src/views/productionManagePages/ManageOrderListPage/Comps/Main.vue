@@ -13,8 +13,9 @@
           <th data-index="7" :style="`width:${widthList[7].width}px`">数量</th>
           <th data-index="8" :style="`width:${widthList[8].width}px`">下单时间</th>
           <th data-index="9" :style="`width:${widthList[9].width}px`">预计生产完成时间</th>
-          <th data-index="10" :style="`width:${widthList[10].width}px`">置顶</th>
-          <th data-index="11" :style="`width:${widthList[11].width}px`">操作</th>
+          <th data-index="10" :style="`width:${widthList[10].width}px`">状态</th>
+          <th data-index="10" :style="`width:${widthList[11].width}px`">置顶</th>
+          <th data-index="11" :style="`width:${widthList[12].width}px`">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -30,16 +31,22 @@
             <td :style="`width:${widthList[7].width}px`" :title="row._Count">{{ row._Count || '' }}</td>
             <td :style="`width:${widthList[8].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
             <td :style="`width:${widthList[9].width}px`" :title="row._ProduceEndTime">{{ row._ProduceEndTime || '' }}</td>
-            <td :style="`width:${widthList[10].width}px`">
+            <td :style="`width:${widthList[10].width}px`" :title="row._StatusDetail?.Name || ''">{{ row._StatusDetail?.Name || '' }}</td>
+            <td :style="`width:${widthList[11].width}px`">
               <span class="top-text" v-show="row.IsTop" :class="{'v-hide': !row.IsTop}">已置顶</span>
-              <mp-button link type="primary" @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.TopShow"
+               @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
               <!-- <mp-button link type="primary" style="margin-left:8px"
                :disabled="row._isMakeuped"
                @click="onTestClick(row)" >_临时拼版</mp-button> -->
             </td>
-            <td :style="`width:${widthList[11].width}px`">
+            <td :style="`width:${widthList[12].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
+              <!-- 取消功能待开发 -->
+              <!-- <mp-button v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
+               :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot"
+               link type="primary" @click="onCancelClick(row)">取消</mp-button> -->
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="!row._isCombineLine">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
@@ -74,7 +81,9 @@
     </table>
     <SetOrderTopDialog v-model:visible="topVisible" @submit="onTopSubmit" />
     <TimeLineDisplayDialog v-model:visible="timeLineVisible" :row="curRow" />
-    <ProcessDisplayDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.order" />
+    <NodePicDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.order" />
+    <!-- 订单取消弹窗 -->
+    <OrderCancelDialog v-model:visible="cancelOrderVisible" :row="curRow" @submit="handleCancel" />
   </main>
 </template>
 
@@ -86,17 +95,25 @@ import {
 } from 'vue';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
+import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import SetOrderTopDialog from './SetOrderTopDialog.vue';
 import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
-import ProcessDisplayDialog from './ProcessDisplayDialog/ProcessDisplayDialog.vue';
-import { IManageOrderListItem } from '../js/type';
+import OrderCancelDialog from './OrderCancelDialog.vue';
+import { IManageOrderListItem, IOrderCancelRelation } from '../js/type';
+import { OrderCancelStatus, OrderStatusList } from '../js/enum';
 
 const props = defineProps<{
   list: IManageOrderListItem[]
   loading: boolean
 }>();
 
-const emit = defineEmits(['top']);
+const emit = defineEmits(['top', 'cancel']);
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const getSellSideProductName = (it: IManageOrderListItem) => {
   const { FirstLevel, SecondLevel, ProductName } = it;
@@ -115,7 +132,8 @@ const widthList = ref([
   { width: 120 },
   { width: 110 },
   { width: 135 },
-  { width: 100 },
+  { width: 60 },
+  { width: 70 },
   { width: 230 },
 ]);
 
@@ -145,6 +163,7 @@ const localList = computed(() => props.list.map(it => ({
     .filter(it => it)
     .join('；\r\n') || '',
   _isMakeuped: getIsMakeuped(it),
+  _StatusDetail: OrderStatusList.find(_it => _it.ID === it.Status),
 })));
 
 // const onTestClick = async (it: typeof localList.value[number]) => {
@@ -185,6 +204,32 @@ const timeLineVisible = ref(false);
 const onTimeLineClick = (row: typeof localList.value[number]) => {
   curRow.value = row;
   timeLineVisible.value = true;
+};
+
+/** 订单取消 */
+const cancelOrderVisible = ref(false);
+const handleCancel = async (e: IOrderCancelRelation) => {
+  console.log('handleCancel', e);
+  const resule = await emit('cancel', e);
+  console.log(123, resule);
+  if ((resule as unknown as boolean) && cancelOrderVisible.value) cancelOrderVisible.value = false;
+};
+const onCancelClick = (row: typeof localList.value[number]) => {
+  if (!row._StatusDetail) return;
+
+  if (row._StatusDetail._CancelStatus === OrderCancelStatus.candirect) { // 可以直接取消
+    MpMessage.warn('确定要取消该订单吗 ?', `订单ID: [ ${row.OrderCode} ]`, () => {
+      const temp: IOrderCancelRelation = {
+        ID: row.ID,
+        PlateList: [],
+      };
+      handleCancel(temp);
+    });
+  }
+  if (row._StatusDetail._CancelStatus === OrderCancelStatus.needplate) { // 需要选择大版
+    curRow.value = row;
+    cancelOrderVisible.value = true;
+  }
 };
 
 /** 生产流程 */
@@ -320,7 +365,7 @@ onUnmounted(() => {
             font-size: 12px;
             padding: 0;
             & + .el-button  {
-              margin-left: 30px;
+              margin-left: 20px;
             }
             &.spread {
               color: #989898;

@@ -15,7 +15,7 @@
         <mp-button type="primary" link @click="ManagementClass">管理分类</mp-button>
       </div> -->
       <div class="header-top">
-        <mp-button type="primary" @click="Data.addTemplateFromShow = true">+ 添加拼版模板</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" @click="Data.addTemplateFromShow = true">+ 添加拼版模板</mp-button>
       </div>
     </header>
     <main>
@@ -51,11 +51,13 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope:any">
-              <mp-button type="info" link @click="ToTemplateSetSize(scope.row)" :disabled="scope.row.IsSameSizeWithPrintingPlate">
+              <mp-button type="info" v-if="localPermission?.SpecQuery" link
+              @click="ToTemplateSetSize(scope.row)"
+              :disabled="scope.row.IsSameSizeWithPrintingPlate">
                 <i class="iconfont icon-shengchanxian" :class="{'disabled':scope.row.IsSameSizeWithPrintingPlate}"></i>模板规格</mp-button>
-              <mp-button type="info" link @click="EditTemplate(scope.row)">
+              <mp-button type="info" v-if="localPermission?.Setup" link @click="EditTemplate(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
-              <mp-button type="info" link
+              <mp-button type="info" v-if="localPermission?.Setup" link
                 @click="delImpositionTemmplate(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
@@ -102,7 +104,7 @@
 <script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
-  reactive, onMounted, onActivated, watch,
+  reactive, onMounted, onActivated, watch, computed,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
@@ -111,6 +113,7 @@ import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 // import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { useUserStore } from '@/store/modules/user';
 import { ImpositionTemmplate } from './types';
 
 interface DataType {
@@ -118,6 +121,11 @@ interface DataType {
   addTemplateFromShow:boolean,
   addTemplateFrom:ImpositionTemmplate,
 }
+
+const userStore = useUserStore();
+const { user } = userStore;
+const localPermission = computed(() => user?.PermissionList?.PermissionManageImposition?.Obj);
+
 const router = useRouter();
 const PasteupSettingStore = usePasteupSettingStore();
 const Data:DataType = reactive({

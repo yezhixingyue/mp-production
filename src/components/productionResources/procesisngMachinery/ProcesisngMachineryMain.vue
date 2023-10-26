@@ -19,7 +19,7 @@
           <span class="is-pink">{{scope.row.IsUseable ? '' : '已停用'}}</span>
         </template>
       </mp-table-column>
-      <mp-table-column width="280px" label="操作">
+      <mp-table-column width="280px" label="操作" v-if="localPermission?.Setup">
         <template #default="scope:any">
           <mp-button type="primary" link @click="onMenuClick(scope.row, EquipmentTableMenuEnumType.setState)">
             {{ scope.row.IsUseable ? '停用' : '启用' }}
@@ -38,11 +38,13 @@
 <script setup lang='ts'>
 import { getNameByIDAndList } from '@/assets/js/utils';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { IUser } from '@/store/modules/user/types';
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { EquipmentListClass, EquipmentTableMenuEnumType } from '@/views/productionResources/procesisngMachinery/TypeClass/EquipmentListClass';
 
 const props = defineProps<{
   localEquipmentListClassData: Required<EquipmentListClass>
+  localPermission?: IUser['PermissionList']['PermissionManageProduceEquipment']['Obj']
 }>();
 
 const emit = defineEmits(['menuClick']);

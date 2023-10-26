@@ -10,7 +10,7 @@
       <mp-table-column v-if="showRowOptions.showProcessTimes" width="100px" prop="_ProcessTimes" label="操作次序" />
       <mp-table-column v-if="showRowOptions.showContent" prop="_DetailText" min-width="120px" label="内容" />
       <mp-table-column v-if="showRowOptions.showMaterial" min-width="120px" prop="_Material" label="物料" />
-      <mp-table-column width="110px" prop="_UnFinishNumber" label="数量" />
+      <mp-table-column width="110px" prop="_Number" label="数量" />
       <mp-table-column min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
       <slot name="ExternalHandle"></slot>
       <mp-table-column v-if="showRowOptions.showEquAndOperator" prop="_EquAndOperator" min-width="100px" label="设备 (操作人)" />
@@ -22,7 +22,8 @@
       <mp-table-column v-if="showRowOptions.showCtrlMenus.length > 0" width="185px" label="操作">
         <template #default="scope:any">
           <mp-button type="primary" link @click="onMenuClick(scope.row, 'switchEqu')"
-           v-if="showRowOptions.showCtrlMenus.includes('switchEqu')" :disabled="!canSwitchEqu(scope.row)">
+           v-if="showRowOptions.showCtrlMenus.includes('switchEqu') && user?.PermissionList.PermissionEquipmentStatus.Obj.ChangeEquipemnt"
+            :disabled="!canSwitchEqu(scope.row)">
             <i class="iconfont icon-churukujilu"></i>更换设备
           </mp-button>
           <mp-button type="primary" link @click="onMenuClick(scope.row, 'confirmExternal')" v-if="showRowOptions.showCtrlMenus.includes('confirmExternal')">
@@ -46,6 +47,8 @@ import { ExternalTaskStatusEnum } from '@/views/OutsourceManage/js/enum';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { ElTable } from 'element-plus';
 import { computed, ref, watch } from 'vue';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
 import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
 import { getLocalTaskList } from './BatchReport/getLocalTaskList';
 
@@ -79,6 +82,9 @@ const props = withDefaults(defineProps<{
   isError: false,
   showHeader: false, // 是否为设备状态详情页面所用 - 是的话 需要添加内容列、预计加工时长列和操作列列表
 });
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 /* 列表展示相关
 -------------------------------------------*/

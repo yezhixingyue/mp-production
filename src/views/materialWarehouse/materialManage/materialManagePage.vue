@@ -4,9 +4,9 @@
       <div class="header-top">
         <div class="bt">
           <mp-button
-          type="primary" @click="addMaterialManage">+ 添加物料</mp-button>
+          type="primary" v-if="localPermission?.Setup" @click="addMaterialManage">+ 添加物料</mp-button>
           <mp-button
-          type="primary" @click="batchAddMaterialManage">批量生成</mp-button>
+          type="primary" v-if="localPermission?.Setup" @click="batchAddMaterialManage">批量生成</mp-button>
         </div>
         <SearchInputComp
           :word='Data.getMaterialManageData.KeyWords'
@@ -54,9 +54,9 @@
           </el-table-column>
           <el-table-column prop="操作" label="操作" min-width="238">
             <template #default="scope:any">
-              <mp-button type="info" link @click="editMaterial(scope.row)">
+              <mp-button type="info" v-if="localPermission?.Setup" link @click="editMaterial(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
-              <mp-button type="info" link @click="delMaterial(scope.row)">
+              <mp-button type="info" v-if="localPermission?.Setup" link @click="delMaterial(scope.row)">
                 <i class="iconfont icon-delete"></i>删除</mp-button>
             </template>
           </el-table-column>
@@ -199,6 +199,7 @@ import messageBox from '@/assets/js/utils/message';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { useUserStore } from '@/store/modules/user';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -266,6 +267,9 @@ export default {
     DialogContainerComp,
   },
   setup() {
+    const userStore = useUserStore();
+    const { user } = userStore;
+    const localPermission = computed(() => user?.PermissionList?.PermissionMaterial?.Obj);
     const NumberTypeItemRef = ref<Ref|null>(null);
     const OptionTypeItemRef = ref<Ref|null>(null);
     const throttleBool = ref(true);
@@ -645,6 +649,7 @@ export default {
     });
 
     return {
+      localPermission,
       Data,
       CategoryList,
       MaterialTypeList,

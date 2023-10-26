@@ -17,7 +17,7 @@
       <mp-table-column min-width="170px" prop="MatchType" label="满足方式">
         <template #default="scope:any">{{formatMatchType(scope.row)}}</template>
       </mp-table-column>
-      <mp-table-column min-width="220px" label="操作">
+      <mp-table-column min-width="220px" label="操作" v-if="localPermission?.Setup">
         <template #default="scope:any">
           <mp-button type="info" link @click="onEditClick(scope.row)"><i class="iconfont icon-bianji"></i>编辑</mp-button>
           <mp-button type="info" link @click="onRemoveClick(scope.row)"><i class="iconfont icon-delete"></i>删除</mp-button>
@@ -31,6 +31,7 @@
 import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpButton from '@/components/common/MpButton.vue';
+import { IUser } from '@/store/modules/user/types';
 import {
   ResourceBundleClass, resourceBundleFeatureEnumObj, resourceBundleMatchEnumObj, PartTypeEnumList, MakingGroupTypeFeatureEnum,
 } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
@@ -40,6 +41,7 @@ import { getTableDiaplayContent } from '../Setup/MaterialTypeGroupSelector/utils
 const props = defineProps<{
   list: ResourceBundleClass[],
   MaterialTypeGroup: IMaterialTypeGroupItemType[],
+  localPermission?: IUser['PermissionList']['PermissionManageResourceGroup']['Obj']
 }>();
 
 const emit = defineEmits(['edit', 'remove']);

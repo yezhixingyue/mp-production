@@ -1,7 +1,8 @@
 <template>
   <section class="wrap">
-    <Header :StaffManagePageData="StaffManagePageData" @add="onSetupClick" @network="onSetIntranetClick" />
+    <Header :localPermission="localPermission" :StaffManagePageData="StaffManagePageData" @add="onSetupClick" @network="onSetIntranetClick" />
     <Main
+      :localPermission="localPermission"
       :StaffManagePageData="StaffManagePageData"
       @edit="onSetupClick"
       @remove="onRemoveClick"
@@ -16,6 +17,7 @@
       :departmentLevelList="StaffManagePageData.departmentLevelList"
       :jobPermissionsList='StaffManagePageData.jobPostList'
       :showIntranet="StaffManagePageData.showIntranet"
+      :localPermission="localPermission"
       @remove='onRemoveClick'
       @submit="checkOrSetJobSubmit"
     />
@@ -34,7 +36,7 @@
 import { useCompanyStore } from '@/store/modules/companyManage';
 import { useUserStore } from '@/store/modules/user';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import MpPagination from '@/components/common/MpPagination.vue';
 import Header from './Comps/StaffListHeader.vue';
@@ -48,6 +50,8 @@ const userStore = useUserStore();
 
 const { StaffManagePageData } = storeToRefs(companyStore);
 const { user } = storeToRefs(userStore);
+
+const localPermission = computed(() => user.value?.PermissionList.PermissionManageStaffBase.Obj);
 
 /** 添加|编辑 */
 const onSetupClick = (data) => {

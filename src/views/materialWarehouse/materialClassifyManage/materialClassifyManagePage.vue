@@ -2,8 +2,8 @@
   <div class="material-classify-manage-page">
     <header>
       <div class="header-top">
-        <mp-button type="primary" @click="addMaterialClassifyClick">+ 添加物料类型</mp-button>
-        <mp-button link type="primary" @click="ToMaterialClassifyManageList">管理物料分类</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" @click="addMaterialClassifyClick">+ 添加物料类型</mp-button>
+        <mp-button link type="primary" v-if="localPermission?.ManageCatagry" @click="ToMaterialClassifyManageList">管理物料分类</mp-button>
         <OneLevelSelect
          :title='"分类"'
          :options='[{CategoryID: "", CategoryName:"不限"}, ...MaterialWarehouseStore.CategoryList]'
@@ -50,9 +50,9 @@
               @click="ToSetDimensionsPage(scope.row)">尺寸规格</mp-button>
               <mp-button type="primary" link
               @click="ToSetTheStorageUnitPage(scope.row)" >出入库单位</mp-button>
-              <mp-button type="primary" link
+              <mp-button type="primary" link v-if="localPermission?.Setup"
               @click="editMaterialClassifyClick(scope.row)">编辑</mp-button>
-              <mp-button type="danger" link
+              <mp-button type="danger" link v-if="localPermission?.Setup"
               @click="delMaterialClassify(scope.row)">删除</mp-button>
             </template>
           </el-table-column>
@@ -149,6 +149,7 @@ import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { useUserStore } from '@/store/modules/user';
 
 interface formType {
   TypeID: string,
@@ -199,6 +200,10 @@ export default {
     OneLevelSelect,
   },
   setup() {
+    const userStore = useUserStore();
+    const { user } = userStore;
+    const localPermission = computed(() => user?.PermissionList?.PermissionMaterialType?.Obj);
+
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     // 添加/编辑 物料类型点击
@@ -365,6 +370,7 @@ export default {
       MaterialWarehouseStore.getMaterialCategoryList();
     });
     return {
+      localPermission,
       Data,
       IsStock,
       MaterialWarehouseStore,

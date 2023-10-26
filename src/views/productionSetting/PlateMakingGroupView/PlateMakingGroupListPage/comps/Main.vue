@@ -26,7 +26,7 @@
         </template>
       </mp-table-column>
       <mp-table-column width="285px" label="操作">
-        <template #default="scope:any">
+        <template #default="scope:any" v-if="localPermission?.Setup">
           <mp-button type="primary" class="ft-12" :disabled="!(props.ClassEquipmentGroups?.length)"
            link @click="onEquipmentClick(scope.row)">选择设备/工厂</mp-button>
           <mp-button type="primary" class="ft-12" :disabled="!(props.MaterialSourcesData?.length)"
@@ -48,6 +48,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IClassEquipmentGroups, IMaterialSources } from '@/store/modules/productionSetting/types';
 import { MaterialSourceTypeEnumObj } from '@/views/productionSetting/js/enums';
 import { computed } from 'vue';
+import { IUser } from '@/store/modules/user/types';
 import { IPlateMakingGroup, IPlateMakingGroupSource } from '../../js/types';
 
 const props = defineProps<{
@@ -57,6 +58,7 @@ const props = defineProps<{
   WorkID: string
   MaterialSourcesData: null | IPlateMakingGroupSource[]
   ClassEquipmentGroups: null | IClassEquipmentGroups[]
+  localPermission: IUser['PermissionList']['PermissionManagePlateMakeGroup']['Obj'] | undefined
 }>();
 
 const emit = defineEmits(['remove', 'edit', 'makingGroupSource', 'equipment']);

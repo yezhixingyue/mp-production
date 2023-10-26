@@ -1,7 +1,7 @@
 <template>
   <section class="equipment-group-list-page-wrap">
-    <Header @add="onItemSetupClick" :EquipmentGroupData="EquipmentGroupData" :getList="getList" />
-    <Main :EquipmentGroupData="EquipmentGroupData" :MaterialTypeGroup="MaterialTypeGroup" @menuClick="onMenuClick" />
+    <Header :localPermission="localPermission" @add="onItemSetupClick" :EquipmentGroupData="EquipmentGroupData" :getList="getList" />
+    <Main :localPermission="localPermission" :EquipmentGroupData="EquipmentGroupData" :MaterialTypeGroup="MaterialTypeGroup" @menuClick="onMenuClick" />
     <Footer :EquipmentGroupData="EquipmentGroupData" :getList="getList" />
     <ItemSetupDialog v-model:visible="visible" :EquipmentGroupData="EquipmentGroupData" @submit="handleItemSetupSubmit" />
     <GripperEdgeSetupDialog v-model:visible="gripperVisible" @submit="handleSizeLimitSubmit" :EquipmentGroupData="EquipmentGroupData" />
@@ -27,6 +27,10 @@ import { EquipmentGroupMenuEnumType } from '@/store/modules/resource/EquipmentGr
 import { GroupColorLimitClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GroupColorLimitClass';
 import { useRouter } from 'vue-router';
 import { GripperSetupClass } from '@/store/modules/resource/EquipmentGroupTypeClass/GripperSetupClass';
+import { useUserStore } from '@/store/modules/user';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageEquipmentGroup.Obj);
 
 const router = useRouter();
 const resourceStore = useResourceStore();

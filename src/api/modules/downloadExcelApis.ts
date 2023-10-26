@@ -14,6 +14,10 @@ export const downloadExcelApis = {
   getExternalTaskExcel(condition) {
     return instance.post('/Api/ExternalTask/Excel', condition, { responseType: 'arraybuffer' });
   },
+  /** POST /Api/Task/Excel   生产任务导出Excel */
+  getTaskExcel(condition) {
+    return instance.post('/Api/Task/Excel', condition, { responseType: 'arraybuffer' });
+  },
 };
 
 /** 存放导出Excel所有用到的接口路径 -- 此处必须把上面所有的接口url放置到里面 - axios需要特殊处理 */
@@ -21,6 +25,7 @@ export const downloadExcelApiUrls: string[] = [
   '/Api/MaterialType/List', // --------- 测试数据 后面清除
   '/Api/ExternalMaterial/Excel', // 外来物料导出
   '/Api/ExternalTask/Excel', // 外协列表
+  '/Api/Task/Excel', // 生产任务Excel
 ];
 
 if (Object.keys(downloadExcelApis).length !== downloadExcelApiUrls.length) {

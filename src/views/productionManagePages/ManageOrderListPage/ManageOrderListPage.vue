@@ -5,7 +5,7 @@
     <Main
      :list="ManageOrderListPageData.list"
      :loading="ManageOrderListPageData.loading"
-     @top="handleOrderToTop" />
+     @top="handleOrderToTop" @cancel="ManageOrderListPageData.handleOrderCancel" />
     <Footer :condition="ManageOrderListPageData.condition" :getList="getList" :total="ManageOrderListPageData.listNumber" />
   </section>
 </template>

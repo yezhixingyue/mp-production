@@ -1,9 +1,10 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
+import { ElMessage } from 'element-plus';
 import { IFactoryMaterialList } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from './Condition';
-import { IManageOrderListItem } from './type';
+import { IManageOrderListItem, IOrderCancelRelation } from './type';
 
 export class ManageOrderListClass {
   /** 获取订单列表的条件信息 */
@@ -76,5 +77,28 @@ export class ManageOrderListClass {
 
       MpMessage.dialogSuccess('置顶成功', cb, cb);
     }
+  }
+
+  /** 订单取消 */
+  async handleOrderCancel(ruleForm: IOrderCancelRelation) { // getOrderCancle
+    const resp = await api.productionManageApis.getOrderPushTop(ruleForm).catch(() => null);
+
+    if (resp?.data.isSuccess) {
+      if (ruleForm.PlateList.length > 0) {
+        ElMessage({
+          showClose: true,
+          message: '取消成功',
+          type: 'success',
+        });
+        this.getList();
+        return true;
+      }
+      const cb = () => {
+        this.getList();
+      };
+      MpMessage.success('取消成功', cb, cb);
+      return true;
+    }
+    return false;
   }
 }

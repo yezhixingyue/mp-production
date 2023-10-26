@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <div class="ctrl" v-show="ManageListData.listNumber > 0">
+    <div class="ctrl" v-show="ManageListData.listNumber > 0"  v-if="Permission?.Deal">
       <el-checkbox :disabled="status.disabled" :indeterminate="status.indeterminate" v-model="checkAllValue" label="">全选</el-checkbox>
       <mp-button :disabled="ManageListData.selectList.length === 0" type="primary" link class="button" @click="onclick">批量标记为已处理</mp-button>
     </div>
@@ -11,15 +11,20 @@
 
 <script setup lang='ts'>
 import { computed } from 'vue';
+import { IUser } from '@/store/modules/user/types';
 import MpPagination from '@/components/common/MpPagination.vue';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ManageListClass } from '../js/ManageListClass';
 
 const props = defineProps<{
   ManageListData: ManageListClass
+  Permission: null | IUser['PermissionList']['PermissionScheduleException']['Obj']
 }>();
 
 const onclick = () => {
-  props.ManageListData.setRowsHaveDeal(props.ManageListData.selectList);
+  MpMessage.warn('确定批量标记为已处理吗 ?', `共选中 ${props.ManageListData.selectList.length} 个订单`, () => {
+    props.ManageListData.setRowsHaveDeal(props.ManageListData.selectList);
+  });
 };
 
 const status = computed(() => {

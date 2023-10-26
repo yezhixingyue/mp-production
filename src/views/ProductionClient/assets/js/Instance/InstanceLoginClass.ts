@@ -35,13 +35,13 @@ export class InstanceLoginClass {
     if (data) {
       this.token = data.token;
       if (this.token) {
-        this.getUser(); // 获取用户信息
+        this._getUser(); // 获取用户信息
       }
     }
   }
 
   /** 校验登录信息是否符合规范 */
-  private validate() {
+  private _validate() {
     if (!this.mobile) {
       MpMessage.error({ title: '登录失败', msg: '请输入登录手机号码' });
       return false;
@@ -66,7 +66,7 @@ export class InstanceLoginClass {
   }
 
   /** 获取用户信息 - 在登录成功后获取 */
-  private async getUser() {
+  private async _getUser() {
     // 如果有用户信息 且 用户信息中的token和当前token一致 则不再重新请求
     if (this.user && this.user.Token === this.token) return;
 
@@ -86,7 +86,7 @@ export class InstanceLoginClass {
 
   /** 提交登录 - 且在登录成功后修改及缓存相关信息 */
   public async login() {
-    if (!this.validate()) return false;
+    if (!this._validate()) return false;
     const temp: ILoginSubmitForm = {
       Mobile: this.mobile,
       Password: Base64.encode(this.password),
@@ -106,7 +106,13 @@ export class InstanceLoginClass {
       // 缓存
       SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: null, token: this.token });
       // 获取用户信息
-      this.getUser();
+      await this._getUser();
+      if (this.user?.PermissionList.PermissionTaskReport.Obj.Report === false) {
+        MpMessage.error('当前账号无报工权限', '请更换账号或联系系统管理员');
+        await this.logout();
+        return false;
+      }
+
       return true;
     }
     return false;

@@ -1,4 +1,4 @@
-import { getEnumList, ILocalEnumValue } from '@/assets/js/utils/getListByEnums';
+import { getEnumList } from '../_difference';
 import { FlowchartNodeColorEnum, FlowchartNodeStatusEnum } from './enum';
 
 export const FlowchartNodeStatusEnumObj = {
@@ -19,4 +19,4 @@ export const FlowchartNodeStatusEnumObj = {
   },
 };
 
-export const FlowchartNodeStatusEnumList = getEnumList(FlowchartNodeStatusEnumObj) as ({ Color: string } & ILocalEnumValue)[];
+export const FlowchartNodeStatusEnumList = getEnumList(FlowchartNodeStatusEnumObj) as { Color: string, ID: number | '', Name: string }[];

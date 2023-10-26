@@ -47,7 +47,7 @@
     </div>
     <!-- 图片展示 -->
     <PictureDisplayDialog v-model:visible="picVisible" title="示意图" :curRowData="curRowData"
-     :picSrcList="curRowData._images.map(it => it.FilePath)" v-if="curRowData" />
+     :picSrcList="(curRowData._images.map(it => it.FilePath).filter(it => it) as string[])" v-if="curRowData" />
     <!-- 文件下载弹窗 -->
     <FileDownloadDialog v-model:visible="downloadVisible" :files="curRowData._files" v-if="curRowData" />
     <!-- 确认批量报工报工 -->

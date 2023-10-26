@@ -20,38 +20,42 @@
         <template #default="scope:any">
           <div class="menus">
             <Menu title="审核" icon="icon-shenhe iconfont" isSuccess
-               v-if="scope.row.Status===StaffStatusEnum.pending" @click="onChangeStatusClick(scope.row, scope.$index)"/>
-            <DetailMenu v-else @click="onDetailClick(scope.row, scope.$index)" :disabled="scope.row.Status===StaffStatusEnum.pending" />
+               v-if="scope.row.Status===StaffStatusEnum.pending && localPermission?.Check" @click="onChangeStatusClick(scope.row, scope.$index)"/>
+            <DetailMenu v-if="scope.row.Status!==StaffStatusEnum.pending && localPermission?.ViewStaffDetail"
+             @click="onDetailClick(scope.row, scope.$index)" :disabled="scope.row.Status===StaffStatusEnum.pending" />
             <!-- <Menu title="离职" icon="icon-lizhi iconfont" isPink
                v-if="scope.row.Status===StaffStatusEnum.approved" @click="onChangeStatusClick(scope.row, scope.$index)" />
             <Menu title="取消离职" icon="icon-fanhui iconfont" isSuccess
                v-if="scope.row.Status===StaffStatusEnum.leaved" @click="onChangeStatusClick(scope.row, scope.$index)"/>
             <EditMenu @click="onEditClick(scope.row)" />
             <RemoveMenu :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)" /> -->
-            <el-dropdown trigger="click">
+            <el-dropdown trigger="click" v-if="!noMoreMenuPermission">
               <span class="el-dropdown-link staff">
                 <el-icon><MoreFilled /></el-icon>
                 更多
               </span>
               <template #dropdown>
                 <el-dropdown-menu class="mp-stall-manage-table-menu--drop-down-wrap">
-                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved" @click="onUnLockClick(scope.row)">
+                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved && localPermission?.ImpositionUnLock" @click="onUnLockClick(scope.row)">
                     <el-icon class="ft-16 is-warning bold"><Unlock /></el-icon>
                     <span>拼版释放</span>
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved" @click="onChangeStatusClick(scope.row, scope.$index)">
+                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved && localPermission?.Dimission"
+                   @click="onChangeStatusClick(scope.row, scope.$index)">
                     <i class="icon-lizhi iconfont is-pink"></i>
                     <span>离职</span>
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.leaved" @click="onChangeStatusClick(scope.row, scope.$index)">
+                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.leaved && localPermission?.Dimission"
+                   @click="onChangeStatusClick(scope.row, scope.$index)">
                     <i class="icon-fanhui iconfont is-success"></i>
                     <span>取消离职</span>
                   </el-dropdown-item>
-                  <el-dropdown-item  @click="onEditClick(scope.row)">
+                  <el-dropdown-item  @click="onEditClick(scope.row)" v-if="localPermission?.Edit">
                     <i class="icon-bianji iconfont is-primary"></i>
                     <span>编辑</span>
                   </el-dropdown-item>
-                  <el-dropdown-item :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)">
+                  <el-dropdown-item :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)"
+                   v-if="localPermission?.Delete">
                     <i class="icon-delete iconfont"></i>
                     <span>删除</span>
                   </el-dropdown-item>
@@ -76,6 +80,7 @@ import DetailMenu from '@/components/common/menus/DetailMenu.vue';
 import { computed } from 'vue';
 import { useCommonStore } from '@/store/modules/common';
 import { storeToRefs } from 'pinia';
+import { IUser } from '@/store/modules/user/types';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import {
   EducationEnumList, SexEnumList, StaffStatusEnumList, StaffStatusEnum,
@@ -90,7 +95,18 @@ const { DistrictTreeList } = storeToRefs(commonStore);
 
 const props = defineProps<{
   StaffManagePageData: StaffManageClass
+  localPermission?: IUser['PermissionList']['PermissionManageStaffBase']['Obj']
 }>();
+
+const noMoreMenuPermission = computed(() => {
+  if (props.localPermission) {
+    const { Edit, Delete, Dimission, ImpositionUnLock } = props.localPermission;
+
+    return !Edit || !Delete || !Dimission || !ImpositionUnLock;
+  }
+
+  return false;
+});
 
 const emit = defineEmits(['edit', 'remove', 'dimission', 'check', 'detail']);
 

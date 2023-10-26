@@ -2,7 +2,7 @@
   <div class="material-warehouse-manage-page">
     <header>
       <div class="header-top">
-        <mp-button type="primary" @click="Data.SaveStorehouseShow = true">添加仓库</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" @click="Data.SaveStorehouseShow = true">添加仓库</mp-button>
       </div>
     </header>
     <main>
@@ -22,19 +22,21 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" show-overflow-tooltip min-width="573">
             <template #default="scope:any">
-              <mp-button type="primary" link
+              <mp-button type="primary" link v-if="localPermission?.SetCode"
               @click="ToSetPositionNumberPage(scope.row)">设置货位编号</mp-button>
-              <mp-button type="primary" link :disabled="!scope.row.IsLockDimension"
+              <mp-button type="primary" link v-if="localPermission?.SetupMap" :disabled="!scope.row.IsLockDimension"
               @click="ToGoodsAllocationPage(scope.row)">规划货位图</mp-button>
-              <mp-button type="primary" link
+              <mp-button type="primary" link v-if="localPermission?.QueryMap"
               @click="seeImg(scope.row.StorehouseImg)">查看平面布局图</mp-button>
-              <mp-button type="primary" link @click="editStorehouse(scope.row)">
-                <!-- <i class="iconfont icon-bianji"></i> -->
-                编辑</mp-button>
-              <mp-button type="danger" link
-                @click="delStorehouse(scope.row)">
-                <!-- <i class="iconfont icon-delete"></i> -->
-                删除</mp-button>
+              <template v-if="localPermission?.Setup">
+                <mp-button type="primary" link @click="editStorehouse(scope.row)">
+                  <!-- <i class="iconfont icon-bianji"></i> -->
+                  编辑</mp-button>
+                <mp-button type="danger" link
+                  @click="delStorehouse(scope.row)">
+                  <!-- <i class="iconfont icon-delete"></i> -->
+                  删除</mp-button>
+              </template>
             </template>
           </el-table-column>
         </el-table>
@@ -97,34 +99,12 @@
     noImgText="未上传平面布局图"
     >
     </SeeImageDialogComp>
-<!--
-    <DialogContainerComp
-    title="查看图片"
-    :visible='Data.LookImgShow'
-    :showPrimary="false"
-    :closeClick="() => Data.LookImgShow = false"
-    closeBtnText="关闭"
-    >
-    <template #default>
-      <div class="see-img">
-        <el-image
-          v-if="Data.SeeimgUrl"
-          style="width: 100px; height: 100px"
-          :src="Data.SeeimgUrl"
-          :preview-src-list="[Data.SeeimgUrl]"
-          :initial-index="4"
-          fit="cover"
-        />
-        <span v-else>暂无图片</span>
-      </div>
-    </template>
-    </DialogContainerComp> -->
   </div>
 </template>
 
 <script lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
-import { reactive, onMounted, onActivated } from 'vue';
+import { reactive, onMounted, onActivated, computed } from 'vue';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
@@ -133,6 +113,7 @@ import api from '@/api';
 import { useRouter } from 'vue-router';
 import messageBox from '@/assets/js/utils/message';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { useUserStore } from '@/store/modules/user';
 
 interface SaveStorehouseFormType {
   StorehouseID: string,
@@ -163,6 +144,10 @@ export default {
     SeeImageDialogComp,
   },
   setup() {
+    const userStore = useUserStore();
+    const { user } = userStore;
+    const localPermission = computed(() => user?.PermissionList?.PermissionWarehouse?.Obj);
+
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const Data:DataType = reactive({
@@ -297,6 +282,7 @@ export default {
       getStorehouseList();
     });
     return {
+      localPermission,
       Data,
       MaterialWarehouseStore,
       seeImg,

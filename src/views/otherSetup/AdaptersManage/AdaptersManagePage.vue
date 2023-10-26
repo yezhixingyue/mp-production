@@ -1,10 +1,11 @@
 <template>
   <section class="mp-erp-factory-adapters-manage-page-wrap">
     <header>
-      <mp-button type="primary" @click="onAdapterEditClick(null, -1)">添加转换服务器</mp-button>
+      <mp-button v-if="user && user.PermissionList.PermissionConvertServer.Obj.Setup" type="primary" @click="onAdapterEditClick(null, -1)">添加转换服务器</mp-button>
     </header>
     <main>
-      <AdaptersManageTable :list="ConvertServerList" :loading="loading" @edit="onAdapterEditClick" @remove="onAdapterRemoveClick" />
+      <AdaptersManageTable :canSetup="user && user.PermissionList.PermissionConvertServer.Obj.Setup"
+       :list="ConvertServerList" :loading="loading" @edit="onAdapterEditClick" @remove="onAdapterRemoveClick" />
       <AdaptersManageDialog :item="curEditData" v-model:visible="visible" :list="ConvertServerList" @saved="onItemSaved" />
     </main>
   </section>
@@ -15,6 +16,8 @@ import AdaptersManageDialog from '@/components/otherSetup/AdaptersManage/Adapter
 import AdaptersManageTable from '@/components/otherSetup/AdaptersManage/AdaptersManageTable.vue';
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { mapState } from 'pinia';
+import { useUserStore } from '@/store/modules/user';
 
 export default {
   name: 'AdaptersManagePage',
@@ -30,6 +33,9 @@ export default {
       ConvertServerList: [],
       loading: false,
     };
+  },
+  computed: {
+    ...mapState(useUserStore, ['user']),
   },
   methods: {
     onAdapterEditClick(editData, index) {

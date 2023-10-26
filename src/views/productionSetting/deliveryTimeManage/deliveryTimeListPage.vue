@@ -1,7 +1,7 @@
 <template>
   <section class="delivery-time-list-page">
     <header>
-      <mp-button type="primary" sizi='small' @click="onItemSetupClick('')">添加发货班次</mp-button>
+      <mp-button type="primary" sizi='small' v-if="localPermission?.Setup" @click="onItemSetupClick('')">添加发货班次</mp-button>
       <EpCascaderWithLevel3
         title="区域"
         :setCondition='setCondition'
@@ -43,7 +43,7 @@
             <span style="white-space: nowrap" :title="getShiftData(scope.row.Shift).replaceAll('；', '；\r\n')">{{getShiftData(scope.row.Shift)}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="操作" min-width="240">
+        <el-table-column prop="name" label="操作" min-width="240" v-if="localPermission?.Setup">
           <template #default="scope:any">
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="onItemSetupClick(scope.row)">
@@ -72,11 +72,15 @@ import api from '@/api';
 import { useCommonStore } from '@/store/modules/common/index';
 import messageBox from '@/assets/js/utils/message';
 import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/store/modules/user';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import { getRecordDataType, IShiftRowItem, IShiftTimeItem } from './types';
 import { ShiftItemClass } from './Comps/ShiftTimeSetupDialog/ShiftItemClass';
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageShift.Obj);
 
 const commonStore = useCommonStore();
 const router = useRouter();
