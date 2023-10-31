@@ -1,19 +1,6 @@
 <template>
   <div class="pasteup-template-page">
     <header>
-      <!-- <div class="classs">
-        <RadioGroupComp
-          :level1Options='ImpositionTemmplateClassList'
-          :level2Options='[]'
-          :defaultProps="{
-            value:'ID',
-            label:'Name',
-          }"
-          :value='RadioGroupCompValue'
-          @change="RadioGroupCompChange"
-          ></RadioGroupComp>
-        <mp-button type="primary" link @click="ManagementClass">管理分类</mp-button>
-      </div> -->
       <div class="header-top">
         <mp-button type="primary" v-if="localPermission?.Setup" @click="Data.addTemplateFromShow = true">+ 添加拼版模板</mp-button>
       </div>
@@ -21,13 +8,6 @@
     <main>
         <el-table border fit stripe
         :data="PasteupSettingStore.ImpositionTemmplateList" style="width: 100%">
-          <!-- <el-table-column show-overflow-tooltip prop="SupplierName" label="分类" min-width="224">
-            <template #default="scope:any">
-              <span >
-                {{getClassName(scope.row.ClassID) }}
-              </span>
-            </template>
-          </el-table-column> -->
           <el-table-column
           show-overflow-tooltip prop="Name" label="名称" min-width="280" />
           <el-table-column

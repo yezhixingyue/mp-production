@@ -38,7 +38,7 @@
         <!-- 是否为 印刷版 -->
         <template v-if="pasteupTemplateData.IsPrintingPlate">
           <el-form-item :label="`翻版方式：`" class="form-item-required">
-            <el-radio-group v-model="Data.addPasteupTemplateFrom.ReproductionType">
+            <el-radio-group :disabled="TemmplateSizeIsEditable" v-model="Data.addPasteupTemplateFrom.ReproductionType">
               <el-radio :label="0">正反版</el-radio>
               <el-radio :label="1">自翻版</el-radio>
               <el-radio :label="2">滚翻版</el-radio>
@@ -46,7 +46,7 @@
           </el-form-item>
         </template>
         <el-form-item :label="`尺寸：`" class="form-item-required">
-          <el-radio-group v-model="Data.addPasteupTemplateFrom.SizeType">
+          <el-radio-group :disabled="TemmplateSizeIsEditable" v-model="Data.addPasteupTemplateFrom.SizeType">
             <el-radio :label="0">按模板尺寸</el-radio>
             <el-radio :label="1">按实际拼版尺寸</el-radio>
           </el-radio-group>
@@ -218,6 +218,8 @@ const pasteupTemplateData = ref<ImpositionTemmplate>({
   IsSameSizeWithPrintingPlate: false,
   List: [],
 });
+const TemmplateSizeIsEditable = ref(false);
+
 const Data: DataType = reactive({
   uploadBtnLoading: false,
   addPasteupTemplateFrom: {
@@ -465,10 +467,14 @@ onMounted(() => {
   // pasteupTemplateData
   pasteupTemplateData.value = JSON.parse(route.params.Template as string) as ImpositionTemmplate;
   const temp = JSON.parse(route.params.SizeItem as string) as SizeListType;
-  console.log(temp, 'aaaaaaaaa');
 
   if (temp.ID) {
     Data.addPasteupTemplateFrom = temp;
+    api.getImpositionTemmplateSizeIsEditable(temp.ID).then(resp => {
+      if (resp.data.Status === 1000) {
+        TemmplateSizeIsEditable.value = JSON.parse(resp.data.Data as string);
+      }
+    });
   }
   Data.addPasteupTemplateFrom.TemplateID = pasteupTemplateData.value.ID;
   if (!temp.TemplateSizeAttribute) {

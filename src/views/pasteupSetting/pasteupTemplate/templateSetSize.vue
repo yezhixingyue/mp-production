@@ -57,6 +57,8 @@
           </el-table-column>
           <el-table-column prop="name" label="操作" min-width="241" v-if="localPermission?.SpecSetup">
             <template #default="scope:any">
+              <mp-button :type="scope.row.IsStop ? 'danger' : 'primary'" link @click="ChangeStopStatus(scope.row)">
+                {{scope.row.IsStop ? '启用' : '停用'}}</mp-button>
               <mp-button type="info" link @click="ToPasteupTemplateSteupPagePage(scope.row)">
                 <i class="iconfont icon-bianji"></i>编辑</mp-button>
               <mp-button type="info" link @click="delImpositionTemmplateSize(scope.row)">
@@ -133,6 +135,20 @@ function getImpositionTemmplateSizeList() {
       getTemmplateSize.value.DataTotal = res.data.DataNumber;
     }
   });
+}
+function ChangeStopStatus(item) {
+  const cb = () => {
+    api.getImpositionTemmplateSizeSwitch(item.ID).then(res => {
+      if (res.data.Status === 1000) {
+        getImpositionTemmplateSizeList();
+      }
+    });
+  };
+  if (item.IsStop) {
+    cb();
+  } else {
+    messageBox.warnCancelBox('确定要停用此模板规格吗？', `${item.Name}`, cb, () => undefined);
+  }
 }
 function ToPasteupTemplateSteupPagePage(item = null) {
   router.push({
