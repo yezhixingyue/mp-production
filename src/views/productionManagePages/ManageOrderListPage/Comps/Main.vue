@@ -43,7 +43,7 @@
             <td :style="`width:${widthList[12].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
-              <!-- 取消功能待开发 -->
+              <!-- 取消 -->
               <!-- <mp-button v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
                :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot"
                link type="primary" @click="onCancelClick(row)">取消</mp-button> -->
@@ -125,16 +125,16 @@ const widthList = ref([
   { width: 120 },
   { width: 85 },
   { width: 200 },
-  { width: 140 },
+  { width: 130 },
   { width: 140 },
   { width: 140 },
   { width: 160 },
   { width: 120 },
   { width: 110 },
   { width: 135 },
-  { width: 60 },
-  { width: 70 },
-  { width: 230 },
+  { width: 65 },
+  { width: 65 },
+  { width: 225 },
 ]);
 
 const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a, b) => a + b, 0));
@@ -209,10 +209,10 @@ const onTimeLineClick = (row: typeof localList.value[number]) => {
 /** 订单取消 */
 const cancelOrderVisible = ref(false);
 const handleCancel = async (e: IOrderCancelRelation) => {
-  console.log('handleCancel', e);
-  const resule = await emit('cancel', e);
-  console.log(123, resule);
-  if ((resule as unknown as boolean) && cancelOrderVisible.value) cancelOrderVisible.value = false;
+  const cb = () => {
+    if (cancelOrderVisible.value) cancelOrderVisible.value = false;
+  };
+  emit('cancel', e, cb);
 };
 const onCancelClick = (row: typeof localList.value[number]) => {
   if (!row._StatusDetail) return;

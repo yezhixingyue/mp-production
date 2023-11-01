@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus';
 import { IFactoryMaterialList } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from './Condition';
 import { IManageOrderListItem, IOrderCancelRelation } from './type';
+import { OrderStatus } from './enum';
 
 export class ManageOrderListClass {
   /** 获取订单列表的条件信息 */
@@ -80,8 +81,11 @@ export class ManageOrderListClass {
   }
 
   /** 订单取消 */
-  async handleOrderCancel(ruleForm: IOrderCancelRelation) { // getOrderCancle
-    const resp = await api.productionManageApis.getOrderPushTop(ruleForm).catch(() => null);
+  async handleOrderCancel(ruleForm: IOrderCancelRelation, callback: () => void) { // getOrderCancle
+    const t = this.list.find(it => it.ID === ruleForm.ID);
+    if (!t) return;
+
+    const resp = await api.productionManageApis.getOrderCancle(ruleForm).catch(() => null);
 
     if (resp?.data.isSuccess) {
       if (ruleForm.PlateList.length > 0) {
@@ -90,15 +94,15 @@ export class ManageOrderListClass {
           message: '取消成功',
           type: 'success',
         });
-        this.getList();
-        return true;
+        t.Status = OrderStatus.HaveCancled;
+        callback();
+      } else {
+        const cb = () => {
+          t.Status = OrderStatus.HaveCancled;
+          callback();
+        };
+        MpMessage.success('取消成功', cb, cb);
       }
-      const cb = () => {
-        this.getList();
-      };
-      MpMessage.success('取消成功', cb, cb);
-      return true;
     }
-    return false;
   }
 }
