@@ -145,7 +145,7 @@ function ChangeStopStatus(item) {
     });
   };
   if (item.IsStop) {
-    cb();
+    messageBox.warnCancelBox('确定要启用此模板规格吗？', `${item.Name}`, cb, () => undefined);
   } else {
     messageBox.warnCancelBox('确定要停用此模板规格吗？', `${item.Name}`, cb, () => undefined);
   }

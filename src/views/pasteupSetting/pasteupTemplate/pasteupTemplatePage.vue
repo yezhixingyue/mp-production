@@ -62,7 +62,7 @@
               <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
                 v-model="Data.addTemplateFrom.IsPrintingPlate" label="印刷版" size="large" />
               <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
-                v-model="Data.addTemplateFrom.IsSameSizeWithPrintingPlate" label="和印刷版保持一致" size="large" />
+                v-model="Data.addTemplateFrom.IsSameSizeWithPrintingPlate" label="和印刷版布局保持一致" size="large" />
               <p>注意：每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。</p>
             </el-form-item>
           </el-form>
