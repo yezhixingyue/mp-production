@@ -7,10 +7,11 @@
       <EquipmentTable
        :title="curLineWorkName"
        :EquipmentList="EquipmentList"
+       :EquipmentIDS="EquipmentIDS"
        @add="onAddClick('default')"
        @onRemoveClick="(e) => onRemoveClick(e, 'default')"
-       @ToPutOutPage="(e) => ToPutOutPage(e, 'default')"
-       @TocCpacityPage="(e) => TocCpacityPage(e, 'default')"
+       @toPutOutPage="(e) => toPutOutPage(e, 'default')"
+       @tocCpacityPage="(e) => tocCpacityPage(e, 'default')"
        @setWeight="(e) => setWeight(e, 'default')"
        :isPlateMaking="isPlateMakingGroup"
        />
@@ -21,8 +22,8 @@
        isPlateMaking
        @add="onAddClick('additional')"
        @onRemoveClick="(e) => onRemoveClick(e, 'additional')"
-       @ToPutOutPage="(e) => ToPutOutPage(e, 'additional')"
-       @TocCpacityPage="(e) => TocCpacityPage(e, 'additional')"
+       @toPutOutPage="(e) => toPutOutPage(e, 'additional')"
+       @tocCpacityPage="(e) => tocCpacityPage(e, 'additional')"
        @setWeight="(e) => setWeight(e, 'additional')"
        />
     </main>
@@ -35,7 +36,7 @@
 </template>
 
 <script setup lang='ts'>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { getGoBackFun } from '@/router';
 import { IMpBreadcrumbItem } from '@/assets/Types/common';
 import { IClassEquipmentGroups } from '@/store/modules/productionSetting/types';
@@ -57,9 +58,9 @@ const props = defineProps<{
   isPlateMakingGroup?: boolean
 }>();
 
-const emit = defineEmits(['ToPutOut', 'TocCpacity', 'remove', 'save', 'setWeight']);
+const emit = defineEmits(['toPutOut', 'tocCpacity', 'remove', 'save', 'setWeight']);
 
-const EquipmentIDS = computed(() => (props.Equipments ? props.Equipments.map(it => it.ID) : []));
+const EquipmentIDS = computed(() => (props.Equipments ? props.Equipments.map(it => it.ID) : undefined));
 
 const _getEquipmentList = (ClassEquipmentGroups: IClassEquipmentGroups[]) => {
   if (Array.isArray(ClassEquipmentGroups) && ClassEquipmentGroups.length > 0) {
@@ -67,7 +68,7 @@ const _getEquipmentList = (ClassEquipmentGroups: IClassEquipmentGroups[]) => {
     ClassEquipmentGroups?.forEach(lv1 => {
       lv1.EquipmentGroups.forEach(lv2 => {
         lv2.Equipments.forEach(it => {
-          if (it.LineEquipmentID || EquipmentIDS.value.includes(it.ID)) {
+          if (it.LineEquipmentID || EquipmentIDS.value?.includes(it.ID)) {
             let LineEquipmentID = it.LineEquipmentID || '';
             let Weight = it.Weight || null;
             if (props.Equipments) {
@@ -112,7 +113,7 @@ const curEditItem = computed(() => {
   const WorkSourceType = curSetupType.value === 'default' ? WorkSourceTypeEnum.Normal : WorkSourceTypeEnum.PlateMaking;
   return {
     LineWorkID: props.LineWorkID || '',
-    EquipmentIDS: _EquipmentList.value.map(it => it.ID),
+    EquipmentIDS: _EquipmentList.value.filter(it => !EquipmentIDS.value || EquipmentIDS.value.includes(it.ID)).map(it => it.ID),
     WorkSourceType,
   };
 });
@@ -140,12 +141,12 @@ const submit = (data: ILineEquipmentSaveParams) => { // 添加设备 本地保�
   emit('save', temp, callback);
 };
 
-const ToPutOutPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 伸放
-  emit('ToPutOut', it, type);
+const toPutOutPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 伸放
+  emit('toPutOut', it, type);
 };
 
-const TocCpacityPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 设备产能
-  emit('TocCpacity', it, type);
+const tocCpacityPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 设备产能
+  emit('tocCpacity', it, type);
 };
 
 const onRemoveClick = (it: EquipmentListType, type: EquipmentSetupType) => { // 本地保存？
@@ -156,6 +157,9 @@ const setWeight = (list: { ID: string, Weight: number }[], type: EquipmentSetupT
   emit('setWeight', list, type);
 };
 
+onMounted(() => {
+  console.log('EquipmentIDS', EquipmentIDS.value, EquipmentList.value);
+});
 </script>
 
 <style lang='scss'>
