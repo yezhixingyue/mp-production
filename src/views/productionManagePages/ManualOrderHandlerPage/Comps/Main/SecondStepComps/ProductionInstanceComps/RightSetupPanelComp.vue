@@ -17,7 +17,7 @@
         <tr v-for="work in itemData.WorkingList" :key="work.ID">
           <td class="w-title" :title="work.Name">{{ work.Name }}</td>
           <td class="w-content" :title="getWorkingContent(work).replaceAll('；', '\r\n')">{{ getWorkingContent(work) }}</td>
-          <td class="w-work-times" style="padding-left:15px;padding-right:0">
+          <td class="w-work-times" style="padding-left:15px;padding-right:0" :class="{'v-hide': WorkingTypeEnum.normal !== work.Type }">
             <span>作业次数：</span>
             <el-input v-model.number="work.WorkTimes" maxlength="3"></el-input>
             <span class="ml-5">次</span>
@@ -171,6 +171,7 @@ import { IConvertAssistInfo, IConvertOrderFile, IPrintColor } from '@/views/prod
 import { handleFileChange, getBleedContent } from '@/views/productionManagePages/ManualOrderHandlerPage/js/utils';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import MpFileSelectButton from '@/components/common/General/MpFileSelectButton.vue';
+import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import WorkingSelectDialog from './WorkingSelectDialog.vue';
 import AssistInfoSetupDialog from './AssistInfoSetupDialog.vue';
 import SpecialColorSelectDialog from './SpecialColorSelectDialog.vue';
@@ -444,6 +445,13 @@ const onBleedSetupSubmit = (e: Required<Pick<IConvertOrderFile, 'BleedBottom' | 
             width: 150px;
             .el-input {
               width: 55px;
+            }
+
+            &.v-hide {
+              * {
+                visibility: hidden;
+                display: none;
+              }
             }
           }
           &.w-operator {

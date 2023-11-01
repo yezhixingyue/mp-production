@@ -1,6 +1,7 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum } from './enums';
 import { ILineDetailWorkingProcedure, ILineWorkingMaterialSources } from './ProductionLineDetailTypes';
 import {
@@ -306,12 +307,14 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
 
     const text = this._LineInstanceName ? '中 ' : '';
 
-    let target = this.WorkingList.find(it => it.WorkTimes === '');
+    const _normalWorkingList = this.WorkingList.filter(w => w.Type === WorkingTypeEnum.normal);
+    console.log(_normalWorkingList, 1);
+    let target = _normalWorkingList.find(it => it.WorkTimes === '');
     if (target) {
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序未设置作业次数` });
       return false;
     }
-    target = this.WorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
+    target = _normalWorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
     if (target) {
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序作业次数设置不正确，必须为正整数类型` });
       return false;
