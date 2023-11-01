@@ -27,7 +27,7 @@ export class InstanceTaskListClass {
   }
 
   /** 获取时机： 1. 加载当前任务完成后 2. 扫描条码完成后 - 根据结果获取 */
-  public async getEquipmentTaskList(Page = 1, Equipment: IManageEquipmentInfo | null = null) {
+  public async getEquipmentTaskList(Page = 1, Equipment: IManageEquipmentInfo | null = null, StartProduction = false) {
     this.TaskList = [];
     this.loading = true;
 
@@ -37,7 +37,7 @@ export class InstanceTaskListClass {
       this.condition.setEquipment(Equipment);
     }
 
-    const resp = await clientApi.getEquipmentTaskList(this.condition.getParams()).catch(() => null);
+    const resp = await clientApi.getEquipmentTaskList(this.condition.getParams(StartProduction)).catch(() => null);
     this.loading = false;
 
     if (resp?.data.isSuccess) {

@@ -55,12 +55,13 @@ export class Condition {
     }
   }
 
-  getParams() {
+  getParams(StartProduction = false) {
     if (this._UnReceived) {
       return {
         Page: this.Page,
         PageSize: this.PageSize,
         SendEquipment: this.SendEquipment,
+        StartProduction,
       };
     }
 
@@ -69,6 +70,7 @@ export class Condition {
       PageSize: this.PageSize,
       Catalog: this.Catalog,
       StatusList: this.StatusList,
+      StartProduction,
     };
   }
 }
