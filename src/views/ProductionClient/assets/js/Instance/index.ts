@@ -109,7 +109,8 @@ export class TerminalEquipmentInstance {
 
     /** ------------------------------ 此处拦截 处理批量报工 */
     if (this.Equipment.AllowBatchReport) {
-      this.TaskListData.getEquipmentTaskList();
+      console.log(123);
+      this.TaskListData.getEquipmentTaskList(); // 批量报工获取列表 - 需要传递特殊值
       return;
     }
 

@@ -5,6 +5,7 @@ import { validateDateValue } from '@/components/common/ElementPlusContainners/Mp
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { MaterialSourceTypeEnum } from '@/views/productionSetting/js/enums';
+import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { ReceiveTypeEnum } from './enums';
 import { PlaceOrderProductionInstance } from './PlaceOrderProductionInstance';
 import { ILineDetailWorkingProcedure, ILineWorkingMaterialSources, IProductionLineDetail } from './ProductionLineDetailTypes';
@@ -305,12 +306,14 @@ export class PlaceOrderClass {
         return false;
       }
 
-      let target = this.WorkingList.find(it => it.WorkTimes === '');
+      const _normalWorkingList = this.WorkingList.filter(w => w.Type === WorkingTypeEnum.normal);
+      console.log(_normalWorkingList, 0);
+      let target = _normalWorkingList.find(it => it.WorkTimes === '');
       if (target) {
         MpMessage.error({ title: '操作失败', msg: `[${target.Name}] 工序未设置作业次数` });
         return false;
       }
-      target = this.WorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
+      target = _normalWorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
       if (target) {
         MpMessage.error({ title: '操作失败', msg: `[${target.Name}] 工序作业次数设置不正确，必须为正整数类型` });
         return false;

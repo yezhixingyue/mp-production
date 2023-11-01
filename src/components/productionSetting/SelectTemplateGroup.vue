@@ -2,7 +2,7 @@
   <DialogContainerComp
     title="选择大版模板"
     :visible='localVisible'
-    :width="660"
+    :width="720"
     @submit="submit"
     @open="onOpen"
     @cancel="onCancel"
@@ -71,8 +71,17 @@ function submit() {
   .el-radio-group{
     width: 100%;
     .el-radio{
-      width: calc(25% - 10px);
-      margin-right: 10px;
+      width: calc(25% - 5px);
+      margin-right: 5px;
+      overflow: hidden;
+      flex: none;
+
+      .el-radio__label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 }
