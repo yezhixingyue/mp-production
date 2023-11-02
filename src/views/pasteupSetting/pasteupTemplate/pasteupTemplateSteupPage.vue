@@ -222,7 +222,8 @@ const pasteupTemplateData = ref<ImpositionTemmplate>({
   IsSameSizeWithPrintingPlate: false,
   List: [],
 });
-const TemmplateSizeIsEditable = ref(false);
+// 是否可以编辑
+const TemmplateSizeIsEditable = ref(true);
 
 const Data: DataType = reactive({
   uploadBtnLoading: false,
