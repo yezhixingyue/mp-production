@@ -171,6 +171,7 @@ header.mp-client-header {
       display: flex;
       margin-right: 20px;
       overflow: hidden;
+      overflow: auto;
       position: relative;
       > span {
         height: 46px;
