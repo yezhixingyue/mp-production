@@ -3,6 +3,7 @@
     <Header :condition="ManagePlateListPageData.condition" :list="ManagePlateListPageData.list" :lineList="ManagePlateListPageData.ProductionLineList"
      :getList="getList" :setCondition="setCondition" @clear="clearCondition" />
     <Main
+     :Type="ManagePlateListPageData.condition.Type"
      :list="ManagePlateListPageData.list"
      :loading="ManagePlateListPageData.loading" />
     <Footer :condition="ManagePlateListPageData.condition" :getList="getList" :total="ManagePlateListPageData.listNumber" />
@@ -15,8 +16,9 @@ import Header from './Comps/Header.vue';
 import Main from './Comps/Main.vue';
 import Footer from './Comps/Footer.vue';
 import { ManagePlateListClass } from './js/ManagePlateListClass';
+import { PlateTypeEnum } from './js/enum';
 
-const ManagePlateListPageData = ref(new ManagePlateListClass());
+const ManagePlateListPageData = ref(new ManagePlateListClass(PlateTypeEnum.Plate));
 
 const setCondition = (e) => { ManagePlateListPageData.value.setCondition(e); };
 

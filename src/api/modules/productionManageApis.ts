@@ -36,6 +36,10 @@ export const productionManageApis = {
   getChunkList(condition) {
     return request<IManageChunkInfo[]>({ method: 'POST', url: '/Api/Chunk/List', data: condition });
   },
+  /** GET /Api/Plate/OrderList  获取大版相关订单列表 */
+  getPlateOrderList(plateID: string) {
+    return instance.get<IManageOrderListItem[]>('/Api/Plate/OrderList', { params: { plateID } });
+  },
   /** POST /Api/Task/List   筛选任务列表 --- 接口作废 和 设备任务列表接口共用 */
   // getTaskList(data) {
   //   return instance.post('/Api/Task/List', data);

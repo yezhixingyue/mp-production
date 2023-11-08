@@ -34,6 +34,10 @@ export interface ISellOrderInstanceItem {
   Unit: string
   /** 生产线列表 */
   LineList: ISellOrderLineItem[]
+  /** 印刷版拼版详情与进度 */
+  PrintFileRemark: string | null
+  /** 后工版拼版详情与进度 */
+  AfterPrintFileRemark: string | null
 }
 
 /**

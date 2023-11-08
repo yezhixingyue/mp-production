@@ -4,16 +4,16 @@
       <thead>
         <tr @mousedown="mousedown" @mousemove="mousemove">
           <th data-index="0" :style="`width:${widthList[0].width}px`">大版ID</th>
-          <th data-index="0" :style="`width:${widthList[1].width}px`">序号</th>
-          <th data-index="1" :style="`width:${widthList[2].width}px`">尺寸规格</th>
-          <th data-index="2" :style="`width:${widthList[3].width}px`">物料</th>
-          <th data-index="3" :style="`width:${widthList[4].width}px`">印刷数量</th>
-          <th data-index="4" :style="`width:${widthList[5].width}px`">包含订单块</th>
-          <th data-index="5" :style="`width:${widthList[6].width}px`">拼版时间</th>
-          <th data-index="6" :style="`width:${widthList[7].width}px`">拼版人员</th>
-          <th data-index="7" :style="`width:${widthList[8].width}px`">生产线</th>
-          <th data-index="8" :style="`width:${widthList[9].width}px`">当前位置</th>
-          <th data-index="9" :style="`width:${widthList[10].width}px`">状态</th>
+          <th data-index="1" :style="`width:${widthList[1].width}px`">序号</th>
+          <th data-index="2" :style="`width:${widthList[2].width}px`">尺寸规格</th>
+          <th v-show="Type === PlateTypeEnum.Plate" data-index="3" :style="`width:${widthList[3].width}px`">物料</th>
+          <th data-index="4" :style="`width:${widthList[4].width}px`">{{ Type === PlateTypeEnum.Plate ? '印刷数量' : '加工数量' }}</th>
+          <th data-index="5" :style="`width:${widthList[5].width}px`">包含订单块</th>
+          <th data-index="6" :style="`width:${widthList[6].width}px`">拼版时间</th>
+          <th data-index="7" :style="`width:${widthList[7].width}px`">拼版人员</th>
+          <th data-index="8" :style="`width:${widthList[8].width}px`">生产线</th>
+          <th data-index="9" :style="`width:${widthList[9].width}px`">当前位置</th>
+          <th data-index="10" :style="`width:${widthList[10].width}px`">状态</th>
           <th data-index="11" :style="`width:${widthList[11].width}px`">操作</th>
         </tr>
       </thead>
@@ -23,7 +23,7 @@
             <td :style="`width:${widthList[0].width}px`" :title="row.Code + ''">{{ row.Code || '' }}</td>
             <td :style="`width:${widthList[1].width}px`" :title="row.Code + ''">{{ row.Index || '' }}</td>
             <td :style="`width:${widthList[2].width}px`" :title="row._Size">{{ row._Size || '' }}</td>
-            <td :style="`width:${widthList[3].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
+            <td v-show="Type === PlateTypeEnum.Plate" :style="`width:${widthList[3].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
             <td :style="`width:${widthList[4].width}px`" :title="row._Number">{{ row._Number || '' }}</td>
             <td :style="`width:${widthList[5].width}px`" :title="row.ChunkNumber + ''">{{ row.ChunkNumber }}</td>
             <td :style="`width:${widthList[6].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
@@ -35,8 +35,11 @@
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onOrderPrintClick(row)">打印工单</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
                :disabled="!row.MapFilePath">打印条码稿</mp-button>
-              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query" @click="onProcessClick(row)">进度详情</mp-button>
-              <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0">
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.Plate"
+               @click="onProcessClick(row)">进度详情</mp-button>
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.LaterCraft"
+               @click="onOrderContainClick(row)">包含订单</mp-button>
+              <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0" v-show="Type === PlateTypeEnum.Plate">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
                 <el-icon v-show="row._isSpread"><CaretTop /></el-icon>
@@ -49,7 +52,10 @@
                 <span class="m">{{ child.Code }}</span>
               </td>
               <td class="number">含订单：{{ child.ChunkNumber }}个</td>
-              <td :style="`width:${widthList[10].width}px`">
+              <td class="detail" :title="child._Size">{{ child._Size }}</td>
+              <td class="detail" :title="child._Position">{{ child._Position }}</td>
+              <td class="detail" :title="child._StatusText">{{ child._StatusText }}</td>
+              <td class="menus">
                 <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query" @click="onProcessClick(row, child)">进度详情</mp-button>
                 <!-- <mp-button link type="primary" @click="onBarCodePrintClick(row, child)" :disabled="!child.MapFilePath">打印条码稿</mp-button> -->
               </td>
@@ -81,12 +87,15 @@
         <embed type="application/pdf" v-if= 'previewUrl' :src="previewUrl" width="100%" height="100%" />
       </div>
     </PrintDialog>
+
+    <!-- 展示包含订单弹窗 -->
+    <OrderContainDialog v-model:visible="orderContainVisible" :item="curRow" />
   </main>
 </template>
 
 <script setup lang='ts'>
 import {
-  computed, onMounted, onUnmounted, ref,
+  computed, defineAsyncComponent, onMounted, onUnmounted, ref,
 } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
@@ -100,10 +109,14 @@ import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
 import { useUserStore } from '@/store/modules/user';
 import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
+import { PlateStatusEnum, PlateTypeEnum } from '../js/enum';
+
+const OrderContainDialog = defineAsyncComponent(() => import('./OrderContainDialog.vue'));
 
 const props = defineProps<{
   list: IManagePlateInfo[]
   loading: boolean
+  Type: PlateTypeEnum
 }>();
 
 const userStore = useUserStore();
@@ -112,16 +125,16 @@ const { user } = storeToRefs(userStore);
 const widthList = ref([
   { width: 85 },
   { width: 120 },
-  { width: 190 },
+  { width: props.Type === PlateTypeEnum.Plate ? 190 : 260 },
   { width: 200 },
   { width: 140 },
+  { width: props.Type === PlateTypeEnum.Plate ? 85 : 100 },
+  { width: props.Type === PlateTypeEnum.Plate ? 115 : 120 },
   { width: 85 },
-  { width: 115 },
-  { width: 85 },
-  { width: 110 },
-  { width: 180 },
+  { width: props.Type === PlateTypeEnum.Plate ? 110 : 180 },
+  { width: props.Type === PlateTypeEnum.Plate ? 180 : 220 },
   { width: 75 },
-  { width: 325 },
+  { width: 310 },
 ]);
 
 const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a, b) => a + b, 0));
@@ -136,6 +149,13 @@ const localList = computed(() => props.list.map(it => ({
   _StatusText: getEnumNameByID(it.Status, PlateStatusEnumList) || '',
   _isSpread: spreadList.value.includes(it.ID),
   _Size: [it.Template, it.TemplateSize].filter(it => it).join(' '),
+  ChildList: it.ChildList.map(child => ({
+    ...child,
+    _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
+    _Position: it.Status === PlateStatusEnum.Finished && child.Position ? `当前位置：${child.Position}` : '',
+    _StatusText: it.Status === PlateStatusEnum.Finished && getEnumNameByID(child.Status, PlateStatusEnumList)
+      ? `状态：${getEnumNameByID(child.Status, PlateStatusEnumList)}` : '',
+  })),
 })));
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
@@ -159,6 +179,12 @@ const onProcessClick = (row: typeof localList.value[number], childPlat: IPlateLi
   curRow.value = row;
   curRowChildPlat.value = childPlat;
   processVisible.value = true;
+};
+
+const orderContainVisible = ref(false);
+const onOrderContainClick = (row: typeof localList.value[number]) => {
+  curRow.value = row;
+  orderContainVisible.value = true;
 };
 
 const imgSrc = ref('');
@@ -313,6 +339,7 @@ onUnmounted(() => {
           button {
             font-size: 12px;
             padding: 0;
+            margin-top: -3px;
             & + .el-button  {
               margin-left: 30px;
             }
@@ -350,6 +377,8 @@ onUnmounted(() => {
           border-bottom: 1px solid #E5E5E5;
           line-height: 39px;
           text-align: left;
+          display: flex;
+          align-items: center;
           &:hover {
             background-color: #d8effc;
           }
@@ -367,6 +396,15 @@ onUnmounted(() => {
             &.number {
               min-width: 150px;
               margin-right: 13px;
+            }
+
+            &.detail {
+              flex: 1;
+              padding-right: 10px;
+            }
+
+            &.menus {
+              width: 525px;
             }
           }
         }

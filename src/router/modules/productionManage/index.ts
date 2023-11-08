@@ -95,6 +95,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManageOrderListPage/ManageOrderListPage.vue'),
     },
+    /* 后工版
+    -------------------------------------- */
+    {
+      path: '/ManageLaterCraftPlateList',
+      name: 'ManageLaterCraftPlateList',
+      meta: {
+        title: '后工版',
+        requiresAuth: true,
+        icon: 'icon-daban iconfont',
+        pageName: 'ManageLaterCraftPlateListPage',
+        PermissionInfo: ['PermissionManagePlate', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/ManagePlateListPage/ManageLaterCraftPlateList.vue'),
+    },
     /* 外来物料
     -------------------------------------- */
     {
@@ -141,7 +155,7 @@ const routes: RouteRecordRaw = {
       path: '/ManageTaskList',
       name: 'ManageTaskList',
       meta: {
-        title: '生产任务',
+        title: '已完成任务',
         requiresAuth: true,
         icon: 'icon-shengchanrenwu iconfont',
         pageName: 'ManageTaskListPage',
