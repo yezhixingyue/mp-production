@@ -103,7 +103,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '后工版',
         requiresAuth: true,
-        icon: 'icon-daban iconfont',
+        icon: 'icon-hougongbanben iconfont',
         pageName: 'ManageLaterCraftPlateListPage',
         PermissionInfo: ['PermissionManagePlate', 'HavePomission'],
       },
