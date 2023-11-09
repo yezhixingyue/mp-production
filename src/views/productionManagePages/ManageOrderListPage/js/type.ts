@@ -75,6 +75,8 @@ export interface IManageOrderListItem {
   CreateTime: string
   /** 预计完成时间 */
   WishFinishTime: string
+  /** 是否手动下单 */
+  IsManualOrder: boolean
   /** 是否已置顶 */
   IsTop: boolean
   /** 生产线 */

@@ -35,6 +35,7 @@
             <td :style="`width:${widthList[11].width}px`">
               <span class="top-text" v-show="row.IsTop" :class="{'v-hide': !row.IsTop}">已置顶</span>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.TopShow"
+                :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot"
                @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
               <!-- <mp-button link type="primary" style="margin-left:8px"
                :disabled="row._isMakeuped"
@@ -45,7 +46,7 @@
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
               <!-- 取消 -->
               <mp-button v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
-               :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot"
+               :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot || !row.IsManualOrder"
                link type="primary" @click="onCancelClick(row)">取消</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="!row._isCombineLine">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
@@ -364,6 +365,7 @@ onUnmounted(() => {
           button {
             font-size: 12px;
             padding: 0;
+            margin-top: -4px;
             & + .el-button  {
               margin-left: 20px;
             }
