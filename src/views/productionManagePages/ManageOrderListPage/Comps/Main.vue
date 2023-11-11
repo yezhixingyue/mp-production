@@ -159,6 +159,14 @@ const _getNormalOrderLineContent = (instance: ISellOrderInstanceItem) => {
   return [_LineContent, _PrintFileRemark, _AfterPrintFileRemark].filter(it => it).join('；');
 };
 
+const _getRootNormalOrderLineContent = (it: IManageOrderListItem) => {
+  if (it.InstanceList.length > 1 && it.AfterPrintFileRemark) return `后工版: ${it.AfterPrintFileRemark}`;
+
+  if (it.InstanceList[0]) return _getNormalOrderLineContent(it.InstanceList[0]);
+
+  return '';
+};
+
 const localList = computed(() => props.list.map(it => ({
   ...it,
   /** 销售端产品 */
@@ -170,7 +178,7 @@ const localList = computed(() => props.list.map(it => ({
   _isCombineLine: it.InstanceList.length > 1,
   _Size: it.InstanceList.length > 1 ? it.Size || '' : it.InstanceList[0]?.Size || '',
   _Material: it.InstanceList.length > 1 ? '' : it.InstanceList[0]?.Material || '',
-  _LineContent: it.InstanceList.length > 1 || !it.InstanceList[0] ? '' : _getNormalOrderLineContent(it.InstanceList[0]),
+  _LineContent: _getRootNormalOrderLineContent(it),
   _isMakeuped: getIsMakeuped(it),
   _StatusDetail: OrderStatusList.find(_it => _it.ID === it.Status),
 })));

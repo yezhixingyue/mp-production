@@ -83,6 +83,7 @@ export interface IManageOrderListItem {
   Line: string
   /** 实例列表 */
   InstanceList: ISellOrderInstanceItem[]
+  AfterPrintFileRemark: string
 }
 
 /** 时间线数据类型 */
