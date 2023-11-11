@@ -418,6 +418,7 @@ export class PlaceOrderClass {
 
   /** 组合生产线  添加工序 | 删除工序 后的对应处理函数： 用于生成半成品生产线实例： 1. 半成品   2. 来自其它生产线  3. 去重  4. 必需 */
   handleWorkingSelect() {
+    console.log(123, 'handleWorkingSelect');
     const list: PlaceOrderProductionInstance[] = [];
 
     // 1. 定义组合生产线中根据所选工序计算出来的所有可用到的半成品列表 -- 包含必需和非必需 必需的排至前面
@@ -441,6 +442,28 @@ export class PlaceOrderClass {
               }
             }
           }
+        });
+      }
+
+      // 1. 拼版文件
+      if (w.Template && !_FileList.find(_it => _it.Template?.ID === w.Template?.ID)) {
+        const t = this.FileList.find(_it => _it.Template?.ID === w.Template?.ID);
+        _FileList.push({
+          UniqueName: t ? t.UniqueName : '',
+          _File: t ? t._File : null,
+          Template: {
+            ID: w.Template.ID,
+          },
+          _PlateTemplate: w.Template,
+          _LineInfo: {
+            ID: this._curCombineLine?.ID || '',
+            Name: this._curCombineLine?.Name || '',
+            Index: '',
+          },
+          BleedBottom: t?.BleedBottom || '',
+          BleedLeft: t?.BleedLeft || '',
+          BleedRight: t?.BleedRight || '',
+          BleedTop: t?.BleedTop || '',
         });
       }
 

@@ -32,7 +32,7 @@
       </tbody>
     </table>
     <!-- 拼版文件列表 -->
-    <template v-if="itemData.WorkingList.length > 0 && !isCombine && _MakeupFileList.length > 0">
+    <template v-if="itemData.WorkingList.length > 0 && _MakeupFileList.length > 0">
       <div class="header makeup_header">
         <span class="title">拼版文件:</span>
         <el-checkbox :model-value="itemData.ForbitUnionMakeup" @change="e => itemData.ForbitUnionMakeup = e">禁止印刷版合拼</el-checkbox>

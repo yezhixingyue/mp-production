@@ -105,7 +105,7 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
   /** 根据选中工序生成相关信息: WorkingList AssistList FileList */
   handleWorkingSelect(index: number | '') {
     // 需要生成的数据有: WorkingList AssistList FileList  其中  FileList中包含拼版文件 辅助文件 和 专色文件 3种类型
-
+    console.log('handleWorkingSelect 1111', index);
     const _AssistList: IConvertAssistInfo[] = [];
     const _FileList: IConvertOrderFile[] = [];
 
