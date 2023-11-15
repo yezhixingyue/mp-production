@@ -10,7 +10,7 @@ export const getTime = (dateString: string, options?: { onlyDate: boolean, withT
   if (options?.onlyDate || !dateString) return '';
   const _content = dateString.split('.')[0];
   const _timeContent = _content.split('T')[1];
-  if (!_timeContent && options && !options.withTime) { // 时间点不存在 或者 根据配置生成
+  if (!_timeContent && options && !options.withTime) { // 时间点不存在 则 根据配置生成
     if (options.isBegin) {
       return '00:00:00';
     }

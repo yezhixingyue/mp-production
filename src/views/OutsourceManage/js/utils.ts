@@ -11,8 +11,8 @@ export const checkExTaskIsComplete = (row: ReturnType<typeof getLocalTaskList>[n
   const { FactoryID, Amount, WishFinishTime } = row._ExternalSubmitParams;
 
   if (!FactoryID) return '请选择外协工厂';
-  const _row = row; // 此两行代码临时使用 后面需要删除 并 取消注释上行代码
-  _row._ExternalSubmitParams.FactoryID = '4bd5293b-1e4d-4b47-a58c-afba010ae72a';
+  // const _row = row; // 此两行代码临时使用 后面需要删除 并 取消注释上行代码
+  // _row._ExternalSubmitParams.FactoryID = '4bd5293b-1e4d-4b47-a58c-afba010ae72a';
 
   if (!Amount && Amount !== 0) return '请输入外协金额';
 
