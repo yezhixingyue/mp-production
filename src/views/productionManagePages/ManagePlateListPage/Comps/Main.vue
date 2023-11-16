@@ -11,7 +11,7 @@
           <th data-index="5" :style="`width:${widthList[5].width}px`">包含订单块</th>
           <th data-index="6" :style="`width:${widthList[6].width}px`">拼版时间</th>
           <th data-index="7" :style="`width:${widthList[7].width}px`">拼版人员</th>
-          <th data-index="8" :style="`width:${widthList[8].width}px`">生产线</th>
+          <th data-index="8" :style="`width:${widthList[8].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
           <th data-index="9" :style="`width:${widthList[9].width}px`">当前位置</th>
           <th data-index="10" :style="`width:${widthList[10].width}px`">状态</th>
           <th data-index="11" :style="`width:${widthList[11].width}px`">操作</th>
