@@ -29,7 +29,7 @@
             <td :style="`width:${widthList[6].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
             <td :style="`width:${widthList[7].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
             <td :style="`width:${widthList[8].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
-            <td :style="`width:${widthList[9].width}px`" :title="row.Position">{{ row.Position || '' }}</td>
+            <td :style="`width:${widthList[9].width}px`" :title="row._Position">{{ row._Position }}</td>
             <td :style="`width:${widthList[10].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
             <td :style="`width:${widthList[11].width}px`">
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onOrderPrintClick(row)">打印工单</mp-button>
@@ -149,6 +149,7 @@ const localList = computed(() => props.list.map(it => ({
   _StatusText: getEnumNameByID(it.Status, PlateStatusEnumList) || '',
   _isSpread: spreadList.value.includes(it.ID),
   _Size: [it.Template, it.TemplateSize].filter(it => it).join(' '),
+  _Position: it.Status !== PlateStatusEnum.Finished ? it.Position || '' : '',
   ChildList: it.ChildList.map(child => ({
     ...child,
     _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
