@@ -63,6 +63,7 @@
                 action="/Api/Upload/PlateTemplate"
                 accept=".pdf"
                 :on-success='handlleUploaded'
+                :on-error="handlleUploadedError"
                 :before-upload='beforeUpload'
               >
                 <template #trigger>
@@ -451,6 +452,11 @@ function handlleUploaded(e) {
   } else {
     messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
   }
+  Data.uploadBtnLoading = false;
+}
+function handlleUploadedError(error) {
+  const errorRes = JSON.parse(error.message);
+  messageBox.failSingleError('上传失败', errorRes.Message, () => null, () => null);
   Data.uploadBtnLoading = false;
 }
 function beforeUpload(file) {
