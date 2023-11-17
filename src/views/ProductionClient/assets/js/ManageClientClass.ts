@@ -52,8 +52,8 @@ export class ManageClientClass {
 
     this.InstanceList = list.map(it => this.InstanceList.find(_it => _it.Equipment.ID === it.ID) || new TerminalEquipmentInstance(it));
 
-    this.websocketHandler.getAllUndeliveredList(); // 更新设备信息
-
+    // this.websocketHandler.getAllUndeliveredList(); // 更新设备信息
+    this.websocketHandler.start();
     // 对curActiveInstance的相关处理 -- 如果当前实例被移除 则置curActiveInstance为null
     if (this.curActiveInstance) {
       const t = this.InstanceList.find(it => it.Equipment.ID === this.curActiveInstance?.Equipment.ID);

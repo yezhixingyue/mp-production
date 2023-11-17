@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import clientApi from '@/api/client';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getLocalMachineCode } from '@/views/ProductionClient/assets/js/getLocalMachineCode';
 
@@ -72,7 +74,6 @@ export class WebsocketHandler {
         this.terminal = await getLocalMachineCode();
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const chat = ($ as any).connection.messageHub;
       chat.connection.url = '/signalr';
 
@@ -86,9 +87,11 @@ export class WebsocketHandler {
             UndeliveredNumber,
           });
         }
+
+        console.log('UpdateUnReceivedNumber', EquipmentID, UndeliveredNumber);
+        console.log('target UndeliveredList', t, this.UndeliveredList);
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ($ as any).connection.hub.start().done(() => {
         this.chatServer = chat.server;
 
@@ -110,9 +113,10 @@ export class WebsocketHandler {
       return;
     }
 
-    this.chatServer.getUndeliveredList()
+    this.chatServer.getUndeliveredList(this.terminal)
       .done((result: IUndeliveredListItem[]) => {
         this.UndeliveredList = result || [];
+        console.log('getAllUndeliveredList getUndeliveredList done result', result);
       })
       .catch((error) => {
         this.UndeliveredList = [];
@@ -120,5 +124,27 @@ export class WebsocketHandler {
         const msg = error instanceof Error ? error.message : '将导致未送出数量显示不准确';
         MpMessage.error({ title: '创建socket连接失败', msg });
       });
+  }
+
+  public async start() { // 暂不使用websocket
+    if (!this.terminal) {
+      this.terminal = await getLocalMachineCode();
+    }
+    const resp = await clientApi.getEquipmentUndeliveredList(this.terminal).catch(() => null);
+
+    let needRepeat = true;
+
+    if (resp?.data.isSuccess) {
+      this.UndeliveredList = resp.data.Data || [];
+      if (!this.UndeliveredList.find(it => it.UndeliveredNumber > 0)) {
+        needRepeat = false;
+      }
+    }
+
+    if (needRepeat) {
+      setTimeout(() => {
+        this.start();
+      }, 10 * 1000);
+    }
   }
 }

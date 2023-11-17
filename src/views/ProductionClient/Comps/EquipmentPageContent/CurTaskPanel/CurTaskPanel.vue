@@ -34,6 +34,7 @@ import { computed, ref } from 'vue';
 import { TerminalEquipmentInstance } from '@/views/ProductionClient/assets/js/Instance';
 import { EquipmentStatusEnum } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/enum';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
+import { ManageClientPageData } from '@/api/client/clientStore';
 import PanelLeft from './PanelLeft.vue';
 import PanelRight from './PanelRight.vue';
 import SetTaskErrorDialog from './SetTaskErrorDialog.vue';
@@ -83,12 +84,17 @@ const onCompleteClick = (task: null | ITaskDetail) => {
 const handleTaskSetComplete = (count: number | '') => {
   const cb = () => {
     completeVisible.value = false;
+    ManageClientPageData.value.websocketHandler.start();
   };
   props.curInstance.setTaskComplete(count, cb, curSelectTask.value?.ID);
 };
 
 const handleBatchReport = (list, callback) => {
-  props.curInstance.getEquipmentTaskBatchReport(list, callback);
+  const cb = () => {
+    callback();
+    ManageClientPageData.value.websocketHandler.start();
+  };
+  props.curInstance.getEquipmentTaskBatchReport(list, cb);
 };
 
 </script>

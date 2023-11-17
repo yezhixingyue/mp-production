@@ -63,7 +63,7 @@ const axios = new Axios({
     // 响应拦截器
     responseInterceptors: (result:AxiosResponse) => {
       if (loadingInstance && (result.config as IRequestConfig)?.closeLoading !== true) handleLoadingClose();
-      if (result.data.Status !== 1000 && !downloadExcelApiUrls.includes(result.config.url || '')) {
+      if (result.data.Status !== 1000 && !downloadExcelApiUrls.includes(result.config.url || '') && !result.config.closeTips) {
         if ([8037, 7025].includes(result.data.Status)) {
           // 请重新登录
           axios.cancelAllRequest();
