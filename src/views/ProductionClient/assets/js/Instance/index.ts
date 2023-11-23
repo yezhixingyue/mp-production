@@ -205,11 +205,16 @@ export class TerminalEquipmentInstance {
   }
 
   /** 任务报错  批量报工时需要传递TaskID */
-  public async setTaskError(Remark: string, callback: () => void, TaskID?: string) {
-    if (!this.curTaskData && !TaskID) return;
+  public async setTaskError(
+    Remark: string,
+    callback: () => void,
+    info: { ID?: string, TaskWorkingID?: string, NextTaskWorkingID?: string, EquipmentID?: string },
+  ) {
+    if (!this.curTaskData && !info) return;
 
     const temp = {
-      ID: TaskID || this.curTaskData?.ID || '',
+      ...info,
+      ID: info.ID || this.curTaskData?.ID || '',
       Remark,
     };
     const resp = await clientApi.getEquipmentTaskError(temp).catch(() => null);

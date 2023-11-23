@@ -5,6 +5,7 @@
     :style="`transform: translate(${position.x}px, ${position.y}px);`"
     @mousedown="handleballmousedown"
     @mouseup="handleballmouseup"
+    @dblclick="dblclick"
     v-show="count"
     >
     <span>有{{ count }}单</span>
@@ -51,10 +52,14 @@ const handleballmousedown = (e: MouseEvent) => {
 };
 
 const handleballmouseup = () => {
-  if (Date.now() - begin < 150) {
+  if (Date.now() - begin < 240) {
     emit('triggerclick');
   }
   begin = 0;
+};
+
+const dblclick = () => {
+  console.log('dblclick');
 };
 
 onMounted(() => {

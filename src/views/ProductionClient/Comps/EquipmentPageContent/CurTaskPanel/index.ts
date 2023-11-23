@@ -1,4 +1,4 @@
-import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
+import { INextWorkingProduction, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 
@@ -49,29 +49,36 @@ export const getTaskDisplayInfo = (TaskData: ITaskDetail, withTemplate = true) =
 };
 
 /** 获取报工任务中的下一道工序信息 ( 用于非拆分工序 ) */
-export const getNextWorkContent = (TaskData: ITaskDetail | null) => {
+export const getNextWorkContent = (TaskData: ITaskDetail | null, index?: number) => {
   // if (!TaskData || TaskData.Working.Type === WorkingTypeEnum.split) { // 拆分工序
   //   return null;
   // }
-
-  const temp = {
-    NextWorkName: '',
-    EquipmentName: '',
-  };
-
-  if (TaskData?.NextWorkingList?.length === 1) {
-    const next = TaskData.NextWorkingList[0];
+  const _getInfo = (next: INextWorkingProduction) => {
     if (!next.Name) return null;
+    const _temp = {
+      NextWorkName: '',
+      EquipmentName: '',
+    };
 
-    temp.NextWorkName = next.Name;
+    _temp.NextWorkName = next.Name;
 
     if (next.Equipment) {
       const _class = [next.Equipment.GroupName, next.Equipment.Name].filter(it => it).join('-');
       if (_class) {
-        temp.EquipmentName = _class;
+        _temp.EquipmentName = _class;
       }
     }
+
+    return _temp;
+  };
+
+  if (typeof index === 'number' && TaskData?.NextWorkingList[index]) {
+    return _getInfo(TaskData.NextWorkingList[index]);
   }
 
-  return temp;
+  if (typeof index !== 'number' && TaskData?.NextWorkingList?.length === 1) {
+    return _getInfo(TaskData.NextWorkingList[0]);
+  }
+
+  return null;
 };

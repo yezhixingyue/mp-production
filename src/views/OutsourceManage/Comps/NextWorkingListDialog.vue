@@ -8,6 +8,7 @@
    :showClose="false"
    @open='onOpen'
    @submit='localVisible = false'
+   @cancel="localVisible = false"
    >
    <div class='dialog-content'>
     <ul class="header" v-if="row">
@@ -30,11 +31,14 @@
     </ul>
     <dl v-if="_NextWorkingList.length > 0" class="wrap">
       <!-- <dt>色彩示例</dt> -->
-      <dd v-for="it in _NextWorkingList" :key="it.ID">
+      <dd v-for="(it, i) in _NextWorkingList" :key="it.ID">
         <div class="block" :style="`background-color:${it.Color}`"></div>
         <h5>下一道工序：</h5>
-        <h4>{{ it.Name }}</h4>
-        <h4>{{ [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') }}</h4>
+        <div class="name">
+          <h4>{{ it.Name }}</h4>
+          <h4>{{ [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') }}</h4>
+        </div>
+        <mp-button type="primary" class="ml-20" v-if="showSendError" link @click="onSendErrorClick(i)">报错</mp-button>
       </dd>
     </dl>
    </div>
@@ -54,9 +58,10 @@ import { INextWorkingProduction } from '@/views/ProductionClient/assets/js/types
 const props = defineProps<{
   visible: boolean
   row: ReturnType<typeof getLocalTaskList>[number] | null
+  showSendError?: boolean
 }>();
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'sendError']);
 
 const localVisible = computed({
   get() {
@@ -70,6 +75,14 @@ const localVisible = computed({
 const localInfo = computed(() => (props.row ? getTaskDisplayInfo(props.row, false) : null));
 
 const _NextWorkingList = ref<INextWorkingProduction[]>([]);
+
+const onSendErrorClick = (index: number) => {
+  if (!props.row) return;
+  const cb = () => {
+    _NextWorkingList.value.splice(index, 1);
+  };
+  emit('sendError', props.row, index, cb);
+};
 
 const onOpen = async () => {
   // const td = new MyTDClass();
@@ -121,6 +134,10 @@ const onOpen = async () => {
       margin-top: 10px;
       box-sizing: border-box;
       padding-right: 10px;
+      .name {
+        display: flex;
+        align-items: center;
+      }
       .block {
         width: 60px;
         height: 30px;

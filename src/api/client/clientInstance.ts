@@ -82,7 +82,7 @@ const axios = new Axios({
     },
     responseInterceptorsCatch: (error:ICatch) => {
       if (loadingInstance && (error.config as IRequestConfig)?.closeLoading !== true) handleLoadingClose();
-      if (error.response) {
+      if (error.response && !(error.config as IRequestConfig)?.closeTips) {
         let _msg = '';
         switch (error.response.status) {
           case 401:

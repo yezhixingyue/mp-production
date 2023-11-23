@@ -126,7 +126,14 @@ export class WebsocketHandler {
       });
   }
 
+  private timer: undefined | number
+
   public async start() { // 暂不使用websocket
+    if (typeof this.timer === 'number') {
+      clearTimeout(this.timer);
+      this.timer = undefined;
+    }
+
     if (!this.terminal) {
       this.terminal = await getLocalMachineCode();
     }
@@ -142,7 +149,7 @@ export class WebsocketHandler {
     }
 
     if (needRepeat) {
-      setTimeout(() => {
+      this.timer = setTimeout(() => {
         this.start();
       }, 10 * 1000);
     }

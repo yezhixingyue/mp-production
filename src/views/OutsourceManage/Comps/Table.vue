@@ -56,8 +56,9 @@
     <!-- 下一道工序 未交接时展示 -->
     <mp-table-column min-width="100px" label="下一道工序" v-if="pageType === 'inTransition' || pageType === 'undelivered'">
       <template #default="scope:any">
-        <h4 v-if="(scope.row as Row).NextWorkingList?.length === 1" class="is-red">
-          {{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}
+        <h4 v-if="(scope.row as Row).NextWorkingList?.length === 1" class="next-work">
+          <span class="is-red">{{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}</span>
+          <mp-button type="primary" v-if="pageType === 'undelivered'" link @click="onSendErrorClick(scope.row, 0)">报错</mp-button>
         </h4>
         <mp-button type="primary" link v-else-if="(scope.row as Row).NextWorkingList?.length > 1" @click="showNextWorkingList(scope.row)">查看列表</mp-button>
       </template>
@@ -106,7 +107,7 @@
       <span class="ft-12" v-show="!loading">暂无任务</span>
     </template>
   </el-table>
-  <NextWorkingListDialog v-model:visible="visible" :row="curRow" />
+  <NextWorkingListDialog v-model:visible="visible" :row="curRow" :showSendError="pageType === 'undelivered'" @send-error="onSendErrorClick" />
 </template>
 
 <script setup lang='ts'>
@@ -130,7 +131,7 @@ const props = defineProps<{
   pageType: OutsourceManagePageType
 }>();
 
-const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print']);
+const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print', 'sendError']);
 
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageExternalTask.Obj);
@@ -165,6 +166,10 @@ const showNextWorkingList = (row: typeof props.TaskList[number]) => {
   curRow.value = row;
   visible.value = true;
 };
+
+const onSendErrorClick = (row: typeof props.TaskList[number], index: number, callback?: () => void) => {
+  emit('sendError', row, index, callback);
+};
 </script>
 
 <style scoped lang='scss'>
@@ -194,6 +199,22 @@ const showNextWorkingList = (row: typeof props.TaskList[number]) => {
     .amount {
       input {
         text-align: center;
+      }
+    }
+
+    .next-work {
+      display: flex;
+      align-items: center;
+      > span {
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      > button {
+        flex: none;
+        margin-left: 6px;
       }
     }
   }

@@ -12,7 +12,7 @@
       </template>
 
       <!-- 报错弹窗 -->
-      <SetTaskErrorDialog v-model:visible="errorVisible" :TaskData="curSelectTask" @set-error="handleTaskSetError" />
+      <!-- <SetTaskErrorDialog v-model:visible="errorVisible" :TaskData="curSelectTask" @set-error="handleTaskSetError" /> -->
 
       <!-- 加工完成弹窗 -->
       <SetTaskCompleteDialog v-model:visible="completeVisible" :TaskData="curSelectTask" @complete="handleTaskSetComplete" />
@@ -37,7 +37,7 @@ import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { ManageClientPageData } from '@/api/client/clientStore';
 import PanelLeft from './PanelLeft.vue';
 import PanelRight from './PanelRight.vue';
-import SetTaskErrorDialog from './SetTaskErrorDialog.vue';
+// import SetTaskErrorDialog from './SetTaskErrorDialog.vue';
 import SetTaskCompleteDialog from './SetTaskCompleteDialog.vue';
 import TaskActivateAndList from '../TaskActivateAndList/TaskActivateAndList.vue';
 import EquipmentError from './EquipmentError/EquipmentErrorPanel.vue';
@@ -45,6 +45,7 @@ import EquipmentError from './EquipmentError/EquipmentErrorPanel.vue';
 const props = defineProps<{
   curInstance: Required<TerminalEquipmentInstance>
 }>();
+const emit = defineEmits(['sendError']);
 
 /* 展示相关
 ------------------------------------------------ */
@@ -61,18 +62,19 @@ const _IsEmpty = computed(() => {
 ------------------------------------------------ */
 const curSelectTask = ref<ITaskDetail | null>(null);
 
-const errorVisible = ref(false);
+// const errorVisible = ref(false);
 const onErrorClick = (task: null | ITaskDetail) => {
-  curSelectTask.value = task || props.curInstance.curTaskData;
-  errorVisible.value = true;
+  emit('sendError', task || props.curInstance.curTaskData);
+  // curSelectTask.value = task || props.curInstance.curTaskData;
+  // errorVisible.value = true;
 };
-const handleTaskSetError = (reason: string) => {
-  const cb = () => {
-    errorVisible.value = false;
-  };
-  // 处理方法可添加到实例类中处理
-  props.curInstance.setTaskError(reason, cb, curSelectTask.value?.ID);
-};
+// const handleTaskSetError = (reason: string) => {
+//   const cb = () => {
+//     errorVisible.value = false;
+//   };
+//   // 处理方法可添加到实例类中处理
+//   props.curInstance.setTaskError(reason, cb, curSelectTask.value?.ID);
+// };
 
 /* 加工完成相关
 ----------------------------------------------- */
