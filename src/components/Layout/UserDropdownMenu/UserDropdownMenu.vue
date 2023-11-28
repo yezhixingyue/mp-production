@@ -46,6 +46,7 @@ import { storeToRefs } from 'pinia';
 import { ref, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { getImgGaussBlurUrl } from '@/assets/js/utils/gaussBlur';
+import { WikiHandler } from '@/assets/js/Class/WikiHandler';
 import ChangePwdDialog from './ChangePwdDialog.vue';
 
 const props = defineProps<{
@@ -75,7 +76,8 @@ const docPermissions = computed(() => {
 const onDocClick = (target) => {
   if (!user.value) return;
   const siteType = 2;
-  window.open(`http://file.ybz888.com:7006/init?token=${user.value.Token}&siteType=${siteType}&target=${target}`);
+  // window.open(`http://file.ybz888.com:7006/init?token=${user.value.Token}&siteType=${siteType}&target=${target}`);
+  WikiHandler.toWikiPageWithToken({ token: user.value.Token, siteType, target });
 };
 
 const onMenuClick = (hash: string) => {
