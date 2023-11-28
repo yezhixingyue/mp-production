@@ -1,31 +1,19 @@
 import { useRouterStore } from '@/store/modules/routerStore';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-// import messageBox from '../assets/js/utils/message';
 import { useUserStore } from '@/store/modules/user';
-// import { RouterType } from '@/router/modules/routerTypes';
 import {
   Router, RouteLocationNormalized, NavigationGuardNext,
 } from 'vue-router';
-// import routerData from '@/router';
+import { WikiHandler } from '@/assets/js/Class/WikiHandler';
 import { getLastRouteInfoByName } from './getLastRouteInfoByName';
 
-// if (window.location.protocol.includes('https')) {
-//   window.location = window.location.href.replace('https', 'http');
-// }
 /*  页面进度条
 ------------------------------------------ */
 NProgress.configure({
   trickleSpeed: 20,
   // showSpinner: false,
 });
-
-/*  处理跳转报错
------------------------------------------- */
-// const routerPush = VueRouter.prototype.push;
-// VueRouter.prototype.push = function push(location) {
-//   return routerPush.call(this, location).catch(error => error);
-// };
 
 /**
  * @description: 主要作用为在页面跳转时向vuex中加入跳转前的历史记录
@@ -38,7 +26,6 @@ const NextHandler = (
   next:NavigationGuardNext,
 ) => {
   const RouterStore = useRouterStore();
-  // store.commit('common/setLastPagePaths', from);
   RouterStore.setLastPagePaths(from);
   next();
 };
@@ -132,12 +119,33 @@ export const handleRouterEach = (router:Router) => {
     ) => { // 使用全局路由导航守卫进行权限控制
       const userStore = useUserStore();
       const { token } = userStore;
+
+      if (to.query.toWiki || to.path === '/appendTokenForWiki') {
+        const { siteType, target } = to.query;
+        if (siteType && target) {
+          if (!token || token === to.query.token) {
+            userStore.token = '';
+            const query: { [key: string]: string | number } = { ...to.query, toWiki: 'true' };
+            delete query.token;
+            // 前往登录页面 - 登录成功后再跳转回文档页面
+            if (to.name === 'login' && to.query.toWiki) {
+              next();
+            } else {
+              next({ query: { ...query, toWiki: 'true' }, name: 'login' });
+            }
+          } else { // 有token - 跳转回文档页面
+            WikiHandler.toWikiPageWithToken({ ...to.query, token }, true);
+          }
+          return;
+        }
+      }
+
       if (to.name === 'client') {
         next();
         return;
       }
       if (to.name === 'login' && token) {
-        next({ name: from.name && from.name !== 'client' ? from.name : 'home' });
+        next({ name: (from.name && from.name !== 'client') ? from.name : 'home' });
         return;
       }
 
