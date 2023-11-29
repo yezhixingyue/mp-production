@@ -1,4 +1,4 @@
-// import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
+import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { TaskListConditionCompareEnum } from './enum';
 
@@ -31,6 +31,7 @@ export class Condition {
   //   // ProductiveTaskStatusEnum.Initial,
   //   // ProductiveTaskStatusEnum.Producibility,
   // ]
+  StatusList = [ProductiveTaskStatusEnum.Finished]
 
   DateType = 'last7Date'
 

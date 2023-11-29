@@ -16,6 +16,7 @@
     :modal="showModal"
     :append-To-Body="appendToBody"
     :destroy-on-close="destroyOnClose"
+    :close-on-press-escape="canEscClose"
     :top="top"
     ref="oDialog"
     :show-close="!loading"
@@ -51,6 +52,10 @@ import { computed, ref } from 'vue';
 export default {
   props: {
     draggable: {
+      type: Boolean,
+      default: true,
+    },
+    canEscClose: {
       type: Boolean,
       default: true,
     },

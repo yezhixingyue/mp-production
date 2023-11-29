@@ -39,6 +39,14 @@
           {{ TaskData.UnFinishNumber }}{{ localInfo.Unit }}
         </p>
       </li>
+      <!-- 下一个工序目标 -->
+      <li v-if="nextWorkInfo" class="mt-12 ft-15">
+        <span>下一道工序：</span>
+        <div style="text-decoration: underline;">
+          <span class="mr-12">{{ nextWorkInfo.NextWorkName }}</span>
+          <span>{{ nextWorkInfo.EquipmentName }}</span>
+        </div>
+      </li>
       <!-- 输入文字区域 -->
       <li class="input-area">
         <h4>情况说明：</h4>
@@ -58,11 +66,12 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
-import { getTaskDisplayInfo } from '.';
+import { getNextWorkContent, getTaskDisplayInfo } from '.';
 
 const props = defineProps<{
   visible: boolean
   TaskData: ITaskDetail | null,
+  nextWorkIndex?: number
 }>();
 
 const emit = defineEmits(['update:visible', 'setError']);
@@ -77,6 +86,8 @@ const localVisible = computed({
 });
 
 const localInfo = computed(() => (props.TaskData ? getTaskDisplayInfo(props.TaskData, false) : null));
+
+const nextWorkInfo = computed(() => getNextWorkContent(props.TaskData, typeof props.nextWorkIndex === 'number' ? props.nextWorkIndex : -1));
 
 const textarea = ref('');
 

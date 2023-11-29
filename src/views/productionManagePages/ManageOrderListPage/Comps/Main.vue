@@ -35,6 +35,7 @@
             <td :style="`width:${widthList[11].width}px`">
               <span class="top-text" v-show="row.IsTop" :class="{'v-hide': !row.IsTop}">已置顶</span>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.TopShow"
+                :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot"
                @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
               <!-- <mp-button link type="primary" style="margin-left:8px"
                :disabled="row._isMakeuped"
@@ -43,10 +44,10 @@
             <td :style="`width:${widthList[12].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
-              <!-- 取消功能待开发 -->
-              <!-- <mp-button v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
-               :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot"
-               link type="primary" @click="onCancelClick(row)">取消</mp-button> -->
+              <!-- 取消 -->
+              <mp-button v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
+               :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot || !row.IsManualOrder"
+               link type="primary" @click="onCancelClick(row)">取消</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="!row._isCombineLine">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
@@ -66,11 +67,8 @@
               <span class="m">{{ instance.Material }}</span>
             </td>
             <td class="number">{{ instance.Number }}{{ instance.Unit }}</td>
-            <td v-for="line in instance.LineList" :key="line.ID" v-show="line.PlateList.length > 0" class="line"
-              :title="`${line.Name}\r\n大版ID：\r\n${line.PlateList.join('\r\n')}`">
-              <h4>{{ line.Name }}</h4>
-              <span class="ml-15">大版ID：</span>
-              <span>{{ line.PlateList.join('、') }}</span>
+            <td class="line" :title="_getNormalOrderLineContent(instance)">
+              <span>{{ _getNormalOrderLineContent(instance) }}</span>
             </td>
           </tr>
         </template>
@@ -102,7 +100,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import SetOrderTopDialog from './SetOrderTopDialog.vue';
 import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
 import OrderCancelDialog from './OrderCancelDialog.vue';
-import { IManageOrderListItem, IOrderCancelRelation } from '../js/type';
+import { IManageOrderListItem, IOrderCancelRelation, ISellOrderInstanceItem } from '../js/type';
 import { OrderCancelStatus, OrderStatusList } from '../js/enum';
 
 const props = defineProps<{
@@ -124,17 +122,17 @@ const getSellSideProductName = (it: IManageOrderListItem) => {
 const widthList = ref([
   { width: 120 },
   { width: 85 },
-  { width: 200 },
-  { width: 140 },
+  { width: 190 },
+  { width: 130 },
   { width: 140 },
   { width: 140 },
   { width: 160 },
   { width: 120 },
   { width: 110 },
   { width: 135 },
-  { width: 60 },
-  { width: 70 },
-  { width: 230 },
+  { width: 75 },
+  { width: 65 },
+  { width: 225 },
 ]);
 
 const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a, b) => a + b, 0));
@@ -145,6 +143,28 @@ const getIsMakeuped = (it: IManageOrderListItem) => {
   const t = it.InstanceList.find(ins => ins.LineList.find(l => l.PlateList.length > 0));
 
   return !!t;
+};
+
+/** 获取普通生产线的生产线列的展示内容 */
+const _getNormalOrderLineContent = (instance: ISellOrderInstanceItem) => {
+  const { LineList, PrintFileRemark, AfterPrintFileRemark } = instance;
+
+  const _LineContent = LineList.map(l => (l.PlateList.length > 0 ? `${l.Name} 大版ID:${l.PlateList.join('、')}` : ''))
+    .filter(it => it)
+    .join('；\r\n') || '';
+
+  const _PrintFileRemark = PrintFileRemark ? ` \r\n印刷版: ${PrintFileRemark || ''}` : '';
+  const _AfterPrintFileRemark = AfterPrintFileRemark ? ` \r\n后工版: ${AfterPrintFileRemark || ''}` : '';
+
+  return [_LineContent, _PrintFileRemark, _AfterPrintFileRemark].filter(it => it).join('；');
+};
+
+const _getRootNormalOrderLineContent = (it: IManageOrderListItem) => {
+  if (it.InstanceList.length > 1 && it.AfterPrintFileRemark) return `后工版: ${it.AfterPrintFileRemark}`;
+
+  if (it.InstanceList[0]) return _getNormalOrderLineContent(it.InstanceList[0]);
+
+  return '';
 };
 
 const localList = computed(() => props.list.map(it => ({
@@ -158,21 +178,10 @@ const localList = computed(() => props.list.map(it => ({
   _isCombineLine: it.InstanceList.length > 1,
   _Size: it.InstanceList.length > 1 ? it.Size || '' : it.InstanceList[0]?.Size || '',
   _Material: it.InstanceList.length > 1 ? '' : it.InstanceList[0]?.Material || '',
-  _LineContent: it.InstanceList.length > 1 ? '' : it.InstanceList[0]?.LineList
-    .map(l => (l.PlateList.length > 0 ? `${l.Name} 大版ID:${l.PlateList.join('、')}` : ''))
-    .filter(it => it)
-    .join('；\r\n') || '',
+  _LineContent: _getRootNormalOrderLineContent(it),
   _isMakeuped: getIsMakeuped(it),
   _StatusDetail: OrderStatusList.find(_it => _it.ID === it.Status),
 })));
-
-// const onTestClick = async (it: typeof localList.value[number]) => {
-//   const resp = await api.productionManageApis.getOrderDistributeWithTest(it.ID).catch(() => null);
-
-//   if (resp?.data.isSuccess) {
-//     MpMessage.success('拼版成功，自行刷新');
-//   }
-// };
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
   if (!it._isCombineLine) return;
@@ -209,10 +218,10 @@ const onTimeLineClick = (row: typeof localList.value[number]) => {
 /** 订单取消 */
 const cancelOrderVisible = ref(false);
 const handleCancel = async (e: IOrderCancelRelation) => {
-  console.log('handleCancel', e);
-  const resule = await emit('cancel', e);
-  console.log(123, resule);
-  if ((resule as unknown as boolean) && cancelOrderVisible.value) cancelOrderVisible.value = false;
+  const cb = () => {
+    if (cancelOrderVisible.value) cancelOrderVisible.value = false;
+  };
+  emit('cancel', e, cb);
 };
 const onCancelClick = (row: typeof localList.value[number]) => {
   if (!row._StatusDetail) return;
@@ -364,6 +373,7 @@ onUnmounted(() => {
           button {
             font-size: 12px;
             padding: 0;
+            margin-top: -4px;
             & + .el-button  {
               margin-left: 20px;
             }
@@ -437,20 +447,18 @@ onUnmounted(() => {
         }
         &.instance-list {
           display: flex;
+
           .line {
             display: flex;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             flex-shrink: 1;
-            > span:last-of-type {
+            > span {
               flex-shrink: 1;
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
-            }
-            & + .line {
-              padding-left: 60px;
             }
           }
         }

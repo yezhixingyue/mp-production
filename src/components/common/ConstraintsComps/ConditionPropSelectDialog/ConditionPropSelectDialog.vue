@@ -48,7 +48,7 @@ const onOpen = () => {
 <style lang='scss'>
 @import '@/assets/css/mixins.scss';
 .wrap {
-  .el-dialog__body {
+  > .el-dialog__body {
     height: 450px;
     padding-top: 20px;
     overflow: auto;

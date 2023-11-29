@@ -48,8 +48,14 @@ const api = {
   getImpositionTemmplateSave(data) { // POST /Api/ImpositionTemmplate/Save  拼版模板保存
     return request({ method: 'POST', url: '/Api/ImpositionTemplate/Save', data });
   },
+  getImpositionTemmplateSizeIsEditable(data) { // POST /Api/ImpositionTemplateSize/IsEditable  拼版模板规格是否可编辑
+    return request({ method: 'GET', url: `/Api/ImpositionTemplateSize/IsEditable?id=${data}` });
+  },
   getImpositionTemmplateSizeSave(data) { // POST /Api/ImpositionTemplateSize/Save  拼版模板尺寸保存
     return request({ method: 'POST', url: '/Api/ImpositionTemplateSize/Save', data });
+  },
+  getImpositionTemmplateSizeSwitch(data) { // POST /Api/ImpositionTemplateSize/Switch  拼版模板尺寸启用状态切换
+    return request({ method: 'PUT', url: `/Api/ImpositionTemplateSize/Switch?id=${data}` });
   },
   getImpositionTemmplateSizeList(data) { // POST /Api/ImpositionTemplateSize/List  拼版模板尺寸列表
     return request({ method: 'POST', url: '/Api/ImpositionTemplateSize/List', data });

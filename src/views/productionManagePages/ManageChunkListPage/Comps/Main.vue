@@ -82,6 +82,10 @@ const onThumbnailClick = (item: typeof localList.value[number]) => { // 查看�
 
   :deep(.el-table__body-wrapper .el-table__body tbody .el-table__row .el-table__cell) {
     height: 44px;
+
+    .cell {
+      padding: 0 6px;
+    }
   }
 }
 </style>

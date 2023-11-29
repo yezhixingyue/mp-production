@@ -101,7 +101,15 @@
         <el-table-column
         show-overflow-tooltip prop="CreateTime" label="状态" min-width="80">
           <template #default="scope:any">
-            {{scope.row.Status ? '已出库' : '未出库'}}
+            <template v-if="scope.row.Status === 0">
+              未出库
+            </template>
+            <template v-if="scope.row.Status === 1">
+              已出库
+            </template>
+            <template v-if="scope.row.Status === 255">
+              已取消
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -204,7 +212,8 @@ export default {
 
     const StatesList = computed(() => [{ StatusID: '', StatusName: '不限' },
       { StatusID: 0, StatusName: '待出库' },
-      { StatusID: 1, StatusName: '已出库' }]);
+      { StatusID: 1, StatusName: '已出库' },
+      { StatusID: 255, StatusName: '已取消' }]);
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
       ...MaterialWarehouseStore.MaterialTypeGroup]);
     // const MaterialTypeList = computed(() => {

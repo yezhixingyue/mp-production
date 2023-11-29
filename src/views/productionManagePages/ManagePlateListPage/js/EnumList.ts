@@ -2,10 +2,6 @@ import { getEnumList } from '@/assets/js/utils/getListByEnums';
 import { PlateStatusEnum } from './enum';
 
 const PlateStatusEnumObj = {
-  Initial: {
-    ID: PlateStatusEnum.WaiteMaterial,
-    Name: '等待物料',
-  },
   HaveMakeup: {
     ID: PlateStatusEnum.Producibility,
     Name: '待生产',
@@ -16,11 +12,11 @@ const PlateStatusEnumObj = {
   },
   Finished: {
     ID: PlateStatusEnum.Finished,
-    Name: '已完成',
+    Name: '已分切',
   },
   HaveCancled: {
     ID: PlateStatusEnum.HaveCancled,
-    Name: '大版取消',
+    Name: '已取消',
   },
 };
 

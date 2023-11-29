@@ -15,6 +15,7 @@
       <Table
         :TaskList="getLocalTaskList(listDataClass.TaskList, false)"
         :loading="listDataClass.loading"
+        @send-error="handleSendError"
         pageType="undelivered"
       />
     </div>
@@ -44,7 +45,7 @@ const props = defineProps<{
   Equipment: IManageEquipmentInfo
 }>();
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'sendError']);
 
 const localVisible = computed({
   get() {
@@ -61,6 +62,19 @@ const getList = async (Page = 1) => {
 };
 const onOpen = () => {
   getList();
+};
+
+const handleSendError = (row, index, callback?: () => void) => {
+  const cb = () => {
+    if (callback) {
+      callback();
+      return;
+    }
+    const i = listDataClass.value.TaskList.findIndex(it => it.ID === row.ID);
+
+    if (i > -1) listDataClass.value.TaskList.splice(i, 1);
+  };
+  emit('sendError', row, index, cb);
 };
 
 </script>

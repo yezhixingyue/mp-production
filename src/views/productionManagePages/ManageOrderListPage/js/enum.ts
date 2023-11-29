@@ -1,17 +1,15 @@
 /** 订单状态枚举 */
 export enum OrderStatus {
-  /** 已下单 */
-  Initial = 0,
-  /** 已拆稿 */
+  /** 创建生产订单 */
+  CreateOrder = 0,
+  /** 文件已同步 */
   ConvertFile = 2,
   /** 待折手 */
   WaitFolding = 10,
   /** 已做折手 */
   HaveFolding = 15,
-  /** 待拼版 */
+  /** 已排程 */
   HaveScheduling = 20,
-  /** 已拼版 */
-  HaveImposition = 25,
   /** 生产中 */
   InProduction = 30,
   /** 已完成 */
@@ -33,13 +31,13 @@ export enum OrderCancelStatus {
 /** 订单状态枚举列表 */
 export const OrderStatusList = [
   {
-    ID: OrderStatus.Initial,
-    Name: '已下单',
+    ID: OrderStatus.CreateOrder,
+    Name: '创建生产订单',
     _CancelStatus: OrderCancelStatus.candirect, // 该状态是否可以取消
   },
   {
     ID: OrderStatus.ConvertFile,
-    Name: '已拆稿',
+    Name: '文件已同步',
     _CancelStatus: OrderCancelStatus.candirect, // 该状态是否可以取消
   },
   {
@@ -54,13 +52,8 @@ export const OrderStatusList = [
   },
   {
     ID: OrderStatus.HaveScheduling,
-    Name: '待拼版',
+    Name: '已排程',
     _CancelStatus: OrderCancelStatus.candirect, // 该状态是否可以取消
-  },
-  {
-    ID: OrderStatus.HaveImposition,
-    Name: '已拼版',
-    _CancelStatus: OrderCancelStatus.needplate, // 该状态是否可以取消
   },
   {
     ID: OrderStatus.InProduction,

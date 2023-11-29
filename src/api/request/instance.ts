@@ -106,7 +106,7 @@ const axios = new Axios({
       if (getShowLoading(error.config as IRequestConfig) && loadingInstance) handleLoadingClose();
 
       const userStore = useUserStore();
-      if (error.response) {
+      if (error.response && !(error.config as IRequestConfig)?.closeTips) {
         let _msg = '';
         switch (error.response.status) {
           case 401:

@@ -34,6 +34,10 @@ export interface ISellOrderInstanceItem {
   Unit: string
   /** 生产线列表 */
   LineList: ISellOrderLineItem[]
+  /** 印刷版拼版详情与进度 */
+  PrintFileRemark: string | null
+  /** 后工版拼版详情与进度 */
+  AfterPrintFileRemark: string | null
 }
 
 /**
@@ -71,12 +75,15 @@ export interface IManageOrderListItem {
   CreateTime: string
   /** 预计完成时间 */
   WishFinishTime: string
+  /** 是否手动下单 */
+  IsManualOrder: boolean
   /** 是否已置顶 */
   IsTop: boolean
   /** 生产线 */
   Line: string
   /** 实例列表 */
   InstanceList: ISellOrderInstanceItem[]
+  AfterPrintFileRemark: string
 }
 
 /** 时间线数据类型 */

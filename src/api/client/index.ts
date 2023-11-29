@@ -1,4 +1,5 @@
 import { IEquipmentErrorInfo, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
+import { IUndeliveredListItem } from '@/views/ProductionClient/Comps/EquipmentPageContent/FloatingBall/WebsocketHandler';
 import { clientInstance as instance } from './clientInstance';
 
 const clientApi = {
@@ -55,6 +56,10 @@ const clientApi = {
   /** GET Api/Equipment/NextWorkingList */
   getEquipmentNextWorkingList(TaskWorkingID: string) {
     return instance.get('/Api/Equipment/NextWorkingList', { params: { TaskWorkingID } });
+  },
+  /** GET /Api/Equipment/UndeliveredList  获取设备未送达物料列表 */
+  getEquipmentUndeliveredList(terminal: string) {
+    return instance.get<IUndeliveredListItem[]>('/Api/Equipment/UndeliveredList', { params: { terminal }, closeLoading: true, closeTips: true });
   },
 };
 

@@ -21,7 +21,7 @@
             ></OneLevelSelect>
         </el-form-item> -->
         <el-form-item :label="`名称：`" class="form-item-required template-name">
-          <el-input v-model="Data.addPasteupTemplateFrom.Name" placeholder="请输入"></el-input>
+          <el-input v-model="Data.addPasteupTemplateFrom.Name" maxlength="30" show-word-limit placeholder="请输入"></el-input>
           <!-- <div>
             <p>
               <el-checkbox v-model="Data.addPasteupTemplateFrom.IsPrintingPlate"
@@ -38,7 +38,7 @@
         <!-- 是否为 印刷版 -->
         <template v-if="pasteupTemplateData.IsPrintingPlate">
           <el-form-item :label="`翻版方式：`" class="form-item-required">
-            <el-radio-group v-model="Data.addPasteupTemplateFrom.ReproductionType">
+            <el-radio-group :disabled="!TemmplateSizeIsEditable" v-model="Data.addPasteupTemplateFrom.ReproductionType">
               <el-radio :label="0">正反版</el-radio>
               <el-radio :label="1">自翻版</el-radio>
               <el-radio :label="2">滚翻版</el-radio>
@@ -46,7 +46,7 @@
           </el-form-item>
         </template>
         <el-form-item :label="`尺寸：`" class="form-item-required">
-          <el-radio-group v-model="Data.addPasteupTemplateFrom.SizeType">
+          <el-radio-group :disabled="!TemmplateSizeIsEditable" v-model="Data.addPasteupTemplateFrom.SizeType">
             <el-radio :label="0">按模板尺寸</el-radio>
             <el-radio :label="1">按实际拼版尺寸</el-radio>
           </el-radio-group>
@@ -63,6 +63,7 @@
                 action="/Api/Upload/PlateTemplate"
                 accept=".pdf"
                 :on-success='handlleUploaded'
+                :on-error="handlleUploadedError"
                 :before-upload='beforeUpload'
               >
                 <template #trigger>
@@ -108,10 +109,10 @@
             </p>
           </el-form-item>
           <el-form-item :label="`用料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
-            <span>宽：<el-input-number max="999999" :controls="false"
-               v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
-            <span>高：<el-input-number max="999999" :controls="false"
-               v-model.number="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
+            <span>宽：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+               v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
+            <span>高：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+               v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
           </el-form-item>
           <el-form-item :label="`拼版方式：`">
             <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute"
@@ -139,24 +140,24 @@
                 <span class="coord">
                   <span class="coord-item">
                     <span class="dark">x：</span>
-                    <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.XCoordinate"/> mm
+                    <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')" v-model="ModeItem.XCoordinate"/> mm
                   </span>
                   <span class="coord-item">
                     <span class="dark">y：</span>
-                    <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.YCoordinate"/> mm
+                    <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')" v-model="ModeItem.YCoordinate"/> mm
                   </span>
                 </span>
                 <span class="size">
                   <span class="dark">宽：</span>
-                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.Width"/>
+                  <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')" v-model="ModeItem.Width"/>
                   mm <i>X</i> <span class="dark">高：</span>
-                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.Height"/> mm
+                  <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')" v-model="ModeItem.Height"/> mm
                 </span>
                 <span class="row">
-                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.RowNumber"/> 行
+                  <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')" v-model.number="ModeItem.RowNumber"/> 行
                 </span>
                 <span class="col">
-                  <el-input-number :controls="false" :step="0.1" step-strictly v-model.number="ModeItem.ColumnNumber"/> 列
+                  <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')" v-model.number="ModeItem.ColumnNumber"/> 列
                 </span>
                 <span class="handle">
                   <mp-button type="danger" link @click="delModeItem(index)">删除</mp-button>
@@ -169,10 +170,14 @@
         <template v-if="Data.addPasteupTemplateFrom.SizeType === 1">
           <el-form-item :label="`白边：`" class="form-item-required white-edge">
             <ul v-if="Data.addPasteupTemplateFrom.ActualSizeAttribute">
-              <li>上: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop" /> mm</li>
-              <li>左: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft" /> mm</li>
-              <li>右: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight" /> mm</li>
-              <li>下: <el-input v-model.number="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom" /> mm</li>
+              <li>上: <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedTop" /> mm</li>
+              <li>左: <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedLeft" /> mm</li>
+              <li>右: <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedRight" /> mm</li>
+              <li>下: <el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                v-model="Data.addPasteupTemplateFrom.ActualSizeAttribute.BleedBottom" /> mm</li>
             </ul>
           </el-form-item>
         </template>
@@ -218,6 +223,9 @@ const pasteupTemplateData = ref<ImpositionTemmplate>({
   IsSameSizeWithPrintingPlate: false,
   List: [],
 });
+// 是否可以编辑
+const TemmplateSizeIsEditable = ref(true);
+
 const Data: DataType = reactive({
   uploadBtnLoading: false,
   addPasteupTemplateFrom: {
@@ -446,6 +454,11 @@ function handlleUploaded(e) {
   }
   Data.uploadBtnLoading = false;
 }
+function handlleUploadedError(error) {
+  const errorRes = JSON.parse(error.message);
+  messageBox.failSingleError('上传失败', errorRes.Message, () => null, () => null);
+  Data.uploadBtnLoading = false;
+}
 function beforeUpload(file) {
   const maxMbit = 15; // 文件尺寸限制 最大可上传多少兆的文件
 
@@ -465,10 +478,14 @@ onMounted(() => {
   // pasteupTemplateData
   pasteupTemplateData.value = JSON.parse(route.params.Template as string) as ImpositionTemmplate;
   const temp = JSON.parse(route.params.SizeItem as string) as SizeListType;
-  console.log(temp, 'aaaaaaaaa');
 
   if (temp.ID) {
     Data.addPasteupTemplateFrom = temp;
+    api.getImpositionTemmplateSizeIsEditable(temp.ID).then(resp => {
+      if (resp.data.Status === 1000) {
+        TemmplateSizeIsEditable.value = JSON.parse(resp.data.Data as string);
+      }
+    });
   }
   Data.addPasteupTemplateFrom.TemplateID = pasteupTemplateData.value.ID;
   if (!temp.TemplateSizeAttribute) {
@@ -710,7 +727,7 @@ export default {
             i{
               margin: 0 5px;
             }
-            .el-input-number{
+            .el-input{
               width: 60px;
               height: 28px;
               input{
@@ -730,7 +747,7 @@ export default {
             justify-content: left;
             align-items: center;
             margin-right: 20px;
-            .el-input-number{
+            .el-input{
               margin-right: 4px;
               width: 70px;
               input{

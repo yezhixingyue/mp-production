@@ -5,8 +5,11 @@
 
     <!-- 当前任务组件 -->
     <template v-for="it in ManageClientPageData.InstanceList" :key="it.Equipment.ID">
-      <CurTaskPanel v-show="curActiveInstance && curActiveInstance.Equipment.ID === it.Equipment.ID" :curInstance="it" />
+      <CurTaskPanel v-show="curActiveInstance && curActiveInstance.Equipment.ID === it.Equipment.ID" :curInstance="it" @send-error="onErrClick" />
     </template>
+
+    <!-- 报错弹窗 -->
+    <SetTaskErrorDialog v-model:visible="errorVisible" :TaskData="curSelectTask" :next-work-index="nextWorkErrorIndex" @set-error="handleTaskSetError" />
 
     <!-- 登录组件 -->
     <LoginComp v-if="curActiveInstance && !curActiveInstance.loginData.token" />
@@ -18,7 +21,7 @@
     <FloatingBall :count="curInstanceUndeliveredNumber" @triggerclick="onBallClick" :class="{inSwitching:inSwitching}" />
 
     <!-- 未送出列表弹窗 -->
-    <UndeliveredListDIsplayDialog v-if="curActiveInstance" v-model:visible="undeliveredVisible" :Equipment="curActiveInstance.Equipment" />
+    <UndeliveredListDIsplayDialog v-if="curActiveInstance" v-model:visible="undeliveVisible" :Equipment="curActiveInstance.Equipment" @sendError="onErrClick"/>
   </section>
 </template>
 
@@ -31,6 +34,8 @@ import LoginComp from './LoginComp.vue';
 import SetEquipmentStopDialog from './SetEquipmentStopDialog.vue';
 import FloatingBall from './FloatingBall/FloatingBall.vue';
 import UndeliveredListDIsplayDialog from './UndeliveredListDIsplayDialog.vue';
+import SetTaskErrorDialog from './CurTaskPanel/SetTaskErrorDialog.vue';
+import { ITaskDetail } from '../../assets/js/types';
 
 const emit = defineEmits(['setEquipment']);
 
@@ -49,10 +54,46 @@ const curInstanceUndeliveredNumber = computed(() => {
   return t ? t.UndeliveredNumber : 0;
 });
 
-const undeliveredVisible = ref(false);
+/* 报错相关
+------------------------------------------------ */
+const curSelectTask = ref<ITaskDetail | null>(null);
+const errorVisible = ref(false);
+const nextWorkErrorIndex = ref<undefined | number>();
+let callback: undefined | (() => void);
+
+const onErrClick = (task: null | ITaskDetail, index?: number, cb?: () => void) => {
+  curSelectTask.value = task;
+  nextWorkErrorIndex.value = index;
+  callback = cb;
+
+  errorVisible.value = true;
+};
+const handleTaskSetError = (reason: string) => {
+  if (!curActiveInstance.value) return;
+  const cb = () => {
+    errorVisible.value = false;
+    if (callback) callback();
+    ManageClientPageData.value.websocketHandler.start();
+  };
+
+  const temp: { ID?: string, TaskWorkingID?: string, NextTaskWorkingID?: string, EquipmentID?: string } = {
+    ID: curSelectTask.value?.ID,
+    EquipmentID: curSelectTask.value?.Equipment.ID,
+  };
+
+  if (typeof nextWorkErrorIndex.value === 'number' && curSelectTask.value?.NextWorkingList[nextWorkErrorIndex.value]) {
+    temp.TaskWorkingID = curSelectTask.value?.NextWorkingList[nextWorkErrorIndex.value].TaskWorkingID;
+    temp.NextTaskWorkingID = curSelectTask.value?.NextWorkingList[nextWorkErrorIndex.value].NextTaskWorkingID;
+  }
+
+  // 处理方法可添加到实例类中处理
+  curActiveInstance.value.setTaskError(reason, cb, temp);
+};
+
+const undeliveVisible = ref(false);
 const onBallClick = () => {
   if (!curInstanceUndeliveredNumber.value) return;
-  undeliveredVisible.value = true;
+  undeliveVisible.value = true;
 };
 
 let timer: null | number = null;

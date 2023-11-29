@@ -1,7 +1,27 @@
 <template>
   <header class="header-box">
-    <div class="menu">
+    <div class="menu" v-if="condition.Type === PlateTypeEnum.Plate">
       <span v-for="it in lineList" :key="it.ID" :class="{active:it.ID===condition.LineID}" @click="onMenuClick(it)">{{it.Name}}</span>
+    </div>
+    <div class="first" v-if="condition.Type === PlateTypeEnum.LaterCraft && WorkingAndMakingGroupList">
+      <EpCascaderByLevel2
+        title="制版组"
+        showLine
+        onlyLastValid
+        :fiexdWidth="220"
+        :First="condition._WorkingID"
+        :Second="condition.LineID"
+        :type-list="[['_WorkingID', ''], ['LineID', '']]"
+        :list="WorkingAndMakingGroupList"
+        @getList="(e) => getList(e)"
+        @setCondition="(e) => setCondition(e)"
+      />
+      <div class="status">
+        <span class="title">状态筛选：</span>
+        <el-select v-model="Status" class="mp-select">
+          <el-option v-for="item in localPlateStatusEnumList" :key="item.ID" :label="item.Name" :value="item.ID" />
+        </el-select>
+      </div>
     </div>
     <div class="second">
       <div class="left">
@@ -15,7 +35,7 @@
           :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
           label="拼版时间"
         />
-        <div class="status">
+        <div class="status" v-if="condition.Type === PlateTypeEnum.Plate">
           <span class="title">状态筛选：</span>
           <el-select v-model="Status" class="mp-select">
             <el-option v-for="item in localPlateStatusEnumList" :key="item.ID" :label="item.Name" :value="item.ID" />
@@ -40,11 +60,15 @@
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
-import { computed } from 'vue';
+import { IListItemType } from '@/components/common/EpCascader/EpCascaderWrap/types';
+import { computed, defineAsyncComponent } from 'vue';
 import { ProductLineSimpleType } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from '../js/Condition';
 import { PlateStatusEnumList } from '../js/EnumList';
 import { IManagePlateInfo } from '../js/type';
+import { PlateTypeEnum } from '../js/enum';
+
+const EpCascaderByLevel2 = defineAsyncComponent(() => import('@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue'));
 
 const props = defineProps<{
   setCondition:(e: ISetConditionParams) => void
@@ -52,6 +76,7 @@ const props = defineProps<{
   condition: Condition
   list: IManagePlateInfo[]
   lineList: ProductLineSimpleType[]
+  WorkingAndMakingGroupList?: IListItemType[]
 }>();
 
 const emit = defineEmits(['clear']);
@@ -127,6 +152,16 @@ const Status = computed({
       }
     }
   }
+
+  .first {
+    display: flex;
+    align-items: center;
+
+    .status {
+      margin-left: 30px;
+      margin-top: -4px;
+    }
+  }
   .second {
     display: flex;
     align-items: center;
@@ -137,15 +172,18 @@ const Status = computed({
       align-items: center;
       flex-wrap: wrap;
       justify-content: space-between;
-      .status {
-        margin-top: 15px;
-        position: relative;
-        top: 2px;
-        .title {
-          font-weight: 700;
-          margin-right: 10px;
-        }
-      }
+    }
+
+    .status {
+      margin-top: 15px;
+    }
+  }
+  .status {
+    position: relative;
+    top: 2px;
+    .title {
+      font-weight: 700;
+      margin-right: 10px;
     }
   }
   :deep(.mp-line-date-selector-wrap) {

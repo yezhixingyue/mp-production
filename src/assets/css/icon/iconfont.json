@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "38023887",
+      "name": "后工版本",
+      "font_class": "hougongbanben",
+      "unicode": "e66f",
+      "unicode_decimal": 58991
+    },
+    {
       "icon_id": "37448200",
       "name": "排程异常",
       "font_class": "paichengyichang",

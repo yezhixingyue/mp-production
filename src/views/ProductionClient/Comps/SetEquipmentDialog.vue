@@ -19,7 +19,8 @@
       <div v-else class="setup-content">
         <div class="header">
           <h4>设置关联机器：</h4>
-          <span class="is-blue-span" @click="onRowAddClick" :class="{disabled: localEquipmentSetupData.localEquipmentSetupList.length > 3}">+ 添加机器</span>
+          <span class="is-blue-span" @click="onRowAddClick"
+           :class="{disabled: localEquipmentSetupData.localEquipmentSetupList.length >= maxEquipmentNumber}">+ 添加机器</span>
         </div>
         <ul class="list">
           <li v-for="(it, i) in localEquipmentSetupData.localEquipmentSetupList" :key="it._key">
@@ -125,8 +126,10 @@ const getEquipmentList = (ClassID: IEquipmentSetupItem['ClassID'], GroupID: IEqu
   return localEquipmentSetupData.value.EquipmentList.filter(it => it.ClassID === ClassID && it.GroupID === GroupID);
 };
 
+const maxEquipmentNumber = 40;
+
 const onRowAddClick = () => { // 添加一行
-  if (localEquipmentSetupData.value.localEquipmentSetupList.length >= 4) return;
+  if (localEquipmentSetupData.value.localEquipmentSetupList.length >= maxEquipmentNumber) return;
   localEquipmentSetupData.value.generateEquipmentSetupItem();
 };
 

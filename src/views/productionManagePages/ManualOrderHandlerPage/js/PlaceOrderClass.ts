@@ -5,6 +5,7 @@ import { validateDateValue } from '@/components/common/ElementPlusContainners/Mp
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { MaterialSourceTypeEnum } from '@/views/productionSetting/js/enums';
+import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { ReceiveTypeEnum } from './enums';
 import { PlaceOrderProductionInstance } from './PlaceOrderProductionInstance';
 import { ILineDetailWorkingProcedure, ILineWorkingMaterialSources, IProductionLineDetail } from './ProductionLineDetailTypes';
@@ -305,12 +306,14 @@ export class PlaceOrderClass {
         return false;
       }
 
-      let target = this.WorkingList.find(it => it.WorkTimes === '');
+      const _normalWorkingList = this.WorkingList.filter(w => w.Type === WorkingTypeEnum.normal);
+      console.log(_normalWorkingList, 0);
+      let target = _normalWorkingList.find(it => it.WorkTimes === '');
       if (target) {
         MpMessage.error({ title: '操作失败', msg: `[${target.Name}] 工序未设置作业次数` });
         return false;
       }
-      target = this.WorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
+      target = _normalWorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
       if (target) {
         MpMessage.error({ title: '操作失败', msg: `[${target.Name}] 工序作业次数设置不正确，必须为正整数类型` });
         return false;
@@ -415,6 +418,7 @@ export class PlaceOrderClass {
 
   /** 组合生产线  添加工序 | 删除工序 后的对应处理函数： 用于生成半成品生产线实例： 1. 半成品   2. 来自其它生产线  3. 去重  4. 必需 */
   handleWorkingSelect() {
+    console.log(123, 'handleWorkingSelect');
     const list: PlaceOrderProductionInstance[] = [];
 
     // 1. 定义组合生产线中根据所选工序计算出来的所有可用到的半成品列表 -- 包含必需和非必需 必需的排至前面
@@ -438,6 +442,28 @@ export class PlaceOrderClass {
               }
             }
           }
+        });
+      }
+
+      // 1. 拼版文件
+      if (w.Template && !_FileList.find(_it => _it.Template?.ID === w.Template?.ID)) {
+        const t = this.FileList.find(_it => _it.Template?.ID === w.Template?.ID);
+        _FileList.push({
+          UniqueName: t ? t.UniqueName : '',
+          _File: t ? t._File : null,
+          Template: {
+            ID: w.Template.ID,
+          },
+          _PlateTemplate: w.Template,
+          _LineInfo: {
+            ID: this._curCombineLine?.ID || '',
+            Name: this._curCombineLine?.Name || '',
+            Index: '',
+          },
+          BleedBottom: t?.BleedBottom || '',
+          BleedLeft: t?.BleedLeft || '',
+          BleedRight: t?.BleedRight || '',
+          BleedTop: t?.BleedTop || '',
         });
       }
 
