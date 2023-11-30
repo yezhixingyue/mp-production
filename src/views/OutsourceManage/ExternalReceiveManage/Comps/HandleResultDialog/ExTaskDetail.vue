@@ -5,7 +5,7 @@
     </p>
     <h4 class="mb-8">
       <span>{{ result.WorkingName }}</span>
-      <span>数量：{{ result.Amount }}{{ result.Unit }}</span>
+      <span>数量：{{ result.Number }}{{ result.Unit }}</span>
     </h4>
     <div class="mb-18">
       <span>工厂：{{ result.Equipment.Name }}</span>
