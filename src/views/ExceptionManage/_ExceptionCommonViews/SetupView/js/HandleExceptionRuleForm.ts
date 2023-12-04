@@ -61,6 +61,10 @@ export class HandleExceptionRuleForm {
 
     this._PlateChunkSelectList = TaskExceptionDetail.PlateList.map(it => new HandleRevocationChunkSelectClass(it));
 
+    if (this.ExternalFactory) {
+      this.ExternalFactory.init(TaskExceptionDetail);
+    }
+
     function getRevocationPlateList(PlateList: null): null;
     function getRevocationPlateList(PlateList: IExceptionPlate[]): IRevocationPlateItem[];
     function getRevocationPlateList(PlateList: IExceptionPlate[] | null): IRevocationPlateItem[] | null {
