@@ -161,7 +161,7 @@ onDeactivated(() => {
   min-width: 760px;
   display: flex;
   align-items: center;
-  line-height: 30px !important;
+  line-height: 28px !important;
 
   .el-radio-button:last-child .el-radio-button__inner {
     border-radius: 0;
@@ -208,7 +208,7 @@ onDeactivated(() => {
       position: relative;
       min-width: 80px;
       // width: 120px;
-      height: 29px;
+      height: 28px;
       z-index: 9;
       // overflow: hidden;
       margin-right: -1px;
@@ -221,7 +221,7 @@ onDeactivated(() => {
       .el-radio-button__inner {
         background-color: #F5F5F5;
         border: 1px solid #E6E6E6;
-        height: 29px;
+        height: 28px;
       }
 
       box-sizing: border-box;
@@ -289,7 +289,7 @@ onDeactivated(() => {
   .manual-select-date-box {
     font-size: 13px;
     min-width: 110px;
-    height: 29px;
+    height: 28px;
     border: 1px solid $--border-color-base;
     display: inline-block;
     text-align: center;

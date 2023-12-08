@@ -6,16 +6,16 @@
           <el-checkbox v-model="chunk.checked" />
         </td>
         <td style="width: 70px;">
-          <span>{{ chunk.Order?.ServerName}}</span>
+          <span :title="chunk.Order?.ServerName">{{ chunk.Order?.ServerName}}</span>
         </td>
         <td>
-          <span style="width: 70px;text-align: center;">{{ chunk.Order?.OrderID }}</span>
+          <span style="width: 70px;text-align: center;" :title="chunk.Order?.OrderID">{{ chunk.Order?.OrderID }}</span>
         </td>
         <td>
-          <span style="width: 160px;text-align: center;">{{ chunk.Name }}</span>
+          <span style="width: 160px;text-align: center;" :title="chunk.Name">{{ chunk.Name }}</span>
         </td>
         <td>
-          <span style="width: 120px;text-align: center;">{{ chunk.Size }}</span>
+          <span style="width: 120px;text-align: center;" :title="chunk.Size">{{ chunk.Size }}</span>
         </td>
       </tr>
     </tbody>
