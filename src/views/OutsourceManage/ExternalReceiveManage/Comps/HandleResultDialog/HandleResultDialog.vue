@@ -2,7 +2,7 @@
  <DialogContainerComp
    :visible='localVisible'
    :width='600'
-   title='外协加工入库'
+   :title="isInstored ? '外协加工入库' : '外协加工出库'"
    top='12vh'
    @open='onOpen'
    @cancel='close'
@@ -25,7 +25,7 @@
           <el-icon><SuccessFilled /></el-icon>
           <h4>此外协任务已确认完成</h4>
         </div>
-        <mp-button link type="primary" @click="isSettingError = true">外协有问题</mp-button>
+        <mp-button link type="primary" @click="isSettingError = true" v-if="isInstored">外协有问题</mp-button>
       </div>
 
       <!-- 重复扫描 已上报问题 -->
@@ -52,8 +52,9 @@
     <div class="btns">
       <!-- 第一次扫描 确认完成 -->
       <template v-if="displayMode.confirming">
-        <mp-button type="primary" @click="submit">确认完成</mp-button>
-        <mp-button class="blue" @click="isSettingError = true">有问题</mp-button>
+        <mp-button type="primary" @click="submit">{{ isInstored ? '确认完成' : '确认送出' }}</mp-button>
+        <mp-button class="blue" @click="isSettingError = true" v-if="isInstored">有问题</mp-button>
+        <mp-button class="blue" @click="close" v-else>关闭</mp-button>
       </template>
 
       <!-- 重复扫描 已确认 -->
@@ -87,6 +88,7 @@ import { ExternalReportResultCodeEnum } from '../../js/enums';
 const props = defineProps<{
   visible: boolean
   result: IExternalReportResult | null
+  isInstored: boolean
 }>();
 
 const emit = defineEmits(['update:visible', 'submit', 'setQuestion', 'close']);

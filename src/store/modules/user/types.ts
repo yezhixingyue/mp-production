@@ -29,10 +29,11 @@ export interface IUser {
       };
     };
     /** 外协入库 */
-    PermissionExternalInStored: {
+    PermissionExternalStored: {
       HavePomission: boolean
       Obj: {
-        Setup: boolean
+        Instored: boolean
+        PutOut: boolean
       };
     };
     /** 报工管理 */

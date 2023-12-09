@@ -24,8 +24,11 @@
           <el-dropdown-item @click="visible = true" :icon="Lock" command='changePwd'>修改密码</el-dropdown-item>
           <el-dropdown-item v-if="user?.PermissionList.PermissionManualOrder.HavePomission"
            @click="onMenuClick('ManualOrder')"><i class="icon-header-03 iconfont"></i> 手动下单</el-dropdown-item>
-          <el-dropdown-item v-if="user?.PermissionList.PermissionExternalInStored.HavePomission"
-           @click="onMenuClick('ExternalReceiveManage')"><i class="icon-daiwaixie iconfont scale-8"
+          <el-dropdown-item v-if="user?.PermissionList.PermissionExternalStored.Obj.PutOut"
+           @click="onMenuClick('ExternalReceiveManage/PutOut')"><i class="icon-chuku2 iconfont scale-15"
+            style="position: relative;right: 1px;"></i> 外协出库</el-dropdown-item>
+          <el-dropdown-item v-if="user?.PermissionList.PermissionExternalStored.Obj.Instored"
+           @click="onMenuClick('ExternalReceiveManage/Instored')"><i class="icon-ruku iconfont scale-15"
             style="position: relative;right: 1px;"></i> 外协入库</el-dropdown-item>
           <el-dropdown-item v-if="docPermissions?.manage" @click="onDocClick('manage')"><i class="iconfont icon-wendangguanli1"></i> 文档管理</el-dropdown-item>
           <el-dropdown-item v-if="docPermissions?.read" @click="onDocClick('document')"><i class="iconfont icon-bangzhuzhongxin"></i> 帮助中心</el-dropdown-item>

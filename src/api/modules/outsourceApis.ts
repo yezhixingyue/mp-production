@@ -22,8 +22,12 @@ export const outsourceApis = {
     return instance.post('/Api/ExternalFactory/Download', data);
   },
   /** GET /Api/ExternalFactory/ReportDetail 外协加工入库详情 */
-  getExternalFactoryReportDetail(taskCode: number, msgCallback) {
-    return instance.get<IExternalReportResult>('/Api/ExternalFactory/ReportDetail', { params: { taskCode }, msgCallback });
+  getExternalFactoryReportDetail(taskCode: number, isReport: boolean, msgCallback) {
+    return instance.get<IExternalReportResult>('/Api/ExternalFactory/ReportDetail', { params: { taskCode, isReport }, msgCallback });
+  },
+  /** PUT /Api/ExternalFactory/TaskPutOut   外协加工出库 */
+  getExternalFactoryTaskPutOut(taskCode: number) {
+    return instance.put<string>('/Api/ExternalFactory/TaskPutOut', null, { params: { taskCode } });
   },
   /** PUT /Api/ExternalFactory/TaskReport   外协加工入库 */
   getExternalFactoryTaskReport(taskCode: number) {
