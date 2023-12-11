@@ -25,7 +25,7 @@
           <el-icon><SuccessFilled /></el-icon>
           <h4>此外协任务已确认完成</h4>
         </div>
-        <mp-button link type="primary" @click="isSettingError = true" v-if="isInstored">外协有问题</mp-button>
+        <!-- <mp-button link type="primary" @click="isSettingError = true" v-if="isInstored">外协有问题</mp-button> -->
       </div>
 
       <!-- 重复扫描 已上报问题 -->
