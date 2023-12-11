@@ -65,7 +65,9 @@ export class ExternalReportHandleClass {
         callback();
       };
 
-      MpMessage.dialogSuccess('确认完成成功', cb, cb);
+      const title = this.isInstored ? '入库成功' : '出库成功';
+
+      MpMessage.dialogSuccess(title, cb, cb);
     }
   }
 
