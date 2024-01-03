@@ -32,7 +32,7 @@
     <div class="legend" v-show="!localOrderFlowchart.loading">
       <span>图例：</span>
       <div v-for="it in FlowchartNodeStatusEnumList" :key="it.ID" class="item">
-        <div :style="`background-color:${it.Color}`"></div>
+        <div :style="`background-color:${it.Color};${it.isWhite ? 'border:1px solid #707070' : ''}`"></div>
         <h4>{{ it.Name }}</h4>
       </div>
     </div>
