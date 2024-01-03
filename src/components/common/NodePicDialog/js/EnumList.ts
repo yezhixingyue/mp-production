@@ -17,6 +17,11 @@ export const FlowchartNodeStatusEnumObj = {
     Name: '有问题',
     Color: FlowchartNodeColorEnum.atQuestion,
   },
+  stop: {
+    ID: FlowchartNodeStatusEnum.stop,
+    Name: '已终止',
+    Color: FlowchartNodeColorEnum.stop,
+  },
 };
 
 export const FlowchartNodeStatusEnumList = getEnumList(FlowchartNodeStatusEnumObj) as { Color: string, ID: number | '', Name: string }[];

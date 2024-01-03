@@ -12,6 +12,8 @@ export enum FlowchartNodeStatusEnum {
   notStarted = 0,
   /** 有问题 */
   atQuestion = 3,
+  /** 已终止 */
+  stop = 255,
 }
 
 export enum FlowchartNodeColorEnum {
@@ -21,4 +23,6 @@ export enum FlowchartNodeColorEnum {
   inProduction = '#00BFBF',
   /** 有问题 */
   atQuestion = '#A30014',
+  /** 已终止 */
+  stop = '#cbcbcb',
 }
