@@ -24,7 +24,7 @@ export const ExceptionHandlerApis = {
   },
 
   /** POST /Api/Plate/ChunkList   获取大版上指定订单块信息; 多个ID使用半角逗号（，）隔开，最多可填写10个订单 */
-  getPlateChunkList(data: { ID: string, orderIDString: string }) {
+  getPlateChunkList(data: { ID: string, OrderCodeListString: string, CurrentTaskOrderID?: string }) {
     return instance.post<IRevocationChunk[]>('/Api/Plate/ChunkList', data);
   },
 

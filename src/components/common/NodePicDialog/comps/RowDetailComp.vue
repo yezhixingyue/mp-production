@@ -20,8 +20,7 @@
         <span>
           最晚生产完成时间：
           <h4>{{ format2MiddleLangTypeDateFunc2(orderInfo.WishFinishTime) }}
-            <i :class="{'is-red': getIsTimeout(orderInfo.WishFinishTime)}"
-             v-if="orderInfo.WishFinishTime">（{{ getTimeDifference(orderInfo.WishFinishTime) }}）</i>
+            <i v-if="TimeoutPeriod" :class="{'is-red': TimeoutPeriod.isTimeout}">（{{ TimeoutPeriod.content }}）</i>
           </h4>
         </span>
       </div>
@@ -57,6 +56,7 @@
 
 <script setup lang='ts'>
 import { computed } from 'vue';
+import { OrderStatus } from '@/views/productionManagePages/ManageOrderListPage/js/enum';
 import {
   INodePicManageChunkInfo, format2MiddleLangTypeDateFunc2, INodePicManageOrderListItem, INodePicManagePlateInfo, INodePicPlateListChild, ReportModeEnum,
 } from '../_difference';
@@ -68,16 +68,24 @@ const props = defineProps<{
 
 const orderInfo = computed(() => (props.ReportMode === ReportModeEnum.order && props.item as INodePicManageOrderListItem) || null);
 
-const getTimeDifference = (dateString: string) => { // 获取剩余或超时时间
-  const now = Date.now();
+const TimeoutPeriod = computed(() => { // 超时时间信息
+  if (!orderInfo.value || !orderInfo.value.WishFinishTime || [OrderStatus.HaveCancled].includes(orderInfo.value.Status)) return null;
 
-  const target = new Date(dateString.replace('Z', '')).getTime();
+  if ([OrderStatus.Finished].includes(orderInfo.value.Status) && (!orderInfo.value.FinishTime)) return { content: '订单已完成', isTimeout: false };
 
-  const text = target > now ? '剩余' : '已超时';
+  /** 参照时间节点 */
+  const nodeTime = [OrderStatus.Finished].includes(orderInfo.value.Status) ? new Date(orderInfo.value.FinishTime.replace('Z', '')).getTime() : Date.now();
 
-  const d = Math.abs(target - now);
+  /** 预计完成时间点 */
+  const targetTime = new Date(orderInfo.value.WishFinishTime.replace('Z', '')).getTime();
 
-  if (d < 60 * 1000) return '剩余0分钟';
+  if ([OrderStatus.Finished].includes(orderInfo.value.Status) && targetTime >= nodeTime) return { content: '订单已完成', isTimeout: false };
+
+  const text = targetTime > nodeTime ? '剩余' : '已超时';
+
+  const d = Math.abs(targetTime - nodeTime);
+
+  if (d < 60 * 1000) return { content: '剩余0分钟', isTimeout: targetTime < nodeTime };
 
   const day = Math.floor(d / (1000 * 60 * 60 * 24));
 
@@ -85,16 +93,8 @@ const getTimeDifference = (dateString: string) => { // 获取剩余或超时时�
 
   const minute = Math.floor((d - day * 1000 * 60 * 60 * 24 - hour * 1000 * 60 * 60) / (60 * 1000));
 
-  return `${text}${day ? `${day}天` : ''}${hour ? `${hour}小时` : ''}${minute}分钟`;
-};
-
-const getIsTimeout = (dateString: string) => { // 获取剩余或超时时间
-  const now = Date.now();
-
-  const target = new Date(dateString.replace('Z', '')).getTime();
-
-  return target < now;
-};
+  return { content: `${text}${day ? `${day}天` : ''}${hour ? `${hour}小时` : ''}${minute}分钟`, isTimeout: targetTime < nodeTime };
+});
 
 const reg = /(?=(\B)(\d{3})+$)/g;
 

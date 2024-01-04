@@ -9,7 +9,9 @@
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
     <mp-table-column v-if="pageType !== 'undelivered'" width="146px" label="外协工厂">
       <template #default="scope:any">
-        <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive" :disabled="!localPermission?.WaitSetup"
+        <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
+         :disabled="!localPermission?.WaitSetup || scope.row._ExternalSubmitParams._IsFixedFactory"
+         :title="scope.row._ExternalSubmitParams._IsFixedFactory ? '外协异常处理中锁定了工厂' : ''"
          v-model="scope.row._ExternalSubmitParams.FactoryID" style="width:120px;" placeholder="指定外协工厂">
           <el-option
             v-for="item in scope.row.Working.UseableEquipmentList || []"
@@ -25,7 +27,8 @@
       <template #default="scope:any">
         <el-input style="width:70px;margin-right: 5px;" class="amount" placeholder="外协金额"
           v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
-          :disabled="!localPermission?.WaitSetup"
+          :disabled="!localPermission?.WaitSetup || scope.row._ExternalSubmitParams._IsFixedAmount"
+          :title="scope.row._ExternalSubmitParams._IsFixedAmount ? '外协异常处理中锁定了价格' : ''"
           v-model.trim="scope.row._ExternalSubmitParams.Amount" maxlength="9"/>
         <span v-else>{{ scope.row._ExternalSubmitParams.Amount }}</span>
         <i>元</i>

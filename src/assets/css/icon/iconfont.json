@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7335441",
+      "name": "入库",
+      "font_class": "ruku",
+      "unicode": "eb1b",
+      "unicode_decimal": 60187
+    },
+    {
+      "icon_id": "7335451",
+      "name": "出库",
+      "font_class": "chuku2",
+      "unicode": "eb1c",
+      "unicode_decimal": 60188
+    },
+    {
       "icon_id": "38023887",
       "name": "后工版本",
       "font_class": "hougongbanben",

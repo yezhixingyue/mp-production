@@ -12,13 +12,19 @@ export enum FlowchartNodeStatusEnum {
   notStarted = 0,
   /** 有问题 */
   atQuestion = 3,
+  /** 已终止 */
+  canceled = 255,
 }
 
 export enum FlowchartNodeColorEnum {
+  /** 未开始 */
+  notStarted = '#fff',
   /** 已完成 */
   completed = '#4B7902',
   /** 生产中 */
   inProduction = '#00BFBF',
   /** 有问题 */
   atQuestion = '#A30014',
+  /** 已终止 */
+  canceled = '#cbcbcb',
 }

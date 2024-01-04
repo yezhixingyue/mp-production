@@ -144,6 +144,10 @@ export interface IWorkingExternalAttribute {
   ReduceAmount: number
   /** 最终价格 */
   FinalAmount: number
+  /** 是否外协处理价格锁定 */
+  HaveFixedAmount?: boolean
+  /** 是否外协处理锁定工厂 */
+  HaveFixedFactory?: boolean
   /** 外协状态 */
   Status: ExternalTaskStatusEnum
   /** 是否有文件可下载 */

@@ -31,7 +31,7 @@ const squareStyle = computed(() => {
   const t = FlowchartNodeStatusEnumList.find(it => it.ID === props.item.Status);
   if (!t) return `height:${NodeHeight}px`;
 
-  return `height:${NodeHeight}px;background-color: ${t.Color};color: #fff;`;
+  return `height:${NodeHeight}px;background-color: ${t.Color};color: ${t.isWhite ? '#444' : '#fff'};`;
 });
 // const squareClass = computed(() => ({
 //   completed: props.item.Status === FlowchartNodeStatusEnum.completed,

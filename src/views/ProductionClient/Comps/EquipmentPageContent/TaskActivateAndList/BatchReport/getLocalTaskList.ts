@@ -93,7 +93,9 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       FactoryID: it.Working.UseableEquipmentList?.find(f => f.ID === it.Equipment.ID)?.ID || '',
       Amount: it.Working.ExternalAttribute?.FinalAmount || '',
       WishFinishTime: it.LatestFinishTime ? getTimeConvertFormat({ date: it.LatestFinishTime.replace('Z', ''), withHMS: true }) : '',
-      _FactoryName: it.Working.UseableEquipmentList?.find(f => f.ID === it.Equipment.ID)?.Name || '',
+      _FactoryName: it.Working.UseableEquipmentList ? it.Working.UseableEquipmentList.find(f => f.ID === it.Equipment.ID)?.Name || '' : it.Equipment.Name || '',
+      _IsFixedAmount: !!it.Working.ExternalAttribute.HaveFixedAmount,
+      _IsFixedFactory: !!it.Working.ExternalAttribute.HaveFixedFactory,
     };
 
     /** 开始时间（外协时间） */

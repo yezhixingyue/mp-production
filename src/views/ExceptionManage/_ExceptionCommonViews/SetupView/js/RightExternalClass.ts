@@ -37,13 +37,19 @@ export class RightExternalClass {
   _IsChangeContent = false
 
   /** 当前工序可用的外协工厂  -- 列表数据待获取 */
-  _FactoryList = [{ ID: '', Name: '可用外协工厂' }]
+  _FactoryList: { ID: string, Name: string }[] = []
 
   /** 当前工序外协的加工信息  -- 数据待获取 */
-  _originProcessContent = '烫印2处[黄金、哑金]'
+  _originProcessContent = ''
 
   constructor() {
     this.ProcessContent = this._originProcessContent; // 初始赋值
+  }
+
+  init(TaskExceptionDetail: ITaskExceptionDetail) {
+    this._originProcessContent = TaskExceptionDetail.TaskDetail.Working.ExternalAttribute.ProcessContent || '';
+    this.ProcessContent = this._originProcessContent;
+    this._FactoryList = TaskExceptionDetail.TaskDetail.Working.UseableEquipmentList || [];
   }
 
   getSubmitData(TaskExceptionDetail: ITaskExceptionDetail | null) {

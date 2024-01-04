@@ -29,14 +29,14 @@ const routes: RouteRecordRaw = {
     /* 外协加工入库
     -------------------------------------- */
     {
-      path: '/ExternalReceiveManage',
+      path: '/ExternalReceiveManage/:type',
       name: 'ExternalReceiveManage',
       meta: {
         title: '外协入库',
         requiresAuth: true,
         icon: 'icon-daiwaixie iconfont',
         pageName: 'ExternalReceiveManagePage',
-        PermissionInfo: ['PermissionExternalInStored', 'HavePomission'],
+        PermissionInfo: ['PermissionExternalStored', 'HavePomission'],
         hideMenu: true,
         fullAcreen: true,
       },

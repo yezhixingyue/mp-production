@@ -59,7 +59,13 @@ export class HandleExceptionRuleForm {
     this.ID = TaskExceptionDetail.ID;
     this._ReportMode = TaskExceptionDetail.TaskDetail.Working.ReportMode;
 
-    this._PlateChunkSelectList = TaskExceptionDetail.PlateList.map(it => new HandleRevocationChunkSelectClass(it));
+    const CurrentTaskOrderID = TaskExceptionDetail.TaskDetail.Working.OrderInfo?.ID;
+
+    this._PlateChunkSelectList = TaskExceptionDetail.PlateList.map(it => new HandleRevocationChunkSelectClass(it, CurrentTaskOrderID));
+
+    if (this.ExternalFactory) {
+      this.ExternalFactory.init(TaskExceptionDetail);
+    }
 
     function getRevocationPlateList(PlateList: null): null;
     function getRevocationPlateList(PlateList: IExceptionPlate[]): IRevocationPlateItem[];
