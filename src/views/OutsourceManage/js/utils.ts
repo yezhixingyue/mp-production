@@ -25,7 +25,7 @@ export const checkExTaskIsComplete = (row: ReturnType<typeof getLocalTaskList>[n
 
 /**
  * 获取外协任务是否可以下载文件
- * 1. 已外协 或 已出库  2. 有文件可下载（AssistList中有文件类型或PlateInfo中FilePath有值）
+ * 1. 已外协 或 已出库（生产中）  2. 有文件可下载（AssistList中有文件类型或PlateInfo中FilePath有值）
  *
  * @param {ReturnType<typeof getLocalTaskList>[number]} row
  */

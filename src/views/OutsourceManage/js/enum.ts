@@ -9,7 +9,7 @@ export enum ExternalTaskStatusEnum {
   WaitFactoryReceive = 0,
   /** 已外协 */
   FactoryReceived = 10,
-  /** 已出库 */
+  /** 生产中 */
   HaveInstored = 30,
   /** 有问题 */
   Error = 40,
