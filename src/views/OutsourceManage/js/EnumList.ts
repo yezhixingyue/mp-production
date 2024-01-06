@@ -12,14 +12,9 @@ export const ExternalTaskStatusEnumObj = {
     ID: ExternalTaskStatusEnum.FactoryReceived,
     Name: '已外协',
   },
-  /** 已出库 */
+  /** 生产中 */
   HaveInstored: {
     ID: ExternalTaskStatusEnum.HaveInstored,
-    Name: '已出库',
-  },
-  /** 生产中 */
-  InProduction: {
-    ID: ExternalTaskStatusEnum.InProduction,
     Name: '生产中',
   },
   /** 已入库 */
