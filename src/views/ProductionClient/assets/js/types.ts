@@ -47,6 +47,8 @@ export interface ITaskOrderInfo {
   SecondLevel?: string
   /** 产品信息 */
   Product?: string
+  /** 生产线 */
+  Line?: string
   /** 数量 */
   Number: number
   /** 产品单位 -- 大版报工方式时固定为张 */
@@ -108,6 +110,8 @@ export interface ITaskChunkInfo {
   Unit: string
   /** 尺寸 */
   Size: string
+  /** 生产线 */
+  Line?: string
   /** 工序列表 */
   WorkingList:IBaseProperty<string>[]
 }
