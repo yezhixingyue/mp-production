@@ -1,12 +1,13 @@
 <template>
   <el-table :data="TaskList" border stripe class="table-wrap" ref="oTableRef" @selection-change="onSelectionChange">
-    <mp-table-column type="selection" width="70" label-class-name="check-title" class-name='check' v-if="pageType==='await' && localPermission?.WaitSetup" />
-    <mp-table-column width="110px" prop="Code" label="任务ID" />
+    <mp-table-column type="selection" width="60" label-class-name="check-title" class-name='check' v-if="pageType==='await' && localPermission?.WaitSetup" />
+    <mp-table-column width="95px" prop="Code" label="任务ID" />
     <mp-table-column width="160px" prop="_TargetID" label="关联ID" />
-    <mp-table-column v-if="pageType !== 'undelivered'" width="170px" prop="_WorkingName" label="工序" />
+    <mp-table-column v-if="pageType === 'await'" min-width="120px" prop="_LineName" label="生产线" />
+    <mp-table-column v-if="pageType !== 'undelivered'" min-width="140px" prop="_WorkingName" label="工序" />
     <mp-table-column v-if="pageType === 'undelivered'" min-width="100px" prop="_Material" label="物料" />
     <mp-table-column width="110px" prop="_Number" label="数量" />
-    <mp-table-column v-if="pageType !== 'undelivered'" min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
+    <mp-table-column v-if="pageType !== 'undelivered'" min-width="110px" prop="_AssistText" label="加工信息" class-name="is-pink" />
     <mp-table-column v-if="pageType !== 'undelivered'" width="146px" label="外协工厂">
       <template #default="scope:any">
         <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
@@ -60,14 +61,18 @@
     <mp-table-column min-width="100px" label="下一道工序" v-if="pageType === 'inTransition' || pageType === 'undelivered'">
       <template #default="scope:any">
         <h4 v-if="(scope.row as Row).NextWorkingList?.length === 1" class="next-work">
-          <span class="is-red">{{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}</span>
+          <span>{{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}</span>
           <mp-button type="primary" v-if="pageType === 'undelivered'" link @click="onSendErrorClick(scope.row, 0)">报错</mp-button>
         </h4>
         <mp-button type="primary" link v-else-if="(scope.row as Row).NextWorkingList?.length > 1" @click="showNextWorkingList(scope.row)">查看列表</mp-button>
       </template>
     </mp-table-column>
     <!-- 最晚送达时间 未交接时展示 -->
-    <mp-table-column width="130px" prop="_LastestSendedTime" label="最晚送达时间" v-if="pageType === 'inTransition'" class-name="is-pink" />
+    <mp-table-column width="130px" prop="_LastestSendedTime" label="最晚送达时间" v-if="pageType === 'inTransition'">
+      <template #default="scope:any">
+        <span :class="{'is-red': (scope.row as Row)._IsTimeout}">{{ (scope.row as Row)._LastestSendedTime }}</span>
+      </template>
+    </mp-table-column>
     <mp-table-column width="146px" label="预计完成日期" v-if="pageType==='await'">
       <template #default="scope:any">
         <MpDateTimePicker style="width:120px;" :disabled="!localPermission?.WaitSetup"
@@ -76,8 +81,8 @@
         <span v-else>{{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}</span>
       </template>
     </mp-table-column>
-    <mp-table-column width="100px" prop="Operator" label="操作人" v-if="pageType !== 'undelivered'" />
-    <mp-table-column width="130px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
+    <mp-table-column width="90px" prop="Operator" label="操作人" v-if="pageType !== 'undelivered'" />
+    <mp-table-column width="120px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
     <!-- 预计完成时间 全部时显示 -->
     <mp-table-column width="130px" label="预计完成日期" v-if="pageType === 'all'">
       <template #default="scope:any">
@@ -90,8 +95,8 @@
         {{ format2MiddleLangTypeDateFunc2((scope.row as Row).FinishTime) }}
       </template>
     </mp-table-column>
-    <mp-table-column width="100px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
-    <mp-table-column width="225px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
+    <mp-table-column width="85px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
+    <mp-table-column width="220px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
       <template #default="scope:any">
         <mp-button type="primary" class='f' link @click="onMenuClick(scope.row, 'confirmExternal')"
           :disabled="![ExternalTaskStatusEnum.WaitFactoryReceive, ExternalTaskStatusEnum.FactoryReceived]
@@ -186,6 +191,10 @@ const onSendErrorClick = (row: typeof props.TaskList[number], index: number, cal
   :deep(.el-table__body-wrapper .el-table__body tbody .el-table__row .el-table__cell) {
     height: 44px;
 
+    .cell {
+      padding: 0 6px;
+    }
+
     button {
       font-size: 12px;
       padding: 0;
@@ -225,7 +234,7 @@ const onSendErrorClick = (row: typeof props.TaskList[number], index: number, cal
   :deep(.check-title) {
     .cell {
       width: 68px;
-      padding-left: 11px;
+      padding-left: 7px;
       > label > span {
         position: relative;
         &::after {

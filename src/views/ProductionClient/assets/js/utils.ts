@@ -39,8 +39,9 @@ export const filterNextWorkingList = async (TaskWorkingID: string) => {
   const obj: { [key: string]: INextWorkingProduction } = {};
 
   NextWorkingList.forEach(it => {
-    if (it.Color && !obj[it.Color]) {
-      obj[it.Color] = it;
+    const key = `${it.Color}${it.Name}`;
+    if (it.Color && key && !obj[key]) {
+      obj[key] = it;
     }
   });
 

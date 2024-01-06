@@ -25,6 +25,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
   const list = TaskList.map(it => {
     let _TargetID = '';
     let _Material = '';
+    let _LineName = '';
 
     const info = getTaskDisplayInfo(it);
 
@@ -35,17 +36,20 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
         _TargetID = `${it.Working.PlateInfo?.Code || ''}（大版）`;
         _Material = it.Working.PlateInfo?.Material || '';
         _DetailText = info.SecondTitle;
+        _LineName = it.Working.PlateInfo?.Line || '';
         break;
 
       case ReportModeEnum.order:
         _TargetID = `${it.Working.OrderInfo?.OrderID || ''}（订单）`;
         if (it.Working.OrderInfo?.Content && useContent) _DetailText = it.Working.OrderInfo.Content;
+        _LineName = it.Working.OrderInfo?.Line || '';
         break;
 
       case ReportModeEnum.block:
         _TargetID = `${it.Working.OrderInfo?.OrderID || ''} ${it.Working.ChunkInfo?.Name || ''}（块）`;
         _Material = it.Working.PlateInfo?.Material || '';
         if (it.Working.OrderInfo?.Content && useContent) _DetailText = it.Working.OrderInfo.Content;
+        _LineName = it.Working.ChunkInfo?.Line || '';
         break;
 
       default:
@@ -103,10 +107,12 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
 
     /** 最晚送达时间 */
     const _LastestSendedTime = it.LatestSendTime ? format2MiddleLangTypeDateFunc2(it.LatestSendTime) : '';
+    const _IsTimeout = _LastestSendedTime ? new Date(_LastestSendedTime).getTime() < Date.now() : false;
 
     return {
       ...it,
       _TargetID,
+      _LineName,
       _ProcessTimes, // 是第几次加工次数
       _AssistText, // 辅助文字信息
       _Material,
@@ -126,6 +132,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _ExternalSubmitParams,
       _StartTime,
       _LastestSendedTime,
+      _IsTimeout,
     };
   });
 
