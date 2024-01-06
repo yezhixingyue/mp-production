@@ -17,6 +17,11 @@ export const ExternalTaskStatusEnumObj = {
     ID: ExternalTaskStatusEnum.HaveInstored,
     Name: '已出库',
   },
+  /** 生产中 */
+  InProduction: {
+    ID: ExternalTaskStatusEnum.InProduction,
+    Name: '生产中',
+  },
   /** 已入库 */
   HaveFinished: {
     ID: ExternalTaskStatusEnum.HaveFinished,
