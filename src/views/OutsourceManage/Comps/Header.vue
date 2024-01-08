@@ -14,11 +14,11 @@
           :changePropsFunc='setCondition'
           :requestFunc='getList'
           :isFull="true"
-          :typeList="[['DateType', ''], ['FinishTime', 'First'], ['FinishTime', 'Second']]"
+          :typeList="[['DateType', ''], [options.DateType, 'First'], [options.DateType, 'Second']]"
           :dateList="dateList"
           :dateValue='condition.DateType'
           :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
-          label="时间筛选"
+          :label="options.DateTitle"
           v-show="options.showDate"
         />
         <div class="item" v-show="!options.showDate">
@@ -71,7 +71,8 @@ const dateList = [
   { name: '上月下单', ID: 'lastMonth' },
 ];
 
-const UserDefinedTimeIsActive = computed(() => props.condition.DateType === '' && !!props.condition.FinishTime.First && !!props.condition.FinishTime.Second);
+const UserDefinedTimeIsActive = computed(() => props.condition.DateType === '' && !!props.options.DateType
+ && !!props.condition[props.options.DateType].First && !!props.condition[props.options.DateType].Second);
 
 const _Factory = computed({
   get() {

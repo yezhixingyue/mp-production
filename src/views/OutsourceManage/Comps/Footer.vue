@@ -26,7 +26,6 @@ import { useUserStore } from '@/store/modules/user';
 import { ExternalTaskStatusEnum } from '../js/enum';
 import { ManageListClass } from '../js/ManageListClass';
 import { OutsourceManagePageType } from '../js/type';
-import { Condition } from '../js/Condition';
 import { checkExTaskIsComplete, getCanNotDownload } from '../js/utils';
 
 const props = defineProps<{
@@ -112,11 +111,12 @@ const onBatchConfirmClick = () => { // 批量确认
 };
 
 const downloadExcelObj: ComputedRef<IExportExcelProps | undefined> = computed(() => { // 导出Excel
-  if (props.pageType === 'all' && localPermission.value?.Excel) {
+  const field = props.ManageListData.condition._options.DateType;
+  if (props.pageType === 'all' && localPermission.value?.Excel && field) {
     const condition = props.ManageListData.condition.filter() as IExportExcelCondition;
     const fileDate = {
-      First: (condition.FinishTime as Condition['FinishTime']).First,
-      Second: (condition.FinishTime as Condition['FinishTime']).Second,
+      First: (condition[field] as { First: string, Second: string }).First,
+      Second: (condition[field] as { First: string, Second: string }).Second,
     };
 
     return {

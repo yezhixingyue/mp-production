@@ -79,6 +79,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
 
     const _ActualDuration = transformMinute(it.ActualDuration);
 
+    const _CreateTime = it.CreateTime ? format2MiddleLangTypeDateFunc2(it.CreateTime) : '';
     const _FinishTime = it.FinishTime ? format2MiddleLangTypeDateFunc2(it.FinishTime) : '';
 
     const _EquAndOperator = [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') + (it.Operator ? ` (${it.Operator})` : '');
@@ -122,6 +123,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _DetailText,
       _files,
       _images,
+      _CreateTime,
       _WishDuration, // 预计加工时长
       _ActualDuration, // 实际加工时长
       _FinishTime, // 完工时间

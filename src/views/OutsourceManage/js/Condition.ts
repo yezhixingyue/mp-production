@@ -8,8 +8,8 @@ export class Condition {
     ID: '',
   }
 
-  /** 完成时间 */
-  FinishTime = {
+  /** 创建时间 */
+  CreateTime = {
     First: '',
     Second: '',
   }
@@ -25,14 +25,17 @@ export class Condition {
 
   PageSize = 20
 
+  _options: ISwitchOptions
+
   constructor(options: ISwitchOptions) {
     this.DateType = options.showDate ? 'today' : '';
     this.Status = options.Status;
+    this._options = options;
   }
 
   filter() {
     /** 处理时间 */
-    CommonClassType.setDate(this, 'FinishTime');
+    if (this._options.DateType) CommonClassType.setDate(this, this._options.DateType);
 
     /** 筛选结果 */
     return CommonClassType.filter(this);

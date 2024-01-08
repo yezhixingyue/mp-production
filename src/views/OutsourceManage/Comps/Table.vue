@@ -10,7 +10,7 @@
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="110px" prop="_AssistText" label="加工信息" class-name="is-pink" />
     <mp-table-column v-if="pageType !== 'undelivered'" width="146px" label="外协工厂">
       <template #default="scope:any">
-        <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
+        <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive && pageType==='await'"
          :disabled="!localPermission?.WaitSetup || scope.row._ExternalSubmitParams._IsFixedFactory"
          :title="scope.row._ExternalSubmitParams._IsFixedFactory ? '外协异常处理中锁定了工厂' : ''"
          v-model="scope.row._ExternalSubmitParams.FactoryID" style="width:120px;" placeholder="指定外协工厂">
@@ -27,7 +27,7 @@
     <mp-table-column width="115px" label="金额" v-if="pageType==='await'">
       <template #default="scope:any">
         <el-input style="width:70px;margin-right: 5px;" class="amount" placeholder="外协金额"
-          v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
+          v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive && pageType==='await'"
           :disabled="!localPermission?.WaitSetup || scope.row._ExternalSubmitParams._IsFixedAmount"
           :title="scope.row._ExternalSubmitParams._IsFixedAmount ? '外协异常处理中锁定了价格' : ''"
           v-model.trim="scope.row._ExternalSubmitParams.Amount" maxlength="9"/>
@@ -76,12 +76,13 @@
     <mp-table-column width="146px" label="预计完成日期" v-if="pageType==='await'">
       <template #default="scope:any">
         <MpDateTimePicker style="width:120px;" :disabled="!localPermission?.WaitSetup"
-          v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
+          v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive  && pageType==='await'"
           v-model="scope.row._ExternalSubmitParams.WishFinishTime" disabledBeforeToday :clearable="false" />
         <span v-else>{{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}</span>
       </template>
     </mp-table-column>
     <mp-table-column width="90px" prop="Operator" label="操作人" v-if="pageType !== 'undelivered'" />
+    <mp-table-column width="120px" prop="_CreateTime" label="创建时间" v-if="pageType === 'all'" />
     <mp-table-column width="120px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
     <!-- 预计完成时间 全部时显示 -->
     <mp-table-column width="130px" label="预计完成日期" v-if="pageType === 'all'">
@@ -90,11 +91,7 @@
       </template>
     </mp-table-column>
     <!-- 完成时间 非待外协时显示 -->
-    <mp-table-column width="130px" label="完成时间" v-if="pageType !== 'await' && pageType !== 'undelivered'">
-      <template #default="scope:any">
-        {{ format2MiddleLangTypeDateFunc2((scope.row as Row).FinishTime) }}
-      </template>
-    </mp-table-column>
+    <mp-table-column width="120px" prop="_FinishTime" label="完成时间" v-if="pageType !== 'await' && pageType !== 'undelivered'" />
     <mp-table-column width="85px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
     <mp-table-column width="220px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
       <template #default="scope:any">
@@ -123,7 +120,7 @@ import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageCo
 import { ElTable } from 'element-plus';
 import { computed, ref, watch } from 'vue';
 import { useUserStore } from '@/store/modules/user';
-import { format2MiddleLangTypeDateFunc2, formatOnlyDate } from '@/assets/js/filters/dateFilters';
+import { formatOnlyDate } from '@/assets/js/filters/dateFilters';
 import { getNextWorkContentOnlySingle } from '@/views/ProductionClient/assets/js/utils';
 import MpDateTimePicker from '@/components/common/ElementPlusContainners/MpDateTimePicker/MpDateTimePicker.vue';
 import { ExternalTaskStatusEnum } from '../js/enum';
