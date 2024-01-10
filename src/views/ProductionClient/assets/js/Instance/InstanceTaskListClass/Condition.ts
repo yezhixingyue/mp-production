@@ -26,7 +26,7 @@ export class Condition {
     this.setEquipment(Equipment);
 
     if (Equipment.AllowBatchReport) { // 如果为批量报工 - 仅调取可生产状态的订单列表
-      this.StatusList = [ProductiveTaskStatusEnum.Producibility];
+      this.StatusList = [ProductiveTaskStatusEnum.Producibility, ProductiveTaskStatusEnum.InProduction];
     }
 
     if (isUndelevered) {
