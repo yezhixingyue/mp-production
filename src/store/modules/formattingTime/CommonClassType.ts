@@ -8,6 +8,9 @@ export type ISetConditionParams = [[string, string | undefined], any];
 export default class CommonClassType {
   static setDate(obj, key = 'Date', defalutProps = { First: 'First', Second: 'Second' }) {
     const _obj = obj;
+
+    store.updateNewDate();
+
     switch (obj.DateType) {
       case 'all':
         _obj[key][defalutProps.First] = store.AlltimeDate.First;
