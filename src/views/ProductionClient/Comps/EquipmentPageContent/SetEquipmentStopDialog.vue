@@ -55,9 +55,9 @@ const reason = ref(''); // 6 - 16位
 const requestResult = ref<null | { ErrorInfo: IEquipmentErrorInfo; cb:() => void }>(null);
 
 const onCancel = () => {
-  if (requestResult.value) {
-    requestResult.value.cb();
-  }
+  // if (requestResult.value) {
+  //   requestResult.value.cb();
+  // }
   localVisible.value = false;
 };
 
@@ -69,6 +69,7 @@ const onClosed = () => {
 const submit = async () => {
   if (requestResult.value) {
     // 成功后的弹窗关闭处理
+    requestResult.value.cb();
     onCancel();
     return;
   }
