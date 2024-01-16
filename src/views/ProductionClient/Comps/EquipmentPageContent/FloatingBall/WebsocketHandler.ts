@@ -87,9 +87,6 @@ export class WebsocketHandler {
             UndeliveredNumber,
           });
         }
-
-        console.log('UpdateUnReceivedNumber', EquipmentID, UndeliveredNumber);
-        console.log('target UndeliveredList', t, this.UndeliveredList);
       };
 
       ($ as any).connection.hub.start().done(() => {
@@ -116,7 +113,6 @@ export class WebsocketHandler {
     this.chatServer.getUndeliveredList(this.terminal)
       .done((result: IUndeliveredListItem[]) => {
         this.UndeliveredList = result || [];
-        console.log('getAllUndeliveredList getUndeliveredList done result', result);
       })
       .catch((error) => {
         this.UndeliveredList = [];

@@ -2,6 +2,7 @@ import clientApi from '@/api/client';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentStatusEnum } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/enum';
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
+import { ManageClientPageData } from '@/api/client/clientStore';
 import { IEquipmentErrorInfo, ITaskDetail } from '../types';
 import { InstanceLoginClass } from './InstanceLoginClass';
 import { InstanceTaskListClass } from './InstanceTaskListClass/InstanceTaskListClass';
@@ -135,10 +136,14 @@ export class TerminalEquipmentInstance {
 
     if (resp?.data.isSuccess) {
       const cb = () => {
+        // console.log('cb');
         // 1. 设置设备状态为报停状态
         this.Equipment.Status = EquipmentStatusEnum.failure;
         this.ErrorInfo = resp.data.Data;
         // 2. 对处理另外字段的修改 Remark ? 还有一个目标设备字段  还有一个是对待转移列表数据的获取及展示
+
+        // 3. 设备报停和启用之后，小红点数据重新获取
+        ManageClientPageData.value.websocketHandler.start();
       };
 
       return {
@@ -157,6 +162,7 @@ export class TerminalEquipmentInstance {
       const cb = () => {
         this.Equipment.Status = EquipmentStatusEnum.normal;
         this.getTaskInfo();
+        ManageClientPageData.value.websocketHandler.start(); // 设备报停和启用之后，小红点数据重新获取
       };
       MpMessage.dialogSuccess({ title: '恢复生产成功', onCancel: cb, onOk: cb });
     }
