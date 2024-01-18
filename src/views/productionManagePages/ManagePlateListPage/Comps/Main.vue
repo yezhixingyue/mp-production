@@ -36,7 +36,7 @@
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
                :disabled="!row.MapFilePath">打印条码稿</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.Plate"
-               @click="onProcessClick(row)">进度详情</mp-button>
+               @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.LaterCraft"
                @click="onOrderContainClick(row)">包含订单</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0" v-show="Type === PlateTypeEnum.Plate">
@@ -56,7 +56,7 @@
               <td class="detail" :title="child._Position">{{ child._Position }}</td>
               <td class="detail" :title="child._StatusText">{{ child._StatusText }}</td>
               <td class="menus">
-                <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query" @click="onProcessClick(row, child)">进度详情</mp-button>
+                <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query" @click="onProcessClick(row, child)">生产流程</mp-button>
                 <!-- <mp-button link type="primary" @click="onBarCodePrintClick(row, child)" :disabled="!child.MapFilePath">打印条码稿</mp-button> -->
               </td>
             </tr>
