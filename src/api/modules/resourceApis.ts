@@ -31,9 +31,10 @@ export const resourceApis = {
   getEquipmentClassificationSave(data) { // POST /Api/EquipmentClass/Save  设备分类编辑
     return request<string>({ method: 'POST', url: '/Api/EquipmentClass/Save', data });
   },
-  getEquipmentClassificationList(sign?: string) { // POST /Api/EquipmentClass/List  设备分类查询
+  getEquipmentClassificationList(sign?: string, isHaveEquipment?: boolean) { // POST /Api/EquipmentClass/List  设备分类查询
     const headers = sign ? { sign } : undefined;
-    return request<EquipmentClassificationListItem[]>({ method: 'GET', url: '/Api/EquipmentClass/List', headers });
+    const params = isHaveEquipment ? { isHaveEquipment } : undefined;
+    return request<EquipmentClassificationListItem[]>({ method: 'GET', url: '/Api/EquipmentClass/List', headers, params });
   },
   getEquipmentClassificationRemove(id) { // POST /Api/EquipmentClass/Remove  设备分类删除
     return request({ method: 'DELETE', url: '/Api/EquipmentClass/Remove', params: { id } });

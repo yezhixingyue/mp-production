@@ -120,7 +120,7 @@ export class InstanceLoginClass {
 
   /** 注销登录 - 清除缓存 */
   public async logout() {
-    const resp = await clientApi.getStaffLoginOut(this.EquipmentID).catch(() => null);
+    const resp = await clientApi.getLogout(this.EquipmentID).catch(() => null);
     if (resp?.data.isSuccess) {
       this.user = null;
       this.token = '';

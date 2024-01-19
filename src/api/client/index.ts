@@ -45,10 +45,6 @@ const clientApi = {
   getEquipmentTaskError(data: { ID: string, Remark: string }) {
     return instance.post('/Api/Equipment/TaskError', data);
   },
-  /** GET /Api/Staff/LoginOut  员工退出登录 -目前仅报工使用 */
-  getStaffLoginOut(equipmentID: string) {
-    return instance.get('/Api/Staff/LoginOut', { params: { equipmentID } });
-  },
   /** POST /Api/Equipment/TaskBatchReport  批量报工 */
   getEquipmentTaskBatchReport(data) {
     return instance.post('/Api/Equipment/TaskBatchReport', data);
@@ -60,6 +56,10 @@ const clientApi = {
   /** GET /Api/Equipment/UndeliveredList  获取设备未送达物料列表 */
   getEquipmentUndeliveredList(terminal: string) {
     return instance.get<IUndeliveredListItem[]>('/Api/Equipment/UndeliveredList', { params: { terminal }, closeLoading: true, closeTips: true });
+  },
+  /** 退出登录 put /Api/Logout  equipmentID */
+  getLogout(equipmentID: string) {
+    return instance.put('/Api/Logout', null, { params: { equipmentID } });
   },
 };
 

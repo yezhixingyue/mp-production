@@ -109,7 +109,7 @@ export class EquipmentStatusManageClass {
     await nextTick();
     this.loading = true;
 
-    const resp = await api.getEquipmentClassificationList().catch(() => null);
+    const resp = await api.getEquipmentClassificationList(undefined, true).catch(() => null);
 
     if (resp?.data.isSuccess) {
       this.EquipmentClassList.push(...resp.data.Data);
