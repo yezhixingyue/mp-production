@@ -50,7 +50,7 @@ const onClick = (label) => {
             width: 260px;
             padding: 8px 20px;
 
-            &[disabled] {
+            &[disabled=true] {
               color: #cbcbcb !important;
               pointer-events: none;
             }
