@@ -210,7 +210,7 @@ export class BoardDraw {
     this.ctx.fillStyle = '#444';
     this.ctx.textBaseline = 'top';
     this.ctx.font = '14px YaHei';
-    this.ctx.fillText(`任 务: ${it.TaskList.length}个`, x + this.layout.TitleWidth + 14 + 0.5, y + 6 + 2 + 0.5, this.layout.TaskNumberWidth);
+    this.ctx.fillText(`任 务: ${it.TaskNumber}个`, x + this.layout.TitleWidth + 14 + 0.5, y + 6 + 2 + 0.5, this.layout.TaskNumberWidth);
 
     // 3 操作人
     this.ctx.font = '14px YaHei';
@@ -219,7 +219,7 @@ export class BoardDraw {
     this.ctx.closePath();
 
     // 4 任务详情
-    this._renderDetailBtn(it.TaskList.length === 0, x, y);
+    this._renderDetailBtn(it.TaskNumber === 0, x, y);
 
     // 5 为该条数据上_menuBorder进行赋值，以供后续使用
     const _it = it;
@@ -333,7 +333,7 @@ export class BoardDraw {
   private _drawTask(x: number, y: number, h: number, it: ILocalEquipmentStatusItem) {
     if (!this.ctx) return;
     // 正常任务列表, 错误信息提取到其它步骤呈现
-    if (it.Status !== EquipmentStatusForBoardEnum.error && it.TaskList.length > 0) {
+    if (it.Status !== EquipmentStatusForBoardEnum.error && it.TaskNumber > 0) {
       const startX = x + this.layout.TitleWidth + this.layout.IntroWidth;
       const startY = y + 10;
 
@@ -378,7 +378,7 @@ export class BoardDraw {
   /** 添加任务文字 */
   private _drawTaskWords() {
     this.list.forEach(it => {
-      if (it.Status !== EquipmentStatusForBoardEnum.error && it.TaskList.length > 0) {
+      if (it.Status !== EquipmentStatusForBoardEnum.error && it.TaskNumber > 0) {
         it.TaskList.forEach((task) => {
           // 4. 画图
           if (this.ctx && task._points && task._points.len >= 30) {
@@ -577,13 +577,13 @@ export class BoardDraw {
       && e.offsetY > it._menuBorder.y
       && e.offsetY < it._menuBorder.y + it._menuBorder.h) {
       this.canvas.style.cursor = 'pointer';
-      this._renderDetailBtn(it.TaskList.length === 0, x, y, true);
-      if (it.TaskList.length === 0) {
+      this._renderDetailBtn(it.TaskNumber === 0, x, y, true);
+      if (it.TaskNumber === 0) {
         this.canvas.style.cursor = 'not-allowed';
       }
     } else {
       this.canvas.style.cursor = 'default';
-      this._renderDetailBtn(it.TaskList.length === 0, x, y);
+      this._renderDetailBtn(it.TaskNumber === 0, x, y);
     }
     // 5. 悬浮到任务列表部分时
     if (e.offsetX > this.layout.TitleWidth + this.layout.IntroWidth) {
@@ -608,7 +608,7 @@ export class BoardDraw {
       && e.offsetX < it._menuBorder.x + it._menuBorder.w
       && e.offsetY > it._menuBorder.y
       && e.offsetY < it._menuBorder.y + it._menuBorder.h) {
-      if (it.TaskList.length === 0) {
+      if (it.TaskNumber === 0) {
         // MpMessage.error('当前设备尚无任务', `设备名称：[ ${it.Equipment.Name} ]`);
       } else {
         sessionStorage.setItem('EquipmentStatusDetailData', JSON.stringify(it));

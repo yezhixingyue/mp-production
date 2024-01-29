@@ -50,6 +50,8 @@ export interface IEquipmentStatusItem {
   ErrorOperator?: string
   /** 任务列表 */
   TaskList: ITask[]
+  /** 任务数量 */
+  TaskNumber: number
 }
 
 interface ILocalTask extends ITask {
