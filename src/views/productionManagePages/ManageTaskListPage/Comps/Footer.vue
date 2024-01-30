@@ -7,9 +7,9 @@
 
 <script setup lang='ts'>
 import MpPagination from '@/components/common/MpPagination.vue';
+import { IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
 import { useUserStore } from '@/store/modules/user';
-import { IExportExcelProps, IExportExcelCondition } from '@/components/common/General/DownLoadExcelComp/types';
-import { ComputedRef, computed } from 'vue';
+import { computed } from 'vue';
 import { Condition } from '../js/Condition';
 
 const props = defineProps<{
@@ -21,21 +21,16 @@ const props = defineProps<{
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageTask.Obj);
 
-const downloadExcelObj: ComputedRef<IExportExcelProps | undefined> = computed(() => { // 导出Excel
-  if (!localPermission.value?.Excel) return undefined;
-  const condition = props.condition.filter() as IExportExcelCondition;
-  const fileDate = {
-    First: (condition.FinishTime as Condition['FinishTime']).First,
-    Second: (condition.FinishTime as Condition['FinishTime']).Second,
-  };
+const downloadExcelObj: undefined | IExportExcelProps = localPermission.value?.Excel ? {
+  apiPath: 'getTaskExcel',
+  fileName: '已完成任务列表',
+  getCondition: () => props.condition.filter(),
+  getFileNameDate: () => ({
+    First: props.condition.FinishTime.First,
+    Second: props.condition.FinishTime.Second,
+  }),
+} : undefined;
 
-  return {
-    apiPath: 'getTaskExcel',
-    fileName: '外协任务列表',
-    condition,
-    fileDate,
-  };
-});
 </script>
 
 <style scoped lang='scss'>

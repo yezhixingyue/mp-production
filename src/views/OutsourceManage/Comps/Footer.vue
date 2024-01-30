@@ -20,9 +20,9 @@
 <script setup lang='ts'>
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpPagination from '@/components/common/MpPagination.vue';
-import { IExportExcelCondition, IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
-import { computed, ComputedRef } from 'vue';
+import { computed } from 'vue';
 import { useUserStore } from '@/store/modules/user';
+import { IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
 import { ExternalTaskStatusEnum } from '../js/enum';
 import { ManageListClass } from '../js/ManageListClass';
 import { OutsourceManagePageType } from '../js/type';
@@ -110,24 +110,17 @@ const onBatchConfirmClick = () => { // 批量确认
   });
 };
 
-const downloadExcelObj: ComputedRef<IExportExcelProps | undefined> = computed(() => { // 导出Excel
-  const field = props.ManageListData.condition._options.DateType;
-  if (props.pageType === 'all' && localPermission.value?.Excel && field) {
-    const condition = props.ManageListData.condition.filter() as IExportExcelCondition;
-    const fileDate = {
-      First: (condition[field] as { First: string, Second: string }).First,
-      Second: (condition[field] as { First: string, Second: string }).Second,
-    };
-
-    return {
-      apiPath: 'getExternalTaskExcel',
-      fileName: '外协任务列表',
-      condition,
-      fileDate,
-    };
-  }
-  return undefined;
-});
+// eslint-disable-next-line max-len
+const downloadExcelObj: undefined | IExportExcelProps = props.pageType === 'all' && localPermission.value?.Excel && props.ManageListData.condition._options.DateType
+  ? {
+    apiPath: 'getExternalTaskExcel',
+    fileName: '外协任务列表',
+    getCondition: () => props.ManageListData.condition.filter(),
+    getFileNameDate: () => ({
+      First: props.ManageListData.condition.CreateTime.First,
+      Second: props.ManageListData.condition.CreateTime.Second,
+    }),
+  } : undefined;
 
 </script>
 

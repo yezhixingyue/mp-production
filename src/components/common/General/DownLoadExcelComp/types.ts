@@ -25,12 +25,12 @@ export interface IExportExcelProps {
   disabled?: boolean
   /** 导出接口 */
   apiPath: keyof typeof downloadExcelApis
-  /** 导出条件 */
-  condition?: IExportExcelCondition
+  /** 获取导出条件 */
+  getCondition?: () => IExportExcelCondition
   /** 导出的文件名称 */
   fileName: string
-  /** 导出时间段 */
-  fileDate?: { First: string, Second: string }
-  /** 是否包含导出日期 */
+  /** 导出时间段 - 如果未设置且withoutDate为false时为全部文字 */
+  getFileNameDate?: () => { First: string, Second: string }
+  /** 导出的文件名称上是否包含导出时间段 */
   withExportDate?: boolean
 }

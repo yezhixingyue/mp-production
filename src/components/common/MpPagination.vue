@@ -74,15 +74,15 @@ export default {
 
     const currentPage = computed(() => props.nowPage);
 
-    const localExportExcelProps = computed<IExportExcelProps | null>(() => (props.ExportExcelProps ? {
-      ...(props.ExportExcelProps as IExportExcelProps),
-    } : null));
+    // const localExportExcelProps = computed<IExportExcelProps | null>(() => (props.ExportExcelProps ? {
+    //   ...(props.ExportExcelProps as IExportExcelProps),
+    // } : null));
 
     return {
       currentPage,
       handleCurrentChange,
       locale: zhCn,
-      localExportExcelProps,
+      localExportExcelProps: props.ExportExcelProps as IExportExcelProps,
     };
   },
 };

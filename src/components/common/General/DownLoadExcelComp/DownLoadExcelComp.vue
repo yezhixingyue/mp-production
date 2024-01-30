@@ -22,12 +22,12 @@ interface IExportExcelProps {
   disabled?: boolean
   /** 导出接口 */
   apiPath: keyof typeof downloadExcelApis
-  /** 导出条件 */
-  condition?: IExportExcelCondition
+  /** 获取导出条件 */
+  getCondition?: () => IExportExcelCondition
   /** 导出的文件名称 */
   fileName: string
   /** 导出时间段 - 如果未设置且withoutDate为false时为全部文字 */
-  fileDate?: { First: string, Second: string }
+  getFileNameDate?: () => { First: string, Second: string }
   /** 导出的文件名称上是否包含导出时间段 */
   withExportDate?: boolean
 }
@@ -46,7 +46,7 @@ const onClick = async () => {
    * 3. 是否可导出（count > 0， 可使用disabled传入）
    * 4. 导出的文件名称 fileName
    * */
-  const _condition: IExportExcelCondition = JSON.parse(JSON.stringify(props.condition || {})); // 获取经过处理过的请求头配置对象
+  const _condition: IExportExcelCondition = JSON.parse(JSON.stringify(props.getCondition ? props.getCondition() : {})); // 获取经过处理过的请求头配置对象
 
   delete _condition.Page;
   delete _condition.PageSize;
@@ -62,8 +62,8 @@ const onClick = async () => {
 
   let fileName = `${props.fileName}.xls`;
 
-  if (props.fileDate) {
-    const { First, Second } = props.fileDate;
+  if (props.getFileNameDate) {
+    const { First, Second } = props.getFileNameDate();
     if (First && Second) {
       const f = First.split('T')[0];
       let _second = '';

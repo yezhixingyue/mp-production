@@ -6,10 +6,10 @@
 </template>
 
 <script setup lang='ts'>
-import { IExportExcelCondition, IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
 import MpPagination from '@/components/common/MpPagination.vue';
 import { useUserStore } from '@/store/modules/user';
-import { computed, ComputedRef } from 'vue';
+import { IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
+import { computed } from 'vue';
 import { Condition } from '../js/Condition';
 
 const props = defineProps<{
@@ -21,23 +21,15 @@ const props = defineProps<{
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionExternalMaterial.Obj);
 
-const downloadExcelObj: ComputedRef<IExportExcelProps | undefined> = computed(() => {
-  if (!localPermission.value?.Excel) return undefined;
-
-  const condition = props.condition.filter() as IExportExcelCondition;
-  const fileDate = {
-    First: (condition.CreateTime as Condition['CreateTime']).First,
-    Second: (condition.CreateTime as Condition['CreateTime']).Second,
-  };
-
-  return {
-    apiPath: 'getExternalMaterialExcel',
-    fileName: '外来物料列表',
-    condition,
-    fileDate,
-    // withExportDate: true,
-  };
-});
+const downloadExcelObj: undefined | IExportExcelProps = localPermission.value?.Excel ? {
+  apiPath: 'getExternalMaterialExcel',
+  fileName: '外来物料列表',
+  getCondition: () => props.condition.filter(),
+  getFileNameDate: () => ({
+    First: props.condition.CreateTime.First,
+    Second: props.condition.CreateTime.Second,
+  }),
+} : undefined;
 
 </script>
 
