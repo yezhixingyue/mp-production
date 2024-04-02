@@ -13,13 +13,13 @@
         <!-- <mp-button type="primary" class="ft-12" :class="{h: item._isSplit}" v-if="type==='normal'" link @click="setPlateMakingWork">设置制版工序</mp-button> -->
         <mp-button type="primary" class="ft-12" link :class="{h: item._isSplit}" @click="setPlateMakingWork" :disabled="!canSetPMWork"
          v-if="localPermission?.Setup" :title="!canSetPMWork ? '物料来源中设置有版材才可设置制版工序' : ''">设置制版工序</mp-button>
-        <mp-button type="primary" v-if="localPermission?.Setup" class="ft-12" link @click="ToEquipment">选择设备/工厂</mp-button>
+        <mp-button type="primary" v-if="localPermission?.Setup" class="ft-12" link @click="toEquipment">选择设备/工厂</mp-button>
         <mp-button type="primary" v-if="localPermission?.Setup" class="ft-12" link :class="{h: item._isSplit}"
         :disabled="!!(
           (!item.MaterialSources || item.MaterialSources.length===0)
           &&
           (item.PlateMakingGroupID||!item.PlateMakingMaterialSources||item.PlateMakingMaterialSources.length===0))"
-          @click="ToMaterialSource">物料来源</mp-button>
+          @click="toMaterialSource">物料来源</mp-button>
         <mp-button type="danger" v-if="localPermission?.Setup" class="ft-12" link @click="delLineWorking">删除</mp-button>
       </span>
     </div>
@@ -75,7 +75,7 @@ const props = defineProps<{
   localPermission: IUser['PermissionList']['PermissionManageUnionLine']['Obj'] | IUser['PermissionList']['PermissionManageNormalLine']['Obj'] | undefined
 }>();
 
-const emit = defineEmits(['setPlateMakingWork', 'ToEquipment', 'ToMaterialSource', 'delLineWorking', 'onSplitWorkingRemove']);
+const emit = defineEmits(['setPlateMakingWork', 'toEquipment', 'toMaterialSource', 'delLineWorking', 'onSplitWorkingRemove']);
 
 const productionSettingStore = useProductionSettingStore();
 const { PlateMakingWorkSetupHander, MaterialTypeGroup } = storeToRefs(productionSettingStore);
@@ -93,13 +93,13 @@ const setPlateMakingWork = () => {
   emit('setPlateMakingWork', props.item);
 };
 
-const ToEquipment = () => {
-  emit('ToEquipment', props.item);
+const toEquipment = () => {
+  emit('toEquipment', props.item);
 };
 
-const ToMaterialSource = () => {
+const toMaterialSource = () => {
   if (props.item._isSplit) return;
-  emit('ToMaterialSource', props.item);
+  emit('toMaterialSource', props.item);
 };
 
 const delLineWorking = () => {

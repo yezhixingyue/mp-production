@@ -19,6 +19,10 @@
         <el-input v-model.trim="ruleForm.Name" maxlength="20" show-word-limit></el-input>
       </li>
       <li>
+        <span class="label star">额外功能：</span>
+        <el-checkbox v-model="ruleForm.IsDigitalAutoDieCut" >数码自动模切机</el-checkbox>
+      </li>
+      <li>
         <span class="label">可选外协工厂：</span>
         <div class="factory-box">
           <span v-if="!ruleForm.ClassID && ruleForm.ClassID !== 0" class="tip">请先选择分类</span>

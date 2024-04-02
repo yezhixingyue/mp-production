@@ -29,6 +29,8 @@ export interface IProductionLineSet {
   UseModeType: LineIsUseModeEnum,
   /** 允许翻版方式， 仅生产线 */
   ReproductionTypes: ReproductionTypeEnum[]
+  /** 是否数码生产线 */
+  IsDigital: boolean
 }
 
 /**

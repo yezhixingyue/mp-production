@@ -3,11 +3,11 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum } from './enums';
-import { ILineDetailWorkingProcedure, ILineWorkingMaterialSources } from './ProductionLineDetailTypes';
+import { IImpositionTemplate, ILineDetailWorkingProcedure, ILineWorkingMaterialSources } from './ProductionLineDetailTypes';
 import {
   IConvertAssistInfo, IConvertOrderFile, IFactoryMaterialList, IPrintColor, IProductionInstanceOriginData,
 } from './types';
-import { checkIsPositiveInteger, checkMobile } from './utils';
+import { checkIsPositiveInteger, checkMobile, getDigitalImpositionTemplate } from './utils';
 import { InstanceSettingsOnMakeupFileClass } from './InstanceSettingsOnMakeupFileClass';
 
 /**
@@ -103,23 +103,36 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
   }
 
   /** 根据选中工序生成相关信息: WorkingList AssistList FileList */
-  handleWorkingSelect(index: number | '') {
+  async handleWorkingSelect(index: number | '') {
     // 需要生成的数据有: WorkingList AssistList FileList  其中  FileList中包含拼版文件 辅助文件 和 专色文件 3种类型
-    console.log('handleWorkingSelect 1111', index);
+    console.log('handleWorkingSelect 1111', index, this._originLineData);
     const _AssistList: IConvertAssistInfo[] = [];
     const _FileList: IConvertOrderFile[] = [];
 
+    let _Template: IImpositionTemplate | null = null;
+    if (this._originLineData?.IsDigital) {
+      const t = this.WorkingList.find(it => it.Type === WorkingTypeEnum.print && !it.Template); // 印刷工序且未设置拼版模板（未绑定制版工序）
+      if (t) {
+        _Template = await getDigitalImpositionTemplate().catch(() => null);
+        // const _Template = await getDigitalImpositionTemplate().catch(() => null);
+        // if (_Template) {
+        //   t.Template = _Template;
+        // }
+      }
+    }
+
     this.WorkingList.forEach(it => {
       // 1. 拼版文件
-      if (it.Template && !_FileList.find(_it => _it.Template?.ID === it.Template?.ID)) {
-        const t = this.FileList.find(_it => _it.Template?.ID === it.Template?.ID);
+      const Template = it.Type === WorkingTypeEnum.print ? it.Template || _Template : null;
+      if (Template && !_FileList.find(_it => _it.Template?.ID === Template?.ID)) {
+        const t = this.FileList.find(_it => _it.Template?.ID === Template?.ID);
         _FileList.push({
           UniqueName: t ? t.UniqueName : '',
           _File: t ? t._File : null,
           Template: {
-            ID: it.Template.ID,
+            ID: Template.ID,
           },
-          _PlateTemplate: it.Template,
+          _PlateTemplate: Template,
           _LineInfo: {
             ID: this._originLineData?.ID || '',
             Name: this._originLineData?.Name || '',
@@ -308,7 +321,7 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
     const text = this._LineInstanceName ? '中 ' : '';
 
     const _normalWorkingList = this.WorkingList.filter(w => w.Type === WorkingTypeEnum.normal);
-    console.log(_normalWorkingList, 1);
+
     let target = _normalWorkingList.find(it => it.WorkTimes === '');
     if (target) {
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序未设置作业次数` });

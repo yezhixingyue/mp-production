@@ -5,6 +5,11 @@
         <template #default="scope:any">{{formatListName(scope.row.ClassID, props.EquipmentGroupData.EquipmentClassList)}}</template>
       </mp-table-column>
       <mp-table-column min-width="135px" prop="Name" label="组名称" />
+      <mp-table-column width="150px" prop="Feature" label="数码自动模切机">
+        <template #default="scope:any">
+          {{scope.row.IsDigitalAutoDieCut ? '是' : ''}}
+        </template>
+      </mp-table-column>
       <mp-table-column min-width="170px" prop="Feature" label="可以外协工厂">
         <template #default="scope:any">
           {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}

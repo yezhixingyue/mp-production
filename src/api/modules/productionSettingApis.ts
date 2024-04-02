@@ -39,8 +39,8 @@ const api = {
   getWorkingProcedureList(data) { // POST /Api/WorkingProcedure/List  工序列表
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
   },
-  getWorkingProcedureSearch(searchType?: FetchWorkingProcedureSearchEnum) { // POST /Api/WorkingProcedure/Search  工序查询
-    return request<IWorkingProcedureSearch[]>({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType } });
+  getWorkingProcedureSearch(searchType?: FetchWorkingProcedureSearchEnum, isDigital = false) { // POST /Api/WorkingProcedure/Search  工序查询
+    return request<IWorkingProcedureSearch[]>({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType, isDigital } });
   },
   getWorkingProcedureSave(data) { // POST /Api/WorkingProcedure/Save  工序保存
     return request({ method: 'POST', url: '/Api/WorkingProcedure/Save', data });

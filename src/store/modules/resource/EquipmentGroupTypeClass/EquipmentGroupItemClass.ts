@@ -23,6 +23,9 @@ export class EquipmentGroupItemClass {
 
   ColorLimitContent = ''
 
+  /** 数码自动模切机 */
+  IsDigitalAutoDieCut = false
+
   MinWidth: number|'' = ''
 
   MaxWidth: number|'' = ''
