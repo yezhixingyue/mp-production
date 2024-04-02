@@ -35,7 +35,7 @@ export class ManageChunkListClass {
     const resp = await api.getProductionLineAll().catch(() => null);
     if (resp?.data.isSuccess) {
       const list = (resp.data.Data as ProductLineSimpleType[]).filter(it => it.Type === LineTypeEnum.normal);
-      this.ProductionLineList = [{ ID: '', Name: '所有生产线', Type: LineTypeEnum.normal }, ...list];
+      this.ProductionLineList = [{ ID: '', Name: '所有生产线', Type: LineTypeEnum.normal, IsDigital: false }, ...list];
     }
   }
 

@@ -5,6 +5,7 @@
       <p class="line-info" v-if="!isCombine">
         <span class="title" :title="actionLine?.Name || ''">
           {{actionLine?.Name || ''}}
+          <i v-if="!isCombine && ProductionLineData && ProductionLineData.IsDigital">(数码生产线)</i>
         </span>
         <!-- <span class="fold-the-hand" v-show="actionLine && actionLine.NeedFoldWay">需要折手</span> -->
         <span class="btn" v-if="localPermission?.Setup">
@@ -12,18 +13,19 @@
           <RemoveMenu @click="delLine">删除</RemoveMenu>
         </span>
       </p>
+
       <mp-button type="primary" v-if="localPermission?.Setup" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
       <!-- 生产线： -->
       <p class="set-slit" v-if="!isCombine && localPermission?.Setup">
         <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-14"></i>设置分切工序</mp-button>
       </p>
-      <p class="templates" v-if="!isCombine && ProductionLineData">
+      <p class="templates" v-if="!isCombine && ProductionLineData && !ProductionLineData.IsDigital">
         <span class="label">允许翻版方式：</span>
         <span class="ft-12">
           {{ProductionLineData.ReproductionTypes?.map(t => getEnumNameByID(t, ReproductionTypeEnumList)).join('、') || '无'}}
         </span>
       </p>
-      <p class="templates" v-if="!isCombine && ProductionLineData">
+      <p class="templates" v-if="!isCombine && ProductionLineData && !ProductionLineData.IsDigital">
         <span class="label">是否允许按模位：</span>
         <span class="ft-12">
           {{getEnumNameByID(ProductionLineData.UseModeType, LineIsUseModeEnumList)}}
@@ -87,8 +89,8 @@
               :localPermission="localPermission"
               :_summaryWorkList="_summaryWorkList"
               @setPlateMakingWork="setPlateMakingWork"
-              @ToEquipment="ToEquipment"
-              @ToMaterialSource='ToMaterialSource'
+              @toEquipment="jumpToEquipment"
+              @toMaterialSource='jumpToMaterialSource'
               @delLineWorking="delLineWorking"
               @onSplitWorkingRemove="onSplitWorkingRemove"
             />
@@ -126,7 +128,7 @@
     >
     <template #default>
       <!-- 生产线与组合生产线有区分 -->
-      <div class="add-line-dialog line">
+      <div class="add-line-dialog line" style="min-height: 200px;">
         <el-form :model="Data.addLineFrom" label-width="130px">
           <el-form-item label="名称：" class="form-item-required">
             <div class="name">
@@ -135,19 +137,22 @@
             </div>
           </el-form-item>
           <template v-if="!isCombine">
-            <div class="text bold">
-              拼版模板设置：
-            </div>
-            <el-form-item label="允许的翻版方式：" class="form-item-required">
-              <el-checkbox-group v-model="Data.addLineFrom.ReproductionTypes">
-                <el-checkbox :label="it.ID" v-for="it in ReproductionTypeEnumList" :key="it.ID">{{it.Name}}</el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-            <el-form-item label="是否允许按模位：" class="form-item-required">
-              <el-radio-group v-model="Data.addLineFrom.UseModeType">
-                <el-radio :label="it.ID" v-for="it in LineIsUseModeEnumList" :key="it.ID">{{it.Name}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
+            <el-checkbox v-model="Data.addLineFrom.IsDigital" :disabled="!!Data.addLineFrom.ID" style="margin: -6px 0 6px 130px;">数码生产线</el-checkbox>
+            <template v-if="!Data.addLineFrom.IsDigital">
+              <div class="text bold">
+                拼版模板设置：
+              </div>
+              <el-form-item label="允许的翻版方式：" class="form-item-required">
+                <el-checkbox-group v-model="Data.addLineFrom.ReproductionTypes">
+                  <el-checkbox :label="it.ID" v-for="it in ReproductionTypeEnumList" :key="it.ID">{{it.Name}}</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="是否允许按模位：" class="form-item-required">
+                <el-radio-group v-model="Data.addLineFrom.UseModeType">
+                  <el-radio :label="it.ID" v-for="it in LineIsUseModeEnumList" :key="it.ID">{{it.Name}}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </template>
           </template>
           <template v-else>
             <div class="text bold">
@@ -188,7 +193,11 @@
         </div>
         <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
             <el-checkbox-group v-model="Data.addPrcessFrom.WordIDS">
-              <template v-for="item in PrcessList.filter(it => [it.Type, ''].includes(Data.addPrcessFrom._filterType))" :key="item.ClassID" >
+              <template
+               v-for="item in PrcessList.filter(it => !ProductionLineData?.IsDigital || it.ReportMode !== ReportModeEnum.block)
+               .filter(it => [it.Type, ''].includes(Data.addPrcessFrom._filterType))"
+               :key="item.ClassID"
+               >
                 <el-checkbox :label="item.ID" :title="item.Name" :disabled="originWordIDS.includes(item.ID)">{{item.Name}}</el-checkbox>
               </template>
             </el-checkbox-group>
@@ -249,7 +258,7 @@ import { useUserStore } from '@/store/modules/user';
 import { getSourceWork } from '../js/utils';
 import PlateMakingWorkSetupDialog from './Comps/PlateMakingWorkSetupDialog.vue';
 import { IWorkingProcedureSearch } from '../PlateMakingGroupView/js/types';
-import { ReportModeEnumList, WorkingTypeEnum, WorkingTypeEnumList } from '../process/enums';
+import { ReportModeEnumList, WorkingTypeEnum, WorkingTypeEnumList, ReportModeEnum } from '../process/enums';
 import { ILocalProductionLineWorkings } from './js/types';
 import LineTableRowComp from './Comps/LineTableRowComp.vue';
 import {
@@ -283,6 +292,8 @@ interface addLineFromType {
     ReproductionTypes: ReproductionTypeEnum[],
     UseModeType: LineIsUseModeEnum | ''
     CombinationWordIDS: string[],
+    /** 是否数码生产线 */
+    IsDigital: boolean,
 }
 interface addPrcessFromType {
   ID: string,
@@ -331,6 +342,7 @@ const Data:DataType = reactive({
     Name: '',
     UseModeType: '',
     ReproductionTypes: [],
+    IsDigital: false,
   },
   addPrcessFrom: {
     ID: '',
@@ -451,7 +463,7 @@ const localTableList = computed(() => {
 // 选中的生产线
 const actionLine = computed(() => ProductionLineList.value.find(item => item.ID === Data.getPocessFrom.LineID));
 // 跳转物料来源
-const ToMaterialSource = (item: ILocalProductionLineWorkings) => {
+const jumpToMaterialSource = (item: ILocalProductionLineWorkings) => {
   const name = isCombine.value ? 'combinationMaterialSource' : 'materialSource';
   router.push({
     name,
@@ -464,7 +476,7 @@ const ToMaterialSource = (item: ILocalProductionLineWorkings) => {
   });
 };
 // 跳转生产设备
-const ToEquipment = (item: ILocalProductionLineWorkings) => {
+const jumpToEquipment = (item: ILocalProductionLineWorkings) => {
   const name = isCombine.value ? 'combinationEquipment' : 'equipment';
   router.push({
     name,
@@ -481,6 +493,7 @@ const getProductionLineWorkingProcedureList = () => {
   api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
     if (res.data.Status === 1000) {
       ProductionLineData.value = res.data.Data as IWorkingProcedureList;
+      router.replace({ query: { LineID: Data.getPocessFrom.LineID } });
     }
   });
 };
@@ -540,7 +553,11 @@ const getProductionLineList = (id?: string) => {
       ProductionLineList.value = res.data.Data as IProductionLineSet[];
       // 默认选中第一条生产线
       if (ProductionLineList.value.length) {
-        Data.getPocessFrom.LineID = id || ProductionLineList.value[0].ID || '';
+        let _id = id;
+        if (!_id || !ProductionLineList.value.map(it => it.ID).includes(_id)) {
+          _id = ProductionLineList.value[0].ID || '';
+        }
+        Data.getPocessFrom.LineID = _id;
         getProductionLineWorkingProcedureList();
       }
     }
@@ -628,6 +645,7 @@ const editLine = () => {
       ReproductionTypes: ProductionLineData.value.ReproductionTypes ? [...ProductionLineData.value.ReproductionTypes] : [],
       UseModeType: ProductionLineData.value.UseModeType,
       CombinationWordIDS,
+      IsDigital: actionLine.value.IsDigital,
     };
     Data.addLineFrom = temp;
     initSelectedCombinationWordIDS.value = CombinationWordIDS;
@@ -656,6 +674,7 @@ const addLineCloseedClick = () => {
     Name: '',
     UseModeType: '',
     ReproductionTypes: [],
+    IsDigital: false,
   };
 };
 const addLineCloseClick = () => {
@@ -667,13 +686,15 @@ const addLinePrimaryClick = () => {
     return;
   }
   if (Data.addLineFrom.Type === LineTypeEnum.normal) {
-    if (!Data.addLineFrom.ReproductionTypes || Data.addLineFrom.ReproductionTypes.length === 0) {
-      MpMessage.error({ title: '保存失败', msg: '请选择允许翻版方式' });
-      return;
-    }
-    if (Data.addLineFrom.UseModeType === '') {
-      MpMessage.error({ title: '保存失败', msg: '请选择是否允许按模位' });
-      return;
+    if (!Data.addLineFrom.IsDigital) {
+      if (!Data.addLineFrom.ReproductionTypes || Data.addLineFrom.ReproductionTypes.length === 0) {
+        MpMessage.error({ title: '保存失败', msg: '请选择允许翻版方式' });
+        return;
+      }
+      if (Data.addLineFrom.UseModeType === '') {
+        MpMessage.error({ title: '保存失败', msg: '请选择是否允许按模位' });
+        return;
+      }
     }
   } else if (Data.addLineFrom.CombinationWordIDS.length === 0) {
     MpMessage.error({ title: '保存失败', msg: '请选择组合工序' });
@@ -776,7 +797,7 @@ onMounted(async () => {
     sessionStorage.removeItem('productionLinePage');
   }
   productionSettingStore.setPlateMakingWorkSetupHanderInit();
-  getProductionLineList();
+  getProductionLineList(router.currentRoute.value.query?.LineID as undefined | string);
   // if (!productionSettingStore.MaterialTypeGroup.length) {
   await productionSettingStore.getMaterialTypeGroupAll();
   // }
@@ -848,6 +869,12 @@ onMounted(async () => {
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: 18px;
+        i {
+          vertical-align: 1px;
+          color: #888;
+          font-size: 12px;
+          font-weight: 100;
+        }
       }
       .btn{
         margin-top: 8px;

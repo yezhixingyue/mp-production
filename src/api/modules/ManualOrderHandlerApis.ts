@@ -20,4 +20,8 @@ export const ManualOrderHandlerApis = {
   getSellPartOrderDetail(serverID: number | string, orderID: number | string) {
     return request<SourceOrderData>({ method: 'GET', url: '/Api/SellPart/OrderDetail', params: { serverID, orderID } });
   },
+  /** /Api/GetDigitalImpositionTemplate 手动下单数码生产线获取拼版模板 */
+  getDigitalImpositionTemplate() {
+    return request({ method: 'GET', url: '/Api/GetDigitalImpositionTemplate' });
+  },
 };
