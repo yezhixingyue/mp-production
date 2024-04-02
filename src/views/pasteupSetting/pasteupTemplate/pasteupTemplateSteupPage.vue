@@ -36,7 +36,7 @@
           </div> -->
         </el-form-item>
         <!-- 是否为 印刷版 -->
-        <template v-if="pasteupTemplateData.IsPrintingPlate">
+        <template v-if="pasteupTemplateData.IsPrintingPlate && !pasteupTemplateData.IsDigital">
           <el-form-item :label="`翻版方式：`" class="form-item-required">
             <el-radio-group :disabled="!TemmplateSizeIsEditable" v-model="Data.addPasteupTemplateFrom.ReproductionType">
               <el-radio :label="0">正反版</el-radio>
@@ -221,6 +221,7 @@ const pasteupTemplateData = ref<ImpositionTemmplate>({
   IsPrintingPlate: false,
   // 和印刷版保持一致
   IsSameSizeWithPrintingPlate: false,
+  IsDigital: false,
   List: [],
 });
 // 是否可以编辑
