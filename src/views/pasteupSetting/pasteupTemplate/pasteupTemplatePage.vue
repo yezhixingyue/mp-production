@@ -19,6 +19,9 @@
               <span v-if="scope.row.IsSameSizeWithPrintingPlate">
                 和印刷版布局保持一致
               </span>
+              <span v-if="scope.row.IsDigital">
+                数码版
+              </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -59,10 +62,12 @@
               <el-input :maxlength="100" style="width: 360px;" v-model="Data.addTemplateFrom.Name" />
             </el-form-item>
             <el-form-item label="" >
-              <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
+              <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length || Data.addTemplateFrom.IsDigital"
                 v-model="Data.addTemplateFrom.IsPrintingPlate" label="印刷版" size="large" />
-              <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
+              <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length || Data.addTemplateFrom.IsDigital"
                 v-model="Data.addTemplateFrom.IsSameSizeWithPrintingPlate" label="和印刷版布局保持一致" size="large" />
+              <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
+                v-model="Data.addTemplateFrom.IsDigital" label="数码版" size="large" />
               <p>注意：每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。</p>
             </el-form-item>
           </el-form>
@@ -118,6 +123,8 @@ const Data:DataType = reactive({
     IsPrintingPlate: false,
     // 和印刷版保持一致
     IsSameSizeWithPrintingPlate: false,
+    // 数码版
+    IsDigital: false,
     List: [],
   },
 });
@@ -189,6 +196,7 @@ function addTemplateCloseedClick() {
     IsPrintingPlate: false,
     // 和印刷版保持一致
     IsSameSizeWithPrintingPlate: false,
+    IsDigital: false,
     List: [],
   };
 }
@@ -203,6 +211,14 @@ watch(() => Data.addTemplateFrom.IsPrintingPlate, (newVal) => {
 });
 watch(() => Data.addTemplateFrom.IsSameSizeWithPrintingPlate, (newVal) => {
   if (newVal) {
+    Data.addTemplateFrom.IsPrintingPlate = false;
+  }
+});
+watch(() => Data.addTemplateFrom.IsDigital, (newVal) => {
+  if (newVal) {
+    Data.addTemplateFrom.IsPrintingPlate = true;
+    Data.addTemplateFrom.IsSameSizeWithPrintingPlate = false;
+  } else {
     Data.addTemplateFrom.IsPrintingPlate = false;
   }
 });

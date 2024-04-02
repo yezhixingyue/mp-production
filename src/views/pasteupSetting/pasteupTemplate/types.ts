@@ -59,5 +59,6 @@ export interface ImpositionTemmplate{
   Name: string,
   IsPrintingPlate:boolean,
   IsSameSizeWithPrintingPlate:boolean,
+  IsDigital:boolean,
   List:SizeListType[],
 }
