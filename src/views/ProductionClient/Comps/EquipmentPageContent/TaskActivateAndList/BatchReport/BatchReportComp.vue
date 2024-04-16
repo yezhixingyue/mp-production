@@ -42,6 +42,10 @@
       <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" label="全选" />
 
       <div class="btn-box">
+        <MpPagination countInLeft :nowPage="curInstance.TaskListData.condition.Page" :pageSize="curInstance.TaskListData.condition.PageSize"
+          :total="curInstance.TaskListData.TaskListNumber" :handlePageChange="(e) => curInstance.TaskListData.getEquipmentTaskList(e, null, true)">
+          <template #text="data: { total: number }">共检索出<i class="is-bold ml-5 mr-5">{{ data.total }}</i>个任务</template>
+        </MpPagination>
         <mp-button type="primary" @click="onCompleteClick">完成选中任务</mp-button>
       </div>
     </div>
@@ -60,6 +64,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { TerminalEquipmentInstance } from '@/views/ProductionClient/assets/js/Instance';
 import { ElTable } from 'element-plus';
 import { computed, ref } from 'vue';
+import MpPagination from '@/components/common/MpPagination.vue';
 import { getLocalTaskList } from './getLocalTaskList';
 import PictureDisplayDialog from './PictureDisplayDialog.vue';
 import FileDownloadDialog from '../../CurTaskPanel/FileDownloadDialog.vue';
@@ -219,6 +224,10 @@ const onDownloadClick = (row: ReturnType<typeof getLocalTaskList>[number]) => { 
 
     .btn-box {
       text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-left: -30px;
       .el-button {
         font-size: 30px;
         width: 260px;

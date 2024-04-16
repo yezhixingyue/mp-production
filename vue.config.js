@@ -9,9 +9,9 @@ if (!isDev) {
   publicPath = process.env.VUE_APP_TARGET === 'My Order App' ? '/Order/' : '/Web/';
 }
 
-const proxyUrl = 'http://192.168.1.92:8052'; // 测试
+// const proxyUrl = 'http://192.168.1.92:8052'; // 测试
 // const proxyUrl = 'http://42.233.43.252:7001'; // 正式
-// const proxyUrl = 'http://192.168.3.68:8052'; // 强哥
+const proxyUrl = 'http://192.168.2.238:8052'; // 强哥
 // const proxyUrl = 'http://192.168.3.253:2022'; // 吕伟
 
 // const imgUrl = 'http://192.168.1.92:8050';

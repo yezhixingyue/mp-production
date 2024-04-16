@@ -7,6 +7,7 @@ import { IExternalMaterialDetail } from '@/views/productionManagePages/ManageOut
 import { IOrderFlowchartNode } from '@/components/common/NodePicDialog/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
+import { IDigitalOrderPlatePrintInfo } from '@/views/productionManagePages/ManageDigitalListPage/js/types';
 import request from '../request/request';
 import { instance } from '../request/instance';
 
@@ -87,5 +88,13 @@ export const productionManageApis = {
   /** PUT /Api/Task/ChangeEquipment  任务更换设备 */
   getTaskChangeEquipment(taskWorkingID: string, equipmentID: string) {
     return instance.put('/Api/Task/ChangeEquipment', null, { params: { taskWorkingID, equipmentID } });
+  },
+  /** 获取数码工单打印列表数据 POST /Api/OfflinePlate/List 线下大版列表 */
+  getOfflinePlateList(condition) {
+    return instance.post('/Api/OfflinePlate/List', condition);
+  },
+  /** POST /Api/OfflinePlate/Print  线下大版打印工单 */
+  getOfflinePlatePrint(data: { List: number[] }) {
+    return instance.post<IDigitalOrderPlatePrintInfo[]>('/Api/OfflinePlate/Print', data);
   },
 };

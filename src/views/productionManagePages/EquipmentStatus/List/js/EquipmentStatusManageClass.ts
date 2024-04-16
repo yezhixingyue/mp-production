@@ -44,7 +44,7 @@ export class EquipmentStatusManageClass {
       this.getList(this.condition.ClassID);
       return;
     }
-    this.timer = setInterval(() => {
+    this.timer = window.setInterval(() => {
       this.getList(this.condition.ClassID);
     }, 60 * 1000);
   }

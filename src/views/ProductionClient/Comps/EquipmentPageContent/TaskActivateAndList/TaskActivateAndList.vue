@@ -26,7 +26,8 @@
     />
 
     <!-- 送达结果弹窗处理 -->
-    <ResultHandleDialog v-model:visible="resultVisible" :result="receiveResult" @close="onClose" @submit="onDialogSubmit" />
+    <ResultHandleDialog :isBatchReport="!!curInstance.Equipment.AllowBatchReport"
+     v-model:visible="resultVisible" :result="receiveResult" @close="onClose" @submit="onDialogSubmit" />
   </section>
 </template>
 

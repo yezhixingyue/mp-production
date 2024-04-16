@@ -42,7 +42,7 @@
       border-color: darken($color: $--color-primary, $amount: 12);
     }
   }
-  &.gradient {
+  &.gradient, &.linear {
     background: linear-gradient(266deg, #36E0F9 0%, $--color-primary 100%);
     border: none !important;
     border-radius: 2px;

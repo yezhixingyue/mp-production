@@ -304,6 +304,8 @@ export interface IReceiveResult {
   Number: number
   /** 单位 */
   Unit: string
+  /** 状态 */
+  Status: ProductiveTaskStatusEnum
 }
 
 /**

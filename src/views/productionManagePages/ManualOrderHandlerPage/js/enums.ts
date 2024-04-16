@@ -22,6 +22,11 @@ export enum PrintSideEnum {
   double = 1,
 }
 
+export const PrintSideEnumList = [
+  { ID: PrintSideEnum.single, Name: '单面' },
+  { ID: PrintSideEnum.double, Name: '双面' },
+];
+
 /**
  * 订单收货方式
  *

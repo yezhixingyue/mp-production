@@ -149,7 +149,7 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManageEquipment/ManageEquipmentRunTimePage/ManageEquipmentRunTimePage.vue'),
     },
-    /* 生产任务
+    /* 已完成任务列表
     -------------------------------------- */
     {
       path: '/ManageTaskList',
@@ -162,6 +162,20 @@ const routes: RouteRecordRaw = {
         PermissionInfo: ['PermissionManageTask', 'HavePomission'],
       },
       component: () => import('@/views/productionManagePages/ManageTaskListPage/ManageTaskListPage.vue'),
+    },
+    /* 数码工单打印
+    -------------------------------------- */
+    {
+      path: '/ManageDigitalList',
+      name: 'ManageDigitalList',
+      meta: {
+        title: '数码工单打印',
+        requiresAuth: true,
+        icon: 'icon-shumagongdandayin iconfont scale-11',
+        pageName: 'ManageDigitalListPage',
+        PermissionInfo: ['PermissionManageTask', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/ManageDigitalListPage/ManageDigitalListPage.vue'),
     },
   ],
 };

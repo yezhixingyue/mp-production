@@ -20,7 +20,7 @@ export class Condition {
 
   Page = 1
 
-  PageSize = 50
+  PageSize = 20
 
   constructor(Equipment: IManageEquipmentInfo, isUndelevered: boolean) {
     this.setEquipment(Equipment);

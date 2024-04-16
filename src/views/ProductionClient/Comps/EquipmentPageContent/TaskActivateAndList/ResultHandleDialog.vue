@@ -28,6 +28,7 @@
       <h2 class="number">
         {{ result.Number }}{{ result.Unit || '' }}
       </h2>
+
       <div class="title">
         <el-icon v-if="isCancel" class="is-orange"><WarningFilled /></el-icon>
         <el-icon v-else-if="isError" class="is-pink"><CircleCloseFilled /></el-icon>
@@ -39,6 +40,9 @@
           <h1 v-if="displayInfo?.second">{{ displayInfo.second }}</h1>
         </div>
       </div>
+
+      <h4 class="third" v-if="!isCancel && !isError && displayInfo?.third && isBatchReport">{{ displayInfo.third }}</h4>
+
       <div class="red" v-if="displayInfo?.rightPosition">
         <span>请送往</span>
         <h2>{{ displayInfo.rightPosition }}</h2>
@@ -51,11 +55,12 @@
 import { computed } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IReceiveResult } from '@/views/ProductionClient/assets/js/types';
-import { EquipmentReceiveCodeEnum } from '@/views/ProductionClient/assets/js/enum';
+import { EquipmentReceiveCodeEnum, ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
 
 const props = defineProps<{
   visible: boolean
   result: IReceiveResult | null
+  isBatchReport: boolean // 是否批量报工
 }>();
 
 const emit = defineEmits(['update:visible', 'close', 'submit']);
@@ -78,6 +83,7 @@ const displayInfo = computed(() => {
     title: '',
     first: '',
     second: '',
+    third: '', // 可生产 | 不可生产
     rightPosition: '',
     class: '',
   };
@@ -87,6 +93,7 @@ const displayInfo = computed(() => {
       temp.title = '确定';
       temp.first = '位置正确，';
       temp.second = '完成送达';
+      temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
       temp.class = 'is-success';
       break;
 
@@ -94,6 +101,7 @@ const displayInfo = computed(() => {
       temp.title = '确定';
       temp.first = '正确：';
       temp.second = '是当前加工任务';
+      temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
       temp.class = 'is-success';
       break;
 
@@ -171,15 +179,12 @@ const submit = () => {
         line-height: 38px;
       }
     }
-    .is-success {
-      color: #52C41A;
-    }
-    .is-pink {
-      color: #ff0000;
-    }
-    .is-orange {
-      color: #F4A307;
-    }
+  }
+
+  > .third {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 17px;
   }
 
   > .red {
@@ -195,6 +200,16 @@ const submit = () => {
       font-size: 30px;
     }
   }
+
+  .is-success {
+    color: #52C41A;
+  }
+  .is-pink {
+    color: #ff0000;
+  }
+  .is-orange {
+    color: #F4A307;
+  }
 }
 </style>
 
@@ -204,7 +219,7 @@ const submit = () => {
     min-height: 240px;
   }
   .el-dialog__footer {
-    padding-top: 30px;
+    padding-top: 10px;
   }
 }
 </style>
