@@ -41,7 +41,7 @@ export class ManageDigitalListClass {
 
   /** 获取所有数码生产线列表 - 用于顶部筛选 */
   private async _getDigitalLineList() {
-    const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal }).catch(() => null);
+    const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsDigital: true }).catch(() => null);
     if (resp?.data.isSuccess) {
       this.DigitalLineList = [{ ID: '', Name: '所有生产线' }, ...(resp.data.Data as IProductionLineSet[]).filter(it => it.IsDigital)];
     }
