@@ -38,7 +38,7 @@ const imgSrc = ref('');
 watch(() => props.visible, async (val) => {
   if (val && props.curRow && oPrintDialog.value) { // 弹窗打开
     imgSrc.value = '';
-    const src = await getQRCodeSrc(props.curRow.Code); // 获取img src
+    const src = await getQRCodeSrc(props.curRow.Code, 100); // 获取img src
 
     if (src) {
       imgSrc.value = src;

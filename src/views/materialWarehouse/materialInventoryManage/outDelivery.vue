@@ -755,7 +755,7 @@ export default {
         if (res.data.Status === 1000) {
           Data.outDeliveryForm.OutCode = res.data.Data as string;
           // 获取订单领料 大阪id 二维码 出库
-          getQRCodeSrc(Data.outDeliveryForm.OutCode || '').then(res => {
+          getQRCodeSrc(Data.outDeliveryForm.OutCode || '', 120).then(res => {
             OutCodeSrc.value = res || '';
           });
         }
@@ -813,7 +813,7 @@ export default {
           return;
         }
         // 获取订单领料 大阪id 二维码 出库
-        getQRCodeSrc(StoresRequisitionInfo.value?.Code || '').then(res => {
+        getQRCodeSrc(StoresRequisitionInfo.value?.Code || '', 156).then(res => {
           MaterialRequisitionCodeSrc.value = res || '';
         });
         if (!Data.outDeliveryForm.OutCode) {

@@ -197,7 +197,7 @@ const onOrderPrintClick = async (row: typeof localList.value[number]) => {
   curRow.value = row;
   imgSrc.value = '';
 
-  const src = await getQRCodeSrc(row.Code); // 获取img src
+  const src = await getQRCodeSrc(row.Code, 130); // 获取img src
 
   if (src) {
     imgSrc.value = src;

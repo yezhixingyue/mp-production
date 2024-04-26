@@ -8,7 +8,7 @@ export const SolveTypeEnumObj = {
   rollbackBeforeMakeup: {
     ID: SolveTypeEnum.rollbackBeforeMakeup,
     Name: '撤回至拼版前',
-    _ExcludePlateTypes: [PlateTypeEnum.Virtual], // 当大版类型为这些时不显示该项
+    _ExcludePlateTypes: [PlateTypeEnum.Virtual, PlateTypeEnum.Digital], // 当大版类型为这些时不显示该项
   },
   remake: {
     ID: SolveTypeEnum.remake,

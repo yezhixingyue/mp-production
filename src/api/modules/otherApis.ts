@@ -59,11 +59,6 @@ export const otherSettingApis = {
   getEquipmentMaintainSetup(data) {
     return instance({ method: 'POST', url: '/Api/Equipment/MaintainSetup', data });
   },
-  /* 二维码相关
-  --------------------------------- */
-  getQRCodeSrc(content: string | number, size = 3) {
-    return instance.get('/QRCode', { params: { content, size }, responseType: 'arraybuffer', closeTips: true });
-  },
   /* 审稿释放相关
   --------------------------------- */
   /** /Api/Staff/Imposition/UnLock PUT请求，解锁拼版 */

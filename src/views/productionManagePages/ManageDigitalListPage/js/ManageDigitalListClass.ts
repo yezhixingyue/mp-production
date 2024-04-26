@@ -1,7 +1,7 @@
 import api from '@/api';
 import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
-import { getQRCodeSrcInLocal } from '@/components/common/General/Print/utils';
+import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { Condition } from './Condition';
 import { IDigitalOrderPlateInfo, ILocalDigitalOrderPlatePrintInfoWithQrCode } from './types';
 
@@ -71,7 +71,7 @@ export class ManageDigitalListClass {
       }));
 
       const _generateQrcode = async (it: ILocalDigitalOrderPlatePrintInfoWithQrCode) => {
-        const [url1, url2] = await Promise.all([getQRCodeSrcInLocal(it.Code), getQRCodeSrcInLocal(it.ChunkList[0]?.Code || '')]);
+        const [url1, url2] = await Promise.all([getQRCodeSrc(it.Code), getQRCodeSrc(it.ChunkList[0]?.Code || '')]);
 
         if (url1 && url2) {
           const _it = it;

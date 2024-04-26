@@ -88,7 +88,7 @@ const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], is
   curPrintData.value = '';
   onlyPrint.value = isPrint;
 
-  const src = await getQRCodeSrc(row.Code); // 获取img src
+  const src = await getQRCodeSrc(row.Code, 100); // 获取img src
 
   if (src) {
     imgSrc.value = src;
