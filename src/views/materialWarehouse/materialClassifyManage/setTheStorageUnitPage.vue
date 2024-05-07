@@ -155,7 +155,7 @@ export default {
     ]);
     function getUnitList() {
       api.getMaterialTypeUnitList(Data.getUnitListData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.unitList = res.data.Data as never[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -197,7 +197,7 @@ export default {
     function delStorageUnit(item) {
       messageBox.warnCancelBox('确定要删除此单位吗？', `${item.Unit}`, () => {
         api.getMaterialTypeUnitRemove(item.UnitID).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
           // 删除成功
             getUnitList();
             setStorage();
@@ -225,7 +225,7 @@ export default {
         messageBox.failSingleError('保存失败', '单位换算请输入正数', () => null, () => null);
       } else {
         api.getMaterialTypeUnitSave(Data.addUnitForm).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
             // 提示成功
             const cb = () => {
               addUnitCloseClick();
@@ -244,7 +244,7 @@ export default {
         messageBox.failSingleError('保存失败', '请输入库存单位', () => null, () => null);
       } else {
         api.getMaterialTypeSetStockUnit(Data.setStoreUnitForm).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
             // 设置成功
             const cb = () => {
               Data.currentStoreUnit = Data.setStoreUnitForm.StockUnit;

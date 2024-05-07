@@ -106,7 +106,7 @@ watch(() => curActiveInstance.value?.Equipment.ID, () => {
 
   inSwitching.value = true;
 
-  timer = setTimeout(() => {
+  timer = window.setTimeout(() => {
     inSwitching.value = false;
   }, 100);
 });

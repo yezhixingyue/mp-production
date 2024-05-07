@@ -27,7 +27,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     // 折手模板
     getFoldWayTemplateClassList(callback = () => null) {
       api.getFoldWayTemplateClassList().then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           this.FoldWayTemplateClassList = res.data.Data as FoldWayTemplateClassType[];
           callback(res.data.DataNumber);
           //
@@ -37,7 +37,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     // 拼版模板分类列表
     getImpositionTemmplateClassList(callback = () => null) {
       api.getImpositionTemmplateClassList().then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           this.ImpositionTemmplateClassList = res.data.Data as FoldWayTemplateClassType[];
           callback(res.data.DataNumber);
           //
@@ -47,7 +47,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     // 拼版模板列表
     getImpositionTemmplateList(callback = () => null) {
       api.getImpositionTemmplateList(this.getImpositionTemmplateData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           this.ImpositionTemmplateList = res.data.Data as ImpositionTemmplate[];
           callback(res.data.DataNumber);
           //

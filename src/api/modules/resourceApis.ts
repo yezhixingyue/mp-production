@@ -5,7 +5,7 @@ import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupT
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { MaterialTypeLimitItemType } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
-import request from '../request/request';
+import { request } from '../request';
 
 export const resourceApis = {
   /** 生产资源 - 辅助信息相关
@@ -34,7 +34,7 @@ export const resourceApis = {
   getEquipmentClassificationList(sign?: string, isHaveEquipment?: boolean) { // POST /Api/EquipmentClass/List  设备分类查询
     const headers = sign ? { sign } : undefined;
     const params = isHaveEquipment ? { isHaveEquipment } : undefined;
-    return request<EquipmentClassificationListItem[]>({ method: 'GET', url: '/Api/EquipmentClass/List', headers, params });
+    return request<EquipmentClassificationListItem[]>({ method: 'GET', url: '/Api/EquipmentClass/List', headers, params, withoutToken: true });
   },
   getEquipmentClassificationRemove(id) { // POST /Api/EquipmentClass/Remove  设备分类删除
     return request({ method: 'DELETE', url: '/Api/EquipmentClass/Remove', params: { id } });
@@ -75,7 +75,7 @@ export const resourceApis = {
   getEquipmentGroupList(conditon, sign?: string) { // POST /Api/EquipmentGroup/List   设备组查询
     const headers = sign ? { sign } : undefined;
     return request<EquipmentGroupItemType[]>({
-      method: 'POST', url: '/Api/EquipmentGroup/List', data: conditon, headers,
+      method: 'POST', url: '/Api/EquipmentGroup/List', data: conditon, headers, withoutToken: true,
     });
   },
   getEquipmentGroupRemove(id) { // DELETE /Api/EquipmentGroup/Remove   设备组删除
@@ -99,7 +99,7 @@ export const resourceApis = {
   getEquipmentList(condition, sign?: string) { // POST /Api/Equipment/List   获取加工设备列表 -- 建立条件类
     const headers = sign ? { sign } : undefined;
     return request<IManageEquipmentInfo[]>({
-      method: 'POST', url: '/Api/Equipment/List', data: condition, headers,
+      method: 'POST', url: '/Api/Equipment/List', data: condition, headers, withoutToken: true,
     });
   },
   getEquipmentSetStatus(data) { // POST /Api/Equipment/SetStatus   设置停用和启用

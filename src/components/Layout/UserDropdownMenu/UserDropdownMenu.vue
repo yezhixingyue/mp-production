@@ -1,17 +1,44 @@
 <template>
   <div class="user">
-    <el-dropdown trigger="click">
+    <el-dropdown trigger="click" placement="bottom-end" :show-arrow="false">
       <span class="el-dropdown-link">
         <template v-if="!showImgType">
-          <el-icon class="ft-16 is-bold">
-            <User />
-          </el-icon>
-          <span>
-            {{user ? user.StaffName : ''}}
-          </span>
-          <el-icon>
-            <ArrowDown />
-          </el-icon>
+          <el-popover
+            placement="bottom-end"
+            title=""
+            :width="350"
+            trigger="hover"
+            :show-arrow="false"
+            popper-class="mp-erp-user-info-img-popover-wrap"
+          >
+            <div class="popover-content">
+              <img :src="user?.HeadPic" class="HeadPic" alt="">
+              <div class="right">
+                <div class="position">
+                  <p class="mb-2">岗位：</p>
+                  <p class="mb-4" v-for="(str, index) in _department || []" :key="index" :title="str">{{ str }}</p>
+                </div>
+
+                <div class="version">
+                  <p class="mb-2">当前版本：</p>
+                  <p style='letter-spacing: 1px;'>{{ VERSION }}</p>
+                </div>
+              </div>
+            </div>
+            <template #reference>
+              <span>
+                <el-icon class="ft-16 is-bold">
+                  <User />
+                </el-icon>
+                <span>
+                  {{user ? user.StaffName : ''}}
+                </span>
+                <el-icon>
+                  <ArrowDown />
+                </el-icon>
+              </span>
+            </template>
+          </el-popover>
         </template>
         <span class="avatar" v-else :title="user?.StaffName || ''">
           <img v-if='imgSrc' :src="imgSrc" alt="">
@@ -54,6 +81,7 @@ import ChangePwdDialog from './ChangePwdDialog.vue';
 
 const props = defineProps<{
   showImgType?: boolean
+  _department?: string[]
 }>();
 
 const userStore = useUserStore();
@@ -62,6 +90,8 @@ const { user } = storeToRefs(userStore);
 const router = useRouter();
 
 const visible = ref(false);
+
+const VERSION = process.env.VUE_APP_VERSION;
 
 const docPermissions = computed(() => {
   if (!user.value) return null;
@@ -121,14 +151,16 @@ watch(() => user.value?.HeadPic, (newVal, oldVal) => {
 <style scoped lang='scss'>
 .user{
   width: 188px;
-  padding-right: 25px;
+  // padding-right: 25px;
   box-sizing: border-box;
   display: flex;
   justify-content: flex-end;
   &:hover{
     cursor: pointer;
   }
-  :deep(.el-dropdown-link) {
+  :deep(.el-dropdown-link) > span {
+    padding: 12px 0;
+    padding-right: 25px;
     display: flex;
     align-items: center;
     user-select: none;
@@ -184,8 +216,53 @@ watch(() => user.value?.HeadPic, (newVal, oldVal) => {
 <style lang="scss">
 .mp-erp-user-drop-down-wrap {
   .el-dropdown-menu__item {
-    .iconfont {
-      font-size: 15px;
+    width: 130px;
+    box-sizing: border-box;
+    padding-left: 24px;
+    font-size: 13px;
+    .iconfont, .el-icon {
+      font-size: 16px;
+      margin-right: 7px;
+    }
+
+    &:not(:first-of-type) {
+      margin-top: 4px;
+    }
+  }
+}
+
+.mp-erp-user-info-img-popover-wrap {
+  background-color: #222b3a !important;
+
+  .popover-content {
+    padding: 2px 5px;
+    display: flex;
+
+    .HeadPic {
+      flex: none;
+      width: 100px;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .right {
+      flex: 1;
+      overflow: hidden;
+      color: #eee;
+      padding-left: 15px;
+      font-size: 12px;
+
+      p {
+        line-height: 18px;
+      }
+
+      .position {
+        min-height: 92px;
+      }
+
+      .version {
+        padding-top: 10px;
+      }
     }
   }
 }

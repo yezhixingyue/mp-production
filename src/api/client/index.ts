@@ -1,17 +1,17 @@
 import { IEquipmentErrorInfo, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IUndeliveredListItem } from '@/views/ProductionClient/Comps/EquipmentPageContent/FloatingBall/WebsocketHandler';
-import { clientInstance as instance } from './clientInstance';
+import { clientInstance as instance } from '../request/client';
 
 const clientApi = {
   getTerminalEquipmentList(terminal: string) { // 获取终端设备列表
-    return instance.get('/Api/Terminal/Equipment/List', { params: { terminal } });
+    return instance.get('/Api/Terminal/Equipment/List', { params: { terminal }, withoutToken: true });
   },
   getVerifySystemPassword(password: string) { // GET /Api/Verify/SystemPassword   验证系统密码
-    return instance.get('/Api/Verify/SystemPassword', { params: { password } });
+    return instance.get('/Api/Verify/SystemPassword', { params: { password }, withoutToken: true });
   },
   getEquipmentBind(terminal: string, list: string[], sign: string) { // GET /Api/Equipment/Bind   绑定设备
     const headers = { sign };
-    return instance.post('/Api/Equipment/Bind', { terminal, list }, { headers });
+    return instance.post('/Api/Equipment/Bind', { terminal, list }, { headers, withoutToken: true });
   },
   /** POST /Api/Equipment/Error   设备报停 */
   getEquipmentStop(data) {
@@ -55,7 +55,7 @@ const clientApi = {
   },
   /** GET /Api/Equipment/UndeliveredList  获取设备未送达物料列表 */
   getEquipmentUndeliveredList(terminal: string) {
-    return instance.get<IUndeliveredListItem[]>('/Api/Equipment/UndeliveredList', { params: { terminal }, closeLoading: true, closeTips: true });
+    return instance.get<IUndeliveredListItem[]>('/Api/Equipment/UndeliveredList', { params: { terminal }, loading: true, closeTip: true, withoutToken: true });
   },
   /** 退出登录 put /Api/Logout  equipmentID */
   getLogout(equipmentID: string) {

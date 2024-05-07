@@ -82,13 +82,12 @@ import { useCommonStore } from '@/store/modules/common';
 import { storeToRefs } from 'pinia';
 import { IUser } from '@/store/modules/user/types';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { getDepartmentDisplayList } from '@/assets/js/utils/getDepartmentLevelList';
 import {
   EducationEnumList, SexEnumList, StaffStatusEnumList, StaffStatusEnum,
 } from '../js/enums';
 import { StaffManageClass } from '../js/StaffManageClass';
 import { IStaff } from '../js/types';
-import { IDepartmentLevelItem } from '../../DepartmentManage/js/types';
-import { IJobPost } from '../../JobPostManage/js/types';
 
 const commonStore = useCommonStore();
 const { DistrictTreeList } = storeToRefs(commonStore);
@@ -121,38 +120,6 @@ const getAddressContent = ({ RegionalID, CityID }, list) => {
 
 const formatDate = (date: string) => (date && date.includes('T') ? date.split('T')[0] : '');
 
-const formatDepartment = ({ PositionList }: IStaff, departmentLevelList: IDepartmentLevelItem[], jobPostList: IJobPost[]) => {
-  if (Array.isArray(PositionList) && PositionList.length > 0) {
-    const list = PositionList.map(({ First, Second }) => {
-      const { FirstDepartmentID, SecondDepartmentID, ThirdDepartmentID } = First;
-      const { PositionID } = Second;
-      const t = jobPostList.find(it => it.PositionID === PositionID);
-      const PositionName = t && t.PositionName ? t.PositionName : '';
-      let str = '';
-      const _getDepartmentName = (id: number, _list: IDepartmentLevelItem[]) => {
-        if ((!id && id !== 0) || id === -666 || !Array.isArray(_list)) return undefined;
-        const t = _list.find(it => it.ID === id);
-        return t && { Name: t.Name, arr: t.children };
-      };
-      const f = _getDepartmentName(FirstDepartmentID, departmentLevelList);
-      if (f) {
-        str += f.Name;
-        const s = _getDepartmentName(SecondDepartmentID, f.arr || []);
-        if (s) {
-          str += `-${s.Name}`;
-          const third = _getDepartmentName(ThirdDepartmentID, s.arr || []);
-          if (third) {
-            str += `-${third.Name}`;
-          }
-        }
-      }
-      return [str, PositionName].filter(it => it).join(' ');
-    });
-    return list.filter(it => it).join(' | ');
-  }
-  return '';
-};
-
 const localList = computed(() => props.StaffManagePageData.dataList.map(it => ({
   ...it,
   _gender: getEnumNameByID(it.Sex, SexEnumList),
@@ -161,7 +128,7 @@ const localList = computed(() => props.StaffManagePageData.dataList.map(it => ({
   _address: getAddressContent(it.Area, DistrictTreeList.value),
   _Birthday: formatDate(it.TimeRecord?.Birthday),
   _JoinDate: formatDate(it.TimeRecord?.JoinDate),
-  _department: formatDepartment(it, props.StaffManagePageData.departmentLevelList, props.StaffManagePageData.jobPostList),
+  _department: getDepartmentDisplayList(it, props.StaffManagePageData.departmentLevelList, props.StaffManagePageData.jobPostList).join(' | '),
   _statusText: getEnumNameByID(it.Status, StaffStatusEnumList),
 })));
 

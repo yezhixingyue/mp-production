@@ -3,6 +3,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { IUser } from '@/store/modules/user/types';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
+import { getDepartmentLevelList } from '@/assets/js/utils/getDepartmentLevelList';
 import { IDepartment, IDepartmentLevelItem } from '../../DepartmentManage/js/types';
 import { IJobPost } from '../../JobPostManage/js/types';
 import { StaffStatusEnum } from './enums';
@@ -43,38 +44,16 @@ export class StaffManageClass {
   async getJobPostList() {
     const resp = await api.getJobPermissionsList().catch(() => null);
     if (resp?.data.isSuccess) {
-      this.jobPostList = resp.data.Data as IJobPost[];
+      this.jobPostList = resp.data.Data;
     }
   }
 
   async getDepartmentList() {
     const resp = await api.getDepartmentList().catch(() => null);
     if (resp?.data.isSuccess) {
-      const _list = resp.data.Data as IDepartment[];
-      this.departmentList = _list;
-      const level1List = _list.filter(item => item.Level === 1).map(i => ({ ...i, children: [] }));
-      level1List.unshift({
-        ID: -666, Name: '无', children: [], Level: 1, ParentID: -1,
-      });
-      const list = level1List.map(level1 => {
-        const _level1: IDepartmentLevelItem = { ...level1, children: [] };
-        const _level2list = _list.filter(item => item.Level === 2 && item.ParentID === level1.ID)
-          .map(item => ({ ...item, children: [] }));
-        _level2list.unshift({
-          ID: -666, Name: '无', children: [], Level: 2, ParentID: level1.ID,
-        });
-        _level1.children = _level2list;
-        _level1.children.forEach(level2 => {
-          const _level3list = _list.filter(item => item.Level === 3 && item.ParentID === level2.ID);
-          _level3list.unshift({
-            ID: -666, Name: '无', Level: 3, ParentID: level2.ID,
-          });
-          // eslint-disable-next-line no-param-reassign
-          level2.children = _level3list;
-        });
-        return _level1;
-      });
-      this.departmentLevelList = list;
+      this.departmentList = resp.data.Data;
+
+      this.departmentLevelList = getDepartmentLevelList(this.departmentList);
     }
   }
 

@@ -527,7 +527,7 @@ export default {
       // }
 
       api.getStockLogList(_obj).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.RecordList = res.data.Data as RecordListType[];
           Data.DataTotal = res.data.DataNumber as number;
           Data.aggregateAmount = res.data.Message as string;
@@ -567,7 +567,7 @@ export default {
     // 查看入库货位
     function SeeGoodsAllocation(data) {
       api.getStockLogPosition(data.LogID).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.StorehouseStockInfo = res.data.Data as StorehouseStockInfoType[];
           Data.materialManageInfo = { ...data };
           Data.StorehouseStockShow = true;

@@ -41,7 +41,6 @@ const print = async () => {
   const list = await localManageData.value.requestPrint();
   if (!list) return;
 
-  console.log('list', list);
   printDataList.value = list;
   oPrintDialog.value?.print();
 };

@@ -7,7 +7,7 @@ import {
 } from '@/views/productionSetting/PlateMakingGroupView/js/types';
 import { ISetPlateMakingWorkParams, ISetPlateMakingWorkSaveResult } from '@/views/productionSetting/productionLine/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
-import request from '../request/request';
+import { request } from '../request';
 
 const api = {
   // 配送方式 ------------------------ Express
@@ -50,7 +50,7 @@ const api = {
   },
   // Api/WorkingProcedure/ProductionLineUsed?id=3101d3f7-8b72-48d1-a23e-b04c00fcdddf
   getWorkingProcedureProductionLineUsed(id) { // 获取工序在生产线中被使用情况
-    return request({ method: 'GET', url: '/Api/WorkingProcedure/ProductionLineUsed', params: { id }, closeTips: true });
+    return request({ method: 'GET', url: '/Api/WorkingProcedure/ProductionLineUsed', params: { id }, closeTip: true });
   },
 
   // 生产线 ------------------------ ProductionLine

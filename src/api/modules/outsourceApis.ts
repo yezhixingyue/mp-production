@@ -1,5 +1,5 @@
 import { IExternalReportResult } from '@/views/OutsourceManage/ExternalReceiveManage/js/types';
-import { instance } from '../request/instance';
+import { instance } from '../request';
 
 /**
  * 外协管理模块接口

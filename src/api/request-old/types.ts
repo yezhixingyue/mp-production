@@ -26,7 +26,7 @@ export interface IRequestInterceptors {
 export interface IRequestConfig extends AxiosRequestConfig {
   interceptors?: IRequestInterceptors
   /** 是否关闭全局loading */
-  closeLoading?: boolean
+  loading?: boolean
   msgCallback?: () => void
 }
 
