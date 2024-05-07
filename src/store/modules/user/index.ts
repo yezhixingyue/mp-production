@@ -42,7 +42,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       if (this.user && this.user.Account.Token === this.token) return null;
       this.user = null;
       if (!this.token) return 'login';
-      const resp = await api.getUser().catch((error) => error);
+      const resp = await api.getUser();
       if (!resp || !resp.data.isSuccess) {
         if (resp?.status === 401) {
           return 'login';

@@ -175,7 +175,7 @@ export default {
     ]);
     function getPalletDimensionsList() {
       api.getGoodsPositionDimensionList(Data.getPalletDimensionsListData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.PalletDimensionsList = res.data.Data as addPalletDimensionsFormType[];
         }
       });
@@ -207,7 +207,7 @@ export default {
     function delStorehouse(item) {
       messageBox.warnCancelBox('确定要删除此仓库吗？', `${item.StartCode}-${item.EndCode}${item.DimensionUnit}`, () => {
         api.getGoodsPositionDimensionRemove(item.DimensionID).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
           // 删除成功
             getPalletDimensionsList();
             setStorage();
@@ -224,7 +224,7 @@ export default {
       } else {
         // messageBox.failSingleError('保存失败', '请输入起止编号', () => null, () => null);
         api.getGoodsPositionDimensionSave(Data.addPalletDimensionsForm).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
           // 保存成功
             const cb = () => {
               getPalletDimensionsList();
@@ -241,7 +241,7 @@ export default {
       api.getGoodsPositionDimensionLockStatus(
         Data.getPalletDimensionsListData.StorehouseID,
       ).then((res) => {
-        if (res.data.Status) {
+        if (res?.data.Status) {
           const t = res.data.Data as getLockStatusType;
           Data.LockStatus = t.LockStatus as boolean;
         }
@@ -252,7 +252,7 @@ export default {
         api.getGoodsPositionDimensionLockCode(
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
             const cb = () => {
               setStorage();
               getLockStatus();
@@ -272,7 +272,7 @@ export default {
         api.getGoodsPositionDimensionUnlockCode(
           Data.getPalletDimensionsListData.StorehouseID,
         ).then((res) => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
             const cb = () => {
               setStorage();
               getLockStatus();

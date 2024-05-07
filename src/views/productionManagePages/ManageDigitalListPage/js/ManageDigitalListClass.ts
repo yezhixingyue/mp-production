@@ -4,6 +4,7 @@ import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { Condition } from './Condition';
 import { IDigitalOrderPlateInfo, ILocalDigitalOrderPlatePrintInfoWithQrCode } from './types';
+import { DigitalImpositionStatusEnum } from './enum';
 
 /** 数码工单打印管理类 */
 export class ManageDigitalListClass {
@@ -63,6 +64,10 @@ export class ManageDigitalListClass {
     const resp = await api.productionManageApis.getOfflinePlatePrint({ List }).catch(() => null);
 
     if (resp?.data.isSuccess) {
+      this.Selection.forEach(it => {
+        const t = this.list.find(_it => _it.Code === it.Code);
+        if (t) t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态
+      });
       // 为每个条目上添加二维码信息（版和块编号）
       const list: ILocalDigitalOrderPlatePrintInfoWithQrCode[] = resp.data.Data.map(it => ({
         ...it,

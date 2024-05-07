@@ -7,6 +7,8 @@ declare namespace NodeJS {
       VUE_APP_TARGET?: 'My Order App'
       /**  */
       BASE_URL: ''
+      /** 版本号 */
+      VUE_APP_VERSION: string
     },
   }
 }

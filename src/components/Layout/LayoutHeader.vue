@@ -82,7 +82,7 @@
         </ul>
       </div>
 
-      <UserDropdownMenu />
+      <UserDropdownMenu :_department="departmentDisplayList" />
     </div>
   </div>
 </template>
@@ -96,7 +96,11 @@ import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import { addBarType } from '@/store/modules/layout/addBarType';
-import { setRefreshing } from '.';
+import { IJobPost } from '@/views/companyManage/JobPostManage/js/types';
+import { IDepartmentLevelItem } from '@/views/companyManage/DepartmentManage/js/types';
+import api from '@/api';
+import { getDepartmentDisplayList, getDepartmentLevelList } from '@/assets/js/utils/getDepartmentLevelList';
+import { setRefreshing } from './index';
 import UserDropdownMenu from './UserDropdownMenu/UserDropdownMenu.vue';
 
 export default {
@@ -198,8 +202,21 @@ export default {
       setRefreshing(router);
     };
 
+    // 岗位相关
+    const jobPostList = ref<IJobPost[]>([]);
+    const departmentLevelList = ref<IDepartmentLevelItem[]>([]);
+    const getPositionData = async () => {
+      const [resp1, resp2] = await Promise.all([api.getJobPermissionsList().catch(() => null), api.getDepartmentList().catch(() => null)]);
+
+      if (resp1?.data.isSuccess) jobPostList.value = resp1.data.Data;
+
+      if (resp2?.data.isSuccess) departmentLevelList.value = getDepartmentLevelList(resp2.data.Data);
+    };
+    const departmentDisplayList = computed(() => (user.value ? getDepartmentDisplayList(user.value, departmentLevelList.value, jobPostList.value) : []));
+
     onMounted(() => {
       document.addEventListener('click', onDocumentClick);
+      getPositionData();
     });
     onBeforeUnmount(() => {
       document.removeEventListener('click', onDocumentClick);
@@ -224,6 +241,7 @@ export default {
       onCloseOtherClick,
       user,
       displayMenuList,
+      departmentDisplayList,
     };
   },
 };

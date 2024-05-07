@@ -8,15 +8,14 @@ import { IOrderFlowchartNode } from '@/components/common/NodePicDialog/js/types'
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IDigitalOrderPlatePrintInfo } from '@/views/productionManagePages/ManageDigitalListPage/js/types';
-import request from '../request/request';
-import { instance } from '../request/instance';
+import { request, instance } from '../request';
 
 export const productionManageApis = {
   /* 生产管理
   --------------------------------- */
-  getEquipmentStatusList(data: { ClassID: number | '' }, closeLoading = false) { // POST 设备状态列表
+  getEquipmentStatusList(data: { ClassID: number | '' }, loading: boolean) { // POST 设备状态列表
     return request<IEquipmentStatusItem[]>({
-      method: 'POST', url: '/Api/EquipmentStatus/List', data, closeLoading,
+      method: 'POST', url: '/Api/EquipmentStatus/List', data, loading,
     });
   },
   /** POST /Api/Task/List   获取设备信息列表 */
@@ -71,11 +70,11 @@ export const productionManageApis = {
   },
   /** GET /Api/Order/GetTimeLine  获取订单时间线 */
   getOrderGetTimeLine(orderID: string) {
-    return instance.get('/Api/Order/GetTimeLine', { params: { orderID }, closeLoading: true });
+    return instance.get('/Api/Order/GetTimeLine', { params: { orderID }, loading: false });
   },
   /** GET /Api/Order/CancleRelation  获取订单取消相关 */
   getOrderCancleRelation(orderID: string) {
-    return instance.get<IOrderCancelRelation>('/Api/Order/CancleRelation', { params: { orderID }, closeLoading: true });
+    return instance.get<IOrderCancelRelation>('/Api/Order/CancleRelation', { params: { orderID }, loading: false });
   },
   /** POST /Api/Order/Cancle  订单取消 */
   getOrderCancle(data) {
@@ -83,7 +82,7 @@ export const productionManageApis = {
   },
   /** GET /Api/Task/UseableEquipmentList  获取任务可用设备列表 taskWorkingID */
   getTaskUseableEquipmentList(taskWorkingID: string) {
-    return instance.get('/Api/Task/UseableEquipmentList', { params: { taskWorkingID }, closeLoading: true });
+    return instance.get('/Api/Task/UseableEquipmentList', { params: { taskWorkingID }, loading: false });
   },
   /** PUT /Api/Task/ChangeEquipment  任务更换设备 */
   getTaskChangeEquipment(taskWorkingID: string, equipmentID: string) {

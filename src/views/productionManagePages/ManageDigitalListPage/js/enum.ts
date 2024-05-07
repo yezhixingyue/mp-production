@@ -7,7 +7,7 @@ export enum DigitalImpositionStatusEnum {
   /** 已排程 */
   HaveScheduling = 2,
   /** 已打印工单 */
-  // HavePrint = 3,
+  HavePrint = 3,
   /** 已取消 */
   Canceled = 255,
 }
@@ -16,8 +16,8 @@ export enum DigitalImpositionStatusEnum {
 export const DigitalImpositionStatusEnumList = [
   { ID: DigitalImpositionStatusEnum.WaitMakeup, Name: '未拼版' },
   { ID: DigitalImpositionStatusEnum.HaveMakeup, Name: '已拼版' },
-  { ID: DigitalImpositionStatusEnum.HaveScheduling, Name: '已排程' },
-  // { ID: DigitalImpositionStatusEnum.HavePrint, Name: '已打印工单' },
+  { ID: DigitalImpositionStatusEnum.HaveScheduling, Name: '已排程', printable: true },
+  { ID: DigitalImpositionStatusEnum.HavePrint, Name: '已打印', printable: true },
   { ID: DigitalImpositionStatusEnum.Canceled, Name: '已取消' },
 ];
 

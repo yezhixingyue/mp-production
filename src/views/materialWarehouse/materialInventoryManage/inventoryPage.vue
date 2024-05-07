@@ -109,7 +109,7 @@ export default {
 
     function getInventoryList() {
       api.getInventoryList(Data.getInventoryListData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.InventoryList = res.data.Data as InventoryListType[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -140,7 +140,7 @@ export default {
     function beginInventory(item) {
       messageBox.warnCancelNullMsg(`确定要开始盘点“${item.StorehouseName}”吗？`, () => {
         api.getInventoryStart(item.StorehouseID).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
             ToMakeAnInventory({
               DetailID: res.data.Data,
               StorehouseName: item.StorehouseName,

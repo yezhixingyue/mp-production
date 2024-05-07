@@ -60,7 +60,7 @@ const remoteMethod = async (query: string) => {
       PageSize: 10,
       KeyWords: query,
     };
-    const resp = await api.getStaffList(temp, true).catch(() => null);
+    const resp = await api.getStaffList(temp, false).catch(() => null);
 
     loading.value = false;
 

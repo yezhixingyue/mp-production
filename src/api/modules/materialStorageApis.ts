@@ -1,15 +1,15 @@
-import request from '../request/request';
+import { request } from '../request';
 
 const api = {
   // 物料类型 ------------------------ MaterialType
-  getMaterialTypeList(data) { // POST /Api/Staff/Login  物料类型查询
+  getMaterialTypeList(data) { // POST  物料类型查询
     return request({ method: 'POST', url: '/Api/MaterialType/List', data });
   },
   getMaterialTypeSave(data) { // POST /Api/MaterialType/Save  物料类型编辑
     return request({ method: 'POST', url: '/Api/MaterialType/Save', data });
   },
   getMaterialTypeAll({ categoryID, isStock }) { // POST /Api/MaterialType/All  所有物料类型
-    return request({ method: 'GET', url: `/Api/MaterialType/All?categoryID=${categoryID}&isStock=${isStock}` });
+    return request({ method: 'GET', url: `/Api/MaterialType/All?categoryID=${categoryID}&isStock=${isStock}`, loading: false });
   },
   // getMaterialTypeGroup(isHaveMaterial) { // GET /Api/MaterialType/Group  所有物料分类及类型
   //   return request({ method: 'GET', url: `/Api/MaterialType/Group?isHaveMaterial=${isHaveMaterial}` });
@@ -191,7 +191,7 @@ const api = {
   },
   getSingleMaterialByType(typeID) {
     // POST /Api/SingleMaterial/ByType  单个物料查询
-    return request({ method: 'GET', url: `/Api/SingleMaterial/ByType?typeID=${typeID}` });
+    return request({ method: 'GET', url: `/Api/SingleMaterial/ByType?typeID=${typeID}`, loading: false });
   },
 
   // 货位 --------------------------- GoodsPosition

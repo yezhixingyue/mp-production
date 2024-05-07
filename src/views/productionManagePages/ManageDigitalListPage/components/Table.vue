@@ -1,6 +1,6 @@
 <template>
   <el-table :data="localList" border stripe class="table-wrap" @selection-change="onSelectionChange" ref="oTableRef">
-    <el-table-column type="selection" width="42" :selectable="(row: IDigitalOrderPlateInfo) => row.Status === DigitalImpositionStatusEnum.HaveScheduling" />
+    <el-table-column type="selection" width="42" :selectable="(row: (typeof localList)[number]) => row._Printable" />
     <mp-table-column width="110px" prop="Code" label="大版ID" />
     <mp-table-column width="125px" prop="OrderCode" label="订单号" />
     <mp-table-column min-width="120px" prop="_Template" label="尺寸规格" />
@@ -27,7 +27,7 @@ import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters'
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { ManageDigitalListClass } from '../js/ManageDigitalListClass';
 import { IDigitalOrderPlateInfo } from '../js/types';
-import { DigitalImpositionStatusEnumList, DigitalImpositionStatusEnum, DigitalImpositionTypeEnumList } from '../js/enum';
+import { DigitalImpositionStatusEnumList, DigitalImpositionTypeEnumList } from '../js/enum';
 
 const props = defineProps<{
   localManageData: ManageDigitalListClass
@@ -35,15 +35,19 @@ const props = defineProps<{
 
 const oTableRef = ref<InstanceType<typeof ElTable>>();
 
-const localList = computed(() => props.localManageData.list.map(it => ({
-  ...it,
-  _Number: typeof it.Number === 'number' ? `${it.Number}${it.Unit || ''}` : '',
-  _Template: [it.Template, it.TemplateSize].filter(it => it).join(' '),
-  _StatusText: getEnumNameByID(it.Status, DigitalImpositionStatusEnumList),
-  _ImpositionType: getEnumNameByID(it.ImpositionType, DigitalImpositionTypeEnumList),
-  _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
-  _ImpositionTime: format2MiddleLangTypeDateFunc2(it.ImpositionTime),
-})));
+const localList = computed(() => props.localManageData.list.map(it => {
+  const printableStatuses = DigitalImpositionStatusEnumList.filter(it => it.printable).map(it => it.ID); // 可打印状态
+  return {
+    ...it,
+    _Number: typeof it.Number === 'number' ? `${it.Number}${it.Unit || ''}` : '',
+    _Template: [it.Template, it.TemplateSize].filter(it => it).join(' '),
+    _StatusText: getEnumNameByID(it.Status, DigitalImpositionStatusEnumList),
+    _ImpositionType: getEnumNameByID(it.ImpositionType, DigitalImpositionTypeEnumList),
+    _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
+    _ImpositionTime: format2MiddleLangTypeDateFunc2(it.ImpositionTime),
+    _Printable: printableStatuses.includes(it.Status),
+  };
+}));
 
 const onSelectionChange = async (val: IDigitalOrderPlateInfo[]) => {
   props.localManageData.setSelection(val);

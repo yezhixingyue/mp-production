@@ -61,7 +61,7 @@ async function uploadFile(chunkCount, curChunkNum, {
     await uploadFile(chunkCount - 1, beginNode + chunkSize, {
       data, uniqueName, onUploadProgressFunc, finalPercentage,
     }); // 递归调用
-  } else throw new Error(res.data.Message);
+  } else throw new Error(res?.data.Message || 'Upload Error!');
 }
 
 /**

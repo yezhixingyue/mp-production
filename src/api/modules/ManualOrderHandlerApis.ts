@@ -1,6 +1,6 @@
 import { IProductionLineDetail } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
 import { IFactoryMaterialList, SourceOrderData } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import request from '../request/request';
+import { request } from '../request';
 
 export const ManualOrderHandlerApis = {
   /* 手工下单

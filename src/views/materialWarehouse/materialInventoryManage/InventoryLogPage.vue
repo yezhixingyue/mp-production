@@ -210,7 +210,7 @@ export default {
       // }
 
       api.getInventoryLogList(_obj).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.InventoryLogList = res.data.Data as InventoryLogListType[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -247,7 +247,7 @@ export default {
     // 获取仓库列表
     function getStorehouseAll(cb) {
       api.getStorehouseAll().then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.StorehouseList = res.data.Data as StorehouseType[];
           cb();
         }

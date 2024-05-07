@@ -1,3 +1,5 @@
+import { IStaffPosition } from '@/views/companyManage/StaffManage/js/types';
+
 export interface ILoginSubmitForm {
   Password: string;
   Mobile: string;
@@ -381,4 +383,6 @@ export interface IUser {
   };
   Mobile: string;
   HeadPic: string;
+  /** 部门岗位 */
+  PositionList: IStaffPosition[]
 }

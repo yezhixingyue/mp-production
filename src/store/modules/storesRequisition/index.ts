@@ -66,7 +66,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       ClassType.setDate(this.getListData, 'CreateTime');
       const _obj = ClassType.filter(this.getListData, true);
       api.productionManageApis.getMaterialRequisitionList(_obj).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           this.List = res.data.Data as IList[];
           this.DataTotal = res.data.DataNumber;
         }
