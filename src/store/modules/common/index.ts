@@ -61,7 +61,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
     },
     async getExpressList() { // 配送方式列表
       api.getExpressList().then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           this.ExpressList = res.data.Data as ExpressListType[];
         }
       });

@@ -17,9 +17,11 @@
     </el-config-provider>
     <span class="count">
       <NewDownLoadExcelComp v-if="localExportExcelProps" :disabled="total === 0" v-bind="localExportExcelProps" />
-      <span>共检索出</span>
-      <i class="num"> {{total}} </i>
-      <span>条记录</span>
+      <slot name="text" :total="total">
+        <span>共检索出</span>
+        <i class="num"> {{total}} </i>
+        <span>条记录</span>
+      </slot>
     </span>
   </section>
 </template>

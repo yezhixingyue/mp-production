@@ -107,7 +107,7 @@ export const useConfigForMap = (locationMap: Ref<LocationMapClass>, readonly: bo
       clearTimeout(timer);
     }
 
-    timer = setTimeout(async () => {
+    timer = window.setTimeout(async () => {
       timer = -1;
 
       // 1. locationMap需要提供一个方法，其接收scale属性，然后对内部方块和面板的宽高及相关文字等内容的尺寸进行修改

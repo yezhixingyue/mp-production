@@ -217,4 +217,204 @@ select {
   padding-bottom: 20px;
 }
 
+.digital-list-print-list .digital-list-print-item {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  min-height: 100vh;
+  font-size: 10pt;
+  box-sizing: border-box;
+  padding: 2vw;
+  page-break-before: always;
+  page-break-inside: avoid;
+}
+.digital-list-print-list .digital-list-print-item table {
+  font-size: 10pt;
+}
+.digital-list-print-list .digital-list-print-item > .header {
+  display: flex;
+  justify-content: space-between;
+}
+.digital-list-print-list .digital-list-print-item > .header > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.digital-list-print-list .digital-list-print-item > .header > div .SemiFinished {
+  height: 1.2em;
+  font-size: 1.55em;
+  margin-top: -0.2em;
+}
+.digital-list-print-list .digital-list-print-item > .header > div .title {
+  font-size: 1.55em;
+  flex: 1;
+  padding-left: 3.5em;
+}
+.digital-list-print-list .digital-list-print-item > .header > div.left {
+  padding-bottom: 0.5em;
+  font-size: 1.3em;
+}
+.digital-list-print-list .digital-list-print-item > .header > div.left > * {
+  flex: none;
+}
+.digital-list-print-list .digital-list-print-item > .header > div.left > *.title {
+  flex: 1;
+}
+.digital-list-print-list .digital-list-print-item > .header > div.code {
+  align-items: center;
+  flex: none;
+}
+.digital-list-print-list .digital-list-print-item > .time {
+  font-size: 0.95em;
+  padding: 0.5em 0;
+}
+.digital-list-print-list .digital-list-print-item > .time span + span {
+  margin-left: 2em;
+}
+.digital-list-print-list .digital-list-print-item > .order-info .top {
+  height: 5em;
+}
+.digital-list-print-list .digital-list-print-item > .order-info .bottom {
+  height: 5.5em;
+}
+.digital-list-print-list .digital-list-print-item > .order-info .bottom .content {
+  border: 1px solid;
+  border-top: none;
+  line-height: 1.5em;
+  padding: 0.65em 0.5em;
+  -webkit-line-clamp: 3;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.digital-list-print-list .digital-list-print-item > .file-info {
+  margin-top: 0.8em;
+}
+.digital-list-print-list .digital-list-print-item > .file-info .top {
+  height: 5em;
+}
+.digital-list-print-list .digital-list-print-item > .file-info .bottom {
+  height: 4.3em;
+  border: 1px solid;
+  border-top: none;
+  line-height: 1.4em;
+  padding: 0.7em 0.5em;
+  box-sizing: border-box;
+}
+.digital-list-print-list .digital-list-print-item > .file-info .bottom div {
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.digital-list-print-list .digital-list-print-item .material-info {
+  margin-top: 0.8em;
+}
+.digital-list-print-list .digital-list-print-item .material-info table td {
+  height: 4em;
+}
+.digital-list-print-list .digital-list-print-item .material-info table td div {
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  padding: 0.2em 0;
+  box-sizing: border-box;
+}
+.digital-list-print-list .digital-list-print-item > * {
+  flex: none;
+}
+.digital-list-print-list .digital-list-print-item > .working-table {
+  margin-top: 0.8em;
+  flex: 1 0 auto;
+}
+.digital-list-print-list .digital-list-print-item .c {
+  font-size: 15pt;
+  margin-top: 1mm;
+}
+.digital-list-print-list .digital-list-print-item > .footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 1.5em;
+}
+.digital-list-print-list .digital-list-print-item > .footer .print {
+  font-size: 0.95em;
+  padding-bottom: 0.5em;
+}
+.digital-list-print-list .digital-list-print-item > .footer .print span + span {
+  margin-left: 1.2em;
+}
+.digital-list-print-list .digital-list-print-item > .footer .code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.digital-list-print-list .digital-list-print-item div.row {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 4em 1fr;
+}
+.digital-list-print-list .digital-list-print-item div.row .title {
+  border: 1px solid;
+  border-right: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5em;
+  height: 100%;
+  box-sizing: border-box;
+}
+.digital-list-print-list .digital-list-print-item div.row .main {
+  overflow: hidden;
+}
+.digital-list-print-list .digital-list-print-item div.row.bottom .title {
+  border-top: none;
+}
+.digital-list-print-list .digital-list-print-item img {
+  width: 25mm;
+  height: 25mm;
+}
+.digital-list-print-list .digital-list-print-item .code {
+  font-size: 1.4em;
+}
+.digital-list-print-list .digital-list-print-item table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  box-sizing: border-box;
+  table-layout: fixed;
+  height: 5em;
+}
+.digital-list-print-list .digital-list-print-item table th, .digital-list-print-list .digital-list-print-item table td {
+  font-weight: 400;
+  text-align: center;
+  border: 1px solid;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 2.45em;
+  font-size: 1em;
+}
+.digital-list-print-list .digital-list-print-item table td {
+  padding: 0 0.15em;
+  height: 2.5em;
+}
+.digital-list-print-list .digital-list-print-item table tr.gray td {
+  border-color: #444;
+  color: #777;
+  border-style: dashed;
+}
+
 /*# sourceMappingURL=print.css.map */

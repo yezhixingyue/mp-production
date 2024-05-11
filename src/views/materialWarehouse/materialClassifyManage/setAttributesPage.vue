@@ -246,7 +246,7 @@ export default {
     }
     function getAttributesList() {
       api.getMaterialTypeAttributeList(Data.getAttributesData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.AttributesList = res.data.Data as AttributeType[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -270,7 +270,7 @@ export default {
     function delAttributes(item) {
       messageBox.warnCancelBox('确定要删除此属性吗？', `${item.AttributeName}`, () => {
         api.getMaterialTypeAttributeRemove(item.AttributeID).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
           // 删除成功
             getAttributesList();
             closeClick();
@@ -307,7 +307,7 @@ export default {
       const Temp = { ...Data.addAttributesForm };
       Temp.AttributeSelects = Temp.AttributeSelects.map((it, i) => ({ ...it, ...{ Sort: i } }));
       api.getMaterialTypeAttributeSave(Temp).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           const cb = () => {
             closeClick();
             getAttributesList();

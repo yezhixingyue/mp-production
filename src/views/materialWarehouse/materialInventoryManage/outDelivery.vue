@@ -542,7 +542,7 @@ export default {
     // 获取物料货位数据信息
     function GetGoodsAllocation(MaterialID) {
       api.getStorehouseStock(MaterialID).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           const temp = [...res.data.Data as StorehouseStockInfoType[]];
           temp.map(StorehouseIt => {
             const _StorehouseIt = StorehouseIt.GoodsPositionStockInfos.map(Positionit => ({
@@ -710,7 +710,7 @@ export default {
       }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        if (res.data.Data) {
+        if (res?.data.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           // Data.outDeliveryForm.UnitID = '';
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
@@ -730,7 +730,7 @@ export default {
     }
     function outVerifyPrimaryClick() {
       api.getStockOut(Data.outDeliveryForm).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.outVerify = false;
           const cb = () => {
             localStorage.setItem('getStoresRequisitionList', 'true');
@@ -752,10 +752,10 @@ export default {
     }
     function getOutCode() {
       api.getStockOutCode().then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.outDeliveryForm.OutCode = res.data.Data as string;
           // 获取订单领料 大阪id 二维码 出库
-          getQRCodeSrc(Data.outDeliveryForm.OutCode || '').then(res => {
+          getQRCodeSrc(Data.outDeliveryForm.OutCode || '', 120).then(res => {
             OutCodeSrc.value = res || '';
           });
         }
@@ -813,7 +813,7 @@ export default {
           return;
         }
         // 获取订单领料 大阪id 二维码 出库
-        getQRCodeSrc(StoresRequisitionInfo.value?.Code || '').then(res => {
+        getQRCodeSrc(StoresRequisitionInfo.value?.Code || '', 156).then(res => {
           MaterialRequisitionCodeSrc.value = res || '';
         });
         if (!Data.outDeliveryForm.OutCode) {

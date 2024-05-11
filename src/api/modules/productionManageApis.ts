@@ -7,15 +7,15 @@ import { IExternalMaterialDetail } from '@/views/productionManagePages/ManageOut
 import { IOrderFlowchartNode } from '@/components/common/NodePicDialog/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
-import request from '../request/request';
-import { instance } from '../request/instance';
+import { IDigitalOrderPlatePrintInfo } from '@/views/productionManagePages/ManageDigitalListPage/js/types';
+import { request, instance } from '../request';
 
 export const productionManageApis = {
   /* 生产管理
   --------------------------------- */
-  getEquipmentStatusList(data: { ClassID: number | '' }, closeLoading = false) { // POST 设备状态列表
+  getEquipmentStatusList(data: { ClassID: number | '' }, loading: boolean) { // POST 设备状态列表
     return request<IEquipmentStatusItem[]>({
-      method: 'POST', url: '/Api/EquipmentStatus/List', data, closeLoading,
+      method: 'POST', url: '/Api/EquipmentStatus/List', data, loading,
     });
   },
   /** POST /Api/Task/List   获取设备信息列表 */
@@ -70,11 +70,11 @@ export const productionManageApis = {
   },
   /** GET /Api/Order/GetTimeLine  获取订单时间线 */
   getOrderGetTimeLine(orderID: string) {
-    return instance.get('/Api/Order/GetTimeLine', { params: { orderID }, closeLoading: true });
+    return instance.get('/Api/Order/GetTimeLine', { params: { orderID }, loading: false });
   },
   /** GET /Api/Order/CancleRelation  获取订单取消相关 */
   getOrderCancleRelation(orderID: string) {
-    return instance.get<IOrderCancelRelation>('/Api/Order/CancleRelation', { params: { orderID }, closeLoading: true });
+    return instance.get<IOrderCancelRelation>('/Api/Order/CancleRelation', { params: { orderID }, loading: false });
   },
   /** POST /Api/Order/Cancle  订单取消 */
   getOrderCancle(data) {
@@ -82,10 +82,18 @@ export const productionManageApis = {
   },
   /** GET /Api/Task/UseableEquipmentList  获取任务可用设备列表 taskWorkingID */
   getTaskUseableEquipmentList(taskWorkingID: string) {
-    return instance.get('/Api/Task/UseableEquipmentList', { params: { taskWorkingID }, closeLoading: true });
+    return instance.get('/Api/Task/UseableEquipmentList', { params: { taskWorkingID }, loading: false });
   },
   /** PUT /Api/Task/ChangeEquipment  任务更换设备 */
   getTaskChangeEquipment(taskWorkingID: string, equipmentID: string) {
     return instance.put('/Api/Task/ChangeEquipment', null, { params: { taskWorkingID, equipmentID } });
+  },
+  /** 获取数码工单打印列表数据 POST /Api/OfflinePlate/List 线下大版列表 */
+  getOfflinePlateList(condition) {
+    return instance.post('/Api/OfflinePlate/List', condition);
+  },
+  /** POST /Api/OfflinePlate/Print  线下大版打印工单 */
+  getOfflinePlatePrint(data: { List: number[] }) {
+    return instance.post<IDigitalOrderPlatePrintInfo[]>('/Api/OfflinePlate/Print', data);
   },
 };

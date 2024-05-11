@@ -54,7 +54,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     // 获取所有设备组
     getEquipmentGroup() {
       api.getEquipmentGroup().then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           const temp = res.data.Data as _UseClassEquipmentGroupType[];
           this.EquipmentListGroup = [];
           temp.forEach(item => {
@@ -77,7 +77,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     // 获取所有文件
     getResourceNoteGroup() {
       api.getResourceNoteGroup().then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           const temp = res.data.Data as SelectAssistInfoGroup[];
           temp.forEach((item, i) => {
             temp[i].Notes = item.Notes.map(it => ({ ...it, Type: item.Type }));
@@ -96,7 +96,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     // 获取拼版模板列表 -- 仅工序列表使用？
     getImpositionTemmplateList(Data) {
       api.getImpositionTemmplateList(Data).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           this.ImpositionTemmplateList = res.data.Data as ImpositionTemmplateListType[];
         }
       });

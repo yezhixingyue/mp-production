@@ -12,6 +12,12 @@ export enum PlateStatusEnum {
 
 /** 大版类型： 0是印刷版  10是后工版 */
 export enum PlateTypeEnum {
+  /** 印刷版 */
   Plate = 0,
+  /** 后工版 */
   LaterCraft = 10,
+  /** 数码版线下拼版 */
+  Digital = 201,
+  /** 虚拟大版 */
+  Virtual = 255
 }

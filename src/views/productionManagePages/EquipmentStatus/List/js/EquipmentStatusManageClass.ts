@@ -44,7 +44,7 @@ export class EquipmentStatusManageClass {
       this.getList(this.condition.ClassID);
       return;
     }
-    this.timer = setInterval(() => {
+    this.timer = window.setInterval(() => {
       this.getList(this.condition.ClassID);
     }, 60 * 1000);
   }
@@ -62,13 +62,13 @@ export class EquipmentStatusManageClass {
 
     this.condition.ClassID = ClassID;
 
-    const closeLoading = this.list.length > 0;
+    const showLoading = this.list.length === 0;
 
     // this.list = [];
 
     this.loading = true;
     // 获取列表数据 然后进行赋值：list listNumber
-    const resp = await api.productionManageApis.getEquipmentStatusList(this.condition, closeLoading).catch(() => null);
+    const resp = await api.productionManageApis.getEquipmentStatusList(this.condition, showLoading).catch(() => null);
 
     this.loading = false;
 

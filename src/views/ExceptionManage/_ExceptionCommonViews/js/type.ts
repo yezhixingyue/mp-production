@@ -2,6 +2,7 @@ import {
   ITaskPlateInfo, ITaskDetail, IEquipmentBaseInfo,
 } from '@/views/ProductionClient/assets/js/types';
 import { ChunkStatusEnum } from '@/views/productionManagePages/ManageChunkListPage/js/enum';
+import { PlateTypeEnum } from '@/views/productionManagePages/ManagePlateListPage/js/enum';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ExceptionHandlerStatusEnum } from './enum';
 
@@ -169,6 +170,8 @@ export interface IExceptionPlate extends ITaskPlateInfo {
   /** 大版是否可撤回拼版前 */
   Revocationable: boolean
   ChildList: null | IExceptionPlate[]
+  /** 大版类型 */
+  Type: PlateTypeEnum
 }
 
 /**

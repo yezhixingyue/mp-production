@@ -13,11 +13,11 @@ import { clientApis } from './modules/clientApis';
 import { ExceptionHandlerApis } from './modules/ExceptionHandlerApis';
 import { outsourceApis } from './modules/outsourceApis';
 import productionSetting from './modules/productionSettingApis';
-import request from './request/request';
+import { request } from './request';
 
 const api = {
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login
-    return request<null|string>({ method: 'POST', url: '/Api/Staff/Login', data });
+    return request<null|string>({ method: 'POST', url: '/Api/Staff/Login', data, withoutToken: true });
   },
   getUser(token?: string) {
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined;

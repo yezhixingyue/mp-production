@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import api from '@/api';
-import { IResponse } from '@/api/request/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ConditionItemClass } from '@/components/common/ConstraintsComps/ConditionSetupPanel/ConditionItemClass';
 import { TransformConstraintTableItemType } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
 import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import { getGoBackFun } from '@/router';
-import { AxiosResponse } from 'axios';
+import { IResponseType, IMpzjResponse } from '@/api/request/request-lib/core/types';
 import { EquipmentListType } from './types';
 
 interface IGetPropertyListParams {
@@ -25,11 +25,11 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   PropertyList: PropertyListItemType[] = []
 
-  abstract getListFunc:(lineEquipmentID: string) => Promise<AxiosResponse<IResponse<unknown>>>
+  abstract getListFunc:(lineEquipmentID: string) => Promise<IResponseType<IMpzjResponse<any>> | null>
 
-  abstract removeFunc:(id: number) => Promise<AxiosResponse<IResponse<unknown>>>
+  abstract removeFunc:(id: number) => Promise<IResponseType<IMpzjResponse<any>> | null>
 
-  abstract saveFunc:(data: T) => Promise<AxiosResponse<IResponse<string>>>
+  abstract saveFunc:(data: T) => Promise<IResponseType<IMpzjResponse<string>> | null>
 
   abstract getPropertyListParams: IGetPropertyListParams
 

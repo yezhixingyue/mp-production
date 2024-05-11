@@ -1,6 +1,6 @@
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import { IGetPropOptions } from '@/components/common/ConstraintsComps/TypeClass/types';
-import request from '../request/request';
+import { request } from '../request';
 
 export const propertyApis = {
   getPropertyList(data: IGetPropOptions) {

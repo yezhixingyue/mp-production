@@ -216,7 +216,7 @@ export default {
       };
       temp.DimensionIDS = Data.selectData.map(res => res.inputValue);
       api.getGoodsPositionDetail(temp).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           const t = res.data.Data as getGoodsPositionType;
           Data.allDimensionData.UsePositionDetails = null;
           setTimeout(() => {
@@ -295,7 +295,7 @@ export default {
 
       Data.GoodsPositionSaveData.DetailSets = temp;
       api.getGoodsPositionSave(Data.GoodsPositionSaveData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           getGoodsPosition();
           Data.actionCells = [];
         }
@@ -321,7 +321,7 @@ export default {
       Data.StorehouseName = route.params.StorehouseName as string;
       Data.GoodsPositionSaveData.StorehouseID = route.params.StorehouseID as string;
       api.getGoodsPositionDimensionSelect(route.params.StorehouseID).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;
         }
       });

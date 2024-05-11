@@ -47,10 +47,21 @@ const props = defineProps<{
 const ruleForm = computed(() => props.handleExceptionRuleForm);
 
 /** 撤回类型，根据报工方式展示不同的类型 */
-const localRevocationTypeEnumList = computed(() => RevocationTypeEnumList
-  .filter(it => it._Display.includes(ruleForm.value._ReportMode as ReportModeEnum)
-   && (!it._needChildList || ruleForm.value.TaskExceptionDetail?.PlateList?.find(p => p.ChildList?.length))));
+const localRevocationTypeEnumList = computed(() => {
+  const _PlateType = ruleForm.value.TaskExceptionDetail?.PlateList[0]?.Type;
 
+  let list = RevocationTypeEnumList
+    .filter(it => it._Display.includes(ruleForm.value._ReportMode as ReportModeEnum)
+   && (!it._needChildList || ruleForm.value.TaskExceptionDetail?.PlateList?.find(p => p.ChildList?.length)));
+
+  if (typeof _PlateType === 'number') {
+    list = list.filter(it => !it._ExcludePlateTypes.includes(_PlateType));
+  }
+
+  return list;
+});
+
+console.log('handleExceptionRuleForm', props.handleExceptionRuleForm, ruleForm.value.TaskExceptionDetail);
 </script>
 
 <style scoped lang='scss'>

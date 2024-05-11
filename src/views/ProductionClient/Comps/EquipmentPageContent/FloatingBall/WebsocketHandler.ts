@@ -145,7 +145,7 @@ export class WebsocketHandler {
     }
 
     if (needRepeat) {
-      this.timer = setTimeout(() => {
+      this.timer = window.setTimeout(() => {
         this.start();
       }, 10 * 1000);
     }

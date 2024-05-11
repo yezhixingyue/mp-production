@@ -1,4 +1,6 @@
+import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { IImpositionTemplate } from './ProductionLineDetailTypes';
 import { IConvertOrderFile } from './types';
 
 export const checkMobile = (str: string, target = '') => {
@@ -73,4 +75,19 @@ export const getBleedContent = (item: IConvertOrderFile) => {
   }
 
   return '';
+};
+
+let _DigitalImpositionTemplateCache: null | IImpositionTemplate = null;
+export const getDigitalImpositionTemplate = async () => {
+  if (_DigitalImpositionTemplateCache) return _DigitalImpositionTemplateCache;
+
+  const resp = await api.ManualOrderHandlerApis.getDigitalImpositionTemplate().catch(() => null);
+
+  if (resp?.data.isSuccess) {
+    _DigitalImpositionTemplateCache = resp.data.Data as IImpositionTemplate;
+
+    return _DigitalImpositionTemplateCache;
+  }
+
+  return null;
 };

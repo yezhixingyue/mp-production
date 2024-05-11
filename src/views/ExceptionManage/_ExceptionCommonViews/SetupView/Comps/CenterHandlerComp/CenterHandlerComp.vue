@@ -5,7 +5,7 @@
     <!-- 处理方式 -->
     <div class="solvetype">
       <el-radio-group v-model="ruleForm.SolveType">
-        <el-radio v-for="it in SolveTypeEnumList" :key="it.ID" :label="it.ID">{{ it.Name }}</el-radio>
+        <el-radio v-for="it in localSolveTypeEnumList" :key="it.ID" :label="it.ID">{{ it.Name }}</el-radio>
       </el-radio-group>
     </div>
     <!-- 撤销处理 -->
@@ -31,6 +31,18 @@ const props = defineProps<{
 }>();
 
 const ruleForm = computed(() => props.handleExceptionRuleForm);
+
+const localSolveTypeEnumList = computed(() => {
+  const _PlateType = props.TaskExceptionDetail?.PlateList[0]?.Type;
+
+  let list = SolveTypeEnumList;
+
+  if (typeof _PlateType === 'number') {
+    list = list.filter(it => !it._ExcludePlateTypes.includes(_PlateType));
+  }
+
+  return list;
+});
 
 </script>
 

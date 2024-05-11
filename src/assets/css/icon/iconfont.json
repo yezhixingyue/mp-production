@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "39806776",
+      "name": "数码工单打印",
+      "font_class": "shumagongdandayin",
+      "unicode": "e67e",
+      "unicode_decimal": 59006
+    },
+    {
       "icon_id": "7335441",
       "name": "入库",
       "font_class": "ruku",

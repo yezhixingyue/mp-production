@@ -180,7 +180,7 @@ export default {
     ]);
     function getStockWarnPageList() {
       api.getStockWarnList(Data.getStockWarnData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.StockWarnList = res.data.Data as StockWarnListType[];
           Data.DataTotal = res.data.DataNumber;
         }

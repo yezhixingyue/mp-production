@@ -14,10 +14,13 @@
           <el-table-column
           show-overflow-tooltip prop="ContactWay" label="翻版方式" min-width="108">
             <template #default="scope:any">
-              <template v-if="pasteupTemplateData.IsPrintingPlate">
+              <template v-if="pasteupTemplateData.IsPrintingPlate && !pasteupTemplateData.IsDigital">
                 <span v-if="scope.row.ReproductionType === 0">正反版</span>
                 <span v-if="scope.row.ReproductionType === 1">自翻版</span>
                 <span v-if="scope.row.ReproductionType === 2">滚翻版</span>
+              </template>
+              <template v-if="pasteupTemplateData.IsDigital">
+                <span>---</span>
               </template>
             </template>
           </el-table-column>
@@ -110,6 +113,7 @@ const pasteupTemplateData = ref<ImpositionTemmplate>({
   IsPrintingPlate: false,
   // 和印刷版保持一致
   IsSameSizeWithPrintingPlate: false,
+  IsDigital: false,
   List: [],
 });
 const sizeList = ref<SizeListType[]>([]);

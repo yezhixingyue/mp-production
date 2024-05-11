@@ -1,12 +1,14 @@
 import { IStaff } from '@/views/companyManage/StaffManage/js/types';
-import request from '../request/request';
+import { IDepartment } from '@/views/companyManage/DepartmentManage/js/types';
+import { IJobPost } from '@/views/companyManage/JobPostManage/js/types';
+import { request } from '../request';
 
 export const companyApis = {
   /* 公司管理相关接口
   --------------------------------- */
   /** GET /Api/Job/List  获取岗位列表 */
   getJobPermissionsList() {
-    return request({ method: 'GET', url: '/Api/Job/List' });
+    return request<IJobPost[]>({ method: 'GET', url: '/Api/Job/List' });
   },
   /** 获取岗位权限详情 POST /Api/Job/Info */
   getJobPermissionsDetail(PositionID: string) {
@@ -20,9 +22,9 @@ export const companyApis = {
   getJobPermissionSave(data) {
     return request({ method: 'POST', url: '/Api/JobPermission/Save', data });
   },
-  getStaffList(data, closeLoading = false) { // 获取员工信息列表
+  getStaffList(data, loading = true) { // 获取员工信息列表
     return request<IStaff[]>({
-      method: 'POST', url: '/Api/Staff/List', data, closeLoading,
+      method: 'POST', url: '/Api/Staff/List', data, loading,
     });
   },
   getStaffBaseInfoSave(data) { // /Api/StaffBaseInfo/Save 保存员工信息
@@ -38,7 +40,7 @@ export const companyApis = {
     return request({ method: 'POST', url: '/Api/CheckStaff/Passed', data });
   },
   getDepartmentList() { //  获取部门列表数据
-    return request({ method: 'GET', url: '/Api/Department/List' });
+    return request<IDepartment[]>({ method: 'GET', url: '/Api/Department/List' });
   },
   getDepartmentSave(data) { //  部门保存
     return request({ method: 'POST', url: '/Api/Department/Save', data });

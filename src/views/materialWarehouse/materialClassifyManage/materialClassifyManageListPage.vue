@@ -104,7 +104,7 @@ export default {
     function getMaterialCategoryList(Page = 1) {
       Data.getMaterialCategoryData.Page = Page;
       api.getMaterialCategoryList(Data.getMaterialCategoryData).then(res => {
-        if (res.data.Status === 1000) {
+        if (res?.data.Status === 1000) {
           Data.tableData = res.data.Data as tableItem[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -122,7 +122,7 @@ export default {
     function delCategory(item) {
       messageBox.warnCancelBox('确定要删除此物料分类吗？', `${item.CategoryName}`, () => {
         api.getMaterialCategoryRemove(item.CategoryID).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
             getMaterialCategoryList();
             MaterialWarehouseStore.getMaterialCategoryList();
           }
@@ -145,7 +145,7 @@ export default {
         // 弹窗
       } else {
         api.getMaterialCategorySave(Data.classifyInfo).then(res => {
-          if (res.data.Status === 1000) {
+          if (res?.data.Status === 1000) {
             const cb = () => {
               closeClick();
               getMaterialCategoryList();

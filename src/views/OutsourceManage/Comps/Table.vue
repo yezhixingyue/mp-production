@@ -61,7 +61,8 @@
     <mp-table-column min-width="100px" label="下一道工序" v-if="pageType === 'inTransition' || pageType === 'undelivered'">
       <template #default="scope:any">
         <h4 v-if="(scope.row as Row).NextWorkingList?.length === 1" class="next-work">
-          <span>{{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}</span>
+          <span :title="getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList)"
+          >{{ getNextWorkContentOnlySingle((scope.row as Row).NextWorkingList) }}</span>
           <mp-button type="primary" v-if="pageType === 'undelivered'" link @click="onSendErrorClick(scope.row, 0)">报错</mp-button>
         </h4>
         <mp-button type="primary" link v-else-if="(scope.row as Row).NextWorkingList?.length > 1" @click="showNextWorkingList(scope.row)">查看列表</mp-button>

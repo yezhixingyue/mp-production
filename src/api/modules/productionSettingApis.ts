@@ -7,7 +7,7 @@ import {
 } from '@/views/productionSetting/PlateMakingGroupView/js/types';
 import { ISetPlateMakingWorkParams, ISetPlateMakingWorkSaveResult } from '@/views/productionSetting/productionLine/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
-import request from '../request/request';
+import { request } from '../request';
 
 const api = {
   // 配送方式 ------------------------ Express
@@ -39,8 +39,8 @@ const api = {
   getWorkingProcedureList(data) { // POST /Api/WorkingProcedure/List  工序列表
     return request({ method: 'POST', url: '/Api/WorkingProcedure/List', data });
   },
-  getWorkingProcedureSearch(searchType?: FetchWorkingProcedureSearchEnum) { // POST /Api/WorkingProcedure/Search  工序查询
-    return request<IWorkingProcedureSearch[]>({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType } });
+  getWorkingProcedureSearch(searchType?: FetchWorkingProcedureSearchEnum, isDigital = false) { // POST /Api/WorkingProcedure/Search  工序查询
+    return request<IWorkingProcedureSearch[]>({ method: 'GET', url: '/Api/WorkingProcedure/Search', params: { searchType, isDigital } });
   },
   getWorkingProcedureSave(data) { // POST /Api/WorkingProcedure/Save  工序保存
     return request({ method: 'POST', url: '/Api/WorkingProcedure/Save', data });
@@ -50,7 +50,7 @@ const api = {
   },
   // Api/WorkingProcedure/ProductionLineUsed?id=3101d3f7-8b72-48d1-a23e-b04c00fcdddf
   getWorkingProcedureProductionLineUsed(id) { // 获取工序在生产线中被使用情况
-    return request({ method: 'GET', url: '/Api/WorkingProcedure/ProductionLineUsed', params: { id }, closeTips: true });
+    return request({ method: 'GET', url: '/Api/WorkingProcedure/ProductionLineUsed', params: { id }, closeTip: true });
   },
 
   // 生产线 ------------------------ ProductionLine
