@@ -17,7 +17,7 @@ export class ResponseCache {
   /** 清理过期及超长项目 */
   private _clean() {
     // 1. 清理过期项目
-    [...this._map.entries()].forEach(([key, item]) => {
+    Array.from(this._map.entries()).forEach(([key, item]) => {
       if (typeof item.expires === 'number' && item.expires > 0 && Date.now() > new Date(item.expires).getTime()) { // 过时
         this._map.delete(key); // 删除元素
       }

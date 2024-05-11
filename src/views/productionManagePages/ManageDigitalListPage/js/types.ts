@@ -97,6 +97,8 @@ export interface IDigitalOrderPlatePrintInfo {
       Describe: string
     }
   }] | []
+  /** 大版单位 */
+  Unit: string
   /** 文件信息 */
   UploadFile: {
     /** 半成品名称 */

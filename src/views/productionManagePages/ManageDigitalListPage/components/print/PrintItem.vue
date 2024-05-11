@@ -107,7 +107,7 @@
                 <div>{{ [item.Material.Width, item.Material.Height].filter(it => it).join('×') }}</div>
               </td>
               <td>
-                <div>{{ typeof item.Material.Number === 'number' ? item.Material.Number + '张' : '' }}</div>
+                <div>{{ typeof item.Material.Number === 'number' ? item.Material.Number + item.Unit || '' : '' }}</div>
               </td>
             </tr>
           </tbody>

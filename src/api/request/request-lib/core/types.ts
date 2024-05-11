@@ -51,7 +51,6 @@ export interface IRequestConfig<D = any> {
   tipTitle?: string // 报错时的提示标题 msgCallback
   /** 弹出了错误提示 点击关闭提示弹窗后的事件回调函数msgCallback */
   msgCallback?: () => void
-  // msgCallback?: (isConfirm: boolean) => void
 }
 
 export interface IRequestor {
