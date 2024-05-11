@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ICoreOptions, IMpzjResponse, IResponseType } from './types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { IMpzjResponse, IResponseType } from './types';
 
 interface IResponseCacheItem<T = any> {
   hash: string
@@ -29,8 +30,8 @@ export class ResponseCache {
     }
   }
 
-  add(hash: string, response: IResponseType<IMpzjResponse>, cacheConfig: Required<ICoreOptions>['cache']) {
-    const expires = Date.now() + cacheConfig.duration;
+  add(hash: string, response: IResponseType<IMpzjResponse>, duration: number) {
+    const expires = Date.now() + duration;
 
     const temp = {
       hash,

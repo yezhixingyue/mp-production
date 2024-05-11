@@ -47,6 +47,7 @@ export interface IRequestConfig<D = any> {
     duration: number // 缓存时间
     isCacheable?: (resp: IResponseType<IMpzjResponse>) => boolean // 判断响应结果是否可以被缓存
   }
+  idempotent?: boolean // 是否开启请求幂等 - 内部借用cache处理 - 故优先级高于cache设置
   tipTitle?: string // 报错时的提示标题 msgCallback
   /** 弹出了错误提示 点击关闭提示弹窗后的事件回调函数msgCallback */
   msgCallback?: () => void
@@ -78,6 +79,8 @@ interface IRespMsgOption {
 }
 
 export interface ICoreOptions {
+  /** baseURL */
+  baseURL?: string
   /** 状态在此范围内时将会返回结果  默认 [200] */
   validStatuses: number[]
   cache?: {
@@ -91,9 +94,9 @@ export interface ICoreOptions {
   /** 设置token 优先级高于getToken */
   setToken?: (config: IRequestConfig) => boolean
   /** 对响应数据进行提示处理 - 仅处理不改变 */
-  useResponseMessage?: (resp: IResponseType<IMpzjResponse>, options: IRespMsgOption) => void
+  useResponse?: (resp: IResponseType<IMpzjResponse>, options: IRespMsgOption) => void
   /** 对catch到的错误信息的处理方法 */
-  useRequestCatchError?: (msg: string) => void
+  useCatchError?: (msg: string) => void
   isSuccess: (resp: IResponseType<IMpzjResponse>) => boolean
 }
 

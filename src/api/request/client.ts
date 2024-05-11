@@ -25,9 +25,9 @@ const getToken = () => { // 获取到token
   return _token;
 };
 
-const useRequestCatchError = (msg: string) => ElMessage({ showClose: true, message: msg || '请求失败', type: 'error' }); // 错误处理
+const useCatchError = (msg: string) => ElMessage({ showClose: true, message: msg || '请求失败', type: 'error' }); // 错误处理
 
-const useResponseMessage: ICoreOptions['useResponseMessage'] = (resp, { clear, closeTip, msgCallback, tipTitle }) => { // 还需要 tipTitle 与 msgCallback 字段
+const useResponse: ICoreOptions['useResponse'] = (resp, { clear, closeTip, msgCallback, tipTitle }) => { // 还需要 tipTitle 与 msgCallback 字段
   if (resp.status === 200 && resp.data.Status === 1000) return;
 
   if (resp.status !== 200) { // 请求错误
@@ -62,8 +62,8 @@ export const clientInstance = create({
     isCacheable: resp => resp.status === 200 && resp.data.Status === 1000,
   },
   getToken,
-  useResponseMessage,
-  useRequestCatchError,
+  useResponse,
+  useCatchError,
   validStatuses: [200],
   isSuccess: resp => resp.status === 200 && resp.data.Status === 1000,
 });
