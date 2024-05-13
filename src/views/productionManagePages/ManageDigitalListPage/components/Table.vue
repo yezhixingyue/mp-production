@@ -3,13 +3,14 @@
     <el-table-column type="selection" width="42" :selectable="(row: (typeof localList)[number]) => row._Printable" />
     <mp-table-column width="110px" prop="Code" label="大版ID" />
     <mp-table-column width="125px" prop="OrderCode" label="订单号" />
+    <mp-table-column width="125px" prop="SemiFinished" label="半成品" />
     <mp-table-column min-width="120px" prop="_Template" label="尺寸规格" />
     <mp-table-column min-width="120px" prop="Material" label="物料" />
     <mp-table-column min-width="120px" prop="Equipment" label="印刷机" />
-    <mp-table-column width="100px" prop="_Number" label="数量"></mp-table-column>
+    <mp-table-column width="90px" prop="_Number" label="数量"></mp-table-column>
     <mp-table-column width="140px" prop="_CreateTime" label="同步时间" />
     <mp-table-column width="140px" prop="_ImpositionTime" label="拼版时间" />
-    <mp-table-column width="100px" prop="_StatusText" label="状态" />
+    <mp-table-column width="85px" prop="_StatusText" label="状态" />
     <mp-table-column width="100px" prop="_ImpositionType" label="拼版方式" />
     <mp-table-column width="100px" prop="Operator" label="拼版人员" />
     <mp-table-column min-width="120px" prop="Line" label="生产线" />
