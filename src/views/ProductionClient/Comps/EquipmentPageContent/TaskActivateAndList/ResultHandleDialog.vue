@@ -18,7 +18,7 @@
         <span class="ft-18 is-bold">{{ result.TaskCode || '' }}</span>
       </p>
       <p>
-        <span>大版ID：</span>
+        <span>{{ result.TargetType === TargetTypeEnum.Plate ? '大版ID：' : 'ID' }}</span>
         <span class="ft-18 is-bold">{{ result.TargetCode || '' }}</span>
       </p>
       <p class="ft-18">
@@ -56,6 +56,7 @@ import { computed } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IReceiveResult } from '@/views/ProductionClient/assets/js/types';
 import { EquipmentReceiveCodeEnum, ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
+import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 
 const props = defineProps<{
   visible: boolean

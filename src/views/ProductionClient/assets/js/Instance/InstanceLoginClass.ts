@@ -1,4 +1,3 @@
-import api from '@/api';
 import clientApi from '@/api/client';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
@@ -76,7 +75,7 @@ export class InstanceLoginClass {
       return;
     }
 
-    const resp = await api.getUser(this.token).catch(() => null);
+    const resp = await clientApi.getUser(this.token).catch(() => null);
 
     if (resp?.data.isSuccess) {
       this.user = resp.data.Data;
@@ -96,7 +95,7 @@ export class InstanceLoginClass {
     };
 
     this.loading = true;
-    const resp = await api.getLogin(temp).catch(() => null);
+    const resp = await clientApi.getLogin(temp).catch(() => null);
     this.loading = false;
 
     if (resp?.data.isSuccess) {

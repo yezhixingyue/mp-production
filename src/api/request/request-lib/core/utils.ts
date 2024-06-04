@@ -50,7 +50,12 @@ export const getRequestHash = (config: IRequestConfig) => {
     spark.append(key);
     spark.append(JSON.stringify(value) || '');
   });
-  return spark.end();
+
+  const _hash = spark.end();
+
+  spark.destroy();
+
+  return _hash;
 };
 
 /** 设置token */

@@ -306,6 +306,8 @@ export interface IReceiveResult {
   Unit: string
   /** 状态 */
   Status: ProductiveTaskStatusEnum
+  /** 类型枚举 */
+  TargetType: TargetTypeEnum
 }
 
 /**

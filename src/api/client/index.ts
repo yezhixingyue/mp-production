@@ -1,8 +1,16 @@
 import { IEquipmentErrorInfo, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IUndeliveredListItem } from '@/views/ProductionClient/Comps/EquipmentPageContent/FloatingBall/WebsocketHandler';
+import { ILoginSubmitForm } from '@/store/modules/user/types';
 import { clientInstance as instance } from '../request/client';
 
 const clientApi = {
+  getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login
+    return instance.post('/Api/Staff/Login', data, { withoutToken: true });
+  },
+  getUser(token?: string) { // POST /Api/Staff/Detail
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+    return instance.post('/Api/Staff/Detail', { headers });
+  },
   getTerminalEquipmentList(terminal: string) { // 获取终端设备列表
     return instance.get('/Api/Terminal/Equipment/List', { params: { terminal }, withoutToken: true });
   },
