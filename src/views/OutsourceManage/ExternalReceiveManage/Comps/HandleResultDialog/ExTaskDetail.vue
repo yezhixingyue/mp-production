@@ -12,7 +12,7 @@
       <span>金额：￥{{ result.Amount ? +`${result.Amount.toFixed(2)}` : '' }}元</span>
     </div>
     <h4 class="mb-6">
-      <span>制作要求：{{ result.ProcessContent }}</span>
+      <span style="line-height: 30px;">制作要求：{{ result.ProcessContent }}</span>
     </h4>
     <div>
       <span>外协时间：{{ format2MiddleLangTypeDateFunc2(result.WishFinishedTime) }}</span>
