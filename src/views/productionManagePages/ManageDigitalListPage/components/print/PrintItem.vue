@@ -121,8 +121,8 @@
         <thead>
           <tr>
             <th style="width: 4em;">工序</th>
-            <th style="width: 16.5%;">工序名称</th>
-            <th style="width: 38%;">加工信息</th>
+            <th style="width: 17%;">工序名称</th>
+            <th style="width: 44%;">加工信息</th>
             <th style="width: 11%;">报工类型</th>
             <th>加工设备</th>
           </tr>
@@ -133,7 +133,8 @@
             <td>{{ working.WorkingName }}</td>
             <td>{{ getAssistInfo(working.AssistList || []) }}</td>
             <td>{{ getEnumNameByID(working.ReportMode, ReportModeEnumList) }}</td>
-            <td>{{ [working.Equipment.GroupName, working.Equipment.Name].filter(it => it).join('-') }}</td>
+            <td>{{ [working.Equipment.Name].filter(it => it).join('-') }}</td>
+            <!-- <td>{{ [working.Equipment.GroupName, working.Equipment.Name].filter(it => it).join('-') }}</td> -->
           </tr>
         </tbody>
       </table>
@@ -215,7 +216,8 @@ const WorkingList = computed(() => {
 });
 
 const getAssistInfo = (AssistList: ILocalDigitalOrderPlatePrintInfoWithQrCode['WorkingList'][0]['AssistList']) => {
-  const list = AssistList.filter(it => it.Content).map(it => `${it.Name}:${it.Content}`);
+  // const list = AssistList.filter(it => it.Content).map(it => `${it.Name}:${it.Content}`);
+  const list = AssistList.filter(it => it.Content).map(it => `${it.Content}`);
 
   return list.join('；');
 };
