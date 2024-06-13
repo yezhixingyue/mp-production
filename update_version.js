@@ -18,5 +18,7 @@ if (/\d+.\d+.\d+/.test(packageJson.version)) { // 格式符合要求
 
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2)); // 写入更新后的内容到文件
     }
+  } else {
+    throw new Error('请切换至主分支进行打包');
   }
 }

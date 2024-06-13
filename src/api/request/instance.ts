@@ -54,10 +54,10 @@ const useResponse: ICoreOptions['useResponse'] = (resp, { clear, closeTip, msgCa
 
 export const instance = create({
   loadingHandler: new LoadingHandler(),
-  cache: {
-    duration: 500,
-    isCacheable: resp => resp.status === 200 && resp.data.Status === 1000,
-  },
+  // cache: {
+  //   duration: 500,
+  //   isCacheable: resp => resp.status === 200 && resp.data.Status === 1000,
+  // },
   getToken,
   useResponse,
   useCatchError,

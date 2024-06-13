@@ -13,7 +13,8 @@ import OutsourceManageRouteRoot from './OutsourceManage';
 import orderAppRouteRoot from './OrderAppRouteManage/orderAppRoutes';
 import { clientRouteName } from './config';
 
-const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
+// const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
+const isOrderApp = false;
 
 export const moduleRoutes: RouteRecordRaw[] = isOrderApp ? [orderAppRouteRoot.routes] : [
   {

@@ -126,7 +126,7 @@ const getEquipmentList = (ClassID: IEquipmentSetupItem['ClassID'], GroupID: IEqu
   return localEquipmentSetupData.value.EquipmentList.filter(it => it.ClassID === ClassID && it.GroupID === GroupID);
 };
 
-const maxEquipmentNumber = 40;
+const maxEquipmentNumber = process.env.VUE_APP_ENV_TYPE === 'prod' ? 4 : 40;
 
 const onRowAddClick = () => { // 添加一行
   if (localEquipmentSetupData.value.localEquipmentSetupList.length >= maxEquipmentNumber) return;

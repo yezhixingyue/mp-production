@@ -6,7 +6,8 @@ const isDev = process.env.NODE_ENV === 'development';
 
 let publicPath = '';
 if (!isDev) {
-  publicPath = process.env.VUE_APP_TARGET === 'My Order App' ? '/Order/' : '/Web/';
+  // publicPath = process.env.VUE_APP_TARGET === 'My Order App' ? '/Order/' : '/Web/';
+  publicPath = '/Web/';
 }
 
 process.env.VUE_APP_VERSION = require('./package.json').version;

@@ -24,7 +24,7 @@
 
 <script lang='ts' setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+// import { useRouter } from 'vue-router';
 
 const canvas = ref<HTMLCanvasElement>();
 const draw = () => {
@@ -59,13 +59,13 @@ function getCurDate() {
   dateString.value = `${year}年${month}月${day}日`;
   weekString.value = weekTextList[w];
 }
-const router = useRouter();
+// const router = useRouter();
 
 onMounted(() => {
   getCurDate();
-  if (process.env.VUE_APP_TARGET === 'My Order App') { // 跳转页面
-    router.replace('/orderAppRoutes');
-  }
+  // if (process.env.VUE_APP_TARGET === 'My Order App') { // 跳转页面
+  //   router.replace('/orderAppRoutes');
+  // }
 
   draw(); // 试验canvas功能  - 可注销
 });

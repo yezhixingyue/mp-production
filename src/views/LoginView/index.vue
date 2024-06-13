@@ -72,8 +72,8 @@ import { getHasLoginPermission } from '@/router/modules/OrderAppRouteManage/util
 export default {
   name: 'LoginPage',
   setup() {
-    const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
-
+    // const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
+    const isOrderApp = false;
     // const router = useRouter();
     const loginForm: ILoginSubmitForm = reactive({
       Mobile: '', Password: '', Terminal: 1, Site: isOrderApp ? 3 : 1,
