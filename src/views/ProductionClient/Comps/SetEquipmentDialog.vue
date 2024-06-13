@@ -107,7 +107,7 @@ const loginAdmin = async () => { // 管理员登录
 
   const resp = await clientApi.getVerifySystemPassword(password.value).catch(() => null);
 
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     sign.value = resp.data.Data;
     localEquipmentSetupData.value = new EquipmentSetupClass(ManageClientPageData.value.TerminalEquipmentList.map(it => it.ID));
     localEquipmentSetupData.value.getInitData(sign.value);

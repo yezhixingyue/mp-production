@@ -491,7 +491,7 @@ const saveProcess = () => {
       temp.AllowUnionImposition = false;
     }
     api.getWorkingProcedureSave(temp).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           setStorage();
           RouterStore.goBack();
@@ -523,8 +523,8 @@ const getProcessUsedInfo = async (id: string) => {
 
   const resp = await api.getWorkingProcedureProductionLineUsed(id).catch(() => null);
 
-  if (!resp?.data.isSuccess) {
-    canNotChangeReason.value.Reason = resp?.data.Message || '当前工序暂不可更改';
+  if (!resp?.data?.isSuccess) {
+    canNotChangeReason.value.Reason = resp?.data?.Message || '当前工序暂不可更改';
   }
 
   canNotChangeReason.value.loading = false;

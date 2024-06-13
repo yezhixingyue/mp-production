@@ -430,7 +430,7 @@ function savePasteupTemplateSize() {
       Data.addPasteupTemplateFrom.WidthErrorRange = null;
     }
     api.getImpositionTemmplateSizeSave(Data.addPasteupTemplateFrom).then(resp => {
-      if (resp.data.Status === 1000) {
+      if (resp.data?.Status === 1000) {
         const cb = () => {
           PasteupSettingStore.getImpositionTemmplateList();
           setStorage();
@@ -483,7 +483,7 @@ onMounted(() => {
   if (temp.ID) {
     Data.addPasteupTemplateFrom = temp;
     api.getImpositionTemmplateSizeIsEditable(temp.ID).then(resp => {
-      if (resp.data.Status === 1000) {
+      if (resp.data?.Status === 1000) {
         TemmplateSizeIsEditable.value = JSON.parse(resp.data.Data as string);
       }
     });

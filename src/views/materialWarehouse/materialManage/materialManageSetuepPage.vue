@@ -508,7 +508,7 @@ export default {
           TypeID: Data.TypeID,
           Materials: Data.BatchAddList,
         }).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             if (res.data.Status === 1000) {
               // 添加成功
               const cb = () => {

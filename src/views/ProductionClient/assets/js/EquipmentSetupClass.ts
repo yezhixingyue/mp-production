@@ -55,7 +55,7 @@ export class EquipmentSetupClass {
     const terminal = await getLocalMachineCode();
     const ids = this.localEquipmentSetupList.map(it => it.ID);
     const resp = await clientApi.getEquipmentBind(terminal, ids, sign).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const callback = () => {
         this.list = ids;
         const _curTerminalEquipmentList = (ids.map(id => this.EquipmentList.find(it => it.ID === id)).filter(it => it) as IManageEquipmentInfo[]).map(it => ({

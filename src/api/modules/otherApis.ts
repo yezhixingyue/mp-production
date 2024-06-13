@@ -1,4 +1,4 @@
-import { request } from '../request';
+import { request } from '@/basic/request';
 
 export const otherSettingApis = {
   /* 转换服务器相关

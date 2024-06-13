@@ -163,7 +163,7 @@ function PaginationChange(newVal) {
 function delImpositionTemmplate(item) {
   messageBox.warnCancelBox('确定要删除此拼版模板吗？', `${item.Name}`, () => {
     api.getImpositionTemmplateRemove(item.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         // 删除成功
         getImpositionTemmplateList();
       }
@@ -174,7 +174,7 @@ function delImpositionTemmplate(item) {
 function addTemplatePrimaryClick() {
   if (Data.addTemplateFrom.Name) {
     api.getImpositionTemmplateSave(Data.addTemplateFrom).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           getImpositionTemmplateList();
           Data.addTemplateFromShow = false;

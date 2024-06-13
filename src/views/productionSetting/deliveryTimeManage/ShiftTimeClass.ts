@@ -53,7 +53,7 @@ export class ShiftTimeClass implements IShiftTimeItem {
   async submit(callback: () => void) {
     if (!this._check()) return;
     const resp = await api.getShiftTimeSave({ ...this }).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       MpMessage.success({
         title: `${this.ItemID ? '编辑' : '添加'}成功`,
         onOk: callback,

@@ -61,7 +61,7 @@ const getEquipmentList = async () => {
   const resp = await api.productionManageApis.getTaskUseableEquipmentList(TaskWorkingID).catch(() => null);
   loading.value = false;
 
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     EquipmentList.value = resp.data.Data || [];
 
     // 对curEquipmentID进行重新赋值： 1 找到原始值  2 看是否在列表中  3 如果在则予以赋值

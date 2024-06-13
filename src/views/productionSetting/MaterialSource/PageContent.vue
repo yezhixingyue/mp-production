@@ -41,8 +41,8 @@ import {
 } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { getGoBackFun } from '@/router';
+import { IMpzjResponse, IResponseType } from '@/basic/request/request-lib/core/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { IMpzjResponse, IResponseType } from '@/api/request/request-lib/core/types';
 import Dialog from './WorkingProcedureSelectDialog.vue';
 import { MaterialSourceTypeEnum } from '../js/enums';
 import PageContentTable, { ITableItem } from './PageContentTable.vue';
@@ -56,7 +56,7 @@ const props = defineProps<{
   curEditItem?: IProductionLineWorkings
   workListRange?: string[] | undefined
   originMaterialSources?: IMaterialSources[]
-  saveApiFunc?:(data: { Materials: ITableItem[] | null }) => Promise<IResponseType<IMpzjResponse> | null>
+  saveApiFunc?:(data: object | object[]) => Promise<IResponseType<IMpzjResponse>>
   params?: object
   withoutOtherPrcess?: boolean // 列表中 物料来源是否可设置为来自其它工序 （ 制版组中不可以 ）
   IsPlateMakingGroup?: boolean // 是否制版组在使用该组件
@@ -164,9 +164,9 @@ const saveProcess = async () => {
   }
   const fetchFunc = props.saveApiFunc || api.getProductionLinetMaterialSourceSave;
 
-  const resp = await fetchFunc(params).catch(() => null);
+  const resp = await fetchFunc(params);
 
-  if (resp?.data.isSuccess) {
+  if (resp.data?.isSuccess) {
     const cb = async () => { // 处理数据变动
       emit('saved', Materials);
       await nextTick();
@@ -183,8 +183,8 @@ const saveProcess = async () => {
 
 const getWorkingProcedureList = async () => {
   if (props.withoutOtherPrcess) return;
-  const resp = await api.getWorkingProcedureSearch().catch(() => null);
-  if (resp?.data.isSuccess) {
+  const resp = await api.getWorkingProcedureSearch();
+  if (resp.data?.isSuccess) {
     WorkingProcedureList.value = resp.data.Data;
   }
 };

@@ -29,7 +29,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
   actions: {
     async getLogin(loginForm: ILoginSubmitForm) {
       const resp = await api.getLogin(loginForm).catch(() => null);
-      if (resp && resp.data.isSuccess && resp.data.Data) {
+      if (resp && resp.data?.isSuccess && resp.data.Data) {
         this.token = resp.data.Data;
         this.loginTime = Date.now();
         this.user = null;
@@ -43,7 +43,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       this.user = null;
       if (!this.token) return 'login';
       const resp = await api.getUser();
-      if (!resp || !resp.data.isSuccess) {
+      if (!resp || !resp.data?.isSuccess) {
         if (resp?.status === 401) {
           return 'login';
         }

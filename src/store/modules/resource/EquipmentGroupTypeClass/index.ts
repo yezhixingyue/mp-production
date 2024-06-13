@@ -54,15 +54,17 @@ export class EquipmentGroupTypeClass {
   async save(item: EquipmentGroupItemClass, closeDialogFunc: () => void) { // 新增|编辑
     const temp = CommonClassType.filter(item);
     const resp = await api.getEquipmentGroupSave(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const isEdit = !!this.curEditItem;
 
       const title = isEdit ? '编辑成功' : '添加成功';
 
       const callback = () => {
         if (!isEdit) {
-          this.DataList.unshift({ ...item, ID: resp.data.Data });
-          this.DataNumber += 1;
+          if (resp.data) {
+            this.DataList.unshift({ ...item, ID: resp.data.Data });
+            this.DataNumber += 1;
+          }
         } else {
           const i = this.DataList.findIndex(it => it.ID === item.ID);
           if (i > -1) {
@@ -109,7 +111,7 @@ export class EquipmentGroupTypeClass {
 
   async setColorLimit(data: GroupColorLimitClass, closeDialogFunc: () => void) { // 设置尺寸限制
     const resp = await api.getEquipmentGroupColorLimit(data).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const i = this.DataList.findIndex(it => it.ID === data.ID);
         if (i > -1) {
@@ -127,7 +129,7 @@ export class EquipmentGroupTypeClass {
     const _data: Omit<GripperSetupClass, '_validate'> = { ...data };
     if (_data.BiteMouthType === GripperTypeEnum.empty) _data.BiteMouthSize = 0;
     const resp = await api.getEquipmentGroupSetBiteMouth(_data).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const i = this.DataList.findIndex(it => it.ID === data.ID);
         if (i > -1) {

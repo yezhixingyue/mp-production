@@ -43,14 +43,14 @@ export class StaffManageClass {
 
   async getJobPostList() {
     const resp = await api.getJobPermissionsList().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.jobPostList = resp.data.Data;
     }
   }
 
   async getDepartmentList() {
     const resp = await api.getDepartmentList().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.departmentList = resp.data.Data;
 
       this.departmentLevelList = getDepartmentLevelList(this.departmentList);
@@ -94,7 +94,7 @@ export class StaffManageClass {
     const resp = await api.getStaffList(temp).catch(() => null);
     this.loading = false;
 
-    if (resp && resp.data.Status === 1000) {
+    if (resp && resp.data?.Status === 1000) {
       this.dataList = resp.data.Data as IStaff[];
       this.dataNumber = resp.data.DataNumber;
     }
@@ -111,7 +111,7 @@ export class StaffManageClass {
   async removeItem(item, index, callback) {
     if (!item || !item.StaffID || typeof index !== 'number') return;
     const resp = await api.getStaffRemove(item.StaffID).catch(() => null);
-    if (resp && resp.data.Status === 1000) {
+    if (resp && resp.data?.Status === 1000) {
       const cb = () => {
         if (callback) callback();
         if (index >= 0) this.dataList.splice(index, 1);
@@ -138,7 +138,7 @@ export class StaffManageClass {
 
     const resp = await api.getCheckStaffPassed(item).catch(() => null);
 
-    if (resp && resp.data.Status === 1000) {
+    if (resp && resp.data?.Status === 1000) {
       const cb = () => {
         const temp = item;
         // 修改成功后补充审核人信息
@@ -182,7 +182,7 @@ export class StaffManageClass {
       status: expectStatus,
     };
     const resp = await api.getStaffChangeStatus(temp).catch(() => null);
-    if (resp && resp.data.Status === 1000) {
+    if (resp && resp.data?.Status === 1000) {
       let title = '设置成功';
       if (expectStatus === StaffStatusEnum.leaved) title = '设置离职成功';
       if (expectStatus === StaffStatusEnum.approved) title = '取消离职成功';

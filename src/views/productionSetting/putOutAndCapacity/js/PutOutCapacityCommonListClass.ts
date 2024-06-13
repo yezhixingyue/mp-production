@@ -6,7 +6,7 @@ import { TransformConstraintTableItemType } from '@/components/common/Constraint
 import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import { getGoBackFun } from '@/router';
-import { IResponseType, IMpzjResponse } from '@/api/request/request-lib/core/types';
+import { IResponseType, IMpzjResponse } from '@/basic/request/request-lib/core/types';
 import { EquipmentListType } from './types';
 
 interface IGetPropertyListParams {
@@ -56,12 +56,12 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   async handleItemSave(item: T) {
     const resp = await this.saveFunc(item).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const isEdit = !!item.ID;
       const cb = () => {
         // 处理数据变动
         if (!isEdit) {
-          const ID = /^\d+$/.test(`${resp.data.Data}`) ? +resp.data.Data : resp.data.Data;
+          const ID = resp.data && /^\d+$/.test(`${resp.data.Data}`) ? +resp.data.Data : resp.data?.Data;
           this.list.unshift({ ...item, ID });
         } else {
           const i = this.list.findIndex(it => it.ID === item.ID);
@@ -83,7 +83,7 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
   async handleItemRemove(item: T) {
     if (!item.ID && item.ID !== 0) return;
     const resp = await this.removeFunc(item.ID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const i = this.list.findIndex(it => it.ID === item.ID);
         if (i > -1) {
@@ -96,8 +96,8 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   private async getList() {
     if (!this.curLineEquipment) return;
-    const resp = await this.getListFunc(this.curLineEquipment.LineEquipmentID || '').catch(() => null);
-    if (resp?.data.isSuccess) {
+    const resp = await this.getListFunc(this.curLineEquipment.LineEquipmentID || '');
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data as T[];
     }
   }
@@ -108,8 +108,8 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
       ...this.getPropertyListParams,
       WorkingID: this.curWork?.ID || '',
     };
-    const resp = await api.propertyApis.getPropertyList(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    const resp = await api.propertyApis.getPropertyList(temp);
+    if (resp.data?.isSuccess) {
       this.PropertyList = resp.data.Data || [];
     }
   }

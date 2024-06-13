@@ -177,7 +177,7 @@ export class EquipmentRunTimeClass {
     // 3. 提交
 
     const resp = await api.getEquipmentMaintainSetup(data).catch(() => null);
-    if (!resp?.data.isSuccess) return;
+    if (!resp?.data?.isSuccess) return;
 
     // 4. 提交成功后对原数据的修改及页面返回
     const cb = () => {

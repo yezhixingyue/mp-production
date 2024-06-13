@@ -52,7 +52,7 @@ export class ManageListClass {
 
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data.map(it => ({
         ...it,
         _Type: getEnumNameByID(it.Type, SchedulingExceptionTypeEnumList),
@@ -69,7 +69,7 @@ export class ManageListClass {
     const ids = rows.map(r => r.ID);
     const resp = await api.ExceptionHandlerApis.getSchedulingExceptionDeal(ids).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const userStore = useUserStore();
         const { user } = userStore;

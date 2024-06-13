@@ -56,7 +56,7 @@ const onConditionSaveClick = (item: IMaterialTypeLimitTableItemType, conditonIte
 const onConditionRemoveClick = async (item: IMaterialTypeLimitTableItemType, conditonItem: ILimitConstraintsItem) => {
   MaterialTypeLimitData.value.setCurMaterialTypeLimitItem(item, conditonItem);
   const resp = await api.getEquipmentGroupMaterialTypeLimitRemove(conditonItem.ID).catch(() => null);
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     const cb = () => {
       MaterialTypeLimitData.value.handlerConditionItemChange({ conditonItem, isEdit: false, isRemove: true });
     };

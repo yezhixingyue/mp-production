@@ -96,9 +96,9 @@ const onSubmitClick = async () => { // 处理： 岗位ID为空，保存后的�
     return;
   }
   const resp = await api.getJobSave(JobPostManagePageData.value.list).catch(() => null);
-  if (resp && resp.data.Status === 1000) {
+  if (resp && resp.data?.Status === 1000) {
     const cb = () => {
-      JobPostManagePageData.value.list = resp.data.Data as IJobPost[];
+      if (resp.data) JobPostManagePageData.value.list = resp.data.Data as IJobPost[];
     };
     MpMessage.success({ title: '保存成功', onOk: cb, onCancel: cb });
   }

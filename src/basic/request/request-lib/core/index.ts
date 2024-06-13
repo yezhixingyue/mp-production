@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ICoreOptions, IMpzjResponse, IRequestConfig, IRequestor, IResponseType, RequestMethod } from './types';
-import { getController, getRequestHash, verifyStatus, normalizeInstanceOptions, setLoading, setToken, getCatchErrorMsg, useReqConfNormalize } from './utils';
+import { getController, getRequestHash, normalizeInstanceOptions, setLoading, setToken, getCatchErrorMsg, useReqConfNormalize } from './utils';
 import { RequestPool } from './requestPool';
 import { ResponseCache } from './responseCache';
 
@@ -28,15 +28,15 @@ export class RequestCore { // ------------------ 需要继续精简
 
     const controller = getController(config); // 3. 设置controller
 
-    const requester = new Promise<IResponseType<IMpzjResponse<T>>>((resolve, reject) => { // 4. 定义及执行Promise
+    const executor = new Promise<IResponseType<IMpzjResponse<T>>>((resolve, reject) => { // 4. 定义及执行Promise
       this._req.request(config)
         .then(resp => resolve(resp))
         .catch(err => reject(err));
     });
 
-    this._requestPool.add({ hash, requester, controller }); // 5. 添加到请求池
+    this._requestPool.add({ hash, executor, controller }); // 5. 添加到请求池
 
-    return requester;
+    return executor;
   }
 
   private _afterSend<T>(config: IRequestConfig, hash: string, resp: IResponseType<IMpzjResponse<T>>) {
@@ -68,13 +68,11 @@ export class RequestCore { // ------------------ 需要继续精简
     const message = getCatchErrorMsg(error);
 
     if (this._options.useCatchError) this._options.useCatchError(message); // 3. 错误提示 --- 应使用传入的轻提示方法
+
+    return message;
   }
 
-  private _filterResp<T>(resp: IResponseType<IMpzjResponse<T>> | null) {
-    return resp && verifyStatus(resp.status, this._options.validStatuses) ? resp : null;
-  }
-
-  private async _requestCore<T = any, D = any>(config: IRequestConfig<D> & { method: RequestMethod }) {
+  private async _requestCore<T = any, D = any>(config: IRequestConfig<D> & { method: RequestMethod }): Promise<IResponseType<IMpzjResponse<T>>> {
     // 合并参数
     useReqConfNormalize(config, this._options);
 
@@ -83,8 +81,8 @@ export class RequestCore { // ------------------ 需要继续精简
     // 1. 同时段重复请求处理
     const t = this._requestPool.list.find((it) => it.hash === _hash);
     if (t) {
-      const resp = await t.requester.catch(() => null) as IResponseType<IMpzjResponse<T>> | null;
-      return this._filterResp(resp);
+      const resp = await t.executor.catch((err) => ({ message: getCatchErrorMsg(err) }));
+      return resp;
     }
 
     // 2. 是否命中缓存
@@ -97,7 +95,7 @@ export class RequestCore { // ------------------ 需要继续精简
 
     // 执行
     try {
-      if (!setToken(config, this._options)) return null; // 设置token
+      if (!setToken(config, this._options)) return { message: '未获取到token，请重新登录尝试' }; // 设置token
 
       const resp = await this._send<T>(config, _hash); // 发送
 
@@ -107,18 +105,17 @@ export class RequestCore { // ------------------ 需要继续精简
         this._responseCache.add(_hash, resp, config.cache.duration);
       }
 
-      return this._filterResp(resp);
+      return resp;
     } catch (error: any) {
-      this._catchError(error, config, _hash); // 错误处理
-
-      return null;
+      const message = this._catchError(error, config, _hash); // 错误处理
+      return { message };
     }
   }
 
   private async _request<T = any, D = any>(config: IRequestConfig<D> & { method: RequestMethod }) {
     const resp = await this._requestCore<T, D>(config);
 
-    if (resp) {
+    if (resp && resp.data) {
       resp.data.isSuccess = this._options.isSuccess(resp);
     }
 

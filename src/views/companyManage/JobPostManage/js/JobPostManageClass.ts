@@ -20,7 +20,7 @@ export class JobPostManageClass {
     const resp = await api.getJobPermissionsList().catch(() => null);
     this.loading = false;
 
-    if (resp && resp.data.Status === 1000) {
+    if (resp && resp.data?.Status === 1000) {
       this.list = resp.data.Data as IJobPost[];
       this.listNumber = resp.data.DataNumber;
     }

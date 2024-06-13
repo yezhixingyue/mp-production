@@ -44,7 +44,7 @@ export class ExternalReportHandleClass {
 
     const resp = await api.outsourceApis.getExternalFactoryReportDetail(+TaskCode, this.isInstored, callback).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.result = resp.data.Data;
       return true;
     }
@@ -60,7 +60,7 @@ export class ExternalReportHandleClass {
 
     const resp = await _api(this.result.TaskCode).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         callback();
       };
@@ -79,7 +79,7 @@ export class ExternalReportHandleClass {
       Remark,
     }).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         callback();
       };

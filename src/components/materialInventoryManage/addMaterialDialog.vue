@@ -263,7 +263,7 @@ export default {
       } else {
         // 物料筛选
         api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-          if (res?.data.Data) {
+          if (res?.data?.Data) {
             Data.checkedMaterial = res.data.Data as MaterialInfoType;
             Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
               .filter(it => it.UnitPurpose === 1);

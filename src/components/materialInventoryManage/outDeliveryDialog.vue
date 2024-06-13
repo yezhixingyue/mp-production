@@ -181,7 +181,7 @@ export default {
     // 获取货位详情
     function getGoodsPosition() {
       api.getGoodsPositionDetail(props.getGoodsPositionData).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           const t = res.data.Data as getGoodsPositionType;
           setTimeout(() => {
             Data.allDimensionData.UsePositionDetails = t.UsePositionDetails;
@@ -201,7 +201,7 @@ export default {
       if (val) {
         Data.allDimensionData.UsePositionDetails = null;
         api.getGoodsPositionDimensionPositionPlan(props.getGoodsPositionData.StorehouseID).then(res => {
-          if (res?.data.Status) {
+          if (res?.data?.Status) {
             Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;
             getGoodsPosition();
           }

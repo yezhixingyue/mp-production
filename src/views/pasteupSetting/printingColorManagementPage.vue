@@ -103,7 +103,7 @@ const Data:DataType = reactive({
 
 const getPrintColorList = () => {
   api.getPrintColorList().then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       Data.PrintColorList = res.data.Data as addPrintingColorShowFromType[];
       Data.DataTotal = res.data.DataNumber;
       //
@@ -125,7 +125,7 @@ const addColorPrimaryClick = () => {
     messageBox.failSingleError('保存失败', '请输入显示颜色', () => null, () => null);
   } else {
     api.getPrintColorSave(Data.addPrintingColorShowFrom).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           addColorCloseClick();
           getPrintColorList();
@@ -145,7 +145,7 @@ const editPrintColor = (item:addPrintingColorShowFromType) => {
 const delPrintColor = (item) => {
   messageBox.warnCancelBox('确定要删除此印色吗？', `${item.Name}`, () => {
     api.getPrintColorRemove(item.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         // 删除成功
         getPrintColorList();
       }

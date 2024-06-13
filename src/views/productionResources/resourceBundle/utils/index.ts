@@ -16,7 +16,7 @@ export const getMaterialTypeGroup = async (bool?: boolean) => {
   let list:IMaterialTypeGroupItemType[] = [];
 
   const resp = await api.getMaterialTypeGroup(bool).catch(() => null);
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     list = resp.data.Data as IMaterialTypeGroupItemType[];
   }
 

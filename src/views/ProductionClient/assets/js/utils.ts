@@ -32,7 +32,7 @@ export const filterNextWorkingList = async (TaskWorkingID: string) => {
 
   const resp = await requestFunc(TaskWorkingID).catch(() => null);
 
-  if (!resp || !resp.data.isSuccess) return [];
+  if (!resp || !resp.data?.isSuccess) return [];
 
   const NextWorkingList = resp.data.Data || [];
 

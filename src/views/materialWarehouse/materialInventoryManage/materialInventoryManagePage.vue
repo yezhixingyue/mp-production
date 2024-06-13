@@ -428,7 +428,7 @@ export default {
     function getStockList(Page = 1) {
       Data.getStockData.Page = Page;
       api.getStockList(Data.getStockData).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.StockList = res.data.Data as StockListType[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -516,7 +516,7 @@ export default {
 
     function SeeGoodsAllocation(data) {
       api.getStorehouseStock(data.MaterialID).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.StorehouseStockInfo = res.data.Data as StorehouseStockInfoType[];
           Data.materialManageInfo = { ...data };
           Data.StorehouseStockShow = true;
@@ -527,7 +527,7 @@ export default {
       if ((Data.SetSMSWarnForm.WarnThreshold && Data.SetSMSWarnForm.NoticeMobile)
       || (!Data.SetSMSWarnForm.WarnThreshold && !Data.SetSMSWarnForm.NoticeMobile)) {
         api.getStockSetSMSWarn(Data.SetSMSWarnForm).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             getStockList();
             // 设置成功
             SetSMSWarnCloseClick();
@@ -569,7 +569,7 @@ export default {
     }
     function CancelSMSWarnClick(item) {
       api.getStockCancelSMSWarn(item.MaterialID).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           // 解除成功
           getStockList();
         }

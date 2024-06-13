@@ -13,7 +13,7 @@ export class PlateMakingGroupManageItemHandlerClass {
   /** 删除设备/工厂 */
   async handleEquipmentRemove(id: string) {
     const resp = await api.getPlateMakingGroupEquipmentRemove(id).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         this.itemData.Equipments = this.itemData.Equipments.filter(it => it.LineEquipmentID !== id);
       };
@@ -29,11 +29,13 @@ export class PlateMakingGroupManageItemHandlerClass {
       EquipmentIDS: params.EquipmentIDS,
     };
     const resp = await api.getPlateMakingGroupEquipmentSave(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
-        this.itemData.Equipments = resp.data.Data
-          .filter(it => !it.IsRemove)
-          .map(it => ({ ID: it.EquipmentID, LineEquipmentID: it.LineEquipmentID, Weight: null }));
+        if (resp.data) {
+          this.itemData.Equipments = resp.data.Data
+            .filter(it => !it.IsRemove)
+            .map(it => ({ ID: it.EquipmentID, LineEquipmentID: it.LineEquipmentID, Weight: null }));
+        }
 
         callback();
       };

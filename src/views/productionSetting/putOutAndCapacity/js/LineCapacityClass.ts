@@ -34,7 +34,7 @@ export class LineCapacityClass extends PutOutCapacityCommonListClass<CapacityCon
     };
 
     const resp = await api.propertyApis.getPropertyList(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.rightPropertyList = resp.data.Data || [];
     }
   }

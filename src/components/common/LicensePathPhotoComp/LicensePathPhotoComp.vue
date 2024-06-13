@@ -127,7 +127,7 @@ export default {
           }
           if (!this.cutting) {
             const res = await api.getImageUpload(file).catch(() => null);
-            if (res && res.data.Status === 1000) {
+            if (res && res.data?.Status === 1000) {
               this.$emit('update:modelValue', res.data.Data.Url);
               this.$emit('change', res.data.Data.Url);
             }
@@ -145,7 +145,7 @@ export default {
     async onCropSubmit(blob) {
       this.cropperVisible = false;
       const res = await api.getImageUpload(blob).catch(() => null);
-      if (res && res.data.Status === 1000) {
+      if (res && res.data?.Status === 1000) {
         this.$emit('update:modelValue', res.data.Data.Url);
         this.$emit('change', res.data.Data.Url);
       }

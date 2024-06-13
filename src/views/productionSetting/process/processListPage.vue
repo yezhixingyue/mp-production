@@ -192,7 +192,7 @@ const ToProcess = (item) => {
 const getProcessList = () => {
   Data.processList = [];
   api.getWorkingProcedureList(getProcessListData.value).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       Data.processList = res.data.Data as IWorkingProcedureInfo[];
       getProcessListData.value.DataTotal = res.data.DataNumber as number;
     }
@@ -262,7 +262,7 @@ const getTemplateName = (TemplateID: string) => {
 const delProcess = (item) => {
   messageBox.warnCancelBox('确定要删除此工序吗？', `${item.Name}`, () => {
     api.getWorkingProcedureRemove(item.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         // 删除成功
         const cb = () => {
           getProcessList();

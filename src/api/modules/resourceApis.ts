@@ -5,7 +5,7 @@ import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupT
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { MaterialTypeLimitItemType } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
-import { request } from '../request';
+import { request } from '@/basic/request';
 
 export const resourceApis = {
   /** 生产资源 - 辅助信息相关

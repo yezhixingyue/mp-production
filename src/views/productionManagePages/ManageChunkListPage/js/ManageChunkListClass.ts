@@ -33,7 +33,7 @@ export class ManageChunkListClass {
   private async getProductionLineList() {
     if (this.ProductionLineList.length > 0) return;
     const resp = await api.getProductionLineAll().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const list = (resp.data.Data as ProductLineSimpleType[]).filter(it => it.Type === LineTypeEnum.normal);
       this.ProductionLineList = [{ ID: '', Name: '所有生产线', Type: LineTypeEnum.normal, IsDigital: false }, ...list];
     }
@@ -51,7 +51,7 @@ export class ManageChunkListClass {
     const resp = await api.productionManageApis.getChunkList(temp).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data;
       this.listNumber = resp.data.DataNumber;
     }

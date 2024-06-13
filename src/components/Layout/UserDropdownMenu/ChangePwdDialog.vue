@@ -143,7 +143,7 @@ const submitForm = async () => {
     Password: Password1,
   };
   const resp = await api.getStaffChangePassword(temp).catch(() => null);
-  if (resp && resp.data.Status === 1000) {
+  if (resp && resp.data?.Status === 1000) {
     const cb = () => {
       localVisible.value = false;
     };

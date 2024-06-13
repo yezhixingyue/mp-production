@@ -64,7 +64,7 @@ const remoteMethod = async (query: string) => {
 
     loading.value = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       options.value = [{ StaffID: '', StaffName: '不限' }, ...resp.data.Data];
     } else {
       options.value = [{ StaffID: '', StaffName: '不限' }];

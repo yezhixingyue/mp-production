@@ -334,7 +334,7 @@ export default {
       }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        if (res?.data.Data) {
+        if (res?.data?.Data) {
           Data.tempMaterialInfo = res.data.Data as MaterialInfoType;
           Data.tempMaterialInfo.UnitSelects = Data.tempMaterialInfo.UnitSelects
             .filter(it => it.UnitPurpose === 1);

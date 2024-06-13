@@ -77,7 +77,7 @@ const getTimeLine = async () => { // 获取时间线数据
     const resp = await api.productionManageApis.getOrderGetTimeLine(props.row.ID).catch(() => null);
     loading.value = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const list: IOrderTimelineItem[] = resp.data.Data || [];
       list.sort((a, b) => b.Index - a.Index);
       const index = list.findIndex(it => it.ShowFocus);

@@ -36,7 +36,7 @@ export class EquipmentGroupMaterialTypeLimitClass {
 
     const resp = await api.propertyApis.getPropertyList(options).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const list = resp.data.Data || [];
       this._isFetchedMaterialTypeIds.push(...MaterialTypeList);
       if (isAdditional) {
@@ -55,7 +55,7 @@ export class EquipmentGroupMaterialTypeLimitClass {
     const resp = await api.getEquipmentGroupMaterialTypeList(groupID).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const list = resp.data.Data || [];
       this.list = list.map(it => ({ ...it, LimitConstraints: it.LimitConstraints || [] }));
     }
@@ -63,7 +63,7 @@ export class EquipmentGroupMaterialTypeLimitClass {
 
   public async saveLimitItem(data: IMaterialTypeLimitSaveParams, cb: () => void) {
     const resp = await api.getEquipmentGroupMaterialTypeSave(data).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const callback = async () => {
         const list = data.MaterialTypeIDS.map(id => ({ MaterialTypeID: id, LimitNumber: 0 }));
         this.curEquipmentGroupItem?.MaterialConstraints.unshift(...list);
@@ -77,7 +77,7 @@ export class EquipmentGroupMaterialTypeLimitClass {
 
   public async removeLimitItem(item: IMaterialTypeLimitItemTypeWithName) {
     const resp = await api.getEquipmentGroupMaterialTypeRemove(item.ID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const callback = async () => {
         if (this.curEquipmentGroupItem) {
           const i = this.curEquipmentGroupItem.MaterialConstraints.findIndex(it => it.MaterialTypeID === item.MaterialTypeID);
@@ -100,7 +100,7 @@ export class EquipmentGroupMaterialTypeLimitClass {
     };
     const resp = await api.getEquipmentGroupMaterialTypeSizeSetUp(temp).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = async () => {
         const t = this.list.find(it => it.ID === data.ID);
         if (t) {

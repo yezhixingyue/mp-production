@@ -117,7 +117,7 @@ export default {
         // 第三层级
         if (level === 2) {
           api.getSingleMaterialByType(node.value).then(res => {
-            if (res?.data.Status === 1000) {
+            if (res?.data?.Status === 1000) {
               const temp = res.data.Data as MaterialDataItemType;
               if (temp) {
                 if (temp.MaterialSelects.length) {
@@ -166,7 +166,7 @@ export default {
     }
     onMounted(() => {
       api.getMaterialTypeGroup(true).then(res => {
-        if (res?.data.isSuccess) {
+        if (res?.data?.isSuccess) {
           MaterialTypeGroup.value = res.data.Data as MaterialTypeGroupType[];
         }
       });

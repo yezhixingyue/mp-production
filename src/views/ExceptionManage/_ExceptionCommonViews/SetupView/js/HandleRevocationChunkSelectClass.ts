@@ -54,7 +54,7 @@ export class HandleRevocationChunkSelectClass {
     if (!this.CurrentTaskOrderID) delete temp.CurrentTaskOrderID;
 
     const resp = await api.ExceptionHandlerApis.getPlateChunkList(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.ChunkList = resp.data.Data.map(it => ({ ...it, checked: false }));
       this._lastOrderIDString = OrderCodeListString;
 

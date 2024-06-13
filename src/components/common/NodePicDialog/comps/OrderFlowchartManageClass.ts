@@ -33,7 +33,7 @@ export class OrderFlowchartManageClass {
 
     this.loading = false;
 
-    if (resp?.data.Status === 1000) {
+    if (resp?.data?.Status === 1000) {
       // resp.data.Data 对数据进行处理 根据SemiFinish字段： 如果为null则是组合工序流程，否则为单生产线、大版、块，还需要继续进行筛选组合成具体实例列表
       const _lineChartsList:IOrderFlowchartNode[][] = [];
       const _unionCharts: IOrderFlowchartNode[] = [];

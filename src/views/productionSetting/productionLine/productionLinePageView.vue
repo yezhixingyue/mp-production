@@ -491,7 +491,7 @@ const jumpToEquipment = (item: ILocalProductionLineWorkings) => {
 // 获取生产线工序列表
 const getProductionLineWorkingProcedureList = () => {
   api.getProductionLineWorkingProcedureList(Data.getPocessFrom).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       ProductionLineData.value = res.data.Data as IWorkingProcedureList;
       router.replace({ query: { LineID: Data.getPocessFrom.LineID } });
     }
@@ -500,7 +500,7 @@ const getProductionLineWorkingProcedureList = () => {
 // 删除生产线工序
 const delLineWorking = (item: ILocalProductionLineWorkings) => {
   api.getProductionLineWorkingProcedureRemove(item.LineWorkID).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       MpMessage.success({
         title: '删除成功',
         onOk: getProductionLineWorkingProcedureList,
@@ -517,7 +517,7 @@ const changeLineStatus = () => {
 // 删除生产线分切工序
 const onSplitWorkingRemove = (item: ILocalProductionLineWorkings) => {
   api.getSplitWorkingProcedureRemove(item.LineID).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
         getProductionLineWorkingProcedureList();
         if (actionLine.value) actionLine.value.SplitWordID = '';
@@ -549,7 +549,7 @@ const RadioGroupCompChange = (levelData) => {
 // 获取生产线列表
 const getProductionLineList = (id?: string) => {
   api.getProductionLineList({ Type: isCombine.value ? LineTypeEnum.combine : LineTypeEnum.normal }).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       ProductionLineList.value = res.data.Data as IProductionLineSet[];
       // 默认选中第一条生产线
       if (ProductionLineList.value.length) {
@@ -567,7 +567,7 @@ const getProductionLineList = (id?: string) => {
 const getPrcessList = () => {
   const type = isCombine.value ? FetchWorkingProcedureSearchEnum.OrderReportNotCombination : FetchWorkingProcedureSearchEnum.NotCombination;
   api.getWorkingProcedureSearch(type).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       if (!isCombine.value) { // 如果是普通生产线 对工序列表进行筛选 - 筛选掉物料来源中包含半成品的工序
         PrcessList.value = res.data.Data;
       } else {
@@ -579,7 +579,7 @@ const getPrcessList = () => {
 // 获取拆分列表
 const getsplitPrcessList = () => {
   api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.Split).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       splitPrcessList.value = res.data.Data;
     }
   });
@@ -587,7 +587,7 @@ const getsplitPrcessList = () => {
 // 获取组合工序列表
 const getCombinationPrcessList = () => {
   api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.Combination).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       combinationPrcessList.value = res.data.Data;
     }
   });
@@ -617,7 +617,7 @@ const setSplit = () => {
 };
 const lineOpen = () => {
   api.getProductionLinOpen(actionLine.value?.ID).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
         getProductionLineList(actionLine.value?.ID);
         // 处理数据变动
@@ -655,7 +655,7 @@ const editLine = () => {
 const delLine = () => {
   messageBox.warnCancelBox('确定要删除此生产线吗？', `${actionLine.value?.Name}`, () => {
     api.getProductionLineRemove(actionLine.value?.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           getProductionLineList();
         };
@@ -701,7 +701,7 @@ const addLinePrimaryClick = () => {
     return;
   }
   api.getProductionLineSave(Data.addLineFrom).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
         addLineCloseClick();
         getProductionLineList(Data.addLineFrom.ID);
@@ -727,7 +727,7 @@ const addPrcessPrimaryClick = () => {
     messageBox.failSingleError('保存失败', '请选择工序', () => null, () => null);
   } else {
     api.getProductionLineWorkingProcedureAdd(Data.addPrcessFrom).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           addPrcessCloseClick();
           getProductionLineWorkingProcedureList();
@@ -753,7 +753,7 @@ const setSplitPrimaryClick = () => {
     messageBox.failSingleError('保存失败', '请选择分切工序', () => null, () => null);
   } else {
     api.getProductionLineSetSplit(Data.setSplitFrom).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           const t = ProductionLineList.value.find(it => it.ID === Data.getPocessFrom.LineID);
           if (t) {

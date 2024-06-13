@@ -36,7 +36,7 @@ const getSystemPassword = async () => {
   loading.value = true;
   const resp = await api.getSystemPassword().catch(() => null);
   loading.value = false;
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     oldPwd.value = resp.data.Data;
   }
 };
@@ -53,7 +53,7 @@ const submit = async () => {
 
   const resp = await api.getChangeSystemPassword(newPwd.value).catch(() => null);
 
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     const cb = () => {
       oldPwd.value = newPwd.value;
       newPwd.value = '';

@@ -59,7 +59,7 @@ const init = async () => {
     };
 
     const resp = await api.getStaffList(temp).catch(() => null);
-    if (resp && resp.data.Status === 1000 && resp.data.Data?.[0]) {
+    if (resp && resp.data?.Status === 1000 && resp.data.Data?.[0]) {
       const t = resp.data.Data.find(it => it.StaffID === temp.ID);
       staffForm.value = new Staff(t);
     }
@@ -92,7 +92,7 @@ const submit = async () => {
     }
     // 提交
     const resp = await api.getStaffBaseInfoSave(temp).catch(() => null);
-    if (resp && resp.data.Status === 1000) {
+    if (resp && resp.data?.Status === 1000) {
       const cb = () => {
         StaffManagePageData.value.getDataList(StaffManagePageData.value.condition.Page); // 暂定
         goback();

@@ -8,7 +8,7 @@ import { IOrderFlowchartNode } from '@/components/common/NodePicDialog/js/types'
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IDigitalOrderPlatePrintInfo } from '@/views/productionManagePages/ManageDigitalListPage/js/types';
-import { request, instance } from '../request';
+import { request, instance } from '@/basic/request';
 
 export const productionManageApis = {
   /* 生产管理

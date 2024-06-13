@@ -14,9 +14,8 @@ const chunkSize = 1024 * 1024 * 20;
  * @param {*} num2
  * @returns
  */
-function _getPercentage(num1: number, num2: number, finalPercentage = 100) {
-  let result = +(((num1 / num2) * 100).toFixed(2));
-  if (result > finalPercentage) result = finalPercentage;
+function _getPercentage(num1: number, num2: number) {
+  const result = +(((num1 / num2) * 100).toFixed(2));
   return result;
 }
 
@@ -40,28 +39,24 @@ function _onUploadProgressFunc(e, { initPercentage, lastedPercentage, onUploadPr
  * @param {*} { data, uniqueName, onUploadProgressFunc }  主函数参数
  * @returns
  */
-async function uploadFile(chunkCount, curChunkNum, {
-  data, uniqueName, onUploadProgressFunc, finalPercentage,
-}) {
+async function uploadFile(chunkCount, curChunkNum, { data, uniqueName, onUploadProgressFunc }) {
   if (chunkCount <= 0) return;
+
   const beginNode = curChunkNum;
   const initPercentage = _getPercentage(beginNode, data.size); // 当次初始百分比
   onUploadProgressFunc(initPercentage);
-  if (chunkCount === 1) {
-    const file = data.slice(beginNode, data.size);
-    const lastedPercentage = finalPercentage; // 当次最终百分比
-    await api.UploadFileBreakpointResume(file, uniqueName, beginNode, data.size, data.size, (e) => _onUploadProgressFunc(e, { initPercentage, lastedPercentage, onUploadProgressFunc }));
-    return;
+
+  const endNode = chunkCount === 1 ? data.size : beginNode + chunkSize;
+  const chunk = data.slice(beginNode, endNode);
+  const lastedPercentage = _getPercentage(endNode, data.size);
+
+  const resp = await api.UploadFileBreakpointResume(chunk, uniqueName, beginNode, endNode, data.size, (e) => _onUploadProgressFunc(e, { initPercentage, lastedPercentage, onUploadProgressFunc }));
+
+  if (resp.data?.isSuccess) {
+    await uploadFile(chunkCount - 1, endNode, { data, uniqueName, onUploadProgressFunc }); // 递归调用
+  } else {
+    throw new Error(resp.message || resp?.data?.Message || 'Upload Error!');
   }
-  const file = data.slice(beginNode, beginNode + chunkSize); // 切片
-  let lastedPercentage = _getPercentage(beginNode + chunkSize, data.size); // 当次最终百分比
-  lastedPercentage = lastedPercentage > finalPercentage ? +finalPercentage : lastedPercentage;
-  const res = await api.UploadFileBreakpointResume(file, uniqueName, beginNode, beginNode + chunkSize, data.size, (e) => _onUploadProgressFunc(e, { initPercentage, lastedPercentage, onUploadProgressFunc })); // 上传(传入header Content-Range中所需要的信息)
-  if (res && res.data && res.data.Status === 1000) {
-    await uploadFile(chunkCount - 1, beginNode + chunkSize, {
-      data, uniqueName, onUploadProgressFunc, finalPercentage,
-    }); // 递归调用
-  } else throw new Error(res?.data.Message || 'Upload Error!');
 }
 
 /**
@@ -72,13 +67,9 @@ async function uploadFile(chunkCount, curChunkNum, {
  * @returns 返回布尔值
  */
 async function checkIsTrue(data, uniqueName) {
-  let key = true;
-  const hasUploadedInfo = await api.getUploadedProgress(uniqueName).catch(() => {
-    key = false;
-  });
-  if (!key || !hasUploadedInfo) return false;
-  if (hasUploadedInfo.data.Status !== 1000) return false;
-  if (hasUploadedInfo.data.Data < data.size) return false;
+  const resp = await api.getUploadedProgress(uniqueName);
+  if (!resp.data?.isSuccess) return false;
+  if (resp.data.Data < data.size) return false;
   return true;
 }
 
@@ -90,40 +81,34 @@ async function checkIsTrue(data, uniqueName) {
  * @param {*} onUploadProgressFunc 回调函数，用于设置进度条的百分比
  * @returns 返回true或false，用于告知该函数上传结果: 成功 还是 失败
  */
-async function breakPointUpload(data: File, uniqueName: string, onUploadProgressFunc: (percentage: number) => void, finalPercentage = 100) {
-  let error = '';
+async function breakPointUpload(data: File, uniqueName: string, onUploadProgressFunc: (percentage: number) => void) {
+  const resp4Progress = await api.getUploadedProgress(uniqueName);
+  if (!resp4Progress.data?.isSuccess) {
+    return { status: false, error: resp4Progress.message || resp4Progress.data?.Message || '上传失败' };
+  }
 
-  const hasUploadedInfo = await api.getUploadedProgress(uniqueName).catch((err) => {
-    if (err.message === 'Network Error') error = '网络连接错误';
-    if (err.message && err.message.includes('timeout')) error = '网络超时';
-    if (typeof err === 'object') error = err.message || '未知错误';
-  });
-
-  if (error || !hasUploadedInfo) return { status: false, error };
-
-  if (hasUploadedInfo.data.Status !== 1000) return { status: false, error: hasUploadedInfo.data.Message }; // 获取已上传信息
-
-  if (+hasUploadedInfo.data.Data === +data.size && +hasUploadedInfo.data.Data === 0) {
+  if (+resp4Progress.data.Data === +data.size && +resp4Progress.data.Data === 0) {
     return { status: false, error: '文件找不到' };
   }
 
-  if (+hasUploadedInfo.data.Data < +data.size) {
-    onUploadProgressFunc(_getPercentage(+hasUploadedInfo.data.Data, data.size, finalPercentage)); // 根据已上传信息设置初始已上传百分比
+  if (+resp4Progress.data.Data < +data.size) {
+    onUploadProgressFunc(_getPercentage(+resp4Progress.data.Data, data.size)); // 根据已上传信息设置初始已上传百分比
 
-    const chunkCount = Math.ceil((data.size - +hasUploadedInfo.data.Data) / (chunkSize)); // 计算出总共需要上传的次数
-    const curChunkNum = +hasUploadedInfo.data.Data; // 获取到当前已上传的节点位置
-    await uploadFile(chunkCount, curChunkNum, {
-      data, uniqueName, onUploadProgressFunc, finalPercentage,
-    }).catch((err) => {
-      if (err.message === 'Network Error') error = '网络出错';
-      if (err.message && err.message.includes('timeout')) error = '网络超时';
+    const chunkCount = Math.ceil((data.size - +resp4Progress.data.Data) / (chunkSize)); // 计算出总共需要上传的次数
+    const curChunkNum = +resp4Progress.data.Data; // 获取到当前已上传的节点位置
+
+    let error = '';
+    await uploadFile(chunkCount, curChunkNum, { data, uniqueName, onUploadProgressFunc }).catch((err) => {
       if (typeof err === 'object') error = err.message || '未知错误';
-    }); // 上传
+    });
     if (error) return { status: false, error };
+
     if (await checkIsTrue(data, uniqueName)) return { status: true, error: '' };
+
     return { status: false, error: '文件上传失败' };
   }
-  onUploadProgressFunc(+finalPercentage);
+
+  onUploadProgressFunc(100);
   return { status: true, error: '' };
 }
 

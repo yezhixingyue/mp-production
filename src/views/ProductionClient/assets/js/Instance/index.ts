@@ -81,7 +81,7 @@ export class TerminalEquipmentInstance {
       Code,
     };
     const resp = await clientApi.getEquipmentReceive(temp, cb).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       return resp.data.Data;
     }
     return null;
@@ -91,7 +91,7 @@ export class TerminalEquipmentInstance {
   private async getErrorInfo() {
     if (this.ErrorInfo) return;
     const resp = await clientApi.getErrorEquipmentTask(this.Equipment.ID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.ErrorInfo = resp.data.Data;
     }
   }
@@ -120,7 +120,7 @@ export class TerminalEquipmentInstance {
     this.isCurTaskLoading = false;
 
     // 3. 处理
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.curTaskData = resp.data.Data;
       this.TaskListData.getEquipmentTaskList();
     }
@@ -134,8 +134,9 @@ export class TerminalEquipmentInstance {
     };
     const resp = await clientApi.getEquipmentStop(temp).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
+        if (!resp.data) return;
         // console.log('cb');
         // 1. 设置设备状态为报停状态
         this.Equipment.Status = EquipmentStatusEnum.failure;
@@ -158,7 +159,7 @@ export class TerminalEquipmentInstance {
   public async getEquipmentRenew() {
     const resp = await clientApi.getEquipmentRenew(this.Equipment.ID).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         this.Equipment.Status = EquipmentStatusEnum.normal;
         this.getTaskInfo();
@@ -184,7 +185,7 @@ export class TerminalEquipmentInstance {
 
     const resp = await clientApi.getEquipmentReprot(temp).catch(() => null);
 
-    if (resp?.data.Status === 1000) {
+    if (resp?.data?.Status === 1000) {
       const cb = () => {
         this.getTaskInfo();
         callback();
@@ -201,7 +202,7 @@ export class TerminalEquipmentInstance {
 
     const resp = await clientApi.getEquipmentTaskBatchReport(temp).catch(() => null);
 
-    if (resp?.data.Status === 1000) {
+    if (resp?.data?.Status === 1000) {
       const cb = () => {
         this.getTaskInfo();
         callback();
@@ -225,7 +226,7 @@ export class TerminalEquipmentInstance {
     };
     const resp = await clientApi.getEquipmentTaskError(temp).catch(() => null);
 
-    if (resp?.data.Status === 1000) {
+    if (resp?.data?.Status === 1000) {
       const cb = () => {
         this.getTaskInfo();
         callback();

@@ -24,12 +24,12 @@ const handleExternalConfirmFetch = async (rows: Row[], isConfirm: boolean) => {
 
     const resp = await api.outsourceApis.getExternalFactoryTakeOrder({ List }).catch(() => null);
 
-    return !!resp?.data.isSuccess;
+    return !!resp?.data?.isSuccess;
   }
 
   // 撤回
   const result = await Promise.all(rows.map(row => api.outsourceApis.getExternalFactoryRevocation(row.ID).catch(() => null)));
-  const t = result.find(it => !(it?.data.isSuccess)); // 去找到一个不成功的项目
+  const t = result.find(it => !(it?.data?.isSuccess)); // 去找到一个不成功的项目
   return !t;
 };
 
@@ -126,7 +126,7 @@ export class ManageListClass {
 
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = getLocalTaskList(resp.data.Data, false, true);
       this.listNumber = resp.data.DataNumber;
     }
@@ -137,7 +137,7 @@ export class ManageListClass {
   private async _getSubcontractorFactoryList() { // 获取外协工厂列表数据 用于列表筛选
     const resp = await api.getSubcontractorFactoryList({ Page: 1, PageSize: 9999 }).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.FactoryList.push(...resp.data.Data);
     }
   }
@@ -196,7 +196,7 @@ export class ManageListClass {
     const List = rows.map(it => ({ TaskID: it.ID }));
     const resp = await api.outsourceApis.getExternalFactoryDownload({ List }).catch(() => null);
 
-    if (resp?.data.isSuccess && resp.data.Message) {
+    if (resp?.data?.isSuccess && resp.data.Message) {
       const url = resp.data.Message;
 
       const link = document.createElement('a');

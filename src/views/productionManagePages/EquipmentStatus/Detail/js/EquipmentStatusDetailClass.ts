@@ -40,7 +40,7 @@ export class EquipmentTaskDetailClass {
     const resp = await api.productionManageApis.getEquipmentTaskList(this.condition).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.TaskList = resp.data.Data || [];
       this.TaskListNumber = resp.data.DataNumber;
     }
@@ -51,7 +51,7 @@ export class EquipmentTaskDetailClass {
     // 设置成功后从列表中删除掉该项，并且总条码数 - 1
     const resp = await api.productionManageApis.getTaskChangeEquipment(TaskWorkingID, EquipmentID).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         this.TaskListNumber -= 1;
         this.TaskList = this.TaskList.filter(it => it.Working.TaskWorkingID !== TaskWorkingID);

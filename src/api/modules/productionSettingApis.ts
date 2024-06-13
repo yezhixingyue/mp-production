@@ -7,7 +7,7 @@ import {
 } from '@/views/productionSetting/PlateMakingGroupView/js/types';
 import { ISetPlateMakingWorkParams, ISetPlateMakingWorkSaveResult } from '@/views/productionSetting/productionLine/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
-import { request } from '../request';
+import { request } from '@/basic/request';
 
 const api = {
   // 配送方式 ------------------------ Express

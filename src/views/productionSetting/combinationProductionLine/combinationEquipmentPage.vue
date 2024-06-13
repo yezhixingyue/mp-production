@@ -99,7 +99,7 @@ const afterRemove = (ID, type: EquipmentSetupType) => {
 };
 const handleRemove = (item, type: EquipmentSetupType = 'default') => {
   api.getProductionLinetEquipmentRemove(item.LineEquipmentID).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
         setStorage();
         afterRemove(item.ID, type);
@@ -152,9 +152,9 @@ function setStorage() { // 设置会话存储
 }
 const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () => void) => {
   api.getProductionLinetEquipmentSave(params).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
-        setEquipment([...params.EquipmentIDS], res.data.Data as IEquipmentGroupSaveResult[], params.WorkSourceType);
+        setEquipment([...params.EquipmentIDS], res.data?.Data as IEquipmentGroupSaveResult[], params.WorkSourceType);
         setStorage();
         callback();
       };

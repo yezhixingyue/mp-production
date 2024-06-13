@@ -17,7 +17,7 @@
         </h2>
         <el-progress :percentage="it.percentage" :status="it.status" />
       </div>
-      <el-icon class="close" v-show="isError" @click="localVisible = false"><CircleClose /></el-icon>
+      <el-icon class="close" v-show="isError" @click="localVisible = false"><Close /></el-icon>
     </div>
   </DialogContainerComp>
 </template>

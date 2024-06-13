@@ -60,7 +60,7 @@ const getTimeLine = async () => { // 获取时间线数据
     const resp = await api.productionManageApis.getOrderCancleRelation(props.row.ID).catch(() => null);
     loading.value = false;
 
-    if (resp?.data.isSuccess && resp.data.Data) {
+    if (resp?.data?.isSuccess && resp.data.Data) {
       ruleForm.value = {
         ID: resp.data.Data.ID,
         PlateList: resp.data.Data.PlateList.map(it => ({ ...it, IsWholePlate: '' })),

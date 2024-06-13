@@ -159,7 +159,7 @@ const RadioGroupCompValue = computed(() => ({
 function getFoldWayTemplateList(Page = 1) {
   Data.getFoldWayTemplateData.Page = Page;
   api.getFoldWayTemplateList(Data.getFoldWayTemplateData).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       Data.FoldWayTemplateList = res.data.Data as FoldWayTemplateType[];
       Data.DataTotal = res.data.DataNumber;
       //
@@ -180,7 +180,7 @@ function RadioGroupCompChange(levelData) {
 function delFoldWayTemplate(item) {
   messageBox.warnCancelBox('确定要删除此折手模板吗？', `${item.Name}`, () => {
     api.getFoldWayTemplateRemove(item.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         // 删除成功
         getFoldWayTemplateList();
       }
@@ -217,7 +217,7 @@ function saveEquipment(Equipments) {
     ID: Data.ApplyEquipment?.ID,
     UseableEquipmentGroupList: Equipments,
   }).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
         Data.ApplyEquipmentShow = false;
         getFoldWayTemplateList();
@@ -257,7 +257,7 @@ onMounted(() => {
   PasteupSettingStore.getFoldWayTemplateClassList();
   // 获取所有适用设备
   api.getEquipmentGroup().then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const temp = res.data.Data as _UseClassEquipmentGroupType[];
       Data.applyEquipmentList = [];
       temp.forEach(item => {

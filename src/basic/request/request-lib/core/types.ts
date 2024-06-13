@@ -16,9 +16,10 @@ export type RequestConfigResponseType =
   | 'stream';
 
 export interface IResponseType<T = any> {
-  data: T;
-  status: number;
-  statusText: string;
+  data?: T;
+  status?: number;
+  statusText?: string;
+  message?: string
 }
 
 export interface IMpzjResponse<T = any> {
@@ -80,8 +81,6 @@ interface IRespMsgOption {
 export interface ICoreOptions {
   /** baseURL */
   baseURL?: string
-  /** 状态在此范围内时将会返回结果  默认 [200] */
-  validStatuses: number[]
   cache?: {
     duration: number // 缓存时间 默认500毫秒 优先级低于请求方法上相同配置
     isCacheable: (resp: IResponseType<IMpzjResponse>) => boolean // 判断响应结果是否可以被缓存
@@ -101,6 +100,6 @@ export interface ICoreOptions {
 
 export interface IRequestPoolItem {
   hash: string;
-  requester: Promise<IResponseType>
+  executor: Promise<IResponseType>
   controller: AbortController;
 }

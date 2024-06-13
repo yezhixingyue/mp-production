@@ -172,7 +172,7 @@ export default {
 
     function getStorehouseList() {
       api.getStorehouseList(Data.getStorehouseData).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.StorehouseList = res.data.Data as SaveStorehouseFormType[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -240,7 +240,7 @@ export default {
     function delStorehouse(item) {
       messageBox.warnCancelBox('确定要删除此仓库吗？', `${item.StorehouseName}`, () => {
         api.getStorehouseRemove(item.StorehouseID).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             // messageBox.successSingle(
             //   '删除成功',
             //   () => (getStorehouseList()),
@@ -259,7 +259,7 @@ export default {
       } else {
         // Data.SaveStorehouseForm.StorehouseImg = Data.SaveStorehouseForm.StorehouseName;
         api.getStorehouseSave(Data.SaveStorehouseForm).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             const cb = () => {
               // 保存成功
               getStorehouseList();

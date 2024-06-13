@@ -216,7 +216,7 @@ export default {
       };
       temp.DimensionIDS = Data.selectData.map(res => res.inputValue);
       api.getGoodsPositionDetail(temp).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           const t = res.data.Data as getGoodsPositionType;
           Data.allDimensionData.UsePositionDetails = null;
           setTimeout(() => {
@@ -262,7 +262,7 @@ export default {
 
       // 此处是否需要调用接口验证空格是否连续 ??? 如需要 加至此处
       const resp = await api.getGoodsPositionSave(temp).catch(() => null);
-      if (resp?.data.Status === 1000) {
+      if (resp?.data?.Status === 1000) {
         return {
           ...temp,
           PositionID: resp.data.Data,
@@ -273,7 +273,7 @@ export default {
 
     async function handleRemove(id): Promise<boolean> {
       const resp = await api.getGoodsPositionRemove(id).catch(() => null);
-      if (resp?.data.Status === 1000) {
+      if (resp?.data?.Status === 1000) {
         return new Promise((resolve) => {
           const cb = () => {
             resolve(true);
@@ -295,7 +295,7 @@ export default {
 
       Data.GoodsPositionSaveData.DetailSets = temp;
       api.getGoodsPositionSave(Data.GoodsPositionSaveData).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           getGoodsPosition();
           Data.actionCells = [];
         }
@@ -321,7 +321,7 @@ export default {
       Data.StorehouseName = route.params.StorehouseName as string;
       Data.GoodsPositionSaveData.StorehouseID = route.params.StorehouseID as string;
       api.getGoodsPositionDimensionSelect(route.params.StorehouseID).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;
         }
       });

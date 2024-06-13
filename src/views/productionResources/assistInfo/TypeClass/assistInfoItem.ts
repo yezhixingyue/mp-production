@@ -43,12 +43,14 @@ export class AssistInfoItem {
     if (resp?.data?.isSuccess) {
       const title = this.ID ? '编辑成功' : '添加成功';
       const callback = () => {
-        const temp: IAssistListItem = {
-          ID: resp.data.Data,
-          Name: this.Name,
-          Type: this.Type,
-        };
-        cb(temp);
+        if (resp.data) {
+          const temp: IAssistListItem = {
+            ID: resp.data.Data,
+            Name: this.Name,
+            Type: this.Type,
+          };
+          cb(temp);
+        }
       };
       MpMessage.dialogSuccess({ title, onOk: callback, onCancel: callback });
     }

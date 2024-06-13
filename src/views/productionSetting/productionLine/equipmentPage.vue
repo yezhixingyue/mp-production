@@ -84,7 +84,7 @@ const afterRemove = (ID, type: EquipmentSetupType = 'default') => {
 };
 const handleRemove = (item, type: EquipmentSetupType = 'default') => {
   api.getProductionLinetEquipmentRemove(item.LineEquipmentID).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
         setStorage();
         afterRemove(item.ID, type);
@@ -141,9 +141,9 @@ const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () =>
     temp.WorkSourceType = WorkSourceTypeEnum.Split;
   }
   api.getProductionLinetEquipmentSave(temp).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       const cb = () => {
-        setEquipment([...params.EquipmentIDS], res.data.Data as ISaveResult[], params.WorkSourceType);
+        setEquipment([...params.EquipmentIDS], res.data?.Data as ISaveResult[], params.WorkSourceType);
         setStorage();
         callback();
       };

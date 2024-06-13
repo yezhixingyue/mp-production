@@ -55,13 +55,13 @@ export default {
       this.loading = true;
       const resp = await api.getConvertServerList().catch(() => null);
       this.loading = false;
-      if (resp && resp.data.Status === 1000) {
+      if (resp && resp.data?.Status === 1000) {
         this.ConvertServerList = resp.data.Data || [];
       }
     },
     async onAdapterRemoveClick(item, index) {
       const resp = await api.getConvertServerRemove(item.ID).catch(() => null);
-      if (resp && resp.data.Status === 1000) {
+      if (resp && resp.data?.Status === 1000) {
         const cb = () => {
           this.ConvertServerList.splice(index, 1);
         };

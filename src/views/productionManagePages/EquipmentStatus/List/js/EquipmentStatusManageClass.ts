@@ -75,7 +75,7 @@ export class EquipmentStatusManageClass {
     // 清除原画
     this.clearBoard();
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data.map(it => ({
         ...it,
         _menuBorder: {
@@ -111,7 +111,7 @@ export class EquipmentStatusManageClass {
 
     const resp = await api.getEquipmentClassificationList(undefined, true).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.EquipmentClassList.push(...resp.data.Data);
 
       if (resp.data.Data.length > 0 && typeof resp.data.Data[0].ID === 'number') {

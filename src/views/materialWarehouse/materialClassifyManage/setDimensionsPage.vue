@@ -158,7 +158,7 @@ export default {
     }
     function getDimensisnsList() {
       api.getMaterialTypeSizeList(Data.getDimensisnsData).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.dimensisnsList = res.data.Data as never[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -179,7 +179,7 @@ export default {
     function delDimensions(item) {
       messageBox.warnCancelBox('确定要删除此尺寸吗？', `${item.SizeName}`, () => {
         api.getMaterialTypeSizeRemove(item.SizeID).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
           // 删除成功
             getDimensisnsList();
             setStorage();
@@ -199,7 +199,7 @@ export default {
         messageBox.failSingleError('保存失败', '请输入尺寸高度', () => null, () => null);
       } else {
         api.getMaterialTypeSizeSave(Data.addDimensionsForm).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             // 成功
             const cb = () => {
               closeClick();

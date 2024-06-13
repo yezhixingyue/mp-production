@@ -32,7 +32,7 @@ export class HandleExceptionClass {
 
     const resp = await api.ExceptionHandlerApis.getProductionExceptionDetail(this.rowData.ID).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.TaskExceptionDetail = resp.data.Data;
       this.ruleForm.init(resp.data.Data);
     }
@@ -44,7 +44,7 @@ export class HandleExceptionClass {
 
     const resp = await api.ExceptionHandlerApis.getProductionExceptionHandling(temp).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         if (this.rowData) {
           this.rowData.Status = ExceptionHandlerStatusEnum.processed;

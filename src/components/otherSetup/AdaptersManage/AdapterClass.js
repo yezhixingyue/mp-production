@@ -20,7 +20,7 @@ export default class AdapterClass {
 
   async save() {
     const resp = await api.getConvertServerSave(this).catch(() => null);
-    if (resp && resp.data.Status === 1000) {
+    if (resp && resp.data?.Status === 1000) {
       if (!this.ID && resp.data.Data) this.ID = resp.data.Data;
       return true;
     }

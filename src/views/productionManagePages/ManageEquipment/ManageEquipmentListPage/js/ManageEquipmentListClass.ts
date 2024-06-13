@@ -31,7 +31,7 @@ export class ManageEquipmentListClass {
   /** 解除绑定 */
   static async handleItemUnbind(item: IManageEquipmentInfo) {
     const resp = await api.getEquipmentUnbind(item.ID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const _item = item;
         _item.Terminal = '';
@@ -47,7 +47,7 @@ export class ManageEquipmentListClass {
   /** 开关机 */
   static async handleItemSwitchOpen(item: IManageEquipmentInfo) {
     const resp = await api.getEquipmentOnOffSetup(item.ID, !item.IsOpen).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const _item = item;
         _item.IsOpen = !item.IsOpen;

@@ -34,7 +34,7 @@ export class PlateMakingGroupManageClass {
     const resp = await api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.PlateMakingGroup).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.WorkingList = resp.data.Data;
       if (this.WorkingList.length > 0) {
         this.WorkID = this.WorkingList[0].ID;

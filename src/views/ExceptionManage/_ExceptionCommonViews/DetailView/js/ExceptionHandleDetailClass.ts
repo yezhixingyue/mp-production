@@ -23,7 +23,7 @@ export class ExceptionHandleDetailClass {
 
     const resp = await api.ExceptionHandlerApis.getProductionExceptionDealDetail(this.rowData.ID).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.handleDetailData = resp.data.Data;
     }
   }

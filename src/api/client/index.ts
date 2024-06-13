@@ -1,7 +1,8 @@
 import { IEquipmentErrorInfo, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IUndeliveredListItem } from '@/views/ProductionClient/Comps/EquipmentPageContent/FloatingBall/WebsocketHandler';
 import { ILoginSubmitForm } from '@/store/modules/user/types';
-import { clientInstance as instance } from '../request/client';
+import { clientInstance as instance } from '@/basic/request/client';
+// import { clientInstance as instance } from '../request/client';
 
 const clientApi = {
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login

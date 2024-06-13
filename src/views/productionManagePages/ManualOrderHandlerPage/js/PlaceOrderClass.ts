@@ -204,7 +204,7 @@ export class PlaceOrderClass {
 
     const resp = await api.ManualOrderHandlerApis.getCreateOrder(temp).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.OrderID = resp.data.Data as string;
       return true;
     }
@@ -384,7 +384,7 @@ export class PlaceOrderClass {
   /** 设置当前生产线 根据参数区分单一和组合生产线 */
   async setCurProdutionLine(item: ProductLineSimpleType) {
     const resp = await api.ManualOrderHandlerApis.getProductionLineDetail(item.ID).catch(() => null);
-    if (!resp) return;
+    if (!resp?.data?.isSuccess) return;
     const Detail: IProductionLineDetail = resp.data.Data;
     const _originData: IProductionInstanceOriginData = {
       ...item,

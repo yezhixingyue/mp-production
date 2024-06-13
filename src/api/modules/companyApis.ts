@@ -1,7 +1,7 @@
 import { IStaff } from '@/views/companyManage/StaffManage/js/types';
 import { IDepartment } from '@/views/companyManage/DepartmentManage/js/types';
 import { IJobPost } from '@/views/companyManage/JobPostManage/js/types';
-import { request } from '../request';
+import { request } from '@/basic/request';
 
 export const companyApis = {
   /* 公司管理相关接口

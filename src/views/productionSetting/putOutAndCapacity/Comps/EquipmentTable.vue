@@ -81,7 +81,7 @@ const onWeightSaveClick = async () => { // 保存权重设置
   const resp = await api.getProductionLinetEquipmentWeightSave(list).catch(() => null);
 
   // 3. 修改成功处理
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     const cb = () => {
       // 4. 成功后的数据改动 - 是否修改生产线可用性?
       emit('setWeight', list);

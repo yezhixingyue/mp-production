@@ -133,7 +133,7 @@ const getTableDataList = (Page = 1) => {
   ShiftTimeList.value = [];
   if (getShiftTimeLisData.ProvinceName === '不限') temp.ProvinceName = '';
   api.getShiftTimeList(temp).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       ShiftTimeList.value = res.data.Data as IShiftTimeItem[];
       ShiftTimeListNumber.value = res.data.DataNumber;
     }
@@ -142,7 +142,7 @@ const getTableDataList = (Page = 1) => {
 const onRemoveClick = (item) => {
   messageBox.warnCancelBox('确定要删除此发货班次吗？', `${item.ItemName}`, () => {
     api.getShiftTimeRemove(item.ItemID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         // 删除成功
         getTableDataList();
       }

@@ -1,4 +1,4 @@
-import { instance } from '../request';
+import { instance } from '@/basic/request';
 
 export const downloadExcelApis = {
   /* 导出excel表格相关接口 --- 全部导出Excel文件的接口都应放置到该文件设置中，以便于在axios中统一进行处理

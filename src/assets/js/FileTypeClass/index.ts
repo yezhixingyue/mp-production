@@ -31,7 +31,6 @@ export default class FileTypeClass {
    * @param {*} file
    * @param {*} uniqueName
    * @param {*} onUploadProgressFunc 调用进度条方法
-   * @param {*} finalPercentage
    * @returns
    * @memberof FileTypeClass
    */
@@ -39,8 +38,7 @@ export default class FileTypeClass {
     file: File,
     uniqueName: string,
     onUploadProgressFunc: (percentage: number) => void,
-    finalPercentage = 100,
   ): Promise<{ status: boolean; error: string }> {
-    return UploadFileByBreakPoint(file, uniqueName, onUploadProgressFunc, finalPercentage);
+    return UploadFileByBreakPoint(file, uniqueName, onUploadProgressFunc);
   }
 }

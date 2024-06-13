@@ -43,7 +43,7 @@ export default {
     async getDetailData() {
       const { PositionID } = this.$route.params;
       const resp = await this.api.getJobPermissionsDetail(PositionID).catch(() => null);
-      if (resp && resp.data.Status === 1000) {
+      if (resp && resp.data?.Status === 1000) {
         this.detailData = resp.data.Data;
       }
     },
@@ -85,7 +85,7 @@ export default {
         PermissionList.push(temp);
       });
       const resp = await this.api.getJobPermissionSave({ PermissionList, PositionID: this.detailData.PositionID }).catch(() => null);
-      if (resp && resp.data.Status === 1000) {
+      if (resp && resp.data?.Status === 1000) {
         MpMessage.success({ title: '保存成功', onOk: this.onGoBackClick, onCancel: this.onGoBackClick });
       }
     },

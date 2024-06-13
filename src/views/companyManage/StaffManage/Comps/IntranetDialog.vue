@@ -63,7 +63,7 @@ export default {
     async onSubmit() {
       const temp = { Content: this.Content };
       const resp = await api.getIntranetSetup(temp).catch(() => null);
-      if (resp?.data.Status === 1000) {
+      if (resp?.data?.Status === 1000) {
         const cb = () => {
           this.visible = false;
         };
@@ -72,7 +72,7 @@ export default {
     },
     async getIntranetContent() {
       const resp = await api.getIntranetContent().catch(() => null);
-      if (resp && resp.data.Status === 1000) {
+      if (resp && resp.data?.Status === 1000) {
         this.Content = resp.data.Data || '';
       } else {
         this.Content = '';

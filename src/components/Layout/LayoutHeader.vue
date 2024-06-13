@@ -208,9 +208,9 @@ export default {
     const getPositionData = async () => {
       const [resp1, resp2] = await Promise.all([api.getJobPermissionsList().catch(() => null), api.getDepartmentList().catch(() => null)]);
 
-      if (resp1?.data.isSuccess) jobPostList.value = resp1.data.Data;
+      if (resp1?.data?.isSuccess) jobPostList.value = resp1.data.Data;
 
-      if (resp2?.data.isSuccess) departmentLevelList.value = getDepartmentLevelList(resp2.data.Data);
+      if (resp2?.data?.isSuccess) departmentLevelList.value = getDepartmentLevelList(resp2.data.Data);
     };
     const departmentDisplayList = computed(() => (user.value ? getDepartmentDisplayList(user.value, departmentLevelList.value, jobPostList.value) : []));
 

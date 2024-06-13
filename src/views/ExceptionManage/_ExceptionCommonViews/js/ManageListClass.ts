@@ -40,7 +40,7 @@ export class ManageListClass {
 
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data;
       this.listNumber = resp.data.DataNumber;
     }

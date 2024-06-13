@@ -185,7 +185,7 @@ const onRemoveClick = (item: IStaff, index: number) => {
 const handleUplock = async (item:IStaff) => {
   const resp = await api.getStaffImpositionUnLock(item.StaffID).catch(() => null);
 
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     MpMessage.success('释放成功');
   }
 };

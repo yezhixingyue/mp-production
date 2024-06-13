@@ -2,7 +2,7 @@ import { ITaskExceptionHandlingDetail } from '@/views/ExceptionManage/_Exception
 import { ITaskExceptionDetail, ITaskExceptionInfo } from '@/views/ExceptionManage/_ExceptionCommonViews/js/type';
 import { IRevocationChunk } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/type';
 import { ISchedulingExceptionListItem } from '@/views/ExceptionManage/ScheduleException/js/type';
-import { instance } from '../request';
+import { instance } from '@/basic/request';
 
 /**
  * 异常处理模块接口

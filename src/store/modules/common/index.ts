@@ -49,19 +49,19 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = { // 存
     async getDistrictList() {
       if (this.DistrictList.length > 0) return;
       const resp = await api.getDistrictList().catch(() => null);
-      if (resp?.data.isSuccess) {
+      if (resp?.data?.isSuccess) {
         this.DistrictList = resp.data.Data;
       }
     },
     async getStaffSelect() { // 回转页面信息后删除掉回转前的路由信息,
       const resp = await api.getStaffSelect().catch(() => null);
-      if (resp?.data.Status === 1000) {
+      if (resp?.data?.Status === 1000) {
         this.StaffSelectList = resp.data.Data as StaffSelectListType[];
       }
     },
     async getExpressList() { // 配送方式列表
       api.getExpressList().then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           this.ExpressList = res.data.Data as ExpressListType[];
         }
       });

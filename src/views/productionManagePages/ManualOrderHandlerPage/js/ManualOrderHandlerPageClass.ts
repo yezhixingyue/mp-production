@@ -127,8 +127,8 @@ export class ManualOrderHandlerPageClass {
     }
     this.source.sourceOrderData = null;
     const resp = await api.ManualOrderHandlerApis.getSellPartOrderDetail(serverID, orderID).catch(() => null);
-    if (resp && resp.data.isSuccess) {
-      const t = this.ExpressList.find(it => it.ID === resp.data.Data.Address?.Express?.Second);
+    if (resp && resp.data?.isSuccess) {
+      const t = this.ExpressList.find(it => it.ID === resp.data?.Data.Address?.Express?.Second);
       if (!t) {
         MpMessage.error('订单解析失败', `在生产系统中找不到${resp.data.Data.Address?.ExpressText || '配送方式'}`);
         return;
@@ -159,7 +159,7 @@ export class ManualOrderHandlerPageClass {
 
   private async getExpressList() {
     const resp = await api.getExpressList().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const list = (resp.data.Data as IBaseProperty<number>[]);
       this.ExpressList = [...list];
     }
@@ -169,7 +169,7 @@ export class ManualOrderHandlerPageClass {
 
   private async getConvertServerList() {
     const resp = await api.getConvertServerList().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const list = resp.data.Data as IBaseProperty<number>[];
       this.ConvertServerList = list;
     }
@@ -180,7 +180,7 @@ export class ManualOrderHandlerPageClass {
   private async getProductionLineList() {
     if (this.ProductionLineList.length > 0) return;
     const resp = await api.getProductionLineAll().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.ProductionLineList = resp.data.Data as ProductLineSimpleType[];
     }
   }
@@ -202,7 +202,7 @@ export class ManualOrderHandlerPageClass {
   getSpecialColorList = async () => {
     if (this.SpecialColorList.length > 0) return;
     const resp = await api.getPrintColorList(false).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.SpecialColorList = resp.data.Data;
     }
   }
@@ -214,7 +214,7 @@ export class ManualOrderHandlerPageClass {
   getAssistNumbericalList = async () => {
     if (this.AssistNumbericalList.length > 0) return;
     const resp = await api.getNoteAll(AssistInfoTypeEnum.numerical).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.AssistNumbericalList = resp.data.Data;
     }
   }
@@ -227,7 +227,7 @@ export class ManualOrderHandlerPageClass {
   private async getFileSuffixList() {
     if (this._fileAccept.assist) return;
     const resp = await api.getFileSuffixList().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this._fileAccept.assist = resp.data.Data.join(',');
     }
   }

@@ -35,11 +35,13 @@ export class EquipmentClassificationItemClassType { // EquipmentClassificationIt
     if (resp?.data?.isSuccess) {
       const title = this.ID ? '编辑成功' : '添加成功';
       const callback = () => {
-        const temp: EquipmentClassificationListItem = {
-          ID: +resp.data.Data,
-          Name: this.Name,
-        };
-        cb(temp);
+        if (resp.data) {
+          const temp: EquipmentClassificationListItem = {
+            ID: +resp.data.Data,
+            Name: this.Name,
+          };
+          cb(temp);
+        }
       };
       MpMessage.dialogSuccess({ title, onOk: callback, onCancel: callback });
     }

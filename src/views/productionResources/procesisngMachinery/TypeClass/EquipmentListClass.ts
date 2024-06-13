@@ -84,7 +84,7 @@ export class EquipmentListClass {
       IsDoubleBite: data.IsDoubleBite,
     };
     const resp = await api.getEquipmentSave(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const isEdit = this.curEditItem;
 
       const title = isEdit ? '编辑成功' : '添加成功';
@@ -96,7 +96,7 @@ export class EquipmentListClass {
             const it: EquipmentListItemType = { ...this.list[i], ...temp, ClassID: data.ClassID };
             this.list.splice(i, 1, it);
           }
-        } else {
+        } else if (resp.data) {
           const it: EquipmentListItemType = { ...data, ID: resp.data.Data };
           this.list.unshift(it);
           this.listNumber += 1;
@@ -110,7 +110,7 @@ export class EquipmentListClass {
 
   public async handleItemRemove(data: EquipmentListItemType) {
     const resp = await api.getEquipmentRemove(data.ID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const i = this.list.findIndex(it => it.ID === data.ID);
         if (i > -1) {
@@ -125,7 +125,7 @@ export class EquipmentListClass {
   public async handleItemSetState(data: EquipmentListItemType) {
     const temp = { IsUseable: !data.IsUseable, ID: data.ID };
     const resp = await api.getEquipmentSetStatus(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const title = temp.IsUseable ? '设置成功，已启用' : '设置成功，已停用';
       const cb = () => {
         const it = this.list.find(it => it.ID === data.ID);

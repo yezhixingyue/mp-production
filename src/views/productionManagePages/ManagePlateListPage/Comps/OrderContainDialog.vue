@@ -52,7 +52,7 @@ const onOpen = async () => {
     const resp = await api.productionManageApis.getPlateOrderList(props.item.ID).catch(() => null);
     loading.value = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       orderList.value = resp.data.Data.map(it => ({ ...it, _SellSideProductName: getSellSideProductName(it) }));
     }
   }

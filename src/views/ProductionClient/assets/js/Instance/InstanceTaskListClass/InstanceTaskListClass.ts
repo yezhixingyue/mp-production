@@ -40,7 +40,7 @@ export class InstanceTaskListClass {
     const resp = await clientApi.getEquipmentTaskList(this.condition.getParams(StartProduction)).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.TaskList = resp.data.Data || [];
       this.TaskListNumber = resp.data.DataNumber;
     }

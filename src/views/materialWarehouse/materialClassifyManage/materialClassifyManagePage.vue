@@ -245,7 +245,7 @@ export default {
     function getMaterialClassifyManage(Page = 1) {
       Data.getMaterialTypeData.Page = Page;
       api.getMaterialTypeList(Data.getMaterialTypeData).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.tableData = res.data.Data as tableItemType[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -302,7 +302,7 @@ export default {
     function delMaterialClassify(item) {
       messageBox.warnCancelBox('确定要删除此物料类型吗？', `${item.TypeName}`, () => {
         api.getMaterialTypeRemove(item.TypeID).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
           // 删除成功
             getMaterialClassifyManage();
           }
@@ -323,7 +323,7 @@ export default {
         // 弹窗
       } else {
         api.getMaterialTypeSave(Data.materialClassifyDialogForm).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             const cb = () => {
               getMaterialClassifyManage();
               materialClassifyCloseClick();
@@ -344,7 +344,7 @@ export default {
     function brandPrimaryClick() {
       messageBox.warnCancelBox('您确定要保存吗?', '保存后将不能更改品牌属性，请谨慎操作', () => {
         api.getMaterialTypeAttributeSetBrand(Data.setBrandForm).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             // 设置成功
             const cback = () => {
               brandCloseClick();

@@ -91,7 +91,7 @@ export default {
     },
     async handleSort(Array) { // 处理保存排序
       const resp = await this.api.getDepartmentOrder(Array).catch(() => null);
-      if (resp && resp.data.Status === 1000) {
+      if (resp && resp.data?.Status === 1000) {
         await this.getDepartmentList();
         MpMessage.success({ title: '保存排序成功' });
         this.isSorting = false;
@@ -101,11 +101,11 @@ export default {
       // 删除
       if (removeIds.length) {
         const removeRes = await api.getDepartmentRemove(removeIds.map(ID => ({ ID })));
-        if (removeRes.status !== 200 || removeRes.data.Status !== 1000) return;
+        if (removeRes.status !== 200 || removeRes.data?.Status !== 1000) return;
       }
       // 保存
       const res = await api.getDepartmentSave(returnData);
-      if (res.status === 200 && res.data.Status === 1000) {
+      if (res.status === 200 && res.data?.Status === 1000) {
         await this.getDepartmentList();
         callback();
         MpMessage.success({ title: '保存成功' });
@@ -113,7 +113,7 @@ export default {
     },
     async getDepartmentList() { // getDepartmentList 获取部门列表数据
       const res = await api.getDepartmentList();
-      if (res && res.data.Status === 1000) {
+      if (res && res.data?.Status === 1000) {
         this.departmentList = res.data.Data;
         return true;
       }

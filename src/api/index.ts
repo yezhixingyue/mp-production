@@ -1,5 +1,6 @@
 import { IDistrictItem } from '@/assets/Types/common';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
+import { request } from '@/basic/request';
 import { resourceApis } from './modules/resourceApis';
 import { propertyApis } from './modules/propertyApis';
 import MaterialStorage from './modules/materialStorageApis';
@@ -13,7 +14,6 @@ import { clientApis } from './modules/clientApis';
 import { ExceptionHandlerApis } from './modules/ExceptionHandlerApis';
 import { outsourceApis } from './modules/outsourceApis';
 import productionSetting from './modules/productionSettingApis';
-import { request } from './request';
 
 const api = {
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login

@@ -33,7 +33,7 @@ const submit = async (e: ConditionItemClass) => {
   if (!MaterialTypeLimitData.value.curMaterialTypeLimitItemTable) return;
   const temp = { ...e, GroupMaterialTypeID: MaterialTypeLimitData.value.curMaterialTypeLimitItemTable.ID };
   const resp = await api.getEquipmentGroupMaterialTypeConditionLimitSave(temp).catch(() => null);
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     const isEdit = !!temp.ID;
     const cb = () => {
       MaterialTypeLimitData.value.handlerConditionItemChange({

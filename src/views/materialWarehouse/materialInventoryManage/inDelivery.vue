@@ -610,7 +610,7 @@ export default {
         });
         Data.inDeliveryForm.MaterialGoodsPositions = temp as MaterialGoodsPositionsType[];
         api.getStockIn(Data.inDeliveryForm).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             // InDeliveryDialogRef.value.clearselectStorehouseGoodsPosition();
             messageBox.successSingle('入库成功', () => {
               clearFrom();
@@ -623,7 +623,7 @@ export default {
     }
     function getGoodsPositionList() {
       api.getGoodsPositionList({ StorehouseID: Data.StorehouseID }).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.GoodsPositionList = res.data.Data as GoodsPositionListType[];
         }
       });
@@ -731,7 +731,7 @@ export default {
       }
       // 物料筛选
       api.getStockSingle(Data.getMaterialData.SKUCode).then(res => {
-        if (res?.data.Data) {
+        if (res?.data?.Data) {
           Data.checkedMaterial = res.data.Data as MaterialInfoType;
           // Data.inDeliveryForm.UnitID = '';
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
@@ -750,7 +750,7 @@ export default {
     // 获取仓库列表
     function getStorehouseAll() {
       api.getStorehouseAll().then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.StorehouseList = res.data.Data as StorehouseType[];
         }
       });

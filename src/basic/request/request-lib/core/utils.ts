@@ -5,10 +5,7 @@ import type { ICoreOptions, IRequestConfig } from './types';
 
 /** 参数归一化 */
 export const normalizeInstanceOptions = (options: ICoreOptions): ICoreOptions => {
-  const validStatuses = options.validStatuses || [200];
-
   const _temp = {
-    validStatuses,
   };
 
   return { ...options || {}, ..._temp };
@@ -114,7 +111,7 @@ export const getController = (config: IRequestConfig) => {
 export const verifyStatus = (status: number, statuses: number[]) => statuses.includes(status);
 
 export const getCatchErrorMsg = (error: any) => {
-  let message = error && error.message ? error.message : '';
+  let message: string = error && error.message && typeof error.message === 'string' ? error.message : '';
 
   if (message === 'Network Error') {
     message = '网络错误';

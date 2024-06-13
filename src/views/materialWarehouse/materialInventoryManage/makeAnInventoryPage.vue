@@ -240,11 +240,11 @@ export default {
       };
       if (Data.DetailID) {
         api.getInventoryDetail(Data.DetailID).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             Data.InventoryDetail = res.data.Data as InventoryDetailType;
             Data.InventoryDetail.DetailID = Data.DetailID as string;
           } else {
-            errorCb(res?.data.Message as string);
+            errorCb(res?.data?.Message as string);
           }
         });
       } else {
@@ -274,7 +274,7 @@ export default {
     function anewLast() {
       messageBox.warnCancelBox('操作确认', '确定要重新盘点上一个', () => {
         api.getInventoryAgainPrev(Data.InventoryDetail?.DetailID).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             setDetail(Data.InventoryDetail?.PrevDetailID);
             getInventoryDetail();
           }
@@ -284,7 +284,7 @@ export default {
     // 去下一个
     function toNext() {
       api.getInventoryRight(Data.DetailID).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           if (res.data.Data) {
             setDetail(res.data.Data);
             getInventoryDetail();
@@ -323,7 +323,7 @@ export default {
 
       temp.PositionID = Data.InventoryDetail?.PositionID;
       api.getInventoryOmission(temp).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           const cb = () => {
             Data.addMaterialShow = false;
             if (Data.InventoryDetail) {
@@ -340,7 +340,7 @@ export default {
       const temp = { ...data };
       temp.DetailID = Data.InventoryDetail?.DetailID;
       api.getInventoryError(temp).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           // 货物修改成功
           if (res.data.Data) {
             // 货位最后一个物料的时候要弹框确认是否还有其他物料

@@ -36,7 +36,7 @@ export class ManageOrderListClass {
       return;
     }
     const resp = await api.ManualOrderHandlerApis.getFactoryMaterialList().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.MaterialList = resp.data.Data;
     }
   }
@@ -53,7 +53,7 @@ export class ManageOrderListClass {
     const resp = await api.productionManageApis.getOrderList(temp).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data;
       this.listNumber = resp.data.DataNumber;
     }
@@ -71,7 +71,7 @@ export class ManageOrderListClass {
 
     const resp = await api.productionManageApis.getOrderPushTop(id).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         t.IsTop = true;
       };
@@ -87,7 +87,7 @@ export class ManageOrderListClass {
 
     const resp = await api.productionManageApis.getOrderCancle(ruleForm).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       if (ruleForm.PlateList.length > 0) {
         ElMessage({
           showClose: true,

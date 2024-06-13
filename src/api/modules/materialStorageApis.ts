@@ -1,4 +1,4 @@
-import { request } from '../request';
+import { request } from '@/basic/request';
 
 const api = {
   // 物料类型 ------------------------ MaterialType

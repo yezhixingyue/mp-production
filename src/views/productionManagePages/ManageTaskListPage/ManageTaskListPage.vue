@@ -36,7 +36,7 @@ const getList = async (Page = 1) => {
 
   ManageTaskListData.value.loading = false;
 
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     ManageTaskListData.value.TaskList = resp.data.Data;
     ManageTaskListData.value.TaskListNumber = resp.data.DataNumber;
   }

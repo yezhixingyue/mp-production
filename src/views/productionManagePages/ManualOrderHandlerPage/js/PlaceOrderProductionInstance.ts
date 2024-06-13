@@ -242,7 +242,7 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
       return;
     }
     const resp = await api.ManualOrderHandlerApis.getFactoryMaterialList(TypeID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this._MaterialList.push(...resp.data.Data);
       this._CacheMaterialTypeIDs.push(TypeID);
     }

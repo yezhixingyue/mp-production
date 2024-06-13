@@ -43,12 +43,12 @@ export class PlateMakingWorkSetupClass {
    */
   async handlePlateMakingWorkSubmit(ruleForm: ISetPlateMakingWorkParams, callback: () => void) {
     const resp = await api.getProductionLineWorkingProcedureSetPlateMakingWork(ruleForm).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         if (this.curWorkItem) {
           this.curWorkItem.PlateMakingWorkID = ruleForm.PlateMakingWorkID;
           this.curWorkItem.PlateMakingGroupID = ruleForm.PlateMakingGroupID || null;
-          if (resp.data.Data.PlateMakingWorkIdentID !== this.curWorkItem.PlateMakingWorkIdentID) {
+          if (resp.data && resp.data.Data.PlateMakingWorkIdentID !== this.curWorkItem.PlateMakingWorkIdentID) {
             // 当该ID未变化时 不予重新赋值
             this.curWorkItem.PlateMakingWorkIdentID = resp.data.Data.PlateMakingWorkIdentID;
             this.curWorkItem.PlateMakingClassEquipmentGroups = resp.data.Data.PlateMakingClassEquipmentGroups;
@@ -74,7 +74,7 @@ export class PlateMakingWorkSetupClass {
    */
   private async getPlateMakingWorkAllList() {
     const resp = await api.getWorkingProcedureSearch(FetchWorkingProcedureSearchEnum.PlateMaking).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const temp:IWorkingProcedureSearch = {
         ReportMode: ReportModeEnum.board,
         Type: WorkingTypeEnum.platemaking,
@@ -98,7 +98,7 @@ export class PlateMakingWorkSetupClass {
    */
   private async getPlateMakingGroupAllList() {
     const resp = await api.getPlateMakingGroupAll().catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.PlateMakingGroupAllList = resp.data.Data;
     }
   }

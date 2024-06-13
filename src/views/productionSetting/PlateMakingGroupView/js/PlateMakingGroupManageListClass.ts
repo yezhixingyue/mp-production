@@ -51,7 +51,7 @@ export class PlateMakingGroupManageListClass {
     const resp = await api.getPlateMakingGroupList(this.WorkID).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data;
       this.listNumber = resp.data.DataNumber;
     }
@@ -63,7 +63,7 @@ export class PlateMakingGroupManageListClass {
 
     const resp = await api.getPlateMakingGroupSource(this.WorkID).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.ClassEquipmentGroups = filterClassEquipmentGroups(resp.data.Data.ClassEquipmentGroups);
       this.MaterialSourcesData = resp.data.Data.MaterialSources || [];
     }
@@ -73,7 +73,7 @@ export class PlateMakingGroupManageListClass {
   async handleItemChange(data: { ID: string, Name: string }, callback: () => void) {
     const temp = { ...data, WorkID: this.WorkID };
     const resp = await api.getPlateMakingGroupSave(temp).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const isEdit = !!temp.ID;
       const cb = () => {
         if (isEdit) {
@@ -81,7 +81,7 @@ export class PlateMakingGroupManageListClass {
           if (i > -1) {
             this.list.splice(i, 1, { ...this.list[i], ...data });
           }
-        } else {
+        } else if (resp.data) {
           const item: IPlateMakingGroup = {
             ...data,
             Equipments: [],
@@ -108,7 +108,7 @@ export class PlateMakingGroupManageListClass {
   /** 删除 */
   async remove(it: IPlateMakingGroup) {
     const resp = await api.getPlateMakingGroupRemove(it.ID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       const cb = () => {
         const i = this.list.findIndex(_it => _it.ID === it.ID);
         if (i > -1) {

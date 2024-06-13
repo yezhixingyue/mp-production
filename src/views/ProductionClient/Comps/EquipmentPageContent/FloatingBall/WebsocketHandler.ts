@@ -137,7 +137,7 @@ export class WebsocketHandler {
 
     let needRepeat = true;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.UndeliveredList = resp.data.Data || [];
       if (!this.UndeliveredList.find(it => it.UndeliveredNumber > 0)) {
         needRepeat = false;

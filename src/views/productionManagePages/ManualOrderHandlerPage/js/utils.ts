@@ -83,7 +83,7 @@ export const getDigitalImpositionTemplate = async () => {
 
   const resp = await api.ManualOrderHandlerApis.getDigitalImpositionTemplate().catch(() => null);
 
-  if (resp?.data.isSuccess) {
+  if (resp?.data?.isSuccess) {
     _DigitalImpositionTemplateCache = resp.data.Data as IImpositionTemplate;
 
     return _DigitalImpositionTemplateCache;

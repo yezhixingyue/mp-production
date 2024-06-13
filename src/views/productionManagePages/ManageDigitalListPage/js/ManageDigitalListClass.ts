@@ -31,7 +31,7 @@ export class ManageDigitalListClass {
     const resp = await api.productionManageApis.getOfflinePlateList(temp).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.list = resp.data.Data;
       this.listNumber = resp.data.DataNumber;
     }
@@ -43,7 +43,7 @@ export class ManageDigitalListClass {
   /** 获取所有数码生产线列表 - 用于顶部筛选 */
   private async _getDigitalLineList() {
     const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsDigital: true }).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.DigitalLineList = [{ ID: '', Name: '所有生产线' }, ...(resp.data.Data as IProductionLineSet[]).filter(it => it.IsDigital)];
     }
   }
@@ -63,7 +63,7 @@ export class ManageDigitalListClass {
 
     const resp = await api.productionManageApis.getOfflinePlatePrint({ List }).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.Selection.forEach(it => {
         const t = this.list.find(_it => _it.Code === it.Code);
         if (t) t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态

@@ -22,7 +22,7 @@ export class PropertyListClass {
     if (!this.options) return;
     const resp = await api.propertyApis.getPropertyList(this.options).catch(() => null);
     this.loaded = true;
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.PropertyList = resp.data.Data || [];
     }
   }

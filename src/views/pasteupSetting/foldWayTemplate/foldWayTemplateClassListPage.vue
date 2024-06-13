@@ -102,7 +102,7 @@ function addClassPrimaryClick() {
     messageBox.failSingleError('保存失败', '请输入分类名称', () => null, () => null);
   } else {
     api.getFoldWayTemplateClassSave(Data.addClassFrom).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           addClassCloseClick();
           getClassList();
@@ -122,7 +122,7 @@ function editClass(item:FoldWayTemplateClassType) {
 function delClass(item) {
   messageBox.warnCancelBox('确定要删除此分类吗？', `${item.Name}`, () => {
     api.getFoldWayTemplateClassRemove(item.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         // 删除成功
         getClassList();
       }

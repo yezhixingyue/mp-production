@@ -259,7 +259,7 @@ function foldWayTemplateSave() {
       Data.foldWayTemplateFrom.PositionList.push(...res);
     });
     api.getFoldWayTemplateSave(Data.foldWayTemplateFrom).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         const cb = () => {
           Data.foldWayTemplateFrom = {
             ClassID: '',

@@ -493,7 +493,7 @@ export default {
             Data.addMaterialManageForm,
           ],
         }).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             if (res.data.Status === 1000) {
               // 添加成功
               const cb = () => {
@@ -583,7 +583,7 @@ export default {
       });
       messageBox.warnCancelBox('确定要删除此物料吗？', msg, () => {
         api.getMaterialRemove(item.ID).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
           // 删除成功
             getMaterialManageList();
           }

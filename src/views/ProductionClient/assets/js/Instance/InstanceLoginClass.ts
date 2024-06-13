@@ -77,7 +77,7 @@ export class InstanceLoginClass {
 
     const resp = await clientApi.getUser(this.token).catch(() => null);
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.user = resp.data.Data;
       SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: this.user, token: this.token });
     }
@@ -98,7 +98,7 @@ export class InstanceLoginClass {
     const resp = await clientApi.getLogin(temp).catch(() => null);
     this.loading = false;
 
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.mobile = '';
       this.password = '';
       this.token = resp.data.Data || '';
@@ -120,7 +120,7 @@ export class InstanceLoginClass {
   /** 注销登录 - 清除缓存 */
   public async logout() {
     const resp = await clientApi.getLogout(this.EquipmentID).catch(() => null);
-    if (resp?.data.isSuccess) {
+    if (resp?.data?.isSuccess) {
       this.user = null;
       this.token = '';
       // 清理缓存

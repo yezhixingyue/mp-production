@@ -1,5 +1,5 @@
 import { IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { request } from '../request';
+import { request } from '@/basic/request';
 
 const api = {
   // 拼版设置 ------------------------ ManageImposition

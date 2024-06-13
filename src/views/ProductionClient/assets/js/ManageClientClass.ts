@@ -37,7 +37,7 @@ export class ManageClientClass {
 
       this.loading = false;
 
-      if (resp?.data.isSuccess) {
+      if (resp?.data?.isSuccess) {
         this.setTerminalEquipmentList(resp.data.Data);
       }
     } catch (error) {

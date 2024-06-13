@@ -47,14 +47,16 @@ const getErrorTitle = (response: IResponseType<IMpzjResponse>) => { // 后续补
 export const handleErrorToast = (response: IResponseType<IMpzjResponse>, clearAndBackLogin: () => void) => {
   const msg = getErrorTitle(response);
 
-  if ([401, 403].includes(response?.status)) {
+  const _status = response?.status || -1;
+
+  if ([401, 403].includes(_status)) {
     ElMessage({ showClose: true, message: msg, type: 'error' });
     clearAndBackLogin();
     return;
   }
 
   const cb = () => {
-    if ([401, 403].includes(response?.status)) { // 清除状态 | 退出登录 -- 方法由外部传入
+    if ([401, 403].includes(_status)) { // 清除状态 | 退出登录 -- 方法由外部传入
       clearAndBackLogin();
     }
   };

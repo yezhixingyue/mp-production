@@ -25,7 +25,7 @@ const getToken = () => { // 获取到token
 const useCatchError = (msg: string) => ElMessage({ showClose: true, message: msg || '请求失败', type: 'error' }); // 错误处理
 
 const useResponse: ICoreOptions['useResponse'] = (resp, { clear, closeTip, msgCallback, tipTitle }) => { // 还需要 tipTitle 与 msgCallback 字段
-  if (resp.status === 200 && resp.data.Status === 1000) return;
+  if (resp.status === 200 && resp.data?.Status === 1000) return;
 
   if (resp.status !== 200) { // 请求错误
     handleErrorToast(resp, () => {
@@ -36,7 +36,7 @@ const useResponse: ICoreOptions['useResponse'] = (resp, { clear, closeTip, msgCa
     return;
   }
 
-  if (!closeTip) { // 请求失败 -- closeTip 是否进行错误提示
+  if (!closeTip && resp.data) { // 请求失败 -- closeTip 是否进行错误提示
     if ([8037, 7025].includes(resp.data.Status)) {
       clear();
       logout();
@@ -44,7 +44,7 @@ const useResponse: ICoreOptions['useResponse'] = (resp, { clear, closeTip, msgCa
     } else {
       MpMessage.error({
         title: tipTitle || '操作失败',
-        msg: `[ ${resp.data.Message} ]`,
+        msg: `[ ${resp.data?.Message} ]`,
         onCancel: () => msgCallback && msgCallback(),
         onOk: () => msgCallback && msgCallback(),
       });
@@ -61,6 +61,5 @@ export const instance = create({
   getToken,
   useResponse,
   useCatchError,
-  isSuccess: resp => resp.status === 200 && resp.data.Status === 1000,
-  validStatuses: [200],
+  isSuccess: resp => resp.status === 200 && resp.data?.Status === 1000,
 });

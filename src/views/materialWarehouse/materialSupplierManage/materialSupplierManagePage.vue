@@ -259,7 +259,7 @@ export default {
     function getMaterialSupplierList(Page = 1) {
       Data.getMaterialSupplierData.Page = Page;
       api.getMaterialSupplierList(Data.getMaterialSupplierData).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.MaterialSupplierList = res.data.Data as MaterialSupplierFormType[];
           Data.DataTotal = res.data.DataNumber as number;
         }
@@ -309,7 +309,7 @@ export default {
     function delMaterialSupplier(item) {
       messageBox.warnCancelBox('确定要删除此供应商吗？', `${item.SupplierName}`, () => {
         api.getMaterialSupplierRemove(item.SupplierID).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
           // 删除成功
             getMaterialSupplierList();
           }
@@ -342,7 +342,7 @@ export default {
         messageBox.failSingleError('保存失败', '请选择供应物料类型', () => null, () => null);
       } else {
         api.getMaterialSupplierSave(Data.MaterialSupplierForm).then(res => {
-          if (res?.data.Status === 1000) {
+          if (res?.data?.Status === 1000) {
             const cb = () => {
               getMaterialSupplierList();
               addMaterialSupplierCloseClick();
@@ -379,7 +379,7 @@ export default {
       // 获取物料分类
       MaterialWarehouseStore.getMaterialCategoryList();
       api.getMaterialTypeList({}).then(res => {
-        if (res?.data.Status === 1000) {
+        if (res?.data?.Status === 1000) {
           Data.MaterialTypeList = res.data.Data as MaterialTypeListType[];
         }
       });

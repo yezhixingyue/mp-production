@@ -134,7 +134,7 @@ const BreadcrumbList = computed(() => [
 
 function getImpositionTemmplateSizeList() {
   api.getImpositionTemmplateSizeList(getTemmplateSize.value).then(res => {
-    if (res.data.Status === 1000) {
+    if (res.data?.Status === 1000) {
       sizeList.value = res.data.Data as SizeListType[];
       getTemmplateSize.value.DataTotal = res.data.DataNumber;
     }
@@ -143,7 +143,7 @@ function getImpositionTemmplateSizeList() {
 function ChangeStopStatus(item) {
   const cb = () => {
     api.getImpositionTemmplateSizeSwitch(item.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         getImpositionTemmplateSizeList();
       }
     });
@@ -172,7 +172,7 @@ function PaginationChange(newVal) {
 function delImpositionTemmplateSize(item) {
   messageBox.warnCancelBox('确定要删除此拼版模板尺寸吗？', `${item.Name}`, () => {
     api.getImpositionTemmplateSizeRemove(item.ID).then(res => {
-      if (res.data.Status === 1000) {
+      if (res.data?.Status === 1000) {
         // 删除成功
         PasteupSettingStore.getImpositionTemmplateList();
         getImpositionTemmplateSizeList();
