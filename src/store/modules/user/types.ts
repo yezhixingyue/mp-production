@@ -356,6 +356,14 @@ export interface IUser {
         Manage: boolean
       };
     };
+    /** 数码工单打印 */
+    PermissionManageDigitalPlate: {
+      HavePomission: boolean
+      Obj: {
+        Print: boolean
+        Query: boolean
+      };
+    };
     /** 岗位管理 */
     PermissionManageJob: {
       HavePomission: boolean

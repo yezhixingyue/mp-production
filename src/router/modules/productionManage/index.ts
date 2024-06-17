@@ -173,7 +173,7 @@ const routes: RouteRecordRaw = {
         requiresAuth: true,
         icon: 'icon-shumagongdandayin iconfont scale-11',
         pageName: 'ManageDigitalListPage',
-        PermissionInfo: ['PermissionManageTask', 'HavePomission'],
+        PermissionInfo: ['PermissionManageDigitalPlate', 'HavePomission'],
       },
       component: () => import('@/views/productionManagePages/ManageDigitalListPage/ManageDigitalListPage.vue'),
     },

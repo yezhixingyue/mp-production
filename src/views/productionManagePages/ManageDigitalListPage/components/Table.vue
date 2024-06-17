@@ -1,6 +1,6 @@
 <template>
   <el-table :data="localList" border stripe class="table-wrap" @selection-change="onSelectionChange" ref="oTableRef">
-    <el-table-column type="selection" width="42" :selectable="(row: (typeof localList)[number]) => row._Printable" />
+    <el-table-column type="selection" width="42" v-if="canCheck" :selectable="(row: (typeof localList)[number]) => row._Printable" />
     <mp-table-column width="110px" prop="Code" label="大版ID" />
     <mp-table-column width="125px" prop="OrderCode" label="订单号" />
     <mp-table-column width="125px" prop="SemiFinished" label="半成品" />
@@ -32,6 +32,7 @@ import { DigitalImpositionStatusEnumList, DigitalImpositionTypeEnumList } from '
 
 const props = defineProps<{
   localManageData: ManageDigitalListClass
+  canCheck: boolean
 }>();
 
 const oTableRef = ref<InstanceType<typeof ElTable>>();

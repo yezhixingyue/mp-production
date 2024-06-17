@@ -117,6 +117,9 @@ export class RequestCore { // ------------------ 需要继续精简
 
     if (resp && resp.data) {
       resp.data.isSuccess = this._options.isSuccess(resp);
+      if (resp.status && resp.status !== 200) {
+        resp.message = `错误代码：${resp.status}`; // 是否使用 config.tipTitle ?
+      }
     }
 
     return resp;

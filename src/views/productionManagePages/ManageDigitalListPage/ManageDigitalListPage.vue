@@ -3,7 +3,7 @@
     <Header :localManageData="localManageData" />
 
     <main>
-      <Table :localManageData="localManageData" />
+      <Table :localManageData="localManageData" :canCheck="!!user?.PermissionList.PermissionManageDigitalPlate.Obj.Print" />
 
       <PrintArea ref="oPrintDialog" onlyPrint>
         <PrintListArea :list="printDataList" />
@@ -12,6 +12,7 @@
 
     <footer>
       <mp-button type="primary" class="linear" :disabled="!localManageData.Selection.length" @click="print"
+       v-if="user?.PermissionList.PermissionManageDigitalPlate.Obj.Print"
         >打印选中大版工单</mp-button>
       <MpPagination center :nowPage="localManageData.condition.Page" :pageSize="localManageData.condition.PageSize" :total="localManageData.listNumber"
         :handlePageChange="(page) => localManageData.getList(page)" />
@@ -23,11 +24,17 @@
 import { Ref, onMounted, ref } from 'vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import PrintArea from '@/components/common/General/Print/PrintDialog.vue';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
 import { ManageDigitalListClass } from './js/ManageDigitalListClass';
 import Header from './components/Header.vue';
 import Table from './components/Table.vue';
 import PrintListArea from './components/print/PrintListArea.vue';
 import { ILocalDigitalOrderPlatePrintInfoWithQrCode } from './js/types';
+
+const userStore = useUserStore();
+
+const { user } = storeToRefs(userStore);
 
 const localManageData = ref(new ManageDigitalListClass()) as Ref<ManageDigitalListClass>;
 
