@@ -22,7 +22,6 @@
           :withEmpty="false"
           withNullValue
           :fiexdWidth="0"
-          onlyLastValid
           title="部门"
           :typeList="[['First', 'FirstDepartmentID'],['First', 'SecondDepartmentID'],['First', 'ThirdDepartmentID']]"
         />
@@ -121,9 +120,9 @@ export default {
     handleSelect([[key1, key2], value], i) {
       if (!key1 || !this.PositionList[i]) return;
       if (key2) {
-        this.PositionList[i][key1][key2] = value;
+        this.PositionList[i][key1][key2] = value === '' ? -666 : value;
       } else {
-        this.PositionList[i][key1] = value;
+        this.PositionList[i][key1] = value === '' ? -666 : value;
       }
       if (key1 === 'Second' && key2 === 'PositionID') { // 如果修改了岗位ID的话则同步修改下岗位名称
         const t = this.jobPermissionsList.find(_it => _it.PositionID === value);
