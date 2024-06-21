@@ -203,7 +203,7 @@ export default {
         api.getGoodsPositionDimensionPositionPlan(props.getGoodsPositionData.StorehouseID).then(res => {
           if (res?.data?.Status) {
             Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;
-            getGoodsPosition();
+            // getGoodsPosition();
           }
         });
       }

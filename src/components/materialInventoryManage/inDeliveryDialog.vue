@@ -408,10 +408,10 @@ export default {
       api.getGoodsPositionDimensionSelect(Data.StorehouseID).then(res => {
         if (res?.data?.Status === 1000) {
           Data.GoodsPositionDimensionSelect = res.data.Data as GoodsPositionDimensionSelectType;
-          if (!Data.GoodsPositionDimensionSelect.DimensionSelects) {
-            // 获取货位信息
-            getGoodsPosition();
-          }
+          // if (!Data.GoodsPositionDimensionSelect.DimensionSelects) {
+          // 获取货位信息
+          // getGoodsPosition();
+          // }
         }
       });
     }
