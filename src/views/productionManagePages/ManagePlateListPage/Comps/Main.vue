@@ -137,7 +137,10 @@ const widthList = ref([
   { width: 310 },
 ]);
 
-const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a, b) => a + b, 0));
+const totalWidth = computed(() => {
+  const _w = widthList.value.map(it => it.width).reduce((a, b) => a + b, 0);
+  return props.Type === PlateTypeEnum.Plate ? _w : _w - widthList.value[3].width;
+});
 
 const spreadList = ref<string[]>([]);
 
