@@ -24,7 +24,6 @@
           <EpCascaderByLevel2
             title="设备组"
             showLine
-            onlyLastValid
             :fiexdWidth="200"
             :First="getProcessListData.ClassID"
             :Second="getProcessListData.GroupID"

@@ -7,7 +7,6 @@
       <EpCascaderByLevel2
         title="制版组"
         showLine
-        onlyLastValid
         :fiexdWidth="220"
         :First="condition._WorkingID"
         :Second="condition.LineID"
