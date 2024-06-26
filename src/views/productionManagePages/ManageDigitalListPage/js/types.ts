@@ -60,6 +60,8 @@ export interface IDigitalOrderPlatePrintInfo {
   Index: number
   /** 生产线 */
   ProductionLine: IBaseProperty<string>
+  /** 任务开启编号 */
+  StartCode: string
   /** 块列表 默认此处有且仅有一个块信息 */
   ChunkList: [{
     /** 块编号(拼版之后才有值) */
@@ -95,6 +97,8 @@ export interface IDigitalOrderPlatePrintInfo {
       Unit: string
       /** 订单需求 */
       Describe: string
+      /** 站点名称 */
+      StationName: string
     }
   }] | []
   /** 大版单位 */
@@ -135,4 +139,5 @@ export interface IDigitalOrderPlatePrintInfo {
 export interface ILocalDigitalOrderPlatePrintInfoWithQrCode extends IDigitalOrderPlatePrintInfo {
   _PlateQcCode: string
   _ChunkQcCode: string
+  _StartBarCode: string
 }

@@ -248,9 +248,17 @@ select {
   margin-top: -0.2em;
 }
 .digital-list-print-list .digital-list-print-item > .header > div .title {
-  font-size: 1.55em;
+  font-size: 1.42em;
   flex: 1;
-  padding-left: 3.5em;
+  padding-left: 0;
+  padding-top: 0.4em;
+}
+.digital-list-print-list .digital-list-print-item > .header > div .title .station {
+  display: inline-block;
+  min-width: 10.5em;
+  text-align: left;
+  font-size: 0.8em;
+  padding-right: 0.8em;
 }
 .digital-list-print-list .digital-list-print-item > .header > div.left {
   padding-bottom: 0.5em;
@@ -350,7 +358,24 @@ select {
 }
 .digital-list-print-list .digital-list-print-item > .footer .print {
   font-size: 0.95em;
-  padding-bottom: 0.5em;
+  padding-bottom: 0;
+}
+.digital-list-print-list .digital-list-print-item > .footer .print .bar-code {
+  font-size: 1.1em;
+  margin-bottom: 0.4em;
+  font-weight: 700;
+  padding-left: 0.5em;
+}
+.digital-list-print-list .digital-list-print-item > .footer .print .bar-code img {
+  width: 12em !important;
+  height: 3em !important;
+  display: block;
+  margin-bottom: 0.4em;
+}
+.digital-list-print-list .digital-list-print-item > .footer .print .bar-code span {
+  display: block;
+  width: 12em;
+  text-align: center;
 }
 .digital-list-print-list .digital-list-print-item > .footer .print span + span {
   margin-left: 1.2em;

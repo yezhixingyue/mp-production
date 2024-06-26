@@ -1,6 +1,6 @@
 {
   "name": "mpzj",
-  "version": "1.0.011",
+  "version": "1.0.012",
   "private": true,
   "scripts": {
     "compile-print-scss": "sass ./src/assets/css/print.scss ./public/css/print.css",
@@ -19,6 +19,7 @@
     "element-plus": "^2.2.25",
     "js-base64": "^3.7.2",
     "js-sha1": "^0.6.0",
+    "jsbarcode": "^3.11.6",
     "mockjs": "^1.1.0",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.13",
@@ -65,5 +66,5 @@
     "ts-jest": "^27.0.4",
     "typescript": "~4.5.5"
   },
-  "commitId": "377a636e52f5d6cf2400a1c325a42e4550082285\n"
+  "commitId": "ef0b86d5875f22a9a1a4fc0d6cd4872369d0b0c0\n"
 }

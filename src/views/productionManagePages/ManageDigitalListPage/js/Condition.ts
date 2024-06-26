@@ -10,7 +10,7 @@ export class Condition {
     Second: '',
   }
 
-  DateType = 'last7Date'
+  DateType = 'today'
 
   EquipmentID = ''
 

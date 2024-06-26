@@ -26,7 +26,7 @@ export const getNextWorkContentOnlySingle = (NextWorkingList?: INextWorkingProdu
 
 export const filterNextWorkingList = async (TaskWorkingID: string) => {
   // 需要区分client还是后台 -- 通过url进行区分
-  const requestFunc = window.location.hash.includes(`/${clientRouteName}`)
+  const requestFunc = window.location.hash.toLocaleLowerCase().includes(`/${clientRouteName}`)
     ? clientApi.getEquipmentNextWorkingList
     : api.outsourceApis.getEquipmentNextWorkingList;
 

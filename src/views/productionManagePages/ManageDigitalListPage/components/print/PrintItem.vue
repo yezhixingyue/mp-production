@@ -4,7 +4,10 @@
     <div class="header">
       <div class="left">
         <p class="SemiFinished b">{{ item.UploadFile.SemiFinished }}</p>
-        <p class="title b" style="text-align: center;">凌顶揽众数码流转工单</p>
+        <p class="title b">
+          <span class="station">{{ OrderInfo?.StationName || '' }}</span>
+          <span>凌顶揽众数码流转工单</span>
+        </p>
         <p>生 产 线：{{ item.ProductionLine.Name }}</p>
       </div>
       <div class="code">
@@ -143,6 +146,10 @@
     <!-- 页底 -->
     <div class="footer">
       <div class="print">
+        <div class="bar-code">
+          <img :src="item._StartBarCode" alt="">
+          <span>{{ item.StartCode }}</span>
+        </div>
         <span>打单人：{{ user?.StaffName || '' }}</span>
         <span>打印时间：{{ format2LangTypeDate(getTimeConvertFormat({ withHMS: true })) }}</span>
       </div>

@@ -178,9 +178,18 @@
         }
 
         .title {
-          font-size: 1.55em;
+          font-size: 1.42em;
           flex: 1;
-          padding-left: 3.5em;
+          padding-left: 0;
+          padding-top: 0.4em;
+
+          .station {
+            display: inline-block;
+            min-width: 10.5em;
+            text-align: left;
+            font-size: 0.8em;
+            padding-right: 0.8em;
+          }
         }
 
         &.left {
@@ -300,7 +309,24 @@
       margin-top: 1.5em;
       .print {
         font-size: 0.95em;
-        padding-bottom: 0.5em;
+        padding-bottom: 0;
+        .bar-code {
+          font-size: 1.1em;
+          margin-bottom: 0.4em;
+          font-weight: 700;
+          padding-left: 0.5em;
+          img {
+            width: 12em !important;
+            height: 3em !important;
+            display: block;
+            margin-bottom: 0.4em;
+          }
+          span {
+            display: block;
+            width: 12em;
+            text-align: center;
+          }
+        }
         span + span {
           margin-left: 1.2em;
         }

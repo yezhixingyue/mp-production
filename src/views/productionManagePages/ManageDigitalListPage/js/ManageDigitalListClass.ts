@@ -1,7 +1,7 @@
 import api from '@/api';
 import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
-import { getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { getBarcodeSrc, getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { Condition } from './Condition';
 import { IDigitalOrderPlateInfo, ILocalDigitalOrderPlatePrintInfoWithQrCode } from './types';
 import { DigitalImpositionStatusEnum } from './enum';
@@ -73,15 +73,17 @@ export class ManageDigitalListClass {
         ...it,
         _PlateQcCode: '',
         _ChunkQcCode: '',
+        _StartBarCode: '',
       }));
 
       const _generateQrcode = async (it: ILocalDigitalOrderPlatePrintInfoWithQrCode) => {
-        const [url1, url2] = await Promise.all([getQRCodeSrc(it.Code), getQRCodeSrc(it.ChunkList[0]?.Code || '')]);
+        const [url1, url2, url3] = await Promise.all([getQRCodeSrc(it.Code), getQRCodeSrc(it.ChunkList[0]?.Code || ''), getBarcodeSrc(it.StartCode)]);
 
-        if (url1 && url2) {
+        if (url1 && url2 && url3) {
           const _it = it;
           _it._PlateQcCode = url1;
           _it._ChunkQcCode = url2;
+          _it._StartBarCode = url3;
         } else {
           throw new Error('二维码转换失败');
         }

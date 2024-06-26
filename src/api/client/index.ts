@@ -64,7 +64,7 @@ const clientApi = {
   },
   /** GET /Api/Equipment/UndeliveredList  获取设备未送达物料列表 */
   getEquipmentUndeliveredList(terminal: string) {
-    return instance.get<IUndeliveredListItem[]>('/Api/Equipment/UndeliveredList', { params: { terminal }, loading: true, closeTip: true, withoutToken: true });
+    return instance.get<IUndeliveredListItem[]>('/Api/Equipment/UndeliveredList', { params: { terminal }, loading: false, closeTip: true, withoutToken: true });
   },
   /** 退出登录 put /Api/Logout  equipmentID */
   getLogout(equipmentID: string) {
