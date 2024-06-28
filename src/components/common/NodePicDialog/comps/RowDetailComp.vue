@@ -81,7 +81,8 @@ const TimeoutPeriod = computed(() => { // 超时时间信息
 
   if ([OrderStatus.Finished].includes(orderInfo.value.Status) && targetTime >= nodeTime) return { content: '订单已完成', isTimeout: false };
 
-  const text = targetTime > nodeTime ? '剩余' : '已超时';
+  let text = [OrderStatus.Finished].includes(orderInfo.value.Status) ? '超时' : '已超时';
+  if (targetTime > nodeTime) text = '剩余';
 
   const d = Math.abs(targetTime - nodeTime);
 
