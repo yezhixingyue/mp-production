@@ -363,6 +363,7 @@ export interface IUser {
         Print: boolean
         Query: boolean
         FileRetransfer: boolean
+        Preview: boolean
       };
     };
     /** 岗位管理 */
