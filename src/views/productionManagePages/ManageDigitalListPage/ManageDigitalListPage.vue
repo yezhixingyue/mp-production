@@ -3,7 +3,7 @@
     <Header :localManageData="localManageData" />
 
     <main>
-      <Table :localManageData="localManageData" :canCheck="!!user?.PermissionList.PermissionManageDigitalPlate.Obj.Print" />
+      <Table :localManageData="localManageData" :Permission="user?.PermissionList.PermissionManageDigitalPlate" />
 
       <PrintArea ref="oPrintDialog" onlyPrint>
         <PrintListArea :list="printDataList" />

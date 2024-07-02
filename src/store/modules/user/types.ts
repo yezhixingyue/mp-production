@@ -362,6 +362,7 @@ export interface IUser {
       Obj: {
         Print: boolean
         Query: boolean
+        FileRetransfer: boolean
       };
     };
     /** 岗位管理 */

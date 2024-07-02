@@ -2,6 +2,7 @@ import api from '@/api';
 import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getBarcodeSrc, getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { Condition } from './Condition';
 import { IDigitalOrderPlateInfo, ILocalDigitalOrderPlatePrintInfoWithQrCode } from './types';
 import { DigitalImpositionStatusEnum } from './enum';
@@ -34,6 +35,16 @@ export class ManageDigitalListClass {
     if (resp?.data?.isSuccess) {
       this.list = resp.data.Data;
       this.listNumber = resp.data.DataNumber;
+    }
+  }
+
+  /** 导出大版 */
+  // eslint-disable-next-line class-methods-use-this
+  async getPlateFileRetransfer(OrderID: string) {
+    const resp = await api.productionManageApis.getPlateFileRetransfer(OrderID);
+
+    if (resp.data?.isSuccess) {
+      MpMessage.success('导出成功');
     }
   }
 
