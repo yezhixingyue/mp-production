@@ -101,12 +101,14 @@ export class ManageListClass {
       default:
         break;
     }
-    console.log('options', options);
+
     this.options = options;
 
     this.condition = new Condition(this.options);
 
-    this._getSubcontractorFactoryList();
+    setTimeout(() => {
+      this._getSubcontractorFactoryList();
+    }, 0);
   }
 
   clearCondition() {
@@ -136,7 +138,6 @@ export class ManageListClass {
 
   private async _getSubcontractorFactoryList() { // 获取外协工厂列表数据 用于列表筛选
     const resp = await api.getSubcontractorFactoryList({ Page: 1, PageSize: 9999 }).catch(() => null);
-
     if (resp?.data?.isSuccess) {
       this.FactoryList.push(...resp.data.Data);
     }

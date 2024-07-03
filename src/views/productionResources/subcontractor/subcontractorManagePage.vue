@@ -94,7 +94,7 @@ const handleItemSetupSubmit = async (data: SubcontractorFactory) => {
     const callback = () => {
       const temp: ISubcontractorFactoryListItemType = {
         ...data,
-        ID: resp.data.Data,
+        ID: resp.data?.Data || '',
       };
       handleAfterSubmit(temp, isEdit);
     };
