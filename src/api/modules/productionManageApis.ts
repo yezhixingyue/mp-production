@@ -93,7 +93,11 @@ export const productionManageApis = {
     return instance.post('/Api/OfflinePlate/List', condition);
   },
   /** POST /Api/OfflinePlate/Print  线下大版打印工单 */
-  getOfflinePlatePrint(data: { List: number[] }) {
+  getOfflinePlatePrint(data: { List: number[]; IsPrint: boolean }) {
     return instance.post<IDigitalOrderPlatePrintInfo[]>('/Api/OfflinePlate/Print', data);
+  },
+  /** 导出大版 PUT /Api/PlateFile/Retransfer  orderID */
+  getPlateFileRetransfer(orderID: string) {
+    return instance.put('/Api/PlateFile/Retransfer', null, { params: { orderID } });
   },
 };

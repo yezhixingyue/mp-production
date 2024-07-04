@@ -3,7 +3,7 @@
     <Header :localManageData="localManageData" />
 
     <main>
-      <Table :localManageData="localManageData" :canCheck="!!user?.PermissionList.PermissionManageDigitalPlate.Obj.Print" />
+      <Table :localManageData="localManageData" :Permission="user?.PermissionList.PermissionManageDigitalPlate" />
 
       <PrintArea ref="oPrintDialog" onlyPrint>
         <PrintListArea :list="printDataList" />
@@ -11,9 +11,12 @@
     </main>
 
     <footer>
-      <mp-button type="primary" class="linear" :disabled="!localManageData.Selection.length" @click="print"
+      <mp-button type="primary" class="linear" :disabled="!localManageData.Selection.length" @click="print(true)"
        v-if="user?.PermissionList.PermissionManageDigitalPlate.Obj.Print"
         >打印选中大版工单</mp-button>
+      <mp-button type="primary" class="linear" :disabled="!localManageData.Selection.length" @click="print(false)"
+       v-if="user?.PermissionList.PermissionManageDigitalPlate.Obj.Preview"
+        >查看选中大版工单</mp-button>
       <MpPagination center :nowPage="localManageData.condition.Page" :pageSize="localManageData.condition.PageSize" :total="localManageData.listNumber"
         :handlePageChange="(page) => localManageData.getList(page)" />
     </footer>
@@ -42,10 +45,10 @@ const oPrintDialog = ref<InstanceType<typeof PrintArea>>();
 
 const printDataList = ref<ILocalDigitalOrderPlatePrintInfoWithQrCode[]>([]);
 
-const print = async () => {
+const print = async (IsPrint: boolean) => {
   printDataList.value = [];
 
-  const list = await localManageData.value.requestPrint();
+  const list = await localManageData.value.requestPrint(IsPrint);
   if (!list) return;
 
   printDataList.value = list;

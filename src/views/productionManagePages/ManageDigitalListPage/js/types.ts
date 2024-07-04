@@ -10,6 +10,8 @@ export interface IDigitalOrderPlateInfo {
   Code: number
   /** 订单号 */
   OrderCode: string
+  /** 订单ID */
+  OrderID: string
   /** 生产线 */
   Line: string
   /** 模板 */

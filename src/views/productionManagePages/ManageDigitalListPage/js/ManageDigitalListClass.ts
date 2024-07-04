@@ -2,6 +2,7 @@ import api from '@/api';
 import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getBarcodeSrc, getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { Condition } from './Condition';
 import { IDigitalOrderPlateInfo, ILocalDigitalOrderPlatePrintInfoWithQrCode } from './types';
 import { DigitalImpositionStatusEnum } from './enum';
@@ -37,6 +38,16 @@ export class ManageDigitalListClass {
     }
   }
 
+  /** 导出大版 */
+  // eslint-disable-next-line class-methods-use-this
+  async getPlateFileRetransfer(OrderID: string) {
+    const resp = await api.productionManageApis.getPlateFileRetransfer(OrderID);
+
+    if (resp.data?.isSuccess) {
+      MpMessage.success('导出成功');
+    }
+  }
+
   /** 顶部数码生产线筛选 */
   DigitalLineList: { ID: string, Name: string }[] = [{ ID: '', Name: '所有生产线' }]
 
@@ -56,18 +67,21 @@ export class ManageDigitalListClass {
   }
 
   /** 请求打印数据 */
-  async requestPrint() {
+  async requestPrint(IsPrint: boolean) {
     if (this.Selection.length === 0) return null;
 
     const List = this.Selection.map(it => it.Code);
 
-    const resp = await api.productionManageApis.getOfflinePlatePrint({ List }).catch(() => null);
+    const resp = await api.productionManageApis.getOfflinePlatePrint({ List, IsPrint }).catch(() => null);
 
     if (resp?.data?.isSuccess) {
-      this.Selection.forEach(it => {
-        const t = this.list.find(_it => _it.Code === it.Code);
-        if (t) t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态
-      });
+      if (IsPrint) {
+        this.Selection.forEach(it => {
+          const t = this.list.find(_it => _it.Code === it.Code);
+          if (t) t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态
+        });
+      }
+
       // 为每个条目上添加二维码信息（版和块编号）
       const list: ILocalDigitalOrderPlatePrintInfoWithQrCode[] = resp.data.Data.map(it => ({
         ...it,
