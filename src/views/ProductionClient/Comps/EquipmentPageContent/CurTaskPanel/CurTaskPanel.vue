@@ -88,7 +88,7 @@ const handleTaskSetComplete = (count: number | '') => {
     completeVisible.value = false;
     ManageClientPageData.value.websocketHandler.start();
   };
-  props.curInstance.setTaskComplete(count, cb, curSelectTask.value?.ID);
+  props.curInstance.setTaskComplete(count, cb, curSelectTask.value || undefined);
 };
 
 const handleBatchReport = (list, callback) => {

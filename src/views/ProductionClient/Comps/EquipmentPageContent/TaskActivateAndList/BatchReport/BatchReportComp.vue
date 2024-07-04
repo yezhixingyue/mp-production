@@ -132,7 +132,12 @@ const submitReport = () => {
   const cb = () => {
     batchReportVisible.value = false;
   };
-  emit('report', multipleSelection.value.map(it => it.ID), cb);
+  emit('report', multipleSelection.value.map(it => ({
+    TaskID: it.ID,
+    Type: it.Working.Type,
+    TargetID: it.Working.TargetID,
+    TargetType: it.Working.TargetType,
+  })), cb);
 };
 
 const onErrorClick = (row: ReturnType<typeof getLocalTaskList>[number]) => { // 报错

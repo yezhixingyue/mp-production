@@ -3,6 +3,8 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { EquipmentStatusEnum } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/enum';
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { ManageClientPageData } from '@/api/client/clientStore';
+import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
+import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 import { IEquipmentErrorInfo, ITaskDetail } from '../types';
 import { InstanceLoginClass } from './InstanceLoginClass';
 import { InstanceTaskListClass } from './InstanceTaskListClass/InstanceTaskListClass';
@@ -170,16 +172,29 @@ export class TerminalEquipmentInstance {
   }
 
   /** 加工完成  批量报工时需要传递TaskID --- 此时会内部调用批量报工函数 */
-  public async setTaskComplete(Number: number | '', callback: () => void, TaskID?: string) {
-    if (!this.curTaskData && !TaskID) return;
+  public async setTaskComplete(Number: number | '', callback: () => void, Task?: ITaskDetail) {
+    if (!this.curTaskData && !Task) return;
 
     if (this.Equipment.AllowBatchReport) {
-      if (TaskID) this.getEquipmentTaskBatchReport([TaskID], callback);
+      if (Task) {
+        this.getEquipmentTaskBatchReport([{
+          TaskID: Task.ID,
+          Type: Task.Working.Type,
+          TargetID: Task.Working.TargetID,
+          TargetType: Task.Working.TargetType,
+        }], callback);
+      }
       return;
     }
 
+    const _Task = Task || this.curTaskData;
+    if (!_Task) return;
+
     const temp = {
-      TaskID: TaskID || this.curTaskData?.ID,
+      TaskID: _Task.ID,
+      Type: _Task.Working.Type,
+      TargetID: _Task.Working.TargetID,
+      TargetType: _Task.Working.TargetType,
       Number,
     };
 
@@ -195,7 +210,7 @@ export class TerminalEquipmentInstance {
   }
 
   /** 批量报工 */
-  public async getEquipmentTaskBatchReport(List: string[], callback: () => void) {
+  public async getEquipmentTaskBatchReport(List: { TaskID: string; Type: WorkingTypeEnum; TargetID: string; TargetType: TargetTypeEnum }[], cback: () => void) {
     if (List.length === 0) return;
 
     const temp = { List };
@@ -205,7 +220,7 @@ export class TerminalEquipmentInstance {
     if (resp?.data?.Status === 1000) {
       const cb = () => {
         this.getTaskInfo();
-        callback();
+        cback();
       };
       MpMessage.dialogSuccess({ title: '已完成', onOk: cb, onCancel: cb });
     }
