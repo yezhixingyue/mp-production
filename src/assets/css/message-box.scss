@@ -64,6 +64,7 @@
         padding-bottom: 15px;
         flex: 1;
         .el-message-box__container{
+            flex-direction: column;
             .el-message-box__status{
                 position: absolute;
                 display: none;

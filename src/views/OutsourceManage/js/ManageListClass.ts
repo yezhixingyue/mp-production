@@ -134,7 +134,7 @@ export class ManageListClass {
     }
   }
 
-  FactoryList: Pick<ISubcontractorFactoryListItemType, 'ID' | 'Name'>[] = [{ ID: '', Name: '不限' }]
+  FactoryList: Pick<ISubcontractorFactoryListItemType, 'ID' | 'Name' | 'Mobile'>[] = [{ ID: '', Name: '不限', Mobile: '' }]
 
   private async _getSubcontractorFactoryList() { // 获取外协工厂列表数据 用于列表筛选
     const resp = await api.getSubcontractorFactoryList({ Page: 1, PageSize: 9999 }).catch(() => null);

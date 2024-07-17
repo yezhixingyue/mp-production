@@ -48,6 +48,26 @@ export class ManageDigitalListClass {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  async download(FilePath: string) {
+    if (!FilePath) return;
+
+    const link = document.createElement('a');
+
+    link.style.display = 'none';
+    link.href = FilePath;
+    link.target = '_blank';
+
+    // link.setAttribute('download', `${fileName}`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    link.onload = () => {
+      window.URL.revokeObjectURL(FilePath);
+    };
+  }
+
   /** 顶部数码生产线筛选 */
   DigitalLineList: { ID: string, Name: string }[] = [{ ID: '', Name: '所有生产线' }]
 
@@ -104,6 +124,10 @@ export class ManageDigitalListClass {
       };
 
       await Promise.all(list.map(it => _generateQrcode(it)));
+
+      if (IsPrint && this.condition.Status === DigitalImpositionStatusEnum.HaveScheduling) {
+        this.getList(this.condition.Page);
+      }
 
       return list;
     }

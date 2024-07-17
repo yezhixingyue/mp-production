@@ -279,6 +279,8 @@ export interface ITaskDetail {
   Operator: string
   /** 创建时间 */
   CreateTime: string
+  /** 物料尺寸 */
+  MaterialSize: string
 }
 
 /**

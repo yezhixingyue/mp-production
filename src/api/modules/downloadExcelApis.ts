@@ -18,16 +18,12 @@ export const downloadExcelApis = {
   getTaskExcel(condition) {
     return instance.post('/Api/Task/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
   },
+  /** 数码工单列表Excel */
+  getOfflinePlateExcel(condition) {
+    return instance.post('/Api/OfflinePlate/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+  },
+  /** 数码完工任务列表Excel /Api/DigitalTask/Excel */
+  getDigitalTaskExcel(condition) {
+    return instance.post('/Api/DigitalTask/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+  },
 };
-
-/** 存放导出Excel所有用到的接口路径 -- 此处必须把上面所有的接口url放置到里面 - axios需要特殊处理 */
-export const downloadExcelApiUrls: string[] = [
-  '/Api/MaterialType/List', // --------- 测试数据 后面清除
-  '/Api/ExternalMaterial/Excel', // 外来物料导出
-  '/Api/ExternalTask/Excel', // 外协列表
-  '/Api/Task/Excel', // 生产任务Excel
-];
-
-if (Object.keys(downloadExcelApis).length !== downloadExcelApiUrls.length) {
-  throw new Error('downloadExcelApis与downloadExcelApiUrls数量不一致，请检查是否有遗漏');
-}

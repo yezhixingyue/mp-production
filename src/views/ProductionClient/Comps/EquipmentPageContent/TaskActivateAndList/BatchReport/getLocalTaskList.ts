@@ -26,6 +26,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
     let _TargetID = '';
     let _Material = '';
     let _LineName = '';
+    let _PrintMaterialSizeTitle = '订单尺寸';
 
     const info = getTaskDisplayInfo(it);
 
@@ -37,6 +38,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
         _Material = it.Working.PlateInfo?.Material || '';
         _DetailText = info.SecondTitle;
         _LineName = it.Working.PlateInfo?.Line || '';
+        _PrintMaterialSizeTitle = '物料尺寸';
         break;
 
       case ReportModeEnum.order:
@@ -67,6 +69,9 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
     const _StatusText = isError ? '待转移' : getEnumNameByID(it.Status, ProductiveTaskStatusEnumList);
 
     const _WorkingName = it.Working.WorkingName;
+
+    /** 申放 */
+    const _Wastage = it.Working.Wastage ? `${it.Working.Wastage}${info.Unit}` : '';
 
     // 处理图片和文件
     const arr = it.Working.AssistList || [];
@@ -119,6 +124,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _Material,
       _UnFinishNumber,
       _Number,
+      _Wastage,
       _StatusText,
       _DetailText,
       _files,
@@ -135,6 +141,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _StartTime,
       _LastestSendedTime,
       _IsTimeout,
+      _PrintMaterialSizeTitle,
     };
   });
 

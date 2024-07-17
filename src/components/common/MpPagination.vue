@@ -1,6 +1,6 @@
 <template>
   <section class="mp--pagination" :class='{center:center, countInLeft: countInLeft, left: left}'>
-    <el-config-provider :locale="locale">
+    <el-config-provider>
       <!-- 分页 -->
       <span v-if="!left || !total || total <= pageSize">
         <slot></slot>
@@ -16,7 +16,7 @@
        </el-pagination>
     </el-config-provider>
     <span class="count">
-      <NewDownLoadExcelComp v-if="localExportExcelProps" :disabled="total === 0" v-bind="localExportExcelProps" />
+      <NewDownLoadExcelComp v-if="localExportExcelProps" :disabled="total === 0" :options="localExportExcelProps" />
       <slot name="text" :total="total">
         <span>共检索出</span>
         <i class="num"> {{total}} </i>
@@ -29,7 +29,6 @@
 <script lang="ts">
 import { ElConfigProvider } from 'element-plus';
 import { computed } from 'vue';
-import zhCn from 'element-plus/lib/locale/lang/zh-cn';
 import NewDownLoadExcelComp from '@/components/common/General/DownLoadExcelComp/DownLoadExcelComp.vue';
 import { IExportExcelProps } from './General/DownLoadExcelComp/types';
 
@@ -76,14 +75,9 @@ export default {
 
     const currentPage = computed(() => props.nowPage);
 
-    // const localExportExcelProps = computed<IExportExcelProps | null>(() => (props.ExportExcelProps ? {
-    //   ...(props.ExportExcelProps as IExportExcelProps),
-    // } : null));
-
     return {
       currentPage,
       handleCurrentChange,
-      locale: zhCn,
       localExportExcelProps: props.ExportExcelProps as IExportExcelProps,
     };
   },

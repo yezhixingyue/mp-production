@@ -7,7 +7,7 @@
 <script lang='ts' setup>
 import LayoutComp from '@/components/Layout/Index.vue';
 import { ElConfigProvider } from 'element-plus';
-import zhCn from 'element-plus/lib/locale/lang/zh-cn';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
 // import { Example } from './assets/js/decorator/_Example';
 
 // const testDecorator = async () => {
