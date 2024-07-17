@@ -289,6 +289,7 @@
           line-height: 1.5em;
           padding: 0.65em 0.5em;
           -webkit-line-clamp: 3;
+          line-clamp: 3;
           box-sizing: border-box;
           text-overflow: ellipsis;
           overflow: hidden;
@@ -314,6 +315,7 @@
         box-sizing: border-box;
         div {
           -webkit-line-clamp: 2;
+          line-clamp: 2;
           text-overflow: ellipsis;
           overflow: hidden;
           height: 100%;
@@ -331,6 +333,7 @@
           height: 4em;
           div {
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             text-overflow: ellipsis;
             overflow: hidden;
             max-height: 100%;
