@@ -351,6 +351,7 @@ select {
   line-height: 1.5em;
   padding: 0.65em 0.5em;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   box-sizing: border-box;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -374,6 +375,7 @@ select {
 }
 .digital-list-print-list .digital-list-print-item > .file-info .bottom div {
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   text-overflow: ellipsis;
   overflow: hidden;
   height: 100%;
@@ -388,6 +390,7 @@ select {
 }
 .digital-list-print-list .digital-list-print-item .material-info table td div {
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   text-overflow: ellipsis;
   overflow: hidden;
   max-height: 100%;
