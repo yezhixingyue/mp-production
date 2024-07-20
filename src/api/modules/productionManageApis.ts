@@ -100,4 +100,8 @@ export const productionManageApis = {
   getPlateFileRetransfer(orderID: string) {
     return instance.put('/Api/PlateFile/Retransfer', null, { params: { orderID } });
   },
+  /** POST /Api/DigitalTask/List  数码已完工任务 */
+  getDigitalTaskList(condition) {
+    return instance.post('/Api/DigitalTask/List', condition);
+  },
 };

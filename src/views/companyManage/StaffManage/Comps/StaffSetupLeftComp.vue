@@ -67,6 +67,7 @@
             :type-list="[['Area', 'RegionalID'], ['Area', 'CityID']]"
             :list="DistrictTreeList"
             :showTitle="false"
+            onlyLastValid
             @setCondition="setArea"
           />
           <el-input class="mp-line-input" v-model.trim="ruleForm.DetailAddress" maxlength="40" placeholder="请输入详细地址" />

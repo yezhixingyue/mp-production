@@ -123,6 +123,9 @@
     box-sizing: border-box;
     border-bottom: 1px solid #DCDFE6;
     transition: border-color 0.2s ease-in-out;
+    &.is-focus {
+      border-color: #26BCF9;
+    }
   }
   &.is-focus {
     .el-input__wrapper {

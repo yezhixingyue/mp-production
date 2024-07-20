@@ -1,10 +1,23 @@
 <template>
   <header class="header">
     <div>
+      <EpCascaderByLevel2
+         title="生产线"
+         showLine
+        :fiexdWidth="180"
+        @setCondition='setCondition'
+        :list='LineList'
+        :First='ManageTaskListData.condition.Line.First'
+        :Second='ManageTaskListData.condition.Line.Second'
+        @getList="getList"
+        :typeList="[['Line', 'First'],['Line', 'Second']]"
+        :defaultProps="{ ID: 'ID', Name: 'Name', children: 'WorkingProcedures' }"
+        class="mr-20"
+      />
       <EpCascaderWithLevel3
-         title="设备筛选"
+         title="设备"
         :setCondition='setCondition'
-        :levelTreeList='ManageTaskListData.EquipmentFilterData.EquipmentClassAndGroupLevelList'
+        :levelTreeList='EquipmentFilterData.EquipmentClassAndGroupLevelList'
         :First='ManageTaskListData.condition.Catalog.ClassID'
         :Second='ManageTaskListData.condition.Catalog.GroupID'
         :Third='ManageTaskListData.condition.Catalog.ID'
@@ -13,6 +26,18 @@
         class="mr-20"
       />
       <StaffSelector v-model="_Operator" title="操作人" />
+      <i class="flexible"></i>
+      <SearchInputComp
+        :word='ManageTaskListData.condition.KeyWords'
+        title="关键词搜索"
+        class="mt-5 mr-80"
+        placeholder="请输入搜索关键词"
+        resetWords="清空所有筛选条件"
+        :changePropsFunc="(keywords: string) => setCondition([['KeyWords', ''], keywords])"
+        :requestFunc='getList'
+        :searchWatchKey="ManageTaskListData.list"
+        @reset='() => ManageTaskListData.clearCondition()'
+      />
     </div>
     <div>
       <LineDateSelectorComp
@@ -24,8 +49,11 @@
         :dateValue='ManageTaskListData.condition.DateType'
         :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
         label="完成时间"
+        dateType="datetimerange"
         class="mr-20"
+        style="min-width: 850px;"
       />
+
       <div class="item">
         <span class="title">时长筛选：</span>
         <el-radio-group v-model="_Compare">
@@ -38,20 +66,30 @@
 </template>
 
 <script setup lang='ts'>
+import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
 import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
 import StaffSelector from '@/components/common/ElementPlusContainners/StaffSelector.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
+import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
+import { EquipmentFilterClass } from '@/assets/js/Class/EquipmentFilterClass';
 import { computed } from 'vue';
-import { ManageTaskListClass } from '../js/ManageTaskListClass';
-import { TaskListConditionCompareEnumList } from '../js/EnumList';
+import { ManageDigitalCompletionTaskList } from '../js/ManageDigitalCompletionTaskList';
+import { TaskListConditionCompareEnumList } from '../../ManageTaskListPage/js/EnumList';
+import { ManagePageData } from '../js/ManagePageData';
 
 const props = defineProps<{
-  ManageTaskListData: ManageTaskListClass
-  getList:() => Promise<void>
+  ManageTaskListData: ManageDigitalCompletionTaskList
+  EquipmentFilterData: Required<EquipmentFilterClass>
+  LineList: ManagePageData['LineList']
 }>();
 
 const setCondition = (e) => {
+  console.log('setcondition', e);
   props.ManageTaskListData.condition.setConditon(e);
+};
+
+const getList = () => {
+  props.ManageTaskListData.getList();
 };
 
 const _Operator = computed<string>({
@@ -60,7 +98,7 @@ const _Operator = computed<string>({
   },
   set(val) {
     setCondition([['Operator'], val]);
-    props.getList();
+    getList();
   },
 });
 
@@ -83,7 +121,7 @@ const _Compare = computed({
   },
   set(val) {
     setCondition([['Compare'], val]);
-    props.getList();
+    getList();
   },
 });
 
@@ -112,6 +150,10 @@ const _Compare = computed({
         vertical-align: 3px;
       }
     }
+  }
+
+  .flexible {
+    flex: 1;
   }
 }
 

@@ -18,13 +18,13 @@
        v-if="user?.PermissionList.PermissionManageDigitalPlate.Obj.Preview"
         >查看选中大版工单</mp-button>
       <MpPagination center :nowPage="localManageData.condition.Page" :pageSize="localManageData.condition.PageSize" :total="localManageData.listNumber"
-        :handlePageChange="(page) => localManageData.getList(page)" />
+        :ExportExcelProps="downloadExcelObj" :handlePageChange="(page) => localManageData.getList(page)" />
     </footer>
   </section>
 </template>
 
 <script setup lang='ts'>
-import { Ref, onMounted, ref } from 'vue';
+import { Ref, computed, onMounted, ref } from 'vue';
 import MpPagination from '@/components/common/MpPagination.vue';
 import PrintArea from '@/components/common/General/Print/PrintDialog.vue';
 import { useUserStore } from '@/store/modules/user';
@@ -54,6 +54,16 @@ const print = async (IsPrint: boolean) => {
   printDataList.value = list;
   oPrintDialog.value?.print();
 };
+
+const downloadExcelObj = computed(() => (user.value?.PermissionList.PermissionManageDigitalPlate.Obj.Excel ? {
+  apiPath: 'getOfflinePlateExcel',
+  fileName: '数码工单',
+  getCondition: () => localManageData.value.condition.filter(),
+  getFileNameDate: () => ({
+    First: localManageData.value.condition.CreateTime.First,
+    Second: localManageData.value.condition.CreateTime.Second,
+  }),
+} : undefined));
 
 onMounted(() => {
   localManageData.value.init();

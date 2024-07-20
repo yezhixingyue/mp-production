@@ -77,6 +77,7 @@ import { ref, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { getImgGaussBlurUrl } from '@/assets/js/utils/gaussBlur';
 import { WikiHandler } from '@/assets/js/Class/WikiHandler';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import ChangePwdDialog from './ChangePwdDialog.vue';
 
 const props = defineProps<{
@@ -119,8 +120,10 @@ const onMenuClick = (hash: string) => {
 };
 
 const logout = () => {
-  userStore.token = '';
-  router.replace('/login');
+  MpMessage.warn('确定退出登录吗 ?', '', () => {
+    userStore.token = '';
+    router.replace('/login');
+  });
 };
 
 const imgSrc = ref('');

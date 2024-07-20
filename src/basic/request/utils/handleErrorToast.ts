@@ -51,13 +51,13 @@ export const handleErrorToast = (response: IResponseType<IMpzjResponse>, clearAn
 
   if ([401, 403].includes(_status)) {
     ElMessage({ showClose: true, message: msg, type: 'error' });
-    clearAndBackLogin();
+    if (_status === 401) clearAndBackLogin();
     return;
   }
 
   const cb = () => {
     if ([401, 403].includes(_status)) { // 清除状态 | 退出登录 -- 方法由外部传入
-      clearAndBackLogin();
+      if (_status === 401) clearAndBackLogin();
     }
   };
 

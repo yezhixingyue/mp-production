@@ -20,10 +20,14 @@ export interface IDigitalOrderPlateInfo {
   TemplateSize: string
   /** 物料 */
   Material: string
+  /** 用料尺寸 */
+  MaterialSize: string
+  /** 用料数量 */
+  MaterialNumber: string
   /** 印刷机 */
   Equipment: string
-  /** 印刷数量 */
-  Number: number
+  /** 印刷份数 - 带单位 */
+  Number: string
   /** 单位 */
   Unit: string
   /** 状态 */
@@ -36,6 +40,10 @@ export interface IDigitalOrderPlateInfo {
   ImpositionTime: string
   /** 同步时间 */
   CreateTime: string
+  /** 下载地址 为空则置灰按钮 */
+  FilePath?: string
+  /** 单双面 */
+  PrintSide: PrintSideEnum
 }
 
 interface ITaskWorkingDetail {
@@ -52,6 +60,8 @@ interface ITaskWorkingDetail {
    }[]
    /** 加工设备 */
    Equipment: IEquipmentBaseInfo
+   /** 申放 */
+   Wastage: number
 }
 
 /** 数码工单打印数据接口类型 */

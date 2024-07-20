@@ -364,6 +364,20 @@ export interface IUser {
         Query: boolean
         FileRetransfer: boolean
         Preview: boolean
+        /** 下载文件 */
+        DownloadFile: boolean
+        /** 导出Excel */
+        Excel: boolean
+      };
+    };
+    /** 数码完工任务 */
+    PermissionManageDigitalTask: {
+      HavePomission: boolean
+      Obj: {
+        PlateQuery: boolean
+        PlateExcel: boolean
+        OrderQuery: boolean
+        OrderExcel: boolean
       };
     };
     /** 岗位管理 */

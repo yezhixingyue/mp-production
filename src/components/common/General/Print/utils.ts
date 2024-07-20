@@ -17,12 +17,12 @@ export const getQRCodeSrc = async (content: number | string, size?: number) => {
 };
 
 /** 在本地使用js库生成条形码 */
-export const getBarcodeSrc = async (content: number | string) => {
+export const getBarcodeSrc = async (content: number | string, size = { width: 280, height: 36 }) => {
   if (!content) return null;
 
   const canvas = document.createElement('canvas');
 
-  JsBarcode(canvas, `${content}`, { width: 280, height: 36, margin: 0, displayValue: false });
+  JsBarcode(canvas, `${content}`, { width: size.width, height: size.height, margin: 0, displayValue: false });
 
   return canvas.toDataURL('image/png');
 };

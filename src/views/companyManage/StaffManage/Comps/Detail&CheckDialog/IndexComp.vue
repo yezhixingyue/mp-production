@@ -196,8 +196,11 @@ export default {
               margin-right: 10px;
               font-weight: 700;
             }
-            .mp-select.el-select .el-input {
+            .mp-select.el-select {
               width: 114px;
+              .el-input {
+                width: 114px;
+              }
             }
           }
           .el-input__inner {
