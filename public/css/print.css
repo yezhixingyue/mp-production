@@ -407,11 +407,6 @@ select {
   margin-top: 0.8em;
   flex: 1 0 auto;
 }
-.digital-list-print-list .digital-list-print-item > .working-table td {
-  white-space: wrap;
-  padding-top: 0.2em;
-  padding-bottom: 0.2em;
-}
 .digital-list-print-list .digital-list-print-item .c {
   font-size: 15pt;
   margin-top: 1mm;
