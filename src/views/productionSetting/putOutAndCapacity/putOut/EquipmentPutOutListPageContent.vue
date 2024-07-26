@@ -4,7 +4,7 @@
       <MpBreadcrumb :list="props.BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="onSaveClick(null)">+ 添加条件</mp-button>
-        <span class="tips-box"><el-icon><WarningFilled /></el-icon> 匹配一条作为伸放设置</span>
+        <span class="tips-box"><el-icon><WarningFilled /></el-icon> 匹配一条作为申放设置</span>
       </div>
     </header>
     <main>

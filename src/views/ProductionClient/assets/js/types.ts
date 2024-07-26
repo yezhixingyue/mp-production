@@ -75,6 +75,8 @@ export interface ITaskPlateInfo {
   TemplateSize: string
   /** 物料 */
   Material: string
+  /** 物料尺寸 */
+  MaterialSize: string
   /** 加工数量 */
   Number: number
   /** 单位 */
@@ -184,7 +186,7 @@ export interface ITaskWorkingInfo {
   MinPartReportNumber: number
   /** 是否允许批量报工 */
   AllowBatchReport: boolean
-  /** 加工数量(不含伸放) */
+  /** 加工数量(不含申放) */
   Number: number
   /** 损耗 */
   Wastage: number

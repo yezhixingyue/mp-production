@@ -54,6 +54,9 @@ export default {
     margin: 0 8px;
     height: 100%;
     overflow: hidden;
+    &:has(.no-gap) {
+      margin: 0;
+    }
   }
   &.no-padding{
     padding: 0;

@@ -64,12 +64,12 @@ const onMenuClick = (LineID: string) => {
 };
 
 const dateList = [
-  { name: '近7天拼版', ID: 'last7Date' },
-  { name: '今天拼版', ID: 'today' },
-  { name: '昨天拼版', ID: 'yesterday' },
-  { name: '前天拼版', ID: 'beforeyesterday' },
-  { name: '本月拼版', ID: 'curMonth' },
-  { name: '上月拼版', ID: 'lastMonth' },
+  { name: '近7天', ID: 'last7Date' },
+  { name: '今天', ID: 'today' },
+  { name: '昨天', ID: 'yesterday' },
+  { name: '前天', ID: 'beforeyesterday' },
+  { name: '本月', ID: 'curMonth' },
+  { name: '上月', ID: 'lastMonth' },
 ];
 
 const UserDefinedTimeIsActive = computed(() => props.localManageData.condition.DateType === ''

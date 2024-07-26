@@ -107,7 +107,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         this.PropertyList = resp.data.Data || [];
       }
     },
-    /** 设置伸放相关数据 */
+    /** 设置申放相关数据 */
     setLinePutOutPageData(LineEquipment) {
       this.LinePutOutPageData = new LinePutOutClass(LineEquipment);
     },

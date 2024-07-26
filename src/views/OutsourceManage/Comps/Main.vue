@@ -9,32 +9,74 @@
       @print="onPrintClick"
       @ConfirmExternal="onConfirmExternalClick"
     />
-    <PrintDialog ref="oPrintDialog" :onlyPrint="onlyPrint" noAutoPrint @submit="submitExternal">
+
+    <PrintDialog ref="oPrintDialog" :onlyPrint="onlyPrint" noAutoPrint @submit="submitExternal" :width="dpiHelper.mm2Px(210) + 70">
       <section class="outside-print-area" v-if="curRow">
-        <main>
-          <!-- 二维码 -->
+        <header>
           <div class="left">
-            <div class="img-box">
-              <img :src="imgSrc" alt="" v-show="imgSrc">
-            </div>
-            <p>ID: {{ curRow.Code }}</p>
+            <p class="title">凌顶揽众工序外协加工单</p>
+            <p class="line">{{ curRow._LineName }}：{{ curRow._TargetID.replace(/（[\w\W]+）$/, '') }}</p>
+            <p>
+              <span style="margin-right: 1.2em;">外协单位：{{ curentFactory?.Name }}</span>
+              <span>联系电话：{{ curentFactory?.Mobile }}</span>
+            </p>
           </div>
-          <!-- 外协信息 -->
-          <div class="right">
-            <h2>{{ curRow._WorkingName }}</h2>
-            <h2>数量：{{ curRow._Number }}</h2>
-            <p>金额：<span v-show="curRow._ExternalSubmitParams.Amount || curRow._ExternalSubmitParams.Amount === 0"
-                >￥{{ `${curRow._ExternalSubmitParams.Amount}`.replace(/(?=(\B)(\d{3})+$)/g, ',') }}元</span></p>
-            <p class=f>工厂：{{ curRow._ExternalSubmitParams._FactoryName }}<span></span></p>
+          <div class="bar">
+            <img :src="imgSrc" alt="" v-show="imgSrc">
+            <span>{{ curRow.Code }}</span>
           </div>
+        </header>
+
+        <main>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 25%;">物料信息</th>
+                <th style="width: 18%;">{{ curRow._PrintMaterialSizeTitle }}</th>
+                <th style="width: 18%;">返货数量</th>
+                <th style="width: 11%;">申放</th>
+                <th >外协价格</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="font-size: 0.85em;">{{ curRow._Material || '-' }}</div>
+                </td>
+                <td>
+                  <div>{{ curRow._Size || '-' }}</div>
+                </td>
+                <td>{{ curRow._Number || '-' }}</td>
+                <td>{{ curRow._Wastage || '-' }}</td>
+                <td>{{ `${curRow._ExternalSubmitParams.Amount}`.replace(/(?=(\B)(\d{3})+$)/g, ',') }}元</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 18%;">工序名称</th>
+                <th style="width: 54%;">加工要求</th>
+                <th >返货时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div>{{ curRow._WorkingName }}</div></td>
+                <td><div style="font-size: 0.85em;">{{ curRow._AssistText || '-' }}</div></td>
+                <td>{{ curRow._ExternalSubmitParams.WishFinishTime?.split('T')[0] }}</td>
+              </tr>
+            </tbody>
+          </table>
         </main>
-        <!-- 制作要求和时间 -->
+
+        <!-- 时间 -->
         <footer>
-          <div>
-            <h2>制作要求：</h2>
-            <span>{{ curRow._AssistText }}</span>
-          </div>
-          <p>打印时间：{{ curPrintData }}</p>
+          <span>打单人：{{ user?.StaffName || '-' }}</span>
+          <span>联系电话：{{ user?.Mobile || '-' }}</span>
+          <span>打印时间：{{ curPrintData }}</span>
+          <div>验收人：</div>
         </footer>
       </section>
     </PrintDialog>
@@ -47,13 +89,19 @@ import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageCo
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ElTable } from 'element-plus';
 import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
-import { getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { getBarcodeSrc } from '@/components/common/General/Print/utils';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { format2LangTypeDate } from '@/assets/js/filters/dateFilters';
+import { dpiHelper } from '@/assets/js/utils/dpiHelper';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
 import { ManageListClass } from '../js/ManageListClass';
 import { checkExTaskIsComplete } from '../js/utils';
 import Table from './Table.vue';
 import { OutsourceManagePageType } from '../js/type';
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const props = defineProps<{
   ManageListData: Required<ManageListClass>
@@ -81,6 +129,7 @@ const imgSrc = ref('');
 const curPrintData = ref('');
 const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
 const onlyPrint = ref(false);
+const curentFactory = ref<null | ManageListClass['FactoryList'][number]>(null);
 const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], isConfirm: boolean, isPrint = true) => { // 下载文件 -- 此处按钮禁用判断暂时取反  待功能完成后改回 3.16
   if (!row || !oPrintDialog.value) return;
   curRow.value = row;
@@ -88,7 +137,9 @@ const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], is
   curPrintData.value = '';
   onlyPrint.value = isPrint;
 
-  const src = await getQRCodeSrc(row.Code, 100); // 获取img src
+  curentFactory.value = props.ManageListData.FactoryList.find(it => it.ID === curRow.value?._ExternalSubmitParams.FactoryID) || null;
+
+  const src = await getBarcodeSrc(row.Code, { width: 160, height: 50 }); // 获取img src
 
   if (src) {
     imgSrc.value = src;
@@ -148,5 +199,10 @@ const onConfirmExternalClick = (row: ReturnType<typeof getLocalTaskList>[number]
   :deep(.mp-date-time-picker .el-date-editor) {
     width: 120px;
   }
+
 }
+// .outside-print-area {
+//   background-color: #eee;
+//   border-radius: 2px;
+// }
 </style>

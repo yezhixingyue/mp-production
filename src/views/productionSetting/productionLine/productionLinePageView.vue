@@ -1315,6 +1315,7 @@ onMounted(async () => {
   .el-checkbox-group {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
   }
   .el-radio, .el-checkbox {
     margin-right: 10px;

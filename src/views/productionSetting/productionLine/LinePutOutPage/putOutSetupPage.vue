@@ -23,9 +23,9 @@ const BreadcrumbList = [
     to: { path: '/equipment' },
     name: `选择设备/工厂：${LinePutOutPageData.value?.curWork?.Name}`,
   },
-  { to: { path: '/putOut' }, name: `设置伸放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
+  { to: { path: '/putOut' }, name: `设置申放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
   {
-    name: `${LinePutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}伸放`,
+    name: `${LinePutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}申放`,
   },
 ];
 

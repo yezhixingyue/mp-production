@@ -31,6 +31,8 @@ export interface IProductionLineSet {
   ReproductionTypes: ReproductionTypeEnum[]
   /** 是否数码生产线 */
   IsDigital: boolean
+  /** 该生产线包含的工序列表 */
+  WorkingProcedures?: { ID: string; Name: string }[]
 }
 
 /**

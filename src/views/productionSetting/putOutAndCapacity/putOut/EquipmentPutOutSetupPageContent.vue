@@ -9,7 +9,7 @@
       </template>
       <template #default>
         <div class="right-class">
-          <p class="title">则伸放为：</p>
+          <p class="title">则申放为：</p>
           <p class="conent">
             <el-input v-model.trim="rightPanelData.Value" maxlength="9"></el-input>
             <el-select v-model="rightPanelData.Type" class="m-2" placeholder="Select">
@@ -50,20 +50,20 @@ const rightPanelData = ref<null | Partial<PutOutConditionItemClass>>(null);
 const submit = (e: PutOutConditionItemClass) => {
   const { Value, Type } = rightPanelData.value || {};
   if (!Value && Value !== 0) {
-    MpMessage.error({ title: '保存失败', msg: '伸放数值未设置' });
+    MpMessage.error({ title: '保存失败', msg: '申放数值未设置' });
     return;
   }
   if (Type !== PutOutTypeEnum.percent && !/^\d+$/.test(`${Value}`)) {
-    MpMessage.error({ title: '保存失败', msg: '非百分比时伸放数值必须为0或正整数类型' });
+    MpMessage.error({ title: '保存失败', msg: '非百分比时申放数值必须为0或正整数类型' });
     return;
   }
   if (Type === PutOutTypeEnum.percent) {
     if (!/^\d{1,3}(\.\d{0,2})?$/.test(`${Value}`)) {
-      MpMessage.error({ title: '保存失败', msg: '伸放数值设置不正确，必须为数值类型，百分比时范围必须在[0,100]之间，最多两位小数' });
+      MpMessage.error({ title: '保存失败', msg: '申放数值设置不正确，必须为数值类型，百分比时范围必须在[0,100]之间，最多两位小数' });
       return;
     }
     if (+Value > 100) {
-      MpMessage.error({ title: '保存失败', msg: '百分比时，伸放数值不能超过100' });
+      MpMessage.error({ title: '保存失败', msg: '百分比时，申放数值不能超过100' });
       return;
     }
   }

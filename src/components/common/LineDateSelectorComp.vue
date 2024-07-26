@@ -67,8 +67,6 @@ const Data = reactive({
   end: '',
   isNotFoulCloseType: false, // 是否使用犯规方式关闭
   clickTarget: null,
-
-  localValue1: '',
 });
 function formatDateContent(str, dateType) {
   if (str) {
@@ -91,8 +89,15 @@ const date = computed({
 function onPickerBlur() {
   setTimeout(() => {
     props.changePropsFunc([props.typeList[0], '']);
-    props.changePropsFunc([props.typeList[1], Data.beginTime]);
-    props.changePropsFunc([props.typeList[2], Data.endTime]);
+    let start = Data.beginTime;
+    let end = Data.endTime;
+
+    const reg = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+    if (reg.test(start)) start += '.000Z'; // 时间补充完整后缀
+    if (reg.test(end)) end += '.997Z'; // 时间补充完整后缀
+
+    props.changePropsFunc([props.typeList[1], start]);
+    props.changePropsFunc([props.typeList[2], end]);
     props.requestFunc();
     Data.key = true;
   }, 0);

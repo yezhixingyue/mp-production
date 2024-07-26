@@ -124,9 +124,10 @@
         <thead>
           <tr>
             <th style="width: 4em;">工序</th>
-            <th style="width: 17%;">工序名称</th>
-            <th style="width: 44%;">加工信息</th>
-            <th style="width: 11%;">报工类型</th>
+            <th style="width: 15%;">工序名称</th>
+            <th style="width: 39%;">加工信息</th>
+            <th style="width: 10%;">报工类型</th>
+            <th style="width: 8%;">申放</th>
             <th>加工设备</th>
           </tr>
         </thead>
@@ -136,6 +137,9 @@
             <td>{{ working.WorkingName }}</td>
             <td>{{ getAssistInfo(working.AssistList || []) }}</td>
             <td>{{ getEnumNameByID(working.ReportMode, ReportModeEnumList) }}</td>
+            <td>
+              <template v-if="working.Wastage">{{ working.Wastage }}张</template>
+            </td>
             <td>{{ [working.Equipment.Name].filter(it => it).join('-') }}</td>
             <!-- <td>{{ [working.Equipment.GroupName, working.Equipment.Name].filter(it => it).join('-') }}</td> -->
           </tr>

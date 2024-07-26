@@ -177,6 +177,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManageDigitalListPage/ManageDigitalListPage.vue'),
     },
+    /* 数码完工任务
+    -------------------------------------- */
+    {
+      path: '/DigitalCompletionTaskList',
+      name: 'DigitalCompletionTaskList',
+      meta: {
+        title: '数码完工任务',
+        requiresAuth: true,
+        icon: 'icon-shumagongdandayin iconfont scale-11',
+        pageName: 'DigitalCompletionTaskListView',
+        PermissionInfo: ['PermissionManageDigitalTask', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/DigitalCompletionTaskList/DigitalCompletionTaskListView.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {
@@ -236,6 +250,18 @@ const routeTree:RouteTreeType = {
     -------------------------------------- */
     {
       name: 'ManageTaskList',
+      children: [],
+    },
+    /* 数码工单打印
+    -------------------------------------- */
+    {
+      name: 'ManageDigitalList',
+      children: [],
+    },
+    /* 数码完工任务
+    -------------------------------------- */
+    {
+      name: 'DigitalCompletionTaskList',
       children: [],
     },
   ],

@@ -2,7 +2,7 @@
  <div v-show="!onlyPrint">
   <DialogContainerComp
     :visible='visible'
-    :width='500'
+    :width='width'
     title='标题'
     top='12vh'
     @open='onOpen'
@@ -22,13 +22,16 @@
 import { nextTick, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   title?: string
   /** 是否直接打印 （不需要在弹窗中预览，非浏览器打印预览） */
   onlyPrint?: boolean
   /** 为true时 在submit事件中将不会自动进行打印 */
   noAutoPrint?: boolean
-}>();
+  width: number
+}>(), {
+  width: 500,
+});
 
 const emit = defineEmits(['submit', 'close']);
 
@@ -58,6 +61,7 @@ const print = async (title?: string) => { // 直接调用打印时 应传递only
   // 写入内容
   const doc = iframe.contentWindow?.document;
   if (!doc) return;
+  doc.write('<!DOCTYPE html>');
   doc.write('<style media="print">body {display:flex;justify-content:center;align-items: center;}</style>');
   doc.write('<link href="./css/print.css" media="print" rel="stylesheet" />');
   doc.write(`<div>${oArea.value.innerHTML}</div>`);

@@ -141,7 +141,7 @@ const submit = (data: ILineEquipmentSaveParams) => { // 添加设备 本地保�
   emit('save', temp, callback);
 };
 
-const toPutOutPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 伸放
+const toPutOutPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 申放
   emit('toPutOut', it, type);
 };
 

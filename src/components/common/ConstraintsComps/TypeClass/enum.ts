@@ -34,7 +34,7 @@ export const PropertyDisplayTypeMpEnumList = getEnumList(PropertyDisplayTypeMpEn
 export enum UseModuleEnum {
   /** 获取设备组物料类型限制条件属性 */
   EquipmentGroupMaterialTypeLimit = 0, // 获取设备组物料类型限制条件属性
-  /** 设置伸放条件 */
+  /** 设置申放条件 */
   PutOutLimit = 1,
   /** 设置产能条件 */
   CapacityLimit = 2,

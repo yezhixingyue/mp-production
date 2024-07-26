@@ -35,6 +35,8 @@ export class Condition {
 
   DateType = 'last7Date'
 
+  IsDigital = false
+
   KeyWords = ''
 
   Page = 1
