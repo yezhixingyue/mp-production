@@ -18,7 +18,7 @@ export class ManageDigitalCompletionTaskList {
     this.IsPlateTask = IsPlateTask;
     this.condition = new Condition(IsPlateTask);
 
-    this.getList();
+    // this.getList();
   }
 
   /** 清除条件筛选项 */

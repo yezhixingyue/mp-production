@@ -33,7 +33,7 @@ const BreadcrumbList = computed(() => ([
     to: { path: '/equipment' },
     name: `选择设备/工厂：${LinePutOutPageData.value?.curWork?.Name || ''}`,
   },
-  { name: `设置伸放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
+  { name: `设置申放：${LinePutOutPageData.value?.curLineEquipment?.Name}` },
 ]));
 
 const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {

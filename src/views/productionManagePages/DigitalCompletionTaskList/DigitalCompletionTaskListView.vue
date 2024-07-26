@@ -9,6 +9,7 @@
       <InternalCoreView
         v-if="localManageData.currentTaskList"
         :class="isSwitching"
+        :key="`${localManageData.currentTaskList.IsPlateTask}`"
         :Permission="localManageData.Permission"
         :ManageTaskListData="localManageData.currentTaskList"
         :EquipmentFilterData="localManageData.EquipmentFilterData"

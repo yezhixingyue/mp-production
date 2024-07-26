@@ -23,9 +23,9 @@
     <mp-table-column width="90px" label="操作" class-name="ctrl" v-if="Permission?.Obj.FileRetransfer || Permission?.Obj.DownloadFile">
       <template #default="scope:any">
         <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.FileRetransfer"
-         :disabled="exportDisableStatuses.includes(scope.row.Status)" link @click="onExportClick(scope.row)">导出</mp-button>
+         :disabled="!scope.row._Downloadable" link @click="onExportClick(scope.row)">导出</mp-button>
         <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.DownloadFile"
-         :disabled="!scope.row.FilePath" link @click="onDownloadClick(scope.row)">下载</mp-button>
+         :disabled="!scope.row.FilePath || !scope.row._Downloadable" link @click="onDownloadClick(scope.row)">下载</mp-button>
       </template>
     </mp-table-column>
     <template #empty>
@@ -55,6 +55,8 @@ const oTableRef = ref<InstanceType<typeof ElTable>>();
 
 const localList = computed(() => props.localManageData.list.map(it => {
   const printableStatuses = DigitalImpositionStatusEnumList.filter(it => it.printable).map(it => it.ID); // 可打印状态
+  const downloadableStatuses = DigitalImpositionStatusEnumList.filter(it => it.downloadable).map(it => it.ID); // 可下载状态
+  const exportableStatuses = DigitalImpositionStatusEnumList.filter(it => it.exportable).map(it => it.ID); // 可导出状态
   return {
     ...it,
     _Template: [it.TemplateSize].filter(it => it).join(' '),
@@ -64,10 +66,10 @@ const localList = computed(() => props.localManageData.list.map(it => {
     _ImpositionTime: format2MiddleLangTypeDateFunc2(it.ImpositionTime),
     _Printable: printableStatuses.includes(it.Status),
     _PrintSideText: getEnumNameByID(it.PrintSide, PrintSideEnumList),
+    _Downloadable: downloadableStatuses.includes(it.Status),
+    _Exportable: exportableStatuses.includes(it.Status),
   };
 }));
-
-const exportDisableStatuses = DigitalImpositionStatusEnumList.filter(it => !it.exportable).map(it => it.ID);
 
 const onSelectionChange = async (val: IDigitalOrderPlateInfo[]) => {
   props.localManageData.setSelection(val);

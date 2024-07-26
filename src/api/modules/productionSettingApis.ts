@@ -96,13 +96,13 @@ const api = {
   getProductionLineSetSplit(data) { // POST /Api/ProductionLine/SetSplit  工序删除
     return request({ method: 'POST', url: '/Api/ProductionLine/SetSplit', data });
   },
-  getProductionLinePutOutList(lineEquipmentID) { // POST /Api/ProductionLine/PutOut/List  生产线伸放列表
+  getProductionLinePutOutList(lineEquipmentID) { // POST /Api/ProductionLine/PutOut/List  生产线申放列表
     return request({ method: 'GET', url: `/Api/ProductionLine/PutOut/List?lineEquipmentID=${lineEquipmentID}` });
   },
-  getProductionLinePutOutSave(data) { // POST /Api/ProductionLine/PutOut/Save  生产线伸放保存
+  getProductionLinePutOutSave(data) { // POST /Api/ProductionLine/PutOut/Save  生产线申放保存
     return request<string>({ method: 'POST', url: '/Api/ProductionLine/PutOut/Save', data });
   },
-  getProductionLinePutOutRemove(id) { // POST /Api/ProductionLine/PutOut/Remove  生产线伸放删除
+  getProductionLinePutOutRemove(id) { // POST /Api/ProductionLine/PutOut/Remove  生产线申放删除
     return request({ method: 'DELETE', url: `/Api/ProductionLine/PutOut/Remove?id=${id}` });
   },
   getProductionLineCapacityList(lineEquipmentID) { // POST /Api/ProductionLine/Capacity/List  生产线设备产能列表

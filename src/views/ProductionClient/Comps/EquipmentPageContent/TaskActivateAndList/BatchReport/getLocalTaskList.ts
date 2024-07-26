@@ -27,6 +27,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
     let _Material = '';
     let _LineName = '';
     let _PrintMaterialSizeTitle = '订单尺寸';
+    let _Size = '';
 
     const info = getTaskDisplayInfo(it);
 
@@ -36,6 +37,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       case ReportModeEnum.board:
         _TargetID = `${it.Working.PlateInfo?.Code || ''}（大版）`;
         _Material = it.Working.PlateInfo?.Material || '';
+        _Size = it.Working.PlateInfo?.MaterialSize || '';
         _DetailText = info.SecondTitle;
         _LineName = it.Working.PlateInfo?.Line || '';
         _PrintMaterialSizeTitle = '物料尺寸';
@@ -45,13 +47,16 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
         _TargetID = `${it.Working.OrderInfo?.OrderID || ''}（订单）`;
         if (it.Working.OrderInfo?.Content && useContent) _DetailText = it.Working.OrderInfo.Content;
         _LineName = it.Working.OrderInfo?.Line || '';
+        _Size = it.Working.OrderInfo?.Size || '';
         break;
 
       case ReportModeEnum.block:
         _TargetID = `${it.Working.OrderInfo?.OrderID || ''} ${it.Working.ChunkInfo?.Name || ''}（块）`;
         _Material = it.Working.PlateInfo?.Material || '';
+        _Size = it.Working.PlateInfo?.MaterialSize || '';
         if (it.Working.OrderInfo?.Content && useContent) _DetailText = it.Working.OrderInfo.Content;
         _LineName = it.Working.ChunkInfo?.Line || '';
+        _PrintMaterialSizeTitle = '物料尺寸';
         break;
 
       default:
@@ -122,6 +127,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _ProcessTimes, // 是第几次加工次数
       _AssistText, // 辅助文字信息
       _Material,
+      _Size,
       _UnFinishNumber,
       _Number,
       _Wastage,

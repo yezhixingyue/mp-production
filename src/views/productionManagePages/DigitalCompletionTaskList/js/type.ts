@@ -19,7 +19,7 @@ export interface IDigitalTask {
   SideNumber: number
   /** 印张数/任务数量 */
   MaterialNumber: number
-  /** 伸放数量 */
+  /** 申放数量 */
   Wastage: number
   /** 操作人 */
   Operator: number

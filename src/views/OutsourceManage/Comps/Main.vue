@@ -44,7 +44,7 @@
                   <div style="font-size: 0.85em;">{{ curRow._Material || '-' }}</div>
                 </td>
                 <td>
-                  <div>{{ curRow.MaterialSize || '-' }}</div>
+                  <div>{{ curRow._Size || '-' }}</div>
                 </td>
                 <td>{{ curRow._Number || '-' }}</td>
                 <td>{{ curRow._Wastage || '-' }}</td>
@@ -199,5 +199,10 @@ const onConfirmExternalClick = (row: ReturnType<typeof getLocalTaskList>[number]
   :deep(.mp-date-time-picker .el-date-editor) {
     width: 120px;
   }
+
 }
+// .outside-print-area {
+//   background-color: #eee;
+//   border-radius: 2px;
+// }
 </style>

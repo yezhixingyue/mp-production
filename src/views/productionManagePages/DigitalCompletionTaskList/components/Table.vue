@@ -8,7 +8,7 @@
     <mp-table-column min-width="100px" prop="WorkingNote" label="加工信息" />
     <mp-table-column width="120px" prop="Equipment" label="设备" />
     <mp-table-column width="80px" prop="PrintSide" label="印面" />
-    <mp-table-column width="80px" prop="_SideNumber" :label="IsPlateTask ? '印面数' : '订单总数'" />
+    <mp-table-column width="80px" prop="_SideNumber" :label="IsPlateTask ? '印面数' : '订单总量'" />
     <mp-table-column width="80px" prop="_MaterialNumber" :label="IsPlateTask ? '印张数' : '任务数量'" />
     <mp-table-column width="80px" prop="_Wastage" label="申放数量" />
     <mp-table-column width="80px" prop="Operator" label="操作人" />

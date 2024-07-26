@@ -12,7 +12,7 @@ export enum WorkSourceTypeEnum {
   Split = 2,
 }
 
-/** 伸放类型： % | 张 */
+/** 申放类型： % | 张 */
 export enum PutOutTypeEnum {
   number = 0,
   percent = 1,

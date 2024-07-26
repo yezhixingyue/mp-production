@@ -4,7 +4,7 @@
       <div class="content">
         条件
       </div>
-      <div class="pot-out">伸放</div>
+      <div class="pot-out">申放</div>
       <div class="priority">优先级</div>
       <div class="ctrl">
         操作
@@ -48,7 +48,7 @@ const onSaveClick = (e) => {
 
 const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemClass>, i: number) => {
   MpMessage.warn({
-    title: '确定要删除此伸放吗？',
+    title: '确定要删除此申放吗？',
     msg: `条目：第 [ ${i + 1} ] 条`,
     onOk: () => {
       emit('rowRemove', it);

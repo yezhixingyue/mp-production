@@ -24,6 +24,9 @@ export class ManagePageData {
 
     if (!t) {
       this.dataList.push(new ManageDigitalCompletionTaskList(val));
+      setTimeout(() => {
+        this.currentTaskList?.getList();
+      }, 0);
     }
 
     this._currentTab = val;
