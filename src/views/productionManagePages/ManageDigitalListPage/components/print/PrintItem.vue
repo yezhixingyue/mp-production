@@ -74,7 +74,7 @@
             <tbody>
               <tr>
                 <td>{{ item.UploadFile.SemiFinished }}</td>
-                <td>{{ item.UploadFile.Size }}</td>
+                <td>{{ item.UploadFile.FileSize }}</td>
                 <td>{{ item.UploadFile.PageNumber }}</td>
                 <td>{{ getEnumNameByID(item.UploadFile.PrintSide, PrintSideEnumList) }}</td>
                 <td>{{ item.UploadFile.Number }}</td>

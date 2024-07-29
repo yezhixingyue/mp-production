@@ -120,7 +120,7 @@ export interface IDigitalOrderPlatePrintInfo {
     /** 半成品名称 */
     SemiFinished: string
     /** 文件尺寸 */
-    Size: string
+    FileSize: string
     /** 文件页数 */
     PageNumber: number
     /** 单双面 */
