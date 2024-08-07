@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
   onlyPrint?: boolean
   /** 为true时 在submit事件中将不会自动进行打印 */
   noAutoPrint?: boolean
-  width: number
+  width?: number
 }>(), {
   width: 500,
 });

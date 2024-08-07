@@ -76,6 +76,8 @@ export enum PlaceOrderMaterialSourceEnum {
   logisticsExpress = 3,
   /** 临时调纸 */
   tempMova = 4,
+  /** 预出库 */
+  preDelivery = 255,
 }
 
 /**

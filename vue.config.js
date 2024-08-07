@@ -17,8 +17,6 @@ process.env.VUE_APP_VERSION = require('./package.json').version;
 const proxyUrl = 'http://192.168.2.238:8052'; // 强哥
 // const proxyUrl = 'http://192.168.3.253:2022'; // 吕伟
 
-// const imgUrl = 'http://192.168.1.92:8050';
-
 module.exports = defineConfig({
   transpileDependencies: true,
   publicPath,
@@ -73,11 +71,9 @@ module.exports = defineConfig({
     },
   },
 
-  // configureWebpack: {
-  //   devtool: 'source-map',
-  // },
   configureWebpack: config => {
-    config.devtool = process.env.NODE_ENV === 'development' ? 'source-map' : false;
+    config.devtool = isDev ? 'source-map' : false;
+
     // 处理图标乱码的问题 （是否解决待确认）
     config.module.rules.filter(rule => rule.test.toString().indexOf('scss') !== -1).forEach(rule => {
       rule.oneOf.forEach(oneOfRule => {

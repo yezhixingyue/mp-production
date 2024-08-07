@@ -69,47 +69,29 @@
     </table>
     <NodePicDialog v-model:visible="processVisible" :item="curRowChildPlat || curRow" :targetType="ReportModeEnum.board" />
 
-    <!-- 打印工单 -->
-    <PrintDialog ref="oPrintDialog" :title="`${curRow?.Code}（大版）`">
-      <div class="plate-print-content">
-        <div class="img-box" v-if= 'curRow'>
-          <img :src="imgSrc" v-show="imgSrc" alt="">
-        </div>
-        <div class="right" v-if= 'curRow'>
-          <h2>大版ID：{{ curRow?.Code || '' }}</h2>
-          <div class="remark">
-            <p>{{ curRow?.Template || '' }} {{ curRow?.TemplateSize || '' }}</p>
-            <p>{{ curRow?.Material || '' }}</p>
-          </div>
-          <h4>{{ curRow?.Number || '' }}{{ curRow?.Unit || '' }}</h4>
-          <p class="time">打印时间：{{ curPrintData }}</p>
-        </div>
-        <embed type="application/pdf" v-if= 'previewUrl' :src="previewUrl" width="100%" height="100%" />
-      </div>
-    </PrintDialog>
-
     <!-- 展示包含订单弹窗 -->
     <OrderContainDialog v-model:visible="orderContainVisible" :item="curRow" />
+
+    <!-- 工单打印弹窗 -->
+    <WorkOrderPrintDialog :row="curRow" ref="oWorkOrderPrintDialog" />
   </main>
 </template>
 
 <script setup lang='ts'>
 import {
-  computed, defineAsyncComponent, onMounted, onUnmounted, ref,
+  computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref,
 } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getQRCodeSrc } from '@/components/common/General/Print/utils';
-import { format2LangTypeDate, format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
+import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
-import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { loadBarcode } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/utils';
-import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
 import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
 import { useUserStore } from '@/store/modules/user';
 import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
 import { PlateStatusEnum, PlateTypeEnum } from '../js/enum';
+import WorkOrderPrintDialog from './WorkOrderPrintDialog.vue';
 
 const OrderContainDialog = defineAsyncComponent(() => import('./OrderContainDialog.vue'));
 
@@ -191,26 +173,17 @@ const onOrderContainClick = (row: typeof localList.value[number]) => {
   orderContainVisible.value = true;
 };
 
-const imgSrc = ref('');
-const curPrintData = ref('');
-const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
-const onOrderPrintClick = async (row: typeof localList.value[number]) => {
-  if (!row || !oPrintDialog.value) return;
+const oWorkOrderPrintDialog = ref<InstanceType<typeof WorkOrderPrintDialog>>();
+const onOrderPrintClick = async (row: typeof localList.value[number]) => { // 打印大版工单
+  if (!row || !oWorkOrderPrintDialog.value) return;
 
   curRow.value = row;
-  imgSrc.value = '';
 
-  const src = await getQRCodeSrc(row.Code, 130); // 获取img src
+  await nextTick();
 
-  if (src) {
-    imgSrc.value = src;
-    curPrintData.value = format2LangTypeDate(getTimeConvertFormat({ withHMS: true }));
-    // oPrintDialog.value.print(`${row.Code}（大版工单）`);
-    oPrintDialog.value.open();
-  }
+  oWorkOrderPrintDialog.value.display();
 };
 
-const previewUrl = ref('');
 const onBarCodePrintClick = (row: typeof localList.value[number], childPlat: IPlateListChild | null = null) => {
   const item = childPlat || row;
 

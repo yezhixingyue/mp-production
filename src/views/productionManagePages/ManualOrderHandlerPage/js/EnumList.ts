@@ -60,6 +60,11 @@ export const PlaceOrderMaterialSourceEnumList = [
     Name: '临时调纸',
     ManualOrderUse: false,
   },
+  {
+    ID: PlaceOrderMaterialSourceEnum.preDelivery,
+    Name: '预出库',
+    ManualOrderUse: false,
+  },
 ];
 
 /** 爬移使用枚举类型列表 */
