@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3547397 */
-  src: url('iconfont.woff2?t=1712548468282') format('woff2'),
-       url('iconfont.woff?t=1712548468282') format('woff'),
-       url('iconfont.ttf?t=1712548468282') format('truetype');
+  src: url('iconfont.woff2?t=1722937806648') format('woff2'),
+       url('iconfont.woff?t=1722937806648') format('woff'),
+       url('iconfont.ttf?t=1722937806648') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shumawangongrenwu:before {
+  content: "\e695";
+}
+
+.icon-shumagongdandayin1:before {
+  content: "\e697";
+}
+
+.icon-querenzeren:before {
+  content: "\e68c";
+}
+
+.icon-budabiaoqian:before {
+  content: "\e698";
+}
+
+.icon-saomiao:before {
+  content: "\e699";
+}
+
+.icon-dayin:before {
+  content: "\e69a";
 }
 
 .icon-shumagongdandayin:before {

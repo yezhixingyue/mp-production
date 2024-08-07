@@ -1,49 +1,5 @@
 @import './reset.scss';
 
-// 大版打印工单
-.plate-print-content {
-  display: flex;
-  width: 415px;
-  margin: 0 auto;
-  .img-box {
-    width: 130px;
-    height: 130px;
-    margin-right: 20px;
-    margin-top: 5px;
-    flex: none;
-    background-color: #e5e5e5;
-    img {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .right {
-    width: 240px;
-    color: #444;
-    padding-top: 2px;
-    font-size: 18px;
-    h2 {
-      font-size: 18px;
-      padding-bottom: 6px;
-    }
-    .remark {
-      min-height: 50px;
-      line-height: 24px;
-    }
-    h4 {
-      margin-top: 4px;
-    }
-    .time {
-      font-size: 14px;
-    }
-  }
-
-  @media print {
-    width: 100%;
-  }
-}
-
 // 待外协打印工单
 .outside-print-area {
   margin: 0 auto;
@@ -469,4 +425,132 @@
 
   }
   
+}
+
+// 大版工单打印
+.plate-work-order-print-wrap {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  min-height: 100vh;
+  font-size: 9.2pt;
+  box-sizing: border-box;
+  padding: 2vw;
+  page-break-before: always;
+  page-break-inside: avoid;
+
+  > header {
+    flex: none;
+    text-align: center;
+    position: relative;
+    height: 36mm;
+
+    h2 {
+      font-size: 2.2em;
+      font-weight: 400;
+      padding-top: 8mm;
+    }
+
+  }
+
+  > main {
+    flex: 1;
+    > .line {
+      font-size: 1.4em;
+      letter-spacing: 0.1pt;
+    }
+
+    > .title {
+      font-size: 1.1em;
+      border: 1px solid;
+      border-bottom: none;
+      line-height: 2em;
+      padding: 0 1em;
+    }
+
+    > .item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 10% auto;
+      grid-template-rows: 1fr;
+
+      > .title {
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        border: 1px solid;
+        border-right: none;
+        i {
+          max-width: 2em;
+          white-space: wrap;
+        }
+      }
+
+      > table {
+        flex: 1;
+        overflow: hidden;
+
+        .m-num {
+          span {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  > footer {
+    flex: none;
+    position: relative;
+    height: 36mm;
+    box-sizing: border-box;
+    padding-top: 30mm;
+    margin-top: 5mm;
+    span {
+      font-size: 1.2em;
+      & + span {
+        margin-left: 15px;
+      }
+    }
+  }
+
+  
+  .code {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: center;
+
+    img {
+      width: 28mm;
+      height: 28mm;
+    }
+
+    p {
+      font-size: 1.6em;
+      padding-top: 0.2em;
+      letter-spacing: 2px;
+    }
+  }
+
+  table {
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+    tr {
+      td, th {
+        border: 1px solid;
+        text-align: center;
+        line-height: 1.35em;
+        padding: 0.6em 0.1em;
+        font-size: 1.1em;
+        font-weight: 400;
+
+      }
+    }
+  }
 }

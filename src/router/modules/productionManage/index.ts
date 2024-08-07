@@ -171,7 +171,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '数码工单打印',
         requiresAuth: true,
-        icon: 'icon-shumagongdandayin iconfont scale-11',
+        icon: 'icon-shumagongdandayin1 iconfont scale-11',
         pageName: 'ManageDigitalListPage',
         PermissionInfo: ['PermissionManageDigitalPlate', 'HavePomission'],
       },
@@ -185,7 +185,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '数码完工任务',
         requiresAuth: true,
-        icon: 'icon-shumagongdandayin iconfont scale-11',
+        icon: 'icon-shumawangongrenwu iconfont scale-11',
         pageName: 'DigitalCompletionTaskListView',
         PermissionInfo: ['PermissionManageDigitalTask', 'HavePomission'],
       },

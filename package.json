@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "compile-print-scss": "sass ./src/assets/css/print.scss ./public/css/print.css",
-    "serve": "npm run compile-print-scss && vue-cli-service serve --mode dev.test",
+    "serve": "npm run compile-print-scss && vue-cli-service serve --mode dev.test --port 8060",
     "build.test": "npm run compile-print-scss && vue-cli-service build --mode prod.test",
     "build.prod": "node update_version.js && npm run compile-print-scss && vue-cli-service build --mode prod",
     "test:unit": "vue-cli-service test:unit",

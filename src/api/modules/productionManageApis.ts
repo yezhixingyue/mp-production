@@ -32,6 +32,10 @@ export const productionManageApis = {
   getPlateList(condition) {
     return request<IManagePlateInfo[]>({ method: 'POST', url: '/Api/Plate/List', data: condition });
   },
+  /** get /Api/Plate/Detail */
+  getPlateDetail(plateID: string) {
+    return instance.get<IDigitalOrderPlatePrintInfo>('/Api/Plate/Detail', { params: { plateID } });
+  },
   /** POST /Api/Chunk/List   筛选块列表 */
   getChunkList(condition) {
     return request<IManageChunkInfo[]>({ method: 'POST', url: '/Api/Chunk/List', data: condition });

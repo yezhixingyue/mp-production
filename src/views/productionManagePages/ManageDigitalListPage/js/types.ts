@@ -1,6 +1,7 @@
 import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
-import { PrintSideEnum } from '../../ManualOrderHandlerPage/js/enums';
+import { ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
+import { PlaceOrderMaterialSourceEnum, PrintSideEnum } from '../../ManualOrderHandlerPage/js/enums';
 import { IBaseProperty } from '../../ManualOrderHandlerPage/js/types';
 import { DigitalImpositionStatusEnum, DigitalImpositionTypeEnum } from './enum';
 
@@ -47,21 +48,31 @@ export interface IDigitalOrderPlateInfo {
 }
 
 interface ITaskWorkingDetail {
-   /** 工序名称  */
-   WorkingName: string
-   /** 报工方式 */
-   ReportMode: ReportModeEnum
-   /** 加工信息 */
-   AssistList: {
-    /** 名称 */
-    Name: string
-    /** 文字信息 --- 筛选掉为空的条目，然后把剩下的以 名称:文字信息 的形式join(;)起来显示 */
-    Content?: string
-   }[]
-   /** 加工设备 */
-   Equipment: IEquipmentBaseInfo
-   /** 申放 */
-   Wastage: number
+  /** 工序ID */
+  WorkingID: string
+  /** 工序名称  */
+  WorkingName: string
+  /** 报工方式 */
+  ReportMode: ReportModeEnum
+  /** 加工信息 */
+  AssistList: {
+  /** 名称 */
+  Name: string
+  /** 文字信息 --- 筛选掉为空的条目，然后把剩下的以 名称:文字信息 的形式join(;)起来显示 */
+  Content?: string
+  }[]
+  /** 加工设备 */
+  Equipment: IEquipmentBaseInfo
+  /** 申放 */
+  Wastage: number
+  /** 加工次序 */
+  Index: number
+  /** 加工数量(不含当前工序申放数量) */
+  Number: number
+  /** 加工次数 */
+  WorkTimes: number
+  /** 附带的制版工序 */
+  PlateMakingWorking?: Omit<ITaskWorkingDetail, 'PlateMakingWorking'>
 }
 
 /** 数码工单打印数据接口类型 */
@@ -74,6 +85,21 @@ export interface IDigitalOrderPlatePrintInfo {
   ProductionLine: IBaseProperty<string>
   /** 任务开启编号 */
   StartCode: string
+  /** 版头字 */
+  Title: string
+  /** 拼版规格名称 */
+  TemplateSize: IBaseProperty<string>
+  /** 翻版方式 */
+  ReproductionType: ReproductionTypeEnum
+  /** 拼版尺寸 宽与高 */
+  Width: number
+  Height: number
+  /** 是否合拼 */
+  ForbitUnionMakeup: boolean
+  /** 物料来源 PlaceOrderMaterialSourceEnumList */
+  MaterialSource: PlaceOrderMaterialSourceEnum
+  /** 子版列表 */
+  ChildList?: (Omit<IDigitalOrderPlatePrintInfo, 'ChildList'>)[]
   /** 块列表 默认此处有且仅有一个块信息 */
   ChunkList: [{
     /** 块编号(拼版之后才有值) */
@@ -142,6 +168,11 @@ export interface IDigitalOrderPlatePrintInfo {
     Height: number
     /** 物料数量 */
     Number: number
+    /** 开数 */
+    Multiple: number
+    /** 开料尺寸 */
+    OriginalWidth: number
+    OriginalHeight: number
   }
   /** 任务列表 工序列表 */
   WorkingList: ITaskWorkingDetail[]
