@@ -191,6 +191,22 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/DigitalCompletionTaskList/DigitalCompletionTaskListView.vue'),
     },
+    /** 补打标签 */
+    {
+      path: '/rePrint',
+      name: 'rePrint',
+      meta: {
+        title: '补打标签',
+        requiresAuth: true,
+        icon: 'icon-daiwaixie iconfont',
+        pageName: 'TagRePrintPage',
+        // PermissionInfo: ['PermissionExternalStored', 'HavePomission'],
+        PermissionInfo: ['PermissionManageChunk', 'Obj', 'RePrint'],
+        hideMenu: true,
+        fullAcreen: true,
+      },
+      component: () => import('@/views/productionManagePages/TagRePrintPage/TagRePrintPage.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {

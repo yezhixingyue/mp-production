@@ -9,6 +9,7 @@ import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IDigitalOrderPlatePrintInfo } from '@/views/productionManagePages/ManageDigitalListPage/js/types';
 import { request, instance } from '@/basic/request';
+import { IChunkDetail } from '@/views/productionManagePages/TagRePrintPage/js/type';
 
 export const productionManageApis = {
   /* 生产管理
@@ -104,8 +105,16 @@ export const productionManageApis = {
   getPlateFileRetransfer(orderID: string) {
     return instance.put('/Api/PlateFile/Retransfer', null, { params: { orderID } });
   },
+  /** 撤回数码大版 /Api/OfflinePlate/Revocation */
+  getOfflinePlateRevocation(data) {
+    return instance.post('/Api/OfflinePlate/Revocation', data);
+  },
   /** POST /Api/DigitalTask/List  数码已完工任务 */
   getDigitalTaskList(condition) {
     return instance.post('/Api/DigitalTask/List', condition);
+  },
+  /** /Api/Chunk/Detail 获取块详情 补打块标签  */
+  getChunkDetail(code: string) {
+    return instance.get<IChunkDetail>('/Api/Chunk/Detail', { params: { code } });
   },
 };

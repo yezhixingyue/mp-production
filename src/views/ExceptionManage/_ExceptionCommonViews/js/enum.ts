@@ -9,4 +9,6 @@ export enum ExceptionHandlerStatusEnum {
   unprocessed = 0,
   /** 已处理 */
   processed = 200,
+  /** 已取消 */
+  canceled = 255,
 }

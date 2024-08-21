@@ -105,6 +105,7 @@ export interface IUser {
       HavePomission: boolean
       Obj: {
         Query: boolean
+        RePrint: boolean
       };
     };
     /** 订单管理 */
@@ -368,6 +369,8 @@ export interface IUser {
         DownloadFile: boolean
         /** 导出Excel */
         Excel: boolean
+        /** 撤销至大版前 */
+        Revocation: boolean
       };
     };
     /** 数码完工任务 */

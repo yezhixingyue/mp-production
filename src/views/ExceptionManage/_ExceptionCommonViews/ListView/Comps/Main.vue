@@ -10,14 +10,15 @@
       <mp-table-column width="185px" prop="_SubmitContent" label="提交时间（提交人）" />
       <mp-table-column width="150px" label="状态">
         <template #default="scope:any">
-          <span v-if="scope.row._processed" class="mr-10">已处理</span>
-          <mp-button type="primary" v-if="Permission?.Query && scope.row._processed" link @click="onMenuClick(scope.row, 'Detail')">处理详情</mp-button>
+          <span >{{ scope.row._StatusText }}</span>
+          <mp-button type="primary" class="ml-10"
+           v-if="Permission?.Query && scope.row._processed" link @click="onMenuClick(scope.row, 'Detail')">处理详情</mp-button>
         </template>
       </mp-table-column>
       <mp-table-column width="185px" prop="_HandlerContent" label="处理时间（处理人）" />
       <mp-table-column width="120px" label="操作">
         <template #default="scope:any">
-          <mp-button type="primary" v-if="Permission?.Deal && !scope.row._processed" link @click="onMenuClick(scope.row, 'Setup')">处理</mp-button>
+          <mp-button type="primary" v-if="Permission?.Deal && scope.row._unprocessed" link @click="onMenuClick(scope.row, 'Setup')">处理</mp-button>
         </template>
       </mp-table-column>
       <template #empty>
@@ -35,6 +36,7 @@ import { useUserStore } from '@/store/modules/user';
 import { ITaskExceptionInfo } from '../../js/type';
 import { ExceptionHandlerStatusEnum } from '../../js/enum';
 import { TargetTypeEnumList } from '../../SetupView/js/EnumList';
+import { ExceptionHandlerStatusEnumList } from '../../js/EnumList';
 
 const props = defineProps<{
   list: ITaskExceptionInfo[]
@@ -60,7 +62,11 @@ const localList = computed(() => {
     _SubmitContent: `${format2MiddleLangTypeDateFunc2(it.CreateTime)}（${it.SubmitterName}）`,
     _HandlerContent: it.HandlerTime ? `${format2MiddleLangTypeDateFunc2(it.HandlerTime)}（${it.HandlerName}）` : '',
     /** 是否已处理 */
-    _processed: it.Status !== ExceptionHandlerStatusEnum.unprocessed,
+    _processed: it.Status === ExceptionHandlerStatusEnum.processed,
+    /** 是否未处理 */
+    _unprocessed: it.Status === ExceptionHandlerStatusEnum.unprocessed,
+    /** 状态 */
+    _StatusText: getEnumNameByID(it.Status, ExceptionHandlerStatusEnumList),
     /** 工序(外协工厂) */
     _WorkingContent: it.Working + (it.Equipment ? ` (${it.Equipment.Name})` : ''),
   }));
@@ -78,6 +84,10 @@ const onMenuClick = (row: ITaskExceptionInfo, type: 'Detail' | 'Setup') => {
 .table-wrap {
   :deep(.el-table__body-wrapper .el-table__body tbody .el-table__row .el-table__cell) {
     height: 44px;
+
+    .cell {
+      padding: 0 4px;
+    }
 
     button {
       font-size: 12px;

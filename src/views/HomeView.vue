@@ -17,15 +17,37 @@
       <!-- <i>!</i> -->
     </header>
     <main>
-      <canvas ref="canvas" width="800" height="800"></canvas>
+      <!-- <canvas ref="canvas" width="800" height="800"></canvas> -->
+      <MpButton v-if="isDev" @click="onclick">生成</MpButton>
+
+      <img v-if="qrcodeSrc" :src="qrcodeSrc" alt="" style="display: block;">
     </main>
   </section>
 </template>
 
 <script lang='ts' setup>
-import { onMounted, ref } from 'vue';
+import { getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { nextTick, onMounted, ref } from 'vue';
 // import { useRouter } from 'vue-router';
 
+const qrcodeSrc = ref('');
+
+const onclick = async () => { // 测试二维码
+  qrcodeSrc.value = '';
+
+  await nextTick();
+
+  setTimeout(async () => {
+    qrcodeSrc.value = await getQRCodeSrc('10000160') || '';
+  }, 100);
+
+  const num = Math.random() > 1 ? Math.random() > 0.5 ? 1 : 0 : 10;
+
+  console.log('qrcodeSrc.value', qrcodeSrc.value);
+  console.log(123, num);
+};
+
+const isDev = process.env.NODE_ENV === 'development';
 const canvas = ref<HTMLCanvasElement>();
 const draw = () => {
   if (canvas.value) {

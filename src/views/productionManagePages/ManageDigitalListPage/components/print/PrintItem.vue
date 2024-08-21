@@ -85,7 +85,7 @@
         </div>
       </div>
       <div class="bottom">
-        <div>订单备注：{{ item.UploadFile.Remark }}</div>
+        <div>文件备注：{{ item.UploadFile.Remark }}</div>
       </div>
     </div>
 

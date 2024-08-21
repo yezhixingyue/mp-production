@@ -20,12 +20,14 @@
     <mp-table-column width="65px" prop="Operator" label="拼版人员" />
     <mp-table-column min-width="100px" prop="Line" label="生产线" />
     <mp-table-column min-width="80px" prop="Error" label="错误" />
-    <mp-table-column width="90px" label="操作" class-name="ctrl" v-if="Permission?.Obj.FileRetransfer || Permission?.Obj.DownloadFile">
+    <mp-table-column width="110px" label="操作" class-name="ctrl" v-if="Permission?.Obj.FileRetransfer || Permission?.Obj.DownloadFile">
       <template #default="scope:any">
         <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.FileRetransfer"
          :disabled="!scope.row._Downloadable" link @click="onExportClick(scope.row)">导出</mp-button>
         <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.DownloadFile"
          :disabled="!scope.row.FilePath || !scope.row._Downloadable" link @click="onDownloadClick(scope.row)">下载</mp-button>
+        <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.Revocation"
+         :disabled="!scope.row._Revocable" link @click="onRevocationClick(scope.row)">撤销</mp-button>
       </template>
     </mp-table-column>
     <template #empty>
@@ -57,6 +59,7 @@ const localList = computed(() => props.localManageData.list.map(it => {
   const printableStatuses = DigitalImpositionStatusEnumList.filter(it => it.printable).map(it => it.ID); // 可打印状态
   const downloadableStatuses = DigitalImpositionStatusEnumList.filter(it => it.downloadable).map(it => it.ID); // 可下载状态
   const exportableStatuses = DigitalImpositionStatusEnumList.filter(it => it.exportable).map(it => it.ID); // 可导出状态
+  const revocableStatuses = DigitalImpositionStatusEnumList.filter(it => it.revocable).map(it => it.ID); // 可撤销
   return {
     ...it,
     _Template: [it.TemplateSize].filter(it => it).join(' '),
@@ -68,6 +71,7 @@ const localList = computed(() => props.localManageData.list.map(it => {
     _PrintSideText: getEnumNameByID(it.PrintSide, PrintSideEnumList),
     _Downloadable: downloadableStatuses.includes(it.Status),
     _Exportable: exportableStatuses.includes(it.Status),
+    _Revocable: revocableStatuses.includes(it.Status),
   };
 }));
 
@@ -86,6 +90,11 @@ const onDownloadClick = (item: IDigitalOrderPlateInfo) => {
     if (item.FilePath) props.localManageData.download(item.FilePath);
   });
 };
+
+const onRevocationClick = (item: IDigitalOrderPlateInfo) => { // 撤销
+  props.localManageData.revocationData.open(item);
+};
+
 </script>
 
 <style scoped lang='scss'>
@@ -103,6 +112,10 @@ const onDownloadClick = (item: IDigitalOrderPlateInfo) => {
 
     button {
       font-size: 12px;
+
+      &.el-button+.el-button {
+        margin-left: 6px;
+      }
     }
 
     &.content {

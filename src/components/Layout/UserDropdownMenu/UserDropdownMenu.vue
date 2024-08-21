@@ -57,6 +57,9 @@
           <el-dropdown-item v-if="user?.PermissionList.PermissionExternalStored.Obj.Instored"
            @click="onLinkMenuClick('ExternalReceiveManage/Instored')"><i class="icon-ruku iconfont scale-15"
             style="position: relative;right: 1px;"></i> 外协入库</el-dropdown-item>
+          <el-dropdown-item v-if="user?.PermissionList.PermissionManageChunk.Obj.RePrint"
+           @click="onLinkMenuClick('rePrint')"><i class="icon-budabiaoqian iconfont scale-10"
+            style="position: relative;right: 1px;"></i> 补打标签</el-dropdown-item>
           <el-dropdown-item v-if="docPermissions?.manage" @click="onDocClick('manage')"><i class="iconfont icon-wendangguanli1"></i> 文档管理</el-dropdown-item>
           <el-dropdown-item v-if="docPermissions?.read" @click="onDocClick('document')"><i class="iconfont icon-bangzhuzhongxin"></i> 帮助中心</el-dropdown-item>
           <el-dropdown-item @click="logout" :icon="SwitchButton" command='logout'>退出登录</el-dropdown-item>

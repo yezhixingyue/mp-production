@@ -2,6 +2,9 @@
 const { defineConfig } = require('@vue/cli-service');
 require('events').EventEmitter.defaultMaxListeners = 20; // 将MaxListeners的限制数增加到20
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+const webpack = require('webpack');
+
 const isDev = process.env.NODE_ENV === 'development';
 
 let publicPath = '';
@@ -84,5 +87,20 @@ module.exports = defineConfig({
         );
       });
     });
+
+    // config.plugin('define').tap((definitions) => {
+    //   Object.assign(definitions[0], {
+    //     __VUE_OPTIONS_API__: 'true',
+    //     __VUE_PROD_DEVTOOLS__: 'false',
+    //     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
+    //   });
+    //   return definitions;
+    // });
+
+    config.plugins.push(new webpack.DefinePlugin({
+      __VUE_OPTIONS_API__: 'true',
+      __VUE_PROD_DEVTOOLS__: 'false',
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
+    }));
   },
 });

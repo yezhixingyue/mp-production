@@ -45,6 +45,7 @@ export interface IDigitalOrderPlateInfo {
   FilePath?: string
   /** 单双面 */
   PrintSide: PrintSideEnum
+  Error: string
 }
 
 interface ITaskWorkingDetail {
