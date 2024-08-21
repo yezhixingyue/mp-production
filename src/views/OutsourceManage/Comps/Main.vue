@@ -11,74 +11,76 @@
     />
 
     <PrintDialog ref="oPrintDialog" :onlyPrint="onlyPrint" noAutoPrint @submit="submitExternal" :width="dpiHelper.mm2Px(210) + 70">
-      <section class="outside-print-area" v-if="curRow">
-        <header>
-          <div class="left">
-            <p class="title">凌顶揽众工序外协加工单</p>
-            <p class="line">{{ curRow._LineName }}：{{ curRow._TargetID.replace(/（[\w\W]+）$/, '') }}</p>
-            <p>
-              <span style="margin-right: 1.2em;">外协单位：{{ curentFactory?.Name }}</span>
-              <span>联系电话：{{ curentFactory?.Mobile }}</span>
-            </p>
-          </div>
-          <div class="bar">
-            <img :src="imgSrc" alt="" v-show="imgSrc">
-            <span>{{ curRow.Code }}</span>
-          </div>
-        </header>
+      <div class="outside-print-area-wrap">
+        <section class="outside-print-area" v-if="curRow">
+          <header>
+            <div class="left">
+              <p class="title">凌顶揽众工序外协加工单</p>
+              <p class="line">{{ curRow._LineName }}：{{ curRow._TargetID.replace(/（[\w\W]+）$/, '') }}</p>
+              <p>
+                <span style="margin-right: 1.2em;">外协单位：{{ curentFactory?.Name }}</span>
+                <span>联系电话：{{ curentFactory?.Mobile }}</span>
+              </p>
+            </div>
+            <div class="bar">
+              <img :src="imgSrc" alt="" v-show="imgSrc">
+              <span>{{ curRow.Code }}</span>
+            </div>
+          </header>
 
-        <main>
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 25%;">物料信息</th>
-                <th style="width: 18%;">{{ curRow._PrintMaterialSizeTitle }}</th>
-                <th style="width: 18%;">返货数量</th>
-                <th style="width: 11%;">申放</th>
-                <th >外协价格</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div style="font-size: 0.85em;">{{ curRow._Material || '-' }}</div>
-                </td>
-                <td>
-                  <div>{{ curRow._Size || '-' }}</div>
-                </td>
-                <td>{{ curRow._Number || '-' }}</td>
-                <td>{{ curRow._Wastage || '-' }}</td>
-                <td>{{ `${curRow._ExternalSubmitParams.Amount}`.replace(/(?=(\B)(\d{3})+$)/g, ',') }}元</td>
-              </tr>
-            </tbody>
-          </table>
+          <main>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 25%;">物料信息</th>
+                  <th style="width: 18%;">{{ curRow._PrintMaterialSizeTitle }}</th>
+                  <th style="width: 18%;">返货数量</th>
+                  <th style="width: 11%;">申放</th>
+                  <th >外协价格</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="font-size: 0.85em;">{{ curRow._Material || '-' }}</div>
+                  </td>
+                  <td>
+                    <div>{{ curRow._Size || '-' }}</div>
+                  </td>
+                  <td>{{ curRow._Number || '-' }}</td>
+                  <td>{{ curRow._Wastage || '-' }}</td>
+                  <td>{{ `${curRow._ExternalSubmitParams.Amount}`.replace(/(?=(\B)(\d{3})+$)/g, ',') }}元</td>
+                </tr>
+              </tbody>
+            </table>
 
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 18%;">工序名称</th>
-                <th style="width: 54%;">加工要求</th>
-                <th >返货时间</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><div>{{ curRow._WorkingName }}</div></td>
-                <td><div style="font-size: 0.85em;">{{ curRow._AssistText || '-' }}</div></td>
-                <td>{{ curRow._ExternalSubmitParams.WishFinishTime?.split('T')[0] }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </main>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 18%;">工序名称</th>
+                  <th style="width: 54%;">加工要求</th>
+                  <th >返货时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div>{{ curRow._WorkingName }}</div></td>
+                  <td><div style="font-size: 0.85em;">{{ curRow._AssistText || '-' }}</div></td>
+                  <td>{{ curRow._ExternalSubmitParams.WishFinishTime?.split('T')[0] }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </main>
 
-        <!-- 时间 -->
-        <footer>
-          <span>打单人：{{ user?.StaffName || '-' }}</span>
-          <span>联系电话：{{ user?.Mobile || '-' }}</span>
-          <span>打印时间：{{ curPrintData }}</span>
-          <div>验收人：</div>
-        </footer>
-      </section>
+          <!-- 时间 -->
+          <footer>
+            <span>打单人：{{ user?.StaffName || '-' }}</span>
+            <span>联系电话：{{ user?.Mobile || '-' }}</span>
+            <span>打印时间：{{ curPrintData }}</span>
+            <div>验收人：</div>
+          </footer>
+        </section>
+      </div>
     </PrintDialog>
   </main>
 </template>

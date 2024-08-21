@@ -83,7 +83,7 @@ export default {
     @keyframes fromLeft {
       from {
         opacity: 0;
-        transform: translateX(-150px);
+        transform: translateX(-100px);
       }
       to {
         opacity: 0.5;
@@ -94,7 +94,7 @@ export default {
     @keyframes fromRight {
       from {
         opacity: 0;
-        transform: translateX(150px);
+        transform: translateX(100px);
       }
       to {
         opacity: 0.5;

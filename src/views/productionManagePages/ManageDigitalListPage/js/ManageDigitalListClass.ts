@@ -3,9 +3,12 @@ import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getBarcodeSrc, getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import { ElMessage } from 'element-plus';
+import { useUserStore } from '@/store/modules/user';
 import { Condition } from './Condition';
 import { IDigitalOrderPlateInfo, ILocalDigitalOrderPlatePrintInfoWithQrCode } from './types';
-import { DigitalImpositionStatusEnum } from './enum';
+import { DigitalImpositionStatusEnum, DigitalImpositionStatusEnumList } from './enum';
+import { RevocationData } from './RevocationData';
 
 /** 数码工单打印管理类 */
 export class ManageDigitalListClass {
@@ -134,6 +137,35 @@ export class ManageDigitalListClass {
 
     return null;
   }
+
+  async revocation(params: Pick<IDigitalOrderPlateInfo, 'Code' | 'OrderID'> & { Remark: string }) {
+    const resp = await api.productionManageApis.getOfflinePlateRevocation(params);
+
+    if (resp.data?.isSuccess) {
+      const userStore = useUserStore();
+      const revocableStatuses = DigitalImpositionStatusEnumList.filter(it => it.revocable).map(it => it.ID); // 可撤销状态列表
+
+      this.list.forEach(it => {
+        if (it.OrderID === params.OrderID && revocableStatuses.includes(it.Status)) {
+          const _it = it;
+
+          _it.Status = DigitalImpositionStatusEnum.Canceled;
+          _it.Error = `${userStore.user?.StaffName || ''}撤销至拼版前，原因：${params.Remark}`;
+        }
+      });
+
+      this.revocationData.close();
+
+      ElMessage.success('撤销成功');
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /** 撤销 */
+  revocationData = new RevocationData()
 
   init() {
     this._getDigitalLineList();

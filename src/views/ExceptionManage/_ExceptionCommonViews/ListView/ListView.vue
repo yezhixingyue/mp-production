@@ -5,6 +5,7 @@
       :setCondition="ManageListData.condition.setConditon.bind(ManageListData.condition)"
       :clearCondition="ManageListData.clearCondition.bind(ManageListData)"
       :getList="ManageListData.getList.bind(ManageListData)"
+      :IsOutSourcing="IsOutSourcing"
       :list="ManageListData.list"
     />
     <Main :list="ManageListData.list" :loading="ManageListData.loading" :IsOutSourcing="IsOutSourcing" @jump="handleJump" />

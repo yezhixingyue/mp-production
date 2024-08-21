@@ -8,6 +8,8 @@
       <PrintArea ref="oPrintDialog" onlyPrint>
         <PrintListArea :list="printDataList" />
       </PrintArea>
+
+      <RevocationDialog :revocationData="localManageData.revocationData" @submit="(e) => localManageData.revocation(e)" />
     </main>
 
     <footer>
@@ -32,6 +34,7 @@ import { storeToRefs } from 'pinia';
 import { ManageDigitalListClass } from './js/ManageDigitalListClass';
 import Header from './components/Header.vue';
 import Table from './components/Table.vue';
+import RevocationDialog from './components/RevocationDialog.vue';
 import PrintListArea from './components/print/PrintListArea.vue';
 import { ILocalDigitalOrderPlatePrintInfoWithQrCode } from './js/types';
 

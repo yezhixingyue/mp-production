@@ -16,8 +16,8 @@ export enum DigitalImpositionStatusEnum {
 export const DigitalImpositionStatusEnumList = [
   { ID: DigitalImpositionStatusEnum.WaitMakeup, Name: '未拼版' },
   { ID: DigitalImpositionStatusEnum.HaveMakeup, Name: '已拼版' },
-  { ID: DigitalImpositionStatusEnum.HaveScheduling, Name: '已排程', printable: true, exportable: true },
-  { ID: DigitalImpositionStatusEnum.HavePrint, Name: '已打印', printable: true, exportable: true, downloadable: true },
+  { ID: DigitalImpositionStatusEnum.HaveScheduling, Name: '已排程', printable: true, exportable: true, revocable: true }, // revocable 是否可撤销
+  { ID: DigitalImpositionStatusEnum.HavePrint, Name: '已打印', printable: true, exportable: true, downloadable: true, revocable: true },
   { ID: DigitalImpositionStatusEnum.Canceled, Name: '已取消' },
 ];
 

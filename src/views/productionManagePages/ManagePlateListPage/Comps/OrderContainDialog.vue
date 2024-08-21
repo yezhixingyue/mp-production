@@ -1,8 +1,8 @@
 <template>
   <DialogContainerComp :visible='localVisible' :width='630' :title='`包含订单 [ 大版ID:${item?.Code} ]`' top='13vh' :show-primary="false" closeBtnText="关闭"
-    @open='onOpen' @cancel='localVisible = false' @submit='submit'>
+    @open='onOpen' @cancel='localVisible = false'>
     <div class='dialog-content'>
-      <el-table :data="orderList" stripe border class="row-ft-12" max-height="300" v-show="!loading">
+      <el-table :data="orderList" stripe border class="row-ft-12" height="300" v-show="!loading">
         <mp-table-column width="180px" prop="ServerName" label="销售端" />
         <mp-table-column width="128px" prop="OrderCode" label="订单ID" />
         <mp-table-column prop="_SellSideProductName" label="销售端产品" />
@@ -56,10 +56,6 @@ const onOpen = async () => {
       orderList.value = resp.data.Data.map(it => ({ ...it, _SellSideProductName: getSellSideProductName(it) }));
     }
   }
-};
-
-const submit = () => {
-  console.log('submit  MpMessage.dialogSuccess');
 };
 
 </script>

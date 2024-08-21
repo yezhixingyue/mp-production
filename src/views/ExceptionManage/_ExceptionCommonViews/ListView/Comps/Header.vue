@@ -50,6 +50,7 @@ const props = defineProps<{
   clearCondition:() => void
   getList:(Page?: number) => void
   list: ITaskExceptionInfo[]
+  IsOutSourcing: boolean
 }>();
 
 const _Operator = computed({
@@ -78,8 +79,8 @@ const onMenuClick = (it: ILocalEnumValue) => {
   props.getList();
 };
 
-const localStatusEnumList: ILocalEnumValue[] = [{ ID: '', Name: '不限' }, ...ExceptionHandlerStatusEnumList];
-
+const EnableEnumList = ExceptionHandlerStatusEnumList.filter(it => !props.IsOutSourcing || it.OutSourcingUsable !== false);
+const localStatusEnumList: ILocalEnumValue[] = [{ ID: '', Name: '不限' }, ...EnableEnumList];
 </script>
 
 <style scoped lang='scss'>

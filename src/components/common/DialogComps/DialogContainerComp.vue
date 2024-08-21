@@ -229,6 +229,8 @@ export default {
       if (props.autoSubmitFocus && !props.disabled && props.showPrimary && oSubmitBtn.value?.$el) {
         oSubmitBtn.value.$el.focus();
       }
+
+      context.emit('opened');
     };
 
     return {

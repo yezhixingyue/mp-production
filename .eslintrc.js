@@ -12,6 +12,9 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2020,
   },
+  globals: {
+    defineModel: true,
+  },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -29,6 +32,7 @@ module.exports = {
     'vuejs-accessibility/label-has-for': 'off',
     'vue/multi-word-component-names': 'off',
     'object-curly-newline': 'off',
+    'no-nested-ternary': 'off',
   },
   overrides: [
     {
