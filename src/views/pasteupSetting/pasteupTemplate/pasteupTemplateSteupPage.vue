@@ -272,7 +272,7 @@ function delModeItem(i) {
   Data.addPasteupTemplateFrom.TemplateSizeAttribute?.ModeItemList.splice(i, 1);
 }
 function verificationGeneralNumber() {
-  const strlist = Data.addPasteupTemplateFrom.TemplateSizeAttribute?.GeneralNumber.split(/,|，/) || [];
+  const strlist = Data.addPasteupTemplateFrom.TemplateSizeAttribute?.GeneralNumber.split(/,|，/).filter(it => it) || [];
   const isNotNumber = strlist.find(it => !!Number.isNaN(Number(it)));
   if (isNotNumber) {
     messageBox.failSingleError('保存失败', `请将[${isNotNumber}]修改为正确的数字`, () => null, () => null);
