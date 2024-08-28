@@ -23,6 +23,7 @@ interface ITemplateSizeAttribute{
   FilePath: string,
   Width: number,
   Height: number,
+  GeneralNumber: string,
   AreaList: AreaList[],
   // 是否按模位
   UseMode: boolean,

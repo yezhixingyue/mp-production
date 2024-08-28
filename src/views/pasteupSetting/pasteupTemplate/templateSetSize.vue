@@ -48,6 +48,14 @@
             </template>
           </el-table-column>
           <el-table-column
+          show-overflow-tooltip prop="MaterialTypeIDS" label="常规版数" min-width="172">
+            <template #default="scope:any">
+              <span v-if="scope.row.TemplateSizeAttribute">
+                {{scope.row.TemplateSizeAttribute?.GeneralNumber}}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
           show-overflow-tooltip prop="MaterialTypeIDS" label="白边（上下左右）" min-width="172">
             <template #default="scope:any">
               <template v-if="scope.row.ActualSizeAttribute">
