@@ -128,9 +128,9 @@ export class ManageDigitalListClass {
 
       await Promise.all(list.map(it => _generateQrcode(it)));
 
-      if (IsPrint && this.condition.Status === DigitalImpositionStatusEnum.HaveScheduling) {
-        this.getList(this.condition.Page);
-      }
+      // if (IsPrint && this.condition.Status === DigitalImpositionStatusEnum.HaveScheduling) {
+      //   this.getList(this.condition.Page);
+      // }
 
       return list;
     }
