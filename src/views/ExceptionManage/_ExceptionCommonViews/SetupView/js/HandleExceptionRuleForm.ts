@@ -152,9 +152,12 @@ export class HandleExceptionRuleForm {
       if ([RevocationTypeEnum.CurrentChunk, RevocationTypeEnum.CurrentPlate].includes(this.RevocationInfo.Type)
         || (this.RevocationInfo.Type === RevocationTypeEnum.CurrentOrder && this._ReportMode === ReportModeEnum.block)) {
         // 撤销此大版、撤销当前块、撤销此订单（块报工时）可直接返回结果
+
+        const OrderID = this.TaskExceptionDetail?.TaskDetail.Working.OrderInfo?.ID;
+
         return {
           ..._params,
-          RevocationInfo: { Type: this.RevocationInfo.Type },
+          RevocationInfo: { Type: this.RevocationInfo.Type, OrderID },
         };
       }
 

@@ -7,33 +7,8 @@
       <el-scrollbar>
       <p class="title">{{Data.addPasteupTemplateFrom.ID?'编辑' :'添加'}}尺寸</p>
       <el-form :model="Data.addPasteupTemplateFrom" label-width="100px">
-        <!-- <el-form-item :label="`分类：`" class="form-item-required">
-          <OneLevelSelect
-            :options='PasteupSettingStore.ImpositionTemmplateClassList'
-            :defaultProps="{
-              value:'ID',
-              label:'Name',
-            }"
-            :value='Data.addPasteupTemplateFrom.ClassID'
-            @change="(ID) => Data.addPasteupTemplateFrom.ClassID = ID"
-            @requestFunc='() => null'
-            :width="200"
-            ></OneLevelSelect>
-        </el-form-item> -->
         <el-form-item :label="`名称：`" class="form-item-required template-name">
           <el-input v-model="Data.addPasteupTemplateFrom.Name" maxlength="30" show-word-limit placeholder="请输入"></el-input>
-          <!-- <div>
-            <p>
-              <el-checkbox v-model="Data.addPasteupTemplateFrom.IsPrintingPlate"
-              @change="Data.addPasteupTemplateFrom.IsSameSizeWithPrintingPlate = false" label="印刷版"/>
-              <el-checkbox v-model="Data.addPasteupTemplateFrom.IsSameSizeWithPrintingPlate"
-              @change="Data.addPasteupTemplateFrom.IsPrintingPlate = false"
-              label="和印刷版保持一致" style="--el-checkbox-font-size: 12px"/>
-            </p>
-            <p class="hint">
-              每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。
-            </p>
-          </div> -->
         </el-form-item>
         <!-- 是否为 印刷版 -->
         <template v-if="pasteupTemplateData.IsPrintingPlate && !pasteupTemplateData.IsDigital">
@@ -81,19 +56,6 @@
             <p class="hint">
               模板制作说明：版芯使用 PANTONE 804C 标记
             </p>
-            <!-- <div class="error-range">
-              <p v-if="Data.addPasteupTemplateFrom.LengthErrorRange">
-                宽允许误差：
-                + <el-input v-model.number="Data.addPasteupTemplateFrom.LengthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
-                - <el-input v-model.number="Data.addPasteupTemplateFrom.LengthErrorRange.MinValue"/> mm
-              </p>
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              <p v-if="Data.addPasteupTemplateFrom.WidthErrorRange">
-                高允许误差：
-                + <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MaxValue"/> mm&nbsp;&nbsp;
-                - <el-input v-model.number="Data.addPasteupTemplateFrom.WidthErrorRange.MinValue"/> mm
-              </p>
-            </div> -->
             <p class="template-info" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute?.FilePath">
               <ul>
                 <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.TemplateSizeAttribute.Width}}mm</span>
@@ -113,6 +75,10 @@
                v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
             <span>高：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
                v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
+          </el-form-item>
+          <el-form-item :label="`常规版数：`" class="paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
+            <el-input style="width: 400px;" v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.GeneralNumber"
+            placeholder="多个常规版数之间请用逗号隔开"/>
           </el-form-item>
           <el-form-item :label="`拼版方式：`">
             <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute"
@@ -239,6 +205,7 @@ const Data: DataType = reactive({
       FilePath: '',
       Width: 0,
       Height: 0,
+      GeneralNumber: '',
       AreaList: [
         // {
         //   XCoordinate: 0,
@@ -304,6 +271,24 @@ function addModeItem() {
 function delModeItem(i) {
   Data.addPasteupTemplateFrom.TemplateSizeAttribute?.ModeItemList.splice(i, 1);
 }
+function verificationGeneralNumber() {
+  const strlist = Data.addPasteupTemplateFrom.TemplateSizeAttribute?.GeneralNumber.split(/,|，/).filter(it => it) || [];
+  const isNotNumber = strlist.find(it => !!Number.isNaN(Number(it)));
+  if (isNotNumber) {
+    messageBox.failSingleError('保存失败', `请将[${isNotNumber}]修改为正确的数字`, () => null, () => null);
+    return true;
+  }
+  if (strlist.length > 15) {
+    messageBox.failSingleError('保存失败', '最多只能输入15个常规版数', () => null, () => null);
+    return true;
+  }
+  const index = strlist.findIndex(it => Number(it) < 1 || Number(it) > 99999);
+  if (index !== -1) {
+    messageBox.failSingleError('保存失败', `请将[${strlist[index]}]修改为大于0，小于100000的数字`, () => null, () => null);
+    return true;
+  }
+  return false;
+}
 function verification() {
   if (!Data.addPasteupTemplateFrom.Name) {
     messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
@@ -353,21 +338,11 @@ function verification() {
         messageBox.failSingleError('保存失败', '请输入正整数用料尺寸(高)', () => null, () => null);
         return false;
       }
+      if (verificationGeneralNumber()) {
+        return false;
+      }
       return true;
     }
-    // 按模板尺寸 没有输入允许误差
-    // if (Data.addPasteupTemplateFrom.SizeType === 0
-    // && (typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MaxValue !== 'number'
-    // || typeof Data.addPasteupTemplateFrom.LengthErrorRange?.MinValue !== 'number')) {
-    //   messageBox.failSingleError('保存失败', '请输入宽允许误差', () => null, () => null);
-    //   return false;
-    // }
-    // if (Data.addPasteupTemplateFrom.SizeType === 0
-    // && (typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MaxValue !== 'number'
-    // || typeof Data.addPasteupTemplateFrom.WidthErrorRange?.MinValue !== 'number')) {
-    //   messageBox.failSingleError('保存失败', '请输入高允许误差', () => null, () => null);
-    //   return false;
-    // }
     // 按模板尺寸 并且按模位
     if (Data.addPasteupTemplateFrom.SizeType === 0 && Data.addPasteupTemplateFrom.TemplateSizeAttribute?.UseMode) {
       // 验证模位合法性
@@ -494,6 +469,7 @@ onMounted(() => {
       FilePath: '',
       Width: 0,
       Height: 0,
+      GeneralNumber: '',
       AreaList: [
         {
           XCoordinate: 0,

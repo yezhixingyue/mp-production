@@ -123,7 +123,7 @@ export interface IRevocationPlateItem extends Omit<ITaskPlateInfo, 'ChildList'> 
 
 /** 异常处理数据提交类型 */
 export interface IExceptionSubmitParams extends Partial<Omit<HandleExceptionRuleForm, 'RevocationInfo' | 'RedoInfo' | 'ExternalFactory'>> {
-  RevocationInfo?: Partial<Omit<IRevocationDetail, 'PlateList'> & { PlateList: { ID: string }[] }>
+  RevocationInfo?: Partial<Omit<IRevocationDetail, 'PlateList'> & { PlateList: { ID: string }[]; OrderID?: string }>
   RedoInfo?: Partial<IRedoInfo4Submit> & { OrderID?: string }
   ExternalFactory?: Partial<HandleExceptionRuleForm['ExternalFactory']>
 }

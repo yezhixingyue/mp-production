@@ -193,7 +193,7 @@ input[type='number'] {
   &:active {
     color: $--color-primary-light;
   }
-  &:disabled, &.disabled {
+  &:disabled, &.disabled, &[disabled=true] {
     color: #cbcbcb;
     cursor: not-allowed;
     pointer-events: none;
