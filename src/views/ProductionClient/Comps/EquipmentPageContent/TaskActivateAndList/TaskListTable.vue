@@ -17,7 +17,11 @@
       <mp-table-column v-if="showRowOptions.showWishDuration" prop="_WishDuration" width="120px" label="预计加工时长" />
       <mp-table-column v-if="showRowOptions.showActualDuration" prop="_ActualDuration" width="120px" label="实际加工时长" />
       <mp-table-column v-if="showRowOptions.showFinishTime" prop="_FinishTime" width="130px" label="完成时间" />
-      <mp-table-column v-if="showRowOptions.showStatus" width="100px" prop="_StatusText" label="当前状态" />
+      <mp-table-column v-if="showRowOptions.showStatus" width="100px" prop="_StatusText" label="当前状态" >
+        <template #default="scope:any">
+          <span :class="isError ? 'is-pink' : ''">{{ scope.row._StatusText }}</span>
+        </template>
+      </mp-table-column>
       <mp-table-column v-if="showRowOptions.showExternalStatus" width="100px" prop="_ExternalStatusText" label="状态" />
       <mp-table-column v-if="showRowOptions.showCtrlMenus.length > 0" width="185px" label="操作">
         <template #default="scope:any">
@@ -88,7 +92,7 @@ const { user } = storeToRefs(userStore);
 
 /* 列表展示相关
 -------------------------------------------*/
-const localTaskList = computed(() => getLocalTaskList(props.TaskList, false, true));
+const localTaskList = computed(() => getLocalTaskList(props.TaskList, props.isError, true));
 
 const _defaultshowRowOptions: rowDisplayOptions = {
   showContent: false,

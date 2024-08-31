@@ -27,11 +27,15 @@ export class ManageClientClass {
   /** websocket通信获取到的未送出工单信息（小球展示内容数据） */
   websocketHandler: WebsocketHandler = new WebsocketHandler()
 
+  public TerminalID = ''
+
   /** 获取当前终端设备列表 */
   public async getTerminalEquipmentList() {
     this.loading = true;
     try {
       const terminal = await getLocalMachineCode();
+
+      this.TerminalID = terminal;
 
       const resp = await clientApi.getTerminalEquipmentList(terminal).catch(() => null);
 
