@@ -46,7 +46,7 @@ export interface ITaskOrderInfo {
   /** 产品二级分类 */
   SecondLevel?: string
   /** 产品信息 */
-  Product?: string
+  ProductName?: string
   /** 生产线 */
   Line?: string
   /** 数量 */

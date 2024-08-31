@@ -17,7 +17,7 @@ export const getTaskDisplayInfo = (TaskData: ITaskDetail, withTemplate = true) =
   temp.FirstTitle = [
     TaskData.Working.OrderInfo?.FirstLevel,
     TaskData.Working.OrderInfo?.SecondLevel,
-    TaskData.Working.OrderInfo?.Product,
+    TaskData.Working.OrderInfo?.ProductName,
   ].filter(it => it).join('-') || '';
 
   switch (TaskData.Working.ReportMode) {

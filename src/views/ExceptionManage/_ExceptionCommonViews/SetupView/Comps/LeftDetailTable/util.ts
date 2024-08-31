@@ -70,7 +70,7 @@ const getOrderListInfo = (TaskDetail: ITaskDetail, isChunk = false) => {
 
   const list: IExceptionLeftDisplayList['list'] = [
     { label: '订单ID', value: `${OrderInfo?.ServerName || ''} ${OrderInfo?.OrderID || ''} ${isChunk ? ChunkInfo?.Name || '' : ''}` },
-    { label: '销售端产品', value: [OrderInfo?.FirstLevel, OrderInfo?.SecondLevel, OrderInfo?.Product].filter(it => it).join(' - ') },
+    { label: '销售端产品', value: [OrderInfo?.FirstLevel, OrderInfo?.SecondLevel, OrderInfo?.ProductName].filter(it => it).join(' - ') },
     { label: '订单内容', value: OrderInfo?.Content || '' },
     { label: '加工数量', value: TaskDetail.Working.Number + (isChunk ? ChunkInfo?.Unit || '' : OrderInfo?.Unit || '') },
     { label: '最晚交付时间', value: format2MiddleLangTypeDateFunc2(TaskDetail.LatestSendTime || '') },

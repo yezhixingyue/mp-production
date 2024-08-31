@@ -3,7 +3,7 @@ import { SessionStorageClientHandler } from '@/views/ProductionClient/assets/js/
 import { ElMessage } from 'element-plus';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { create } from './request-lib/bus';
-import { ICoreOptions } from './request-lib/core/types';
+import { ICoreOptions, IRequestConfig } from './request-lib/core/types';
 import { LoadingHandler } from './utils/LoadingHandler';
 import { handleErrorToast } from './utils/handleErrorToast';
 
@@ -15,7 +15,7 @@ const logout = () => { // 清除状态并跳转登录页面
   }
 };
 
-const getToken = () => { // 获取到token
+const _getToken = () => { // 获取到token
   const _token = ManageClientPageData.value.curActiveInstance?.loginData.token || '';
 
   if (!_token) {
@@ -23,6 +23,23 @@ const getToken = () => { // 获取到token
   }
 
   return _token;
+};
+
+const setToken = (config: IRequestConfig) => {
+  const _config = config;
+  if (!_config.headers) _config.headers = {};
+
+  _config.headers.terminalID = ManageClientPageData.value.TerminalID;
+  _config.headers.equipmentID = ManageClientPageData.value.curActiveInstance?.Equipment.ID || '';
+
+  const token = _getToken();
+  if (!token) {
+    return false; // 但未获取到token
+  }
+
+  _config.headers.Authorization = `Bearer ${token}`;
+
+  return true;
 };
 
 const useCatchError = (msg: string) => ElMessage({ showClose: true, message: msg || '请求失败', type: 'error' }); // 错误处理
@@ -61,7 +78,8 @@ export const clientInstance = create({
   //   duration: 500,
   //   isCacheable: resp => resp.status === 200 && resp.data.Status === 1000,
   // },
-  getToken,
+  // getToken,
+  setToken,
   useResponse,
   useCatchError,
   isSuccess: resp => resp.status === 200 && resp.data?.Status === 1000,
