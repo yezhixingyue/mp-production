@@ -20,6 +20,8 @@ export { getEnumList } from '@/assets/js/utils/getListByEnums';
 
 export { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 
+export { OrderStatus } from '@/views/productionManagePages/ManageOrderListPage/js/enum';
+
 export { ReportModeEnum } from '@/views/productionSetting/process/enums';
 
 export type INodePicPlateListChild = IPlateListChild;

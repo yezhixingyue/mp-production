@@ -17,6 +17,7 @@
     "core-js": "^3.8.3",
     "cropperjs": "^1.5.12",
     "element-plus": "^2.2.25",
+    "jr-qrcode": "^1.2.1",
     "js-base64": "^3.7.2",
     "js-sha1": "^0.6.0",
     "jsbarcode": "^3.11.6",
