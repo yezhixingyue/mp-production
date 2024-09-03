@@ -199,12 +199,15 @@ const onClosed = () => {
   &.loading {
     pointer-events: none;
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(0px);
+    visibility: hidden;
   }
   &.loaded {
     opacity: 1;
     transform: translateY(0px);
-    transition: 0.3s ease-in-out;
+    transition: 0.4s linear;
+    transition-property: opacity transform;
+    visibility: visible;
   }
 }
 </style>

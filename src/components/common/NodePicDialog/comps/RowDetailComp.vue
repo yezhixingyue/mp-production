@@ -56,9 +56,9 @@
 
 <script setup lang='ts'>
 import { computed } from 'vue';
-import { OrderStatus } from '@/views/productionManagePages/ManageOrderListPage/js/enum';
 import {
   INodePicManageChunkInfo, format2MiddleLangTypeDateFunc2, INodePicManageOrderListItem, INodePicManagePlateInfo, INodePicPlateListChild, ReportModeEnum,
+  OrderStatus,
 } from '../_difference';
 
 const props = defineProps<{
