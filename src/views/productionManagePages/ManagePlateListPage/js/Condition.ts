@@ -1,3 +1,4 @@
+import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
 import { PlateStatusEnum, PlateTypeEnum } from './enum';
 
 export class Condition {
@@ -25,5 +26,13 @@ export class Condition {
 
   constructor(type: PlateTypeEnum) {
     this.Type = type;
+  }
+
+  filter() {
+    /** 处理时间 */
+    CommonClassType.setDate(this, 'CreateTime');
+
+    /** 筛选结果 */
+    return CommonClassType.filter(this);
   }
 }

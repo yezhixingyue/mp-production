@@ -26,4 +26,8 @@ export const downloadExcelApis = {
   getDigitalTaskExcel(condition) {
     return instance.post('/Api/DigitalTask/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
   },
+  /** POST /Api/Plate/Excel   大版导出Excel */
+  getPlateExcel(condition) {
+    return instance.post('/Api/Plate/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+  },
 };

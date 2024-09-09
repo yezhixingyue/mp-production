@@ -138,7 +138,7 @@ const onLineSelect = async (item: ProductLineSimpleType) => {
   selectVisible.value = false;
   if (item.ID === itemData.value._originLineData?.ID) return;
   const resp = await api.ManualOrderHandlerApis.getProductionLineDetail(item.ID).catch(() => null);
-  if (!resp) return;
+  if (!resp || !resp.data) return;
   const Detail: IProductionLineDetail = resp.data.Data;
   const _originData: IProductionInstanceOriginData = {
     ...item,

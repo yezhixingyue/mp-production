@@ -2,7 +2,8 @@ import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { ElMessage } from 'element-plus';
-import { IFactoryMaterialList } from '../../ManualOrderHandlerPage/js/types';
+import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { ProductLineSimpleType } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from './Condition';
 import { IManageOrderListItem, IOrderCancelRelation } from './type';
 import { OrderStatus } from './enum';
@@ -20,8 +21,6 @@ export class ManageOrderListClass {
   /** 是否正在加载中 */
   loading = false
 
-  MaterialList: IFactoryMaterialList[] = []
-
   /** 设置条件 */
   setCondition(e: ISetConditionParams) {
     CommonClassType.setCondition(e, this.condition);
@@ -31,13 +30,15 @@ export class ManageOrderListClass {
     this.condition = new Condition();
   }
 
-  private async getMaterialList() {
-    if (this.MaterialList.length > 0) { // 已经获取过
-      return;
-    }
-    const resp = await api.ManualOrderHandlerApis.getFactoryMaterialList().catch(() => null);
+  /** 生产线 暂定不包含组合生产线 */
+  ProductionLineList: ProductLineSimpleType[] = []
+
+  private async getProductionLineList() {
+    if (this.ProductionLineList.length > 0) return;
+    const resp = await api.getProductionLineAll().catch(() => null);
     if (resp?.data?.isSuccess) {
-      this.MaterialList = resp.data.Data;
+      const list = (resp.data.Data as ProductLineSimpleType[]).filter(it => it.Type === LineTypeEnum.normal);
+      this.ProductionLineList = [{ ID: '', Name: '所有生产线', Type: LineTypeEnum.normal, IsDigital: false }, ...list];
     }
   }
 
@@ -47,7 +48,10 @@ export class ManageOrderListClass {
     this.list = [];
 
     CommonClassType.setDate(this.condition, 'CreateTime');
-    const temp = CommonClassType.filter(this.condition, true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const temp = CommonClassType.filter(this.condition, true) as any;
+
+    if (temp.UnImposition === false) delete temp.UnImposition;
 
     this.loading = true;
     const resp = await api.productionManageApis.getOrderList(temp).catch(() => null);
@@ -61,7 +65,7 @@ export class ManageOrderListClass {
 
   getInitData() {
     this.getList();
-    this.getMaterialList();
+    this.getProductionLineList();
   }
 
   /** 订单置顶 */

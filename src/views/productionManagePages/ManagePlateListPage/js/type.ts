@@ -17,6 +17,8 @@ interface _IManagePlateCommonInfo {
   Unit: string
   /** 包含块数量  */
   ChunkNumber: number
+  /** 内容占比 */
+  Percent: number
   /** 拼版时间 */
   CreateTime: string
   /** 操作人 */
@@ -37,6 +39,7 @@ interface _IManagePlateCommonInfo {
 export type IPlateListChild = _IManagePlateCommonInfo
 
 export interface IManagePlateInfo extends _IManagePlateCommonInfo {
+  FileDic?: { [key: string] : string }
   /** 子板列表 */
   ChildList: IPlateListChild[]
 }

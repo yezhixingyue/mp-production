@@ -9,12 +9,13 @@
           <th v-show="Type === PlateTypeEnum.Plate" data-index="3" :style="`width:${widthList[3].width}px`">物料</th>
           <th data-index="4" :style="`width:${widthList[4].width}px`">{{ Type === PlateTypeEnum.Plate ? '印刷数量' : '加工数量' }}</th>
           <th data-index="5" :style="`width:${widthList[5].width}px`">包含订单块</th>
-          <th data-index="6" :style="`width:${widthList[6].width}px`">拼版时间</th>
-          <th data-index="7" :style="`width:${widthList[7].width}px`">拼版人员</th>
-          <th data-index="8" :style="`width:${widthList[8].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
-          <th data-index="9" :style="`width:${widthList[9].width}px`">当前位置</th>
-          <th data-index="10" :style="`width:${widthList[10].width}px`">状态</th>
-          <th data-index="11" :style="`width:${widthList[11].width}px`">操作</th>
+          <th data-index="5" :style="`width:${widthList[6].width}px`">内容占比</th>
+          <th data-index="6" :style="`width:${widthList[7].width}px`">拼版时间</th>
+          <th data-index="7" :style="`width:${widthList[8].width}px`">拼版人员</th>
+          <th data-index="8" :style="`width:${widthList[9].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
+          <th data-index="9" :style="`width:${widthList[10].width}px`">当前位置</th>
+          <th data-index="10" :style="`width:${widthList[11].width}px`">状态</th>
+          <th data-index="11" :style="`width:${widthList[12].width}px`">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -26,17 +27,35 @@
             <td v-show="Type === PlateTypeEnum.Plate" :style="`width:${widthList[3].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
             <td :style="`width:${widthList[4].width}px`" :title="row._Number">{{ row._Number || '' }}</td>
             <td :style="`width:${widthList[5].width}px`" :title="row.ChunkNumber + ''">{{ row.ChunkNumber }}</td>
-            <td :style="`width:${widthList[6].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
-            <td :style="`width:${widthList[7].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
-            <td :style="`width:${widthList[8].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
-            <td :style="`width:${widthList[9].width}px`" :title="row._Position">{{ row._Position }}</td>
-            <td :style="`width:${widthList[10].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
-            <td :style="`width:${widthList[11].width}px`">
+            <td :style="`width:${widthList[6].width}px`" :title="`${row._Percent}`">{{ row._Percent }}</td>
+            <td :style="`width:${widthList[7].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
+            <td :style="`width:${widthList[8].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
+            <td :style="`width:${widthList[9].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
+            <td :style="`width:${widthList[10].width}px`" :title="row._Position">{{ row._Position }}</td>
+            <td :style="`width:${widthList[11].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
+            <td :style="`width:${widthList[12].width}px`">
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onOrderPrintClick(row)">打印工单</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
                :disabled="!row.MapFilePath">打印条码稿</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.Plate"
                @click="onProcessClick(row)">生产流程</mp-button>
+
+              <el-dropdown trigger="click">
+                <span class="el-dropdown-link">
+                  <mp-button link type="primary" :disabled="row._downloadList.length===0">下载</mp-button>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu >
+                    <el-dropdown-item v-for="it in row._downloadList" :key="it.key">
+                      <el-link :href="it.href" target="_blank" >
+                        <el-icon class="mr-5" style="font-size: 14px;"><Document /></el-icon>
+                        <span class="ft-12">{{ it.key }}</span>
+                      </el-link>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.LaterCraft"
                @click="onOrderContainClick(row)">包含订单</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0" v-show="Type === PlateTypeEnum.Plate">
@@ -52,7 +71,8 @@
                 <span class="m">{{ child.Code }}</span>
               </td>
               <td class="number">含订单：{{ child.ChunkNumber }}个</td>
-              <td class="detail" :title="child._Size">{{ child._Size }}</td>
+              <td class="detail size" :title="child._Size">{{ child._Size }}</td>
+              <td class="detail" :title="child._Percent"> <span style="margin-left: 20px;">内容占比：{{ child._Percent }}</span> </td>
               <td class="detail" :title="child._Position">{{ child._Position }}</td>
               <td class="detail" :title="child._StatusText">{{ child._StatusText }}</td>
               <td class="menus">
@@ -105,18 +125,19 @@ const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
 const widthList = ref([
-  { width: 85 },
+  { width: 80 },
   { width: 120 },
-  { width: props.Type === PlateTypeEnum.Plate ? 190 : 260 },
+  { width: props.Type === PlateTypeEnum.Plate ? 180 : 230 },
   { width: 200 },
-  { width: 140 },
-  { width: props.Type === PlateTypeEnum.Plate ? 85 : 100 },
-  { width: props.Type === PlateTypeEnum.Plate ? 115 : 120 },
-  { width: 85 },
-  { width: props.Type === PlateTypeEnum.Plate ? 110 : 180 },
-  { width: props.Type === PlateTypeEnum.Plate ? 180 : 220 },
+  { width: 110 }, // 数量
+  { width: 90 },
+  { width: props.Type === PlateTypeEnum.Plate ? 65 : 90 },
+  { width: 115 },
   { width: 75 },
-  { width: 310 },
+  { width: props.Type === PlateTypeEnum.Plate ? 110 : 190 },
+  { width: props.Type === PlateTypeEnum.Plate ? 150 : 220 },
+  { width: 70 },
+  { width: 320 },
 ]);
 
 const totalWidth = computed(() => {
@@ -125,6 +146,20 @@ const totalWidth = computed(() => {
 });
 
 const spreadList = ref<string[]>([]);
+
+const getDownloadList = (it: IManagePlateInfo) => {
+  const arr: { key: string; href: string }[] = [];
+
+  if (it.FileDic && typeof it.FileDic === 'object') {
+    Object.entries(it.FileDic).forEach(([key, href]) => {
+      if (key && href) {
+        arr.push({ key, href });
+      }
+    });
+  }
+
+  return arr;
+};
 
 const localList = computed(() => props.list.map(it => ({
   ...it,
@@ -135,12 +170,15 @@ const localList = computed(() => props.list.map(it => ({
   _isSpread: spreadList.value.includes(it.ID),
   _Size: [it.Template, it.TemplateSize].filter(it => it).join(' '),
   _Position: it.Status !== PlateStatusEnum.Finished ? it.Position || '' : '',
+  _Percent: typeof it.Percent === 'number' ? `${it.Percent}%` : '',
+  _downloadList: getDownloadList(it),
   ChildList: it.ChildList.map(child => ({
     ...child,
     _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
     _Position: it.Status === PlateStatusEnum.Finished && child.Position ? `当前位置：${child.Position}` : '',
     _StatusText: it.Status === PlateStatusEnum.Finished && getEnumNameByID(child.Status, PlateStatusEnumList)
       ? `状态：${getEnumNameByID(child.Status, PlateStatusEnumList)}` : '',
+    _Percent: typeof child.Percent === 'number' ? `${child.Percent}%` : '',
   })),
 })));
 
@@ -318,14 +356,21 @@ onUnmounted(() => {
             padding: 0;
             margin-top: -3px;
             & + .el-button  {
-              margin-left: 30px;
+              margin-left: 15px;
             }
             &.spread {
               color: #989898;
+              margin-left: 17px;
               .el-icon {
                 font-size: 14px;
               }
             }
+          }
+
+          :deep(.el-dropdown) {
+            margin-left: 15px;
+            line-height: 40px;
+            top: 1px;
           }
         }
 
@@ -366,7 +411,7 @@ onUnmounted(() => {
               vertical-align: top;
               flex: none;
             &.name {
-              margin-left: 44px;
+              margin-left: 24px;
               min-width: 150px;
               margin-right: 13px;
             }
@@ -378,10 +423,13 @@ onUnmounted(() => {
             &.detail {
               flex: 1;
               padding-right: 10px;
+              &.size {
+                flex: 2;
+              }
             }
 
             &.menus {
-              width: 525px;
+              width: 327px;
             }
           }
         }
@@ -415,4 +463,5 @@ onUnmounted(() => {
     }
   }
 }
+
 </style>
