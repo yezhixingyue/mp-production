@@ -32,6 +32,9 @@ const onclick = () => {
   emit('search', oElInput.value);
 };
 
+defineExpose({
+  setFocus,
+});
 </script>
 
 <style scoped lang='scss'>

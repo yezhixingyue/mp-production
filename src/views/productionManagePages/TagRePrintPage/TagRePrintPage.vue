@@ -3,7 +3,7 @@
     <header>补打出货标签</header>
     <main>
       <!-- 搜索输入框 -->
-      <SearchBox v-model="localData.keywords" @search="(oElInput) => localData.search(oElInput)" />
+      <SearchBox ref="oSearchBox" v-model="localData.keywords" @search="onSearchClick" />
 
       <!-- 显示区域 -->
       <div class="area" v-if="localData.result.code">
@@ -33,7 +33,7 @@
         </ul>
 
         <div class="print">
-          <el-input v-model.number="localData.result.count" placeholder="请输入补打张数" maxlength="3" @keyup.enter="onPrint" size="large"></el-input>
+          <el-input v-model.number="localData.result.count" ref="oInput" placeholder="请输入补打张数" maxlength="3" @keyup.enter="onPrint" size="large"></el-input>
           <mp-button class="btn" @click="onPrint" type="primary" size="large">
             <i class="iconfont icon-dayin mr-2"></i>
             <span>打印</span>
@@ -48,8 +48,9 @@
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { InputInstance } from 'element-plus';
 import SearchBox from './components/SearchBox.vue';
 import PrintDialog from './components/PrintDialog.vue';
 import { ManageTagRePrintClass } from './js/ManageTagRePrintClass';
@@ -58,14 +59,31 @@ const localData = ref(new ManageTagRePrintClass());
 
 const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
 
+const oSearchBox = ref<InstanceType<typeof SearchBox>>();
+
+const oInput = ref<InputInstance>();
+
+const onSearchClick = async (oElInput) => {
+  await localData.value.search(oElInput);
+
+  await nextTick();
+
+  oInput.value?.focus();
+};
+
 const onPrint = async () => {
   if (!oPrintDialog.value || !localData.value.validatePrint()) return;
 
   localData.value.result.QRCodeSrc = (await getQRCodeSrc(localData.value.result.code, 130)) || '';
 
   oPrintDialog.value.print();
+
+  oSearchBox.value?.setFocus();
 };
 
+onMounted(() => {
+  oSearchBox.value?.setFocus();
+});
 </script>
 
 <script lang="ts">
