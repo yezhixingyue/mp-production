@@ -86,6 +86,8 @@ export interface IManageOrderListItem {
   /** 实例列表 */
   InstanceList: ISellOrderInstanceItem[]
   AfterPrintFileRemark: string
+  /** 下载文件列表 */
+  CheckedFileList: { FilePath: string }[]
 }
 
 /** 时间线数据类型 */

@@ -117,6 +117,7 @@ export interface IUser {
         Query: boolean
         TopShow: boolean
         Cancle: boolean
+        Download: boolean
       };
     };
     /** 外来物料管理 */

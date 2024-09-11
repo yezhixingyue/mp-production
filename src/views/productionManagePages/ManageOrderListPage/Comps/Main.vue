@@ -37,17 +37,24 @@
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.TopShow"
                 :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot"
                @click="onTopClick(row)" v-show="!row.IsTop">一键置顶</mp-button>
-              <!-- <mp-button link type="primary" style="margin-left:8px"
-               :disabled="row._isMakeuped"
-               @click="onTestClick(row)" >_临时拼版</mp-button> -->
             </td>
             <td :style="`width:${widthList[12].width}px`">
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
-              <!-- 取消 -->
-              <mp-button v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
-               :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot || !row.IsManualOrder"
-               link type="primary" @click="onCancelClick(row)">取消</mp-button>
+
+              <el-dropdown trigger="click" v-if="!noMoreMenuPermission">
+                <mp-button link type="primary" class="el-dropdown-link">更多</mp-button>
+                <template #dropdown>
+                  <el-dropdown-menu class="mp-stall-manage-table-menu--drop-down-wrap">
+                    <el-dropdown-item link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.Download"
+                     style="font-size: 13px;" @click="onDownloadClick(row)">下载</el-dropdown-item>
+                    <!-- 取消 -->
+                    <el-dropdown-item v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
+                    :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot || !row.IsManualOrder"
+                    link type="primary" @click="onCancelClick(row)" style="font-size: 13px;">取消</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="!row._isCombineLine">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
@@ -137,6 +144,16 @@ const widthList = ref([
 
 const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a, b) => a + b, 0));
 
+const noMoreMenuPermission = computed(() => {
+  if (user.value?.PermissionList.PermissionManageOrder.Obj) {
+    const { Cancle, Download } = user.value.PermissionList.PermissionManageOrder.Obj;
+
+    return !Cancle && !Download;
+  }
+
+  return false;
+});
+
 const spreadList = ref<string[]>([]);
 
 const getIsMakeuped = (it: IManageOrderListItem) => {
@@ -213,6 +230,26 @@ const timeLineVisible = ref(false);
 const onTimeLineClick = (row: typeof localList.value[number]) => {
   curRow.value = row;
   timeLineVisible.value = true;
+};
+
+/** 订单下载 */
+const onDownloadClick = (row: typeof localList.value[number]) => {
+  if (!row.CheckedFileList || row.CheckedFileList.length === 0) return;
+  const _download = (href) => {
+    if (!href) return;
+
+    const link = document.createElement('a');
+
+    link.target = '_blank';
+    link.style.display = 'none';
+    link.href = href;
+
+    document.body.appendChild(link);
+
+    link.click();
+  };
+
+  row.CheckedFileList.forEach(it => _download(it.FilePath));
 };
 
 /** 订单取消 */
@@ -379,10 +416,15 @@ onUnmounted(() => {
             }
             &.spread {
               color: #989898;
+              margin-left: 20px;
               .el-icon {
                 font-size: 14px;
               }
             }
+          }
+          :deep(.el-dropdown) {
+            vertical-align: middle;
+            margin-left: 20px;
           }
         }
 

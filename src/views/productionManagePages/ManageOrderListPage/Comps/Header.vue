@@ -156,6 +156,7 @@ const onMenuClick = (it: ProductLineSimpleType) => {
         margin-top: 15px;
         top: 2px;
         margin-right: 30px;
+        white-space: nowrap;
         .title {
           font-weight: 700;
           margin-right: 10px;
