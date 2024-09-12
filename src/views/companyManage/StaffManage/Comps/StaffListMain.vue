@@ -29,6 +29,7 @@
                v-if="scope.row.Status===StaffStatusEnum.leaved" @click="onChangeStatusClick(scope.row, scope.$index)"/>
             <EditMenu @click="onEditClick(scope.row)" />
             <RemoveMenu :disabled="scope.row.Status !== StaffStatusEnum.pending" @click="onRemoveClick(scope.row, scope.$index)" /> -->
+
             <el-dropdown trigger="click" v-if="!noMoreMenuPermission">
               <span class="el-dropdown-link staff">
                 <el-icon><MoreFilled /></el-icon>
@@ -36,7 +37,7 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu class="mp-stall-manage-table-menu--drop-down-wrap">
-                  <el-dropdown-item v-if="scope.row.Status===StaffStatusEnum.approved && localPermission?.ImpositionUnLock" @click="onUnLockClick(scope.row)">
+                  <el-dropdown-item v-if="localPermission?.ImpositionUnLock" @click="onUnLockClick(scope.row)">
                     <el-icon class="ft-16 is-warning bold"><Unlock /></el-icon>
                     <span>拼版释放</span>
                   </el-dropdown-item>
@@ -101,7 +102,7 @@ const noMoreMenuPermission = computed(() => {
   if (props.localPermission) {
     const { Edit, Delete, Dimission, ImpositionUnLock } = props.localPermission;
 
-    return !Edit || !Delete || !Dimission || !ImpositionUnLock;
+    return !Edit && !Delete && !Dimission && !ImpositionUnLock;
   }
 
   return false;

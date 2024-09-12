@@ -83,6 +83,7 @@ export default {
     },
     level: { // 下拉展示等级数量  若要启用 则传入数值类型
       default: '',
+      type: [Number, String],
     },
     showTitle: {
       type: Boolean,

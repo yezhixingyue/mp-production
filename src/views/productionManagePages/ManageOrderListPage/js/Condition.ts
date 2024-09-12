@@ -1,3 +1,5 @@
+import { OrderStatus } from './enum';
+
 export class Condition {
   /** 创建时间 */
   CreateTime = {
@@ -6,6 +8,12 @@ export class Condition {
   }
 
   DateType = 'today'
+
+  LineID = ''
+
+  UnImposition = false
+
+  Status: OrderStatus | '' = ''
 
   KeyWords = ''
 

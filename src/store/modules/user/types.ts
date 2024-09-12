@@ -98,6 +98,8 @@ export interface IUser {
       Obj: {
         Query: boolean
         Print: boolean
+        Excel: boolean
+        Download: boolean
       };
     };
     /** 块管理 */
@@ -115,6 +117,7 @@ export interface IUser {
         Query: boolean
         TopShow: boolean
         Cancle: boolean
+        Download: boolean
       };
     };
     /** 外来物料管理 */

@@ -1,6 +1,6 @@
 <template>
   <section class="page-wrap">
-    <Header :condition="ManageOrderListPageData.condition" :list="ManageOrderListPageData.list"
+    <Header :condition="ManageOrderListPageData.condition" :list="ManageOrderListPageData.list" :lineList="ManageOrderListPageData.ProductionLineList"
      :getList="getList" :setCondition="setCondition" @clear="clearCondition" />
     <Main
      :list="ManageOrderListPageData.list"

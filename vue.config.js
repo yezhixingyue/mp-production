@@ -56,6 +56,11 @@ module.exports = defineConfig({
         ws: true,
         changeOrigin: true,
       },
+      '/ImpositionFile': { //
+        target: proxyUrl,
+        ws: true,
+        changeOrigin: true,
+      },
       '/File': { // 代理临时图片地址
         target: proxyUrl,
         ws: true,
