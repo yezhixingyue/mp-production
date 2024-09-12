@@ -47,11 +47,12 @@
                 <template #dropdown>
                   <el-dropdown-menu class="mp-stall-manage-table-menu--drop-down-wrap">
                     <el-dropdown-item link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.Download"
-                     style="font-size: 13px;" @click="onDownloadClick(row)">下载</el-dropdown-item>
+                      :disabled="!row.CheckedFileList || row.CheckedFileList.length === 0"
+                     style="font-size: 12px;" @click="onDownloadClick(row)">下载（{{row.CheckedFileList?.length || 0}}）</el-dropdown-item>
                     <!-- 取消 -->
                     <el-dropdown-item v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
                     :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot || !row.IsManualOrder"
-                    link type="primary" @click="onCancelClick(row)" style="font-size: 13px;">取消</el-dropdown-item>
+                    link type="primary" @click="onCancelClick(row)" style="font-size: 12px;">取消</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
