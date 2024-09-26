@@ -9,13 +9,13 @@
           <th v-show="Type === PlateTypeEnum.Plate" data-index="3" :style="`width:${widthList[3].width}px`">物料</th>
           <th data-index="4" :style="`width:${widthList[4].width}px`">{{ Type === PlateTypeEnum.Plate ? '印刷数量' : '加工数量' }}</th>
           <th data-index="5" :style="`width:${widthList[5].width}px`">包含订单块</th>
-          <th data-index="5" :style="`width:${widthList[6].width}px`">内容占比</th>
-          <th data-index="6" :style="`width:${widthList[7].width}px`">拼版时间</th>
-          <th data-index="7" :style="`width:${widthList[8].width}px`">拼版人员</th>
-          <th data-index="8" :style="`width:${widthList[9].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
-          <th data-index="9" :style="`width:${widthList[10].width}px`">当前位置</th>
-          <th data-index="10" :style="`width:${widthList[11].width}px`">状态</th>
-          <th data-index="11" :style="`width:${widthList[12].width}px`">操作</th>
+          <th data-index="6" :style="`width:${widthList[6].width}px`">内容占比</th>
+          <th data-index="7" :style="`width:${widthList[7].width}px`">拼版时间</th>
+          <th data-index="8" :style="`width:${widthList[8].width}px`">拼版人员</th>
+          <th data-index="9" :style="`width:${widthList[9].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
+          <th data-index="10" :style="`width:${widthList[10].width}px`">当前位置</th>
+          <th data-index="11" :style="`width:${widthList[11].width}px`">状态</th>
+          <th data-index="12" :style="`width:${widthList[12].width}px`">操作</th>
         </tr>
       </thead>
       <tbody>
