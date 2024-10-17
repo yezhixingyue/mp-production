@@ -61,7 +61,7 @@ export class ManagePageData {
   /** 生产线筛选数据 */
   LineList: IListItemType[] = []
 
-  async getLineList() { // 获取生产线列表数据
+  private async getLineList() { // 获取生产线列表数据
     const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsDigital: true, IsShowWorkingProcedure: true }).catch(() => null);
     if (resp?.data?.isSuccess) {
       this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.IsDigital)];

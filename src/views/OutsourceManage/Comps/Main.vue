@@ -17,9 +17,11 @@
             <div class="left">
               <p class="title">凌顶揽众工序外协加工单</p>
               <p class="line">{{ curRow._LineName }}：{{ curRow._TargetID.replace(/（[\w\W]+）$/, '') }}</p>
-              <p>
-                <span style="margin-right: 1.2em;">外协单位：{{ curentFactory?.Name }}</span>
-                <span>联系电话：{{ curentFactory?.Mobile }}</span>
+              <p class="info">
+                <span>外协单位：{{ curentFactory?.Name }}</span>
+                <span style="margin-right: 1.2em;">({{ curentFactory?.Mobile }})</span>
+                <span style="margin-right: 1.2em;">开单人：{{ onlyPrint ? curRow.Operator : user?.StaffName || '-' }}</span>
+                <span>开单时间：{{ onlyPrint ? curRow._StartTime : curPrintDate.slice(0, -3) }}</span>
               </p>
             </div>
             <div class="bar">
@@ -76,7 +78,7 @@
           <footer>
             <span>打单人：{{ user?.StaffName || '-' }}</span>
             <span>联系电话：{{ user?.Mobile || '-' }}</span>
-            <span>打印时间：{{ curPrintData }}</span>
+            <span>打印时间：{{ curPrintDate }}</span>
             <div>验收人：</div>
           </footer>
         </section>
@@ -128,7 +130,7 @@ const curRow = ref<null | ReturnType<typeof getLocalTaskList>[number]>(null);
 /* 打印工单
 ---------------------------------- */
 const imgSrc = ref('');
-const curPrintData = ref('');
+const curPrintDate = ref('');
 const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
 const onlyPrint = ref(false);
 const curentFactory = ref<null | ManageListClass['FactoryList'][number]>(null);
@@ -136,7 +138,7 @@ const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], is
   if (!row || !oPrintDialog.value) return;
   curRow.value = row;
   imgSrc.value = '';
-  curPrintData.value = '';
+  curPrintDate.value = '';
   onlyPrint.value = isPrint;
 
   curentFactory.value = props.ManageListData.FactoryList.find(it => it.ID === curRow.value?._ExternalSubmitParams.FactoryID) || null;
@@ -145,7 +147,7 @@ const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], is
 
   if (src) {
     imgSrc.value = src;
-    curPrintData.value = format2LangTypeDate(getTimeConvertFormat({ withHMS: true }));
+    curPrintDate.value = format2LangTypeDate(getTimeConvertFormat({ withHMS: true }));
 
     if (!isPrint) {
       oPrintDialog.value.open();
@@ -203,8 +205,10 @@ const onConfirmExternalClick = (row: ReturnType<typeof getLocalTaskList>[number]
   }
 
 }
-// .outside-print-area {
-//   background-color: #eee;
-//   border-radius: 2px;
-// }
+:deep(.outside-print-area-wrap) {
+  // background-color: #eee;
+  // border-radius: 2px;
+  width: unset;
+  height: unset;
+}
 </style>

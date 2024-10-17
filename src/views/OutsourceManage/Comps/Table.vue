@@ -97,8 +97,10 @@
     <mp-table-column width="220px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
       <template #default="scope:any">
         <mp-button type="primary" class='f' link @click="onMenuClick(scope.row, 'confirmExternal')"
-          :disabled="![ExternalTaskStatusEnum.WaitFactoryReceive, ExternalTaskStatusEnum.FactoryReceived]
-          .includes(scope.row.Working.ExternalAttribute.Status)">{{ scope.row._ExternalStatusCtrlText }}</mp-button>
+          :disabled="!([ExternalTaskStatusEnum.WaitFactoryReceive, ExternalTaskStatusEnum.FactoryReceived]
+          .includes(scope.row.Working.ExternalAttribute.Status)
+          ||(scope.row.Working.ExternalAttribute.Status===ExternalTaskStatusEnum.HaveInstored
+              &&scope.row.Working.Type===WorkingTypeEnum.platemaking))">{{ scope.row._ExternalStatusCtrlText }}</mp-button>
         <mp-button type="primary" link
           :disabled="scope.row.Working.ExternalAttribute.Status===ExternalTaskStatusEnum.WaitFactoryReceive"
           :title="scope.row.Working.ExternalAttribute.Status===ExternalTaskStatusEnum.WaitFactoryReceive ? '外协后即可打印工单' : ''"
@@ -124,6 +126,7 @@ import { useUserStore } from '@/store/modules/user';
 import { formatOnlyDate } from '@/assets/js/filters/dateFilters';
 import { getNextWorkContentOnlySingle } from '@/views/ProductionClient/assets/js/utils';
 import MpDateTimePicker from '@/components/common/ElementPlusContainners/MpDateTimePicker/MpDateTimePicker.vue';
+import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { ExternalTaskStatusEnum } from '../js/enum';
 import { getCanNotDownload } from '../js/utils';
 import { OutsourceManagePageType } from '../js/type';

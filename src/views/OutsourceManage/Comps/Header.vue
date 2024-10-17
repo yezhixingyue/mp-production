@@ -1,56 +1,62 @@
 <template>
   <header class="header-box">
-    <div class="first" v-show="options.showDate">
+    <div class="first" :class="{full: options.showDate}">
       <div class="item">
         <span class="title">外协工厂：</span>
         <el-select v-model="_Factory" class="mp-select">
           <el-option v-for="item in FactoryList" :key="item.ID" :label="item.Name" :value="item.ID" />
         </el-select>
       </div>
-    </div>
-    <div class="second">
-      <div class="left">
-        <LineDateSelectorComp
-          :changePropsFunc='setCondition'
-          :requestFunc='getList'
-          :isFull="true"
-          :typeList="[['DateType', ''], [options.DateType, 'First'], [options.DateType, 'Second']]"
-          :dateList="dateList"
-          :dateValue='condition.DateType'
-          :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
-          :label="options.DateTitle"
-          v-show="options.showDate"
-        />
-        <div class="item" v-show="!options.showDate">
-          <span class="title">外协工厂：</span>
-          <el-select v-model="_Factory" class="mp-select">
-            <el-option v-for="item in FactoryList" :key="item.ID" :label="item.Name" :value="item.ID" />
-          </el-select>
-        </div>
-      </div>
-      <SearchInputComp
-        :word='condition.KeyWords'
-        title="关键词搜索"
-        placeholder="请输入任务ID或关联ID"
-        resetWords="清空所有筛选条件"
-        :changePropsFunc="(keywords: string) => setCondition([['KeyWords', ''], keywords])"
-        :requestFunc='getList'
-        :searchWatchKey="list"
-        @reset='clearCondition'
+
+      <EpCascaderByLevel2
+         title="生产线"
+         showLine
+        :fiexdWidth="180"
+        @setCondition='setCondition'
+        :list='LineList'
+        :First='condition.Line.First'
+        :Second='condition.Line.Second'
+        @getList="getList"
+        :typeList="[['Line', 'First'],['Line', 'Second']]"
+        :defaultProps="{ ID: 'ID', Name: 'Name', children: 'WorkingProcedures' }"
       />
     </div>
+    <LineDateSelectorComp
+      :changePropsFunc='setCondition'
+      :requestFunc='getList'
+      :isFull="true"
+      :typeList="[['DateType', ''], [options.DateType, 'First'], [options.DateType, 'Second']]"
+      :dateList="dateList"
+      :dateValue='condition.DateType'
+      :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
+      :label="options.DateTitle"
+      v-show="options.showDate"
+      />
+    <SearchInputComp
+      :word='condition.KeyWords'
+      title="关键词搜索"
+      placeholder="请输入任务ID或关联ID"
+      resetWords="清空所有筛选条件"
+      :changePropsFunc="(keywords: string) => setCondition([['KeyWords', ''], keywords])"
+      :requestFunc='getList'
+      :searchWatchKey="list"
+      @reset='clearCondition'
+    />
   </header>
 </template>
 
 <script setup lang='ts'>
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
+import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+import { debounce } from '@/components/common/EpCascader/assets/utils';
 import { Condition } from '../js/Condition';
 import { ISwitchOptions } from '../js/type';
+import { ManageListClass } from '../js/ManageListClass';
 
 const props = defineProps<{
   condition: Condition
@@ -60,6 +66,7 @@ const props = defineProps<{
   list: ITaskDetail[]
   FactoryList: Pick<ISubcontractorFactoryListItemType, 'ID' | 'Name'>[]
   options: ISwitchOptions
+  LineList: ManageListClass['LineList']
 }>();
 
 const dateList = [
@@ -85,21 +92,34 @@ const _Factory = computed({
   },
 });
 
+onMounted(() => {
+  const _ResizeObserver = window.ResizeObserver;
+  window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
+    constructor(callback) {
+      // eslint-disable-next-line no-param-reassign
+      callback = debounce(callback, 16, false);
+      super(callback);
+    }
+  };
+});
 </script>
 
 <style scoped lang='scss'>
 .header-box {
   padding: 5px 15px 20px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
   .first {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-  }
-  .second {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    margin-top: 15px;
+
+    &.full {
+      width: 100%;
+    }
   }
   :deep(.mp-line-date-selector-wrap) {
     margin-right: 20px;
@@ -122,10 +142,11 @@ const _Factory = computed({
       display: inline-block;
       text-align: right;
       margin-right: 10px;
-      margin-top: 15px;
+      // margin-top: 15px;
       line-height: 30px;
       font-weight: 700;
     }
+    margin-right: 20px
   }
 }
 

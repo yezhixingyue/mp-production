@@ -8,6 +8,11 @@ export class Condition {
     ID: '',
   }
 
+  Line = { // 生产线 与 工序
+    First: '',
+    Second: '',
+  }
+
   /** 创建时间 */
   CreateTime = {
     First: '',

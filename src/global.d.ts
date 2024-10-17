@@ -11,6 +11,8 @@ declare namespace NodeJS {
       BASE_URL: ''
       /** 版本号 */
       VUE_APP_VERSION: string
+      VUE_APP_EQUIPMENT_API_URL:string
+      VUE_APP_ENV_SITE_TYPE:string
     },
   }
 }

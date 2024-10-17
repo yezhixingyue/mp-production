@@ -7,6 +7,7 @@
       :getList="ManageListData.getList.bind(ManageListData)"
       :list="ManageListData.list"
       :FactoryList="ManageListData.FactoryList"
+      :LineList="ManageListData.LineList"
       :options="ManageListData.options"
     />
     <Main :ManageListData="ManageListData" :pageType="pageType" />

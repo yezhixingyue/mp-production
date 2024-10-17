@@ -78,6 +78,7 @@ import { useUserStore } from '@/store/modules/user';
 import { storeToRefs } from 'pinia';
 import { ref, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { siteType } from '@/config';
 import { getImgGaussBlurUrl } from '@/assets/js/utils/gaussBlur';
 import { WikiHandler } from '@/assets/js/Class/WikiHandler';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
@@ -112,8 +113,6 @@ const docPermissions = computed(() => {
 
 const onDocClick = (target) => {
   if (!user.value) return;
-  const siteType = 2;
-  // window.open(`http://file.ybz888.com:7006/init?token=${user.value.Token}&siteType=${siteType}&target=${target}`);
   WikiHandler.toWikiPageWithToken({ token: user.value.Token, siteType, target });
 };
 

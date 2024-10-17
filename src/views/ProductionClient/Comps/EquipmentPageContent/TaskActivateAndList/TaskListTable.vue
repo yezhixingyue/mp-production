@@ -11,12 +11,17 @@
       <mp-table-column v-if="showRowOptions.showContent" prop="_DetailText" min-width="120px" label="内容" />
       <mp-table-column v-if="showRowOptions.showMaterial" min-width="120px" prop="_Material" label="物料" />
       <mp-table-column width="110px" prop="_Number" label="数量" />
-      <mp-table-column min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink" />
+      <mp-table-column min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink t-l" />
       <slot name="ExternalHandle"></slot>
       <mp-table-column v-if="showRowOptions.showEquAndOperator" prop="_EquAndOperator" min-width="100px" label="设备 (操作人)" />
       <mp-table-column v-if="showRowOptions.showWishDuration" prop="_WishDuration" width="120px" label="预计加工时长" />
       <mp-table-column v-if="showRowOptions.showActualDuration" prop="_ActualDuration" width="120px" label="实际加工时长" />
       <mp-table-column v-if="showRowOptions.showFinishTime" prop="_FinishTime" width="130px" label="完成时间" />
+      <mp-table-column v-if="showRowOptions.showLatestFinishTime" prop="LatestFinishTime" width="130px" label="最迟完工时间">
+        <template #default="scope:{ row: typeof localTaskList.value[number] }">
+          <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''">{{ scope.row._LatestFinishTime.Time }}</span>
+        </template>
+      </mp-table-column>
       <mp-table-column v-if="showRowOptions.showStatus" width="100px" prop="_StatusText" label="当前状态" >
         <template #default="scope:any">
           <span :class="isError ? 'is-pink' : ''">{{ scope.row._StatusText }}</span>
@@ -65,6 +70,7 @@ interface rowDisplayOptions {
   showActualDuration: boolean
   showStatus: boolean
   showFinishTime: boolean
+  showLatestFinishTime: boolean,
   showEquAndOperator: boolean
   useMultipleSelection: boolean
   showExternalStatus: boolean
@@ -101,6 +107,7 @@ const _defaultshowRowOptions: rowDisplayOptions = {
   showActualDuration: false,
   showStatus: true,
   showFinishTime: false,
+  showLatestFinishTime: false,
   showEquAndOperator: false,
   useMultipleSelection: false,
   showExternalStatus: false,
@@ -163,7 +170,7 @@ const canSwitchEqu = (row: typeof localTaskList.value[number]) => {
 
   :deep(td.is-pink) {
     .cell {
-      color: #ff0000;
+      color: #ff3769;
       padding: 0 6px;
     }
   }
@@ -177,6 +184,12 @@ const canSwitchEqu = (row: typeof localTaskList.value[number]) => {
         font-size: 16px;
       }
     }
+
+    // &.t-l {
+    //   text-align: left;
+    //   padding-left: 8px;
+    //   padding-right: 8px;
+    // }
   }
 
   :deep(.check-title) {

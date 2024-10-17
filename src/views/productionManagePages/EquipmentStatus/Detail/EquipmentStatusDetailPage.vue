@@ -17,6 +17,7 @@
       :rowDisplayOptions="{
         showContent: true,
         showWishDuration: true,
+        showLatestFinishTime: true,
         showCtrlMenus: ['switchEqu'],
       }"
       @switchEqu="onSwitchEquClick"

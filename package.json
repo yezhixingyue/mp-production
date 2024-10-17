@@ -1,6 +1,6 @@
 {
   "name": "mpzj",
-  "version": "1.0.026",
+  "version": "1.0.027",
   "private": true,
   "scripts": {
     "compile-print-scss": "sass ./src/assets/css/print.scss ./public/css/print.css",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.6",
     "axios": "^0.26.1",
+    "buffer": "^6.0.3",
     "class-validator": "^0.14.0",
     "core-js": "^3.8.3",
     "cropperjs": "^1.5.12",
@@ -28,6 +29,7 @@
     "pinia-plugin-persistedstate": "^1.6.1",
     "qrcode": "^1.5.3",
     "qs": "^6.9.7",
+    "reflect-metadata": "^0.2.2",
     "spark-md5": "^3.0.2",
     "uuid": "^8.3.2",
     "vue": "^3.4.37",
@@ -67,5 +69,5 @@
     "ts-jest": "^27.0.4",
     "typescript": "~4.5.5"
   },
-  "commitId": "b1d6bdad60a02a78786f21d7bc7b0808a41ce34f\n"
+  "commitId": "f9037ce7270187d6c2d5de23d963175edc1e412a\n"
 }

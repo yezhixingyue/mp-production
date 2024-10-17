@@ -78,6 +78,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/companyManage/JobPostManage/PostManageSetupPage.vue'),
     },
+    /*  资产管理
+    ------------------------------------------ */
+    {
+      path: '/ComputerList',
+      name: 'ComputerList',
+      meta: {
+        title: '办公电脑管理',
+        icon: 'icon-pc iconfont',
+        pageName: 'ComputerListManageView',
+        PermissionInfo: ['PermissionManagePC', 'HavePomission'],
+        requiresAuth: true,
+      },
+      component: () => import('@/views/companyManage/EquipmentManage/ComputerList/ComputerListManageView.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {

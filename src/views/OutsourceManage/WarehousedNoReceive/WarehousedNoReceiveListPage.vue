@@ -8,6 +8,7 @@
       :list="ManageListData.list"
       :FactoryList="ManageListData.FactoryList"
       :options="ManageListData.options"
+      :LineList="ManageListData.LineList"
     />
     <Main :ManageListData="ManageListData" :pageType="pageType" />
     <Footer :ManageListData="ManageListData" :pageType="pageType" />

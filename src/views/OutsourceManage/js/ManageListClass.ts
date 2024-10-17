@@ -7,6 +7,9 @@ import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageCo
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { ElTable } from 'element-plus';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
+import { LineStatusEnum, LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
+import { IListItemType } from '@/components/common/EpCascader/EpCascaderWrap/types';
 import { Condition } from './Condition';
 import { ExternalTaskStatusEnum } from './enum';
 import { ExternalTaskStatusEnumList } from './EnumList';
@@ -106,9 +109,7 @@ export class ManageListClass {
 
     this.condition = new Condition(this.options);
 
-    setTimeout(() => {
-      this._getSubcontractorFactoryList();
-    }, 0);
+    // this.init();
   }
 
   clearCondition() {
@@ -116,6 +117,7 @@ export class ManageListClass {
   }
 
   async getList(Page = 1) { // 获取列表数据
+    this.init();
     this.condition.Page = Page;
 
     this.list = [];
@@ -131,15 +133,6 @@ export class ManageListClass {
     if (resp?.data?.isSuccess) {
       this.list = getLocalTaskList(resp.data.Data, false, true);
       this.listNumber = resp.data.DataNumber;
-    }
-  }
-
-  FactoryList: Pick<ISubcontractorFactoryListItemType, 'ID' | 'Name' | 'Mobile'>[] = [{ ID: '', Name: '不限', Mobile: '' }]
-
-  private async _getSubcontractorFactoryList() { // 获取外协工厂列表数据 用于列表筛选
-    const resp = await api.getSubcontractorFactoryList({ Page: 1, PageSize: 9999 }).catch(() => null);
-    if (resp?.data?.isSuccess) {
-      this.FactoryList.push(...resp.data.Data);
     }
   }
 
@@ -214,5 +207,35 @@ export class ManageListClass {
         window.URL.revokeObjectURL(url);
       };
     }
+  }
+
+  FactoryList: Pick<ISubcontractorFactoryListItemType, 'ID' | 'Name' | 'Mobile'>[] = [{ ID: '', Name: '不限', Mobile: '' }]
+
+  private async _getSubcontractorFactoryList() { // 获取外协工厂列表数据 用于列表筛选
+    const resp = await api.getSubcontractorFactoryList({ Page: 1, PageSize: 9999 }).catch(() => null);
+    if (resp?.data?.isSuccess) {
+      this.FactoryList.push(...resp.data.Data);
+    }
+  }
+
+  /** 生产线筛选数据 */
+  LineList: IListItemType[] = []
+
+  private async _getLineList() { // 获取生产线列表数据
+    const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsShowWorkingProcedure: true }).catch(() => null);
+    if (resp?.data?.isSuccess) {
+      this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.Status === LineStatusEnum.usable)];
+    }
+  }
+
+  private _inited = false
+
+  public init() {
+    if (this._inited) return;
+    this._inited = true;
+    setTimeout(() => {
+      this._getSubcontractorFactoryList();
+      this._getLineList();
+    }, 1);
   }
 }

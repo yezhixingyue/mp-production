@@ -21,6 +21,17 @@ const transformMinute = (Duration: number) => {
   return `${day ? `${day}天` : ''}${hour ? `${hour}小时` : ''}${minute}分钟`;
 };
 
+const getIsTimedout = (time?: string) => {
+  if (time && typeof time === 'string') {
+    const _date = new Date(time.replace('Z', ''));
+
+    if (_date) {
+      return _date.getTime() < Date.now();
+    }
+  }
+  return false;
+};
+
 export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useContent = false) => {
   const list = TaskList.map(it => {
     let _TargetID = '';
@@ -92,6 +103,9 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
     const _CreateTime = it.CreateTime ? format2MiddleLangTypeDateFunc2(it.CreateTime) : '';
     const _FinishTime = it.FinishTime ? format2MiddleLangTypeDateFunc2(it.FinishTime) : '';
 
+    const _LatestFinishTime = it.LatestFinishTime
+      ? { Time: format2MiddleLangTypeDateFunc2(it.LatestFinishTime), isTimedout: getIsTimedout(it.LatestFinishTime) } : null;
+
     const _EquAndOperator = [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') + (it.Operator ? ` (${it.Operator})` : '');
 
     // 外协状态
@@ -139,6 +153,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _WishDuration, // 预计加工时长
       _ActualDuration, // 实际加工时长
       _FinishTime, // 完工时间
+      _LatestFinishTime, // 最迟完工时间
       _EquAndOperator, // 设备和操作人信息
       _ExternalStatusText, // 外协任务状态 - 仅外协任务有值
       _ExternalStatusCtrlText,
