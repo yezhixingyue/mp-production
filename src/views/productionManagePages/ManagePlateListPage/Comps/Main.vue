@@ -34,15 +34,16 @@
             <td :style="`width:${widthList[10].width}px`" :title="row._Position">{{ row._Position }}</td>
             <td :style="`width:${widthList[11].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
             <td :style="`width:${widthList[12].width}px`">
-              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onOrderPrintClick(row)">打印工单</mp-button>
+              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" :disabled="row._isCancelled"
+               @click="onOrderPrintClick(row)">打印工单</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
-               :disabled="!row.MapFilePath">打印条码稿</mp-button>
+               :disabled="!row.MapFilePath || row._isCancelled">打印条码稿</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.Plate"
                @click="onProcessClick(row)">生产流程</mp-button>
 
               <el-dropdown trigger="click">
                 <span class="el-dropdown-link">
-                  <mp-button link type="primary" :disabled="row._downloadList.length===0">下载</mp-button>
+                  <mp-button link type="primary" :disabled="row._downloadList.length===0 || row._isCancelled">下载</mp-button>
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu >
@@ -172,6 +173,7 @@ const localList = computed(() => props.list.map(it => ({
   _Position: it.Status !== PlateStatusEnum.Finished ? it.Position || '' : '',
   _Percent: typeof it.Percent === 'number' ? `${it.Percent}%` : '',
   _downloadList: getDownloadList(it),
+  _isCancelled: it.Status === PlateStatusEnum.HaveCancled,
   ChildList: it.ChildList.map(child => ({
     ...child,
     _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
