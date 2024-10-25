@@ -81,7 +81,7 @@
             placeholder="多个常规版数之间请用逗号隔开"/>
           </el-form-item>
           <el-form-item :label="`拼版方式：`">
-            <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute"
+            <el-checkbox v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute" :disabled="!TemmplateSizeIsEditable"
             v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.UseMode" label="按模位" />
           </el-form-item>
           <div v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute?.UseMode" class="template-location-list">
