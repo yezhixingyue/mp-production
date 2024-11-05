@@ -108,6 +108,7 @@ export interface IUser {
       Obj: {
         Query: boolean
         RePrint: boolean
+        Excel: boolean
       };
     };
     /** 订单管理 */

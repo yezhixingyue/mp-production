@@ -5,10 +5,12 @@
       <mp-table-column width="120px" prop="ChunkID" label="块ID" />
       <mp-table-column width="110px" prop="ChunkCode" label="块编号" />
       <mp-table-column width="100px" prop="PlateCode" label="所在大版ID" />
+      <mp-table-column width="85px" prop="PlateIndex" label="套数序号" />
       <mp-table-column min-width="170px" prop="Material" label="物料" />
       <mp-table-column min-width="140px" prop="Size" label="尺寸" />
       <mp-table-column width="110px" prop="_Number" label="数量" />
       <mp-table-column width="130px" prop="Line" label="生产线" />
+      <mp-table-column width="125px" prop="_ImpositionTime" label="拼版时间" />
       <mp-table-column width="130px" prop="Position" label="当前位置" />
       <mp-table-column width="110px" prop="_StatusText" label="状态" />
       <mp-table-column width="228px" label="操作" class-name="ctrl">
@@ -32,6 +34,7 @@ import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { computed, ref } from 'vue';
 import PictureDisplayDialog from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/PictureDisplayDialog.vue';
 import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
+import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { ChunkStatusEnumList } from '../js/EnumList';
 import { IManageChunkInfo } from '../js/type';
 
@@ -45,6 +48,7 @@ const localList = computed(() => {
     ...it,
     _Number: it.Number || it.Number === 0 ? `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${it.Unit || ''}` : '',
     _StatusText: getEnumNameByID(it.Status, ChunkStatusEnumList) || '',
+    _ImpositionTime: format2MiddleLangTypeDateFunc2(it.ImpositionTime),
   }));
 
   return list;

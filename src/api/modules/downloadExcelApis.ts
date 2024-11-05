@@ -30,4 +30,7 @@ export const downloadExcelApis = {
   getPlateExcel(condition) {
     return instance.post('/Api/Plate/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
   },
+  getChunkExcel(condition) {
+    return instance.post('/Api/Chunk/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+  },
 };

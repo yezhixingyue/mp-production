@@ -33,6 +33,6 @@ export class Condition {
     CommonClassType.setDate(this, 'CreateTime');
 
     /** 筛选结果 */
-    return CommonClassType.filter(this);
+    return CommonClassType.filter(this, true);
   }
 }

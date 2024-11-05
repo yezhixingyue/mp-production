@@ -32,4 +32,6 @@ export interface IManageChunkInfo {
   FrontThumbil: string
   /** 缩略图 后面 */
   BackThumbil: string
+  /** 拼版时间 */
+  ImpositionTime: string
 }

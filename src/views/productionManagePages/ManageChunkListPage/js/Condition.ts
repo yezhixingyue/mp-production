@@ -1,3 +1,4 @@
+import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
 import { ChunkStatusEnum } from './enum';
 
 export class Condition {
@@ -18,4 +19,12 @@ export class Condition {
   Page = 1
 
   PageSize = 20
+
+  filter() {
+    /** 处理时间 */
+    CommonClassType.setDate(this, 'CreateTime');
+
+    /** 筛选结果 */
+    return CommonClassType.filter(this, true);
+  }
 }

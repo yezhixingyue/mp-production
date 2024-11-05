@@ -53,8 +53,9 @@ export class ManagePlateListClass {
     this.condition.Page = Page;
     this.list = [];
 
-    CommonClassType.setDate(this.condition, 'CreateTime');
-    const temp = CommonClassType.filter(this.condition, true);
+    // CommonClassType.setDate(this.condition, 'CreateTime');
+    // const temp = CommonClassType.filter(this.condition, true);
+    const temp = this.condition.filter();
 
     this.loading = true;
     const resp = await api.productionManageApis.getPlateList(temp).catch(() => null);
