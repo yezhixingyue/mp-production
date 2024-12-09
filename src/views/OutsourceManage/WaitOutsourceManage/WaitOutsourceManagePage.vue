@@ -18,7 +18,7 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue';
 import Header from '../Comps/Header.vue';
-import Main from '../Comps/Main.vue';
+import Main from '../Comps/Main/Main.vue';
 import Footer from '../Comps/Footer.vue';
 import { ManageListClass } from '../js/ManageListClass';
 import { OutsourceManagePageType } from '../js/type';

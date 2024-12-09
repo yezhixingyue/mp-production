@@ -8,6 +8,7 @@
       @loadFile="onDownloadClick"
       @print="onPrintClick"
       @ConfirmExternal="onConfirmExternalClick"
+      @issue="onIssueClick"
     />
 
     <PrintDialog ref="oPrintDialog" :onlyPrint="onlyPrint" noAutoPrint @submit="submitExternal" :width="dpiHelper.mm2Px(210) + 70">
@@ -67,7 +68,7 @@
               <tbody>
                 <tr>
                   <td><div>{{ curRow._WorkingName }}</div></td>
-                  <td><div style="font-size: 0.85em;">{{ curRow._AssistText || '-' }}</div></td>
+                  <td><div style="font-size: 0.85em;">{{ [curRow._AssistText, curRow._SpecialColorText].filter(it => it).join('；') || '-' }}</div></td>
                   <td>{{ curRow._ExternalSubmitParams.WishFinishTime?.split('T')[0] }}</td>
                 </tr>
               </tbody>
@@ -84,6 +85,8 @@
         </section>
       </div>
     </PrintDialog>
+
+    <HandleResultDialog v-if="pageType==='await'" v-model:visible="visible" :row="curIssueRow" mode="issue" @setQuestion="e=>onIssueSubmit(e, ManageListData)"/>
   </main>
 </template>
 
@@ -99,10 +102,12 @@ import { format2LangTypeDate } from '@/assets/js/filters/dateFilters';
 import { dpiHelper } from '@/assets/js/utils/dpiHelper';
 import { useUserStore } from '@/store/modules/user';
 import { storeToRefs } from 'pinia';
-import { ManageListClass } from '../js/ManageListClass';
-import { checkExTaskIsComplete } from '../js/utils';
-import Table from './Table.vue';
-import { OutsourceManagePageType } from '../js/type';
+import { ManageListClass } from '../../js/ManageListClass';
+import { checkExTaskIsComplete } from '../../js/utils';
+import Table from '../Table.vue';
+import { OutsourceManagePageType } from '../../js/type';
+import { useIssue } from './useIssue';
+import HandleResultDialog from '../../ExternalReceiveManage/Comps/HandleResultDialog/HandleResultDialog.vue';
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -189,6 +194,8 @@ const onConfirmExternalClick = (row: ReturnType<typeof getLocalTaskList>[number]
   });
 };
 
+/** 单个任务设置有问题 */
+const { visible, onIssueClick, curIssueRow, onIssueSubmit } = useIssue();
 </script>
 
 <style scoped lang='scss'>

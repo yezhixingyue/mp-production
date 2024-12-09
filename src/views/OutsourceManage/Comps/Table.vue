@@ -1,14 +1,14 @@
 <template>
   <el-table :data="TaskList" border stripe class="table-wrap" ref="oTableRef" @selection-change="onSelectionChange">
     <mp-table-column type="selection" width="60" label-class-name="check-title" class-name='check' v-if="pageType==='await' && localPermission?.WaitSetup" />
-    <mp-table-column width="95px" prop="Code" label="任务ID" />
-    <mp-table-column width="160px" prop="_TargetID" label="关联ID" />
+    <mp-table-column width="90px" prop="Code" label="任务ID" />
+    <mp-table-column width="170px" prop="_TargetID" label="关联ID" />
     <mp-table-column v-if="pageType === 'await'" min-width="120px" prop="_LineName" label="生产线" />
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="140px" prop="_WorkingName" label="工序" />
     <mp-table-column v-if="pageType === 'undelivered'" min-width="100px" prop="_Material" label="物料" />
-    <mp-table-column width="110px" prop="_Number" label="数量" />
+    <mp-table-column width="100px" prop="_Number" label="数量" />
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="110px" prop="_AssistText" label="加工信息" class-name="is-pink" />
-    <mp-table-column v-if="pageType !== 'undelivered'" width="146px" label="外协工厂">
+    <mp-table-column v-if="pageType !== 'undelivered'" width="140px" label="外协工厂">
       <template #default="scope:any">
         <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive && pageType==='await'"
          :disabled="!localPermission?.WaitSetup || scope.row._ExternalSubmitParams._IsFixedFactory"
@@ -24,7 +24,7 @@
         <span v-else>{{ scope.row._ExternalSubmitParams._FactoryName }}</span>
       </template>
     </mp-table-column>
-    <mp-table-column width="115px" label="金额" v-if="pageType==='await'">
+    <mp-table-column width="110px" label="金额" v-if="pageType==='await'">
       <template #default="scope:any">
         <el-input style="width:70px;margin-right: 5px;" class="amount" placeholder="外协金额"
           v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive && pageType==='await'"
@@ -37,7 +37,7 @@
     </mp-table-column>
 
     <template v-if="pageType==='all'">
-      <mp-table-column width="85px" label="金额" >
+      <mp-table-column width="80px" label="金额" >
         <template #default="scope:any">
           <span>{{ (scope.row as Row).Working.ExternalAttribute.OrignalAmount }}</span>
           <i v-if="typeof (scope.row as Row).Working.ExternalAttribute.OrignalAmount === 'number'">元</i>
@@ -74,7 +74,7 @@
         <span :class="{'is-red': (scope.row as Row)._IsTimeout}">{{ (scope.row as Row)._LastestSendedTime }}</span>
       </template>
     </mp-table-column>
-    <mp-table-column width="146px" label="预计完成日期" v-if="pageType==='await'">
+    <mp-table-column width="140px" label="预计完成日期" v-if="pageType==='await'">
       <template #default="scope:any">
         <MpDateTimePicker style="width:120px;" :disabled="!localPermission?.WaitSetup"
           v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive  && pageType==='await'"
@@ -82,9 +82,9 @@
         <span v-else>{{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}</span>
       </template>
     </mp-table-column>
-    <mp-table-column width="90px" prop="Operator" label="操作人" v-if="pageType !== 'undelivered'" />
-    <mp-table-column width="120px" prop="_CreateTime" label="创建时间" v-if="pageType === 'all'" />
-    <mp-table-column width="120px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
+    <mp-table-column width="70px" prop="Operator" label="操作人" v-if="pageType !== 'undelivered'" />
+    <mp-table-column width="115px" prop="_CreateTime" label="创建时间" v-if="pageType === 'all'" />
+    <mp-table-column width="115px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
     <!-- 预计完成时间 全部时显示 -->
     <mp-table-column width="130px" label="预计完成日期" v-if="pageType === 'all'">
       <template #default="scope:any">
@@ -93,14 +93,17 @@
     </mp-table-column>
     <!-- 完成时间 非待外协时显示 -->
     <mp-table-column width="120px" prop="_FinishTime" label="完成时间" v-if="pageType !== 'await' && pageType !== 'undelivered'" />
-    <mp-table-column width="85px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
-    <mp-table-column width="220px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
+    <mp-table-column width="70px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
+    <mp-table-column width="240px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
       <template #default="scope:any">
         <mp-button type="primary" class='f' link @click="onMenuClick(scope.row, 'confirmExternal')"
           :disabled="!([ExternalTaskStatusEnum.WaitFactoryReceive, ExternalTaskStatusEnum.FactoryReceived]
           .includes(scope.row.Working.ExternalAttribute.Status)
           ||(scope.row.Working.ExternalAttribute.Status===ExternalTaskStatusEnum.HaveInstored
               &&scope.row.Working.Type===WorkingTypeEnum.platemaking))">{{ scope.row._ExternalStatusCtrlText }}</mp-button>
+        <mp-button type="primary" link
+          :disabled="scope.row.Working.ExternalAttribute.Status!==ExternalTaskStatusEnum.HaveInstored"
+          @click="onMenuClick(scope.row, 'issue')">有问题</mp-button>
         <mp-button type="primary" link
           :disabled="scope.row.Working.ExternalAttribute.Status===ExternalTaskStatusEnum.WaitFactoryReceive"
           :title="scope.row.Working.ExternalAttribute.Status===ExternalTaskStatusEnum.WaitFactoryReceive ? '外协后即可打印工单' : ''"
@@ -140,7 +143,7 @@ const props = defineProps<{
   pageType: OutsourceManagePageType
 }>();
 
-const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print', 'sendError']);
+const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print', 'sendError', 'issue']);
 
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageExternalTask.Obj);
@@ -193,7 +196,7 @@ const onSendErrorClick = (row: typeof props.TaskList[number], index: number, cal
     height: 44px;
 
     .cell {
-      padding: 0 6px;
+      padding: 0 2px;
     }
 
     button {
@@ -255,9 +258,9 @@ const onSendErrorClick = (row: typeof props.TaskList[number], index: number, cal
 
   :deep(.el-table__body tbody .check) {
     .cell {
-      padding-left: 11px;
+      padding-left: 15px;
       > label {
-        padding: 5px 20px 5px 0;
+        padding: 5px 20px 5px 4px;
         height: 14px;
       }
     }

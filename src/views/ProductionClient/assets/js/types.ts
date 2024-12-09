@@ -97,6 +97,8 @@ export interface ITaskPlateInfo {
   Redoable: boolean
   MapFilePath: string
   Index: string
+  /** 印色信息 */
+  PrintColor?: { IsSpecialColor: boolean; Name: string }[]
 }
 
 /** 任务中工序上的块信息类型 */

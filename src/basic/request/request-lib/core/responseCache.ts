@@ -26,7 +26,7 @@ export class ResponseCache {
     // 2. 清理超长项目
     if (this._map.size > this._length) {
       const delKey = this._map.keys().next().value; // 获取map中的第一个键值对中的key值 （默认第一个为最久的数据， 新加数据在最后面）
-      this._map.delete(delKey);
+      if (delKey && this._map.has(delKey)) this._map.delete(delKey);
     }
   }
 

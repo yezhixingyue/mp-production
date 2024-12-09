@@ -5,7 +5,7 @@ import { ExternalTaskStatusEnumList } from '@/views/OutsourceManage/js/EnumList'
 import { ProductiveTaskStatusEnumList } from '@/views/ProductionClient/assets/js/enum';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
-import { ReportModeEnum } from '@/views/productionSetting/process/enums';
+import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { getTaskDisplayInfo } from '../../CurTaskPanel';
 
@@ -39,6 +39,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
     let _LineName = '';
     let _PrintMaterialSizeTitle = '订单尺寸';
     let _Size = '';
+    let _SpecialColorText = ''; // 专色字段： 专色[单黑、印白]
 
     const info = getTaskDisplayInfo(it);
 
@@ -52,6 +53,12 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
         _DetailText = info.SecondTitle;
         _LineName = it.Working.PlateInfo?.Line || '';
         _PrintMaterialSizeTitle = '物料尺寸';
+
+        if (it.Working.Type === WorkingTypeEnum.print && it.Working.PlateInfo?.PrintColor?.length) {
+          _SpecialColorText = it.Working.PlateInfo.PrintColor.filter(it => it.IsSpecialColor).map(it => it.Name).join('、');
+          if (_SpecialColorText) _SpecialColorText = `专色[${_SpecialColorText}]`;
+        }
+
         break;
 
       case ReportModeEnum.order:
@@ -140,6 +147,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _LineName,
       _ProcessTimes, // 是第几次加工次数
       _AssistText, // 辅助文字信息
+      _SpecialColorText, // 专色信息
       _Material,
       _Size,
       _UnFinishNumber,

@@ -2,7 +2,7 @@
  <DialogContainerComp
    :visible='localVisible'
    :width='600'
-   :title="isInstored ? '外协加工入库' : '外协加工出库'"
+   :title="localInfo.title"
    top='12vh'
    @open='onOpen'
    @cancel='close'
@@ -10,7 +10,7 @@
    >
    <div class='dialog-content'>
     <!-- 外协任务详情展示 -->
-    <ExTaskDetail :result="result" v-if="result" :class="{
+    <ExTaskDetail :result="result" :row="row" v-if="result||row" :class="{
       'd-writeQuestion': displayMode.writeQuestion,
       'd-confirming': displayMode.confirming,
     }" />
@@ -52,8 +52,8 @@
     <div class="btns">
       <!-- 第一次扫描 确认完成 -->
       <template v-if="displayMode.confirming">
-        <mp-button type="primary" @click="submit">{{ isInstored ? '确认完成' : '确认送出' }}</mp-button>
-        <mp-button class="blue" @click="isSettingError = true" v-if="isInstored">有问题</mp-button>
+        <mp-button type="primary" @click="submit">{{ localInfo.confirmingBtnText }}</mp-button>
+        <mp-button class="blue" @click="isSettingError = true" v-if="mode === 'in'">有问题</mp-button>
         <mp-button class="blue" @click="close" v-else>关闭</mp-button>
       </template>
 
@@ -70,7 +70,8 @@
       <!-- 问题提交 -->
       <template v-if="displayMode.writeQuestion">
         <mp-button type="primary" @click="submitError">保存</mp-button>
-        <mp-button class="blue" @click="isSettingError = false">返回</mp-button>
+        <mp-button class="blue" v-if="mode==='issue'" @click="close">取消</mp-button>
+        <mp-button class="blue" v-else @click="isSettingError = false">返回</mp-button>
       </template>
     </div>
    </template>
@@ -80,6 +81,7 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
+import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import ExTaskDetail from './ExTaskDetail.vue';
 import { IExternalReportResult } from '../../js/types';
@@ -87,8 +89,9 @@ import { ExternalReportResultCodeEnum } from '../../js/enums';
 
 const props = defineProps<{
   visible: boolean
-  result: IExternalReportResult | null
-  isInstored: boolean
+  result?: IExternalReportResult | null
+  row?: ReturnType<typeof getLocalTaskList>[number] | null
+  mode: 'in' | 'out' | 'issue'
 }>();
 
 const emit = defineEmits(['update:visible', 'submit', 'setQuestion', 'close']);
@@ -100,6 +103,36 @@ const localVisible = computed({
   set(val) {
     emit('update:visible', val);
   },
+});
+
+const localInfo = computed(() => {
+  const temp = {
+    title: '',
+    confirmingBtnText: '',
+  };
+
+  switch (props.mode) {
+    case 'in':
+      temp.title = '外协加工入库';
+      temp.confirmingBtnText = '确认完成';
+
+      break;
+
+    case 'out':
+      temp.title = '外协加工出库';
+      temp.confirmingBtnText = '确认送出';
+
+      break;
+
+    case 'issue':
+      temp.title = '外协有问题';
+
+      break;
+    default:
+      break;
+  }
+
+  return temp;
 });
 
 const isSettingError = ref(false);
@@ -123,7 +156,7 @@ const remark = ref('');
 
 const onOpen = () => {
   remark.value = '';
-  isSettingError.value = false;
+  isSettingError.value = props.mode === 'issue';
 };
 
 const close = () => {

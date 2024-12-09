@@ -27,24 +27,38 @@ const handleExternalConfirmFetch = async (rows: Row[], isConfirm: boolean) => {
 
     const resp = await api.outsourceApis.getExternalFactoryTakeOrder({ List }).catch(() => null);
 
-    return !!resp?.data?.isSuccess;
+    return { success: !!resp?.data?.isSuccess, data: resp?.data?.Data };
   }
 
   // 撤回
   const result = await Promise.all(rows.map(row => api.outsourceApis.getExternalFactoryRevocation(row.ID).catch(() => null)));
   const t = result.find(it => !(it?.data?.isSuccess)); // 去找到一个不成功的项目
-  return !t;
+  return { success: !t };
 };
 
 /** 确认外协或撤回成功后对列表数据的修改 */
-const handleExternalConfirmSuccess = (rows: Row[], isConfirm: boolean) => {
+const handleExternalConfirmSuccess = (rows: Row[], isConfirm: boolean, list?: { TaskID: string; Status: ExternalTaskStatusEnum }[]) => {
   const userStore = useUserStore();
+
+  const _getStatus = (id: string) => {
+    if (isConfirm) {
+      if (list?.length) {
+        const t = list.find(it => it.TaskID === id);
+        if (t) return t.Status;
+      }
+
+      return ExternalTaskStatusEnum.FactoryReceived;
+    }
+
+    return ExternalTaskStatusEnum.WaitFactoryReceive;
+  };
+
   rows.forEach(row => {
     const _row = row;
 
     // 对列表数据的修改
     _row.Operator = isConfirm ? userStore.user?.StaffName || '' : '';
-    _row.Working.ExternalAttribute.Status = isConfirm ? ExternalTaskStatusEnum.FactoryReceived : ExternalTaskStatusEnum.WaitFactoryReceive;
+    _row.Working.ExternalAttribute.Status = _getStatus(_row.ID);
     _row.StartTime = isConfirm ? getTimeConvertFormat({ withHMS: true }) : '';
     _row._ExternalStatusText = getEnumNameByID(_row.Working.ExternalAttribute.Status, ExternalTaskStatusEnumList); // 更新展示项目 - 状态
     _row._StartTime = isConfirm ? format2MiddleLangTypeDateFunc2(_row.StartTime) : ''; // 更新展示项目 - 外协时间
@@ -61,7 +75,7 @@ export class ManageListClass {
   condition: Condition
 
   /** 列表数据 */
-  list: ReturnType<typeof getLocalTaskList> = []
+  list: Row[] = []
 
   listNumber = 0
 
@@ -142,10 +156,10 @@ export class ManageListClass {
 
     const result = await handleExternalConfirmFetch(rows, isConfirm); // 确认外协或撤回操作
 
-    if (result) { // 处理成功
+    if (result.success) { // 处理成功
       const cb = () => {
         // 1. 对列表数据的修改
-        handleExternalConfirmSuccess(rows, isConfirm);
+        handleExternalConfirmSuccess(rows, isConfirm, result.data?.List);
 
         // 2. 从multipleSelection列表中删除掉该项 及 从table的全部选中项中移除掉操作项 --- 暂不移除
         // if (isConfirm) {
@@ -237,5 +251,28 @@ export class ManageListClass {
       this._getSubcontractorFactoryList();
       this._getLineList();
     }, 1);
+  }
+
+  /** 提交问题 */
+  async setQuestion(row: Row, Remark: string, callback: () => void) {
+    if (!row || !Remark) return;
+
+    const resp = await api.outsourceApis.getEquipmentTaskError({ ID: row.ID, Remark });
+
+    if (resp.data?.isSuccess) {
+      const cb = () => {
+        callback();
+      };
+
+      const t = this.list.find(it => it.ID === row.ID);
+      if (t) {
+        const userStore = useUserStore();
+        t.Operator = userStore.user?.StaffName || '';
+        t.Working.ExternalAttribute.Status = ExternalTaskStatusEnum.Error;
+        t._ExternalStatusText = getEnumNameByID(t.Working.ExternalAttribute.Status, ExternalTaskStatusEnumList); // 更新展示项目 - 状态
+      }
+
+      MpMessage.dialogSuccess('问题已提交', cb, cb);
+    }
   }
 }

@@ -8,7 +8,7 @@
         <mp-button class="button" :type="isInstored ? 'primary' : 'danger'" @click="search"><el-icon><Search /></el-icon></mp-button>
       </div>
     </div>
-    <HandleResultDialog v-model:visible="visible" :result="localExternalReportHandleClass.result" :isInstored="isInstored"
+    <HandleResultDialog v-model:visible="visible" :result="localExternalReportHandleClass.result" :mode="isInstored ? 'in' : 'out'"
      @submit="confirm" @setQuestion="setQuestion" @close="setFocus"/>
   </section>
 </template>
