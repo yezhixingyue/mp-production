@@ -81,17 +81,29 @@ const routes: RouteRecordRaw = {
     /*  资产管理
     ------------------------------------------ */
     {
-      path: '/ComputerList',
-      name: 'ComputerList',
+      path: '/EquipmentList',
+      name: 'EquipmentList',
       meta: {
-        title: '办公电脑管理',
+        title: '办公设备管理',
         icon: 'icon-pc iconfont',
-        pageName: 'ComputerListManageView',
+        pageName: 'EquipmentListManageView',
         PermissionInfo: ['PermissionManagePC', 'HavePomission'],
         requiresAuth: true,
       },
-      component: () => import('@/views/companyManage/EquipmentManage/ComputerList/ComputerListManageView.vue'),
+      component: () => import('@/views/companyManage/EquipmentManage/EquipmentList/EquipmentListManageView.vue'),
     },
+    // {
+    //   path: '/ComputerList',
+    //   name: 'ComputerList',
+    //   meta: {
+    //     title: '办公电脑管理',
+    //     icon: 'icon-pc iconfont',
+    //     pageName: 'ComputerListManageView',
+    //     PermissionInfo: ['PermissionManagePC', 'HavePomission'],
+    //     requiresAuth: true,
+    //   },
+    //   component: () => import('@/views/companyManage/EquipmentManage/ComputerList/ComputerListManageView.vue'),
+    // },
   ],
 };
 const routeTree:RouteTreeType = {
