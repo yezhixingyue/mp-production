@@ -147,7 +147,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _LineName,
       _ProcessTimes, // 是第几次加工次数
       _AssistText, // 辅助文字信息
-      _SpecialColorText, // 专色信息
+      _SpecialColorText, // 专色信息 --- 2024-12-17后 暂无使用 - 后续可废弃
       _Material,
       _Size,
       _UnFinishNumber,

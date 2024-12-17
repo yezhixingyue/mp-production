@@ -68,7 +68,8 @@
               <tbody>
                 <tr>
                   <td><div>{{ curRow._WorkingName }}</div></td>
-                  <td><div style="font-size: 0.85em;">{{ [curRow._AssistText, curRow._SpecialColorText].filter(it => it).join('；') || '-' }}</div></td>
+                  <!-- <td><div style="font-size: 0.85em;">{{ [curRow._AssistText, curRow._SpecialColorText].filter(it => it).join('；') || '-' }}</div></td> -->
+                  <td><div style="font-size: 0.85em;">{{ curRow._AssistText || '-' }}</div></td>
                   <td>{{ curRow._ExternalSubmitParams.WishFinishTime?.split('T')[0] }}</td>
                 </tr>
               </tbody>
