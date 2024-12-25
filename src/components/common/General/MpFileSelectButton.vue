@@ -47,10 +47,13 @@ const handleFileEmit = (files: File[] | FileList, e: Event) => {
   if (oInput.value) oInput.value.value = '';
 };
 
-const onChange = (e: InputEvent | DragEvent) => {
+const onChange = (e: Event) => {
   if (!e || !e.target) return;
-  const files = e.dataTransfer ? e.dataTransfer.files : oInput.value?.files || [];
-  handleFileEmit(files, e);
+
+  const _e = e as InputEvent | DragEvent;
+  const files = _e.dataTransfer ? _e.dataTransfer.files : oInput.value?.files || [];
+
+  handleFileEmit(files, _e);
 };
 
 const dragover = ref(false);

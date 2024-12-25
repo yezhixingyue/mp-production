@@ -211,7 +211,7 @@ input[type='number'] {
   &:active {
     color: darken($color: $--color-pink, $amount: 15);
   }
-  &:disabled, &.disabled {
+  &:disabled, &.disabled, &[disabled=true] {
     color: #cbcbcb;
     cursor: not-allowed;
     pointer-events: none;

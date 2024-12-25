@@ -90,7 +90,7 @@ export default {
 
   > main {
     padding-left: 20px;
-    padding-right: 40px;
+    padding-right: 20px;
     overflow: hidden;
   }
 

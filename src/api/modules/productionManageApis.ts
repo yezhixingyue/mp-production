@@ -33,6 +33,10 @@ export const productionManageApis = {
   getPlateList(condition) {
     return request<IManagePlateInfo[]>({ method: 'POST', url: '/Api/Plate/List', data: condition });
   },
+  /** /Api/Plate/GenreateFile?PlateID  PUT请求 */
+  getPlateGenreateFile(PlateID: string) {
+    return instance.put('/Api/Plate/GenreateFile', null, { params: { PlateID } });
+  },
   /** get /Api/Plate/Detail */
   getPlateDetail(plateID: string) {
     return instance.get<IDigitalOrderPlatePrintInfo>('/Api/Plate/Detail', { params: { plateID } });
@@ -72,6 +76,10 @@ export const productionManageApis = {
   /** PUT /Api/Order/PushTop  订单置顶 */
   getOrderPushTop(orderID) {
     return instance.put('/Api/Order/PushTop', null, { params: { orderID } });
+  },
+  /** /Api/Order/FileReplace 订单文件替换 */
+  getOrderFileReplace(data) {
+    return instance.post('/Api/Order/FileReplace', data);
   },
   /** GET /Api/Order/GetTimeLine  获取订单时间线 */
   getOrderGetTimeLine(orderID: string) {

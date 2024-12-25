@@ -100,6 +100,8 @@ export interface IUser {
         Print: boolean
         Excel: boolean
         Download: boolean
+        /** 重新生成大版 */
+        GenerateFile: boolean
       };
     };
     /** 块管理 */
@@ -119,6 +121,7 @@ export interface IUser {
         TopShow: boolean
         Cancle: boolean
         Download: boolean
+        Replace: boolean
       };
     };
     /** 外来物料管理 */

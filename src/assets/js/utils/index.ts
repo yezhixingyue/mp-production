@@ -51,9 +51,10 @@ export const scrollToBottom = element => element.scrollIntoView({ behavior: 'smo
  */
 export const extname = (filename: string) => {
   if (!filename || typeof filename !== 'string') {
-    return '未知类型';
+    return '';
   }
   const a = filename.split('').reverse().join('');
   const b = a.substring(0, a.search(/\./)).split('').reverse().join('');
-  return b.toLowerCase();
+
+  return `.${b.toLowerCase()}`;
 };

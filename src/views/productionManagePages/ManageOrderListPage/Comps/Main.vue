@@ -45,14 +45,21 @@
               <el-dropdown trigger="click" v-if="!noMoreMenuPermission">
                 <mp-button link type="primary" class="el-dropdown-link">更多</mp-button>
                 <template #dropdown>
-                  <el-dropdown-menu class="mp-stall-manage-table-menu--drop-down-wrap">
-                    <el-dropdown-item link type="primary" v-if="user?.PermissionList.PermissionManageOrder.Obj.Download"
+                  <el-dropdown-menu class="mp-order-list-manage-table-menu--drop-down-wrap">
+                    <el-dropdown-item link type="primary"
+                      v-if="user?.PermissionList.PermissionManageOrder.Obj.Download"
                       :disabled="!row.CheckedFileList || row.CheckedFileList.length === 0"
-                     style="font-size: 12px;" @click="onDownloadClick(row)">下载（{{row.CheckedFileList?.length || 0}}）</el-dropdown-item>
+                      @click="onDownloadClick(row)">下载（{{row.CheckedFileList?.length || 0}}）</el-dropdown-item>
+                    <!-- 文件替换 -->
+                    <el-dropdown-item link type="primary"
+                      v-if="user?.PermissionList.PermissionManageOrder.Obj.Replace"
+                      :disabled="!row.CheckedFileList || row.CheckedFileList.length === 0 || !row.IsReplaceable"
+                      @click="onFileReplaceClick(row)">文件替换</el-dropdown-item>
                     <!-- 取消 -->
-                    <el-dropdown-item v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
-                    :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot || !row.IsManualOrder"
-                    link type="primary" @click="onCancelClick(row)" style="font-size: 12px;">取消</el-dropdown-item>
+                    <el-dropdown-item link type="primary"
+                      v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
+                      :disabled="!row._StatusDetail || row._StatusDetail._CancelStatus === OrderCancelStatus.cannot || !row.IsManualOrder"
+                      @click="onCancelClick(row)">取消</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -90,6 +97,8 @@
     <NodePicDialog v-model:visible="processVisible" :item="curRow" :targetType="ReportModeEnum.order" />
     <!-- 订单取消弹窗 -->
     <OrderCancelDialog v-model:visible="cancelOrderVisible" :row="curRow" @submit="handleCancel" />
+    <!-- 文件替换弹窗 -->
+    <FileReplaceDialog v-model:visible="replaceFileVisible" :row="curRow" />
   </main>
 </template>
 
@@ -99,7 +108,6 @@
 import {
   computed, onMounted, onUnmounted, ref,
 } from 'vue';
-import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
 import { useUserStore } from '@/store/modules/user';
@@ -108,8 +116,10 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import SetOrderTopDialog from './SetOrderTopDialog.vue';
 import TimeLineDisplayDialog from './TimeLineDisplayDialog.vue';
 import OrderCancelDialog from './OrderCancelDialog.vue';
-import { IManageOrderListItem, IOrderCancelRelation, ISellOrderInstanceItem } from '../js/type';
-import { OrderCancelStatus, OrderStatusList } from '../js/enum';
+import FileReplaceDialog from './FileReplaceDialog.vue';
+import { IManageOrderListItem, IOrderCancelRelation } from '../js/type';
+import { OrderCancelStatus } from '../js/enum';
+import { getOrderTableListItem, _getNormalOrderLineContent } from '../js/getOrderTableList';
 
 const props = defineProps<{
   list: IManageOrderListItem[]
@@ -121,14 +131,8 @@ const emit = defineEmits(['top', 'cancel']);
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-const getSellSideProductName = (it: IManageOrderListItem) => {
-  const { FirstLevel, SecondLevel, ProductName } = it;
-  const list = [FirstLevel || '', SecondLevel || '', ProductName || ''];
-  return list.filter(it => it).join('-');
-};
-
 const widthList = ref([
-  { width: 120 },
+  { width: 110 },
   { width: 85 },
   { width: 190 },
   { width: 130 },
@@ -147,9 +151,9 @@ const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a,
 
 const noMoreMenuPermission = computed(() => {
   if (user.value?.PermissionList.PermissionManageOrder.Obj) {
-    const { Cancle, Download } = user.value.PermissionList.PermissionManageOrder.Obj;
+    const { Cancle, Download, Replace } = user.value.PermissionList.PermissionManageOrder.Obj;
 
-    return !Cancle && !Download;
+    return !Cancle && !Download && !Replace;
   }
 
   return false;
@@ -157,49 +161,7 @@ const noMoreMenuPermission = computed(() => {
 
 const spreadList = ref<string[]>([]);
 
-const getIsMakeuped = (it: IManageOrderListItem) => {
-  const t = it.InstanceList.find(ins => ins.LineList.find(l => l.PlateList.length > 0));
-
-  return !!t;
-};
-
-/** 获取普通生产线的生产线列的展示内容 */
-const _getNormalOrderLineContent = (instance: ISellOrderInstanceItem) => {
-  const { LineList, PrintFileRemark, AfterPrintFileRemark } = instance;
-
-  const _LineContent = LineList.map(l => (l.PlateList.length > 0 ? `${l.Name} 大版ID:${l.PlateList.join('、')}` : ''))
-    .filter(it => it)
-    .join('；\r\n') || '';
-
-  const _PrintFileRemark = PrintFileRemark ? ` \r\n印刷版: ${PrintFileRemark || ''}` : '';
-  const _AfterPrintFileRemark = AfterPrintFileRemark ? ` \r\n后工版: ${AfterPrintFileRemark || ''}` : '';
-
-  return [_LineContent, _PrintFileRemark, _AfterPrintFileRemark].filter(it => it).join('；');
-};
-
-const _getRootNormalOrderLineContent = (it: IManageOrderListItem) => {
-  if (it.InstanceList.length > 1 && it.AfterPrintFileRemark) return `后工版: ${it.AfterPrintFileRemark}`;
-
-  if (it.InstanceList[0]) return _getNormalOrderLineContent(it.InstanceList[0]);
-
-  return '';
-};
-
-const localList = computed(() => props.list.map(it => ({
-  ...it,
-  /** 销售端产品 */
-  _SellSideProductName: getSellSideProductName(it),
-  _Count: [`${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}${it.Unit}`, it.KindCount ? `${it.KindCount}款` : ''].filter(it => it).join(' '),
-  _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
-  _ProduceEndTime: format2MiddleLangTypeDateFunc2(it.WishFinishTime),
-  _isSpread: spreadList.value.includes(it.ID),
-  _isCombineLine: it.InstanceList.length > 1,
-  _Size: it.InstanceList.length > 1 ? it.Size || '' : it.InstanceList[0]?.Size || '',
-  _Material: it.InstanceList.length > 1 ? '' : it.InstanceList[0]?.Material || '',
-  _LineContent: _getRootNormalOrderLineContent(it),
-  _isMakeuped: getIsMakeuped(it),
-  _StatusDetail: OrderStatusList.find(_it => _it.ID === it.Status),
-})));
+const localList = computed(() => props.list.map(it => getOrderTableListItem(it, spreadList.value)));
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
   if (!it._isCombineLine) return;
@@ -251,6 +213,13 @@ const onDownloadClick = (row: typeof localList.value[number]) => {
   };
 
   row.CheckedFileList.forEach(it => _download(it.FilePath));
+};
+
+/** 订单文件替换 */
+const replaceFileVisible = ref(false);
+const onFileReplaceClick = (row: typeof localList.value[number]) => {
+  curRow.value = row;
+  replaceFileVisible.value = true;
 };
 
 /** 订单取消 */
@@ -515,5 +484,9 @@ onUnmounted(() => {
       }
     }
   }
+}
+
+.mp-order-list-manage-table-menu--drop-down-wrap {
+  --el-font-size-base: 12px;
 }
 </style>

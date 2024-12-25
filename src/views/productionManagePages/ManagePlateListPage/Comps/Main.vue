@@ -41,24 +41,28 @@
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.Plate"
                @click="onProcessClick(row)">生产流程</mp-button>
 
+              <mp-button link type="primary" class="ml-15" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.LaterCraft"
+              @click="onOrderContainClick(row)">包含订单</mp-button>
+
               <el-dropdown trigger="click">
                 <span class="el-dropdown-link">
-                  <mp-button link type="primary" :disabled="row._downloadList.length===0 || row._isCancelled">下载</mp-button>
+                  <mp-button link type="primary"
+                    :disabled="(row._downloadList.length===0 && !row._showGenerateFile) || row._isCancelled"
+                    >更多</mp-button>
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu >
                     <el-dropdown-item v-for="it in row._downloadList" :key="it.key">
-                      <el-link :href="it.href" target="_blank" >
-                        <el-icon class="mr-5" style="font-size: 14px;"><Document /></el-icon>
-                        <span class="ft-12">{{ it.key }}</span>
-                      </el-link>
+                      <a :href="it.href" target="_blank" >
+                        <span class="ft-12">下载{{ it.key }}</span>
+                      </a>
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="row._showGenerateFile" @click="onGenerateFileClick(row)" :disabled="row.Status===PlateStatusEnum.Finished">
+                      <span class="ft-12">重新生成文件</span>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-
-              <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.LaterCraft"
-               @click="onOrderContainClick(row)">包含订单</mp-button>
               <mp-button link @click="onSpreadClick(row)" class="spread" :disabled="row.ChildList.length === 0" v-show="Type === PlateTypeEnum.Plate">
                 <span class="mr-2">{{ row._isSpread ? '隐藏' : '展开' }}</span>
                 <el-icon v-show="!row._isSpread"><CaretBottom /></el-icon>
@@ -109,6 +113,8 @@ import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { loadBarcode } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/utils';
 import NodePicDialog from '@/components/common/NodePicDialog/NodePicDialog.vue';
 import { useUserStore } from '@/store/modules/user';
+import api from '@/api';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
 import { PlateStatusEnum, PlateTypeEnum } from '../js/enum';
@@ -138,7 +144,7 @@ const widthList = ref([
   { width: props.Type === PlateTypeEnum.Plate ? 110 : 190 },
   { width: props.Type === PlateTypeEnum.Plate ? 150 : 220 },
   { width: 70 },
-  { width: 320 },
+  { width: props.Type === PlateTypeEnum.LaterCraft ? 288 : 320 },
 ]);
 
 const totalWidth = computed(() => {
@@ -174,6 +180,7 @@ const localList = computed(() => props.list.map(it => ({
   _Percent: typeof it.Percent === 'number' ? `${it.Percent}%` : '',
   _downloadList: getDownloadList(it),
   _isCancelled: it.Status === PlateStatusEnum.HaveCancled,
+  _showGenerateFile: user.value?.PermissionList.PermissionManagePlate.Obj.GenerateFile && [PlateTypeEnum.Plate, PlateTypeEnum.LaterCraft].includes(it.Type),
   ChildList: it.ChildList.map(child => ({
     ...child,
     _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
@@ -183,6 +190,23 @@ const localList = computed(() => props.list.map(it => ({
     _Percent: typeof child.Percent === 'number' ? `${child.Percent}%` : '',
   })),
 })));
+
+const submitGenerateFile = async (row: typeof localList.value[number]) => {
+  const resp = await api.productionManageApis.getPlateGenreateFile(row.ID);
+
+  if (resp.data?.isSuccess) {
+    MpMessage.success('生成成功!');
+  }
+};
+
+const onGenerateFileClick = (row: typeof localList.value[number]) => {
+  MpMessage.warn('确定重新生成大版文件吗 ?', `<ul class='generate-file-msg-section'>
+    <li>大版ID：[ ${row.Code} ]</li>
+    <li>拼版人员：[ ${row.Operator} ]</li>
+  </ul>`, () => {
+    submitGenerateFile(row);
+  }, undefined, true);
+};
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
   if (it.ChildList.length === 0) return;
@@ -356,8 +380,8 @@ onUnmounted(() => {
           button {
             font-size: 12px;
             padding: 0;
-            margin-top: -3px;
-            & + .el-button  {
+            margin-top: -4px;
+            & + :deep(.el-button)  {
               margin-left: 15px;
             }
             &.spread {
@@ -465,5 +489,17 @@ onUnmounted(() => {
     }
   }
 }
+</style>
 
+<style lang="scss">
+ul.generate-file-msg-section {
+  line-height: 24px;
+  text-align: left;
+  margin: 0 auto;
+  display: inline-block;
+
+  > li:first-of-type {
+    margin-left: 14px;
+  }
+}
 </style>

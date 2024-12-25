@@ -79,6 +79,8 @@ export interface IManageOrderListItem {
   FinishTime: string
   /** 是否手动下单 */
   IsManualOrder: boolean
+  /** 是否可替换文件 */
+  IsReplaceable: boolean
   /** 是否已置顶 */
   IsTop: boolean
   /** 生产线 */
@@ -87,7 +89,7 @@ export interface IManageOrderListItem {
   InstanceList: ISellOrderInstanceItem[]
   AfterPrintFileRemark: string
   /** 下载文件列表 */
-  CheckedFileList: { FilePath: string }[]
+  CheckedFileList: { FilePath: string; ID: string; Name: string; IsReplaceable: boolean }[]
 }
 
 /** 时间线数据类型 */

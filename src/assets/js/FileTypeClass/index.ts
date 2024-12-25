@@ -21,7 +21,7 @@ export default class FileTypeClass {
   }: { file: File, Terminal: number, CustomerID: string, aside: string }) {
     const ext = extname(file.name);
     const combineName = `${CustomerID}${Terminal}${aside}${file.name}${file.lastModified}${file.size}`; // 按照规则进行组合
-    return `${sha1(combineName)}.${ext}`;
+    return `${sha1(combineName)}${ext}`;
   }
 
   /**

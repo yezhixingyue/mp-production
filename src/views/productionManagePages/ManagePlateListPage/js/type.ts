@@ -1,5 +1,5 @@
 // import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
-import { PlateStatusEnum } from './enum';
+import { PlateStatusEnum, PlateTypeEnum } from './enum';
 
 interface _IManagePlateCommonInfo {
   ID: string
@@ -34,6 +34,8 @@ interface _IManagePlateCommonInfo {
   MapFilePath: string
   /** 大版序号 */
   Index: string
+  /** 大版类型 */
+  Type: PlateTypeEnum
 }
 
 export type IPlateListChild = _IManagePlateCommonInfo
