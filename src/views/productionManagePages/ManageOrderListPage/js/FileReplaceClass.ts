@@ -69,7 +69,7 @@ export class FileReplaceClass {
 
     // 提交
     const temp = {
-      CheckedFileList: updloadedList.map(it => ({ ID: it!.data.ID, UniqueName: it!.UniqueName })),
+      CheckedFileList: updloadedList.map(it => ({ ID: it!.data.ID, UniqueName: it!.UniqueName, Name: it!.data.Name })),
       ID: this.row.ID,
     };
     const resp = await api.productionManageApis.getOrderFileReplace(temp);
