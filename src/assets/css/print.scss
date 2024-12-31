@@ -475,6 +475,20 @@
     > .line {
       font-size: 1.4em;
       letter-spacing: 0.1pt;
+
+      display: flex;
+      align-items: center;
+
+      > span {
+        flex: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &.n {
+          flex: 0 1 auto;
+        }
+      }
     }
 
     > .title {
