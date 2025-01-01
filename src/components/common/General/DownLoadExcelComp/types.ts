@@ -23,6 +23,10 @@ export interface IExportExcelProps {
   title?: string
   /** 是否禁用 - 总页码条目为0时禁用 */
   disabled?: boolean
+  /** 最大条目限制导出数 -- 必须同时传递total才生效 */
+  maxCountLimit?: number
+  /** 当前已知总条码数量 */
+  total?: number
   /** 导出接口 */
   apiPath: keyof typeof downloadExcelApis
   /** 获取导出条件 */

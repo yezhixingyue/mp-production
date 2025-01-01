@@ -26,6 +26,8 @@ const downloadExcelObj: undefined | IExportExcelProps = localPermission.value?.E
   apiPath: 'getPlateExcel',
   fileName: `${props.condition.Type === PlateTypeEnum.Plate ? '大版' : '后工版'}列表`,
   getCondition: () => props.condition.filter(),
+  maxCountLimit: 15000,
+  total: props.total,
   getFileNameDate: () => ({
     First: props.condition.CreateTime.First,
     Second: props.condition.CreateTime.Second,

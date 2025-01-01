@@ -19,6 +19,11 @@ const localDisabled = computed(() => (typeof props.options.disabled === 'boolean
 
 const onClick = async () => {
   if (localDisabled.value) return;
+
+  if (typeof props.options.total === 'number' && typeof props.options.maxCountLimit === 'number' && props.options.total > props.options.maxCountLimit) {
+    MpMessage.error({ title: '导出失败', msg: '导出数量超出限制' });
+    return;
+  }
   /** 需要知道的信息：
    * 1. 导出Excel的接口地址
    * 2. 导出条件（除起始页码、页码容量外的其它条件）
