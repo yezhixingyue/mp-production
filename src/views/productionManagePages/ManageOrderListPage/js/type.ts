@@ -83,6 +83,8 @@ export interface IManageOrderListItem {
   IsReplaceable: boolean
   /** 是否已置顶 */
   IsTop: boolean
+  /** 是否可转自定义版 */
+  ToCustomPlate: boolean
   /** 生产线 */
   Line: string
   /** 实例列表 */

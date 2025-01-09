@@ -93,6 +93,10 @@ export const productionManageApis = {
   getOrderCancle(data) {
     return instance.post('/Api/Order/Cancle', data);
   },
+  /** PUT /Api/Order/ToCustomPlate 订单转自定义版 */
+  getOrderToCustomPlate(orderID: string) {
+    return instance.put('/Api/Order/ToCustomPlate', null, { params: { orderID } });
+  },
   /** GET /Api/Task/UseableEquipmentList  获取任务可用设备列表 taskWorkingID */
   getTaskUseableEquipmentList(taskWorkingID: string) {
     return instance.get('/Api/Task/UseableEquipmentList', { params: { taskWorkingID }, loading: false });

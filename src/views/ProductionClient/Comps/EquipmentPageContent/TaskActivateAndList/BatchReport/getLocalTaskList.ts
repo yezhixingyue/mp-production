@@ -6,20 +6,9 @@ import { ProductiveTaskStatusEnumList } from '@/views/ProductionClient/assets/js
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
+import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { getTaskDisplayInfo } from '../../CurTaskPanel';
-
-const transformMinute = (Duration: number) => {
-  if (typeof Duration !== 'number') return '';
-
-  const day = Math.floor(Duration / (60 * 24));
-
-  const hour = Math.floor((Duration - day * 60 * 24) / (60));
-
-  const minute = Math.floor(Duration - day * 60 * 24 - hour * 60);
-
-  return `${day ? `${day}天` : ''}${hour ? `${hour}小时` : ''}${minute}分钟`;
-};
 
 const getIsTimedout = (time?: string) => {
   if (time && typeof time === 'string') {

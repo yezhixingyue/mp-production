@@ -21,6 +21,8 @@ interface _IManagePlateCommonInfo {
   Percent: number
   /** 拼版时间 */
   CreateTime: string
+  /** 最早发货时间 */
+  FastDepartureTime: string
   /** 操作人 */
   Operator: string
   /** 生产线 */

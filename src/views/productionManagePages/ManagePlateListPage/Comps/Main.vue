@@ -12,10 +12,11 @@
           <th data-index="6" :style="`width:${widthList[6].width}px`">内容占比</th>
           <th data-index="7" :style="`width:${widthList[7].width}px`">拼版时间</th>
           <th data-index="8" :style="`width:${widthList[8].width}px`">拼版人员</th>
-          <th data-index="9" :style="`width:${widthList[9].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
-          <th data-index="10" :style="`width:${widthList[10].width}px`">当前位置</th>
-          <th data-index="11" :style="`width:${widthList[11].width}px`">状态</th>
-          <th data-index="12" :style="`width:${widthList[12].width}px`">操作</th>
+          <th data-index="7" :style="`width:${widthList[9].width}px`">最早发货时间</th>
+          <th data-index="9" :style="`width:${widthList[10].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
+          <th data-index="10" :style="`width:${widthList[11].width}px`">当前位置</th>
+          <th data-index="11" :style="`width:${widthList[12].width}px`">状态</th>
+          <th data-index="12" :style="`width:${widthList[13].width}px`">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -30,10 +31,11 @@
             <td :style="`width:${widthList[6].width}px`" :title="`${row._Percent}`">{{ row._Percent }}</td>
             <td :style="`width:${widthList[7].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
             <td :style="`width:${widthList[8].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
-            <td :style="`width:${widthList[9].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
-            <td :style="`width:${widthList[10].width}px`" :title="row._Position">{{ row._Position }}</td>
-            <td :style="`width:${widthList[11].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
-            <td :style="`width:${widthList[12].width}px`">
+            <td :style="`width:${widthList[9].width}px`" :title="row._FastDepartureTime">{{ row._FastDepartureTime || '' }}</td>
+            <td :style="`width:${widthList[10].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
+            <td :style="`width:${widthList[11].width}px`" :title="row._Position">{{ row._Position }}</td>
+            <td :style="`width:${widthList[12].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
+            <td :style="`width:${widthList[13].width}px`">
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" :disabled="row._isCancelled"
                @click="onOrderPrintClick(row)">打印工单</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
@@ -132,19 +134,20 @@ const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
 const widthList = ref([
-  { width: 80 },
-  { width: 120 },
-  { width: props.Type === PlateTypeEnum.Plate ? 180 : 230 },
-  { width: 200 },
-  { width: 110 }, // 数量
-  { width: 90 },
-  { width: props.Type === PlateTypeEnum.Plate ? 65 : 90 },
-  { width: 115 },
-  { width: 75 },
-  { width: props.Type === PlateTypeEnum.Plate ? 110 : 190 },
-  { width: props.Type === PlateTypeEnum.Plate ? 150 : 220 },
   { width: 70 },
-  { width: props.Type === PlateTypeEnum.LaterCraft ? 288 : 320 },
+  { width: 110 },
+  { width: props.Type === PlateTypeEnum.Plate ? 175 : 225 },
+  { width: 195 },
+  { width: 105 }, // 数量
+  { width: 80 },
+  { width: props.Type === PlateTypeEnum.Plate ? 65 : 80 },
+  { width: 108 },
+  { width: 68 },
+  { width: 108 },
+  { width: props.Type === PlateTypeEnum.Plate ? 105 : 185 },
+  { width: props.Type === PlateTypeEnum.Plate ? 145 : 215 },
+  { width: 56 },
+  { width: props.Type === PlateTypeEnum.LaterCraft ? 272 : 305 },
 ]);
 
 const totalWidth = computed(() => {
@@ -172,6 +175,7 @@ const localList = computed(() => props.list.map(it => ({
   ...it,
   _Number: `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}张`,
   _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
+  _FastDepartureTime: format2MiddleLangTypeDateFunc2(it.FastDepartureTime),
   // _Position: it.Equipment ? [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') : '',
   _StatusText: getEnumNameByID(it.Status, PlateStatusEnumList) || '',
   _isSpread: spreadList.value.includes(it.ID),
@@ -376,13 +380,13 @@ onUnmounted(() => {
           overflow: hidden;
           text-overflow: ellipsis;
           box-sizing: border-box;
-          padding: 0 6px;
+          padding: 0 3px;
           button {
             font-size: 12px;
             padding: 0;
             margin-top: -4px;
             & + :deep(.el-button)  {
-              margin-left: 15px;
+              margin-left: 12px;
             }
             &.spread {
               color: #989898;

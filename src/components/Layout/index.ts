@@ -20,7 +20,7 @@ export const setRefreshing = async (router: Router) => {
     refreshing.value = true;
     setTimeout(() => {
       setRefreshing(router);
-    }, 10);
+    }, 100);
     return;
   }
 

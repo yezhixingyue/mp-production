@@ -21,8 +21,6 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn';
 
 // testDecorator();
 
-console.log(process.env);
-
 </script>
 
 <style lang="scss">

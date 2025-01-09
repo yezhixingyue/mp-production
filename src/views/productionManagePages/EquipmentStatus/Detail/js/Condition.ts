@@ -21,6 +21,8 @@ export class Condition {
 
   PageSize = 20
 
+  IncludeTotalDuration = true
+
   constructor(Equipment?: IEquipmentBaseInfo) {
     this.Catalog = {
       ClassID: Equipment?.ClassID || -777,

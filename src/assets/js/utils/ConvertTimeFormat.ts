@@ -21,3 +21,16 @@ export function ConvertTimeFormat(date: Date) {
 export function getSecondTime(date: Date) {
   return ConvertTimeFormat(new Date(date.getTime() + 1000 * 60 * 60 * 24));
 }
+
+/** 把以分钟为单位的时间数字转换为*天*小时*分钟的文字显示格式 */
+export const transformMinute = (Duration: number) => {
+  if (typeof Duration !== 'number') return '';
+
+  const day = Math.floor(Duration / (60 * 24));
+
+  const hour = Math.floor((Duration - day * 60 * 24) / (60));
+
+  const minute = Math.floor(Duration - day * 60 * 24 - hour * 60);
+
+  return `${day ? `${day}天` : ''}${hour ? `${hour}小时` : ''}${minute}分钟`;
+};

@@ -109,4 +109,19 @@ export class ManageOrderListClass {
       }
     }
   }
+
+  /** 转自定义版 */
+  async handleToCustomizPlate(id: string) {
+    const t = this.list.find(it => it.ID === id);
+    if (!t) return;
+
+    const resp = await api.productionManageApis.getOrderToCustomPlate(id);
+
+    if (resp?.data?.isSuccess) {
+      const cb = () => {
+        t.ToCustomPlate = false;
+      };
+      MpMessage.success('转版成功', cb, cb);
+    }
+  }
 }

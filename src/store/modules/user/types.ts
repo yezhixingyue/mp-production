@@ -122,6 +122,8 @@ export interface IUser {
         Cancle: boolean
         Download: boolean
         Replace: boolean
+        /** 转自定义版 */
+        ToCustomizPlate: boolean
       };
     };
     /** 外来物料管理 */

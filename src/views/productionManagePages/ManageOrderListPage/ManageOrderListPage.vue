@@ -5,7 +5,9 @@
     <Main
      :list="ManageOrderListPageData.list"
      :loading="ManageOrderListPageData.loading"
-     @top="handleOrderToTop" @cancel="(e, cb) => ManageOrderListPageData.handleOrderCancel(e, cb)" />
+     @top="handleOrderToTop"
+     @toCustomizPlate="handleToCustomizPlate"
+     @cancel="(e, cb) => ManageOrderListPageData.handleOrderCancel(e, cb)" />
     <Footer :condition="ManageOrderListPageData.condition" :getList="getList" :total="ManageOrderListPageData.listNumber" />
   </section>
 </template>
@@ -26,6 +28,7 @@ const clearCondition = () => { ManageOrderListPageData.value.clearCondition(); }
 const getList = (e) => { ManageOrderListPageData.value.getList(e); };
 
 const handleOrderToTop = (id: string) => { ManageOrderListPageData.value.handleOrderToTop(id); }; // 订单置顶
+const handleToCustomizPlate = (id: string) => { ManageOrderListPageData.value.handleToCustomizPlate(id); }; // 转自定义版
 
 onMounted(() => { ManageOrderListPageData.value.getInitData(); });
 </script>

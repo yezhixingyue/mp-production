@@ -55,6 +55,11 @@
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.Replace"
                       :disabled="!row.CheckedFileList || row.CheckedFileList.length === 0 || !row.IsReplaceable"
                       @click="onFileReplaceClick(row)">文件替换</el-dropdown-item>
+                    <!-- 转自定义版 -->
+                    <el-dropdown-item link type="primary"
+                      v-if="user?.PermissionList.PermissionManageOrder.Obj.ToCustomizPlate"
+                      :disabled="!row.ToCustomPlate"
+                      @click="onToCustomizPlateClick(row)">转自定义版</el-dropdown-item>
                     <!-- 取消 -->
                     <el-dropdown-item link type="primary"
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
@@ -126,7 +131,7 @@ const props = defineProps<{
   loading: boolean
 }>();
 
-const emit = defineEmits(['top', 'cancel']);
+const emit = defineEmits(['top', 'cancel', 'toCustomizPlate']);
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -151,9 +156,9 @@ const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a,
 
 const noMoreMenuPermission = computed(() => {
   if (user.value?.PermissionList.PermissionManageOrder.Obj) {
-    const { Cancle, Download, Replace } = user.value.PermissionList.PermissionManageOrder.Obj;
+    const { Cancle, Download, Replace, ToCustomizPlate } = user.value.PermissionList.PermissionManageOrder.Obj;
 
-    return !Cancle && !Download && !Replace;
+    return !Cancle && !Download && !Replace && !ToCustomizPlate;
   }
 
   return false;
@@ -220,6 +225,13 @@ const replaceFileVisible = ref(false);
 const onFileReplaceClick = (row: typeof localList.value[number]) => {
   curRow.value = row;
   replaceFileVisible.value = true;
+};
+
+/** 转自定义版 */
+const onToCustomizPlateClick = (row: typeof localList.value[number]) => {
+  MpMessage.warn('确定该订单转自定义版吗 ?', `订单ID: [ ${row.OrderCode} ]`, () => {
+    emit('toCustomizPlate', row.ID);
+  });
 };
 
 /** 订单取消 */
@@ -377,6 +389,8 @@ onUnmounted(() => {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          padding: 0 2px;
+          box-sizing: border-box;
           button {
             font-size: 12px;
             padding: 0;

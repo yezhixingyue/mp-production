@@ -18,6 +18,8 @@ export class EquipmentTaskDetailClass {
 
   TaskListNumber = 0
 
+  TotalMessage = 0
+
   loading = false
 
   /** 当前设备信息 */
@@ -32,17 +34,25 @@ export class EquipmentTaskDetailClass {
   public async getTaskList(Page = 1) {
     if (!this.rowData) return;
 
-    this.TaskList = [];
-    this.loading = true;
-
     this.condition.Page = Page;
 
+    if (Page === 1) {
+      this.TotalMessage = 0;
+    }
+
+    this.TaskList = [];
+
+    this.loading = true;
     const resp = await api.productionManageApis.getEquipmentTaskList(this.condition).catch(() => null);
     this.loading = false;
 
     if (resp?.data?.isSuccess) {
       this.TaskList = resp.data.Data || [];
       this.TaskListNumber = resp.data.DataNumber;
+
+      if (Page === 1) {
+        this.TotalMessage = +Number(resp.data.Message).toFixed(2);
+      }
     }
   }
 

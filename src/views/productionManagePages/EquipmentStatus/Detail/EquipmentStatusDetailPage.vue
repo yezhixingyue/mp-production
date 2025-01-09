@@ -25,7 +25,15 @@
     <SwitchEquipmentDialog v-model:visible="visible" :curTaskItem="curTaskItem" @submit="switchEquSubmit" />
     <footer>
       <MpPagination center :nowPage="EquTaskDetailData.condition.Page" :pageSize="EquTaskDetailData.condition.PageSize"
-       :total="EquTaskDetailData.TaskListNumber" :handlePageChange="EquTaskDetailData.getTaskList.bind(EquTaskDetailData)" />
+       :total="EquTaskDetailData.TaskListNumber" :handlePageChange="EquTaskDetailData.getTaskList.bind(EquTaskDetailData)">
+       <template #text>
+          <span v-show="EquTaskDetailData.TotalMessage" class="mr-25"
+            >预计加工总时长：<i class="is-pink bold">{{ transformMinute(EquTaskDetailData.TotalMessage) }}</i></span>
+          <span>共检索出</span>
+          <i class="num"> {{EquTaskDetailData.TaskListNumber}} </i>
+          <span>条记录</span>
+        </template>
+      </MpPagination>
       <div class="btn-row">
         <mp-button class="blue return-btn" @click="getGoBackFun">返回</mp-button>
       </div>
@@ -43,6 +51,7 @@ import TaskListTable from '@/views/ProductionClient/Comps/EquipmentPageContent/T
 import MpPagination from '@/components/common/MpPagination.vue';
 import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
+import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
 import { EquipmentTaskDetailClass } from './js/EquipmentStatusDetailClass';
 import SwitchEquipmentDialog from './Comp/SwitchEquipmentDialog.vue';
 
