@@ -368,12 +368,14 @@ function setStorage() { // 设置会话存储
   sessionStorage.setItem('processSetupPage', 'true');
 }
 const saveEquipment = (Equipments) => {
-  Data.processDataFrom.EquipmentGroups = Equipments.map(it => ({
+  const list = Equipments.map(it => ({
     GroupID: it.ID,
     GroupName: it.Name,
     // Weight: '',
-    OneTimeTwoSide: false,
+    OneTimeTwoSide: Data.processDataFrom.EquipmentGroups.find(_it => _it.GroupID === it.ID)?.OneTimeTwoSide || false,
   }));
+
+  Data.processDataFrom.EquipmentGroups = list;
   selectDeviceGroupShow.value = false;
 };
 const saveInfo = (infoList) => {

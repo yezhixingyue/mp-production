@@ -46,11 +46,9 @@
               <mp-button link type="primary" class="ml-15" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query && Type === PlateTypeEnum.LaterCraft"
               @click="onOrderContainClick(row)">包含订单</mp-button>
 
-              <el-dropdown trigger="click">
+              <el-dropdown trigger="click" :disabled="row._moreIsDisabled">
                 <span class="el-dropdown-link">
-                  <mp-button link type="primary"
-                    :disabled="(row._downloadList.length===0 && !row._showGenerateFile) || row._isCancelled"
-                    >更多</mp-button>
+                  <mp-button link type="primary" :disabled="row._moreIsDisabled">更多</mp-button>
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu >
@@ -59,8 +57,19 @@
                         <span class="ft-12">下载{{ it.key }}</span>
                       </a>
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="row._showGenerateFile" @click="onGenerateFileClick(row)" :disabled="row.Status===PlateStatusEnum.Finished">
+
+                    <el-dropdown-item v-if="row._showGenerateFile" @click="onGenerateFileClick(row)"
+                     :disabled="row.Status===PlateStatusEnum.Finished || !row.MapFilePath">
                       <span class="ft-12">重新生成文件</span>
+                    </el-dropdown-item>
+
+                    <el-dropdown-item  @click="onFileErrorShowClick(row)" v-if="row.FileError">
+                      <span class="ft-12">查看错误</span>
+                    </el-dropdown-item>
+
+                    <el-dropdown-item v-if="row._showGenerateFile" @click="onErrorFileTestClick(row)"
+                     :disabled="row.Status===PlateStatusEnum.Finished || !row.MapFilePath">
+                      <span class="ft-12">排查错误文件</span>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -101,6 +110,9 @@
 
     <!-- 工单打印弹窗 -->
     <WorkOrderPrintDialog :row="curRow" ref="oWorkOrderPrintDialog" />
+
+    <!-- 测试文件弹窗 -->
+    <ErrorFileTestDialog :row="fileTestState.row" v-model:visible="fileTestState.visible" />
   </main>
 </template>
 
@@ -121,6 +133,8 @@ import { IManagePlateInfo, IPlateListChild } from '../js/type';
 import { PlateStatusEnumList } from '../js/EnumList';
 import { PlateStatusEnum, PlateTypeEnum } from '../js/enum';
 import WorkOrderPrintDialog from './WorkOrderPrintDialog.vue';
+import { useErrorFileTest } from '../js/useErrorFileTest';
+import ErrorFileTestDialog from './ErrorFileTestDialog/ErrorFileTestDialog.vue';
 
 const OrderContainDialog = defineAsyncComponent(() => import('./OrderContainDialog.vue'));
 
@@ -171,29 +185,39 @@ const getDownloadList = (it: IManagePlateInfo) => {
   return arr;
 };
 
-const localList = computed(() => props.list.map(it => ({
-  ...it,
-  _Number: `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}张`,
-  _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
-  _FastDepartureTime: format2MiddleLangTypeDateFunc2(it.FastDepartureTime),
-  // _Position: it.Equipment ? [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') : '',
-  _StatusText: getEnumNameByID(it.Status, PlateStatusEnumList) || '',
-  _isSpread: spreadList.value.includes(it.ID),
-  _Size: [it.Template, it.TemplateSize].filter(it => it).join(' '),
-  _Position: it.Status !== PlateStatusEnum.Finished ? it.Position || '' : '',
-  _Percent: typeof it.Percent === 'number' ? `${it.Percent}%` : '',
-  _downloadList: getDownloadList(it),
-  _isCancelled: it.Status === PlateStatusEnum.HaveCancled,
-  _showGenerateFile: user.value?.PermissionList.PermissionManagePlate.Obj.GenerateFile && [PlateTypeEnum.Plate, PlateTypeEnum.LaterCraft].includes(it.Type),
-  ChildList: it.ChildList.map(child => ({
-    ...child,
-    _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
-    _Position: it.Status === PlateStatusEnum.Finished && child.Position ? `当前位置：${child.Position}` : '',
-    _StatusText: it.Status === PlateStatusEnum.Finished && getEnumNameByID(child.Status, PlateStatusEnumList)
-      ? `状态：${getEnumNameByID(child.Status, PlateStatusEnumList)}` : '',
-    _Percent: typeof child.Percent === 'number' ? `${child.Percent}%` : '',
-  })),
-})));
+const localList = computed(() => props.list.map(it => {
+  const _isCancelled = it.Status === PlateStatusEnum.HaveCancled;
+  const _downloadList = _isCancelled ? [] : getDownloadList(it);
+  // eslint-disable-next-line max-len
+  const _showGenerateFile = user.value?.PermissionList.PermissionManagePlate.Obj.GenerateFile && [PlateTypeEnum.Plate, PlateTypeEnum.LaterCraft].includes(it.Type);
+
+  const _moreIsDisabled = (_downloadList.length === 0 && !_showGenerateFile && !it.FileError) || _isCancelled;
+
+  return {
+    ...it,
+    _Number: `${`${it.Number}`.replace(/(?=(\B)(\d{3})+$)/g, ',')}张`,
+    _CreateTime: format2MiddleLangTypeDateFunc2(it.CreateTime),
+    _FastDepartureTime: format2MiddleLangTypeDateFunc2(it.FastDepartureTime),
+    // _Position: it.Equipment ? [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') : '',
+    _StatusText: getEnumNameByID(it.Status, PlateStatusEnumList) || '',
+    _isSpread: spreadList.value.includes(it.ID),
+    _Size: [it.Template, it.TemplateSize].filter(it => it).join(' '),
+    _Position: it.Status !== PlateStatusEnum.Finished ? it.Position || '' : '',
+    _Percent: typeof it.Percent === 'number' ? `${it.Percent}%` : '',
+    _downloadList,
+    _isCancelled,
+    _showGenerateFile,
+    _moreIsDisabled,
+    ChildList: it.ChildList.map(child => ({
+      ...child,
+      _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
+      _Position: it.Status === PlateStatusEnum.Finished && child.Position ? `当前位置：${child.Position}` : '',
+      _StatusText: it.Status === PlateStatusEnum.Finished && getEnumNameByID(child.Status, PlateStatusEnumList)
+        ? `状态：${getEnumNameByID(child.Status, PlateStatusEnumList)}` : '',
+      _Percent: typeof child.Percent === 'number' ? `${child.Percent}%` : '',
+    })),
+  };
+}));
 
 const submitGenerateFile = async (row: typeof localList.value[number]) => {
   const resp = await api.productionManageApis.getPlateGenreateFile(row.ID);
@@ -211,6 +235,12 @@ const onGenerateFileClick = (row: typeof localList.value[number]) => {
     submitGenerateFile(row);
   }, undefined, true);
 };
+
+const onFileErrorShowClick = (row: typeof localList.value[number]) => {
+  MpMessage.error(`大版 [${row.Code}] 错误信息`, `<h4 class='plate-file-err-msg-dialog'>${row.FileError}</h4>`, undefined, undefined, true);
+};
+
+const { onErrorFileTestClick, fileTestState } = useErrorFileTest();
 
 const onSpreadClick = (it: typeof localList.value[number]) => {
   if (it.ChildList.length === 0) return;
@@ -459,7 +489,7 @@ onUnmounted(() => {
             }
 
             &.menus {
-              width: 327px;
+              width: 303px;
             }
           }
         }
@@ -506,4 +536,42 @@ ul.generate-file-msg-section {
     margin-left: 14px;
   }
 }
+
+.mp-message:has(h4.plate-file-err-msg-dialog) {
+  width: 420px !important;
+  // max-width: 420px;
+  .el-message-box__header {
+    .el-message-box__title {
+      > span {
+        justify-content: flex-start;
+        position: relative;
+        margin: 0 10px;
+        padding-left: 4px;
+        top: -25px;
+        // font-weight: 400;
+        color: #585858;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 7px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        &::before {
+          // display: none !important;
+          width: 20px;
+          height: 20px;
+          margin-right: 9px;
+        }
+      }
+    }
+  }
+
+  .plate-file-err-msg-dialog {
+    text-align: left;
+    margin-top: -32px;
+    font-weight: 400;
+    color:#585858;
+    letter-spacing: 1px;
+    text-indent: 2em;
+  }
+}
+
 </style>

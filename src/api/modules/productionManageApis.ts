@@ -37,6 +37,10 @@ export const productionManageApis = {
   getPlateGenreateFile(PlateID: string) {
     return instance.put('/Api/Plate/GenreateFile', null, { params: { PlateID } });
   },
+  /** /Api/Plate/CreateFileTest  POST 排查大版错误文件 */
+  getPlateCreateFileTest(data) {
+    return instance.post('/Api/Plate/CreateFileTest', data);
+  },
   /** get /Api/Plate/Detail */
   getPlateDetail(plateID: string) {
     return instance.get<IDigitalOrderPlatePrintInfo>('/Api/Plate/Detail', { params: { plateID } });

@@ -44,6 +44,8 @@ export type IPlateListChild = _IManagePlateCommonInfo
 
 export interface IManagePlateInfo extends _IManagePlateCommonInfo {
   FileDic?: { [key: string] : string }
+  /** 生成大版出错信息 */
+  FileError?: string
   /** 子板列表 */
   ChildList: IPlateListChild[]
 }

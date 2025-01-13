@@ -18,7 +18,7 @@
         <span style="line-height: 30px;">
           权重：{{ isWeightSetuping ? '' : (scope as any).row.Weight || '未设置' }}
         </span>
-        <el-input v-if="isWeightSetuping" class="inp-box" v-model.number="(scope as any).row._Weight" placeholder="请输入权重" maxlength="7"></el-input>
+        <el-input v-if="isWeightSetuping" class="input-box" v-model.number="(scope as any).row._Weight" placeholder="请输入权重" maxlength="7"></el-input>
       </template>
     </mp-table-column>
     <mp-table-column prop="name" label="操作" width="220">
@@ -145,7 +145,7 @@ const onRemoveClick = (it: EquipmentListType) => { // 本地保存？
   color: #585858;
 }
 
-.inp-box {
+.input-box {
   --el-component-size: 28px;
   --el-border-radius-base: 2px;
   width: 80px;

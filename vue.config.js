@@ -51,6 +51,11 @@ module.exports = defineConfig({
         ws: true,
         changeOrigin: true,
       },
+      '/TestFile': { //
+        target: proxyUrl,
+        ws: true,
+        changeOrigin: true,
+      },
       '/PlateFile': { //
         target: proxyUrl,
         ws: true,
