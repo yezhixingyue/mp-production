@@ -8,12 +8,12 @@ import { handleErrorToast } from './utils/handleErrorToast';
 
 const logout = () => { // 清除状态并跳转登录页面
   const userStore = useUserStore();
-  userStore.token = '';
+  userStore.clear();
   window.location.href = `${window.location.href.split('#')[0] || ''}#/login`;
 };
 
 const getToken = () => { // 获取到token
-  const _token = useUserStore().token;
+  const _token = useUserStore().getToken();
 
   if (!_token) {
     logout();

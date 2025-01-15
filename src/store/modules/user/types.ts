@@ -422,3 +422,20 @@ export interface IUser {
   /** 部门岗位 */
   PositionList: IStaffPosition[]
 }
+
+export interface IUserStoreState {
+  token: string
+  loginTime: '' | number
+  lastReqTime: '' | number
+  user: IUser | null
+  getTheUserTime: '' | number
+}
+
+export type IUserStoreGetters = Record<string, never>;
+
+export interface IUserStoreActions {
+  getLogin: (loginForm: ILoginSubmitForm) => Promise<boolean>;
+  getUser: () => Promise<null | IUser | 'login'>;
+  clear: () => void;
+  getToken: () => string;
+}
