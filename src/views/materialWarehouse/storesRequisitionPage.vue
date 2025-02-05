@@ -102,7 +102,7 @@
         show-overflow-tooltip prop="CreateTime" label="状态" min-width="80">
           <template #default="scope:any">
             <template v-if="scope.row.Status === 0">
-              未出库
+              待出库
             </template>
             <template v-if="scope.row.Status === 1">
               已出库
