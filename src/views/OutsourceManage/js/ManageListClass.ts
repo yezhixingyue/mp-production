@@ -10,7 +10,7 @@ import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { LineStatusEnum, LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { IListItemType } from '@/components/common/EpCascader/EpCascaderWrap/types';
-import { Condition } from './Condition';
+import { _OutsourceConditionLineTypeEnum, Condition } from './Condition';
 import { ExternalTaskStatusEnum } from './enum';
 import { ExternalTaskStatusEnumList } from './EnumList';
 import { ISwitchOptions, OutsourceManagePageType } from './type';
@@ -238,8 +238,41 @@ export class ManageListClass {
   private async _getLineList() { // 获取生产线列表数据
     const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsShowWorkingProcedure: true }).catch(() => null);
     if (resp?.data?.isSuccess) {
-      this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.Status === LineStatusEnum.usable)];
+      this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.Status === LineStatusEnum.usable)].map(it => ({
+        ID: it.ID,
+        Name: it.Name,
+        children: it.WorkingProcedures,
+      }));
     }
+  }
+
+  /** 制版组筛选数据 */
+  PlateMakingGroupList: IListItemType[] = []
+
+  private async _getPlateMakingGroupList() { // 获取生产线列表数据
+    const resp = await api.getWorkingProcedurePlateMakingGroup().catch(() => null);
+    if (resp?.data?.isSuccess) {
+      this.PlateMakingGroupList = [...(resp.data.Data || [])].map(it => ({
+        ID: it.ID,
+        Name: it.Name,
+        children: it.PlateMakingGroups,
+      }));
+    }
+  }
+
+  get LineAndMakingGroupTreeList() {
+    return [
+      {
+        ID: _OutsourceConditionLineTypeEnum.Line,
+        Name: '生产线',
+        children: this.LineList,
+      },
+      {
+        ID: _OutsourceConditionLineTypeEnum.MakingGroup,
+        Name: '制版组',
+        children: this.PlateMakingGroupList,
+      },
+    ];
   }
 
   private _inited = false
@@ -250,6 +283,7 @@ export class ManageListClass {
     setTimeout(() => {
       this._getSubcontractorFactoryList();
       this._getLineList();
+      this._getPlateMakingGroupList();
     }, 1);
   }
 

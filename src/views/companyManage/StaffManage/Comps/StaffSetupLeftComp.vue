@@ -67,6 +67,7 @@
             :type-list="[['Area', 'RegionalID'], ['Area', 'CityID']]"
             :list="DistrictTreeList"
             :showTitle="false"
+            :withEmpty="false"
             onlyLastValid
             @setCondition="setArea"
           />

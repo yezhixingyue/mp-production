@@ -5,6 +5,7 @@
     :list="levelTreeList"
     :fiexdWidth="fiexdWidth"
     :onlyLastValid="onlyLastValid"
+    :offFirst="offFirst"
     :withEmpty="withEmpty && !onlyLastValid"
     :title="title"
     :level="level"
@@ -61,6 +62,10 @@ export default {
       default: 3,
     },
     onlyLastValid: {
+      type: Boolean,
+      default: false,
+    },
+    offFirst: {
       type: Boolean,
       default: false,
     },

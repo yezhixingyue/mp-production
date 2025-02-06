@@ -6,7 +6,7 @@
       :clearCondition="ManageListData.clearCondition.bind(ManageListData)"
       :getList="ManageListData.getList.bind(ManageListData)"
       :list="ManageListData.list"
-      :LineList="ManageListData.LineList"
+      :LineAndMakingGroupTreeList="ManageListData.LineAndMakingGroupTreeList"
       :FactoryList="ManageListData.FactoryList"
       :options="ManageListData.options"
     />

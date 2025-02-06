@@ -8,6 +8,7 @@ import {
 import { ISetPlateMakingWorkParams, ISetPlateMakingWorkSaveResult } from '@/views/productionSetting/productionLine/js/types';
 import { IEquipmentGroupSaveResult } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import { request } from '@/basic/request';
+import { IPlateMakingGroupWorkingProcedure } from '@/views/OutsourceManage/js/type';
 
 const api = {
   // 配送方式 ------------------------ Express
@@ -152,6 +153,10 @@ const api = {
   /** DELETE /Api/PlateMakingGroup/Equipment/Remove  制版组设备删除 */
   getPlateMakingGroupEquipmentRemove(id: string) {
     return request({ method: 'DELETE', url: '/Api/PlateMakingGroup/Equipment/Remove', params: { id } });
+  },
+  /** get /Api/WorkingProcedure/PlateMakingGroup  获取列表：工序下的制版组 */
+  getWorkingProcedurePlateMakingGroup() {
+    return request<IPlateMakingGroupWorkingProcedure[]>({ method: 'GET', url: '/Api/WorkingProcedure/PlateMakingGroup' });
   },
   /** DELETE /Api/ProductionLine/SplitWorkingProcedure/Remove   删除生产线分切工序 */
   getSplitWorkingProcedureRemove(lineID: string) {

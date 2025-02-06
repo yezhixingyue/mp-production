@@ -24,11 +24,11 @@
           :curLvSelectID="modelValue[i]"
           :withEmpty="withEmpty"
           :withNullValue="withNullValue"
-          :onlyLastValid="onlyLastValid"
+          :offFirst="offFirst"
           :defaultProps="defaultProps"
           :isLast="level ? i >= (level - 1) : false"
           @hoverItem="e => onItemHover(i, e)"
-          @itemClick="onItemClick(i)"
+          @itemClick="e => onItemClick(i, e)"
         />
         <div class="empty" v-if="cascaderList.length === 0">
           <span>暂无数据</span>
@@ -78,6 +78,10 @@ export default {
       default: '产品',
     },
     onlyLastValid: { // 仅最后一个生效（可点击）
+      type: Boolean,
+      default: false,
+    },
+    offFirst: { // 第一个下拉框按钮无效
       type: Boolean,
       default: false,
     },
@@ -210,8 +214,12 @@ export default {
         this.handleLeftChange();
       }
     },
-    onItemClick(i) {
+    onItemClick(i, it) {
       if (this.onlyLastValid && i < this.cascaderList.length - 1) return;
+      if (this.offFirst && i === 0 && (!this.withEmpty || it[this.defaultProps.ID] !== '')) {
+        return;
+      }
+
       let _val = [...this.activeIds];
       if (_val.length === 1 && _val[0] === '') _val = [];
       if (JSON.stringify(_val) === JSON.stringify(this.modelValue)) {

@@ -1,3 +1,5 @@
+import { IWorkingProcedureInfo } from '@/assets/Types/ProductionLineSet/types';
+import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { ExternalTaskStatusEnum } from './enum';
 
 /**
@@ -19,4 +21,9 @@ export interface ISwitchOptions {
   Status: ExternalTaskStatusEnum | ''
   DateType: string
   DateTitle: string
+}
+
+/** 指定带有制版组的工序信息接口类型 */
+export interface IPlateMakingGroupWorkingProcedure extends Pick<IWorkingProcedureInfo, 'ID' | 'Name'> {
+  PlateMakingGroups: IBaseProperty<string>[]
 }

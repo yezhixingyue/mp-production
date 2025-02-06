@@ -8,17 +8,19 @@
         </el-select>
       </div>
 
-      <EpCascaderByLevel2
-         title="生产线"
+      <EpCascaderWithLevel3
+         title="生产线/制版组"
          showLine
-        :fiexdWidth="180"
-        @setCondition='setCondition'
-        :list='LineList'
-        :First='condition.Line.First'
-        :Second='condition.Line.Second'
-        @getList="getList"
-        :typeList="[['Line', 'First'],['Line', 'Second']]"
-        :defaultProps="{ ID: 'ID', Name: 'Name', children: 'WorkingProcedures' }"
+        :fiexdWidth="240"
+        :setCondition='setCondition'
+        :levelTreeList='LineAndMakingGroupTreeList'
+        :First='condition.Line._Type'
+        :Second='condition.Line.First'
+        :Third='condition.Line.Second'
+        :getList="getList"
+        offFirst
+        :typeList="[['Line', '_Type'], ['Line', 'First'], ['Line', 'Second']]"
+        :defaultProps="{ ID: 'ID', Name: 'Name', children: 'children' }"
       />
     </div>
     <LineDateSelectorComp
@@ -47,7 +49,7 @@
 
 <script setup lang='ts'>
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
-import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue';
+import EpCascaderWithLevel3 from '@/components/common/EpCascader/EpCascaderWrap/EpCascaderWithLevel3.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
@@ -66,7 +68,7 @@ const props = defineProps<{
   list: ITaskDetail[]
   FactoryList: Pick<ISubcontractorFactoryListItemType, 'ID' | 'Name'>[]
   options: ISwitchOptions
-  LineList: ManageListClass['LineList']
+  LineAndMakingGroupTreeList: ManageListClass['LineAndMakingGroupTreeList']
 }>();
 
 const dateList = [
