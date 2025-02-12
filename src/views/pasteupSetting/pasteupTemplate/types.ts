@@ -20,6 +20,7 @@ interface ModeItemList {
 //   AreaList: AreaList[],
 // }
 interface ITemplateSizeAttribute{
+  VersoFilePath: string,
   FilePath: string,
   Width: number,
   Height: number,

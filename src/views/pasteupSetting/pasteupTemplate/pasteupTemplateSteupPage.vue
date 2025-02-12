@@ -37,21 +37,73 @@
                 class="upload-demo"
                 action="/Api/Upload/PlateTemplate"
                 accept=".pdf"
-                :on-success='handlleUploaded'
+                :on-success='(e) => handlleUploaded(e, false)'
                 :on-error="handlleUploadedError"
                 :before-upload='beforeUpload'
               >
                 <template #trigger>
-                  <mp-button type="primary" :loading="Data.uploadBtnLoading">选择文件</mp-button>
+                  <mp-button type="primary" :loading="Data.uploadBtnLoading === 'front'">选择文件</mp-button>
                 </template>
                 <template #tip>
                   <div class="el-upload__tip text-red">
-                    {{Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath? '已上传模板文件':'未上传'}}
+                    <template v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath">
+                      <span style="color: #26bcf9;">已上传模板文件</span>
+                    </template>
+                    <template v-else>
+                      未上传
+                    </template>
                   </div>
                 </template>
               </el-upload>
-              <el-link type="primary" :href="Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath" target="_blank">
-                下载当前模板文件</el-link>
+              <el-link type="primary" :href="Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath"
+              v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath" target="_blank">
+                <i class="iconfont icon-xiazai"></i>
+                下载
+              </el-link>
+            </div>
+            <div v-if="pasteupTemplateData.IsPrintingPlate && !pasteupTemplateData.IsDigital
+            && Data.addPasteupTemplateFrom.TemplateSizeAttribute
+            && Data.addPasteupTemplateFrom.ReproductionType === 0" style="margin-top: 10px;">
+              <el-upload
+                ref="upload"
+                class="upload-demo"
+                action="/Api/Upload/PlateTemplate"
+                accept=".pdf"
+                :on-success='(e) => handlleUploaded(e, true)'
+                :on-error="handlleUploadedError"
+                :before-upload='(e) => beforeUpload(e, "verso")'
+              >
+                <template #trigger>
+                  <mp-button type="primary" :loading="Data.uploadBtnLoading === 'verso'"
+                  :disabled="!Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath">
+                    反面模板文件
+                  </mp-button>
+                </template>
+                <template #tip>
+                  <div class="el-upload__tip text-red">
+                    <template v-if="!Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath">
+                      请先上传模板文件
+                    </template>
+                    <template v-else>
+                      <template v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute.VersoFilePath">
+                        <span style="color: #26bcf9;">已上传反面模板</span>
+                      </template>
+                      <template v-else>
+                        未上传
+                      </template>
+                    </template>
+                  </div>
+                </template>
+              </el-upload>
+              <el-link type="primary" :href="Data.addPasteupTemplateFrom.TemplateSizeAttribute.VersoFilePath"
+              v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute.VersoFilePath" target="_blank">
+                <i class="iconfont icon-xiazai"></i>
+                下载
+              </el-link>
+              <el-link type="danger" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute.VersoFilePath">
+                <i class="icon-delete iconfont is-pink"
+                @click="deleteVerso"> 删除</i>
+              </el-link>
             </div>
             <p class="hint">
               模板制作说明：版芯使用 PANTONE 804C 标记
@@ -170,7 +222,7 @@ import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { ImpositionTemmplate, SizeListType } from './types';
 
 interface DataType {
-  uploadBtnLoading: boolean
+  uploadBtnLoading: string
   addPasteupTemplateFrom: SizeListType
 }
 
@@ -194,7 +246,7 @@ const pasteupTemplateData = ref<ImpositionTemmplate>({
 const TemmplateSizeIsEditable = ref(true);
 
 const Data: DataType = reactive({
-  uploadBtnLoading: false,
+  uploadBtnLoading: '',
   addPasteupTemplateFrom: {
     TemplateID: '',
     // 翻版方式
@@ -202,6 +254,7 @@ const Data: DataType = reactive({
     // 尺寸
     SizeType: 0,
     TemplateSizeAttribute: {
+      VersoFilePath: '',
       FilePath: '',
       Width: 0,
       Height: 0,
@@ -397,7 +450,12 @@ function setStorage() { // 设置会话存储
 function savePasteupTemplateSize() {
   if (verification()) {
     if (Data.addPasteupTemplateFrom.SizeType === 0) {
-      Data.addPasteupTemplateFrom.ActualSizeAttribute = null;
+      Data.addPasteupTemplateFrom.ActualSizeAttribute = {
+        BleedTop: null,
+        BleedBottom: null,
+        BleedLeft: null,
+        BleedRight: null,
+      };
     }
     if (Data.addPasteupTemplateFrom.SizeType === 1) {
       Data.addPasteupTemplateFrom.TemplateSizeAttribute = null;
@@ -417,9 +475,18 @@ function savePasteupTemplateSize() {
     });
   }
 }
-function handlleUploaded(e) {
+function handlleUploaded(e, Verso?:boolean) {
   if (e.Status === 1000) {
-    if (Data.addPasteupTemplateFrom.TemplateSizeAttribute) {
+    if (Verso) {
+      if (Data.addPasteupTemplateFrom.TemplateSizeAttribute?.Width === e.Data.Width
+      && Data.addPasteupTemplateFrom.TemplateSizeAttribute?.Height === e.Data.Height) {
+        if (Data.addPasteupTemplateFrom.TemplateSizeAttribute) {
+          Data.addPasteupTemplateFrom.TemplateSizeAttribute.VersoFilePath = e.Data.FilePath;
+        }
+      } else {
+        messageBox.failSingleError('上传失败', '反面尺寸和正面尺寸不一致', () => null, () => null);
+      }
+    } else if (Data.addPasteupTemplateFrom.TemplateSizeAttribute) {
       Data.addPasteupTemplateFrom.TemplateSizeAttribute.FilePath = e.Data.FilePath;
       Data.addPasteupTemplateFrom.TemplateSizeAttribute.AreaList = e.Data.AreaList;
       Data.addPasteupTemplateFrom.TemplateSizeAttribute.Width = e.Data.Width;
@@ -428,14 +495,14 @@ function handlleUploaded(e) {
   } else {
     messageBox.failSingleError('上传失败', e.Message, () => null, () => null);
   }
-  Data.uploadBtnLoading = false;
+  Data.uploadBtnLoading = '';
 }
 function handlleUploadedError(error) {
   const errorRes = JSON.parse(error.message);
   messageBox.failSingleError('上传失败', errorRes.Message, () => null, () => null);
-  Data.uploadBtnLoading = false;
+  Data.uploadBtnLoading = '';
 }
-function beforeUpload(file) {
+function beforeUpload(file, surface = 'front') {
   const maxMbit = 15; // 文件尺寸限制 最大可上传多少兆的文件
 
   const isLessthenMax = file.size < maxMbit * 1024 * 1024;
@@ -444,10 +511,15 @@ function beforeUpload(file) {
     // 文件过大上传失败
     messageBox.failSingleError('上传失败', `上传文件过大，请上传小于${maxMbit}M的文件`, () => null, () => null);
   } else {
-    Data.uploadBtnLoading = true;
+    Data.uploadBtnLoading = surface;
   }
 
   return isLessthenMax;
+}
+function deleteVerso() {
+  if (Data.addPasteupTemplateFrom.TemplateSizeAttribute) {
+    Data.addPasteupTemplateFrom.TemplateSizeAttribute.VersoFilePath = '';
+  }
 }
 
 onMounted(() => {
@@ -466,6 +538,7 @@ onMounted(() => {
   Data.addPasteupTemplateFrom.TemplateID = pasteupTemplateData.value.ID;
   if (!temp.TemplateSizeAttribute) {
     Data.addPasteupTemplateFrom.TemplateSizeAttribute = {
+      VersoFilePath: '',
       FilePath: '',
       Width: 0,
       Height: 0,
