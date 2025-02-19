@@ -57,6 +57,11 @@
     </ul>
 
     <ul class="footer">
+      <!-- 当前工序 -->
+      <li class="current" v-if="TaskData.Working.WorkingName">
+        <span>当前工序：</span>
+        <h4 class="w-name">{{ TaskData.Working.WorkingName }}</h4>
+      </li>
       <!-- 下一道工序 -->
       <li class="next" v-if="_NextWorkContent">
         <span>下一道工序：</span>
@@ -175,10 +180,23 @@ const onErrorClick = () => {
       }
     }
   }
-  .next {
+  .next, .current {
     font-size: 18px;
     margin-top: 18px;
     display: flex;
+
+    > span {
+      width: 6em;
+      text-align: right;
+    }
+
+    .w-name {
+      color: #FF0000;
+      // text-decoration: underline;
+    }
+  }
+  .next {
+    margin-top: 8px;
   }
   .btns {
     margin-top: 15px;
