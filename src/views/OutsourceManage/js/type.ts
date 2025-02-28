@@ -21,6 +21,8 @@ export interface ISwitchOptions {
   Status: ExternalTaskStatusEnum | ''
   DateType: string
   DateTitle: string
+  showStatusFilter: boolean
+  OnlyStatusList?: ExternalTaskStatusEnum[]
 }
 
 /** 指定带有制版组的工序信息接口类型 */

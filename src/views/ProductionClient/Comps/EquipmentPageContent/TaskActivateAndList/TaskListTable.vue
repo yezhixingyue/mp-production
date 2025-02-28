@@ -6,6 +6,7 @@
        label-class-name="check-title" class-name='check' :selectable="getSelectable" />
       <mp-table-column width="125px" prop="Code" label="任务ID" />
       <mp-table-column width="160px" prop="_TargetID" label="关联ID" />
+      <mp-table-column v-if="showRowOptions.showReproductionType" width="80px" prop="_ReproductionType" label="翻版方式" />
       <mp-table-column v-if="showRowOptions.showWorkingName" width="170px" prop="_WorkingName" label="工序" />
       <mp-table-column v-if="showRowOptions.showProcessTimes" width="100px" prop="_ProcessTimes" label="操作次序" />
       <mp-table-column v-if="showRowOptions.showContent" prop="_DetailText" min-width="120px" label="内容" />
@@ -75,6 +76,7 @@ interface rowDisplayOptions {
   useMultipleSelection: boolean
   showExternalStatus: boolean
   showWorkingName: boolean
+  showReproductionType: boolean
   showProcessTimes: boolean
   showMaterial: boolean,
 }
@@ -112,6 +114,7 @@ const _defaultshowRowOptions: rowDisplayOptions = {
   useMultipleSelection: false,
   showExternalStatus: false,
   showWorkingName: false,
+  showReproductionType: false,
   showProcessTimes: true,
   showMaterial: true,
 };

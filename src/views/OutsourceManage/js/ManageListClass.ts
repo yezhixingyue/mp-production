@@ -97,11 +97,18 @@ export class ManageListClass {
       Status: ExternalTaskStatusEnum.WaitFactoryReceive,
       DateType: '',
       DateTitle: '时间筛选',
+      showStatusFilter: false,
     };
 
     switch (type) {
       case 'await': // 待外协
-
+        options.OnlyStatusList = [
+          ExternalTaskStatusEnum.WaitFactoryReceive,
+          ExternalTaskStatusEnum.HaveInstored,
+          ExternalTaskStatusEnum.FactoryReceived,
+          ExternalTaskStatusEnum.Error,
+        ];
+        options.showStatusFilter = true;
         break;
 
       case 'inTransition': // 已入库未交接
@@ -113,6 +120,7 @@ export class ManageListClass {
         options.Status = '';
         options.DateType = 'CreateTime';
         options.DateTitle = '创建时间';
+        options.showStatusFilter = true;
         break;
 
       default:

@@ -23,6 +23,10 @@
           <span class="label">大版序号：</span>
           <span>{{ TaskData.Working.PlateInfo.Index }}</span>
         </div>
+        <div v-if="TaskData.Working.ReportMode === ReportModeEnum.board && TaskData.Working.PlateInfo?.ReproductionType" style="margin-left: 40px;">
+          <span class="label">翻版方式：</span>
+          <span>{{ TaskData.Working.PlateInfo.ReproductionType }}</span>
+        </div>
       </li>
       <!-- 标题信息  大版显示物料和模板信息   订单和块显示产品、块名称、销售尺寸信息 -->
       <li class="title">

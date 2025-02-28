@@ -23,6 +23,7 @@ const rowDisplayOptions = {
   showStatus: false,
   showFinishTime: true,
   showEquAndOperator: true,
+  showReproductionType: true,
 };
 
 const getList = async (Page = 1) => {

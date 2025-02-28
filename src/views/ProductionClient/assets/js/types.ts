@@ -97,6 +97,8 @@ export interface ITaskPlateInfo {
   Redoable: boolean
   MapFilePath: string
   Index: string
+  /** 大版翻版方式 */
+  ReproductionType: string
   /** 印色信息 */
   PrintColor?: { IsSpecialColor: boolean; Name: string }[]
 }

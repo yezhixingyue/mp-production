@@ -36,6 +36,8 @@ interface _IManagePlateCommonInfo {
   MapFilePath: string
   /** 大版序号 */
   Index: string
+  /** 大版翻版方式 */
+  ReproductionType: string
   /** 大版类型 */
   Type: PlateTypeEnum
 }

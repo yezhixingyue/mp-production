@@ -39,6 +39,8 @@ export class Condition {
 
   PageSize = 20
 
+  ExternalStatus: ExternalTaskStatusEnum | '' = ''
+
   _options: ISwitchOptions
 
   constructor(options: ISwitchOptions) {

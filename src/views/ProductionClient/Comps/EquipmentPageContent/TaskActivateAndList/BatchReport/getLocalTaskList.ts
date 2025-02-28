@@ -34,12 +34,15 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
 
     let _DetailText = `${info.FirstTitle}  ${info.SecondTitle}`;
 
+    let _ReproductionType = '';
+
     switch (it.Working.ReportMode) {
       case ReportModeEnum.board:
         _TargetID = `${it.Working.PlateInfo?.Code || ''}（大版）`;
         _Material = it.Working.PlateInfo?.Material || '';
         _Size = it.Working.PlateInfo?.MaterialSize || '';
-        _DetailText = info.SecondTitle;
+        _DetailText = `${info.SecondTitle}`;
+        _ReproductionType = it.Working.PlateInfo?.ReproductionType || '';
         _LineName = it.Working.PlateInfo?.Line || '';
         _PrintMaterialSizeTitle = '物料尺寸';
 
@@ -144,6 +147,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _Wastage,
       _StatusText,
       _DetailText,
+      _ReproductionType,
       _files,
       _images,
       _CreateTime,

@@ -22,6 +22,13 @@
         :typeList="[['Line', '_Type'], ['Line', 'First'], ['Line', 'Second']]"
         :defaultProps="{ ID: 'ID', Name: 'Name', children: 'children' }"
       />
+
+      <div class="item" v-if="options.showStatusFilter" style="margin-left: 20px;">
+        <span class="title">外协状态：</span>
+        <el-select v-model="_ExternalTaskStatus" class="mp-select">
+          <el-option v-for="item in localExternalTaskStatusEnumList" :key="item.ID" :label="item.Name" :value="item.ID" />
+        </el-select>
+      </div>
     </div>
     <LineDateSelectorComp
       :changePropsFunc='setCondition'
@@ -59,6 +66,8 @@ import { debounce } from '@/components/common/EpCascader/assets/utils';
 import { Condition } from '../js/Condition';
 import { ISwitchOptions } from '../js/type';
 import { ManageListClass } from '../js/ManageListClass';
+import { ExternalTaskStatusEnumList } from '../js/EnumList';
+import { ExternalTaskStatusEnum } from '../js/enum';
 
 const props = defineProps<{
   condition: Condition
@@ -80,6 +89,13 @@ const dateList = [
   { name: '上月下单', ID: 'lastMonth' },
 ];
 
+const localExternalTaskStatusEnumList = computed(() => {
+  const _list = ExternalTaskStatusEnumList
+    .filter(it => (props.options.OnlyStatusList ? props.options.OnlyStatusList.includes(it.ID as ExternalTaskStatusEnum) : true));
+
+  return [{ ID: '', Name: '不限' }, ..._list];
+});
+
 const UserDefinedTimeIsActive = computed(() => props.condition.DateType === '' && !!props.options.DateType
  && !!props.condition[props.options.DateType].First && !!props.condition[props.options.DateType].Second);
 
@@ -90,6 +106,17 @@ const _Factory = computed({
   set(val) {
     if (val === props.condition.Catalog.ID) return;
     props.setCondition([['Catalog', 'ID'], val]);
+    props.getList();
+  },
+});
+
+const _ExternalTaskStatus = computed({
+  get() {
+    return props.condition.ExternalStatus;
+  },
+  set(val) {
+    if (val === props.condition.ExternalStatus) return;
+    props.setCondition([['ExternalStatus', ''], val]);
     props.getList();
   },
 });

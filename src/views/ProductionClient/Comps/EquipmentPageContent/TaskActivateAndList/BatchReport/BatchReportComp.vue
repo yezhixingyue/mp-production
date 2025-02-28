@@ -22,7 +22,7 @@
               <span>{{ scope.row._Material }}</span>
             </p>
             <!-- 详细信息 -->
-            <p>{{ scope.row._DetailText }}</p>
+            <p>{{ [scope.row._DetailText, scope.row._ReproductionType].filter(it => it).join(' ') }}</p>
           </div>
         </template>
       </mp-table-column>

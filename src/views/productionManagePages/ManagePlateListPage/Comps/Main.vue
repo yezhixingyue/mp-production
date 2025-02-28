@@ -1,41 +1,43 @@
 <template>
-  <main class="main-comp-wrap">
+  <main class="main-comp-wrap" :class="{LaterCraft: Type === PlateTypeEnum.LaterCraft}">
     <table>
       <thead>
         <tr @mousedown="mousedown" @mousemove="mousemove">
           <th data-index="0" :style="`width:${widthList[0].width}px`">大版ID</th>
-          <th data-index="1" :style="`width:${widthList[1].width}px`">序号</th>
-          <th data-index="2" :style="`width:${widthList[2].width}px`">尺寸规格</th>
-          <th v-show="Type === PlateTypeEnum.Plate" data-index="3" :style="`width:${widthList[3].width}px`">物料</th>
-          <th data-index="4" :style="`width:${widthList[4].width}px`">{{ Type === PlateTypeEnum.Plate ? '印刷数量' : '加工数量' }}</th>
-          <th data-index="5" :style="`width:${widthList[5].width}px`">包含订单块</th>
-          <th data-index="6" :style="`width:${widthList[6].width}px`">内容占比</th>
-          <th data-index="7" :style="`width:${widthList[7].width}px`">拼版时间</th>
-          <th data-index="8" :style="`width:${widthList[8].width}px`">拼版人员</th>
-          <th data-index="7" :style="`width:${widthList[9].width}px`">最早发货时间</th>
-          <th data-index="9" :style="`width:${widthList[10].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
-          <th data-index="10" :style="`width:${widthList[11].width}px`">当前位置</th>
-          <th data-index="11" :style="`width:${widthList[12].width}px`">状态</th>
-          <th data-index="12" :style="`width:${widthList[13].width}px`">操作</th>
+          <th data-index="1" :style="`width:${widthList[1].width}px`">翻版方式</th>
+          <th data-index="1" :style="`width:${widthList[2].width}px`">序号</th>
+          <th data-index="2" :style="`width:${widthList[3].width}px`">尺寸规格</th>
+          <th v-show="Type === PlateTypeEnum.Plate" data-index="3" :style="`width:${widthList[4].width}px`">物料</th>
+          <th data-index="4" :style="`width:${widthList[5].width}px`">{{ Type === PlateTypeEnum.Plate ? '印刷数量' : '加工数量' }}</th>
+          <th data-index="5" :style="`width:${widthList[6].width}px`">包含订单块</th>
+          <th data-index="6" :style="`width:${widthList[7].width}px`">内容占比</th>
+          <th data-index="7" :style="`width:${widthList[8].width}px`">拼版时间</th>
+          <th data-index="8" :style="`width:${widthList[9].width}px`">拼版人员</th>
+          <th data-index="7" :style="`width:${widthList[10].width}px`">最早发货时间</th>
+          <th data-index="9" :style="`width:${widthList[11].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
+          <th data-index="10" :style="`width:${widthList[12].width}px`">当前位置</th>
+          <th data-index="11" :style="`width:${widthList[13].width}px`">状态</th>
+          <th data-index="12" :style="`width:${widthList[14].width}px`">操作</th>
         </tr>
       </thead>
       <tbody>
         <template v-for="row in localList" :key="row.ID">
           <tr class="row-title" @click.self.stop="onSpreadClick(row)">
             <td :style="`width:${widthList[0].width}px`" :title="row.Code + ''">{{ row.Code || '' }}</td>
-            <td :style="`width:${widthList[1].width}px`" :title="row.Code + ''">{{ row.Index || '' }}</td>
-            <td :style="`width:${widthList[2].width}px`" :title="row._Size">{{ row._Size || '' }}</td>
-            <td v-show="Type === PlateTypeEnum.Plate" :style="`width:${widthList[3].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
-            <td :style="`width:${widthList[4].width}px`" :title="row._Number">{{ row._Number || '' }}</td>
-            <td :style="`width:${widthList[5].width}px`" :title="row.ChunkNumber + ''">{{ row.ChunkNumber }}</td>
-            <td :style="`width:${widthList[6].width}px`" :title="`${row._Percent}`">{{ row._Percent }}</td>
-            <td :style="`width:${widthList[7].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
-            <td :style="`width:${widthList[8].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
-            <td :style="`width:${widthList[9].width}px`" :title="row._FastDepartureTime">{{ row._FastDepartureTime || '' }}</td>
-            <td :style="`width:${widthList[10].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
-            <td :style="`width:${widthList[11].width}px`" :title="row._Position">{{ row._Position }}</td>
-            <td :style="`width:${widthList[12].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
-            <td :style="`width:${widthList[13].width}px`">
+            <td :style="`width:${widthList[1].width}px`" :title="row.Code + ''">{{ row.ReproductionType || '' }}</td>
+            <td :style="`width:${widthList[2].width}px`" :title="row.Code + ''">{{ row.Index || '' }}</td>
+            <td :style="`width:${widthList[3].width}px`" :title="row._Size">{{ row._Size || '' }}</td>
+            <td v-show="Type === PlateTypeEnum.Plate" :style="`width:${widthList[4].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
+            <td :style="`width:${widthList[5].width}px`" :title="row._Number">{{ row._Number || '' }}</td>
+            <td :style="`width:${widthList[6].width}px`" :title="row.ChunkNumber + ''">{{ row.ChunkNumber }}</td>
+            <td :style="`width:${widthList[7].width}px`" :title="`${row._Percent}`">{{ row._Percent }}</td>
+            <td :style="`width:${widthList[8].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
+            <td :style="`width:${widthList[9].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
+            <td :style="`width:${widthList[10].width}px`" :title="row._FastDepartureTime">{{ row._FastDepartureTime || '' }}</td>
+            <td :style="`width:${widthList[11].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
+            <td :style="`width:${widthList[12].width}px`" :title="row._Position">{{ row._Position }}</td>
+            <td :style="`width:${widthList[13].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
+            <td :style="`width:${widthList[14].width}px`">
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" :disabled="row._isCancelled"
                @click="onOrderPrintClick(row)">打印工单</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
@@ -148,20 +150,21 @@ const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
 const widthList = ref([
-  { width: 70 },
-  { width: 110 },
-  { width: props.Type === PlateTypeEnum.Plate ? 175 : 225 },
+  { width: 65 },
+  { width: 65 },
+  { width: 85 },
+  { width: props.Type === PlateTypeEnum.Plate ? 170 : 225 },
   { width: 195 },
-  { width: 105 }, // 数量
+  { width: 95 }, // 数量
   { width: 80 },
   { width: props.Type === PlateTypeEnum.Plate ? 65 : 80 },
   { width: 108 },
   { width: 68 },
   { width: 108 },
   { width: props.Type === PlateTypeEnum.Plate ? 105 : 185 },
-  { width: props.Type === PlateTypeEnum.Plate ? 145 : 215 },
-  { width: 56 },
-  { width: props.Type === PlateTypeEnum.LaterCraft ? 272 : 305 },
+  { width: props.Type === PlateTypeEnum.Plate ? 140 : 215 },
+  { width: 55 },
+  { width: props.Type === PlateTypeEnum.LaterCraft ? 262 : 288 },
 ]);
 
 const totalWidth = computed(() => {
@@ -416,7 +419,7 @@ onUnmounted(() => {
             padding: 0;
             margin-top: -4px;
             & + :deep(.el-button)  {
-              margin-left: 12px;
+              margin-left: 10px;
             }
             &.spread {
               color: #989898;
@@ -489,7 +492,7 @@ onUnmounted(() => {
             }
 
             &.menus {
-              width: 303px;
+              width: 295px;
             }
           }
         }
@@ -520,6 +523,12 @@ onUnmounted(() => {
           box-sizing: border-box;
         }
       }
+    }
+  }
+
+  &.LaterCraft {
+    button + :deep(.el-button)  {
+      margin-left: 18px;
     }
   }
 }
