@@ -34,7 +34,8 @@
             <tbody>
               <tr>
                 <td>{{ localInfo.data.TemplateSize.Name }}</td>
-                <td>{{ getEnumNameByID(localInfo.data.ReproductionType, ReproductionTypeEnumList) }}</td>
+                <!-- <td>{{ getEnumNameByID(localInfo.data.ReproductionType, ReproductionTypeEnumList) }}</td> -->
+                <td>{{ localInfo.data._ReproductionTypeContent }}</td>
                 <td>{{ localInfo.data.Width }}x{{ localInfo.data.Height }}</td>
                 <td>{{ localInfo.data.ForbitUnionMakeup ? '专版' : '合拼' }}</td>
                 <td>{{ row.Operator }}</td>
@@ -131,7 +132,7 @@ import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { format2LangTypeDate } from '@/assets/js/filters/dateFilters';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
-import { ReproductionTypeEnumList } from '@/views/productionSetting/productionLine/js/enum';
+// import { ReproductionTypeEnumList } from '@/views/productionSetting/productionLine/js/enum';
 import { useUserStore } from '@/store/modules/user';
 import { storeToRefs } from 'pinia';
 import { IManagePlateInfo } from '../js/type';
@@ -147,7 +148,7 @@ const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-const localInfo = ref<{key: boolean;data: null | IDigitalOrderPlatePrintInfo;time: string;codeUrl: string;}>({
+const localInfo = ref<{key: boolean;data: null | { _ReproductionTypeContent: string } & IDigitalOrderPlatePrintInfo;time: string;codeUrl: string;}>({
   key: false,
   data: null,
   time: '',
@@ -189,7 +190,7 @@ const display = async () => {
   const resp = await api.productionManageApis.getPlateDetail(props.row.ID);
 
   if (resp.data?.isSuccess) {
-    localInfo.value.data = resp.data.Data;
+    localInfo.value.data = { ...resp.data.Data, _ReproductionTypeContent: props.row.ReproductionType };
     localInfo.value.time = format2LangTypeDate(getTimeConvertFormat({ withHMS: true }));
     localInfo.value.codeUrl = (await getQRCodeSrc(props.row.Code, 130)) || ''; // 获取二维码img src
 
