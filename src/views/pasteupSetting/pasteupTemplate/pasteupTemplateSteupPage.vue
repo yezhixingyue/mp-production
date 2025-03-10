@@ -110,14 +110,21 @@
             </p>
             <p class="template-info" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute?.FilePath">
               <ul>
-                <li>模板：<span>宽:{{Data.addPasteupTemplateFrom.TemplateSizeAttribute.Width}}mm</span>
-                          <span>高:{{Data.addPasteupTemplateFrom.TemplateSizeAttribute.Height}}mm</span></li>
+                <li>模板：
+                  <span :title="`宽:${Data.addPasteupTemplateFrom.TemplateSizeAttribute.Width}mm`">
+                    宽:{{Data.addPasteupTemplateFrom.TemplateSizeAttribute.Width}}mm
+                  </span>
+                  <span :title="`高:${Data.addPasteupTemplateFrom.TemplateSizeAttribute.Height}mm`">
+                    高:{{Data.addPasteupTemplateFrom.TemplateSizeAttribute.Height}}mm
+                  </span>
+                </li>
                 <el-scrollbar max-height="100px">
                 <li v-for="(Area,index) in Data.addPasteupTemplateFrom.TemplateSizeAttribute.AreaList" :key="index">
-                版芯：<span>X:{{Area.XCoordinate}}mm</span>
-                <span>Y:{{Area.YCoordinate}}mm</span>
-                <span>宽:{{Area.Width}}mm</span>
-                <span>高:{{Area.Height}}mm</span></li>
+                  版芯：<span :title="`X:${Area.XCoordinate}mm`">X:{{Area.XCoordinate}}mm</span>
+                  <span :title="`Y:${Area.YCoordinate}mm`">Y:{{Area.YCoordinate}}mm</span>
+                  <span :title="`宽:${Area.Width}mm`">宽:{{Area.Width}}mm</span>
+                  <span :title="`高:${Area.Height}mm`">高:{{Area.Height}}mm</span>
+                </li>
                 </el-scrollbar>
               </ul>
             </p>
@@ -686,14 +693,18 @@ export default {
             }
           }
           .template-info{
+            width: 500px;
             color: #606266;
             ul{
               li{
                 display: flex;
                 line-height: 2em;
                 span{
-                  width: 70px;
+                  max-width: 100px;
                   margin: 0 5px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
                 }
               }
             }
