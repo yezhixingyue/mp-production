@@ -41,17 +41,17 @@ import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { computed } from 'vue';
-import { ProductLineSimpleType } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from '../js/Condition';
 import { ChunkStatusEnumList } from '../js/EnumList';
 import { IManageChunkInfo } from '../js/type';
+import { ManageChunkListClass } from '../js/ManageChunkListClass';
 
 const props = defineProps<{
   setCondition:(e: ISetConditionParams) => void
   getList:(Page?: number) => void
   condition: Condition
   list: IManageChunkInfo[]
-  lineList: ProductLineSimpleType[]
+  lineList: ManageChunkListClass['ProductionLineList']
 }>();
 
 const emit = defineEmits(['clear']);
@@ -71,7 +71,7 @@ const clearCondition = () => {
   emit('clear');
 };
 
-const onMenuClick = (it: ProductLineSimpleType) => {
+const onMenuClick = (it: ManageChunkListClass['ProductionLineList'][number]) => {
   props.setCondition([['LineID', ''], it.ID]);
   props.getList();
 };

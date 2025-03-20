@@ -23,3 +23,13 @@ export enum LineStatusEnum {
   /** 可用 */
   usable = 1,
 }
+
+/** 普通生产线的特殊类型枚举： 普通 | 数码生产线 | 专版生产线 */
+export enum NormalLineCategoryTypeEnum {
+  /** 普通 */
+  normal = 0,
+  /** 数码生产线 */
+  digital = 1,
+  /** 专版生产线 */
+  special = 2,
+}

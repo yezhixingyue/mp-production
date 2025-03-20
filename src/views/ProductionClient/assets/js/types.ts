@@ -314,6 +314,16 @@ export interface IReceiveResult {
   Status: ProductiveTaskStatusEnum
   /** 类型枚举 */
   TargetType: TargetTypeEnum
+  /** 当前款号 > 0 显示 */
+  CurrentKind: number
+  /** 总款数 CurrentKind > 0 显示 */
+  KindCount: number
+  /** 本次送达数量 - 待确认时显示 */
+  CurrentNumber: number
+  /** 已送达数量 - 待确认时显示 */
+  HaveSendNumber: number
+  /** 是否拆版 控制拆版印章显示 */
+  IsSplitPlate: boolean
 }
 
 /**

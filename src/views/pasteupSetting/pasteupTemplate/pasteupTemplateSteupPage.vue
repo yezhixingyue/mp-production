@@ -129,7 +129,7 @@
               </ul>
             </p>
           </el-form-item>
-          <el-form-item :label="`用料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
+          <el-form-item :label="`开料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
             <span>宽：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
                v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
             <span>高：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"

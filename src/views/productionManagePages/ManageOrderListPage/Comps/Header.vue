@@ -44,14 +44,14 @@ import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassT
 import { computed } from 'vue';
 import { Condition } from '../js/Condition';
 import { IManageOrderListItem } from '../js/type';
-import { ProductLineSimpleType } from '../../ManualOrderHandlerPage/js/types';
 import { OrderStatusList } from '../js/enum';
+import { ManageOrderListClass } from '../js/ManageOrderListClass';
 
 const props = defineProps<{
   setCondition:(e: ISetConditionParams) => void
   getList:(Page?: number) => void
   condition: Condition
-  lineList: ProductLineSimpleType[]
+  lineList: ManageOrderListClass['ProductionLineList']
   list: IManageOrderListItem[]
 }>();
 
@@ -96,7 +96,7 @@ const clearCondition = () => {
   emit('clear');
 };
 
-const onMenuClick = (it: ProductLineSimpleType) => {
+const onMenuClick = (it: ManageOrderListClass['ProductionLineList'][number]) => {
   props.setCondition([['LineID', ''], it.ID]);
   props.getList();
 };

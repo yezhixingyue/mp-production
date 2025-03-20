@@ -61,11 +61,11 @@ import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue
 import { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
 import { IListItemType } from '@/components/common/EpCascader/EpCascaderWrap/types';
 import { computed, defineAsyncComponent } from 'vue';
-import { ProductLineSimpleType } from '../../ManualOrderHandlerPage/js/types';
 import { Condition } from '../js/Condition';
 import { PlateStatusEnumList } from '../js/EnumList';
 import { IManagePlateInfo } from '../js/type';
 import { PlateTypeEnum } from '../js/enum';
+import { ManagePlateListClass } from '../js/ManagePlateListClass';
 
 const EpCascaderByLevel2 = defineAsyncComponent(() => import('@/components/common/EpCascader/EpCascaderWrap/EpCascaderByLevel2.vue'));
 
@@ -74,7 +74,7 @@ const props = defineProps<{
   getList:(Page?: number) => void
   condition: Condition
   list: IManagePlateInfo[]
-  lineList: ProductLineSimpleType[]
+  lineList: ManagePlateListClass['ProductionLineList']
   WorkingAndMakingGroupList?: IListItemType[]
 }>();
 
@@ -95,7 +95,7 @@ const clearCondition = () => {
   emit('clear');
 };
 
-const onMenuClick = (it: ProductLineSimpleType) => {
+const onMenuClick = (it: ManagePlateListClass['ProductionLineList'][number]) => {
   props.setCondition([['LineID', ''], it.ID]);
   props.getList();
 };

@@ -1,5 +1,5 @@
 import api from '@/api';
-import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { LineTypeEnum, NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { getBarcodeSrc, getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
@@ -76,9 +76,12 @@ export class ManageDigitalListClass {
 
   /** 获取所有数码生产线列表 - 用于顶部筛选 */
   private async _getDigitalLineList() {
-    const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsDigital: true }).catch(() => null);
+    const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, Category: NormalLineCategoryTypeEnum.digital }).catch(() => null);
     if (resp?.data?.isSuccess) {
-      this.DigitalLineList = [{ ID: '', Name: '所有生产线' }, ...(resp.data.Data as IProductionLineSet[]).filter(it => it.IsDigital)];
+      this.DigitalLineList = [
+        { ID: '', Name: '所有生产线' },
+        ...(resp.data.Data as IProductionLineSet[]).filter(it => it.Category === NormalLineCategoryTypeEnum.digital),
+      ];
     }
   }
 

@@ -6,18 +6,19 @@
           <th data-index="0" :style="`width:${widthList[0].width}px`">大版ID</th>
           <th data-index="1" :style="`width:${widthList[1].width}px`">翻版方式</th>
           <th data-index="2" :style="`width:${widthList[2].width}px`">序号</th>
-          <th data-index="3" :style="`width:${widthList[3].width}px`">尺寸规格</th>
-          <th v-show="Type === PlateTypeEnum.Plate" data-index="4" :style="`width:${widthList[4].width}px`">物料</th>
-          <th data-index="5" :style="`width:${widthList[5].width}px`">{{ Type === PlateTypeEnum.Plate ? '印刷数量' : '加工数量' }}</th>
-          <th data-index="6" :style="`width:${widthList[6].width}px`">包含订单块</th>
-          <th data-index="7" :style="`width:${widthList[7].width}px`">内容占比</th>
-          <th data-index="8" :style="`width:${widthList[8].width}px`">拼版时间</th>
-          <th data-index="9" :style="`width:${widthList[9].width}px`">拼版人员</th>
-          <th data-index="10" :style="`width:${widthList[10].width}px`">最早发货时间</th>
-          <th data-index="11" :style="`width:${widthList[11].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
-          <th data-index="12" :style="`width:${widthList[12].width}px`">当前位置</th>
-          <th data-index="13" :style="`width:${widthList[13].width}px`">状态</th>
-          <th data-index="14" :style="`width:${widthList[14].width}px`">操作</th>
+          <th data-index="3" :style="`width:${widthList[3].width}px`">模板规格</th>
+          <th data-index="4" :style="`width:${widthList[4].width}px`">开料尺寸</th>
+          <th v-show="Type === PlateTypeEnum.Plate" data-index="5" :style="`width:${widthList[5].width}px`">物料</th>
+          <th data-index="6" :style="`width:${widthList[6].width}px`">{{ Type === PlateTypeEnum.Plate ? '印刷数量' : '加工数量' }}</th>
+          <th data-index="7" :style="`width:${widthList[7].width}px`">包含订单块</th>
+          <th data-index="8" :style="`width:${widthList[8].width}px`">内容占比</th>
+          <th data-index="9" :style="`width:${widthList[9].width}px`">拼版时间</th>
+          <th data-index="10" :style="`width:${widthList[10].width}px`">拼版人员</th>
+          <th data-index="11" :style="`width:${widthList[11].width}px`">最早发货时间</th>
+          <th data-index="12" :style="`width:${widthList[12].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
+          <th data-index="13" :style="`width:${widthList[13].width}px`">当前位置</th>
+          <th data-index="14" :style="`width:${widthList[14].width}px`">状态</th>
+          <th data-index="15" :style="`width:${widthList[15].width}px`">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -27,17 +28,18 @@
             <td :style="`width:${widthList[1].width}px`" :title="row.Code + ''">{{ row.ReproductionType || '' }}</td>
             <td :style="`width:${widthList[2].width}px`" :title="row.Code + ''">{{ row.Index || '' }}</td>
             <td :style="`width:${widthList[3].width}px`" :title="row._Size">{{ row._Size || '' }}</td>
-            <td v-show="Type === PlateTypeEnum.Plate" :style="`width:${widthList[4].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
-            <td :style="`width:${widthList[5].width}px`" :title="row._Number">{{ row._Number || '' }}</td>
-            <td :style="`width:${widthList[6].width}px`" :title="row.ChunkNumber + ''">{{ row.ChunkNumber }}</td>
-            <td :style="`width:${widthList[7].width}px`" :title="`${row._Percent}`">{{ row._Percent }}</td>
-            <td :style="`width:${widthList[8].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
-            <td :style="`width:${widthList[9].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
-            <td :style="`width:${widthList[10].width}px`" :title="row._FastDepartureTime">{{ row._FastDepartureTime || '' }}</td>
-            <td :style="`width:${widthList[11].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
-            <td :style="`width:${widthList[12].width}px`" :title="row._Position">{{ row._Position }}</td>
-            <td :style="`width:${widthList[13].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
-            <td :style="`width:${widthList[14].width}px`">
+            <td :style="`width:${widthList[4].width}px`" :title="row.MaterialSize">{{ row.MaterialSize || '' }}</td>
+            <td v-show="Type === PlateTypeEnum.Plate" :style="`width:${widthList[5].width}px`" :title="row.Material">{{ row.Material || '' }}</td>
+            <td :style="`width:${widthList[6].width}px`" :title="row._Number">{{ row._Number || '' }}</td>
+            <td :style="`width:${widthList[7].width}px`" :title="row.ChunkNumber + ''">{{ row.ChunkNumber }}</td>
+            <td :style="`width:${widthList[8].width}px`" :title="`${row._Percent}`">{{ row._Percent }}</td>
+            <td :style="`width:${widthList[9].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
+            <td :style="`width:${widthList[10].width}px`" :title="row.Operator">{{ row.Operator || '' }}</td>
+            <td :style="`width:${widthList[11].width}px`" :title="row._FastDepartureTime">{{ row._FastDepartureTime || '' }}</td>
+            <td :style="`width:${widthList[12].width}px`" :title="row.Line">{{ row.Line || '' }}</td>
+            <td :style="`width:${widthList[13].width}px`" :title="row._Position">{{ row._Position }}</td>
+            <td :style="`width:${widthList[14].width}px`" :title="row._StatusText">{{ row._StatusText || '' }}</td>
+            <td :style="`width:${widthList[15].width}px`">
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" :disabled="row._isCancelled"
                @click="onOrderPrintClick(row)">打印工单</mp-button>
               <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Print" @click="onBarCodePrintClick(row)"
@@ -150,21 +152,22 @@ const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
 const widthList = ref([
-  { width: 65 },
-  { width: 65 },
-  { width: 85 },
-  { width: props.Type === PlateTypeEnum.Plate ? 170 : 225 },
-  { width: 195 },
-  { width: 95 }, // 数量
+  { width: 63 },
+  { width: 63 },
   { width: 80 },
-  { width: props.Type === PlateTypeEnum.Plate ? 65 : 80 },
-  { width: 108 },
-  { width: 68 },
-  { width: 108 },
-  { width: props.Type === PlateTypeEnum.Plate ? 105 : 185 },
-  { width: props.Type === PlateTypeEnum.Plate ? 140 : 215 },
-  { width: 55 },
-  { width: props.Type === PlateTypeEnum.LaterCraft ? 262 : 288 },
+  { width: props.Type === PlateTypeEnum.Plate ? 155 : 190 },
+  { width: 80 },
+  { width: 180 },
+  { width: 90 }, // 数量
+  { width: 78 },
+  { width: props.Type === PlateTypeEnum.Plate ? 63 : 78 },
+  { width: 106 },
+  { width: 62 },
+  { width: 106 },
+  { width: props.Type === PlateTypeEnum.Plate ? 103 : 183 },
+  { width: props.Type === PlateTypeEnum.Plate ? 125 : 200 },
+  { width: 53 },
+  { width: props.Type === PlateTypeEnum.LaterCraft ? 260 : 286 },
 ]);
 
 const totalWidth = computed(() => {
@@ -413,7 +416,7 @@ onUnmounted(() => {
           overflow: hidden;
           text-overflow: ellipsis;
           box-sizing: border-box;
-          padding: 0 3px;
+          padding: 0 2px;
           button {
             font-size: 12px;
             padding: 0;
@@ -492,7 +495,7 @@ onUnmounted(() => {
             }
 
             &.menus {
-              width: 295px;
+              width: 286px;
             }
           }
         }

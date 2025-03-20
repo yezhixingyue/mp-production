@@ -6,9 +6,9 @@
     <!-- 1. 设置送达 -->
     <header>
       <h4>条码ID：</h4>
-      <el-input v-model.trim="code" maxlength="20" ref="oInput" @keydown.enter="submit">
+      <el-input v-model.trim="code" maxlength="20" ref="oInput" @keydown.enter="() => submit()">
         <template #append>
-          <span class="btn" @click="submit">送达</span>
+          <span class="btn" @click="() => submit()">送达</span>
         </template>
       </el-input>
     </header>
@@ -27,7 +27,7 @@
 
     <!-- 送达结果弹窗处理 -->
     <ResultHandleDialog :isBatchReport="!!curInstance.Equipment.AllowBatchReport"
-     v-model:visible="resultVisible" :result="receiveResult" @close="onClose" @submit="onDialogSubmit" />
+     v-model:visible="resultVisible" :result="receiveResult" @close="onClose" @submit="onDialogSubmit" @confirm="onconfirm" />
   </section>
 </template>
 
@@ -70,7 +70,7 @@ const onClose = () => {
   setInputFocus();
 };
 
-const submit = async () => {
+const submit = async (e?: { OnlyCurrent: boolean }) => {
   if (!oInput.value) return;
   oInput.value.blur();
 
@@ -80,7 +80,16 @@ const submit = async () => {
     });
     return;
   }
-  const result = await props.curInstance.getEquipmentReceive(code.value, setInputFocus);
+
+  const temp: { Code: string; OnlyCurrent?: boolean; } = {
+    Code: code.value,
+  };
+
+  if (e) {
+    temp.OnlyCurrent = e.OnlyCurrent;
+  }
+
+  const result = await props.curInstance.getEquipmentReceive(temp, setInputFocus);
   if (result) {
     // 1. 处理结果 多种可能
     receiveResult.value = result;
@@ -111,6 +120,13 @@ watch(() => curActiveInstance.value, () => {
 const handleKeyup = (e: KeyboardEvent) => {
   if (e.code !== 'F8' || curActiveInstance.value !== props.curInstance || !oInput.value) return;
   oInput.value.focus();
+};
+
+const onconfirm = (e: { OnlyCurrent: boolean }) => {
+  submit(e);
+
+  receiveResult.value = null;
+  code.value = '';
 };
 
 /* 批量操作相关

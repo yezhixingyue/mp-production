@@ -1,7 +1,7 @@
 import { EquipmentFilterClass } from '@/assets/js/Class/EquipmentFilterClass';
 import { IUser } from '@/store/modules/user/types';
 import api from '@/api';
-import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { LineTypeEnum, NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { IListItemType } from '@/components/common/EpCascader/EpCascaderWrap/types';
 import { ManageDigitalCompletionTaskList } from './ManageDigitalCompletionTaskList';
@@ -62,9 +62,11 @@ export class ManagePageData {
   LineList: IListItemType[] = []
 
   private async getLineList() { // 获取生产线列表数据
-    const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsDigital: true, IsShowWorkingProcedure: true }).catch(() => null);
+    const resp = await api.getProductionLineList({
+      Type: LineTypeEnum.normal, Category: NormalLineCategoryTypeEnum.digital, IsShowWorkingProcedure: true,
+    }).catch(() => null);
     if (resp?.data?.isSuccess) {
-      this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.IsDigital)];
+      this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.Category === NormalLineCategoryTypeEnum.digital)];
     }
   }
 }

@@ -105,7 +105,7 @@ export interface ICustomerAddress {
 }
 
 /** 所有可用生产线信息的类型（生产线|组合生产线，简略） */
-export type ProductLineSimpleType = Pick<IProductionLineSet, 'ID'|'Name'|'Type'|'IsDigital'>;
+export type ProductLineSimpleType = Pick<IProductionLineSet, 'ID'|'Name'|'Type'|'Category'>;
 
 /** 生产线物料类型 */
 export interface IFactoryMaterialList {

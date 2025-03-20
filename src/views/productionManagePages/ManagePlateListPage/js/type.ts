@@ -11,6 +11,8 @@ interface _IManagePlateCommonInfo {
   TemplateSize: string
   /** 物料 */
   Material: string
+  /** 物料尺寸 */
+  MaterialSize: string
   /** 印刷数量 */
   Number: number
   /** 单位 */

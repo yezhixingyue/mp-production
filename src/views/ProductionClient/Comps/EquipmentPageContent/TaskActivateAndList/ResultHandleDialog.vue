@@ -1,7 +1,7 @@
 <template>
   <DialogContainerComp
     :visible='localVisible'
-    :width="520"
+    :width="580"
     @cancel="localVisible = false"
     @submit="submit"
     @close="onClose"
@@ -10,44 +10,62 @@
     class="mp-client-equipment-receive-result-handler-dialog-wrap"
     top="20vh"
     :showClose="false"
-    :showHeader="false"
+    title="交接提醒"
     >
     <div class="dialog-content" v-if="result">
       <p>
         <span>任务ID：</span>
-        <span class="ft-18 is-bold">{{ result.TaskCode || '' }}</span>
+        <span class="is-bold">{{ result.TaskCode || '' }}</span>
       </p>
-      <p>
+      <p class="is-bold">
         <span>{{ result.TargetType === TargetTypeEnum.Plate ? '大版ID：' : 'ID' }}</span>
-        <span class="ft-18 is-bold">{{ result.TargetCode || '' }}</span>
+        <span>{{ result.TargetCode || '' }}</span>
       </p>
-      <p class="ft-18">
-        <span class="mr-12">{{ result.Material || '' }}</span>
-        <span>{{ result.Size || '' }}</span>
+      <p class="ft-18 is-bold mb-10">
+        <span class="mr-10">{{ result.Material || '' }}</span>
+        <span v-if="result.Size" class="mr-2">{{ result.Size}}，</span>
+        <span>{{ result.Number }}{{ result.Unit || '' }}</span>
+        <span v-if='result.CurrentKind' class="ml-8">共{{ result.KindCount }}款，当前为第<i class="is-pink ft-20 ml-5 mr-5">{{ result.CurrentKind }}</i>款</span>
       </p>
-      <h2 class="number">
-        {{ result.Number }}{{ result.Unit || '' }}
-      </h2>
 
-      <div class="title">
-        <el-icon v-if="isCancel" class="is-orange"><WarningFilled /></el-icon>
-        <el-icon v-else-if="isError" class="is-pink"><CircleCloseFilled /></el-icon>
-        <el-icon v-else class="is-success"><CircleCheckFilled /></el-icon>
-        <div :class="displayInfo?.class">
-          <h1>
-            {{ displayInfo?.first }}
-          </h1>
-          <h1 v-if="displayInfo?.second">{{ displayInfo.second }}</h1>
+      <!-- 不需要确认 -->
+      <template v-if="!isConfirm">
+        <div class="title" >
+          <el-icon v-if="isCancel" class="is-orange"><WarningFilled /></el-icon>
+          <el-icon v-else-if="isError" class="is-pink"><CircleCloseFilled /></el-icon>
+          <el-icon v-else class="is-success"><CircleCheckFilled /></el-icon>
+          <div :class="displayInfo?.class">
+            <h1>
+              {{ displayInfo?.first }}
+            </h1>
+            <h1 v-if="displayInfo?.second">{{ displayInfo.second }}</h1>
+          </div>
         </div>
+
+        <h4 class="third" v-if="!isCancel && !isError && displayInfo?.third && isBatchReport">{{ displayInfo.third }}</h4>
+
+        <div class="red" v-if="displayInfo?.rightPosition">
+          <span>请送往</span>
+          <h2>{{ displayInfo.rightPosition }}</h2>
+      </div>
+      </template>
+
+      <!-- 块报工 待确认处理 -->
+      <div v-else class="confirm">
+        <h3>加工数量<i class="is-success">{{ result.Number }}</i>{{ result.Unit || '' }}</h3>
+        <h3>
+          <span class="mr-13">当前块<i class="is-pink">{{ result.CurrentNumber }}</i>{{ result.Unit || '' }}</span>
+          <span>已送达<i  class="is-success">{{ result.HaveSendNumber }}</i>{{ result.Unit || '' }}</span>
+        </h3>
       </div>
 
-      <h4 class="third" v-if="!isCancel && !isError && displayInfo?.third && isBatchReport">{{ displayInfo.third }}</h4>
-
-      <div class="red" v-if="displayInfo?.rightPosition">
-        <span>请送往</span>
-        <h2>{{ displayInfo.rightPosition }}</h2>
-      </div>
+      <img src="../../../assets/images/split-img.png" class="split-img" alt="" v-if="result.IsSplitPlate">
     </div>
+
+    <template #footer v-if="isConfirm">
+      <mp-button type="primary" class="gradient" @click="onSendConfirmClick(true)">送达当前块</mp-button>
+      <mp-button type="danger" class="gradient" @click="onSendConfirmClick(false)">{{ result?.IsSplitPlate ? '送达此版块' : '全部送达' }}</mp-button>
+    </template>
   </DialogContainerComp>
 </template>
 
@@ -64,7 +82,7 @@ const props = defineProps<{
   isBatchReport: boolean // 是否批量报工
 }>();
 
-const emit = defineEmits(['update:visible', 'close', 'submit']);
+const emit = defineEmits(['update:visible', 'close', 'submit', 'confirm']);
 
 const localVisible = computed({
   get() {
@@ -77,6 +95,8 @@ const localVisible = computed({
 
 const isError = computed(() => props.result && [EquipmentReceiveCodeEnum.ErrorPosition, EquipmentReceiveCodeEnum.UnCurrentTask].includes(props.result.Code));
 const isCancel = computed(() => props.result && [EquipmentReceiveCodeEnum.HaveCancled].includes(props.result.Code));
+
+const isConfirm = computed(() => !!(props.result && props.result.Code === EquipmentReceiveCodeEnum.NeedConfirm));
 
 const displayInfo = computed(() => {
   if (!props.result) return null;
@@ -95,7 +115,7 @@ const displayInfo = computed(() => {
       temp.first = '位置正确，';
       temp.second = '完成送达';
       temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
-      temp.class = 'is-success';
+      // temp.class = 'is-success';
       break;
 
     case EquipmentReceiveCodeEnum.CurrentTask:
@@ -108,9 +128,9 @@ const displayInfo = computed(() => {
 
     case EquipmentReceiveCodeEnum.UnCurrentTask:
       temp.title = '关闭';
-      temp.first = '错误：';
-      temp.second = '非当前加工任务';
-      temp.class = 'is-pink';
+      temp.first = '';
+      temp.second = '重复扫描';
+      // temp.class = 'is-pink';
       break;
 
     case EquipmentReceiveCodeEnum.ErrorPosition:
@@ -148,17 +168,28 @@ const submit = () => {
   localVisible.value = false;
 };
 
+const onSendConfirmClick = (OnlyCurrent: boolean) => {
+  localVisible.value = false;
+
+  const temp = { OnlyCurrent };
+  emit('confirm', temp);
+};
 </script>
 
 <style lang='scss' scoped>
 .dialog-content {
-  margin-top: -5px;
+  margin-top: -25px;
   padding: 0 20px;
   font-size: 16px;
   color: #444;
+
   > p {
-    line-height: 22px;
-    margin-bottom: 8px;
+    line-height: 27px;
+    margin-bottom: 4px;
+
+    &.mb-10 {
+      margin-bottom: 10px;
+    }
   }
   >.number {
     margin-bottom: 20px;
@@ -170,7 +201,7 @@ const submit = () => {
     align-items: center;
     justify-content: center;
     > i {
-      font-size: 77px;
+      font-size: 80px;
       margin-right: 10px;
     }
     > div {
@@ -202,11 +233,33 @@ const submit = () => {
     }
   }
 
+  .split-img {
+    position: absolute;
+    right: 55px;
+    width: 138px;
+    height: 138px;
+    bottom: 6px;
+  }
+
+  .confirm {
+    text-align: center;
+    font-size: 25px;
+    h3 {
+      margin-bottom: 5px;
+      white-space: nowrap;
+      margin: 0 -30px;
+      i {
+        font-size: 34px;
+        margin: 0 5px;
+      }
+    }
+  }
+
   .is-success {
     color: #52C41A;
   }
   .is-pink {
-    color: #ff0000;
+    color: #FF3E6A;
   }
   .is-orange {
     color: #F4A307;
@@ -217,7 +270,8 @@ const submit = () => {
 <style lang="scss">
 .mp-client-equipment-receive-result-handler-dialog-wrap {
   .el-dialog__body {
-    min-height: 240px;
+    min-height: 200px;
+    position: relative;
   }
   .el-dialog__footer {
     padding-top: 10px;

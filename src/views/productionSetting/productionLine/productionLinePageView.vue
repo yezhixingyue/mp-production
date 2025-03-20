@@ -5,7 +5,8 @@
       <p class="line-info" v-if="!isCombine">
         <span class="title" :title="actionLine?.Name || ''">
           {{actionLine?.Name || ''}}
-          <i v-if="!isCombine && ProductionLineData && ProductionLineData.IsDigital">(数码生产线)</i>
+          <i v-if="!isCombine && ProductionLineData && ProductionLineData.Category===NormalLineCategoryTypeEnum.digital">(数码生产线)</i>
+          <i v-if="!isCombine && ProductionLineData && ProductionLineData.Category===NormalLineCategoryTypeEnum.special">(专版生产线)</i>
         </span>
         <!-- <span class="fold-the-hand" v-show="actionLine && actionLine.NeedFoldWay">需要折手</span> -->
         <span class="btn" v-if="localPermission?.Setup">
@@ -19,13 +20,13 @@
       <p class="set-slit" v-if="!isCombine && localPermission?.Setup">
         <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-14"></i>设置分切工序</mp-button>
       </p>
-      <p class="templates" v-if="!isCombine && ProductionLineData && !ProductionLineData.IsDigital">
+      <p class="templates" v-if="!isCombine && ProductionLineData && ProductionLineData.Category!==NormalLineCategoryTypeEnum.digital">
         <span class="label">允许翻版方式：</span>
         <span class="ft-12">
           {{ProductionLineData.ReproductionTypes?.map(t => getEnumNameByID(t, ReproductionTypeEnumList)).join('、') || '无'}}
         </span>
       </p>
-      <p class="templates" v-if="!isCombine && ProductionLineData && !ProductionLineData.IsDigital">
+      <p class="templates" v-if="!isCombine && ProductionLineData && ProductionLineData.Category!==NormalLineCategoryTypeEnum.digital">
         <span class="label">是否允许按模位：</span>
         <span class="ft-12">
           {{getEnumNameByID(ProductionLineData.UseModeType, LineIsUseModeEnumList)}}
@@ -137,8 +138,15 @@
             </div>
           </el-form-item>
           <template v-if="!isCombine">
-            <el-checkbox v-model="Data.addLineFrom.IsDigital" :disabled="!!Data.addLineFrom.ID" style="margin: -6px 0 6px 130px;">数码生产线</el-checkbox>
-            <template v-if="!Data.addLineFrom.IsDigital">
+            <el-checkbox
+             :modelValue="Data.addLineFrom.Category===NormalLineCategoryTypeEnum.digital"
+             @update:modelValue="(bool) => Data.addLineFrom.Category=bool ? NormalLineCategoryTypeEnum.digital : NormalLineCategoryTypeEnum.normal"
+             :disabled="!!Data.addLineFrom.ID" style="margin: -6px 0 6px 130px;">数码生产线</el-checkbox>
+            <el-checkbox
+             :modelValue="Data.addLineFrom.Category===NormalLineCategoryTypeEnum.special"
+             @update:modelValue="(bool) => Data.addLineFrom.Category=bool ? NormalLineCategoryTypeEnum.special : NormalLineCategoryTypeEnum.normal"
+             :disabled="!!Data.addLineFrom.ID" style="margin: -6px 0 6px 60px;">专版生产线</el-checkbox>
+            <template v-if="Data.addLineFrom.Category!==NormalLineCategoryTypeEnum.digital">
               <div class="text bold">
                 拼版模板设置：
               </div>
@@ -194,7 +202,8 @@
         <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
             <el-checkbox-group v-model="Data.addPrcessFrom.WordIDS">
               <template
-               v-for="item in PrcessList.filter(it => !ProductionLineData?.IsDigital || it.ReportMode !== ReportModeEnum.block)
+               v-for="item in PrcessList
+               .filter(it => ProductionLineData?.Category!==NormalLineCategoryTypeEnum.digital || it.ReportMode !== ReportModeEnum.block)
                .filter(it => [it.Type, ''].includes(Data.addPrcessFrom._filterType))"
                :key="item.ClassID"
                >
@@ -252,7 +261,7 @@ import EditMenu from '@/components/common/menus/EditMenu.vue';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import { FetchWorkingProcedureSearchEnum } from '@/views/productionSetting/js/enums';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
-import { LineStatusEnum, LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { LineStatusEnum, LineTypeEnum, NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
 import { useUserStore } from '@/store/modules/user';
 import { getSourceWork } from '../js/utils';
@@ -292,8 +301,8 @@ interface addLineFromType {
     ReproductionTypes: ReproductionTypeEnum[],
     UseModeType: LineIsUseModeEnum | ''
     CombinationWordIDS: string[],
-    /** 是否数码生产线 */
-    IsDigital: boolean,
+    /** 生产线类型 */
+    Category: NormalLineCategoryTypeEnum
 }
 interface addPrcessFromType {
   ID: string,
@@ -342,7 +351,7 @@ const Data:DataType = reactive({
     Name: '',
     UseModeType: '',
     ReproductionTypes: [],
-    IsDigital: false,
+    Category: NormalLineCategoryTypeEnum.normal,
   },
   addPrcessFrom: {
     ID: '',
@@ -645,7 +654,7 @@ const editLine = () => {
       ReproductionTypes: ProductionLineData.value.ReproductionTypes ? [...ProductionLineData.value.ReproductionTypes] : [],
       UseModeType: ProductionLineData.value.UseModeType,
       CombinationWordIDS,
-      IsDigital: actionLine.value.IsDigital,
+      Category: actionLine.value.Category,
     };
     Data.addLineFrom = temp;
     initSelectedCombinationWordIDS.value = CombinationWordIDS;
@@ -674,7 +683,7 @@ const addLineCloseedClick = () => {
     Name: '',
     UseModeType: '',
     ReproductionTypes: [],
-    IsDigital: false,
+    Category: NormalLineCategoryTypeEnum.normal,
   };
 };
 const addLineCloseClick = () => {
@@ -686,7 +695,7 @@ const addLinePrimaryClick = () => {
     return;
   }
   if (Data.addLineFrom.Type === LineTypeEnum.normal) {
-    if (!Data.addLineFrom.IsDigital) {
+    if (Data.addLineFrom.Category !== NormalLineCategoryTypeEnum.digital) {
       if (!Data.addLineFrom.ReproductionTypes || Data.addLineFrom.ReproductionTypes.length === 0) {
         MpMessage.error({ title: '保存失败', msg: '请选择允许翻版方式' });
         return;

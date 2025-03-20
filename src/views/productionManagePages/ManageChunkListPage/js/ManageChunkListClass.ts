@@ -28,14 +28,14 @@ export class ManageChunkListClass {
   }
 
   /** 生产线 暂定不包含组合生产线 */
-  ProductionLineList: ProductLineSimpleType[] = []
+  ProductionLineList: Pick<ProductLineSimpleType, 'ID' | 'Name'>[] = []
 
   private async getProductionLineList() {
     if (this.ProductionLineList.length > 0) return;
     const resp = await api.getProductionLineAll().catch(() => null);
     if (resp?.data?.isSuccess) {
       const list = (resp.data.Data as ProductLineSimpleType[]).filter(it => it.Type === LineTypeEnum.normal);
-      this.ProductionLineList = [{ ID: '', Name: '所有生产线', Type: LineTypeEnum.normal, IsDigital: false }, ...list];
+      this.ProductionLineList = [{ ID: '', Name: '所有生产线' }, ...list];
     }
   }
 

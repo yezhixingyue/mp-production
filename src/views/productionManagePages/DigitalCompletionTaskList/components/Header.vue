@@ -84,7 +84,6 @@ const props = defineProps<{
 }>();
 
 const setCondition = (e) => {
-  console.log('setcondition', e);
   props.ManageTaskListData.condition.setConditon(e);
 };
 

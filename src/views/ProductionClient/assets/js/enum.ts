@@ -69,4 +69,6 @@ export enum EquipmentReceiveCodeEnum {
   ErrorPosition = 3,
   /** 订单已取消 */
   HaveCancled = 4,
+  /** 待确认 */
+  NeedConfirm = 5,
 }

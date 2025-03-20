@@ -1,7 +1,7 @@
 import { IEquipmentGroupsType, IRelationsType } from '@/store/modules/productionSetting/types';
 import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { LineIsUseModeEnum, ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
-import { LineStatusEnum, LineTypeEnum } from './enum';
+import { LineStatusEnum, LineTypeEnum, NormalLineCategoryTypeEnum } from './enum';
 
 /**
  * 生产线
@@ -29,8 +29,8 @@ export interface IProductionLineSet {
   UseModeType: LineIsUseModeEnum,
   /** 允许翻版方式， 仅生产线 */
   ReproductionTypes: ReproductionTypeEnum[]
-  /** 是否数码生产线 */
-  IsDigital: boolean
+  /** 生产线特殊类型 */
+  Category: NormalLineCategoryTypeEnum
   /** 该生产线包含的工序列表 */
   WorkingProcedures?: { ID: string; Name: string }[]
 }

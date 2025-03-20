@@ -5,7 +5,7 @@ import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/
 import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
 import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMakingGroupView/js/PlateMakingGroupManageClass';
 import { PlateMakingWorkSetupClass } from '@/views/productionSetting/productionLine/js/PlateMakingWorkSetupClass';
-import { LineStatusEnum } from '@/assets/Types/ProductionLineSet/enum';
+import { LineStatusEnum, NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { WorkingProcedureRelationEnum } from '@/views/productionSetting/process/enums';
 import { LineIsUseModeEnum, ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
 import { MakingGroupTypeFeatureEnum, resourceBundleMatchEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
@@ -161,5 +161,5 @@ export interface IWorkingProcedureList {
   UseModeType: LineIsUseModeEnum,
   /** 允许翻版方式， 仅生产线 */
   ReproductionTypes: ReproductionTypeEnum[]
-  IsDigital: boolean
+  Category: NormalLineCategoryTypeEnum
 }

@@ -77,10 +77,10 @@ export class TerminalEquipmentInstance {
   }
 
   /** 扫码枪扫描条码 进行送达操作 */
-  public getEquipmentReceive = async (Code: string, cb) => {
+  public getEquipmentReceive = async (data: { Code: string, OnlyCurrent?: boolean }, cb) => {
     const temp = {
       EquipmentID: this.Equipment.ID,
-      Code,
+      ...data,
     };
     const resp = await clientApi.getEquipmentReceive(temp, cb).catch(() => null);
     if (resp?.data?.isSuccess) {
