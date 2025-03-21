@@ -72,7 +72,7 @@ function warnSingleError(msg, successFunc, failFunc, title = '注意', text = '�
  * @param {*} successFunc
  * @param {*} failFunc
  */
-function warnCancelBox(title, msg, successFunc, failFunc, dangerouslyUseHTMLString = false) {
+function warnCancelBox(title, msg, successFunc, failFunc, dangerouslyUseHTMLString = false, autofocus = false) {
   ElMessageBox({
     showClose: true,
     message: msg,
@@ -80,7 +80,7 @@ function warnCancelBox(title, msg, successFunc, failFunc, dangerouslyUseHTMLStri
     confirmButtonText: '确定',
     title,
     customClass: 'mp-order-del-pop-reverse-warn mp-message',
-    autofocus: false,
+    autofocus,
     showCancelButton: true,
     cancelButtonText: '取消',
     draggable: false,

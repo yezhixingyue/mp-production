@@ -157,9 +157,9 @@ function ChangeStopStatus(item) {
     });
   };
   if (item.IsStop) {
-    messageBox.warnCancelBox('确定要启用此模板规格吗？', `${item.Name}`, cb, () => undefined);
+    messageBox.warnCancelBox('确定要启用此模板规格吗？', `${item.Name}`, cb, () => undefined, false, true);
   } else {
-    messageBox.warnCancelBox('确定要停用此模板规格吗？', `${item.Name}`, cb, () => undefined);
+    messageBox.warnCancelBox('确定要停用此模板规格吗？', `${item.Name}`, cb, () => undefined, false, true);
   }
 }
 function ToPasteupTemplateSteupPagePage(item = null) {
