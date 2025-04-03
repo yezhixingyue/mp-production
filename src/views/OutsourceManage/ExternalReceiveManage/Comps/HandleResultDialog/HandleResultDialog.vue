@@ -46,6 +46,19 @@
         <span>问题描述：</span>
         <el-input v-model.trim="remark" :rows="6" maxlength="100" type="textarea" />
       </div>
+
+      <!-- 第一次送达 -->
+       <div v-if="displayMode.confirming && result && result.NextEquipmentList" class="first">
+          <span v-if="result.NextEquipmentList.length === 0" class="success">该订单已全部加工完成</span>
+          <span v-else-if="result.NextEquipmentList.length > 1">请分拣后交接至多个机台</span>
+          <span v-else-if="result.NextEquipmentList[0].ID === result.Equipment.ID">还有其他外协工序未入库</span>
+          <div v-else>
+            <span style="font-weight: 400;">请送往</span>
+            <h4>
+              {{ [result.NextEquipmentList[0].ClassName, result.NextEquipmentList[0].GroupName, result.NextEquipmentList[0].Name].filter(it => it).join('-') }}
+            </h4>
+          </div>
+       </div>
     </div>
    </div>
    <template #footer>
@@ -263,6 +276,17 @@ const submit = () => { // 确认完成
       > span:last-of-type {
         max-width: 310px;
       }
+    }
+  }
+
+  .first {
+    color: #ff0000;
+    font-weight: 700;
+    font-size: 22px;
+    padding-left: 35px;
+
+    .success {
+      color: #52C41A;
     }
   }
 }

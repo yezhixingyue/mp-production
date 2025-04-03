@@ -25,8 +25,8 @@
         <template v-for="row in localList" :key="row.ID">
           <tr class="row-title" @click.self.stop="onSpreadClick(row)">
             <td :style="`width:${widthList[0].width}px`" :title="row.Code + ''">{{ row.Code || '' }}</td>
-            <td :style="`width:${widthList[1].width}px`" :title="row.Code + ''">{{ row.ReproductionType || '' }}</td>
-            <td :style="`width:${widthList[2].width}px`" :title="row.Code + ''">{{ row.Index || '' }}</td>
+            <td :style="`width:${widthList[1].width}px`" :title="row.ReproductionType || ''">{{ row.ReproductionType || '' }}</td>
+            <td :style="`width:${widthList[2].width}px`" :title="row.Index || ''">{{ row.Index || '' }}</td>
             <td :style="`width:${widthList[3].width}px`" :title="row._Size">{{ row._Size || '' }}</td>
             <td :style="`width:${widthList[4].width}px`" :title="row.MaterialSize">{{ row.MaterialSize || '' }}</td>
             <td v-show="Type === PlateTypeEnum.Plate" :style="`width:${widthList[5].width}px`" :title="row.Material">{{ row.Material || '' }}</td>

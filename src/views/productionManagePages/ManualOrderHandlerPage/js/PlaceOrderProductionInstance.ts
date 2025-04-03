@@ -123,7 +123,10 @@ export class PlaceOrderProductionInstance extends InstanceSettingsOnMakeupFileCl
 
     this.WorkingList.forEach(it => {
       // 1. 拼版文件
-      const Template = it.Type === WorkingTypeEnum.print ? it.Template || _Template : null;
+      let Template: IImpositionTemplate | null = null;
+      if (_Template && it.Type === WorkingTypeEnum.print) Template = _Template;
+      if (it.Template) Template = it.Template;
+
       if (Template && !_FileList.find(_it => _it.Template?.ID === Template?.ID)) {
         const t = this.FileList.find(_it => _it.Template?.ID === Template?.ID);
         _FileList.push({

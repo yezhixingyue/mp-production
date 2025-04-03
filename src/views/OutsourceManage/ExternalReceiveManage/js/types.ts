@@ -1,4 +1,5 @@
 import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
+import { IEquipment } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
 import { ExternalReportResultCodeEnum } from './enums';
 
 /**
@@ -32,4 +33,6 @@ export interface IExternalReportResult {
   WishFinishedTime: string
   /** 异常信息 */
   Exception: string
+  /** 下一个设备列表 */
+  NextEquipmentList: IEquipment[] | null
 }
