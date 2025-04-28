@@ -61,13 +61,13 @@
             <tbody>
               <tr>
                 <td>{{ localInfo.data.Material.Name }}</td>
-                <td>{{ localInfo.data.Material.Width }}x{{ localInfo.data.Material.Height }}</td>
+                <td>{{ localInfo.data.Material.OriginalWidth }}x{{ localInfo.data.Material.OriginalHeight }}</td>
                 <td class="m-num">
                   <span>{{ localInfo.data.Material.Number }}{{ localInfo.data.Unit }}</span>
                   <span>({{ +((localInfo.data.Material.Number / 500).toFixed(2)) }}令)</span>
                 </td>
                 <td>{{ localInfo.data.Material.Multiple }}</td>
-                <td>{{ localInfo.data.Material.OriginalWidth }}x{{ localInfo.data.Material.OriginalHeight }}</td>
+                <td>{{ localInfo.data.Material.Width }}x{{ localInfo.data.Material.Height }}</td>
                 <td>{{ getEnumNameByID(localInfo.data.MaterialSource, PlaceOrderMaterialSourceEnumList) }}</td>
               </tr>
             </tbody>

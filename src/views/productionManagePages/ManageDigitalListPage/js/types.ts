@@ -165,7 +165,7 @@ export interface IDigitalOrderPlatePrintInfo {
   Material: {
     /** 物料信息 物料名称 */
     Name: string
-    /** 宽 */
+    /** 宽 - 开料尺寸 */
     Width: number
     /** 高 */
     Height: number
@@ -173,7 +173,7 @@ export interface IDigitalOrderPlatePrintInfo {
     Number: number
     /** 开数 */
     Multiple: number
-    /** 开料尺寸 */
+    /** 领料尺寸mm */
     OriginalWidth: number
     OriginalHeight: number
   }
