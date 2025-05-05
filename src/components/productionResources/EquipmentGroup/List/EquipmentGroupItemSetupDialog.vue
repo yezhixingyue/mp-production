@@ -21,6 +21,7 @@
       <li>
         <span class="label star">额外功能：</span>
         <el-checkbox v-model="ruleForm.IsDigitalAutoDieCut" >数码自动模切机</el-checkbox>
+        <el-checkbox v-model="ruleForm.NoPlateMake" >过滤制版工序</el-checkbox>
       </li>
       <li>
         <span class="label">可选外协工厂：</span>
