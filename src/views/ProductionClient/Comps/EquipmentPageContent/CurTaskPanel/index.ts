@@ -1,3 +1,4 @@
+import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 import { INextWorkingProduction, ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
@@ -33,6 +34,11 @@ export const getTaskDisplayInfo = (TaskData: ITaskDetail, withTemplate = true) =
       temp.Unit = TaskData.Working.OrderInfo?.Unit || '';
       temp.SecondTitle = TaskData.Working.OrderInfo?.Size || '';
       temp.WorkingList = TaskData.Working.OrderInfo?.WorkingList || [];
+
+      if (TaskData.Working.TargetType === TargetTypeEnum.UnionChunk) {
+        temp.Unit = TaskData.Working.ChunkInfo?.Unit || '';
+      }
+
       break;
 
     case ReportModeEnum.block:

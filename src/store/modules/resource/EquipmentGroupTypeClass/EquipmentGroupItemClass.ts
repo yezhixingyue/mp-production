@@ -26,6 +26,9 @@ export class EquipmentGroupItemClass {
   /** 数码自动模切机 */
   IsDigitalAutoDieCut = false
 
+  /** 过滤制版工序 */
+  NoPlateMake = false
+
   MinWidth: number|'' = ''
 
   MaxWidth: number|'' = ''

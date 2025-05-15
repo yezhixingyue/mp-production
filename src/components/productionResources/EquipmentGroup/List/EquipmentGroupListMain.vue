@@ -10,6 +10,11 @@
           {{scope.row.IsDigitalAutoDieCut ? '是' : ''}}
         </template>
       </mp-table-column>
+      <mp-table-column width="120px" prop="Feature" label="过滤制版工序">
+        <template #default="scope:any">
+          {{scope.row.NoPlateMake ? '是' : ''}}
+        </template>
+      </mp-table-column>
       <mp-table-column min-width="170px" prop="Feature" label="可以外协工厂">
         <template #default="scope:any">
           {{formatListName(scope.row.FactoryIDS, props.EquipmentGroupData.SubcontractorFactoryList, { key: 'Name', value: 'ID' })}}
