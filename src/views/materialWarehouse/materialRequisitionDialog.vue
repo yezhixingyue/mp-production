@@ -128,13 +128,13 @@
                 <p style="margin-top:10px; line-height: 1.3em;">
                   <span style="min-width:70px; text-align: right;">开数：</span>
                   <span style="">
-                    {{ReceiptorName}}
+                    {{StoresRequisitionInfo?.SplitNumber}}
                   </span>
                 </p>
                 <p style="margin-top:10px; line-height: 1.3em;">
                   <span style="min-width:70px; text-align: right;">开料数量：</span>
                   <span style="">
-                    {{ReceiptorName}}
+                    {{StoresRequisitionInfo?.SplitCount}} 张
                   </span>
                 </p>
                 <p style="margin-top:10px; line-height: 1.3em;">
@@ -186,6 +186,8 @@ interface Props {
   operatorName:string
   operatorTime:string
   StoresRequisitionInfo:{
+    SplitNumber:number
+    SplitCount:number
     PlateCode:string
     Code:string
     ProductionLine:string
@@ -230,7 +232,10 @@ const print = ref({
 const printBtn:Ref = ref(null);
 const OperatorTime = computed(() => {
   const temp = new Date(props.operatorTime);
-  const str = `${temp.getFullYear()}年${temp.getMonth() + 1}月${temp.getDate()}日 ${temp.getHours()}:${temp.getMinutes()}`;
+  const Hours = temp.getHours();
+  const Minutes = temp.getMinutes();
+  const str = `${temp.getFullYear()}年${temp.getMonth() + 1}月${temp.getDate()}日
+  ${Hours <= 9 ? `0${Hours}` : Hours}:${Minutes <= 9 ? `0${Minutes}` : Minutes}`;
   return str;
 });
 const outPrimaryClick = () => {
