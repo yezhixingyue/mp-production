@@ -1,5 +1,5 @@
 <template>
-  <div class="material-classify-record-page">
+  <div class="stores-requisition-page">
     <header>
       <div class="top-main flex-box">
         <!-- :level2Options='MaterialTypeList' -->
@@ -60,7 +60,7 @@
     <main>
       <el-table border fit stripe
         :data="storesRequisition.List" style="width: 100%">
-        <el-table-column show-overflow-tooltip prop="Code" label="领料编号" min-width="143">
+        <el-table-column show-overflow-tooltip prop="Code" label="领料编号" min-width="133">
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="PlateCode" label="大版ID" min-width="90">
         </el-table-column>
@@ -68,28 +68,28 @@
         show-overflow-tooltip prop="SKU" label="SKU编码" min-width="146">
         </el-table-column>
         <el-table-column
-        show-overflow-tooltip prop="Material.ClassName" label="分类" min-width="103">
+        show-overflow-tooltip prop="Material.ClassName" label="分类" min-width="100">
         </el-table-column>
 
         <el-table-column
-        show-overflow-tooltip prop="Material.TypeName" label="类型" min-width="115"/>
+        show-overflow-tooltip prop="Material.TypeName" label="类型" min-width="110"/>
         <el-table-column
         show-overflow-tooltip prop="Material.MaterialName" label="物料" min-width="178"/>
         <el-table-column
-        show-overflow-tooltip prop="SizeName" label="尺寸规格" min-width="218">
+        show-overflow-tooltip prop="SizeName" label="尺寸规格" min-width="200">
         </el-table-column>
 
-        <el-table-column prop="Number" label="数量" min-width="100">
+        <el-table-column prop="Number" label="数量" min-width="90">
           <template #default="scope:any">
             {{scope.row.Number}}{{scope.row.Unit}}
           </template>
         </el-table-column>
         <el-table-column
-        show-overflow-tooltip prop="OperaterName" label="机器设备" min-width="285">
+        show-overflow-tooltip prop="OperaterName" label="机器设备" min-width="270">
           <template #default="scope:any">
-            {{scope.row.Equipment.ClassName}}
-            {{scope.row.Equipment.GroupName}}
-            <b>{{scope.row.Equipment.Name}}</b>
+            {{scope.row.ReceiveEquipment.ClassName}}
+            {{scope.row.ReceiveEquipment.GroupName}}
+            <b>{{scope.row.ReceiveEquipment.Name}}</b>
           </template>
         </el-table-column>
         <el-table-column
@@ -113,8 +113,9 @@
           </template>
         </el-table-column>
         <el-table-column
-        show-overflow-tooltip prop="CreateTime" label="操作" min-width="102">
+        show-overflow-tooltip prop="CreateTime" label="操作" min-width="163">
           <template #default="scope:any">
+            <mp-button v-if="localPermission?.Setup" type="primary" :disabled="!scope.row.Status" link @click="toOut(scope.row)">查看领料单</mp-button>
             <mp-button v-if="localPermission?.Setup" type="primary" :disabled="scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
             <!-- <el-button :disabled="scope.row.Status" type="primary" link @click="toOut(scope.row)">出库</el-button> -->
           </template>
@@ -293,7 +294,7 @@ export default {
 </script>
 <style lang='scss'>
 @import '@/assets/css/var.scss';
-.material-classify-record-page{
+.stores-requisition-page{
   display: flex;
   flex-direction: column;
   height: 100%;

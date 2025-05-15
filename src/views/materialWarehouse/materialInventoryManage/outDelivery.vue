@@ -186,7 +186,27 @@
       <!-- </MpCardContainer> -->
     </main>
     <!-- 出库确认 -->
-    <DialogContainerComp
+    <MaterialRequisitionDialog
+      :OutCodeSrc="OutCodeSrc"
+      :outVerify="Data.outVerify"
+      :primaryClick="outVerifyPrimaryClick"
+      :closeClick="() => Data.outVerify = false"
+      :OutCode="Data.outDeliveryForm.OutCode"
+      :Code="Data.checkedMaterial?.Code"
+      :AttributeDescribe="Data.checkedMaterial?.AttributeDescribe"
+      :SizeDescribe="Data.checkedMaterial?.SizeDescribe"
+      :AllOutNumber="getStorehouseAllOutNumber()"
+      :StockUnit="Data.checkedMaterial?.StockUnit"
+      :OutUnitNum="getOutUnitNum"
+      :outUnitName="outUnitName"
+      :MaterialRequisitionCodeSrc="MaterialRequisitionCodeSrc"
+      :ReceiptorName="getReceiptorName"
+      :StoresRequisitionInfo="StoresRequisitionInfo"
+      :StorehouseStockInfo="Data.StorehouseStockInfo"
+      :operatorName="operatorName"
+      :operatorTime="operatorTime"
+    ></MaterialRequisitionDialog>
+    <!-- <DialogContainerComp
     title="出库确认"
     :visible='Data.outVerify'
     :primaryClick="outVerifyPrimaryClick"
@@ -269,7 +289,7 @@
       </div>
       <el-button v-print="print" v-show="false" ref="printBtn">打印</el-button>
     </template>
-    </DialogContainerComp>
+    </DialogContainerComp> -->
     <SeeImageDialogComp
     title="仓库货位平面图"
     :visible='Data.SeeImageShow'
@@ -291,7 +311,7 @@
 <script lang='ts'>
 
 import OutDeliveryDialog from '@/components/materialInventoryManage/outDeliveryDialog.vue';
-import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
+// import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import {
   ref, Ref, reactive, onMounted, computed,
@@ -306,6 +326,9 @@ import { MaterialInfoType } from '@/assets/Types/common';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
 import type { IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
+import MaterialRequisitionDialog from '../materialRequisitionDialog.vue';
 
 interface MaterialGoodsPositionsType {
   PositionID: string,
@@ -416,7 +439,6 @@ interface DataType {
   allSelectTempMaterial:MaterialDataItemType | null,
   itemSelectTempMaterial:MaterialSelectsType | null,
   seePositionShow:boolean
-
   getGoodsPositionData:getGoodsPositionDataType
 }
 
@@ -427,17 +449,22 @@ export default {
     OneLevelSelect,
     ThreeCascaderComp,
     SeeImageDialogComp,
-    DialogContainerComp,
+    // DialogContainerComp,
     OutDeliveryDialog,
+    MaterialRequisitionDialog,
   },
   setup() {
     // 两位小数
     const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
-    const print = ref({
-      id: 'print',
-      preview: false,
-    });
-    const printBtn:Ref = ref(null);
+    // const print = ref({
+    //   id: 'print',
+    //   preview: false,
+    // });
+    // const printBtn:Ref = ref(null);
+    const userStore = useUserStore();
+    const { user } = storeToRefs(userStore);
+    const operatorName = ref('');
+    const operatorTime = ref('');
     const ThreeCascaderComp:Ref = ref(null);
     const StoresRequisitionInfo = ref<IList|null>(null);
     const MaterialRequisitionCodeSrc = ref('');
@@ -728,14 +755,15 @@ export default {
         }
       });
     }
-    function outVerifyPrimaryClick() {
+    function outVerifyPrimaryClick(print) {
       api.getStockOut(Data.outDeliveryForm).then(res => {
         if (res?.data?.Status === 1000) {
           Data.outVerify = false;
           const cb = () => {
             localStorage.setItem('getStoresRequisitionList', 'true');
             if (StoresRequisitionInfo.value) {
-              printBtn.value.ref.click();
+              print();
+              // printBtn.value.ref.click();
               setTimeout(() => {
                 window.close();
               }, 1000);
@@ -743,7 +771,8 @@ export default {
               Data.StorehouseStockInfo = [];
               GetGoodsAllocation(Data.checkedMaterial?.MaterialID);
               clearFrom();
-              printBtn.value.ref.click();
+              print();
+              // printBtn.value.ref.click();
             }
           };
           messageBox.successSingle('出库成功', cb, cb);
@@ -820,6 +849,8 @@ export default {
           getOutCode();
         }
         Data.outDeliveryForm.MaterialGoodsPositions = temp;
+        operatorName.value = user.value?.StaffName || '';
+        operatorTime.value = new Date().toString();
         // 设置出库货位及数量
         Data.outVerify = true;
       }
@@ -875,6 +906,8 @@ export default {
     });
 
     return {
+      operatorName,
+      operatorTime,
       formRules,
       outNumberRules,
       rules,
@@ -882,8 +915,8 @@ export default {
       MaterialRequisitionCodeSrc,
       StoresRequisitionInfo,
       SizeSelects,
-      print,
-      printBtn,
+      // print,
+      // printBtn,
       Data,
       SeeImg,
       ThreeCascaderComp,
