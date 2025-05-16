@@ -27,8 +27,11 @@ export interface IList {
   SizeName: string,
   Number: number,
   Unit: string,
-  Equipment: IEquipment,
+  ReceiveEquipment: IEquipment,
+  SplitEquipment: IEquipment,
   Status: number,
   CreateTime: string,
   ProductionLine:string
+  SplitNumber:string
+  SplitCount:string
 }

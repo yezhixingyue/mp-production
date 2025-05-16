@@ -115,12 +115,36 @@
         <el-table-column
         show-overflow-tooltip prop="CreateTime" label="操作" min-width="163">
           <template #default="scope:any">
-            <mp-button v-if="localPermission?.Setup" type="primary" :disabled="!scope.row.Status" link @click="toOut(scope.row)">查看领料单</mp-button>
+            <mp-button v-if="localPermission?.Setup" type="primary"
+              :disabled="!scope.row.Status" link @click="openMaterialRequisition(scope.row)">查看领料单</mp-button>
             <mp-button v-if="localPermission?.Setup" type="primary" :disabled="scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
             <!-- <el-button :disabled="scope.row.Status" type="primary" link @click="toOut(scope.row)">出库</el-button> -->
           </template>
         </el-table-column>
       </el-table>
+      <!-- 出库确认 -->
+      <!-- :OutCodeSrc="OutCodeSrc"
+        :StorehouseStockInfo="Data.StorehouseStockInfo"
+        :operatorName="operatorName"
+        :operatorTime="operatorTime"
+        :OutCode="Data.outDeliveryForm.OutCode"
+        :Code="Data.checkedMaterial?.Code"
+        :AttributeDescribe="Data.checkedMaterial?.AttributeDescribe"
+        :SizeDescribe="Data.checkedMaterial?.SizeDescribe"
+        :AllOutNumber="getStorehouseAllOutNumber()"
+        :StockUnit="Data.checkedMaterial?.StockUnit"
+        :OutUnitNum="getOutUnitNum"
+        :outUnitName="outUnitName"
+        :MaterialRequisitionCodeSrc="MaterialRequisitionCodeSrc"
+        :ReceiptorName="getReceiptorName" -->
+      <MaterialRequisitionDialog
+        class="material-requisition-dialog"
+        :isMaterialRequisition="true"
+        :outVerify="outVerify"
+        :primaryClick="outVerifyPrimaryClick"
+        :closeClick="() => outVerify = false"
+        :StoresRequisitionInfo="StoresRequisitionInfo"
+      ></MaterialRequisitionDialog>
     </main>
     <footer>
       <MpPagination
@@ -140,14 +164,16 @@ import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue
 import MpPagination from '@/components/common/MpPagination.vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import {
-  onMounted, computed, ComputedRef,
+  onMounted, computed, ComputedRef, ref,
 } from 'vue';
+import type { IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
 import { useRouter } from 'vue-router';
 import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
 import { useStoresRequisition } from '@/store/modules/storesRequisition';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 // import type { IMaterial, IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
 import { useUserStore } from '@/store/modules/user';
+import MaterialRequisitionDialog from './materialRequisitionDialog.vue';
 
 interface twoSelecValueType {
   level1Val:null|string|number,
@@ -180,6 +206,7 @@ export default {
     SearchInputComp,
     MpPagination,
     LineDateSelectorComp,
+    MaterialRequisitionDialog,
   },
   setup() {
     const userStore = useUserStore();
@@ -188,6 +215,8 @@ export default {
     const router = useRouter();
     const MaterialWarehouseStore = useMaterialWarehouseStore();
     const storesRequisition = useStoresRequisition();
+    const outVerify = ref(false);
+    const StoresRequisitionInfo = ref<IList|null>(null);
     // function setCondition4DataList([[key1, key2], value]) {
     //   if (key2) storesRequisition.getListData[key1][key2] = value;
     //   else storesRequisition.getListData[key1] = value;
@@ -248,6 +277,13 @@ export default {
         // Data.getListData.TypeID = level2Val;
       }
     }
+    function openMaterialRequisition(item) {
+      StoresRequisitionInfo.value = item;
+      outVerify.value = true;
+    }
+    function outVerifyPrimaryClick(print) {
+      print();
+    }
     function toOut(item) {
       const routeData = router.resolve({
         name: 'outDelivery',
@@ -275,6 +311,8 @@ export default {
       storesRequisition,
       StatesValue,
       StatesChange,
+      outVerify,
+      StoresRequisitionInfo,
       // setCondition4DataList,
       UserDefinedTimeIsActive,
       StatesList,
@@ -286,6 +324,8 @@ export default {
       clearCondition,
       MaterialWarehouseStore,
       format2MiddleLangTypeDateFunc2,
+      outVerifyPrimaryClick,
+      openMaterialRequisition,
       toOut,
     };
   },
@@ -400,6 +440,11 @@ export default {
         height: 100%;
         flex: 1;
       }
+    .material-requisition-dialog{
+      .el-dialog__body{
+        padding: 0;
+      }
+    }
   }
   >footer{
     background-color: #fff;

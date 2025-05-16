@@ -176,6 +176,10 @@ const api = {
     // POST /Api/Stock/CancelSMSWarn  关闭预警
     return request({ method: 'POST', url: `/Api/Stock/CancelSMSWarn?materialID=${materialID}` });
   },
+  getStockOutRequisition(requisitionID) {
+    // POST /Api/Stock/Out/Requisition  领料单的信息
+    return request({ method: 'GET', url: `/Api/Stock/Out/Requisition?requisitionID=${requisitionID}` });
+  },
   getStockWarnList(data) {
     // POST /ApiStockWarn/List  预警记录
     return request({ method: 'POST', url: '/Api/StockWarn/List', data });
