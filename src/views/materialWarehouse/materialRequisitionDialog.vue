@@ -187,14 +187,24 @@ import {
   computed, Ref, ref,
 } from 'vue';
 import type { IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
-import { useRouter } from 'vue-router';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
-import { useMaterialWarehouseStore } from '@/store/modules/materialWarehouse/materialWarehouse';
-import { useStoresRequisition } from '@/store/modules/storesRequisition';
-// import type { IMaterial, IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
-import { useUserStore } from '@/store/modules/user';
 import api from '@/api';
 
+interface GoodsPositionStockInfosType {
+  StorehouseID: string,
+  PositionName: string,
+  PositionID: string,
+  Number: number | string,
+  checked: boolean,
+  inputValue:string|number,
+  UpperDimension: string
+}
+interface StorehouseStockInfoType {
+  StorehouseID: string,
+  StorehouseName: string,
+  StorehouseImg: string,
+  GoodsPositionStockInfos: GoodsPositionStockInfosType[],
+}
 interface IGoodsPositionStockInfos {
 OutInNumber:number
 PositionName:string
@@ -237,7 +247,7 @@ interface Props {
   operatorName:string
   operatorTime:string
   StoresRequisitionInfo:IList|null,
-  StorehouseStockInfo: any
+  StorehouseStockInfo: StorehouseStockInfoType[]
 }
 const props = withDefaults(defineProps<Props>(), {
   isMaterialRequisition: false,
@@ -259,7 +269,6 @@ const props = withDefaults(defineProps<Props>(), {
   operatorName: '',
   operatorTime: '',
   StoresRequisitionInfo: null,
-  StorehouseStockInfo: [],
 });
 const print = ref({
   id: 'print',
