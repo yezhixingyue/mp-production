@@ -32,8 +32,8 @@ const api = {
   /** 生产下单相关数据接口
   ----------------------------------------------------- */
   /** GET /Api/ProductionLine/All  所有使用中的生产线 */
-  getProductionLineAll() {
-    return request({ method: 'GET', url: '/Api/ProductionLine/All' });
+  getProductionLineAll(data = { type: null, status: 1 }) { // data 部门管理设置拼版权限所用参数 原来是没有的
+    return request({ method: 'GET', url: `/Api/ProductionLine/All?type=${data.type}&status=${data.status}` });
   },
 
   // 工序 ------------------------ WorkingProcedure

@@ -4,7 +4,8 @@
       <p class="mp-common-title-wrap">{{title}}</p>
     </header>
     <main>
-      <Level1ManageComp :departmentList="departmentList" :departmentParentID="departmentParentID" :level1List='level1List' ref="oLevel1Comp"  />
+      <Level1ManageComp :departmentList="departmentList" :departmentParentID="departmentParentID" :level1List='level1List' ref="oLevel1Comp"
+      :ParentLineList="ParentLineList"/>
     </main>
     <footer>
       <el-button type="primary" size="small" @click="onSubmitClick">保存</el-button>
@@ -40,6 +41,9 @@ export default {
     level1List() { // 当前一级部门数据（不含子部门）
       return this.departmentList.filter((item) => item.ParentID === this.departmentParentID);
       // return this.isManageRoot ? this.allAreaTreeList.map(it => ({ ...it, children: null, canRemove: !it.children || it.children.length === 0 })) : [];
+    },
+    ParentLineList() { // 当前一级父级部门选中的生产线
+      return this.departmentList.find((item) => item.ID === this.departmentParentID)?.LineList;
     },
   },
   methods: {
