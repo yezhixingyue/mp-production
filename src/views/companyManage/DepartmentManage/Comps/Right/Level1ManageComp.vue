@@ -17,6 +17,8 @@
     :ParentLineList="ParentLineList"
     :SelectLineList="SelectLineList"
     :lineList="lineList"
+    :departmentParentID="departmentParentID"
+    :childLineIDs="childLineIDs"
     ></SettingAuthorizationDialog>
   </ul>
 </template>
@@ -60,6 +62,7 @@ export default {
       SettingAuthorizationVisible: false,
       SelectLineList: [],
       lineList: [],
+      childLineIDs: [],
       settingAuthorizationKey: '',
     };
   },
@@ -117,6 +120,12 @@ export default {
     SettingAuthorizationClick(it) {
       this.SelectLineList = [...it.LineList];
       this.settingAuthorizationKey = it.ID || it.key;
+      const childDepartment = this.departmentList.filter(departmen => departmen.ParentID === it.ID);
+      console.log(childDepartment);
+      this.childLineIDs = [];
+      childDepartment.forEach(child => {
+        this.childLineIDs.push(...child.LineList);
+      });
       this.SettingAuthorizationVisible = true;
     },
     onPrimaryClick(lineIDs) {
