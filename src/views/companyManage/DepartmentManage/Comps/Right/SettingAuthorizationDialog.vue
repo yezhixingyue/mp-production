@@ -16,8 +16,7 @@
       <el-checkbox :disabled="checkedALLDisabled" v-model="checkedALL" @change="checkedALLChange">所有生产线（包含新增生产线）</el-checkbox>
       <el-checkbox-group v-model="checkList">
         <el-checkbox v-for="line in props.lineList" :key="line.ID" :label="line.ID"
-        :disabled="checkedALL || !!props.childLineIDs.find(it => it === line.ID)
-        || (props.ParentLineList.length ? !props.ParentLineList.find(it => it === line.ID) : false)">
+        :disabled="checkedALL || getCheckbox(line)">
           {{line.Name}}
         </el-checkbox>
       </el-checkbox-group>
@@ -42,9 +41,6 @@ interface IProps {
   childLineIDs: string[],
   departmentParentID: number
 }
-// const props = withDefaults(defineProps<IProps>(), {
-//   visible: false,
-// });
 const props = defineProps<IProps>();
 
 const emit = defineEmits(['update:visible', 'PrimaryClick']);
@@ -53,11 +49,12 @@ const checkAllValue = '00000000-0000-0000-0000-000000000000';
 const checkList = ref<(string|number)[]>([]);
 const checkedALL = ref(false);
 const checkedALLDisabled = computed(() => {
+  if (props.childLineIDs.find(it => it === checkAllValue)) return true;
   const _ParentLineList = props.ParentLineList.filter(it => it !== checkAllValue);
   if (props.ParentLineList.length !== _ParentLineList.length) { // 说明父级部门全选了
     return false;
   }
-  if (props.departmentParentID === -1) { // 说明父级部门全选了
+  if (props.departmentParentID === -1) {
     return false;
   }
   return true;
@@ -72,6 +69,16 @@ const onPrimaryClick = () => {
   }
   emit('PrimaryClick', checkList.value);
 };
+const getCheckbox = (line) => {
+  // !!props.childLineIDs.find(it => it === line.ID)
+  //       || (props.ParentLineList.length ? !props.ParentLineList.find(it => it === line.ID) : false)
+  if (props.departmentParentID === -1) {
+    return props.childLineIDs.find(it => it === line.ID);
+  }
+  return !!props.childLineIDs.find(it => it === line.ID)
+        || (!props.ParentLineList.find(it => it === checkAllValue)
+          ? !props.ParentLineList.find(it => it === line.ID) : false);
+};
 const onClosed = () => {
   checkList.value = [];
   checkedALL.value = false;
@@ -85,17 +92,17 @@ const checkedALLChange = (e) => {
   }
 };
 const open = () => {
-  if ((props.departmentParentID === -1 || props.ParentLineList.find(it => it === checkAllValue))
-  && props.SelectLineList.find(it => it === checkAllValue)) {
-    checkedALL.value = true;
-    checkedALLChange(true);
-  }
   const _SelectLineList = props.SelectLineList.filter(it => {
     const isNoDel = props.lineList.find(line => line.ID === it); // 生产线没有被删除
     // const isNoDisabled = props.ParentLineList.length === 0 || props.ParentLineList.find(line => it === line);
     return isNoDel;
   });
   checkList.value = _SelectLineList;
+  if ((props.departmentParentID === -1 || props.ParentLineList.find(it => it === checkAllValue))
+  && props.SelectLineList.find(it => it === checkAllValue)) {
+    checkedALL.value = true;
+    checkedALLChange(true);
+  }
 };
 </script>
 <style lang='scss'>
