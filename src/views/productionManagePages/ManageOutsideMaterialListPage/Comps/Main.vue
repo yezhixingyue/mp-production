@@ -31,7 +31,8 @@
         <template #default="scope:any">
           <mp-button type="primary" class="ft-12" v-if="localPermission?.Receive && scope.row.Status === ExternalMaterialStatusEnum.WaitingDelivery"
            link @click="onDeliveryClick(scope.row)">到货</mp-button>
-          <mp-button type="primary" class="ft-12" v-if="localPermission?.Print && scope.row.Status !== ExternalMaterialStatusEnum.WaitingDelivery"
+          <mp-button type="primary" class="ft-12"
+           v-if="localPermission?.Print && [ExternalMaterialStatusEnum.HaveDelivery, ExternalMaterialStatusEnum.Received].includes(scope.row.Status)"
            link @click="onPrintClick(scope.row)">打印</mp-button>
         </template>
       </mp-table-column>

@@ -11,4 +11,6 @@ export enum ExternalMaterialStatusEnum {
   HaveDelivery = 1,
   /** 已交接 */
   Received = 2,
+  /** 已取消 */
+  Canceled = 255,
 }

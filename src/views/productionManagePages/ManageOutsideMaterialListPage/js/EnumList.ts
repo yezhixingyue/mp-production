@@ -15,6 +15,10 @@ export const ExternalMaterialStatusEnumObj = {
     ID: ExternalMaterialStatusEnum.Received,
     Name: '已交接',
   },
+  Canceled: {
+    ID: ExternalMaterialStatusEnum.Canceled,
+    Name: '已取消',
+  },
 };
 
 /** 外来物料到货状态枚举列表 */
