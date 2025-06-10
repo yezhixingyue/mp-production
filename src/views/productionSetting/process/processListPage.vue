@@ -56,7 +56,8 @@
     <main>
       <el-table fit stripe :data="Data.processList" border
        style="width: 100%">
-        <el-table-column show-overflow-tooltip prop="Name" label="工序名称" min-width="160" />
+        <el-table-column show-overflow-tooltip prop="Name" label="工序名称" min-width="150" />
+        <el-table-column show-overflow-tooltip prop="NameCode" label="识别码" width="62" />
         <el-table-column show-overflow-tooltip prop="ReportMode" label="报工方式" width="95">
           <template #default="scope: any">
             <span>{{ getEnumNameByID(scope.row.ReportMode, ReportModeEnumList) }}</span>
@@ -72,7 +73,7 @@
             <span>{{ scope.row.AllowUnionImposition ? '允许' : '' }}</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="220">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="设备/工厂组" min-width="200">
           <template #default="scope: any">
             {{getEquipmentGroupsNames(scope.row.EquipmentGroups)}}
           </template>
@@ -82,28 +83,32 @@
             {{ scope.row.AllowBatchReport ? '允许' : '不允许' }}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="160">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="150">
           <template #default="scope: any">
             {{getInfoName(scope.row.Relations, 0)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="160">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="150">
           <template #default="scope: any">
             {{getInfoName(scope.row.Relations,1)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="160">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="150">
           <template #default="scope: any">
             {{getMaterialName(scope.row.Relations)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="大版模板" width="160">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="大版模板" width="150">
           <template #default="scope: any">
             {{getTemplateName(scope.row.TemplateID)}}
           </template>
-
         </el-table-column>
-        <el-table-column prop="name" label="操作" width="200" v-if='localPermission?.Setup'>
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="加工方向限制" width="110">
+          <template #default="scope: any">
+            {{scope.row.IsDirectionLimit ? '限制' : ''}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="操作" width="190" v-if='localPermission?.Setup'>
           <template #default="scope: any">
             <template v-if="!scope.row.IsSpecialColor">
               <mp-button type="info" link @click="ToProcess(scope.row)">
@@ -380,6 +385,10 @@ export default {
       // &.el-table--border:after, .el-table__inner-wrapper::before{
       //   width: 0;
       // }
+
+      .cell {
+        padding: 0 4px;
+      }
     }
   }
   >footer{

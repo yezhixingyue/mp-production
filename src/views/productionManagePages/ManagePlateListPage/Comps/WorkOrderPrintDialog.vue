@@ -6,13 +6,15 @@
         <div class="code">
           <img :src="localInfo.codeUrl" v-show="localInfo.codeUrl" alt="">
           <p>{{ localInfo.data.Code }}</p>
+
+          <span v-if="localInfo.data.FastDepartureTime" class="v-time">{{getFastDepartureTime(localInfo.data.FastDepartureTime)}}</span>
         </div>
       </header>
 
       <main>
         <p class="line">
           <span class="n"> 生 产 线：{{ localInfo.data.ProductionLine.Name }}</span>
-          <span style="margin-left: 20px;" v-if="localInfo.data.FastDepartureTime">{{getFastDepartureTime(localInfo.data.FastDepartureTime)}}</span>
+          <span style="margin-left: 20px;" v-if="localInfo.data.FastDepartureTime">最早发货时间：{{getFastDepartureTime(localInfo.data.FastDepartureTime)}}</span>
         </p>
 
         <!-- 版头字 -->
@@ -175,7 +177,7 @@ const getFastDepartureTime = (time: string) => {
     if (result?.length === 4) {
       const [, m, d, t] = result;
 
-      return `最早发货时间：${m}月${d}日${t}`;
+      return `${m}月${d}日 ${t}`;
     }
   }
 

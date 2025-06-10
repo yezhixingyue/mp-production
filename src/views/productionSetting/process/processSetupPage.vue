@@ -12,6 +12,9 @@
               <el-form-item :label="`工序名称：`" class="form-item-required">
                 <el-input v-model.trim="Data.processDataFrom.Name" placeholder="请输入工序名称" style="width:270px" maxlength="15"></el-input>
               </el-form-item>
+              <el-form-item :label="`识别码：`">
+                <el-input v-model.trim="Data.processDataFrom.NameCode" placeholder="请输入工序识别码,仅允许一位大写英语字母" style="width:270px" maxlength="1"></el-input>
+              </el-form-item>
               <el-form-item :label="`报工方式：`" class="form-item-required">
                 <el-radio-group v-model="Data.processDataFrom.ReportMode">
                   <el-radio
@@ -118,6 +121,18 @@
               </ul>
               <p class="title b">可选物料资源包：<mp-button type="primary" link @click="materialResourceShow = true">选择物料资源包</mp-button></p>
               <div class="info">{{showInfoMaterial.join('、')}}</div>
+
+              <p class="title b">加工方向限制：
+                <el-checkbox v-model="Data.processDataFrom.IsDirectionLimit" label="限制"
+                 style="position: relative;top: -2px;margin-left: 2px;line-height: 20px;vertical-align: top; height: 20px;" />
+              </p>
+              <div class="direction-limit-remark">
+                <span>说明：</span>
+                <div>
+                  <span>勾选则限制，不勾选则不限，加工设备是否对文件的设计和审稿输出方向有明确</span>
+                  <span>的要求，例如压痕、压点线、折页等。</span>
+                </div>
+              </div>
             </el-form>
           </div>
           <div class="line"></div>
@@ -255,6 +270,8 @@ interface processDataFromType{
   EquipmentGroups: IEquipmentGroupsType[],
   Relations: IRelationsType[],
   AllowUnionImposition: boolean,
+  IsDirectionLimit: boolean
+  NameCode: string
 }
 
 interface DataType {
@@ -282,6 +299,8 @@ const Data:DataType = reactive({
     Relations: [],
     /** 是否合拼 */
     AllowUnionImposition: false,
+    IsDirectionLimit: false,
+    NameCode: '',
   },
 });
 
@@ -458,6 +477,9 @@ const saveProcess = () => {
   if (!Data.processDataFrom.Name) {
     // 弹框提醒
     messageBox.failSingleError('保存失败', '请输入工序名称', () => null, () => null);
+  } else if (Data.processDataFrom.NameCode && !/^[A-Z]$/.test(Data.processDataFrom.NameCode)) {
+    // 弹框提醒
+    messageBox.failSingleError('保存失败', '工序识别码不正确，仅允许一位大写英文字母', () => null, () => null);
   } else if (Data.processDataFrom.Type === WorkingTypeEnum.platemaking && Data.processDataFrom.isRestrict
    && !Data.processDataFrom.MaxProduceNumber && Data.processDataFrom.MaxProduceNumber !== 0) {
     // 弹框提醒
@@ -753,6 +775,19 @@ export default {
     }
     .el-button + .el-button{
       margin-left: 30px;
+    }
+  }
+
+  .direction-limit-remark {
+    display: grid;
+    padding-left: 16px;
+    grid-template-columns: 36px 1fr;
+    color: #989898;
+    margin-top: -6px;
+
+    > div {
+      display: flex;
+      flex-direction: column;
     }
   }
 }

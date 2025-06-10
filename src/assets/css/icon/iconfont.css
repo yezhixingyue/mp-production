@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3547397 */
-  src: url('iconfont.woff2?t=1728958619134') format('woff2'),
-       url('iconfont.woff?t=1728958619134') format('woff'),
-       url('iconfont.ttf?t=1728958619134') format('truetype');
+  src: url('iconfont.woff2?t=1749007754071') format('woff2'),
+       url('iconfont.woff?t=1749007754071') format('woff'),
+       url('iconfont.ttf?t=1749007754071') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-daoru:before {
+  content: "\e616";
+}
+
+.icon-shezhipinbanquanxian1:before {
+  content: "\e68a";
 }
 
 .icon-pc:before {

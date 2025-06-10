@@ -95,7 +95,6 @@ export class ManageListClass {
     const options: ISwitchOptions = {
       showDate: false,
       Status: ExternalTaskStatusEnum.WaitFactoryReceive,
-      DateType: '',
       DateTitle: '时间筛选',
       showStatusFilter: false,
     };
@@ -118,8 +117,7 @@ export class ManageListClass {
       case 'all': // 全部
         options.showDate = true;
         options.Status = '';
-        options.DateType = 'CreateTime';
-        options.DateTitle = '创建时间';
+        options.DateTitle = '时间筛选';
         options.showStatusFilter = true;
         break;
 

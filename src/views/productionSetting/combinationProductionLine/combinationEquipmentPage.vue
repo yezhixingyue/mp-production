@@ -64,13 +64,13 @@ const PlateMakingEquipmentSetupData = computed<IPlateMakingEquipmentSetupData | 
   return null;
 });
 
-const ToPutOutPage = (item, type: EquipmentSetupType = 'default') => {
+const ToPutOutPage = (item, type: EquipmentSetupType, EquipmentList) => {
   const Name = type === 'default' ? curLineWorkName.value : PlateMakingEquipmentSetupData.value?.WorkName || '';
   const ID = type === 'default' ? processInfo.value?.WorkID || '' : PlateMakingEquipmentSetupData.value?.WorkID || '';
   const Work = { ID, Name };
   router.push({
     name: 'combinationPutOut',
-    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work), lineName: curLineName.value },
+    params: { LineEquipment: JSON.stringify(item), Work: JSON.stringify(Work), lineName: curLineName.value, EquipmentList: JSON.stringify(EquipmentList) },
   });
 };
 const TocCpacityPage = (item, type: EquipmentSetupType = 'default') => {

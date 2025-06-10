@@ -51,11 +51,11 @@ const handleEquipmentSubmit = (params: ILineEquipmentSaveParams, callback: () =>
   PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.handleEquipmentSubmit(params, cb);
 };
 
-const ToPutOutPage = (item: EquipmentListType) => {
+const ToPutOutPage = (item: EquipmentListType, EquipmentList) => {
   if (!item.LineEquipmentID) return;
   router.push({
     name: 'plateMakingGroupEquipmentPutOut',
-    params: { LineEquipment: JSON.stringify(item) },
+    params: { LineEquipment: JSON.stringify(item), EquipmentList: JSON.stringify(EquipmentList) },
   });
 };
 

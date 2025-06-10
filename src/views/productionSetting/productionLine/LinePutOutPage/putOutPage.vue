@@ -4,8 +4,10 @@
     :BreadcrumbList="BreadcrumbList"
     :list="LinePutOutPageData.list"
     :PropertyList="LinePutOutPageData.PropertyList"
+    :EquipmentData="LinePutOutPageData.EquipmentData"
     @remove="remove"
     @save="ToSetup"
+    @imported="list => LinePutOutPageData?.handleImported(list)"
   />
 </template>
 
@@ -48,7 +50,13 @@ const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>
 onMounted(() => {
   const workString = route.params.Work as string;
   const curWork: { ID: string, Name: string } | null = workString ? JSON.parse(workString) : null;
-  LinePutOutPageData.value?.getInitData(curWork, route.params.lineName as string);
+
+  const data = {
+    EquipmentList: route.params.EquipmentList ? JSON.parse(route.params.EquipmentList as string) : [],
+    curEquipID: route.params.LineEquipment ? JSON.parse(route.params.LineEquipment as string)?.LineEquipmentID || null : null,
+  };
+
+  LinePutOutPageData.value?.getInitData(curWork, route.params.lineName as string, data);
 });
 
 </script>
