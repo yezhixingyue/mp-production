@@ -1,8 +1,8 @@
 interface AreaList {
   XCoordinate: number|null|'',
   YCoordinate: number|null|'',
-  Width: number|null|'',
-  Height: number|null|'',
+  Width: number,
+  Height: number,
 }
 interface ModeItemList {
   XCoordinate: number|null|'',
@@ -31,6 +31,8 @@ interface ITemplateSizeAttribute{
   ModeItemList: ModeItemList[],
   MaterialWidth:number | null,
   MaterialHeight:number | null,
+  MaxMaterialWidth:number | null,
+  MaxMaterialHeight:number | null,
 }
 interface ActualSizeAttribute {
   BleedTop: number|null|'',

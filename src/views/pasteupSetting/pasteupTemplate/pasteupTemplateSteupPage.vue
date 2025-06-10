@@ -6,7 +6,7 @@
     <main>
       <el-scrollbar>
       <p class="title">{{Data.addPasteupTemplateFrom.ID?'编辑' :'添加'}}尺寸</p>
-      <el-form :model="Data.addPasteupTemplateFrom" label-width="100px">
+      <el-form :model="Data.addPasteupTemplateFrom" label-width="122px">
         <el-form-item :label="`名称：`" class="form-item-required template-name">
           <el-input v-model="Data.addPasteupTemplateFrom.Name" maxlength="30" show-word-limit placeholder="请输入"></el-input>
         </el-form-item>
@@ -129,13 +129,25 @@
               </ul>
             </p>
           </el-form-item>
-          <el-form-item :label="`开料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
-            <span>宽：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
-               v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
-            <span>高：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
-               v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
+          <el-form-item :label="`最小开料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
+            <div>
+              <span>宽：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                 v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialWidth"/> mm</span>
+              <span>高：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                 v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaterialHeight"/> mm</span>
+            </div>
+            <p class="is-gray">说明：使用最小尺寸匹配物料规格计算开数</p>
           </el-form-item>
-          <el-form-item :label="`常规版数：`" class="paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
+          <el-form-item :label="`最大开料尺寸：`" class="form-item-required paper-size" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
+            <div>
+              <span>宽：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                 v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaxMaterialWidth"/> mm</span>
+              <span>高：<el-input oninput="value=value.replace(/^([0-9-]\d*\.?\d{0,2})?.*$/,'$1')"
+                 v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.MaxMaterialHeight"/> mm</span>
+            </div>
+            <p class="is-gray">说明：领料开数为1时任意边大于最大尺寸则会触发分切工序</p>
+          </el-form-item>
+          <el-form-item :label="`常规版数：`" v-if="Data.addPasteupTemplateFrom.TemplateSizeAttribute">
             <el-input style="width: 400px;" v-model="Data.addPasteupTemplateFrom.TemplateSizeAttribute.GeneralNumber"
             placeholder="多个常规版数之间请用逗号隔开"/>
           </el-form-item>
@@ -289,6 +301,8 @@ const Data: DataType = reactive({
       ],
       MaterialWidth: null,
       MaterialHeight: null,
+      MaxMaterialWidth: null,
+      MaxMaterialHeight: null,
     },
     ActualSizeAttribute: {
       BleedTop: null,
@@ -383,19 +397,48 @@ function verification() {
         return false;
       }
       if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialWidth)) {
-        messageBox.failSingleError('保存失败', '请输入用料尺寸(宽)', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入最小开料尺寸(宽)', () => null, () => null);
         return false;
       }
       if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialWidth) < 0) {
-        messageBox.failSingleError('保存失败', '请输入正整数用料尺寸(宽)', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入正整数最小开料尺寸(宽)', () => null, () => null);
         return false;
       }
       if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight)) {
-        messageBox.failSingleError('保存失败', '请输入用料尺寸(高)', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入最小开料尺寸(高)', () => null, () => null);
         return false;
       }
       if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight) < 0) {
-        messageBox.failSingleError('保存失败', '请输入正整数用料尺寸(高)', () => null, () => null);
+        messageBox.failSingleError('保存失败', '请输入正整数最小开料尺寸(高)', () => null, () => null);
+        return false;
+      }
+      if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialWidth)) {
+        messageBox.failSingleError('保存失败', '请输入最大开料尺寸(宽)', () => null, () => null);
+        return false;
+      }
+      if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialWidth) < 0) {
+        messageBox.failSingleError('保存失败', '请输入正整数最大开料尺寸(宽)', () => null, () => null);
+        return false;
+      }
+      if (!Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialHeight)) {
+        messageBox.failSingleError('保存失败', '请输入最大开料尺寸(高)', () => null, () => null);
+        return false;
+      }
+      if (Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialHeight) < 0) {
+        messageBox.failSingleError('保存失败', '请输入正整数最大开料尺寸(高)', () => null, () => null);
+        return false;
+      }
+      const minWidth = Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialWidth);
+      const minHeight = Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight);
+      const MaxWidth = Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialWidth);
+      const MaxHeight = Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialHeight);
+      if ((minWidth > MaxWidth) || (minHeight > MaxHeight)) {
+        messageBox.failSingleError('保存失败', '最大开料尺寸不能小于最小开料尺寸', () => null, () => null);
+        return false;
+      }
+      const { AreaList } = Data.addPasteupTemplateFrom.TemplateSizeAttribute;
+      if (AreaList.find(it => (minWidth < it.Width) || (minHeight < it.Height))) {
+        messageBox.failSingleError('保存失败', '最小开料尺寸不能小于版芯尺寸', () => null, () => null);
         return false;
       }
       if (verificationGeneralNumber()) {
@@ -574,6 +617,8 @@ onMounted(() => {
 
       MaterialWidth: null,
       MaterialHeight: null,
+      MaxMaterialWidth: null,
+      MaxMaterialHeight: null,
     };
   }
   if (!temp.ActualSizeAttribute) {
@@ -802,19 +847,30 @@ export default {
         }
       }
       .paper-size{
+        margin-bottom: 14px;
+        &+.paper-size{
+          margin-bottom: 18px;
+        }
         .el-form-item__content{
-          >span{
+          display: inline-block;
+          >div{
             display: flex;
-            justify-content: left;
-            align-items: center;
-            margin-right: 20px;
-            .el-input{
-              margin-right: 4px;
-              width: 70px;
-              input{
-                text-align: left;
+            >span{
+              display: flex;
+              justify-content: left;
+              align-items: center;
+              margin-right: 20px;
+              .el-input{
+                margin-right: 4px;
+                width: 70px;
+                input{
+                  text-align: left;
+                }
               }
             }
+          }
+          >p{
+            line-height: 18px;
           }
         }
       }
