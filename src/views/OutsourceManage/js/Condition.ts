@@ -61,10 +61,10 @@ export class Condition {
     }
 
     // 筛选结果
-    const temp: Partial<Condition> & { FinishTime?: Condition['CreateTime'] } = CommonClassType.filter(this);
+    const temp: Partial<Condition> & { WishFinishTime?: Condition['CreateTime'] } = CommonClassType.filter(this);
 
     if (this._options.showDate && this.DateTypeRadio === ExternalTaskDateTypeRadioEnum.ExpectedFinish) {
-      temp.FinishTime = temp.CreateTime;
+      temp.WishFinishTime = temp.CreateTime;
       delete temp.CreateTime;
     }
 

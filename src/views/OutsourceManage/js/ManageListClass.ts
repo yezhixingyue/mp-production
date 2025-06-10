@@ -244,7 +244,7 @@ export class ManageListClass {
   private async _getLineList() { // 获取生产线列表数据
     const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsShowWorkingProcedure: true }).catch(() => null);
     if (resp?.data?.isSuccess) {
-      this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.Status === LineStatusEnum.usable)].map(it => ({
+      this.LineList = (resp.data.Data as IProductionLineSet[]).filter(it => it.Status === LineStatusEnum.usable).map(it => ({
         ID: it.ID,
         Name: it.Name,
         children: it.WorkingProcedures,
