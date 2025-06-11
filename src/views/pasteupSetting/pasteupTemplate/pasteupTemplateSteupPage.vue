@@ -432,16 +432,23 @@ function verification() {
       const minHeight = Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaterialHeight);
       const MaxWidth = Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialWidth);
       const MaxHeight = Number(Data.addPasteupTemplateFrom.TemplateSizeAttribute?.MaxMaterialHeight);
-      if ((minWidth > MaxWidth) || (minHeight > MaxHeight)) {
+
+      const AreaList = Data.addPasteupTemplateFrom.TemplateSizeAttribute.AreaList[0];
+      const MaterialShortSide = minWidth < minHeight ? minWidth : minHeight; // 开料尺寸短边
+      const MaterialLongSide = minWidth > minHeight ? minWidth : minHeight; // 开料尺寸长边
+
+      const AreaShortSide = AreaList.Width < AreaList.Height ? AreaList.Width : AreaList.Height; // 版芯短边
+      const AreaLongSide = AreaList.Width > AreaList.Height ? AreaList.Width : AreaList.Height; // 版芯长边
+
+      const MaxMaterialShortSide = MaxWidth < MaxHeight ? MaxWidth : MaxHeight; // 最大开料尺寸短边
+      const MaxMaterialLongSide = MaxWidth > MaxHeight ? MaxWidth : MaxHeight; // 最大开料尺寸长边
+
+      if ((MaxMaterialShortSide < MaterialShortSide) || (MaxMaterialLongSide < MaterialLongSide)) {
         messageBox.failSingleError('保存失败', '最大开料尺寸不能小于最小开料尺寸', () => null, () => null);
         return false;
       }
-      const AreaList = Data.addPasteupTemplateFrom.TemplateSizeAttribute.AreaList[0];
-      const MaterialShortSide = minWidth < minHeight ? minWidth : minHeight; // 开料尺寸短边
-      const AreaShortSide = AreaList.Width < AreaList.Height ? AreaList.Width : AreaList.Height; // 版芯短边
-      const MaterialLongSide = minWidth < minHeight ? minWidth : minHeight; // 开料尺寸长边
-      const AreaLongSide = AreaList.Width < AreaList.Height ? AreaList.Width : AreaList.Height; // 版芯长边
-      if (MaterialShortSide < AreaShortSide || MaterialLongSide < AreaLongSide) {
+
+      if ((MaterialShortSide < AreaShortSide) || (MaterialLongSide < AreaLongSide)) {
         messageBox.failSingleError('保存失败', '最小开料尺寸不能小于版芯尺寸', () => null, () => null);
         return false;
       }
