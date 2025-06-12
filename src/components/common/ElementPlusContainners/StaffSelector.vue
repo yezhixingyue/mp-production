@@ -4,12 +4,9 @@
     <el-select
       v-model="value"
       filterable
-      remote
       reserve-keyword
       placeholder="请输入姓名"
       remote-show-suffix
-      :remote-method="remoteMethod"
-      :loading="loading"
       class="mp-select local"
     >
       <el-option
@@ -26,7 +23,7 @@
 <script setup lang='ts'>
 import api from '@/api';
 import { IStaff } from '@/views/companyManage/StaffManage/js/types';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const props = defineProps<{
   modelValue: string
@@ -50,27 +47,23 @@ const loading = ref(false);
 
 const options = ref<Pick<IStaff, 'StaffID' | 'StaffName'>[]>([{ StaffID: '', StaffName: '不限' }]);
 
-const remoteMethod = async (query: string) => {
-  if (query) {
-    loading.value = true;
+const remoteMethod = async () => {
+  loading.value = true;
 
-    const temp = {
-      FieldType: 1,
-      Page: 1,
-      PageSize: 10,
-      KeyWords: query,
-    };
-    const resp = await api.getStaffList(temp, false).catch(() => null);
+  const resp = await api.getStaffSelect().catch(() => null);
 
-    loading.value = false;
+  loading.value = false;
 
-    if (resp?.data?.isSuccess) {
-      options.value = [{ StaffID: '', StaffName: '不限' }, ...resp.data.Data];
-    } else {
-      options.value = [{ StaffID: '', StaffName: '不限' }];
-    }
+  if (resp?.data?.isSuccess) {
+    options.value = [{ StaffID: '', StaffName: '不限' }, ...resp.data.Data];
+  } else {
+    options.value = [{ StaffID: '', StaffName: '不限' }];
   }
 };
+
+onMounted(() => {
+  remoteMethod();
+});
 </script>
 
 <style scoped lang='scss'>

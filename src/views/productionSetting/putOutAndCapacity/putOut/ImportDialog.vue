@@ -102,7 +102,7 @@ const submit = () => {
   const t = localEquipmentList.value.find(it => it.LineEquipmentID === oldLineEquipmentID);
   if (!t || !newLineEquipmentID) return;
 
-  MpMessage.warn('导入将会覆盖当前数据，确定导入吗?', `选中机台: [ ${t.Name} ]`, () => {
+  MpMessage.warn('保存后将覆盖当前机台申放数据', '请确定是否覆盖', () => {
     fetch(oldLineEquipmentID, newLineEquipmentID);
   });
 };
