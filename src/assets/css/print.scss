@@ -468,6 +468,17 @@
       padding-top: 8mm;
     }
 
+     .code {
+      padding-right: 2.8em;
+
+      .v-time {
+        writing-mode: sideways-lr;
+        font-size: 1.5em;
+        position: absolute;
+        top: 0;
+        right: -0.1em;
+      }
+    }
   }
 
   > main {

@@ -4,11 +4,15 @@
       <MpBreadcrumb :list="props.BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="onSaveClick(null)">+ 添加条件</mp-button>
+        <mp-button class="blue" v-if="EquipmentData" @click="onImportClick" :disabled="EquipmentData.EquipmentList.length <= 1">
+          <i class="iconfont icon-daoru"></i> 导入条件</mp-button>
         <span class="tips-box"><el-icon><WarningFilled /></el-icon> 匹配一条作为申放设置</span>
       </div>
     </header>
     <main>
       <ListTable :tableList="localTableList" @rowRemove="onRemoveClick" @rowSave="onSaveClick" />
+
+      <ImportDialog v-model:visible="visible" v-if="EquipmentData" :EquipmentData="EquipmentData" :PropertyList="PropertyList" @success="handleImportSuccess" />
     </main>
     <footer>
       <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
@@ -20,19 +24,22 @@
 import { getGoBackFun } from '@/router';
 import { IMpBreadcrumbItem } from '@/assets/Types/common';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { TransformConstraintTableItemType, transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import ListTable from './ListTable.vue';
 import { PutOutConditionItemClass } from '../js/PutOutConditionItemClass';
+import ImportDialog from './ImportDialog.vue';
+import { EquipmentListType } from '../js/types';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
   list: PutOutConditionItemClass[],
-  PropertyList: PropertyListItemType[]
+  PropertyList: PropertyListItemType[],
+  EquipmentData?: { curEquipID: null | string; EquipmentList: EquipmentListType[] } | null
 }>();
 
-const emit = defineEmits(['save', 'remove']);
+const emit = defineEmits(['save', 'remove', 'imported']);
 
 const localTableList = computed(() => transformConstraintTableList({
   tableList: props.list,
@@ -46,10 +53,21 @@ const onSaveClick = (it: TransformConstraintTableItemType<PutOutConditionItemCla
 const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemClass> | null) => {
   emit('remove', it);
 };
+
+const visible = ref(false);
+const onImportClick = () => {
+  visible.value = true;
+};
+
+const handleImportSuccess = (newConditionList: PutOutConditionItemClass[]) => {
+  emit('imported', newConditionList);
+};
+
 </script>
 
 <style lang='scss'>
 @import '@/assets/css/var.scss';
+
 $row-hover-bg-color: lighten($color: #d8effc, $amount: 6);
 $row-hover-border-color: #d6effc;
 $row-active-bg-color: lighten($color: #d8effc, $amount: 6);
@@ -72,6 +90,10 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
           vertical-align: -2px;
         }
       }
+
+      .iconfont {
+        font-size: 15px;
+      }
     }
   }
   >main{
@@ -81,81 +103,6 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
     padding-left: 20px;
     // padding-top: 20px;
     box-sizing: border-box;
-    > ul {
-      > li {
-        border: 1px solid #eee;
-        border-bottom: none;
-        line-height: 40px;
-        display: flex;
-        &.item {
-          > .content {
-            flex: 1;
-            padding: 0 15px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            > .index {
-              margin-right: 13px;
-            }
-          }
-          >.pot-out{
-            width: 150px;
-            text-align: center;
-          }
-          >.priority{
-            width: 150px;
-            text-align: center;
-          }
-          > .ctrl {
-            padding-left: 15px;
-            width: 220px;
-            min-width: 150px;
-          }
-          transition: 0.1s ease-in-out;
-          &:hover {
-            cursor: pointer;
-            background-color: $row-hover-bg-color;
-            border-color: $row-hover-border-color;
-            & + li {
-              border-top-color: $row-hover-border-color;
-            }
-            & + li.active {
-              border-top-color: $row-active-border-color;
-            }
-          }
-          &.active {
-            background-color: $row-active-bg-color;
-            border-color: $row-active-border-color;
-            & + li {
-              border-top-color: $row-active-border-color;
-            }
-          }
-        }
-        &.header{
-          color: #444;
-          font-weight: 700;
-          font-size: 14px;
-          background-color: #f8f8f8 !important;
-          border-color: #eee!important;
-          > .content{
-            justify-content: center;
-            font-size: 14px;
-          }
-        }
-        &:last-of-type {
-          border: 1px solid #eee;
-        }
-        &.empty {
-          height: 60px;
-          font-size: 12px;
-          text-align: center;
-          color: #aaa;
-          justify-content: center;
-          padding-top: 6px;
-        }
-      }
-    }
   }
   >footer{
     min-height: 50px;

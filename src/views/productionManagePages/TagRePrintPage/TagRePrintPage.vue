@@ -33,7 +33,7 @@
         </ul>
 
         <div class="print">
-          <el-input v-model.number="localData.result.count" ref="oInput" placeholder="请输入补打张数" maxlength="3" @keyup.enter="onPrint" size="large"></el-input>
+          <el-input v-model="localData.result.count" ref="oInput" placeholder="请输入补打张数" maxlength="3" @keyup.enter="onPrint" size="large"></el-input>
           <mp-button class="btn" @click="onPrint" type="primary" size="large">
             <i class="iconfont icon-dayin mr-2"></i>
             <span>打印</span>
@@ -51,6 +51,7 @@
 import { nextTick, onMounted, ref } from 'vue';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { InputInstance } from 'element-plus';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import SearchBox from './components/SearchBox.vue';
 import PrintDialog from './components/PrintDialog.vue';
 import { ManageTagRePrintClass } from './js/ManageTagRePrintClass';
@@ -73,6 +74,11 @@ const onSearchClick = async (oElInput) => {
 
 const onPrint = async () => {
   if (!oPrintDialog.value || !localData.value.validatePrint()) return;
+
+  if (!/^\d+$/.test(localData.value.result.count) || !(Number(localData.value.result.count) > 0)) {
+    MpMessage.error('打印失败', '补打数量输入不正确');
+    return;
+  }
 
   localData.value.result.QRCodeSrc = (await getQRCodeSrc(localData.value.result.code, 130)) || '';
 

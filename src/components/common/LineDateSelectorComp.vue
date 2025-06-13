@@ -1,8 +1,12 @@
 <template>
   <div class="mp-line-date-selector-wrap" :class="isFull ? 'mp-line-date-selector-wrap-is-full' : ''">
     <span class="title">{{ label }}：</span>
-    <!-- <radio-button-group-comp :radioList="dateList" v-model="date" :isFull="isFull" /> -->
-    <el-radio-group v-model="date">
+    <el-radio-group v-if="menu" v-model="dateTypeRadio" style="margin-right: 15px;">
+      <el-radio-button v-for="item in menu.list" :key="item.value" :label="item.value">
+        {{ item.label }}
+      </el-radio-button>
+    </el-radio-group>
+    <el-radio-group v-model="dateRadio">
       <el-radio-button v-for="item in dateList" :key="item" :label="item.ID">
         {{ item.name }}
       </el-radio-button>
@@ -42,6 +46,10 @@ interface IProps {
   isFull?: boolean,
   label?: string,
   dateType?: string,
+  menu?: {
+    radio: string
+    list: { label: string, value: string }[]
+  }
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -68,6 +76,7 @@ const Data = reactive({
   isNotFoulCloseType: false, // 是否使用犯规方式关闭
   clickTarget: null,
 });
+
 function formatDateContent(str, dateType) {
   if (str) {
     const d = str.split('T')[0];
@@ -77,7 +86,7 @@ function formatDateContent(str, dateType) {
   }
   return '';
 }
-const date = computed({
+const dateRadio = computed({
   get() {
     return props.dateValue;
   },
@@ -86,6 +95,17 @@ const date = computed({
     if (newVal) props.requestFunc();
   },
 });
+
+const dateTypeRadio = computed({
+  get() {
+    return props.menu?.radio;
+  },
+  set(newVal) {
+    props.changePropsFunc([['DateTypeRadio', ''], newVal]);
+    if (newVal) props.requestFunc();
+  },
+});
+
 function onPickerBlur() {
   setTimeout(() => {
     props.changePropsFunc([props.typeList[0], '']);

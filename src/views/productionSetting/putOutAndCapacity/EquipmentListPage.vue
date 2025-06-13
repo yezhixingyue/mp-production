@@ -142,7 +142,9 @@ const submit = (data: ILineEquipmentSaveParams) => { // 添加设备 本地保�
 };
 
 const toPutOutPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 申放
-  emit('toPutOut', it, type);
+  // store 存储列表数据
+  const list = EquipmentList.value.filter(item => item.ClassID === it.ClassID && item.GroupID === it.GroupID);
+  emit('toPutOut', it, type, list);
 };
 
 const tocCpacityPage = (it: EquipmentListType, type: EquipmentSetupType) => { // 设备产能

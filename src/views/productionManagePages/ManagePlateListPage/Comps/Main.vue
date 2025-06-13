@@ -72,7 +72,7 @@
                     </el-dropdown-item>
 
                     <el-dropdown-item v-if="row._showGenerateFile" @click="onErrorFileTestClick(row)"
-                     :disabled="row.Status===PlateStatusEnum.Finished || !row.MapFilePath">
+                     :disabled="row.Status===PlateStatusEnum.Finished || (!row.MapFilePath && !row.FileError)">
                       <span class="ft-12">排查错误文件</span>
                     </el-dropdown-item>
                   </el-dropdown-menu>

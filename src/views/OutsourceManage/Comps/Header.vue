@@ -29,16 +29,25 @@
           <el-option v-for="item in localExternalTaskStatusEnumList" :key="item.ID" :label="item.Name" :value="item.ID" />
         </el-select>
       </div>
+
+      <StaffSelector v-model="_Operator" title="操作人" />
     </div>
     <LineDateSelectorComp
       :changePropsFunc='setCondition'
       :requestFunc='getList'
       :isFull="true"
-      :typeList="[['DateType', ''], [options.DateType, 'First'], [options.DateType, 'Second']]"
+      :typeList="[['DateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
       :dateList="dateList"
       :dateValue='condition.DateType'
       :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
       :label="options.DateTitle"
+      :menu="{
+        radio: condition.DateTypeRadio,
+        list: [
+          { label: '创建时间', value: ExternalTaskDateTypeRadioEnum.Create },
+          { label: '预计完成时间', value: ExternalTaskDateTypeRadioEnum.ExpectedFinish },
+        ]
+      }"
       v-show="options.showDate"
       />
     <SearchInputComp
@@ -63,11 +72,12 @@ import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { ISubcontractorFactoryListItemType } from '@/views/productionResources/subcontractor/TypeClass/SubcontractorFactory';
 import { computed, onMounted } from 'vue';
 import { debounce } from '@/components/common/EpCascader/assets/utils';
+import StaffSelector from '@/components/common/ElementPlusContainners/StaffSelector.vue';
 import { Condition } from '../js/Condition';
 import { ISwitchOptions } from '../js/type';
 import { ManageListClass } from '../js/ManageListClass';
 import { ExternalTaskStatusEnumList } from '../js/EnumList';
-import { ExternalTaskStatusEnum } from '../js/enum';
+import { ExternalTaskStatusEnum, ExternalTaskDateTypeRadioEnum } from '../js/enum';
 
 const props = defineProps<{
   condition: Condition
@@ -96,8 +106,8 @@ const localExternalTaskStatusEnumList = computed(() => {
   return [{ ID: '', Name: '不限' }, ..._list];
 });
 
-const UserDefinedTimeIsActive = computed(() => props.condition.DateType === '' && !!props.options.DateType
- && !!props.condition[props.options.DateType].First && !!props.condition[props.options.DateType].Second);
+const UserDefinedTimeIsActive = computed(() => props.condition.DateType === ''
+&& !!props.condition.CreateTime.First && !!props.condition.CreateTime.Second);
 
 const _Factory = computed({
   get() {
@@ -117,6 +127,16 @@ const _ExternalTaskStatus = computed({
   set(val) {
     if (val === props.condition.ExternalStatus) return;
     props.setCondition([['ExternalStatus', ''], val]);
+    props.getList();
+  },
+});
+
+const _Operator = computed({
+  get() {
+    return props.condition.Operator;
+  },
+  set(val) {
+    props.setCondition([['Operator', ''], val]);
     props.getList();
   },
 });
@@ -154,7 +174,7 @@ onMounted(() => {
     margin-right: 20px;
     margin-top: 15px;
     line-height: 30px;
-    min-width: 800px;
+    min-width: 1050px;
     .title {
       min-width: 6em;
     }

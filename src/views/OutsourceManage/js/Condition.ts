@@ -1,5 +1,5 @@
 import CommonClassType, { ISetConditionParams } from '@/store/modules/formattingTime/CommonClassType';
-import { ExternalTaskStatusEnum } from './enum';
+import { ExternalTaskDateTypeRadioEnum, ExternalTaskStatusEnum } from './enum';
 import { ISwitchOptions } from './type';
 
 /** 外协列表筛选条件仅页面使用的生产线类型枚举 */
@@ -33,6 +33,8 @@ export class Condition {
 
   DateType: string
 
+  DateTypeRadio = ExternalTaskDateTypeRadioEnum.Create
+
   KeyWords = ''
 
   Page = 1
@@ -40,6 +42,9 @@ export class Condition {
   PageSize = 20
 
   ExternalStatus: ExternalTaskStatusEnum | '' = ''
+
+  /** 操作人 */
+  Operator = ''
 
   _options: ISwitchOptions
 
@@ -51,10 +56,20 @@ export class Condition {
 
   filter() {
     // 处理时间
-    if (this._options.DateType) CommonClassType.setDate(this, this._options.DateType);
+    if (this._options.showDate) {
+      CommonClassType.setDate(this, 'CreateTime');
+    }
 
     // 筛选结果
-    const temp: Partial<Condition> = CommonClassType.filter(this);
+    const temp: Partial<Condition> & { WishFinishTime?: Condition['CreateTime'] } = CommonClassType.filter(this);
+
+    if (this._options.showDate && this.DateTypeRadio === ExternalTaskDateTypeRadioEnum.ExpectedFinish) {
+      temp.WishFinishTime = temp.CreateTime;
+      delete temp.CreateTime;
+    }
+
+    delete temp.DateTypeRadio;
+    delete temp._options;
 
     // 如果是制版组筛选  对First和Second进行一下值的调换（因为一般生产线是生产线在前工序在其内部，但制版组却是工序在前制版组（约可认为是生产线）在其内部）
     if (temp.Line && temp.Line._Type === _OutsourceConditionLineTypeEnum.MakingGroup) {

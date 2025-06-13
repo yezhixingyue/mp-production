@@ -19,7 +19,6 @@ export type OutsourceManagePageType = 'await' | 'inTransition' | 'all' | 'undeli
 export interface ISwitchOptions {
   showDate: boolean
   Status: ExternalTaskStatusEnum | ''
-  DateType: string
   DateTitle: string
   showStatusFilter: boolean
   OnlyStatusList?: ExternalTaskStatusEnum[]

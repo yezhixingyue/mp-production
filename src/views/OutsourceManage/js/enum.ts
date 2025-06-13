@@ -20,3 +20,8 @@ export enum ExternalTaskStatusEnum {
   /** 已取消 */
   Cancled = 255
 }
+
+export enum ExternalTaskDateTypeRadioEnum {
+  Create = 'Create',
+  ExpectedFinish = 'ExpectedFinish',
+}

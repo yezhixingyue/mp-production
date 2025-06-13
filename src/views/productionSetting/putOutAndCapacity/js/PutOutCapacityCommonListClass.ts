@@ -25,7 +25,7 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   PropertyList: PropertyListItemType[] = []
 
-  abstract getListFunc:(lineEquipmentID: string) => Promise<IResponseType<IMpzjResponse<any>> | null>
+  abstract getListFunc:(LineEquipmentIDS: string[]) => Promise<IResponseType<IMpzjResponse<any>> | null>
 
   abstract removeFunc:(id: number) => Promise<IResponseType<IMpzjResponse<any>> | null>
 
@@ -42,9 +42,14 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   curLineName = ''
 
-  getInitData(curWork: { ID: string, Name: string } | null = null, lineName = '') {
+  EquipmentData: null | { curEquipID: null | string; EquipmentList: EquipmentListType[] } = null
+
+  // eslint-disable-next-line max-len
+  getInitData(curWork: { ID: string, Name: string } | null = null, lineName = '', data: { curEquipID: null | string; EquipmentList: EquipmentListType[] } | null = null) {
     this.curWork = curWork;
     this.curLineName = lineName;
+    this.EquipmentData = data;
+
     this.getList();
     this.getPropertyList();
   }
@@ -94,9 +99,15 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
     }
   }
 
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  handleImported(newConditionList: T[]) {
+    // this.list = [...newConditionList];
+    this.getList();
+  }
+
   private async getList() {
     if (!this.curLineEquipment) return;
-    const resp = await this.getListFunc(this.curLineEquipment.LineEquipmentID || '');
+    const resp = await this.getListFunc([this.curLineEquipment.LineEquipmentID || '']);
     if (resp?.data?.isSuccess) {
       this.list = resp.data.Data as T[];
     }
