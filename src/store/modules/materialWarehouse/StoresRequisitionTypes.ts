@@ -21,7 +21,12 @@ export interface IList {
   ID: string,
   Code: string,
   PlateCode: number,
-  Material: IMaterial,
+  ClassID: number,
+  ClassName: string,
+  TypeID: string,
+  TypeName: string,
+  MaterialID: string,
+  Name: string
   SKU: string,
   SizeID: string,
   SizeName: string,

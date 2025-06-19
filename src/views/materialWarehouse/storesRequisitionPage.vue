@@ -68,13 +68,13 @@
         show-overflow-tooltip prop="SKU" label="SKU编码" min-width="146">
         </el-table-column>
         <el-table-column
-        show-overflow-tooltip prop="Material.ClassName" label="分类" min-width="100">
+        show-overflow-tooltip prop="ClassName" label="分类" min-width="100">
         </el-table-column>
 
         <el-table-column
-        show-overflow-tooltip prop="Material.TypeName" label="类型" min-width="110"/>
+        show-overflow-tooltip prop="TypeName" label="类型" min-width="110"/>
         <el-table-column
-        show-overflow-tooltip prop="Material.MaterialName" label="物料" min-width="178"/>
+        show-overflow-tooltip prop="Name" label="物料" min-width="178"/>
         <el-table-column
         show-overflow-tooltip prop="SizeName" label="尺寸规格" min-width="200">
         </el-table-column>

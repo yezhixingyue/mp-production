@@ -291,8 +291,7 @@ const outPrimaryClick = () => {
   props.primaryClick(back);
 };
 const initData = (data) => {
-  const Material = props.StoresRequisitionInfo?.Material;
-  const AttributeDescribe = `${Material?.MaterialName}`;
+  const AttributeDescribe = `${props.StoresRequisitionInfo?.Name}`;
   // const SizeDescribe =
   StockOutRequisition.value = {
     SKU: props.StoresRequisitionInfo?.SKU || '',
