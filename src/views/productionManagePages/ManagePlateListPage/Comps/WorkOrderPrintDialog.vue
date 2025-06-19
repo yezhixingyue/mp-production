@@ -123,23 +123,27 @@
         </div>
       </footer>
     </section>
+
+    <OutsideMaterialPrintArea v-if="materialPrintData" :materialData="materialPrintData" :QRCodeSrc="localInfo.QRCodeSrc4Material"/>
   </PrintDialog>
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import api from '@/api';
 import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { format2LangTypeDate } from '@/assets/js/filters/dateFilters';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 // import { ReproductionTypeEnumList } from '@/views/productionSetting/productionLine/js/enum';
 import { useUserStore } from '@/store/modules/user';
 import { storeToRefs } from 'pinia';
 import { IManagePlateInfo } from '../js/type';
 import { IDigitalOrderPlatePrintInfo } from '../../ManageDigitalListPage/js/types';
 import { PlaceOrderMaterialSourceEnumList } from '../../ManualOrderHandlerPage/js/EnumList';
+import OutsideMaterialPrintArea from '../../ManageOutsideMaterialListPage/Comps/OutsideMaterialPrintArea/OutsideMaterialPrintArea.vue';
 
 const props = defineProps<{
   row: IManagePlateInfo | null
@@ -150,11 +154,30 @@ const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-const localInfo = ref<{key: boolean;data: null | { _ReproductionTypeContent: string } & IDigitalOrderPlatePrintInfo;time: string;codeUrl: string;}>({
-  key: false,
-  data: null,
-  time: '',
-  codeUrl: '',
+const localInfo = ref<{
+    key: boolean;
+    data: null | { _ReproductionTypeContent: string } & IDigitalOrderPlatePrintInfo;
+    time: string;
+    codeUrl: string;
+    QRCodeSrc4Material:string;
+  }>({
+    key: false,
+    data: null,
+    time: '',
+    codeUrl: '',
+    /** 预出库时打印出库单使用 */
+    QRCodeSrc4Material: '',
+  });
+
+const materialPrintData = computed(() => {
+  if (!localInfo.value.data?.Material?.ReadyAdvance) return null;
+
+  return {
+    ...localInfo.value.data.Material.ReadyAdvance,
+    TargetCode: `${localInfo.value.data.Material.ReadyAdvance.PlateCode}`,
+    TargetType: TargetTypeEnum.Plate,
+    MaterialSource: localInfo.value.data.MaterialSource,
+  };
 });
 
 const getHandleWorkList = (WorkingList?: IDigitalOrderPlatePrintInfo['WorkingList']) => {
@@ -192,10 +215,19 @@ const display = async () => {
   const resp = await api.productionManageApis.getPlateDetail(props.row.ID);
 
   if (resp.data?.isSuccess) {
-    localInfo.value.data = { ...resp.data.Data, _ReproductionTypeContent: props.row.ReproductionType };
     localInfo.value.time = format2LangTypeDate(getTimeConvertFormat({ withHMS: true }));
-    localInfo.value.codeUrl = (await getQRCodeSrc(props.row.Code, 130)) || ''; // 获取二维码img src
 
+    const [codeUrl1, codeUrl2] = (await Promise.all([getQRCodeSrc(props.row.Code, 130), (async () => {
+      if (resp.data?.Data.Material.ReadyAdvance?.Code) {
+        const code = await getQRCodeSrc(resp.data.Data.Material.ReadyAdvance.Code, 125);
+        return code;
+      }
+      return '';
+    })()])); // 获取二维码img src
+
+    localInfo.value.codeUrl = codeUrl1 || '';
+    localInfo.value.QRCodeSrc4Material = codeUrl2 || '';
+    localInfo.value.data = { ...resp.data.Data, _ReproductionTypeContent: props.row.ReproductionType };
     localInfo.value.key = true;
 
     oPrintDialog.value.print(`大版工单打印-${props.row.Code}`);

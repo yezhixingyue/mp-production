@@ -133,15 +133,29 @@
   display: flex;
   color: #333;
   width: 100%;
+  font-size: 11pt;
+  page-break-before: always;
+
+  @media print {
+    width: 100vw;
+    min-height: 100vh;
+  }
 
   .left {
     text-align: center;
     padding: 10px 0;
+    width: 25%;
+    min-width: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex: none;
 
     .img-box {
       background-color: #e5e5e5;
-      width: 100px;
-      height: 100px;
+      width: 125px;
+      height: 125px;
+      margin-top: 40px;
       img {
         width: 100%;
         height: 100%;
@@ -150,18 +164,45 @@
 
     p {
       margin-top: 6px;
+      text-align: center;
+      min-width: 125px;
+      font-size: 0.95em;
     }
   }
 
   .right {
     padding-top: 10px;
     padding-left: 15px;
-    h2 {
-      font-size: 14px;
+    font-size: 1.1em;
+    line-height: 1.5em;
+    color: #000;
 
-      &:first-of-type {
-        font-size: 18px;
-        padding-bottom: 20px;
+    h2 {
+      display: flex;
+      font-size: inherit;
+      margin-bottom: 0.2em;
+
+      .label {
+        width: 6em;
+        flex: none;
+        text-align: right;
+      }
+
+      > div {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    .bottom {
+      padding-top: 0.5em;
+      font-size: 1.05em;
+
+      h2 {
+        margin-bottom: 0.7em;
+        .label {
+          width: 6.5em;
+        }
       }
     }
   }

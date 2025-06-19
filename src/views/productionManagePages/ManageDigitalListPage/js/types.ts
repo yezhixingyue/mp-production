@@ -4,6 +4,7 @@ import { ReproductionTypeEnum } from '@/views/productionSetting/productionLine/j
 import { PlaceOrderMaterialSourceEnum, PrintSideEnum } from '../../ManualOrderHandlerPage/js/enums';
 import { IBaseProperty } from '../../ManualOrderHandlerPage/js/types';
 import { DigitalImpositionStatusEnum, DigitalImpositionTypeEnum } from './enum';
+import { IExternalMaterialPrintBaseData } from '../../ManageOutsideMaterialListPage/js/types';
 
 /** 数码工单打印列表数据接口类型 */
 export interface IDigitalOrderPlateInfo {
@@ -176,6 +177,10 @@ export interface IDigitalOrderPlatePrintInfo {
     /** 领料尺寸mm */
     OriginalWidth: number
     OriginalHeight: number
+    /** 用于预出库打印 */
+    ReadyAdvance?: IExternalMaterialPrintBaseData & {
+      PlateCode: number
+    }
   }
   /** 任务列表 工序列表 */
   WorkingList: ITaskWorkingDetail[]

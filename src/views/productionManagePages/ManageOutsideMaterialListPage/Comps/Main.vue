@@ -3,12 +3,10 @@
     <el-table :data="localList" border stripe class="table-wrap">
       <mp-table-column width="75px" prop="Code" label="编号" />
       <mp-table-column width="75px" prop="_TargetTypeText" label="类型" />
-      <!-- <mp-table-column width="115px" prop="Server" label="销售端" /> -->
       <mp-table-column width="110px" prop="TargetCode" label="订单/大版ID" />
-      <mp-table-column width="130px" prop="Line" label="生产线" />
-      <mp-table-column width="160px" prop="Material" label="物料" />
-      <!-- <mp-table-column min-width="120px" prop="Size" label="尺寸" /> -->
-      <mp-table-column min-width="140px" prop="MaterialSize" label="物料尺寸" />
+      <mp-table-column width="130px" prop="LineName" label="生产线" />
+      <mp-table-column width="160px" prop="Name" label="物料" />
+      <mp-table-column min-width="140px" prop="SizeName" label="物料尺寸" />
       <mp-table-column width="100px" prop="_Number" label="数量">
         <template #default="scope:any">
           {{ scope.row._Number }}<i style="color: #aaa;">({{ scope.row._NumberType }})</i>
@@ -42,12 +40,12 @@
     </el-table>
     <AddressDisplayDialog v-model:visible="AddressVisible" :address="ActiveItem?.Address || null" />
     <DeliveryConfirmDialog v-model:visible="DeliveryVisible" @submit="onDeliverySubmit" />
-    <PrintDialog v-model:visible="printVisible" :curRow="ActiveItem"  />
+    <PrintDialog :curRow="ActiveItem" ref="oPrintDialog" />
   </main>
 </template>
 
 <script setup lang='ts'>
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { useUserStore } from '@/store/modules/user';
 import { IExternalMaterialDetail } from '../js/types';
 import { PlaceOrderMaterialSourceEnum } from '../../ManualOrderHandlerPage/js/enums';
@@ -84,10 +82,15 @@ const onDeliverySubmit = () => {
 };
 
 /** 打印相关 */
-const printVisible = ref(false);
-const onPrintClick = (item: ReturnType<typeof formatTableList>[number]) => {
+const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
+const onPrintClick = async (item: ReturnType<typeof formatTableList>[number]) => {
+  if (!oPrintDialog.value) return;
+
   ActiveItem.value = item;
-  printVisible.value = true;
+
+  await nextTick();
+
+  oPrintDialog.value.print();
 };
 
 /** 取料地址展示相关 */
