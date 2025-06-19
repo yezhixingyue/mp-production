@@ -111,7 +111,7 @@ const onBatchConfirmClick = () => { // 批量确认
 };
 
 // eslint-disable-next-line max-len
-const downloadExcelObj: undefined | IExportExcelProps = props.pageType === 'all' && localPermission.value?.Excel && props.ManageListData.condition._options.DateType
+const downloadExcelObj: undefined | IExportExcelProps = props.pageType === 'all' && localPermission.value?.Excel
   ? {
     apiPath: 'getExternalTaskExcel',
     fileName: '外协任务列表',
