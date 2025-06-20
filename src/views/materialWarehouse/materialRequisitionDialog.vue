@@ -16,11 +16,11 @@
       <div id="print">
         <div style="padding:0 20px;">
           <div class="material-info" style="padding:0 20px;display: flex;display: flex;">
-            <div style="width:150px; margin-top: 70px;">
+            <div style="width:120px; margin-top: 70px;padding-right: 30px; text-align: center;">
               <div style="display: flex;width:120px;height:120px">
                 <img style="width:120px;height:120px" :src="StockOutRequisition ? StockOutRequisition.OutCodeSrc : OutCodeSrc" alt="">
               </div>
-              <span>出库编号:{{ StockOutRequisition ? StockOutRequisition.OutCode : OutCode }}</span>
+              <span>{{ StockOutRequisition ? StockOutRequisition.OutCode : OutCode }}</span>
             </div>
             <div class="material"
             style="line-height: 32px;font-size:16px;font-weight: 600; flex: 1;">
@@ -72,11 +72,11 @@
                 </ul>
               </div>
               <p style="margin-top:10px; line-height: 1.3em;">
-                出库数量：{{StockOutRequisition ? StockOutRequisition.AllOutNumber : AllOutNumber}}
+                {{ (StoresRequisitionInfo) ? '领料' : '出库'}}数量：{{StockOutRequisition ? StockOutRequisition.AllOutNumber : AllOutNumber}}
                   {{StockOutRequisition ? StockOutRequisition.StockUnit : StockUnit}}
-                  <template v-if="!StockOutRequisition">
+                  <!-- <template v-if="!StockOutRequisition">
                     （{{OutUnitNum}} {{outUnitName}}）
-                  </template>
+                  </template> -->
               </p>
               <p style="margin-top:10px; line-height: 1.3em;">
                 <span style="min-width:70px; text-align: right;">领料人：</span>
@@ -108,12 +108,12 @@
             单据以上部分交接后即可回收
           </div>
           <div class="storehouse-stock" style="display: flex;padding:0 20px" v-if="StoresRequisitionInfo">
-            <div style="width:120px; margin-top: 70px; margin-right: 30px;">
+            <div style="width:120px; margin-top: 70px; margin-right: 30px; text-align: center;">
               <div>
                 <img style="width:120px;height:120px"
                 :src="StockOutRequisition ? StockOutRequisition.MaterialRequisitionCodeSrc : MaterialRequisitionCodeSrc" alt="">
               </div>
-              <span>领料编号:{{ StoresRequisitionInfo.Code }}</span>
+              <span>{{ StoresRequisitionInfo.Code }}</span>
             </div>
             <div style="display: flex;flex-direction: column;flex:1">
 
@@ -138,11 +138,12 @@
                   <span style="">{{StockOutRequisition ? StockOutRequisition.SizeDescribe : SizeDescribe}}</span>
                 </p>
                 <p style="margin-top:10px; line-height: 1.3em;">
-                  出库数量：{{StockOutRequisition ? StockOutRequisition.AllOutNumber : AllOutNumber}}
+                  {{ (StoresRequisitionInfo) ? '领料' : '出库'}}数量：
+                  {{StockOutRequisition ? StockOutRequisition.AllOutNumber : AllOutNumber}}
                     {{StockOutRequisition ? StockOutRequisition.StockUnit : StockUnit}}
-                    <template v-if="!StockOutRequisition">
+                    <!-- <template v-if="!StockOutRequisition">
                       （{{OutUnitNum}} {{outUnitName}}）
-                    </template>
+                    </template> -->
                 </p>
                 <!-- <p style="margin-top:10px; line-height: 1.3em;">
                   出库数量：{{AllOutNumber}}
@@ -152,13 +153,13 @@
                 <p style="margin-top:10px; line-height: 1.3em;">
                   <span style="min-width:70px; text-align: right;">开数：</span>
                   <span style="">
-                    {{StoresRequisitionInfo?.SplitNumber}}
+                    {{StoresRequisitionInfo?.Multiple}}
                   </span>
                 </p>
                 <p style="margin-top:10px; line-height: 1.3em;">
                   <span style="min-width:70px; text-align: right;">开料数量：</span>
                   <span style="">
-                    {{StoresRequisitionInfo?.SplitCount}} {{StockOutRequisition ? StockOutRequisition.StockUnit : StockUnit}}
+                    {{StoresRequisitionInfo?.PrintNumber}} {{StockOutRequisition ? StockOutRequisition.StockUnit : StockUnit}}
                   </span>
                 </p>
                 <p style="margin-top:10px; line-height: 1.3em;">

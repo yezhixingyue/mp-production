@@ -32,7 +32,7 @@
           <template v-if="Data.newMaterialInfo">
              <span class="value">
               {{Data.newMaterialInfo.AttributeDescribe}}&nbsp;
-               {{Data.newMaterialInfo.SizeDescribe}}
+               {{Data.newMaterialInfo.Size.Name}}
              </span>
              &nbsp;&nbsp;
               <mp-button @click="Data.newMaterialInfo = null" link type="danger">删除</mp-button>
@@ -42,7 +42,7 @@
           <span class="label">
             正确数量：
           </span>
-          <el-input-number style="margin-right:5px" placeholder="请输入正确数量"
+          <el-input style="margin-right:5px" placeholder="请输入正确数量"
             :controls="false" v-model="Data.editDeliveryForm.Number" />
             {{materialInfo?.StockUnit}}
         </div>
@@ -83,7 +83,7 @@
                 新物料：
                   <span class="value red" >
                     {{Data.tempMaterialInfo?.AttributeDescribe}}&nbsp;
-                    {{Data.tempMaterialInfo?.SizeDescribe}}
+                    {{Data.tempMaterialInfo?.Size.Name}}
                   </span>
               </div>
 
@@ -115,10 +115,10 @@
                     ></ThreeCascaderComp>
                     <OneLevelSelect
                     v-if="Data.itemSelectTempMaterial"
-                      :options='SizeSelects'
+                      :options='SizeSelects.map(it => it.Size)'
                       :defaultProps="{
-                        value:'SizeID',
-                        label:'SizeDescribe',
+                        value:'ID',
+                        label:'Name',
                       }"
                       :value='Data.SizeSelects'
                       @change="SizeSelectChange"
@@ -158,7 +158,6 @@ import {
 
 interface getMaterialDataType {
   MaterialID: string,
-  SizeID: string,
   SKUCode: string|number,
 }
 interface editDeliveryFormType {
@@ -211,7 +210,6 @@ export default {
       // 此货位还有物料时添加物料的物料查询表单
       getMaterialData: {
         MaterialID: '',
-        SizeID: '',
         SKUCode: '',
       },
       // 修改物料/数量
@@ -236,7 +234,7 @@ export default {
       },
     });
     const SizeSelects = computed(() => {
-      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
+      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size.ID) {
         return [];
       }
       // Data.itemSelectTempMaterial.SizeSelects
@@ -303,11 +301,11 @@ export default {
       if (ID !== '00000000-0000-0000-0000-000000000000') {
         Data.SizeSelects = ID;
       }
-      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
+      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         Code: SizeObj?.Code,
-        SizeDescribe: SizeObj?.SizeDescribe,
+        Size: SizeObj?.Size,
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects,
@@ -323,7 +321,7 @@ export default {
       Data.itemSelectTempMaterial = itemMaterial as MaterialSelectsType;
 
       if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
-        SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
+        SizeSelectChange(itemMaterial.SizeSelects[0].Size.ID);
       }
     }
     // 根据选项或sku编码查物料
@@ -387,10 +385,10 @@ export default {
         font-weight: 600;
         text-align: right;
       }
-      .el-input-number{
+      .el-input{
         margin-top: 10px;
         width: 204px;
-        .el-input{
+        &.el-input{
           // width: 204px;
           height: 54px;
           font-size: 16px;

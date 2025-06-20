@@ -42,10 +42,10 @@
               :change="ThreeCascaderCompChange"
               ></ThreeCascaderComp>
               <OneLevelSelect
-                :options='SizeSelects'
+                :options='SizeSelects.map(it => it.Size)'
                 :defaultProps="{
-                  value:'SizeID',
-                  label:'SizeDescribe',
+                  value:'ID',
+                  label:'Name',
                 }"
                 :value='Data.SizeSelects'
                 @change="SizeSelectChange"
@@ -60,7 +60,7 @@
           </span>
             <span style="color:#FF0000;" v-if="Data.checkedMaterial">
               {{Data.checkedMaterial.AttributeDescribe}}
-              {{Data.checkedMaterial?.SizeDescribe}}
+              {{Data.checkedMaterial?.Size.Name}}
               {{Data.checkedMaterial?.Code}}
             </span>
         </div>
@@ -68,7 +68,7 @@
           <span class="label">
             正确数量：
           </span>
-          <el-input-number style="margin-right:5px" placeholder="请输入正确数量"
+          <el-input style="margin-right:5px" placeholder="请输入正确数量"
             :controls="false" v-model="Data.inDeliveryForm.Number" />
             {{Data.checkedMaterial?.StockUnit}}
         </div>
@@ -97,7 +97,6 @@ import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascade
 
 interface getMaterialDataType {
   MaterialID: string,
-  SizeID: string,
   SKUCode: string|number,
 }
 interface inDeliveryFormType {
@@ -146,7 +145,6 @@ export default {
       // 此货位还有物料时添加物料的物料查询表单
       getMaterialData: {
         MaterialID: '',
-        SizeID: '',
         SKUCode: '',
       },
       // 此货位还有物料时添加物料的表单
@@ -171,7 +169,7 @@ export default {
     });
 
     const SizeSelects = computed(() => {
-      if (Data.itemSelectTempMaterial?.SizeSelects?.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
+      if (Data.itemSelectTempMaterial?.SizeSelects?.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size.ID) {
         return [];
       }
       return Data.itemSelectTempMaterial?.SizeSelects || [];
@@ -186,7 +184,6 @@ export default {
 
       Data.getMaterialData = {
         MaterialID: '',
-        SizeID: '',
         SKUCode: '',
       };
       // 此货位还有物料时添加物料的表单
@@ -230,11 +227,11 @@ export default {
 
     // 格式化数据
     function SizeSelectChange(ID) {
-      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
+      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         Code: SizeObj?.Code,
-        SizeDescribe: SizeObj?.SizeDescribe,
+        Size: SizeObj?.Size,
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects,
@@ -251,9 +248,8 @@ export default {
       Data.SizeSelects = null;
       Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
       Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;
-
       if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
-        SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
+        SizeSelectChange(itemMaterial.SizeSelects[0].Size.ID);
       }
     }
     // 根据选项或sku编码查物料
@@ -346,9 +342,9 @@ export default {
           }
         }
       }
-      .el-input-number{
+      .el-input{
         width: 328px;
-        .el-input{
+        &.el-input{
           height: 40px;
           font-size: 16px;
           font-size: 16px;

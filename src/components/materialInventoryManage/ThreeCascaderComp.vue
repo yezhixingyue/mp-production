@@ -41,8 +41,6 @@ interface MaterialAttributesType {
 }
 interface SizeSelectsType {
   MaterialID: string,
-  SizeID: string,
-  SizeDescribe: string
 }
 interface MaterialSelectsType {
   CodeID: number,

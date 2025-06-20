@@ -17,12 +17,18 @@ interface MaterialAttributesType {
   AttributeUnit: string,
   IsBrand: boolean
 }
+interface ISize {
+  ID: string,
+  Name: string,
+  SizeHeight: number,
+  SizeWidth: number,
+}
 // 根据sku编码或者物料查询的物料
 interface MaterialInfoType {
   MaterialID: string,
   TypeID?: string,
   Code: string,
-  SizeDescribe: string,
+  Size: ISize,
   MaterialAttributes: MaterialAttributesType[],
   StockUnit: string,
   UnitSelects: UnitSelectsType[]

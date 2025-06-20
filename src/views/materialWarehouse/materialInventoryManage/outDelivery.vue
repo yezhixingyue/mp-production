@@ -32,10 +32,10 @@
                   <OneLevelSelect
                     v-if="Data.itemSelectTempMaterial"
                     :disabled="!!StoresRequisitionInfo"
-                    :options='SizeSelects'
+                    :options='SizeSelects.map(it => it.Size)'
                     :defaultProps="{
-                      value:'SizeID',
-                      label:'SizeDescribe',
+                      value:'ID',
+                      label:'Name',
                     }"
                     :value='Data.SizeSelects'
                     @change="SizeSelectChange"
@@ -56,7 +56,7 @@
                     <span>
                       {{Data.checkedMaterial.AttributeDescribe}}
                     </span>
-                    <span>{{Data.checkedMaterial.SizeDescribe}}</span>
+                    <span>{{Data.checkedMaterial.Size.Name}}</span>
                     <span>{{Data.checkedMaterial.Code}}</span>
                   </template>
                 </p>
@@ -194,7 +194,7 @@
       :OutCode="Data.outDeliveryForm.OutCode"
       :Code="Data.checkedMaterial?.Code"
       :AttributeDescribe="Data.checkedMaterial?.AttributeDescribe"
-      :SizeDescribe="Data.checkedMaterial?.SizeDescribe"
+      :SizeDescribe="`${Data.checkedMaterial?.Size.Name}（${Data.checkedMaterial?.Size.SizeWidth}mm x ${Data.checkedMaterial?.Size.SizeHeight}mm）`"
       :AllOutNumber="getStorehouseAllOutNumber()"
       :StockUnit="Data.checkedMaterial?.StockUnit"
       :OutUnitNum="getOutUnitNum"
@@ -372,9 +372,13 @@ interface MaterialAttributesType {
 }
 interface SizeSelectsType {
   MaterialID: string,
-  SizeID: string,
   Code: string,
-  SizeDescribe: string
+  Size: {
+    ID: string,
+    Name: string,
+    SizeHeight: number,
+    SizeWidth: number,
+  },
 }
 interface MaterialSelectsType {
   CodeID: number,
@@ -540,7 +544,7 @@ export default {
     });
 
     const SizeSelects = computed(() => {
-      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].SizeDescribe) {
+      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size.ID) {
         return [];
       }
       // Data.itemSelectTempMaterial.SizeSelects
@@ -592,12 +596,17 @@ export default {
       if (ID !== '00000000-0000-0000-0000-000000000000') {
         Data.SizeSelects = ID;
       }
-      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.SizeID === ID);
+      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         TypeID: Data.TypeID,
         Code: SizeObj?.Code,
-        SizeDescribe: SizeObj?.SizeDescribe,
+        Size: {
+          ID: SizeObj?.Size.ID,
+          Name: SizeObj?.Size.Name,
+          SizeHeight: SizeObj?.Size.SizeHeight,
+          SizeWidth: SizeObj?.Size.SizeWidth,
+        },
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 2),
@@ -623,7 +632,7 @@ export default {
       // Data.outDeliveryForm.UnitID = '';
 
       if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
-        SizeSelectChange(itemMaterial.SizeSelects[0].SizeID);
+        SizeSelectChange(itemMaterial.SizeSelects[0].Size.ID);
       }
     }
     // 获取转换为库存单位的数量;
