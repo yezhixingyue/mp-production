@@ -20,8 +20,12 @@ interface MaterialAttributesType {
 interface SizeSelectsType {
   MaterialID: string,
   Code: string
-  SizeID: string,
-  SizeDescribe: string
+  Size: {
+      ID: string,
+      Name: string,
+      SizeHeight: number,
+      SizeWidth: number,
+  }
 }
 export interface MaterialSelectsType {
   CodeID: number,

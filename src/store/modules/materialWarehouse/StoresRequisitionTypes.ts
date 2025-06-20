@@ -37,6 +37,6 @@ export interface IList {
   Status: number,
   CreateTime: string,
   ProductionLine:string
-  SplitNumber:string
-  SplitCount:string
+  Multiple:string
+  PrintNumber:string
 }
