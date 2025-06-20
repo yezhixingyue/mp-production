@@ -5,7 +5,7 @@
         <div class="img-box">
           <img :src="QRCodeSrc" alt="" v-show="QRCodeSrc">
         </div>
-        <p>领料编号: {{ materialData.Code }}</p>
+        <p>{{ materialData.Code }}</p>
       </div>
       <!-- 右侧信息 -->
       <div class="right">
@@ -46,7 +46,7 @@
           </h2>
           <h2>
             <span class="label">开料数量：</span>
-            <span>{{ materialData.Multiple * materialData.Number }}{{ materialData.Unit }}</span>
+            <span>{{ materialData.PrintNumber }}{{ materialData.Unit }}</span>
           </h2>
           <h2 style="color: #ee1d23;">
             <span class="label">开料机台：</span>

@@ -23,6 +23,8 @@ export interface IExternalMaterialPrintBaseData {
   Multiple: number
   /** 开料机台 */
   SplitEquipment?: IEquipmentBaseInfo
+  /** 开料数量 */
+  PrintNumber: number
   /** 交接机台 */
   ReceiveEquipment: IEquipmentBaseInfo
 }
