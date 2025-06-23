@@ -10,7 +10,7 @@
     :width="700"
     :open="open"
     :top="StoresRequisitionInfo ? '5vh' : ''"
-    class="out-verify-dialog"
+    class="material-requisition-dialog"
     >
     <template #default>
       <div id="print">
@@ -28,7 +28,7 @@
               <p style="margin-top:10px; line-height: 1.3em;" v-if="StoresRequisitionInfo">
                 生产线：{{StoresRequisitionInfo?.ProductionLine}}
               </p>
-              <p style="margin-top:10px; line-height: 1.3em;" v-if="StoresRequisitionInfo">
+              <p style="margin-top:7px; line-height: 1.3em;" v-if="StoresRequisitionInfo">
                 大版ID：{{StoresRequisitionInfo?.PlateCode}}
               </p>
               <p style="display: flex;">
@@ -46,7 +46,7 @@
               </p>
               <div style="margin:5px 0">
                 <p style="font-size: 14px;line-height: 16px;">出库位置：</p>
-                <ul :style="`border: 1px solid #A6B6C6;border-radius: 8px;padding:0 3%;color:#566176`">
+                <ul :style="`border: 1px solid #A6B6C6;border-radius: 7px;padding:0 3%;color:#566176`">
                   <template v-if="StockOutRequisition">
                     <li v-for="(GoodsPosition, index) in StockOutRequisition.GoodsPositionStockInfos" :key="index"
                       style="line-height: 20px;border-bottom:1px solid #F2F6FC;display: flex;justify-content: space-between;align-items: center;
@@ -71,20 +71,20 @@
                   </template>
                 </ul>
               </div>
-              <p style="margin-top:10px; line-height: 1.3em;">
+              <p style="margin-top:7px; line-height: 1.3em;">
                 {{ (StoresRequisitionInfo) ? '领料' : '出库'}}数量：{{StockOutRequisition ? StockOutRequisition.AllOutNumber : AllOutNumber}}
                   {{StockOutRequisition ? StockOutRequisition.StockUnit : StockUnit}}
                   <!-- <template v-if="!StockOutRequisition">
                     （{{OutUnitNum}} {{outUnitName}}）
                   </template> -->
               </p>
-              <p style="margin-top:10px; line-height: 1.3em;">
+              <p style="margin-top:7px; line-height: 1.3em;">
                 <span style="min-width:70px; text-align: right;">领料人：</span>
                 <span style="">
                   {{StockOutRequisition ? StockOutRequisition.ReceiptorName : ReceiptorName}}
                 </span>
               </p>
-              <p style="margin-top:10px; line-height: 1.3em;" v-if="StoresRequisitionInfo">
+              <p style="margin-top:7px; line-height: 1.3em;" v-if="StoresRequisitionInfo">
                 <span style="min-width:70px; text-align: right;">开料机台：</span>
                 <span style="" v-if="StoresRequisitionInfo?.SplitEquipment">
                   {{StoresRequisitionInfo?.SplitEquipment.ClassName}}
@@ -95,7 +95,7 @@
                   无需开料
                 </span>
               </p>
-              <p style="font-size: 14px;text-align: right;margin-top: 10px; font-weight: 400;">
+              <p style="font-size: 14px;text-align: right;margin-top: 7px; font-weight: 400;">
                 <span>开单人：{{ StockOutRequisition ? StockOutRequisition.operatorName : operatorName }}</span>
                 <span style="margin-left: 10px;">
                   开单时间：{{ OperatorTime }}
@@ -104,7 +104,7 @@
             </div>
           </div>
           <div v-if="StoresRequisitionInfo"
-            style="border-bottom: 1px dashed #A6B6C6;height:18px;margin:20px 0;font-size: 12px;margin-top: 10px;">
+            style="border-bottom: 1px dashed #A6B6C6;height:18px;margin:10px 0;font-size: 12px;margin-top: 10px;">
             单据以上部分交接后即可回收
           </div>
           <div class="storehouse-stock" style="display: flex;padding:0 20px" v-if="StoresRequisitionInfo">
@@ -118,10 +118,10 @@
             <div style="display: flex;flex-direction: column;flex:1">
 
               <div style="line-height: 32px;font-size:16px;font-weight: 600;">
-                <p style="margin-top:10px; line-height: 1.3em;">
+                <p style="margin-top:7px; line-height: 1.3em;">
                   生产线：{{StoresRequisitionInfo?.ProductionLine}}
                 </p>
-                <p style="margin-top:10px; line-height: 1.3em;">
+                <p style="margin-top:7px; line-height: 1.3em;">
                   大版ID：{{StoresRequisitionInfo?.PlateCode}}
                 </p>
                 <p style="display: flex;">
@@ -137,7 +137,10 @@
                   <span style="width:70px;color:#7A8B9C; text-align: right;"></span>
                   <span style="">{{StockOutRequisition ? StockOutRequisition.SizeDescribe : SizeDescribe}}</span>
                 </p>
-                <p style="margin-top:10px; line-height: 1.3em;">
+                <p style="margin-top:7px; line-height: 1.3em; color: #ff2e17;">
+                  物料来源：仓库领料
+                </p>
+                <p style="margin-top:7px; line-height: 1.3em;">
                   {{ (StoresRequisitionInfo) ? '领料' : '出库'}}数量：
                   {{StockOutRequisition ? StockOutRequisition.AllOutNumber : AllOutNumber}}
                     {{StockOutRequisition ? StockOutRequisition.StockUnit : StockUnit}}
@@ -150,19 +153,30 @@
                     {{StockUnit}}
                     （{{OutUnitNum}} {{outUnitName}}）
                 </p> -->
-                <p style="margin-top:10px; line-height: 1.3em;">
+                <p style="margin-top:7px; line-height: 1.3em;">
                   <span style="min-width:70px; text-align: right;">开数：</span>
                   <span style="">
                     {{StoresRequisitionInfo?.Multiple}}
                   </span>
                 </p>
-                <p style="margin-top:10px; line-height: 1.3em;">
+                <p style="margin-top:7px; line-height: 1.3em;">
                   <span style="min-width:70px; text-align: right;">开料数量：</span>
                   <span style="">
                     {{StoresRequisitionInfo?.PrintNumber}} {{StockOutRequisition ? StockOutRequisition.StockUnit : StockUnit}}
                   </span>
                 </p>
-                <p style="margin-top:10px; line-height: 1.3em;">
+                <p style="margin-top:7px; line-height: 1.3em;color: #ff2e17;">
+                  <span style="min-width:70px; text-align: right;">开料机台：</span>
+                  <span style="" v-if="StoresRequisitionInfo?.SplitEquipment">
+                    {{StoresRequisitionInfo?.SplitEquipment.ClassName}}
+                    {{StoresRequisitionInfo?.SplitEquipment.GroupName}}
+                    {{StoresRequisitionInfo?.SplitEquipment.Name}}
+                  </span>
+                  <span style="" v-else>
+                    无需开料
+                  </span>
+                </p>
+                <p style="margin-top:7px; line-height: 1.3em;">
                   <span style="min-width:70px; text-align: right;">交接机台：</span>
                   <span style="">
                     {{StoresRequisitionInfo?.ReceiveEquipment.ClassName}}
@@ -331,4 +345,9 @@ const open = () => {
 };
 </script>
 <style lang='scss'>
+.material-requisition-dialog{
+  .el-dialog__body{
+    padding: 0;
+  }
+}
 </style>
