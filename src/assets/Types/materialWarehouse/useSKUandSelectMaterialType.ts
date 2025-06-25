@@ -17,14 +17,14 @@ interface MaterialAttributesType {
   AttributeUnit: string,
   IsBrand: true
 }
-interface SizeSelectsType {
+export interface SizeSelectsType {
   MaterialID: string,
   Code: string
   Size: {
-      ID: string,
-      Name: string,
-      SizeHeight: number,
-      SizeWidth: number,
+    ID: string,
+    Name: string,
+    SizeHeight: number,
+    SizeWidth: number,
   }
 }
 export interface MaterialSelectsType {

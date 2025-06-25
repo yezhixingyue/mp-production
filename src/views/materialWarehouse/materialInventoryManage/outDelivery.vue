@@ -27,6 +27,7 @@
                   <ThreeCascaderComp
                   ref="ThreeCascaderComp"
                   :change="ThreeCascaderCompChange"
+                  :MaterialTypeGroup="MaterialTypeGroup"
                   :disabled="!!StoresRequisitionInfo"
                   ></ThreeCascaderComp>
                   <OneLevelSelect
@@ -56,7 +57,7 @@
                     <span>
                       {{Data.checkedMaterial.AttributeDescribe}}
                     </span>
-                    <span>{{Data.checkedMaterial.Size.Name}}</span>
+                    <span>{{Data.checkedMaterial.Size?.Name}}</span>
                     <span>{{Data.checkedMaterial.Code}}</span>
                   </template>
                 </p>
@@ -193,8 +194,10 @@
       :closeClick="() => Data.outVerify = false"
       :OutCode="Data.outDeliveryForm.OutCode"
       :Code="Data.checkedMaterial?.Code"
-      :AttributeDescribe="Data.checkedMaterial?.AttributeDescribe"
-      :SizeDescribe="`${Data.checkedMaterial?.Size.Name}（${Data.checkedMaterial?.Size.SizeWidth}mm x ${Data.checkedMaterial?.Size.SizeHeight}mm）`"
+      :AttributeDescribe="`${getTypeName} ${Data.checkedMaterial?.AttributeDescribe}`"
+      :SizeDescribe="
+      `${Data.checkedMaterial?.Size ?
+      `${Data.checkedMaterial?.Size.Name}（${Data.checkedMaterial?.Size.SizeWidth}mm x ${Data.checkedMaterial?.Size.SizeHeight}mm）`: ''}`"
       :AllOutNumber="getStorehouseAllOutNumber()"
       :StockUnit="Data.checkedMaterial?.StockUnit"
       :OutUnitNum="getOutUnitNum"
@@ -329,6 +332,16 @@ import { getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { useUserStore } from '@/store/modules/user';
 import { storeToRefs } from 'pinia';
 import MaterialRequisitionDialog from '../materialRequisitionDialog.vue';
+
+interface MaterialTypes {
+  TypeID: string,
+  TypeName: string
+}
+interface MaterialTypeGroupType {
+  CategoryID: number,
+  CategoryName: string,
+  MaterialTypes: MaterialTypes[]
+}
 
 interface MaterialGoodsPositionsType {
   PositionID: string,
@@ -467,6 +480,7 @@ export default {
     // const printBtn:Ref = ref(null);
     const userStore = useUserStore();
     const { user } = storeToRefs(userStore);
+    const MaterialTypeGroup = ref<MaterialTypeGroupType[]>([]);
     const operatorName = ref('');
     const operatorTime = ref('');
     const ThreeCascaderComp:Ref = ref(null);
@@ -525,6 +539,13 @@ export default {
       const staff = CommonStore.StaffSelectList.find(res => res.StaffID === Data.outDeliveryForm.Handler);
       return staff?.StaffName || '';
     });
+    const getTypeName = computed(() => { // 物料类型
+      const MaterialTypes:MaterialTypes[] = [];
+      MaterialTypeGroup.value.forEach(it => {
+        MaterialTypes.push(...it.MaterialTypes);
+      });
+      return MaterialTypes.find(it => it.TypeID === Data.checkedMaterial?.TypeID)?.TypeName || '';
+    });
     const numberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
       if (!value) {
         callback(new Error('请输入出库数量'));
@@ -544,7 +565,7 @@ export default {
     });
 
     const SizeSelects = computed(() => {
-      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size.ID) {
+      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size) {
         return [];
       }
       // Data.itemSelectTempMaterial.SizeSelects
@@ -593,20 +614,18 @@ export default {
     // 格式化数据
     function SizeSelectChange(ID) {
       clearFrom();
+      let SizeObj:SizeSelectsType|undefined;
       if (ID !== '00000000-0000-0000-0000-000000000000') {
         Data.SizeSelects = ID;
+        SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
+      } else {
+        SizeObj = Data.itemSelectTempMaterial?.SizeSelects[0];
       }
-      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         TypeID: Data.TypeID,
         Code: SizeObj?.Code,
-        Size: {
-          ID: SizeObj?.Size.ID,
-          Name: SizeObj?.Size.Name,
-          SizeHeight: SizeObj?.Size.SizeHeight,
-          SizeWidth: SizeObj?.Size.SizeWidth,
-        },
+        Size: SizeObj?.Size,
         MaterialAttributes: Data.itemSelectTempMaterial?.MaterialAttributes,
         StockUnit: Data.allSelectTempMaterial?.StockUnit,
         UnitSelects: Data.allSelectTempMaterial?.UnitSelects.filter(res => res.UnitPurpose === 2),
@@ -631,8 +650,8 @@ export default {
       Data.TypeID = TypeID;
       // Data.outDeliveryForm.UnitID = '';
 
-      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
-        SizeSelectChange(itemMaterial.SizeSelects[0].Size.ID);
+      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].Size) {
+        SizeSelectChange('00000000-0000-0000-0000-000000000000');
       }
     }
     // 获取转换为库存单位的数量;
@@ -912,6 +931,11 @@ export default {
       if (!CommonStore.StaffSelectList.length) {
         CommonStore.getStaffSelect();
       }
+      api.getMaterialTypeGroup(true).then(res => {
+        if (res?.data?.isSuccess) {
+          MaterialTypeGroup.value = res.data.Data as MaterialTypeGroupType[];
+        }
+      });
     });
 
     return {
@@ -946,6 +970,8 @@ export default {
       ThreeCascaderCompChange,
       SizeSelectChange,
       checkedChange,
+      getTypeName,
+      MaterialTypeGroup,
     };
   },
 

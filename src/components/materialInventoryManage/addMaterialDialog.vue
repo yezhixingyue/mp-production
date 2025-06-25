@@ -40,6 +40,7 @@
               v-if="Dialog"
               ref="ThreeCascaderComp"
               :change="ThreeCascaderCompChange"
+              :MaterialTypeGroup="MaterialTypeGroup"
               ></ThreeCascaderComp>
               <OneLevelSelect
                 :options='SizeSelects.map(it => it.Size)'
@@ -60,7 +61,7 @@
           </span>
             <span style="color:#FF0000;" v-if="Data.checkedMaterial">
               {{Data.checkedMaterial.AttributeDescribe}}
-              {{Data.checkedMaterial?.Size.Name}}
+              {{Data.checkedMaterial?.Size?.Name}}
               {{Data.checkedMaterial?.Code}}
             </span>
         </div>
@@ -87,13 +88,23 @@
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import messageBox from '@/assets/js/utils/message';
 import {
-  reactive, computed, Ref, ref,
+  reactive, computed, Ref, ref, onMounted,
 } from 'vue';
 import api from '@/api';
 import { MaterialInfoType } from '@/assets/Types/common';
-import { MaterialDataItemType, MaterialSelectsType } from '@/assets/Types/materialWarehouse/useSKUandSelectMaterialType';
+import { MaterialDataItemType, MaterialSelectsType, SizeSelectsType } from '@/assets/Types/materialWarehouse/useSKUandSelectMaterialType';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
 import ThreeCascaderComp from '@/components/materialInventoryManage/ThreeCascaderComp.vue';
+
+interface MaterialTypes {
+  TypeID: string,
+  TypeName: string
+}
+interface MaterialTypeGroupType {
+  CategoryID: number,
+  CategoryName: string,
+  MaterialTypes: MaterialTypes[]
+}
 
 interface getMaterialDataType {
   MaterialID: string,
@@ -139,6 +150,7 @@ export default {
   },
   setup(props) {
     const ThreeCascaderComp:Ref = ref(null);
+    const MaterialTypeGroup = ref<MaterialTypeGroupType[]>([]);
     const Data:DataType = reactive({
       SizeSelects: null,
       addMaterialShow: false,
@@ -169,7 +181,7 @@ export default {
     });
 
     const SizeSelects = computed(() => {
-      if (Data.itemSelectTempMaterial?.SizeSelects?.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size.ID) {
+      if (Data.itemSelectTempMaterial?.SizeSelects?.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size) {
         return [];
       }
       return Data.itemSelectTempMaterial?.SizeSelects || [];
@@ -227,7 +239,13 @@ export default {
 
     // 格式化数据
     function SizeSelectChange(ID) {
-      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
+      let SizeObj:SizeSelectsType|undefined;
+      if (ID !== '00000000-0000-0000-0000-000000000000') {
+        Data.SizeSelects = ID;
+        SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
+      } else {
+        SizeObj = Data.itemSelectTempMaterial?.SizeSelects[0];
+      }
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         Code: SizeObj?.Code,
@@ -238,9 +256,6 @@ export default {
         AttributeDescribe: Data.itemSelectTempMaterial?.AttributeDescribe,
       };
       Data.checkedMaterial = { ...temp } as MaterialInfoType;
-      if (ID !== '00000000-0000-0000-0000-000000000000') {
-        Data.SizeSelects = ID;
-      }
       Data.getMaterialData.SKUCode = '';
     }
     // 选择物料
@@ -248,8 +263,8 @@ export default {
       Data.SizeSelects = null;
       Data.allSelectTempMaterial = { ...allSellectMaterial } as MaterialDataItemType;
       Data.itemSelectTempMaterial = { ...itemMaterial } as MaterialSelectsType;
-      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
-        SizeSelectChange(itemMaterial.SizeSelects[0].Size.ID);
+      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].Size) {
+        SizeSelectChange('00000000-0000-0000-0000-000000000000');
       }
     }
     // 根据选项或sku编码查物料
@@ -270,6 +285,14 @@ export default {
         });
       }
     }
+
+    onMounted(() => {
+      api.getMaterialTypeGroup(true).then(res => {
+        if (res?.data?.isSuccess) {
+          MaterialTypeGroup.value = res.data.Data as MaterialTypeGroupType[];
+        }
+      });
+    });
     return {
       Data,
       Dialog,
@@ -281,6 +304,7 @@ export default {
       addMaterialCloseClick,
       addMaterialClosed,
       addMaterialPrimaryClick,
+      MaterialTypeGroup,
     };
   },
 };

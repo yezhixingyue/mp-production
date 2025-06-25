@@ -25,6 +25,7 @@
                   <ThreeCascaderComp
                   ref="ThreeCascaderComp"
                   :change="ThreeCascaderCompChange"
+                  :MaterialTypeGroup="MaterialTypeGroup"
                   ></ThreeCascaderComp>
                   <OneLevelSelect
                   v-if="Data.itemSelectTempMaterial"
@@ -51,7 +52,7 @@
                     <span>
                       {{Data.checkedMaterial.AttributeDescribe}}
                     </span>
-                    <span>{{Data.checkedMaterial.Size.Name}}</span>
+                    <span>{{Data.checkedMaterial.Size?.Name}}</span>
                     <span>{{Data.checkedMaterial.Code}}</span>
                   </template>
                 </p>
@@ -240,6 +241,15 @@ import { useRouter } from 'vue-router';
 import { MaterialInfoType } from '@/assets/Types/common';
 import InDeliveryDialog from '@/components/materialInventoryManage/inDeliveryDialog.vue';
 
+interface MaterialTypes {
+  TypeID: string,
+  TypeName: string
+}
+interface MaterialTypeGroupType {
+  CategoryID: number,
+  CategoryName: string,
+  MaterialTypes: MaterialTypes[]
+}
 interface UnitSelectsType {
   UnitID: string,
   Unit: string,
@@ -354,6 +364,7 @@ export default {
     const ThreeCascaderComp:Ref = ref(null);
     const InDeliveryDialogRef:Ref = ref(null);
     const MaterialWarehouseStore = useMaterialWarehouseStore();
+    const MaterialTypeGroup = ref<MaterialTypeGroupType[]>([]);
     // 两位小数
     const reg = /(^[1-9]+\d*$)|(^[1-9]+\d*\.[0-9]{1}[1-9]{1}$)|(^[1-9]+\d*\.[1-9]{1}$)|(^0\.[1-9]{1}$)|(^0\.\d{1}[1-9]{1}$)/;
     const CommonStore = useCommonStore();
@@ -430,7 +441,7 @@ export default {
       ],
     });
     const SizeSelects = computed(() => {
-      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size.ID) {
+      if (Data.itemSelectTempMaterial?.SizeSelects.length && !Data.itemSelectTempMaterial.SizeSelects[0].Size) {
         return [];
       }
       // Data.itemSelectTempMaterial.SizeSelects
@@ -460,10 +471,13 @@ export default {
     // 格式化数据
     function SizeSelectChange(ID) {
       clearFrom();
+      let SizeObj:SizeSelectsType|undefined;
       if (ID !== '00000000-0000-0000-0000-000000000000') {
         Data.SizeSelects = ID;
+        SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
+      } else {
+        SizeObj = Data.itemSelectTempMaterial?.SizeSelects[0];
       }
-      const SizeObj = Data.itemSelectTempMaterial?.SizeSelects.find(res => res.Size.ID === ID);
       const temp = {
         MaterialID: SizeObj?.MaterialID,
         TypeID: Data.TypeID,
@@ -490,8 +504,8 @@ export default {
       Data.TypeID = TypeID;
       // Data.inDeliveryForm.UnitID = '';
 
-      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].SizeDescribe) {
-        SizeSelectChange(itemMaterial.SizeSelects[0].Size.ID);
+      if (itemMaterial?.SizeSelects.length && !itemMaterial.SizeSelects[0].Size) {
+        SizeSelectChange('00000000-0000-0000-0000-000000000000');
       }
     }
     // 获取转换为库存单位的数量;
@@ -769,6 +783,11 @@ export default {
         CommonStore.getStaffSelect();
       }
       getStorehouseAll();
+      api.getMaterialTypeGroup(true).then(res => {
+        if (res?.data?.isSuccess) {
+          MaterialTypeGroup.value = res.data.Data as MaterialTypeGroupType[];
+        }
+      });
     });
 
     return {
@@ -797,6 +816,7 @@ export default {
       selectStorehouseGoodsPosition,
       getStorehouseInNumber,
       getStorehouseAllInNumber,
+      MaterialTypeGroup,
     };
   },
 

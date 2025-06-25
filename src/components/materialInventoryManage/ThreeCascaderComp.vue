@@ -55,26 +55,19 @@ interface MaterialDataItemType {
   UnitSelects: UnitSelectsType[],
   MaterialSelects: MaterialSelectsType[]
 }
-
-interface MaterialTypes {
-  TypeID: string,
-  TypeName: string
-}
-interface MaterialTypeGroupType {
-  CategoryID: number,
-  CategoryName: string,
-  MaterialTypes: MaterialTypes[]
-}
-
 export default {
   props: {
     change: {
       type: Function,
       default: () => null,
     },
+    MaterialTypeGroup: {
+      type: Array,
+      default: () => ([]),
+    },
   },
   setup(props) {
-    const MaterialTypeGroup = ref<MaterialTypeGroupType[]>([]);
+    // const MaterialTypeGroup = ref<MaterialTypeGroupType[]>([]);
     const MaterialData:MaterialDataItemType[] = [];
     const reseta = ref(false);
     const cascaderProps = {
@@ -86,7 +79,7 @@ export default {
         // 没有值时为第一层级
         if (level === 0) {
           // 二级没有的时候一级也不显示
-          const temp = MaterialTypeGroup.value.filter(res => res.MaterialTypes.length);
+          const temp = props.MaterialTypeGroup.filter(res => res.MaterialTypes.length);
           const nodes = temp.map(res => ({
             value: res.CategoryID,
             label: res.CategoryName,
@@ -102,7 +95,7 @@ export default {
 
         // 第二层级
         if (level === 1) {
-          const CategoryGroup = MaterialTypeGroup.value.find(it => it.CategoryID === node.value);
+          const CategoryGroup = props.MaterialTypeGroup.find(it => it.CategoryID === node.value);
           const nodes = CategoryGroup?.MaterialTypes.map(res => ({
             value: res.TypeID,
             label: res.TypeName,
@@ -162,20 +155,12 @@ export default {
         reseta.value = false;
       }, 5);
     }
-    onMounted(() => {
-      api.getMaterialTypeGroup(true).then(res => {
-        if (res?.data?.isSuccess) {
-          MaterialTypeGroup.value = res.data.Data as MaterialTypeGroupType[];
-        }
-      });
-    });
 
     return {
       reseta,
       cascaderProps,
       cascaderChange,
       reset,
-      MaterialTypeGroup,
     };
   },
 
