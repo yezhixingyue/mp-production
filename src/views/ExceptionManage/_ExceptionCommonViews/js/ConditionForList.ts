@@ -8,6 +8,9 @@ export class ConditionForList {
   /** 异常处理状态 */
   Status: '' | ExceptionHandlerStatusEnum = ''
 
+  /** 提交人 */
+  Submiter = ''
+
   /** 处理人 */
   Operator = ''
 

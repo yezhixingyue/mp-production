@@ -5,6 +5,7 @@
         <h4>状态筛选：</h4>
         <span v-for="it in localStatusEnumList" :key="it.ID" :class="{active:it.ID===condition.Status}" @click="onMenuClick(it)">{{it.Name}}</span>
       </div>
+      <StaffSelector v-model="_Submiter" title="提交人" class="mr-20" />
       <StaffSelector v-model="_Operator" title="处理人" />
     </div>
     <div class="second">
@@ -52,6 +53,16 @@ const props = defineProps<{
   list: ITaskExceptionInfo[]
   IsOutSourcing: boolean
 }>();
+
+const _Submiter = computed({
+  get() {
+    return props.condition.Submiter;
+  },
+  set(val) {
+    props.setCondition([['Submiter', ''], val]);
+    props.getList();
+  },
+});
 
 const _Operator = computed({
   get() {
