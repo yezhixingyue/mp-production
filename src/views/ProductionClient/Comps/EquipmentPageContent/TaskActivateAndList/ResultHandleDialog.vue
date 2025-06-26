@@ -73,7 +73,7 @@
 import { computed } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IReceiveResult } from '@/views/ProductionClient/assets/js/types';
-import { EquipmentReceiveCodeEnum, ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
+import { EquipmentReceiveCodeEnum } from '@/views/ProductionClient/assets/js/enum';
 import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 
 const props = defineProps<{
@@ -114,7 +114,8 @@ const displayInfo = computed(() => {
       temp.title = '确定';
       temp.first = '位置正确，';
       temp.second = '完成送达';
-      temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
+      // 都不记得当初为什么要添加此处文字 暂时予以注释 25.6.26
+      // temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
       // temp.class = 'is-success';
       break;
 
@@ -122,7 +123,7 @@ const displayInfo = computed(() => {
       temp.title = '确定';
       temp.first = '正确：';
       temp.second = '是当前加工任务';
-      temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
+      // temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
       temp.class = 'is-success';
       break;
 
