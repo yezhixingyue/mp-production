@@ -32,6 +32,10 @@ const api = {
     // POST /Api/MaterialTypeAttribute/SetBrand  物料类型属性 - 设置品牌
     return request({ method: 'POST', url: '/Api/MaterialTypeAttribute/SetBrand', data });
   },
+  getMaterialTypeAttributeSetThickness(attributeID) {
+    // POST /Api/MaterialTypeAttribute/SetThickness  物料类型属性 - 设置厚度
+    return request({ method: 'GET', url: `/Api/MaterialTypeAttribute/SetThickness?attributeID=${attributeID}` });
+  },
   // getMaterialTypeAttributeSetSelectType(data) {
   //   // POST /Api/MaterialTypeAttribute/SelectType  物料类型属性 选择项查询
   //   return request({ method: 'GET', url: '/Api/MaterialTypeAttribute/SelectType', data });

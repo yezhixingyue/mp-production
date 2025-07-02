@@ -21,6 +21,7 @@ interface IActions {
 }
 type IGetters = {
   selectMaterialTypeAttribute: ()=>AttributeType[]
+  selectNumberMaterialTypeAttribute: ()=>AttributeType[]
 };
 
 const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
@@ -38,6 +39,10 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     // 选择项的属性
     selectMaterialTypeAttribute() {
       return this.MaterialTypeAttributeAllList.filter((it) => it.AttributeType === 2);
+    },
+    // 数字的属性
+    selectNumberMaterialTypeAttribute() {
+      return this.MaterialTypeAttributeAllList.filter((it) => it.AttributeType === 1);
     },
   },
   actions: {
