@@ -28,6 +28,8 @@
         <span v-if='result.CurrentKind' class="ml-8">共{{ result.KindCount }}款，当前为第<i class="is-pink ft-20 ml-5 mr-5">{{ result.CurrentKind }}</i>款</span>
       </p>
 
+      <p v-if="displayInfo?.tips" style="color: #ff3769;font-size: 16px;">{{ displayInfo?.tips }}</p>
+
       <!-- 不需要确认 -->
       <template v-if="!isConfirm">
         <div class="title" >
@@ -107,6 +109,7 @@ const displayInfo = computed(() => {
     third: '', // 可生产 | 不可生产
     rightPosition: '',
     class: '',
+    tips: '',
   };
 
   switch (props.result.Code) {
@@ -114,6 +117,7 @@ const displayInfo = computed(() => {
       temp.title = '确定';
       temp.first = '位置正确，';
       temp.second = '完成送达';
+      temp.tips = props.result.Tips || '';
       // 都不记得当初为什么要添加此处文字 暂时予以注释 25.6.26
       // temp.third = props.result.Status === ProductiveTaskStatusEnum.Producibility ? '可生产' : '不可生产';
       // temp.class = 'is-success';

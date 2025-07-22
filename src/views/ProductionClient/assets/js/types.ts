@@ -324,6 +324,8 @@ export interface IReceiveResult {
   HaveSendNumber: number
   /** 是否拆版 控制拆版印章显示 */
   IsSplitPlate: boolean
+  /** 成功时左上角提示 */
+  Tips?: string
 }
 
 /**
