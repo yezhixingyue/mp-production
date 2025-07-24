@@ -1,7 +1,7 @@
 export interface IMaterial {
   ClassID: number,
   ClassName: string,
-  TypeID: string,
+  TypeID: number,
   TypeName: string,
   MaterialID: string,
   MaterialName: string

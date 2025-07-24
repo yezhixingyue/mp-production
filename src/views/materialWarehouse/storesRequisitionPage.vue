@@ -2,10 +2,10 @@
   <div class="stores-requisition-page">
     <header>
       <div class="top-main flex-box">
-        <!-- :level2Options='MaterialTypeList' -->
           <RadioGroupComp
             :title='"物料筛选"'
             :level1Options='CategoryList'
+            :level2Options='MaterialTypeList'
             :defaultProps="{
               value:'CategoryID',
               label:'CategoryName',
@@ -117,7 +117,7 @@
           <template #default="scope:any">
             <mp-button v-if="localPermission?.Setup" type="primary"
               :disabled="!scope.row.Status" link @click="openMaterialRequisition(scope.row)">查看领料单</mp-button>
-            <mp-button v-if="localPermission?.Setup" type="primary" :disabled="scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
+            <mp-button v-if="localPermission?.Setup" type="primary" :disabled="!!scope.row.Status" link @click="toOut(scope.row)">出库</mp-button>
             <!-- <el-button :disabled="scope.row.Status" type="primary" link @click="toOut(scope.row)">出库</el-button> -->
           </template>
         </el-table-column>
@@ -153,7 +153,16 @@
       :nowPage="storesRequisition.getListData.Page"
       :pageSize="storesRequisition.getListData.PageSize"
       :total="storesRequisition.DataTotal"
-      :handlePageChange="PaginationChange" />
+      :handlePageChange="PaginationChange">
+      <template v-slot:text="{total}">
+        <span>共检索出</span>
+        <i class="num"> {{total}} </i>
+        <span>条记录</span>
+        <div class="pagination-left" style="line-height: 30px; padding-left: 20px;">
+          <b>总数量：</b> <span class="is-pink is-bold">{{storesRequisition.TotalNumber}}</span> <i class="is-gray">（不含取消）</i>
+        </div>
+      </template>
+    </MpPagination>
     </footer>
   </div>
 </template>
@@ -173,6 +182,7 @@ import { useStoresRequisition } from '@/store/modules/storesRequisition';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 // import type { IMaterial, IList } from '@/store/modules/materialWarehouse/StoresRequisitionTypes';
 import { useUserStore } from '@/store/modules/user';
+import { MaterialTypeGroupType } from '@/store/modules/materialWarehouse/types';
 import MaterialRequisitionDialog from './materialRequisitionDialog.vue';
 
 interface twoSelecValueType {
@@ -227,7 +237,7 @@ export default {
 
     const twoSelecValue:ComputedRef<twoSelecValueType> = computed(() => ({
       level1Val: storesRequisition.getListData.Material.ClassID,
-      level2Val: '',
+      level2Val: storesRequisition.getListData.Material.TypeID,
     }));
     const StatesValue:ComputedRef<twoSelecValueType> = computed(() => ({
       level1Val: storesRequisition.getListData.Status,
@@ -246,27 +256,28 @@ export default {
       { StatusID: 255, StatusName: '已取消' }]);
     const CategoryList = computed(() => [{ CategoryID: '', CategoryName: '全部分类' },
       ...MaterialWarehouseStore.MaterialTypeGroup]);
-    // const MaterialTypeList = computed(() => {
-    //   const noType = {
-    //     TypeID: '',
-    //     TypeName: '全部类型',
-    //   };
-    //   const MaterialType = CategoryList.value.find(it => it.CategoryID === Data.getListData.CategoryID);
-    //   if (MaterialType && MaterialType.CategoryID) {
-    //     const temp = MaterialType as MaterialTypeGroupType;
-    //     return [noType, ...temp.MaterialTypes] || [];
-    //   }
-    //   return [noType];
-    // });
+    const MaterialTypeList = computed(() => {
+      const noType = {
+        TypeID: '',
+        TypeName: '全部类型',
+      };
+      const MaterialType = CategoryList.value.find(it => it.CategoryID === storesRequisition.getListData.Material.ClassID);
+      if (MaterialType && MaterialType.CategoryID) {
+        const temp = MaterialType as MaterialTypeGroupType;
+        return [noType, ...temp.MaterialTypes] || [];
+      }
+      return [noType];
+    });
     // 清空筛选项
     function clearCondition() {
       storesRequisition.clearCondition();
     }
 
     function twoSelectChange(levelData) {
-      const { level1Val } = levelData;
+      const { level1Val, level2Val } = levelData;
       if (level1Val !== undefined) {
         storesRequisition.ChangeMaterialClassID(level1Val);
+        storesRequisition.ChangeMaterialTypeID(level2Val);
         // Data.getListData.TypeID = level2Val;
       }
     }
@@ -318,7 +329,7 @@ export default {
       StatesList,
       twoSelecValue,
       CategoryList,
-      // MaterialTypeList,
+      MaterialTypeList,
       PaginationChange,
       twoSelectChange,
       clearCondition,

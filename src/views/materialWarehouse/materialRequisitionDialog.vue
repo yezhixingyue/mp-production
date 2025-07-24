@@ -245,24 +245,24 @@ interface IStockOutRequisition {
 
 interface Props {
   isMaterialRequisition:boolean
-  OutCodeSrc:string
+  OutCodeSrc?:string
   outVerify:boolean
   primaryClick:(back:() => void) => void
   closeClick:() => void
-  OutCode:string|number
-  Code:string|number
-  AttributeDescribe:string
-  SizeDescribe:string
-  AllOutNumber:number
-  StockUnit:string
-  OutUnitNum:number
-  outUnitName:string
-  MaterialRequisitionCodeSrc:string
-  ReceiptorName:string
-  operatorName:string
-  operatorTime:string
-  StoresRequisitionInfo:IList|null,
-  StorehouseStockInfo: StorehouseStockInfoType[]
+  OutCode?:string|number
+  Code?:string|number
+  AttributeDescribe?:string
+  SizeDescribe?:string
+  AllOutNumber?:number
+  StockUnit?:string
+  OutUnitNum?:number
+  outUnitName?:string
+  MaterialRequisitionCodeSrc?:string
+  ReceiptorName?:string
+  operatorName?:string
+  operatorTime?:string
+  StoresRequisitionInfo?:IList|null,
+  StorehouseStockInfo?: StorehouseStockInfoType[]
 }
 const props = withDefaults(defineProps<Props>(), {
   isMaterialRequisition: false,

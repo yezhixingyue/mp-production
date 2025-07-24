@@ -17,6 +17,7 @@ interface IGetListData {
 }
 interface IState {
   DataTotal: number,
+  TotalNumber: string,
   List: IList[],
   // 获取领料单列表
   getListData: IGetListData,
@@ -25,6 +26,7 @@ interface IActions {
   getList:(page?:number)=>void,
   clearCondition:()=>void,
   ChangeMaterialClassID: (ClassID:number) => void,
+  ChangeMaterialTypeID: (TypeID:number) => void,
   ChangeCondition: ([key, value]:[key:string, value:string]) => void,
   setCondition4DataList: ([[key1, key2], value]: [key:string[], value:string]) => void,
   getData: () => void,
@@ -35,6 +37,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
   id: 'storesRequisitionStore',
   state: () => ({
     DataTotal: 0,
+    TotalNumber: '0',
     List: [],
     // 获取领料单列表
     getListData: {
@@ -42,7 +45,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       Material: {
         ClassID: 0,
         ClassName: '',
-        TypeID: '',
+        TypeID: 0,
         TypeName: '',
         MaterialID: '',
         MaterialName: '',
@@ -69,6 +72,9 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         if (res?.data?.Status === 1000) {
           this.List = res.data.Data as IList[];
           this.DataTotal = res.data.DataNumber;
+          if (Page === 1) {
+            this.TotalNumber = res.data.Message;
+          }
         }
       });
     },
@@ -78,7 +84,7 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         Material: {
           ClassID: 0,
           ClassName: '',
-          TypeID: '',
+          TypeID: 0,
           TypeName: '',
           MaterialID: '',
           MaterialName: '',
@@ -99,6 +105,9 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
     ChangeMaterialClassID(ClassID) {
       this.getListData.Material.ClassID = ClassID;
+    },
+    ChangeMaterialTypeID(TypeID) {
+      this.getListData.Material.TypeID = TypeID;
     },
     ChangeCondition([key, value]) {
       this.getListData[key] = value;
