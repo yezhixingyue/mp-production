@@ -1,5 +1,5 @@
 <template>
-  <section class="mp--pagination" :class='{center:center, countInLeft: countInLeft, left: left}'>
+  <section class="mp--pagination" :class='{center:center, countInLeft: countInLeft, left: left, spaceBetween: spaceBetween}'>
     <el-config-provider>
       <!-- 分页 -->
       <span v-if="!left || !total || total <= pageSize">
@@ -60,6 +60,10 @@ export default {
       default: false,
     },
     countInLeft: {
+      type: Boolean,
+      default: false,
+    },
+    spaceBetween: {
       type: Boolean,
       default: false,
     },
@@ -138,6 +142,19 @@ export default {
   }
   &.left {
     justify-content: space-between;
+  }
+  &.spaceBetween {
+    justify-content: space-between;
+    .el-pagination {
+      flex: 1;
+      justify-content: center;
+      position: relative;
+      right: -32px;
+    }
+    > span {
+      flex: none;
+      min-width: 120px;
+    }
   }
 }
 </style>

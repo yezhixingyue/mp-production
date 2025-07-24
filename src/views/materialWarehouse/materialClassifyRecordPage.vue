@@ -212,7 +212,7 @@
     <footer>
       <MpPagination
       style="width: 100%;"
-      center
+      spaceBetween
       :nowPage="Data.getRecordData.Page"
       :pageSize="Data.getRecordData.PageSize"
       :total="Data.DataTotal"
@@ -222,6 +222,14 @@
           总金额：<span>￥{{Data.aggregateAmount}}元</span>
           </template>
         </p>
+        <template v-slot:text="{total}">
+          <span>共检索出</span>
+          <i class="num"> {{total}} </i>
+          <span>条记录</span>
+          <div class="pagination-left" style="line-height: 30px; padding-left: 20px;">
+            <b>总数量：</b> <span class="is-pink is-bold">{{Math.abs(Number(Data.TotalNumber))}}</span>
+          </div>
+        </template>
       </MpPagination>
     </footer>
     <!-- 仓库货位信息 -->
@@ -390,6 +398,7 @@ interface StorehouseStockInfoType {
 interface DataType {
   StorehouseStockShow:boolean,
   DataTotal: number,
+  TotalNumber: string,
   aggregateAmount: string,
   RecordList:RecordListType[],
   getRecordData: getRecordDataType,
@@ -467,6 +476,7 @@ export default {
     const Data:DataType = reactive({
       aggregateAmount: '',
       DataTotal: 0,
+      TotalNumber: '0',
       RecordList: [],
       getRecordData: {
         DateType: 'today',
@@ -531,6 +541,11 @@ export default {
           Data.RecordList = res.data.Data as RecordListType[];
           Data.DataTotal = res.data.DataNumber as number;
           Data.aggregateAmount = res.data.Message as string;
+          const Messages = res.data.Message.split(',');
+          if (Page === 1) {
+            Data.TotalNumber = Messages[1] || '0' as string;
+          }
+          Data.aggregateAmount = Messages[0] || '0' as string;
         }
       });
     }
