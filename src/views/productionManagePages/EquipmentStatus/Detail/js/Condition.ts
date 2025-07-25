@@ -1,3 +1,4 @@
+import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
 import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
 import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 
@@ -29,5 +30,13 @@ export class Condition {
       GroupID: Equipment?.GroupID || '',
       ID: Equipment?.ID || '',
     };
+  }
+
+  filter() {
+    /** 处理时间 */
+    // CommonClassType.setDate(this, 'CreateTime');
+
+    /** 筛选结果 */
+    return CommonClassType.filter(this, true);
   }
 }

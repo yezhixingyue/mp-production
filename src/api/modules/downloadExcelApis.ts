@@ -33,4 +33,8 @@ export const downloadExcelApis = {
   getChunkExcel(condition) {
     return instance.post('/Api/Chunk/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
   },
+  /** /Api/ProductionException/Excel 导出外协|生产异常列表 */
+  getProductionExceptionExcel(condition) {
+    return instance.post('/Api/ProductionException/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+  },
 };

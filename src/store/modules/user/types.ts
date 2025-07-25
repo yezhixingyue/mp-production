@@ -90,6 +90,7 @@ export interface IUser {
         Query: boolean
         QueryTask: boolean
         ChangeEquipemnt: boolean
+        Excel: boolean
       };
     };
     /** 大版管理 */

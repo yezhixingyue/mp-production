@@ -68,7 +68,7 @@
       <li v-if="props.item.NeedFolding" class="fold-set">
         <div class="f">
           <h4>需要折手 </h4>
-          <span v-if="item.NeedSheetIndex">{{ item.NeedSheetIndex ? '添加帖标' : '不添加帖标' }}</span>
+          <span v-if="item.NeedSheetIndex">{{ item.NeedSheetIndex ? '添加贴标' : '不添加贴标' }}</span>
           <span v-if="item.FeedEdgePosition !== FeedEdgePositionEnum.None">
             <template v-if="item.FeedEdgePosition === FeedEdgePositionEnum.Front">前叼口空白尺寸：{{ item.FeedEdgeValue }}mm</template>
             <template v-if="item.FeedEdgePosition === FeedEdgePositionEnum.Back">后叼口空白尺寸：{{ item.FeedEdgeValue }}mm</template>

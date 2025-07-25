@@ -27,6 +27,55 @@ const routes: RouteRecordRaw = {
       component: () => import('@/views/productionManagePages/EquipmentStatus/List/EquipmentStatusListPage.vue'),
     },
     {
+      path: '/ProcessDecompositionOrderList',
+      name: 'ProcessDecompositionOrderList',
+      meta: {
+        title: '订单审核',
+        requiresAuth: true,
+        icon: 'icon-dingdanshenhe iconfont scale-11',
+        pageName: 'ProcessDecompositionOrderListView',
+        PermissionInfo: ['PermissionCraftSolve', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/ProcessDecompositionOrderList/ProcessDecompositionOrderListView.vue'),
+    },
+    { // ProcessDecompositionOrderDetail
+      path: '/ProcessDecompositionOrderDetail',
+      name: 'ProcessDecompositionOrderDetail',
+      meta: {
+        title: '订单审核详情',
+        requiresAuth: true,
+        // icon: 'icon-dingdanshenhe iconfont scale-11',
+        pageName: 'ProcessDecompositionOrderDetailView',
+        PermissionInfo: ['PermissionCraftSolve', 'HavePomission'],
+      },
+      // eslint-disable-next-line max-len
+      component: () => import('@/views/productionManagePages/ProcessDecompositionOrderList/childrenPages/PDODetailView/ProcessDecompositionOrderDetailView.vue'),
+    },
+    {
+      path: '/ProcessDecompositionOrderSetup',
+      name: 'ProcessDecompositionOrderSetup',
+      meta: {
+        title: '订单审核',
+        requiresAuth: true,
+        // icon: 'icon-dingdanshenhe iconfont scale-11',
+        pageName: 'ProcessDecompositionOrderSetupView',
+        PermissionInfo: ['PermissionCraftSolve', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/ProcessDecompositionOrderList/childrenPages/PDOSetupView/PDOSetupView.vue'),
+    },
+    {
+      path: '/ProcessDecompositionOrderSubmit',
+      name: 'ProcessDecompositionOrderSubmit',
+      meta: {
+        title: '订单审核提交',
+        requiresAuth: true,
+        // icon: 'icon-dingdanshenhe iconfont scale-11',
+        pageName: 'ProcessDecompositionOrderSubmitView',
+        PermissionInfo: ['PermissionCraftSolve', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/ProcessDecompositionOrderList/childrenPages/PDOSubmitView/PDOSubmitView.vue'),
+    },
+    {
       path: '/EquipmentStatusDetail',
       name: 'EquipmentStatusDetail',
       meta: {
@@ -219,6 +268,18 @@ const routeTree:RouteTreeType = {
       name: 'EquipmentStatus',
       children: [
         { name: 'EquipmentStatusDetail', children: [] },
+      ],
+    },
+    /* 订单审核
+    -------------------------------------- */
+    {
+      name: 'ProcessDecompositionOrderList',
+      children: [
+        {
+          name: 'ProcessDecompositionOrderSetup',
+          children: [{ name: 'ProcessDecompositionOrderSubmit', children: [] }],
+        },
+        { name: 'ProcessDecompositionOrderDetail', children: [] },
       ],
     },
     /* 手动下单

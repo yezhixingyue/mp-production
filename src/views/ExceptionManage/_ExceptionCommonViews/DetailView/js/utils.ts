@@ -12,7 +12,7 @@ export const getWorkingContent = (w: IExceptionWorking) => {
 export const getReproduceContent = (Reproduce: IRedoReproduce | null) => {
   if (!Reproduce) return '';
   const m = Reproduce.ReceiveMaterial ? '重新领料' : '不再领料';
-  const p = Reproduce.Platemaking ? '重新制版' : '不重新拼版';
+  const p = Reproduce.Platemaking ? '重新制版' : '不重新制版';
   const remark = [m, p].filter(it => it).join('、');
 
   return remark ? `重新生产（${remark}）` : '重新生产';

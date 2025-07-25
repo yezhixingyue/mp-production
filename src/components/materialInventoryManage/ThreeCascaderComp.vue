@@ -19,7 +19,7 @@
 
 <script lang='ts'>
 import api from '@/api';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 interface UnitSelectsType {
   UnitID: string,

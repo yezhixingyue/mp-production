@@ -18,8 +18,8 @@ export interface IConvertAssistInfo {
   /** 辅助信息ID */
   ID: string
   /** 未赋值前不能用该字段 */
-  _Name: string
-  /** 数据库赋值 */
+  _Name?: string
+  /** 数据库赋值 -- 工艺分解全部使用该字段 */
   Name?: string
   /** 辅助信息类型 */
   Type: AssistInfoTypeEnum

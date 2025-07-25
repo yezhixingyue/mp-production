@@ -14,7 +14,7 @@ export class InstanceSettingsOnMakeupFileClass {
   /** 是否需要折手 */
   NeedFolding = false
 
-  /** 是否需要帖标 */
+  /** 是否需要贴标 */
   NeedSheetIndex = false
 
   /** 爬移类型 */
@@ -50,7 +50,7 @@ export class InstanceSettingsOnMakeupFileClass {
   private _check() {
     if (!this.NeedFolding) return true;
 
-    // 1. 验证帖标 无需验证
+    // 1. 验证贴标 无需验证
 
     // 2. 爬移使用
     if (this.MoveType !== MoveTypeEnum.None) {

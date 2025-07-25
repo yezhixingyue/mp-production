@@ -89,7 +89,7 @@
           </p>
         </li>
       </template>
-      <li class="remove-row" v-if="itemData._MaterialSource?.NeedResource === false">
+      <li class="remove-add-row" v-if="itemData._MaterialSource?.NeedResource === false">
         <RemoveMenu class="remove" @click="onSemiFinisiedRemoveClick" title="删除此半成品" />
       </li>
     </ul>
@@ -286,7 +286,7 @@ const onFoldingSubmit = (params: object) => {
         }
       }
 
-      &.remove-row {
+      &.remove-add-row {
         justify-content: flex-end;
         line-height: 18px;
         padding-top: 12px;

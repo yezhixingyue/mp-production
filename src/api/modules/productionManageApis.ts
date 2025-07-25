@@ -10,6 +10,8 @@ import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IDigitalOrderPlatePrintInfo } from '@/views/productionManagePages/ManageDigitalListPage/js/types';
 import { request, instance } from '@/basic/request';
 import { IChunkDetail } from '@/views/productionManagePages/TagRePrintPage/js/type';
+import { IProductionLineDetail } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
+import { IFactoryMaterialList } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 
 export const productionManageApis = {
   /* 生产管理
@@ -52,6 +54,34 @@ export const productionManageApis = {
   /** GET /Api/Plate/OrderList  获取大版相关订单列表 */
   getPlateOrderList(plateID: string) {
     return instance.get<IManageOrderListItem[]>('/Api/Plate/OrderList', { params: { plateID } });
+  },
+  /** post /Api/CraftResolve/List  订单审核列表 */
+  getCraftResolveList(condition) {
+    return instance.post('/Api/CraftResolve/List', condition);
+  },
+  /** /Api/CraftResolve/WorkingUseable 单一生产线工序可用性验证 */
+  getCraftResolveWorkingUseable(data: { LineList: [{ ID: string; Name: string }]; WorkingList: { WorkingID: string }[] }) {
+    return instance.post('/Api/CraftResolve/WorkingUseable', data);
+  },
+  /** get /Api/CraftResolve/Detail  获取审核详情 */
+  getCraftResolveDetail(id: string) {
+    return instance.get('/Api/CraftResolve/Detail', { params: { id } });
+  },
+  /** post /Api/CraftResolve/Save  订单审核保存 */
+  getCraftResolveSave(data) {
+    return instance.post('/Api/CraftResolve/Save', data);
+  },
+  /** put /Api/CraftResolve/Submit 订单审核提交 */
+  getCraftResolveSubmit(id: string) {
+    return instance.put('/Api/CraftResolve/Submit', null, { params: { id } });
+  },
+  /** 获取生产线详细信息 GET /Api/ProductionLine/Detail */
+  getProductionLineDetail(id: string) {
+    return request<IProductionLineDetail>({ method: 'GET', url: '/Api/ProductionLine/Detail', params: { id } });
+  },
+  /** GET /Api/Material/All 生产线取物料 */
+  getFactoryMaterialList(typeID?: string) {
+    return request<IFactoryMaterialList[]>({ method: 'GET', url: '/Api/Material/All', params: { typeID } });
   },
   /** POST /Api/Task/List   筛选任务列表 --- 接口作废 和 设备任务列表接口共用 */
   // getTaskList(data) {

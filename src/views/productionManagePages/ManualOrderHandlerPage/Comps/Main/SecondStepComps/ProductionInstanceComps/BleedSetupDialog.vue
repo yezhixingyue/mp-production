@@ -1,7 +1,7 @@
 <template>
   <DialogContainerComp :visible='localVisible' :width='600' :title="`设置出血:${fileItem?._PlateTemplate?.Name}`" top='17vh' @open='onOpen' primary-text="确定"
     @cancel='localVisible = false' @submit='submit'>
-    <div class='dialog-content'>
+    <div class='bleed-content'>
       <div class="item">
         <span>上：</span>
         <el-input v-model.trim="ruleForm.BleedTop" maxlength="4"></el-input>
@@ -89,7 +89,7 @@ const submit = () => {
 <style scoped lang='scss'>
 @import '@/assets/css/mixins.scss';
 
-.dialog-content {
+.bleed-content {
   width: 400px;
   margin: 0 auto;
   padding-bottom: 30px;

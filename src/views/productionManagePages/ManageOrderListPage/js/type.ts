@@ -40,13 +40,7 @@ export interface ISellOrderInstanceItem {
   AfterPrintFileRemark: string | null
 }
 
-/**
- * 订单管理列表
- *
- * @export
- * @interface IManageOrderListItem
- */
-export interface IManageOrderListItem {
+export interface IOrderItemBase {
   /** 订单ID */
   ID: string
   /** 销售服务器名称 */
@@ -67,14 +61,23 @@ export interface IManageOrderListItem {
   Number: number
   /** 单位 */
   Unit: string
-  /** 尺寸 */
-  Size: string
-  /** 订单状态 */
-  Status: OrderStatus
   /** 下单时间 */
   CreateTime: string
   /** 预计完成时间 */
   WishFinishTime: string
+}
+
+/**
+ * 订单管理列表
+ *
+ * @export
+ * @interface IManageOrderListItem
+ */
+export interface IManageOrderListItem extends IOrderItemBase {
+  /** 尺寸 */
+  Size: string
+  /** 订单状态 */
+  Status: OrderStatus
   /** 完成时间 */
   FinishTime: string
   /** 是否手动下单 */
@@ -92,6 +95,8 @@ export interface IManageOrderListItem {
   AfterPrintFileRemark: string
   /** 下载文件列表 */
   CheckedFileList: { FilePath: string; ID: string; Name: string; IsReplaceable: boolean }[]
+  /** 加工信息 */
+  Describe: string
 }
 
 /** 时间线数据类型 */

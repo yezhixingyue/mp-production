@@ -11,8 +11,8 @@
    <ul class='dialog-content' v-if="ruleForm">
     <li>
       <div class="row">
-        <span class="title">帖标:</span>
-        <el-checkbox v-model="ruleForm.NeedSheetIndex">添加帖标</el-checkbox>
+        <span class="title">贴标:</span>
+        <el-checkbox v-model="ruleForm.NeedSheetIndex">添加贴标</el-checkbox>
       </div>
     </li>
     <li>

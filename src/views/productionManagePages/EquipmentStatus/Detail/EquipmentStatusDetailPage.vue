@@ -24,7 +24,7 @@
     />
     <SwitchEquipmentDialog v-model:visible="visible" :curTaskItem="curTaskItem" @submit="switchEquSubmit" />
     <footer>
-      <MpPagination center :nowPage="EquTaskDetailData.condition.Page" :pageSize="EquTaskDetailData.condition.PageSize"
+      <MpPagination center :nowPage="EquTaskDetailData.condition.Page" :pageSize="EquTaskDetailData.condition.PageSize" :ExportExcelProps="downloadExcelObj"
        :total="EquTaskDetailData.TaskListNumber" :handlePageChange="EquTaskDetailData.getTaskList.bind(EquTaskDetailData)">
        <template #text>
           <span v-show="EquTaskDetailData.TotalMessage" class="mr-25"
@@ -49,6 +49,8 @@ import {
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import TaskListTable from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/TaskListTable.vue';
 import MpPagination from '@/components/common/MpPagination.vue';
+import { useUserStore } from '@/store/modules/user';
+import { IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
 import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
@@ -92,6 +94,21 @@ const switchEquSubmit = (EquipmentID: string) => {
 
   EquTaskDetailData.value.switchEquSubmit(TaskWorkingID, EquipmentID, cb);
 };
+
+const userStore = useUserStore();
+const localPermission = computed(() => userStore.user?.PermissionList.PermissionEquipmentStatus.Obj);
+const downloadExcelObj: undefined | IExportExcelProps = localPermission.value?.Excel ? {
+  apiPath: 'getTaskExcel',
+  fileName: `${EquCombineTitle.value}任务列表`,
+  getCondition: () => ({ ...EquTaskDetailData.value.condition.filter(), UseModule: 1 }),
+  maxCountLimit: 15000,
+  getTotal: () => EquTaskDetailData.value.TaskListNumber,
+  // getFileNameDate: () => ({
+  //   First: props.condition.CreateTime.First,
+  //   Second: props.condition.CreateTime.Second,
+  // }),
+  withExportDate: true,
+} : undefined;
 
 onMounted(() => {
   if (!row) {

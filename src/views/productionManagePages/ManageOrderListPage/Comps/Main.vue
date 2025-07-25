@@ -42,7 +42,7 @@
               <mp-button link type="primary" @click="onProcessClick(row)">生产流程</mp-button>
               <mp-button link type="primary" @click="onTimeLineClick(row)">时间线</mp-button>
 
-              <el-dropdown trigger="click" v-if="!noMoreMenuPermission">
+              <el-dropdown trigger="click">
                 <mp-button link type="primary" class="el-dropdown-link">更多</mp-button>
                 <template #dropdown>
                   <el-dropdown-menu class="mp-order-list-manage-table-menu--drop-down-wrap">
@@ -60,6 +60,8 @@
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.ToCustomizPlate"
                       :disabled="!row.ToCustomPlate"
                       @click="onToCustomizPlateClick(row)">转自定义版</el-dropdown-item>
+                    <!-- 查看详情序列化字段 -->
+                    <el-dropdown-item link type="primary" @click="onDetailDisplayClick(row)">加工信息</el-dropdown-item>
                     <!-- 取消 -->
                     <el-dropdown-item link type="primary"
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
@@ -104,6 +106,8 @@
     <OrderCancelDialog v-model:visible="cancelOrderVisible" :row="curRow" @submit="handleCancel" />
     <!-- 文件替换弹窗 -->
     <FileReplaceDialog v-model:visible="replaceFileVisible" :row="curRow" />
+    <!-- 加工信息 -->
+    <OrderDetailInfoDialog v-model:visible="describeVisible" :Describe="currentDescribe" />
   </main>
 </template>
 
@@ -125,6 +129,7 @@ import FileReplaceDialog from './FileReplaceDialog.vue';
 import { IManageOrderListItem, IOrderCancelRelation } from '../js/type';
 import { OrderCancelStatus } from '../js/enum';
 import { getOrderTableListItem, _getNormalOrderLineContent } from '../js/getOrderTableList';
+import OrderDetailInfoDialog from './OrderDetailInfoDialog.vue';
 
 const props = defineProps<{
   list: IManageOrderListItem[]
@@ -154,15 +159,15 @@ const widthList = ref([
 
 const totalWidth = computed(() => widthList.value.map(it => it.width).reduce((a, b) => a + b, 0));
 
-const noMoreMenuPermission = computed(() => {
-  if (user.value?.PermissionList.PermissionManageOrder.Obj) {
-    const { Cancle, Download, Replace, ToCustomizPlate } = user.value.PermissionList.PermissionManageOrder.Obj;
+// const noMoreMenuPermission = computed(() => {
+//   if (user.value?.PermissionList.PermissionManageOrder.Obj) {
+//     const { Cancle, Download, Replace, ToCustomizPlate } = user.value.PermissionList.PermissionManageOrder.Obj;
 
-    return !Cancle && !Download && !Replace && !ToCustomizPlate;
-  }
+//     return !Cancle && !Download && !Replace && !ToCustomizPlate;
+//   }
 
-  return false;
-});
+//   return false;
+// });
 
 const spreadList = ref<string[]>([]);
 
@@ -232,6 +237,13 @@ const onToCustomizPlateClick = (row: typeof localList.value[number]) => {
   MpMessage.warn('确定该订单转自定义版吗 ?', `订单ID: [ ${row.OrderCode} ]`, () => {
     emit('toCustomizPlate', row.ID);
   });
+};
+
+const currentDescribe = ref('');
+const describeVisible = ref(false);
+const onDetailDisplayClick = (row: typeof localList.value[number]) => {
+  currentDescribe.value = row.Describe;
+  describeVisible.value = true;
 };
 
 /** 订单取消 */
