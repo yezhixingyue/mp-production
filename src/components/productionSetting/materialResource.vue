@@ -89,7 +89,8 @@ function Closed() {
   checkList.value = [];
 }
 function PrimaryClick() {
-  const returnData = props.MaterialListGroup.filter(res => checkList.value.find(it => it === res.ID));
+  // const returnData = props.MaterialListGroup.filter(res => checkList.value.find(it => it === res.ID));
+  const returnData = checkList.value.map(id => props.MaterialListGroup.find(it => it.ID === id) as MaterialTypeGroupType).filter(it => it);
 
   // if (returnData.filter(it => it.Feature === MakingGroupTypeFeatureEnum.main).length > 1) {
   //   MpMessage.error({
