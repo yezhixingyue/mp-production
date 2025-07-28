@@ -14,9 +14,10 @@ const props = defineProps<{
   getList:(Page?: number) => void
   condition: ConditionForList
   total: number
+  haveExcelPermission: boolean
 }>();
 
-const downloadExcelObj: IExportExcelProps = {
+const downloadExcelObj: undefined | IExportExcelProps = props.haveExcelPermission ? {
   apiPath: 'getProductionExceptionExcel',
   fileName: `${props.condition.IsOutSourcing ? '外协' : '生产'}异常列表`,
   getCondition: () => props.condition.filter(),
@@ -26,7 +27,7 @@ const downloadExcelObj: IExportExcelProps = {
     First: props.condition.CreateTime.First,
     Second: props.condition.CreateTime.Second,
   }),
-};
+} : undefined;
 
 </script>
 

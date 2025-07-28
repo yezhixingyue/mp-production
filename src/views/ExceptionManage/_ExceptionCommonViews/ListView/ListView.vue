@@ -9,13 +9,15 @@
       :list="ManageListData.list"
     />
     <Main :list="ManageListData.list" :loading="ManageListData.loading" :IsOutSourcing="IsOutSourcing" @jump="handleJump" />
-    <Footer :condition="ManageListData.condition" :total="ManageListData.listNumber" :getList="ManageListData.getList.bind(ManageListData)" />
+    <Footer :condition="ManageListData.condition" :total="ManageListData.listNumber" :haveExcelPermission='haveExcelPermission'
+     :getList="ManageListData.getList.bind(ManageListData)" />
   </section>
 </template>
 
 <script setup lang='ts'>
-import { onActivated, onMounted, ref } from 'vue';
+import { computed, onActivated, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/modules/user';
 import Header from './Comps/Header.vue';
 import Main from './Comps/Main.vue';
 import Footer from './Comps/Footer.vue';
@@ -40,6 +42,15 @@ const handleJump = (row: ITaskExceptionInfo, type: 'Detail' | 'Setup') => {
   const name = props.IsOutSourcing ? `OutsourceException${type}` : `ProductionException${type}`;
   router.push({ name });
 };
+
+const userStore = useUserStore();
+const haveExcelPermission = computed(() => {
+  const _localPermission = props.IsOutSourcing
+    ? userStore.user?.PermissionList.PermissionExternalException
+    : userStore.user?.PermissionList.PermissionTaskException;
+
+  return !!_localPermission?.Obj.Excel;
+});
 
 onMounted(() => { ManageListData.value.getList(); });
 

@@ -65,6 +65,7 @@ export interface IUser {
       Obj: {
         Query: boolean
         Deal: boolean
+        Excel: boolean
       };
     };
     /** 生产异常管理 */
@@ -73,6 +74,7 @@ export interface IUser {
       Obj: {
         Query: boolean
         Deal: boolean
+        Excel: boolean
       };
     };
     /** 排程异常管理 */
