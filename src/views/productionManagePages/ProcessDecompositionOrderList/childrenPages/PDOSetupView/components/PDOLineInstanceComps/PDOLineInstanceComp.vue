@@ -61,7 +61,7 @@
           <span class="title">使用物料:</span>
           <div class="content">
             <mp-button link type="primary" class="ft-12" @click="materialState.visible = true" style="margin-left: -3px;">选择物料</mp-button>
-            <p class="m-name">{{instanceItem.Attribute.Material.Name}}</p>
+            <p class="m-name">{{[instanceItem.Attribute.Material.TypeName, instanceItem.Attribute.Material.Name].filter(Boolean).join('-')}}</p>
           </div>
         </li>
       </template>

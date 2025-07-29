@@ -6,7 +6,8 @@
       <div>生产线：{{ item.LineList?.[0]?.Name }}
         <template v-if="isCombine">( 组合生产线 )</template>
       </div>
-      <div class="m" v-if="!isInstance(item) && !isCombine">主料：{{ item.Attribute.Material.Name }}</div>
+      <div class="m" v-if="!isInstance(item) && !isCombine"
+      >主料：{{ [item.Attribute.Material.TypeName, item.Attribute.Material.Name].filter(Boolean).join('-') }}</div>
     </h4>
 
     <!-- 工序 -->

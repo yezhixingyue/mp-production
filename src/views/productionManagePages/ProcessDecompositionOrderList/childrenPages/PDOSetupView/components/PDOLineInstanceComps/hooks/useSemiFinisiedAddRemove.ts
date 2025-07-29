@@ -25,14 +25,7 @@ export const useSemiFinisiedAddRemove = (
     /** 非必需资源 任何时候可删除 */
     if (!instanceItem.value._MaterialSource?.NeedResource) return true;
 
-    /** 仅剩1个情况下 不可删除 */
-    // const t = props.ruleForm.InstanceList
-    //   .find((it, i) => i !== props.index && it.SemiFinished && it.SemiFinished?.ID === instanceItem.value.SemiFinished?.ID);
-    // if (!t) {
-    //   return false;
-    // }
-
-    return curInsPoi.value.len > 1;
+    return curInsPoi.value.len > 1 && curInsPoi.value.index > 0; // 必需半成品：实例数量大于1且并非是第1个 才可删除
   });
 
   const onSemiFinisiedRemoveClick = () => {
