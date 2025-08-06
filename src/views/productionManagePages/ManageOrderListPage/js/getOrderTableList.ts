@@ -10,31 +10,37 @@ const getSellSideProductName = (it: IManageOrderListItem) => {
 
 /** 获取普通生产线的生产线列的展示内容 */
 export const _getNormalOrderLineContent = (instance: ISellOrderInstanceItem) => {
-  const { LineList, PrintFileRemark, AfterPrintFileRemark } = instance;
+  const { Line, PrintFileRemark, AfterPrintFileRemark } = instance;
 
-  const _LineContent = LineList.map(l => (l.PlateList.length > 0 ? `${l.Name} 大版ID:${l.PlateList.join('、')}` : ''))
-    .filter(it => it)
-    .join('；\r\n') || '';
-
-  const _PrintFileRemark = PrintFileRemark ? ` \r\n印刷版: ${PrintFileRemark || ''}` : '';
-  const _AfterPrintFileRemark = AfterPrintFileRemark ? ` \r\n后工版: ${AfterPrintFileRemark || ''}` : '';
-
-  return [_LineContent, _PrintFileRemark, _AfterPrintFileRemark].filter(it => it).join('；');
+  return [Line?.Name, PrintFileRemark, AfterPrintFileRemark].filter(it => it).join('-');
 };
 
 const _getRootNormalOrderLineContent = (it: IManageOrderListItem) => {
-  if (it.InstanceList.length > 1 && it.AfterPrintFileRemark) return `后工版: ${it.AfterPrintFileRemark}`;
+  if (it.InstanceList && it.InstanceList.length === 1) {
+    const [item] = it.InstanceList;
+    return _getNormalOrderLineContent(item);
+  }
 
-  if (it.InstanceList[0]) return _getNormalOrderLineContent(it.InstanceList[0]);
+  const lineNameSet = new Set<string>();
 
-  return '';
+  if (it.InstanceList && it.InstanceList.length > 0) {
+    it.InstanceList.forEach(item => {
+      if (item.Line?.Name) lineNameSet.add(item.Line.Name);
+    });
+  }
+
+  if (it.Line) {
+    lineNameSet.add(`${it.Line}(组合)`);
+  }
+
+  return [...lineNameSet].join('、');
 };
 
-const getIsMakeuped = (it: IManageOrderListItem) => {
-  const t = it.InstanceList.find(ins => ins.LineList.find(l => l.PlateList.length > 0));
+// const getIsMakeuped = (it: IManageOrderListItem) => {
+//   const t = it.InstanceList.find(ins => ins.Line.find(l => l.PlateList.length > 0));
 
-  return !!t;
-};
+//   return !!t;
+// };
 
 export const getOrderTableListItem = (it: IManageOrderListItem, spreadList: string[]) => ({
   ...it,
@@ -48,6 +54,6 @@ export const getOrderTableListItem = (it: IManageOrderListItem, spreadList: stri
   _Size: it.InstanceList.length > 1 ? it.Size || '' : it.InstanceList[0]?.Size || '',
   _Material: it.InstanceList.length > 1 ? '' : it.InstanceList[0]?.Material || '',
   _LineContent: _getRootNormalOrderLineContent(it),
-  _isMakeuped: getIsMakeuped(it),
+  // _isMakeuped: getIsMakeuped(it),
   _StatusDetail: OrderStatusList.find(_it => _it.ID === it.Status),
 });

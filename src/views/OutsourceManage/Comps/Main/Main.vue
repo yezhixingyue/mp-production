@@ -19,6 +19,7 @@
               <p class="title">凌顶揽众工序外协加工单</p>
               <p class="line">{{ curRow._LineName }}：{{ curRow._TargetID.replace(/（[\w\W]+）$/, '') }}</p>
               <p class="info">
+                <span style="margin-right: 1.2em;">创建时间：{{ curRow._CreateTime }}</span>
                 <span>外协单位：{{ curentFactory?.Name }}</span>
                 <span style="margin-right: 1.2em;">({{ curentFactory?.Mobile }})</span>
                 <span style="margin-right: 1.2em;">开单人：{{ onlyPrint ? curRow.Operator : user?.StaffName || '-' }}</span>
@@ -27,7 +28,7 @@
             </div>
             <div class="bar">
               <img :src="imgSrc" alt="" v-show="imgSrc">
-              <span>{{ curRow.Code }}</span>
+              <span style="margin-top: -0.28em;display: block;">{{ curRow.Code }}</span>
             </div>
           </header>
 

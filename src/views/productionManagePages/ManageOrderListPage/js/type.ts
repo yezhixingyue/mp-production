@@ -1,3 +1,4 @@
+import { IBaseProperty } from '../../ManualOrderHandlerPage/js/types';
 import { OrderStatus } from './enum';
 
 /**
@@ -33,7 +34,7 @@ export interface ISellOrderInstanceItem {
   /** 单位 */
   Unit: string
   /** 生产线列表 */
-  LineList: ISellOrderLineItem[]
+  Line?: IBaseProperty<string>
   /** 印刷版拼版详情与进度 */
   PrintFileRemark: string | null
   /** 后工版拼版详情与进度 */

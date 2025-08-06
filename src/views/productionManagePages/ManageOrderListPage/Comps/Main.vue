@@ -27,7 +27,7 @@
             <td :style="`width:${widthList[3].width}px`" :title="row.Content">{{ row.Content || '' }}</td>
             <td :style="`width:${widthList[4].width}px`" :title="row._Size">{{ row._Size }}</td>
             <td :style="`width:${widthList[5].width}px`" :title="row._Material">{{ row._Material }}</td>
-            <td :style="`width:${widthList[6].width}px`" :title="row._LineContent">{{ row._LineContent }}</td>
+            <td :style="`width:${widthList[6].width}px`" :title="row._LineContent.replace(/-/g, '\r\n')">{{ row._LineContent }}</td>
             <td :style="`width:${widthList[7].width}px`" :title="row._Count">{{ row._Count || '' }}</td>
             <td :style="`width:${widthList[8].width}px`" :title="row._CreateTime">{{ row._CreateTime || '' }}</td>
             <td :style="`width:${widthList[9].width}px`" :title="row._ProduceEndTime">{{ row._ProduceEndTime || '' }}</td>
@@ -89,7 +89,7 @@
               <span class="m">{{ instance.Material }}</span>
             </td>
             <td class="number">{{ instance.Number }}{{ instance.Unit }}</td>
-            <td class="line" :title="_getNormalOrderLineContent(instance)">
+            <td class="line" :title="_getNormalOrderLineContent(instance).replace(/-/g, '\r\n')">
               <span>{{ _getNormalOrderLineContent(instance) }}</span>
             </td>
           </tr>
@@ -463,15 +463,16 @@ onUnmounted(() => {
               flex: none;
             &.name {
               margin-left: 36px;
-              min-width: 240px;
+              min-width: 320px;
               margin-right: 15px;
               .title {
                 margin-right: 8px;
               }
             }
             &.number {
-              min-width: 65px;
+              min-width: 80px;
               margin-right: 25px;
+              text-align: center
             }
           }
         }
