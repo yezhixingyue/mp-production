@@ -2,9 +2,10 @@
   <section class="assist-page-containner">
     <Header :localPermission="localPermission" v-model="condition.Type" v-model:keywords="condition.KeyWords" :list="DataList"
      @change="getList" @add="onItemSetupClick" @clear="clearCondition" />
-    <Main :localPermission="localPermission" :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick" />
+    <Main :localPermission="localPermission" :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick"
+     :NoteDisplayPositionList='NoteDisplayPositionList' />
     <Footer :condition="condition" :total="DataNumber" :getList="getList" />
-    <Dialog v-model:visible="visible" :item="curEditItem" :list="DataList" @submit="handleItemSubmit"  />
+    <Dialog v-model:visible="visible" :item="curEditItem" :list="DataList" :NoteDisplayPositionList="NoteDisplayPositionList" @submit="handleItemSubmit"  />
   </section>
 </template>
 
@@ -21,6 +22,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistListConditionClass as Condition } from './TypeClass/assistListConditionClass';
 import type { AssistInfoItem } from './TypeClass/assistInfoItem';
 import type { IAssistListItem } from './types';
+import { useNoteDisplayPositionList } from './hooks/useNoteDisplayPositionList';
 
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageAssist.Obj);
@@ -47,6 +49,8 @@ const clearCondition = () => {
 onMounted(() => {
   getList();
 });
+
+const { NoteDisplayPositionList } = useNoteDisplayPositionList();
 
 /** 下面为新增|编辑相关
  ------------------------------------------- */

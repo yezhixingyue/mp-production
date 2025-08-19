@@ -1,8 +1,9 @@
 import { useUserStore } from '@/store/modules/user';
 import { ElMessage } from 'element-plus';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import e from '@/api/apiEncrypt';
 import { create } from './request-lib/bus';
-import { ICoreOptions } from './request-lib/core/types';
+import { ICoreOptions, IRequestConfig } from './request-lib/core/types';
 import { LoadingHandler } from './utils/LoadingHandler';
 import { handleErrorToast } from './utils/handleErrorToast';
 
@@ -13,13 +14,26 @@ const logout = () => { // 清除状态并跳转登录页面
 };
 
 const getToken = () => { // 获取到token
-  const _token = useUserStore().getToken();
+  const _token = useUserStore().getTokenInfo().token || '';
 
   if (!_token) {
     logout();
   }
 
   return _token;
+};
+
+const beforeRequest = async (config: IRequestConfig) => {
+  if (config.encrypt) { // 接口加密
+    const _config = config;
+    if (!_config.headers) _config.headers = {};
+
+    const info = useUserStore().getTokenInfo();
+    const { authStr } = await e(info.token, info.mobile);
+
+    _config.headers['s-req-dat'] = authStr;
+    // _config.headers['s-req-time'] = encodeURIComponent(timeContent);
+  }
 };
 
 const useCatchError = (msg: string) => ElMessage({ showClose: true, message: msg || '请求失败', type: 'error' }); // 错误处理
@@ -59,6 +73,7 @@ export const instance = create({
   //   isCacheable: resp => resp.status === 200 && resp.data.Status === 1000,
   // },
   getToken,
+  beforeRequest,
   useResponse,
   useCatchError,
   isSuccess: resp => resp.status === 200 && resp.data?.Status === 1000,

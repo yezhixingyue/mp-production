@@ -9,6 +9,7 @@
       @print="onPrintClick"
       @ConfirmExternal="onConfirmExternalClick"
       @issue="onIssueClick"
+      @changeAssistText="onAssistTextChangeClick"
     />
 
     <PrintDialog ref="oPrintDialog" :onlyPrint="onlyPrint" noAutoPrint @submit="submitExternal" :width="dpiHelper.mm2Px(210) + 70">
@@ -89,6 +90,7 @@
     </PrintDialog>
 
     <HandleResultDialog v-if="pageType==='await'" v-model:visible="visible" :row="curIssueRow" mode="issue" @setQuestion="e=>onIssueSubmit(e, ManageListData)"/>
+    <ChangeAssistTextDialog v-if="pageType==='await'" v-model:visible="assistTextChangeState.visible" :row="assistTextChangeState.row" />
   </main>
 </template>
 
@@ -110,6 +112,9 @@ import Table from '../Table.vue';
 import { OutsourceManagePageType } from '../../js/type';
 import { useIssue } from './useIssue';
 import HandleResultDialog from '../../ExternalReceiveManage/Comps/HandleResultDialog/HandleResultDialog.vue';
+import { useAssistTextChange } from './useAssistTextChange';
+import ChangeAssistTextDialog from './ChangeAssistTextDialog.vue';
+import { ExternalTaskStatusEnum } from '../../js/enum';
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -148,7 +153,11 @@ const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], is
   curPrintDate.value = '';
   onlyPrint.value = isPrint;
 
-  curentFactory.value = props.ManageListData.FactoryList.find(it => it.ID === curRow.value?._ExternalSubmitParams.FactoryID) || null;
+  const fId = row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive
+    ? curRow.value?._ExternalSubmitParams.FactoryID || ''
+    : row.Equipment.ID;
+
+  curentFactory.value = props.ManageListData.FactoryList.find(it => it.ID === fId) || null;
 
   const src = await getBarcodeSrc(row.Code, { width: 160, height: 50 }); // 获取img src
 
@@ -198,6 +207,9 @@ const onConfirmExternalClick = (row: ReturnType<typeof getLocalTaskList>[number]
 
 /** 单个任务设置有问题 */
 const { visible, onIssueClick, curIssueRow, onIssueSubmit } = useIssue();
+
+/** 修改待外协加工信息 */
+const { assistTextChangeState, onAssistTextChangeClick } = useAssistTextChange();
 </script>
 
 <style scoped lang='scss'>

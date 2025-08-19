@@ -90,12 +90,15 @@ const onBatchDownloadClick = () => { // 批量下载
 const onBatchConfirmClick = () => { // 批量确认
   if (confirmDisabled.value) return;
   // 1. 校验
-  for (let i = 0; i < props.ManageListData.multipleSelection.length; i += 1) {
-    const row = props.ManageListData.multipleSelection[i];
+  const _list = [...props.ManageListData.multipleSelection]
+    .sort((a, b) => props.ManageListData.list.findIndex(it => it.ID === a.ID) - props.ManageListData.list.findIndex(it => it.ID === b.ID));
+
+  for (let i = 0; i < _list.length; i += 1) {
+    const row = _list[i];
     const result = checkExTaskIsComplete(row);
 
     if (typeof result === 'string') {
-      MpMessage.error('外协失败', props.ManageListData.multipleSelection.length > 1 ? `第${i + 1}个选中订单中，${result}` : result);
+      MpMessage.error('外协失败', _list.length > 1 ? `第${i + 1}个选中订单中，${result}` : result);
       return;
     }
   }

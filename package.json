@@ -1,6 +1,6 @@
 {
   "name": "mpzj",
-  "version": "1.0.071",
+  "version": "1.1.001",
   "private": true,
   "scripts": {
     "compile-print-scss": "sass ./src/assets/css/print.scss ./public/css/print.css",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.6",
     "axios": "^0.26.1",
+    "base64-js": "^1.5.1",
     "buffer": "^6.0.3",
     "class-validator": "^0.14.0",
     "core-js": "^3.8.3",
@@ -20,6 +21,7 @@
     "element-plus": "^2.2.25",
     "jr-qrcode": "^1.2.1",
     "js-base64": "^3.7.2",
+    "js-md5": "^0.8.3",
     "js-sha1": "^0.6.0",
     "jsbarcode": "^3.11.6",
     "mockjs": "^1.1.0",
@@ -69,5 +71,5 @@
     "ts-jest": "^27.0.4",
     "typescript": "~4.5.5"
   },
-  "commitId": "9db601f7345a1966c4993d3f08ed41ff0ef67810\n"
+  "commitId": "7465e8ea7dfb5894b613de7dcd7b0b9689ab5183\n"
 }

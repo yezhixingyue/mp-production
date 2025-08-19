@@ -18,11 +18,16 @@
         showContent: true,
         showWishDuration: true,
         showLatestFinishTime: true,
+        showPartialDelivery: true,
         showCtrlMenus: ['switchEqu'],
       }"
       @switchEqu="onSwitchEquClick"
+      @partial-delivery-click="onPartialDeliveryClick"
     />
     <SwitchEquipmentDialog v-model:visible="visible" :curTaskItem="curTaskItem" @submit="switchEquSubmit" />
+
+    <PartialDeliveryListDialog v-model:visible="partialDeliveryVisible" :row="curTaskItem" />
+
     <footer>
       <MpPagination center :nowPage="EquTaskDetailData.condition.Page" :pageSize="EquTaskDetailData.condition.PageSize" :ExportExcelProps="downloadExcelObj"
        :total="EquTaskDetailData.TaskListNumber" :handlePageChange="EquTaskDetailData.getTaskList.bind(EquTaskDetailData)">
@@ -56,6 +61,7 @@ import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters'
 import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
 import { EquipmentTaskDetailClass } from './js/EquipmentStatusDetailClass';
 import SwitchEquipmentDialog from './Comp/SwitchEquipmentDialog.vue';
+import PartialDeliveryListDialog from './Comp/PartialDeliveryListDialog/PartialDeliveryListDialog.vue';
 
 const row = sessionStorage.getItem('EquipmentStatusDetailData');
 
@@ -93,6 +99,12 @@ const switchEquSubmit = (EquipmentID: string) => {
   };
 
   EquTaskDetailData.value.switchEquSubmit(TaskWorkingID, EquipmentID, cb);
+};
+
+const partialDeliveryVisible = ref(false);
+const onPartialDeliveryClick = (e: ReturnType<typeof getLocalTaskList>[number]) => {
+  curTaskItem.value = e;
+  partialDeliveryVisible.value = true;
 };
 
 const userStore = useUserStore();

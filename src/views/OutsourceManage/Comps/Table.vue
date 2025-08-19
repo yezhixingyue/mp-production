@@ -7,9 +7,17 @@
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="140px" prop="_WorkingName" label="工序" />
     <mp-table-column v-if="pageType === 'undelivered'" min-width="100px" prop="_Material" label="物料" />
     <mp-table-column width="100px" prop="_Number" label="数量" />
-    <mp-table-column v-if="pageType !== 'undelivered'" min-width="110px" prop="_AssistText" label="加工信息" class-name="is-pink" />
+    <mp-table-column v-if="pageType !== 'undelivered'" min-width="110px" prop="_AssistText" label="加工信息" class-name="">
+      <template #default="scope:{ row: Row }">
+        <span :class="scope.row._AssistText?'is-pink':'is-gray'" class="assist-ctrl assist"
+          v-if="pageType==='await'"
+          @click="onAssistTextChangeClick(scope.row)"
+          >{{ scope.row._AssistText || '无' }}</span>
+        <span :class="scope.row._AssistText?'is-pink':'is-gray'" class="assist" v-else>{{ scope.row._AssistText || '无' }}</span>
+      </template>
+    </mp-table-column>
     <mp-table-column v-if="pageType !== 'undelivered'" width="140px" label="外协工厂">
-      <template #default="scope:any">
+      <template #default="scope:{ row: Row }">
         <el-select v-if="scope.row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive && pageType==='await'"
          :disabled="!localPermission?.WaitSetup || scope.row._ExternalSubmitParams._IsFixedFactory"
          :title="scope.row._ExternalSubmitParams._IsFixedFactory ? '外协异常处理中锁定了工厂' : ''"
@@ -21,7 +29,7 @@
             :value="item.ID"
           />
         </el-select>
-        <span v-else>{{ scope.row._ExternalSubmitParams._FactoryName }}</span>
+        <span v-else>{{ scope.row.Equipment.Name }}</span>
       </template>
     </mp-table-column>
     <mp-table-column width="110px" label="金额" v-if="pageType==='await'">
@@ -143,7 +151,7 @@ const props = defineProps<{
   pageType: OutsourceManagePageType
 }>();
 
-const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print', 'sendError', 'issue']);
+const emit = defineEmits(['confirmExternal', 'loadFile', 'setMultipleSelection', 'print', 'sendError', 'issue', 'changeAssistText']);
 
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageExternalTask.Obj);
@@ -182,6 +190,12 @@ const showNextWorkingList = (row: typeof props.TaskList[number]) => {
 const onSendErrorClick = (row: typeof props.TaskList[number], index: number, callback?: () => void) => {
   emit('sendError', row, index, callback);
 };
+
+/** 修改待外协加工信息 */
+const onAssistTextChangeClick = (row: Row) => {
+  emit('changeAssistText', row);
+};
+
 </script>
 
 <style scoped lang='scss'>
@@ -264,6 +278,20 @@ const onSendErrorClick = (row: typeof props.TaskList[number], index: number, cal
         height: 14px;
       }
     }
+  }
+
+  .assist-ctrl {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .assist {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>

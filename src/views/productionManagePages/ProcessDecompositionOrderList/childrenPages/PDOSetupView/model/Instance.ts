@@ -244,9 +244,10 @@ export class PDOLineInstance extends InstanceSettingInfo {
         if (NoteInfo.Type === AssistInfoTypeEnum.text && !_AssistList.find(_it => _it.ID === NoteInfo.ID)) {
           const t = this.AssistList.find(_it => _it.ID === NoteInfo.ID);
           _AssistList.push({
-            ID: NoteInfo.ID,
-            Name: NoteInfo.Name,
-            Type: NoteInfo.Type,
+            ...NoteInfo,
+            // ID: NoteInfo.ID,
+            // Name: NoteInfo.Name,
+            // Type: NoteInfo.Type,
             Content: t ? t.Content : '',
             Value: '',
             FilePath: '',
@@ -384,6 +385,12 @@ export class PDOLineInstance extends InstanceSettingInfo {
     target = _normalWorkingList.find(it => (!/^\d+$/.test(`${it.WorkTimes}`) || (it.WorkTimes as number) <= 0));
     if (target) {
       MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}${text}[${target.Name}] 工序作业次数设置不正确，必须为正整数类型` });
+      return false;
+    }
+
+    const tAssist = this.AssistList.find(it => it.Type === AssistInfoTypeEnum.text && !it.Content && Object.values(it.Position).filter(v => v).length > (it.Position.Equipment ? 1 : 0));
+    if (tAssist) {
+      MpMessage.error({ title: '操作失败', msg: `${this._LineInstanceName}辅助信息 [ ${tAssist.Name} ] 未填写内容` });
       return false;
     }
 

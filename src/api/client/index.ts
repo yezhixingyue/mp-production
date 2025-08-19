@@ -6,7 +6,7 @@ import { clientInstance as instance } from '@/basic/request/client';
 
 const clientApi = {
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login
-    return instance.post('/Api/Staff/Login', data, { withoutToken: true });
+    return instance.post('/Api/Staff/Login', data, { withoutToken: true, encrypt: true });
   },
   getUser(token?: string) { // POST /Api/Staff/Detail
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
@@ -32,11 +32,11 @@ const clientApi = {
   },
   /** POST /Api/Equipment/Receive   送达 -- 扫描条码枪 */
   getEquipmentReceive(data, msgCallback) {
-    return instance.post('/Api/Equipment/Receive', data, { msgCallback });
+    return instance.post('/Api/Equipment/Receive', data, { msgCallback, encrypt: true });
   },
   /** POST /Api/Task/List   获取设备未开始任务信息列表 */
   getEquipmentTaskList(data) {
-    return instance.post('/Api/Task/List', data);
+    return instance.post('/Api/Task/List', data, { encrypt: true });
   },
   /** GET /Api/Equipment/Renew   设备恢复生产 */
   getEquipmentRenew(equipmentID: string) {
@@ -48,7 +48,7 @@ const clientApi = {
   },
   /** POST /Api/Equipment/TaskReport  报工 */
   getEquipmentReprot(data) {
-    return instance.post('/Api/Equipment/TaskReport', data);
+    return instance.post('/Api/Equipment/TaskReport', data, { encrypt: true });
   },
   /** POST /Api/Equipment/TaskError   任务异常 */
   getEquipmentTaskError(data: { ID: string, Remark: string }) {
@@ -56,7 +56,7 @@ const clientApi = {
   },
   /** POST /Api/Equipment/TaskBatchReport  批量报工 */
   getEquipmentTaskBatchReport(data) {
-    return instance.post('/Api/Equipment/TaskBatchReport', data);
+    return instance.post('/Api/Equipment/TaskBatchReport', data, { encrypt: true });
   },
   /** GET Api/Equipment/NextWorkingList */
   getEquipmentNextWorkingList(TaskWorkingID: string) {

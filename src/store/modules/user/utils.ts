@@ -2,6 +2,7 @@ import { IUserStoreState } from './types';
 
 export const getUserStoreInitialState: () => IUserStoreState = () => ({
   token: '',
+  mobile: '',
   loginTime: '',
   lastReqTime: '',
   user: null,

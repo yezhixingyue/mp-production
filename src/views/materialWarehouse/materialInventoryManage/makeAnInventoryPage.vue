@@ -48,7 +48,7 @@
             </div>
           </div>
             <el-divider direction="vertical" />
-            <div class="current">
+            <div class="area">
               <div class="current-material">
                 <p class="dot big">
                   <!-- <span class="label">当前货位：</span> -->

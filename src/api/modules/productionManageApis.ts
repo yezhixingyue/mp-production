@@ -23,17 +23,17 @@ export const productionManageApis = {
   },
   /** POST /Api/Task/List   获取设备信息列表 */
   getEquipmentTaskList(data) {
-    return instance.post<ITaskDetail[]>('/Api/Task/List', data);
+    return instance.post<ITaskDetail[]>('/Api/Task/List', data, { encrypt: true });
   },
   /* 订单列表
   --------------------------------- */
   /** POST /Api/Order/List   筛选订单列表 */
   getOrderList(condition) {
-    return request<IManageOrderListItem[]>({ method: 'POST', url: '/Api/Order/List', data: condition });
+    return request<IManageOrderListItem[]>({ method: 'POST', url: '/Api/Order/List', data: condition, encrypt: true });
   },
   /** POST /Api/Plate/List   筛选大版列表 */
   getPlateList(condition) {
-    return request<IManagePlateInfo[]>({ method: 'POST', url: '/Api/Plate/List', data: condition });
+    return request<IManagePlateInfo[]>({ method: 'POST', url: '/Api/Plate/List', data: condition, encrypt: true });
   },
   /** /Api/Plate/GenreateFile?PlateID  PUT请求 */
   getPlateGenreateFile(PlateID: string) {
@@ -49,7 +49,7 @@ export const productionManageApis = {
   },
   /** POST /Api/Chunk/List   筛选块列表 */
   getChunkList(condition) {
-    return request<IManageChunkInfo[]>({ method: 'POST', url: '/Api/Chunk/List', data: condition });
+    return request<IManageChunkInfo[]>({ method: 'POST', url: '/Api/Chunk/List', data: condition, encrypt: true });
   },
   /** GET /Api/Plate/OrderList  获取大版相关订单列表 */
   getPlateOrderList(plateID: string) {
@@ -139,13 +139,17 @@ export const productionManageApis = {
   getTaskChangeEquipment(taskWorkingID: string, equipmentID: string) {
     return instance.put('/Api/Task/ChangeEquipment', null, { params: { taskWorkingID, equipmentID } });
   },
+  /** get /Api/Task/MaterialList 获取任务所需物料列表 */
+  getTaskMaterialList(taskID: string) {
+    return instance.get('/Api/Task/MaterialList', { params: { taskID } });
+  },
   /** 获取数码工单打印列表数据 POST /Api/OfflinePlate/List 线下大版列表 */
   getOfflinePlateList(condition) {
     return instance.post('/Api/OfflinePlate/List', condition);
   },
   /** POST /Api/OfflinePlate/Print  线下大版打印工单 */
   getOfflinePlatePrint(data: { List: number[]; IsPrint: boolean }) {
-    return instance.post<IDigitalOrderPlatePrintInfo[]>('/Api/OfflinePlate/Print', data);
+    return instance.post<IDigitalOrderPlatePrintInfo[]>('/Api/OfflinePlate/Print', data, { encrypt: true });
   },
   /** 导出大版 PUT /Api/PlateFile/Retransfer  orderID */
   getPlateFileRetransfer(orderID: string) {
@@ -157,7 +161,7 @@ export const productionManageApis = {
   },
   /** POST /Api/DigitalTask/List  数码已完工任务 */
   getDigitalTaskList(condition) {
-    return instance.post('/Api/DigitalTask/List', condition);
+    return instance.post('/Api/DigitalTask/List', condition, { encrypt: true });
   },
   /** /Api/Chunk/Detail 获取块详情 补打块标签  */
   getChunkDetail(code: string) {

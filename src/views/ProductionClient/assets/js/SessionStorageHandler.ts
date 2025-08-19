@@ -4,6 +4,7 @@ interface IClientSessionStorageType {
   token: string
   user: IUser | null
   EquipmentID: string
+  mobileOnSuccess?: string // 登录成功后使用的手机号
 }
 
 const SessionStorageKEY = 'production-client-storage-data';

@@ -2,6 +2,7 @@ import { ManageClientPageData } from '@/api/client/clientStore';
 import { SessionStorageClientHandler } from '@/views/ProductionClient/assets/js/SessionStorageHandler';
 import { ElMessage } from 'element-plus';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
+import e from '@/api/apiEncrypt';
 import { create } from './request-lib/bus';
 import { ICoreOptions, IRequestConfig } from './request-lib/core/types';
 import { LoadingHandler } from './utils/LoadingHandler';
@@ -42,6 +43,20 @@ const setToken = (config: IRequestConfig) => {
   return true;
 };
 
+const beforeRequest = async (config: IRequestConfig) => {
+  if (config.encrypt) { // 接口加密
+    const _config = config;
+    if (!_config.headers) _config.headers = {};
+
+    const token = ManageClientPageData.value.curActiveInstance?.loginData.token || '';
+    const mobile = ManageClientPageData.value.curActiveInstance?.loginData.mobileOnSuccess || '';
+    const { authStr, timeContent } = await e(token, mobile);
+
+    _config.headers['s-req-dat'] = authStr;
+    _config.headers['s-req-time'] = encodeURIComponent(timeContent);
+  }
+};
+
 const useCatchError = (msg: string) => ElMessage({ showClose: true, message: msg || '请求失败', type: 'error' }); // 错误处理
 
 const useResponse: ICoreOptions['useResponse'] = (resp, { clear, closeTip, msgCallback, tipTitle }) => { // 还需要 tipTitle 与 msgCallback 字段
@@ -80,6 +95,7 @@ export const clientInstance = create({
   // },
   // getToken,
   setToken,
+  beforeRequest,
   useResponse,
   useCatchError,
   isSuccess: resp => resp.status === 200 && resp.data?.Status === 1000,

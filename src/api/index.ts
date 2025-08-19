@@ -16,8 +16,12 @@ import { outsourceApis } from './modules/outsourceApis';
 import productionSetting from './modules/productionSettingApis';
 
 const api = {
+  // /Api/Timestamp
+  getTimestamp() { // 获取服务器时间
+    return request({ method: 'get', url: '/Api/Timestamp', params: { t: Date.now() }, loading: false, withoutToken: true });
+  },
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login
-    return request<null|string>({ method: 'POST', url: '/Api/Staff/Login', data, withoutToken: true });
+    return request<null|string>({ method: 'POST', url: '/Api/Staff/Login', data, withoutToken: true, encrypt: true });
   },
   getUser(token?: string) {
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined;

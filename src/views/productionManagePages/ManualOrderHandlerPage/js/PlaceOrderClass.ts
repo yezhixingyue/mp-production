@@ -487,6 +487,7 @@ export class PlaceOrderClass {
         if (NoteInfo.Type === AssistInfoTypeEnum.text && !_AssistList.find(_it => _it.ID === NoteInfo.ID)) {
           const t = this.AssistList.find(_it => _it.ID === NoteInfo.ID);
           _AssistList.push({
+            ...NoteInfo,
             ID: NoteInfo.ID,
             _Name: NoteInfo.Name,
             Type: NoteInfo.Type,

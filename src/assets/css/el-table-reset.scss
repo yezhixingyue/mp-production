@@ -15,7 +15,7 @@
           border-right: none;
           border-left: none !important;
           .cell {
-            padding: 0 6px;
+            padding: 0 2px;
           }
         }
         &.el-table__cell::after{
@@ -80,7 +80,7 @@
             }
 
             .cell {
-              padding: 0 4px;
+              padding: 0 2px;
             }
           }
         }
@@ -92,4 +92,8 @@
       font-size: 12px;
     }
   }
+}
+
+.el-table .el-popper {
+  max-width: 400px;
 }

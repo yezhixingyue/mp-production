@@ -166,7 +166,9 @@
     />
     <AssistNumbericChangeDialog v-model:visible="numbericalState.changeVisible" :item="numbericalState.curNumbericalItem" @submit="onNumbericalChangeSubmit" />
     <!-- 出血设置 -->
-    <BleedSetupDialog v-model:visible="bleedState.visible" :NeedFolding="instanceItem.NeedFolding" :fileList="_MakeupFileList" @submit="onBleedSetupSubmit" />
+    <!-- <BleedSetupDialog v-model:visible="bleedState.visible" :NeedFolding="instanceItem.NeedFolding" :fileList="_MakeupFileList"
+     @submit="onBleedSetupSubmit" /> -->
+    <BleedSetupDialog v-model:visible="bleedState.visible" :NeedFolding="false" :fileList="_MakeupFileList" @submit="onBleedSetupSubmit" />
 
     <!-- 匹配文件弹窗 -->
     <FileMatchDialog v-model:visible="fileMatchState.visible" :type="fileMatchState.type" :FileList="instanceItem.FileList" @submit="onFileMatchSubmit" />

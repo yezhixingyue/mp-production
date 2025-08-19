@@ -13,7 +13,7 @@ if (/\d+.\d+.\d+/.test(packageJson.version)) { // 格式符合要求
     const hasUnCommited = !!exec('git status --porcelain').toString('utf8').replace('M package.json', '').replace(/\s/g, '');
 
     if (commitId && (packageJson.commitId !== commitId || hasUnCommited)) { // commitId有更新 或 内容有变化
-      packageJson.version = packageJson.version.replace(/(?<=\d+.\d+.)(\d+)\1*/, $1 => `${Number($1) + 1}`.padStart(3, '0'));
+      packageJson.version = packageJson.version.replace(/(?<=\d+\.\d+\.)(\d+)\1*/, $1 => `${Number($1) + 1}`.padStart(3, '0'));
       packageJson.commitId = commitId;
 
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2)); // 写入更新后的内容到文件

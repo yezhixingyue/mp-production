@@ -20,6 +20,7 @@
     :top="top"
     ref="oDialog"
     :show-close="!loading"
+    :before-close="handleBeforeClose"
     :close-on-click-modal="closeOnClickModal">
     <template #header v-if="showHeader">
       <slot name="header">
@@ -39,7 +40,7 @@
         <mp-button :type="danger ? 'danger' : 'primary'" class="gradient" v-if="showPrimary" :disabled="disabled || loading" ref="oSubmitBtn"
         @click="Primary">{{primaryText}}</mp-button>
         <mp-button type="danger" v-if="showDel" @click="Del" :disabled="loading">{{delBtnText }}</mp-button>
-        <mp-button v-if="showClose" :class="danger ? 'pink' : 'blue'" @click="Close" :disabled="loading">{{closeBtnText}}</mp-button>
+        <mp-button v-if="showClose" :class="danger ? 'pink' : 'blue'" @click="Close" :disabled="loading || cancelDisabled">{{closeBtnText}}</mp-button>
       </slot>
     </template>
   </el-dialog>
@@ -100,6 +101,10 @@ export default {
     closeBtnText: {
       type: String,
       default: '取消',
+    },
+    cancelDisabled: {
+      type: Boolean,
+      default: false,
     },
     delBtnText: {
       type: String,
@@ -186,6 +191,12 @@ export default {
       context.emit('cancel');
     }
 
+    const handleBeforeClose = (done) => {
+      if (props.loading || props.cancelDisabled) return;
+
+      done();
+    };
+
     const oDialog = ref<InstanceType<typeof ElDialog>>();
 
     function closedC() {
@@ -242,6 +253,7 @@ export default {
       closedC,
       onOpened,
       dialogVisible,
+      handleBeforeClose,
       oDialog,
     };
   },

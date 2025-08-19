@@ -36,9 +36,15 @@
             {{scope.row.RowNumber}}行 {{scope.row.ColumnNumber}}列
           </template>
         </el-table-column>
-        <!-- show-overflow-tooltip prop="Linkman" label="适用设备" width="505"> -->
+
+         <el-table-column show-overflow-tooltip label="P1装订边位于" width="160">
+          <template #default="scope:{ row: FoldWayTemplateType }">
+            {{ getEnumNameByID(scope.row.BindingEdge, BindingEdgeEnumList) }}
+          </template>
+        </el-table-column>
+
         <el-table-column
-        show-overflow-tooltip prop="Linkman" label="适用设备" min-width="892">
+        show-overflow-tooltip prop="Linkman" label="适用设备" min-width="726">
           <template #default="scope:any">
             <span class="useable-equipment" v-for="(item) in getUseableEquipmentText(scope.row.UseableEquipmentGroupList)" :key="item.ClassID">
               <!-- {{index===0?'':';'}} -->
@@ -93,11 +99,13 @@ import {
 import SetApplyEquipmentDialog from '@/components/pasteupSetting/setApplyEquipmentDialog.vue';
 import type { EquipmentGroups, UseClassEquipmentGroupType } from '@/components/pasteupSetting/types';
 import api from '@/api';
+import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import messageBox from '@/assets/js/utils/message';
 import { useRouter } from 'vue-router';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import { useUserStore } from '@/store/modules/user';
+import { BindingEdgeEnumList } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { FoldWayTemplateType } from './type';
 

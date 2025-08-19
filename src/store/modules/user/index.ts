@@ -15,6 +15,7 @@ const options: DefineStoreOptions<string, IUserStoreState, IUserStoreGetters, IU
       if (resp && resp.data?.isSuccess && resp.data.Data) {
         this.clear();
         this.token = resp.data.Data;
+        this.mobile = loginForm.Mobile;
         this.loginTime = Date.now();
         this.lastReqTime = Date.now();
 
@@ -50,7 +51,7 @@ const options: DefineStoreOptions<string, IUserStoreState, IUserStoreGetters, IU
         this[key as keyof IUserStoreState] = _initialState[key];
       });
     },
-    getToken() {
+    getTokenInfo() {
       let { token } = this;
 
       if (token) {
@@ -62,14 +63,14 @@ const options: DefineStoreOptions<string, IUserStoreState, IUserStoreGetters, IU
         }
       }
 
-      return token;
+      return { token, mobile: token ? this.mobile : '' };
     },
   },
   persist: {
     // key: process.env.VUE_APP_TARGET === 'My Order App' ? 'my_prod-order_user' : 'my_prod_user', // 自定义缓存中的key键名
     key: 'my_prod_user', // 自定义缓存中的key键名
     storage: localStorage, // 自定义缓存类型，默认sessionStorage，
-    paths: ['user', 'token', 'loginTime', 'getTheUserTime', 'lastReqTime'], // 自定义指定持久化的字段，默认为全部
+    paths: ['user', 'token', 'mobile', 'loginTime', 'getTheUserTime', 'lastReqTime'], // 自定义指定持久化的字段，默认为全部
     serializer: {
       serialize: JSON.stringify,
       deserialize: (e) => {

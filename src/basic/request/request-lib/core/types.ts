@@ -44,6 +44,7 @@ export interface IRequestConfig<D = any> {
   loading?: boolean; // 是否展示loading： 传递false时不展示  其它情况均展示
   closeTip?: boolean; // 是否展示错误提示： 默认展示，传递true时不展示
   withoutToken?: boolean; // 不需要token即可进行数据请求
+  encrypt?: boolean; // 是否对请求数据进行加密
   cache?: {
     duration: number // 缓存时间
     isCacheable?: (resp: IResponseType<IMpzjResponse>) => boolean // 判断响应结果是否可以被缓存
@@ -91,6 +92,8 @@ export interface ICoreOptions {
   getToken?: () => string
   /** 设置token 优先级高于getToken */
   setToken?: (config: IRequestConfig) => boolean
+  /** 接口请求前函数 */
+  beforeRequest?: (config: IRequestConfig) => void | Promise<void>
   /** 对响应数据进行提示处理 - 仅处理不改变 */
   useResponse?: (resp: IResponseType<IMpzjResponse>, options: IRespMsgOption) => void
   /** 对catch到的错误信息的处理方法 */

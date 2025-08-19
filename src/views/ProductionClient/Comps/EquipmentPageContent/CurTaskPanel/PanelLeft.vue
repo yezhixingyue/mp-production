@@ -62,7 +62,7 @@
 
     <ul class="footer">
       <!-- 当前工序 -->
-      <li class="current" v-if="TaskData.Working.WorkingName">
+      <li class="area" v-if="TaskData.Working.WorkingName">
         <span>当前工序：</span>
         <h4 class="w-name">{{ TaskData.Working.WorkingName }}</h4>
       </li>
@@ -184,7 +184,7 @@ const onErrorClick = () => {
       }
     }
   }
-  .next, .current {
+  .next, .area {
     font-size: 18px;
     margin-top: 18px;
     display: flex;

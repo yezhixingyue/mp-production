@@ -19,13 +19,18 @@
       <mp-table-column v-if="showRowOptions.showActualDuration" prop="_ActualDuration" width="120px" label="实际加工时长" />
       <mp-table-column v-if="showRowOptions.showFinishTime" prop="_FinishTime" width="130px" label="完成时间" />
       <mp-table-column v-if="showRowOptions.showLatestFinishTime" prop="LatestFinishTime" width="130px" label="最迟完工时间">
-        <template #default="scope:{ row: typeof localTaskList.value[number] }">
+        <template #default="scope:{ row: RowType }">
           <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''">{{ scope.row._LatestFinishTime.Time }}</span>
         </template>
       </mp-table-column>
       <mp-table-column v-if="showRowOptions.showStatus" width="100px" prop="_StatusText" label="当前状态" >
-        <template #default="scope:any">
-          <span :class="isError ? 'is-pink' : ''">{{ scope.row._StatusText }}</span>
+        <template #default="scope: { row: RowType }">
+          <mp-button type="primary" link v-if="showRowOptions.showPartialDelivery
+           && scope.row.Status === ProductiveTaskStatusEnum.Initial && scope.row.Working.HaveAnyReceived && scope.row.Index === 1"
+             @click='onPartialDeliveryClick(scope.row)'>
+            部分送达
+          </mp-button>
+          <span v-else :class="isError ? 'is-pink' : ''">{{ scope.row._StatusText }}</span>
         </template>
       </mp-table-column>
       <mp-table-column v-if="showRowOptions.showExternalStatus" width="100px" prop="_ExternalStatusText" label="状态" />
@@ -62,7 +67,7 @@ import { storeToRefs } from 'pinia';
 import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
 import { getLocalTaskList } from './BatchReport/getLocalTaskList';
 
-const emit = defineEmits(['switchEqu', 'confirmExternal', 'loadFile', 'setMultipleSelection']);
+const emit = defineEmits(['switchEqu', 'confirmExternal', 'loadFile', 'setMultipleSelection', 'partialDeliveryClick']);
 
 interface rowDisplayOptions {
   showContent: boolean
@@ -79,6 +84,8 @@ interface rowDisplayOptions {
   showReproductionType: boolean
   showProcessTimes: boolean
   showMaterial: boolean,
+  /** 是否显示部分送达 */
+  showPartialDelivery: boolean
 }
 
 const props = withDefaults(defineProps<{
@@ -102,6 +109,8 @@ const { user } = storeToRefs(userStore);
 -------------------------------------------*/
 const localTaskList = computed(() => getLocalTaskList(props.TaskList, props.isError, true));
 
+type RowType = typeof localTaskList.value[number];
+
 const _defaultshowRowOptions: rowDisplayOptions = {
   showContent: false,
   showWishDuration: false,
@@ -117,11 +126,12 @@ const _defaultshowRowOptions: rowDisplayOptions = {
   showReproductionType: false,
   showProcessTimes: true,
   showMaterial: true,
+  showPartialDelivery: false,
 };
 
 const showRowOptions = computed(() => ({
   ..._defaultshowRowOptions,
-  ...props.rowDisplayOptions || {},
+  ...props.rowDisplayOptions,
 }));
 
 /* 多选相关处理 ↓
@@ -139,11 +149,11 @@ watch(() => props.loading, (newVal, oldVal) => {
 });
 
 /** 判断一个任务是否可以外协（禁用多选） */
-const getSelectable = (row: typeof localTaskList.value[number]) => row.Working.ExternalAttribute?.Status === ExternalTaskStatusEnum.WaitFactoryReceive;
+const getSelectable = (row: RowType) => row.Working.ExternalAttribute?.Status === ExternalTaskStatusEnum.WaitFactoryReceive;
 
 /* 按钮点击事件处理
 -------------------------------------------*/
-const onMenuClick = (row: typeof localTaskList.value[number], type: Parameters<typeof emit>[0]) => {
+const onMenuClick = (row: RowType, type: Parameters<typeof emit>[0]) => {
   switch (type) {
     // case 'switchEqu':
     // MpMessage.warn('确定更换设备吗', `任务ID：[ ${row.Code} ]`, () => {
@@ -156,9 +166,13 @@ const onMenuClick = (row: typeof localTaskList.value[number], type: Parameters<t
       break;
   }
 };
-const canSwitchEqu = (row: typeof localTaskList.value[number]) => {
+const canSwitchEqu = (row: RowType) => {
   const _canSwitchList = [ProductiveTaskStatusEnum.Initial, ProductiveTaskStatusEnum.Producibility];
   return _canSwitchList.includes(row.Status);
+};
+
+const onPartialDeliveryClick = (row: RowType) => {
+  emit('partialDeliveryClick', row);
 };
 </script>
 

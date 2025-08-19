@@ -96,6 +96,7 @@ export class RequestCore { // ------------------ 需要继续精简
     // 执行
     try {
       if (!setToken(config, this._options)) return { message: '未获取到token，请重新登录尝试' }; // 设置token
+      if (this._options.beforeRequest) await this._options.beforeRequest(config); // 接口请求前函数
 
       const resp = await this._send<T>(config, _hash); // 发送
 

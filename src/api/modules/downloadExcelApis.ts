@@ -12,26 +12,26 @@ export const downloadExcelApis = {
   },
   /** POST /Api/ExternalTask/Excel  外协任务列表 导出Excel */
   getExternalTaskExcel(condition) {
-    return instance.post('/Api/ExternalTask/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+    return instance.post('/Api/ExternalTask/Excel', condition, { responseType: 'arraybuffer', closeTip: true, encrypt: true });
   },
   /** POST /Api/Task/Excel   生产任务导出Excel */
   getTaskExcel(condition) {
-    return instance.post('/Api/Task/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+    return instance.post('/Api/Task/Excel', condition, { responseType: 'arraybuffer', closeTip: true, encrypt: true });
   },
   /** 数码工单列表Excel */
   getOfflinePlateExcel(condition) {
-    return instance.post('/Api/OfflinePlate/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+    return instance.post('/Api/OfflinePlate/Excel', condition, { responseType: 'arraybuffer', closeTip: true, encrypt: true });
   },
   /** 数码完工任务列表Excel /Api/DigitalTask/Excel */
   getDigitalTaskExcel(condition) {
-    return instance.post('/Api/DigitalTask/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+    return instance.post('/Api/DigitalTask/Excel', condition, { responseType: 'arraybuffer', closeTip: true, encrypt: true });
   },
   /** POST /Api/Plate/Excel   大版导出Excel */
   getPlateExcel(condition) {
-    return instance.post('/Api/Plate/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+    return instance.post('/Api/Plate/Excel', condition, { responseType: 'arraybuffer', closeTip: true, encrypt: true });
   },
   getChunkExcel(condition) {
-    return instance.post('/Api/Chunk/Excel', condition, { responseType: 'arraybuffer', closeTip: true });
+    return instance.post('/Api/Chunk/Excel', condition, { responseType: 'arraybuffer', closeTip: true, encrypt: true });
   },
   /** /Api/ProductionException/Excel 导出外协|生产异常列表 */
   getProductionExceptionExcel(condition) {

@@ -32,6 +32,8 @@ export interface IConvertAssistInfo {
   /** 该文件是否为图片文件 */
   IsImage?: boolean
   TaskWorkingID?: string
+  /** 辅助信息显示位置 */
+  Position: Record<string, boolean> & { Equipment: boolean }
 }
 
 /**

@@ -13,6 +13,10 @@ export const resourceApis = {
   getResourceNoteSave(data) { // POST /Api/Note/Save  辅助信息编辑
     return request<string>({ method: 'POST', url: '/Api/Note/Save', data });
   },
+  /** /Api/Note/DisplayPositionList */
+  getNoteDisplayPositionList() {
+    return request({ method: 'GET', url: '/Api/Note/DisplayPositionList' });
+  },
   getResourceNoteList(condition) { // POST /Api/Note/List  辅助信息查询
     return request<IAssistListItem[]>({ method: 'POST', url: '/Api/Note/List', data: condition });
   },

@@ -4,4 +4,7 @@ export interface IAssistListItem {
   ID: string;
   Name: string;
   Type: localEnumValueIDType;
+  Position: {
+    [key: string]: boolean;
+  }
 }

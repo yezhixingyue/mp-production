@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "45191176",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "e6ac",
+      "unicode_decimal": 59052
+    },
+    {
+      "icon_id": "8094179",
+      "name": "导入",
+      "font_class": "daoru1",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "45084828",
+      "name": "方案设计",
+      "font_class": "fangansheji",
+      "unicode": "e6a7",
+      "unicode_decimal": 59047
+    },
+    {
+      "icon_id": "45084827",
+      "name": "打包方案",
+      "font_class": "dabaofangan",
+      "unicode": "e6a8",
+      "unicode_decimal": 59048
+    },
+    {
+      "icon_id": "45068666",
+      "name": "抛货管理",
+      "font_class": "paohuoguanli",
+      "unicode": "e6a6",
+      "unicode_decimal": 59046
+    },
+    {
       "icon_id": "9346458",
       "name": "订单审核",
       "font_class": "dingdanshenhe",

@@ -16,6 +16,9 @@ export class InstanceLoginClass {
   /** 登录成功后获取到的token信息 */
   public token = ''
 
+  /** 登录成功所使用的mobile信息 */
+  public mobileOnSuccess = ''
+
   /** 用户信息 */
   public user: null | IUser = null
 
@@ -33,6 +36,7 @@ export class InstanceLoginClass {
     const data = SessionStorageClientHandler.getData(this.EquipmentID);
     if (data) {
       this.token = data.token;
+      this.mobileOnSuccess = data.mobileOnSuccess || '';
       if (this.token) {
         this._getUser(); // 获取用户信息
       }
@@ -79,7 +83,7 @@ export class InstanceLoginClass {
 
     if (resp?.data?.isSuccess) {
       this.user = resp.data.Data;
-      SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: this.user, token: this.token });
+      SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: this.user, token: this.token, mobileOnSuccess: this.mobileOnSuccess });
     }
   }
 
@@ -102,6 +106,7 @@ export class InstanceLoginClass {
       this.mobile = '';
       this.password = '';
       this.token = resp.data.Data || '';
+      this.mobileOnSuccess = temp.Mobile;
       // 缓存
       SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: null, token: this.token });
       // 获取用户信息
@@ -123,6 +128,7 @@ export class InstanceLoginClass {
     if (resp?.data?.isSuccess) {
       this.user = null;
       this.token = '';
+      this.mobileOnSuccess = '';
       // 清理缓存
       SessionStorageClientHandler.clearItem(this.EquipmentID);
       return true;

@@ -10,7 +10,8 @@
     >
     <div class="assist-info-setup-content">
       <div v-for="it in list" :key="it.ID" class="item">
-        <span class="title" :title="it.Name">{{ it.Name }}</span>
+        <span class="title" :title="it.Name"
+         :class="{star:Object.values(it.Position).filter(v => v).length > (it.Position.Equipment ? 1 : 0)}">{{ it.Name }}</span>
         <i class="s">:</i>
         <el-input v-model.trim="it.Content" maxlength="40"></el-input>
       </div>
@@ -24,6 +25,7 @@ import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 
 const props = defineProps<{
   visible: boolean
@@ -48,6 +50,12 @@ const onOpen = () => {
 };
 
 const submit = () => {
+  const t = list.value.find(it => it.Content.trim() === '' && Object.values(it.Position).filter(v => v).length > (it.Position.Equipment ? 1 : 0));
+  if (t) {
+    MpMessage.error(`[ ${t.Name} ]不能为空`);
+    return;
+  }
+
   const _list = props.modelValue.filter(it => it.Type !== AssistInfoTypeEnum.text);
   emit('update:modelValue', [...list.value, ..._list]);
   localVisible.value = false;

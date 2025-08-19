@@ -56,6 +56,8 @@ const handleExternalConfirmSuccess = (rows: Row[], isConfirm: boolean, list?: { 
   rows.forEach(row => {
     const _row = row;
 
+    const _Equipment = _row.Working.UseableEquipmentList?.find(it => it.ID === _row._ExternalSubmitParams.FactoryID) || null;
+
     // 对列表数据的修改
     _row.Operator = isConfirm ? userStore.user?.StaffName || '' : '';
     _row.Working.ExternalAttribute.Status = _getStatus(_row.ID);
@@ -63,7 +65,9 @@ const handleExternalConfirmSuccess = (rows: Row[], isConfirm: boolean, list?: { 
     _row._ExternalStatusText = getEnumNameByID(_row.Working.ExternalAttribute.Status, ExternalTaskStatusEnumList); // 更新展示项目 - 状态
     _row._StartTime = isConfirm ? format2MiddleLangTypeDateFunc2(_row.StartTime) : ''; // 更新展示项目 - 外协时间
     _row._ExternalStatusCtrlText = isConfirm ? '撤回' : '确认外协';
-    _row._ExternalSubmitParams._FactoryName = _row.Working.UseableEquipmentList?.find(it => it.ID === _row._ExternalSubmitParams.FactoryID)?.Name || '';
+    _row._ExternalSubmitParams._FactoryName = _Equipment?.Name || '';
+    _row.Equipment.Name = _Equipment?.Name || '';
+    _row.Equipment.ID = _Equipment?.ID || '';
   });
 };
 

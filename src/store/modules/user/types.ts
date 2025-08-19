@@ -428,6 +428,7 @@ export interface IUser {
 
 export interface IUserStoreState {
   token: string
+  mobile: string
   loginTime: '' | number
   lastReqTime: '' | number
   user: IUser | null
@@ -440,5 +441,5 @@ export interface IUserStoreActions {
   getLogin: (loginForm: ILoginSubmitForm) => Promise<boolean>;
   getUser: () => Promise<null | IUser | 'login'>;
   clear: () => void;
-  getToken: () => string;
+  getTokenInfo: () => { token: string, mobile: string };
 }

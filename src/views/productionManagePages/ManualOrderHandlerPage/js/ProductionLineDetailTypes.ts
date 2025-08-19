@@ -21,7 +21,9 @@ export interface ILineWorkingNoteInfo {
   ID: string
   Name: string
   /** 辅助信息类型： 0.文件 1.文字信息 2.数值 */
-  Type: AssistInfoTypeEnum,
+  Type: AssistInfoTypeEnum
+  /** 辅助信息显示位置 */
+  Position: Record<string, boolean> & { Equipment: boolean }
 }
 
 /** 工序中需要的物料资源包 -- 组合生产线中使用 */
