@@ -50,10 +50,10 @@ const beforeRequest = async (config: IRequestConfig) => {
 
     const token = ManageClientPageData.value.curActiveInstance?.loginData.token || '';
     const mobile = ManageClientPageData.value.curActiveInstance?.loginData.mobileOnSuccess || '';
-    const { authStr, timeContent } = await e(token, mobile);
+    const { authStr } = await e(token, mobile);
 
     _config.headers['s-req-dat'] = authStr;
-    _config.headers['s-req-time'] = encodeURIComponent(timeContent);
+    // _config.headers['s-req-time'] = encodeURIComponent(timeContent);
   }
 };
 

@@ -18,7 +18,7 @@
             <span class="label">{{ materialData.TargetType === TargetTypeEnum.Order ? '订单' : '大版' }}ID：</span>
             <span>{{ materialData.TargetCode }}</span>
           </h2>
-          <h2 style="color: rgb(122, 139, 156);">
+          <h2 style="color: rgb(122, 139, 156);" v-if="materialData.SKU">
             <span class="label">SKU：</span>
             <span>{{ materialData.SKU }}</span>
           </h2>

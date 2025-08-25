@@ -1,3 +1,5 @@
+/* eslint-disable func-names */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { md5 } from 'js-md5';
 import _0x52942a from 'base64-js';
