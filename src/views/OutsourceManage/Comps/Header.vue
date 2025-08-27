@@ -3,7 +3,7 @@
     <div class="first" :class="{full: options.showDate}">
       <div class="item">
         <span class="title">外协工厂：</span>
-        <el-select v-model="_Factory" class="mp-select">
+        <el-select v-model="_Factory" class="mp-select" filterable>
           <el-option v-for="item in FactoryList" :key="item.ID" :label="item.Name" :value="item.ID" />
         </el-select>
       </div>
