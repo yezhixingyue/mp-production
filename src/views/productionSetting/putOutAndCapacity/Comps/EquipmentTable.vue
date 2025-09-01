@@ -143,6 +143,7 @@ const onRemoveClick = (it: EquipmentListType) => { // 本地保存？
 :deep(.left .cell) {
   text-align: left !important;
   color: #585858;
+  padding-left: 8px !important;
 }
 
 .input-box {

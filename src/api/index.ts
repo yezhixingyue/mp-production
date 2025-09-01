@@ -1,6 +1,7 @@
 import { IDistrictItem } from '@/assets/Types/common';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import { request } from '@/basic/request';
+import { formulaApis } from './modules/formulaApis';
 import { resourceApis } from './modules/resourceApis';
 import { propertyApis } from './modules/propertyApis';
 import MaterialStorage from './modules/materialStorageApis';
@@ -75,6 +76,8 @@ const api = {
   ExceptionHandlerApis,
   /** 外协管理相关接口 */
   outsourceApis,
+  /** 公式相关接口 */
+  formulaApis,
 };
 
 export default api;

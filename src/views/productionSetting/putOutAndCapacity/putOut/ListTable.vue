@@ -15,7 +15,15 @@
         <i class="index">{{ i + 1 }}. </i>
         <ConditionTextDisplayComp :conditionObj="it.Constraint" :content="it._Content" />
       </div>
-      <div class="pot-out">{{ it.Value }}{{ it.Type === 0 ? '张' : '%' }}</div>
+      <div class="pot-out">
+        <!-- <el-tooltip v-if="!showOld && it.Content.length > 20" :content="it.Content"
+           placement="bottom-start" effect="light" popper-class='pot-out-text-tips-box' :show-arrow='false'>
+          <span class="c">{{ it.Content }}</span>
+        </el-tooltip>
+        <span class="c" v-else-if="!showOld">{{ it.Content }}</span> -->
+        <FormulaRowContentDisplayer :Content="it.Content" v-if="!showOld" />
+        <span v-if="showOld">{{ getOldValue(it) }}</span>
+      </div>
       <div class="priority">{{ it.Priority }}</div>
       <div class="ctrl" v-if="!hideCtrl">
         <mp-button type="info" class="menu" link @click="onSaveClick(it)">
@@ -33,22 +41,27 @@
 <script setup lang='ts'>
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import ConditionTextDisplayComp from '@/components/common/ConstraintsComps/ConstraintsTable/ConditionTextDisplayComp.vue';
+import FormulaRowContentDisplayer from '@/components/Formula/components/FormulaRowContentDisplayer.vue';
 import { TransformConstraintTableItemType } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
-import { PutOutConditionItemClass } from '../js/PutOutConditionItemClass';
+import { PutOutConditionItemType } from '../js/PutOutConditionItemClass';
 
 const props = defineProps<{
-  tableList: TransformConstraintTableItemType<PutOutConditionItemClass>[]
+  tableList: TransformConstraintTableItemType<PutOutConditionItemType>[]
   hideCtrl?: boolean
   emptyText?: string
+  showOld?: boolean
 }>();
 
 const emit = defineEmits(['rowRemove', 'rowSave']);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getOldValue = (r: any) => (`${r.Value}${r.Type === 0 ? '张' : '%'}`);
 
 const onSaveClick = (e) => {
   emit('rowSave', e);
 };
 
-const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemClass>, i: number) => {
+const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemType>, i: number) => {
   MpMessage.warn({
     title: '确定要删除此申放吗？',
     msg: `条目：第 [ ${i + 1} ] 条`,
@@ -90,8 +103,19 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
       }
 
       >.pot-out {
-        width: 150px;
+        width: 300px;
+        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
+
+        // .c {
+        //   width: 100%;
+        //   overflow: hidden;
+        //   text-overflow: ellipsis;
+        //   white-space: nowrap;
+        // }
       }
 
       >.priority {
@@ -159,3 +183,13 @@ $row-active-border-color: darken($color: #d8effc, $amount: 15);
   }
 }
 </style>
+
+<!-- <style>
+.pot-out-text-tips-box {
+  max-width: 520px;
+  color: #585858;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+}
+</style> -->

@@ -38,7 +38,9 @@ export class PropertyListClass {
   }
 
   static getGroupedPropertyListData(PropertyList: PropertyListItemType[]) { // 获取分组数据 - 用于弹窗选择展示
-    return this.getListGroupByType(PropertyList);
+    const list = this.getListGroupByType(PropertyList);
+
+    return list;
   }
 
   private static getListGroupByType(PropertyList: PropertyListItemType[]): IGroupedPropertyListItem[] { // { Type: { ID, Name }, PropertyList: [] } 按类型对属性列表进行分组
@@ -111,6 +113,9 @@ export class PropertyListClass {
    */
   static getPerfectPropertyByImperfectProperty(imperfectProp: Partial<PropertyListItemType> | null, PropertyList: PropertyListItemType[]) {
     if (!imperfectProp || !PropertyList || !Array.isArray(PropertyList) || PropertyList.length === 0) return null;
+
+    if (imperfectProp && imperfectProp.FixedType === 254) return imperfectProp as PropertyListItemType;
+
     const t = PropertyList.find(it => {
       const {
         MaterialType, FixedType, Type, Property, Assist,
@@ -137,6 +142,8 @@ export class PropertyListClass {
       //     return { ...t, CraftOptionList: list };
       //   }
       // }
+      if (imperfectProp.DefaultValue || imperfectProp.DefaultValue === 0) t.DefaultValue = imperfectProp.DefaultValue;
+
       return t;
     }
     return null;

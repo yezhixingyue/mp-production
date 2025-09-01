@@ -38,10 +38,14 @@ export class Property {
 
   ValueType: PropertyValueTypeEnum = PropertyValueTypeEnum.numerical
 
+  DefaultValue: null | string | number = ''
+
   MaterialType: null | IPropertyObjectMember = { // 所属物料类型 后面可能会添加多种其它类型
     ID: '',
     Name: '',
   }
+
+  CalculateValue: null | string = ''
 
   constructor(data) {
     if (data) restoreInitDataByOrigin(this, data);

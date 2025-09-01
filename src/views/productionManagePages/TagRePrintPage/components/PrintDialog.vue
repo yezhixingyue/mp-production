@@ -1,7 +1,7 @@
 <template>
   <PrintDialog ref="oPrintDialog" onlyPrint>
     <ul class="tag-reprint-print-wrap-list" v-if="result.data">
-      <li class="wrap" v-for="it in Number(result.count)" :key="it">
+      <li class="mp-prod-condition-prop-select-dialogwrap" v-for="it in Number(result.count)" :key="it">
         <section>
           <header>
             <span>{{ result.data.OrderInfo.ProduceEndTime.slice(0, 16).replace('T', ' ') }}</span>

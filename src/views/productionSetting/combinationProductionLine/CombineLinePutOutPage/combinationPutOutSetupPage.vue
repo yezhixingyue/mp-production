@@ -3,7 +3,10 @@
     :BreadcrumbList="BreadcrumbList"
     :curConditionRow="CombineLinePutOutPageData?.curConditionRow || null"
     :PropertyList="CombineLinePutOutPageData?.PropertyList || []"
+    :FormulaPropertyList="CombineLinePutOutPageData?.FormulaPropertyList || []"
     :curLineEquipment="CombineLinePutOutPageData?.curLineEquipment || null"
+    :FormulaUseModule="CombineLinePutOutPageData?.FormulaUseModule"
+    :Working="CombineLinePutOutPageData?.curWork || null"
     @save="onSave"
   />
 </template>
@@ -12,7 +15,7 @@
 import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import EquipmentPutOutSetupPageContent from '../../putOutAndCapacity/putOut/EquipmentPutOutSetupPageContent.vue';
-import { PutOutConditionItemClass } from '../../putOutAndCapacity/js/PutOutConditionItemClass';
+import { PutOutConditionItemType } from '../../putOutAndCapacity/js/PutOutConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();
 const { CombineLinePutOutPageData } = storeToRefs(productionSettingStore);
@@ -29,7 +32,7 @@ const BreadcrumbList = [
   },
 ];
 
-const onSave = (e: PutOutConditionItemClass) => {
+const onSave = (e: PutOutConditionItemType) => {
   if (CombineLinePutOutPageData.value) CombineLinePutOutPageData.value.handleItemSave(e);
 };
 

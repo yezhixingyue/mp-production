@@ -1,5 +1,5 @@
 <template>
-  <section class="wrap" v-if="PlateMakingGroupManageData">
+  <section class="mp-prod-condition-prop-select-dialogwrap" v-if="PlateMakingGroupManageData">
     <Header
       v-model="PlateMakingGroupManageData.WorkID"
       :WorkingList="PlateMakingGroupManageData.WorkingList"
@@ -87,7 +87,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.wrap {
+.mp-prod-condition-prop-select-dialogwrap {
   width: 100%;
   height: 100%;
   display: flex;

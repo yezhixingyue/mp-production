@@ -3,7 +3,7 @@ import { PropertyListItemType } from '../TypeClass/Property';
 import { Constraints } from './Constraints';
 
 export class ConditionItemClass {
-  ID: number | '' = ''
+  ID: number | string = ''
 
   Priority: number | '' = ''
 

@@ -6,6 +6,7 @@ import type {
 } from '@/store/modules/productionSetting/types';
 
 import { LinePutOutClass } from '@/views/productionSetting/putOutAndCapacity/js/LinePutOutClass';
+import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import { LineCapacityClass } from '@/views/productionSetting/putOutAndCapacity/js/LineCapacityClass';
 import { EquipmentListType } from '@/views/productionSetting/putOutAndCapacity/js/types';
 import { PlateMakingGroupManageClass } from '@/views/productionSetting/PlateMakingGroupView/js/PlateMakingGroupManageClass';
@@ -109,13 +110,13 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
     },
     /** 设置申放相关数据 */
     setLinePutOutPageData(LineEquipment) {
-      this.LinePutOutPageData = new LinePutOutClass(LineEquipment);
+      this.LinePutOutPageData = new LinePutOutClass(LineEquipment, UseModuleEnum.WastageFormula);
     },
     setLineCapacityPageData(LineEquipment) {
       this.LineCapacityPageData = new LineCapacityClass(LineEquipment);
     },
     setCombineLinePutOutPageData(LineEquipment) {
-      this.CombineLinePutOutPageData = new LinePutOutClass(LineEquipment);
+      this.CombineLinePutOutPageData = new LinePutOutClass(LineEquipment, UseModuleEnum.UnionLineWastageFormula);
     },
     setCombineLineCapacityPageData(LineEquipment) {
       this.CombineLineCapacityPageData = new LineCapacityClass(LineEquipment);

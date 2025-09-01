@@ -4,6 +4,8 @@
     :BreadcrumbList="BreadcrumbList"
     :list="CombineLinePutOutPageData.list"
     :PropertyList="CombineLinePutOutPageData.PropertyList"
+    :FormulaUseModule="CombineLinePutOutPageData.FormulaUseModule"
+    :WorkingID="CombineLinePutOutPageData.curWork?.ID"
     :EquipmentData="CombineLinePutOutPageData.EquipmentData"
     @remove="remove"
     @save="ToSetup"
@@ -18,7 +20,7 @@ import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { TransformConstraintTableItemType } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
 import EquipmentPutOutListPageContent from '../../putOutAndCapacity/putOut/EquipmentPutOutListPageContent.vue';
-import { PutOutConditionItemClass } from '../../putOutAndCapacity/js/PutOutConditionItemClass';
+import { PutOutConditionItemType } from '../../putOutAndCapacity/js/PutOutConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();
 const { CombineLinePutOutPageData } = storeToRefs(productionSettingStore);
@@ -38,12 +40,12 @@ const BreadcrumbList = computed(() => [
   { name: `设置申放：${CombineLinePutOutPageData.value?.curLineEquipment?.Name}` },
 ]);
 
-const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
+const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemType>) => {
   CombineLinePutOutPageData.value?.setCurConditionRow(item);
   router.push({ name: 'combinationPutOutSetup' });
 };
 
-const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
+const remove = (item: TransformConstraintTableItemType<PutOutConditionItemType>) => {
   CombineLinePutOutPageData.value?.handleItemRemove(item);
 };
 

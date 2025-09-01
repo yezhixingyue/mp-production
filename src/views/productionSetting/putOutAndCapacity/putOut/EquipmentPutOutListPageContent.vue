@@ -4,15 +4,22 @@
       <MpBreadcrumb :list="props.BreadcrumbList"></MpBreadcrumb>
       <div class="header-top">
         <mp-button type="primary" @click="onSaveClick(null)">+ 添加条件</mp-button>
-        <mp-button class="blue" v-if="EquipmentData" @click="onImportClick" :disabled="EquipmentData.EquipmentList.length <= 1">
+        <mp-button class="blue" v-if="EquipmentData" @click="visible=true" :disabled="EquipmentData.EquipmentList.length <= 1">
           <i class="iconfont icon-daoru"></i> 导入条件</mp-button>
+        <span class="is-blue-span ml-25" @click="oldVisible=true">查看旧版本数据</span>
         <span class="tips-box"><el-icon><WarningFilled /></el-icon> 匹配一条作为申放设置</span>
       </div>
     </header>
     <main>
       <ListTable :tableList="localTableList" @rowRemove="onRemoveClick" @rowSave="onSaveClick" />
 
-      <ImportDialog v-model:visible="visible" v-if="EquipmentData" :EquipmentData="EquipmentData" :PropertyList="PropertyList" @success="handleImportSuccess" />
+      <ImportDialog v-model:visible="visible" v-if="EquipmentData && typeof FormulaUseModule === 'number' && WorkingID"
+        :EquipmentData="EquipmentData" :FormulaUseModule="FormulaUseModule" :WorkingID="WorkingID"
+        :PropertyList="PropertyList"
+        @success="handleImportSuccess" />
+
+      <!-- 旧数据 -->
+      <OldDataDisplayDialog v-model:visible="oldVisible" v-if="EquipmentData" :EquipmentData="EquipmentData" :PropertyList="PropertyList" />
     </main>
     <footer>
       <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
@@ -27,15 +34,19 @@ import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrum
 import { computed, ref } from 'vue';
 import { TransformConstraintTableItemType, transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
+import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import ListTable from './ListTable.vue';
-import { PutOutConditionItemClass } from '../js/PutOutConditionItemClass';
+import { PutOutConditionItemType } from '../js/PutOutConditionItemClass';
 import ImportDialog from './ImportDialog.vue';
 import { EquipmentListType } from '../js/types';
+import OldDataDisplayDialog from './OldDataDisplayDialog.vue';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
-  list: PutOutConditionItemClass[],
+  list: PutOutConditionItemType[],
   PropertyList: PropertyListItemType[],
+  FormulaUseModule?: UseModuleEnum
+  WorkingID?: string
   EquipmentData?: { curEquipID: null | string; EquipmentList: EquipmentListType[] } | null
 }>();
 
@@ -46,20 +57,18 @@ const localTableList = computed(() => transformConstraintTableList({
   PropertyList: props.PropertyList,
 }));
 
-const onSaveClick = (it: TransformConstraintTableItemType<PutOutConditionItemClass> | null) => {
+const onSaveClick = (it: TransformConstraintTableItemType<PutOutConditionItemType> | null) => {
   emit('save', it);
 };
 
-const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemClass> | null) => {
+const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemType> | null) => {
   emit('remove', it);
 };
 
 const visible = ref(false);
-const onImportClick = () => {
-  visible.value = true;
-};
+const oldVisible = ref(false);
 
-const handleImportSuccess = (newConditionList: PutOutConditionItemClass[]) => {
+const handleImportSuccess = (newConditionList: PutOutConditionItemType[]) => {
   emit('imported', newConditionList);
 };
 

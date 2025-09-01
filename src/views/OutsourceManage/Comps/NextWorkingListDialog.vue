@@ -29,7 +29,7 @@
         <span>{{ row._AssistText }}</span>
       </li>
     </ul>
-    <dl v-if="_NextWorkingList.length > 0" class="wrap">
+    <dl v-if="_NextWorkingList.length > 0" class="mp-prod-condition-prop-select-dialogwrap">
       <!-- <dt>色彩示例</dt> -->
       <dd v-for="(it, i) in _NextWorkingList" :key="it.ID">
         <div class="block" :style="`background-color:${it.Color}`"></div>
@@ -121,7 +121,7 @@ const onOpen = async () => {
     }
   }
  }
- dl.wrap {
+ dl.mp-prod-condition-prop-select-dialogwrap {
   display: flex;
   flex-wrap: wrap;
   margin: 0 auto;

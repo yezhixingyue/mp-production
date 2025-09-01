@@ -1,18 +1,18 @@
 <template>
  <DialogContainerComp
-   :visible='localVisible'
+   :visible='visible'
    :width='1100'
    title='申放条件拷贝'
    top='12vh'
    @open='onOpen'
-   @cancel='localVisible = false'
+   @cancel='visible = false'
    @submit='submit'
    :disabled="localTableList.length===0"
    >
    <section class='dialog-content'>
     <header>选择导入机台</header>
     <aside>
-      <div v-for="it in localEquipmentList" :key="it.ID" :class="{active:it.LineEquipmentID===localId}" @click="localId=it.LineEquipmentID || ''">
+      <div v-for="it in localEquipmentList" :key="it.ID" :class="{active:it.LineEquipmentID===activeId}" @click="activeId=it.LineEquipmentID || ''">
         <span :title="it.Name">{{ it.Name }}</span>
       </div>
     </aside>
@@ -29,68 +29,88 @@ import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
-import { transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
+import { TransformConstraintTableItemType, transformConstraintTableList } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
+import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import { EquipmentListType } from '../js/types';
-import { PutOutConditionItemClass } from '../js/PutOutConditionItemClass';
+import { PutOutConditionItemType } from '../js/PutOutConditionItemClass';
 import ListTable from './ListTable.vue';
 
 const props = defineProps<{
-  visible: boolean
   EquipmentData: { curEquipID: null | string; EquipmentList: EquipmentListType[] }
   PropertyList: PropertyListItemType[]
+  FormulaUseModule: UseModuleEnum
+  WorkingID: string
 }>();
 
-const emit = defineEmits(['update:visible', 'success']);
+const emit = defineEmits(['success']);
 
-const localVisible = computed({
-  get() {
-    return props.visible;
-  },
-  set(val) {
-    emit('update:visible', val);
-  },
-});
+const visible = defineModel<boolean>('visible');
 
 const localEquipmentList = ref<EquipmentListType[]>([]);
-const localConditionDataList = ref<PutOutConditionItemClass[]>([]);
+const localConditionDataList = ref<TransformConstraintTableItemType<PutOutConditionItemType>[]>([]);
 const localId = ref('');
 
-const localTableList = computed(() => {
-  const tableList = localConditionDataList.value.filter(it => it.LineEquipmentID === localId.value);
+const _fetchedPositionIDs = new Set<string>();
+const fetchDataList = async (val: string) => {
+  if (!val || _fetchedPositionIDs.has(val)) return;
 
-  return transformConstraintTableList({
-    tableList,
-    PropertyList: props.PropertyList,
+  const resp = await api.formulaApis.getFormulaList({
+    UseModule: props.FormulaUseModule,
+    WorkingID: props.WorkingID,
+    PositionID: val,
   });
-});
 
-const onOpen = async () => {
-  localEquipmentList.value = props.EquipmentData.EquipmentList.filter(it => it.LineEquipmentID !== props.EquipmentData.curEquipID);
-  localConditionDataList.value = [];
-  localId.value = '';
-
-  if (localEquipmentList.value.length === 0) return;
-
-  localId.value = localEquipmentList.value[0].LineEquipmentID || '';
-
-  const resp = await api.getProductionLinePutOutList(localEquipmentList.value.map(it => it.LineEquipmentID || '').filter(it => it));
   if (resp.data?.isSuccess) {
-    localConditionDataList.value = resp.data.Data;
+    localConditionDataList.value.push(...transformConstraintTableList<PutOutConditionItemType>({
+      tableList: resp.data.Data,
+      PropertyList: props.PropertyList,
+    }));
+
+    _fetchedPositionIDs.add(val);
   }
 };
 
+const activeId = computed({
+  get() {
+    return localId.value;
+  },
+  set(val) {
+    if (localId.value === val) return;
+    localId.value = val;
+
+    fetchDataList(val);
+  },
+});
+
+const localTableList = computed(() => localConditionDataList.value.filter(it => it.PositionID === activeId.value));
+
+const onOpen = async () => {
+  _fetchedPositionIDs.clear();
+  localEquipmentList.value = props.EquipmentData.EquipmentList.filter(it => it.LineEquipmentID !== props.EquipmentData.curEquipID);
+  localConditionDataList.value = [];
+  activeId.value = '';
+
+  if (localEquipmentList.value.length === 0) return;
+
+  activeId.value = localEquipmentList.value[0].LineEquipmentID || '';
+};
+
 const fetch = async (oldLineEquipmentID: string, newLineEquipmentID: string) => {
-  const resp = await api.getProductionLinePutOutImport(oldLineEquipmentID, newLineEquipmentID);
+  const resp = await api.formulaApis.getFormulaCopy({
+    SourcePositionID: oldLineEquipmentID,
+    DestPositionID: newLineEquipmentID,
+    UseModule: props.FormulaUseModule,
+  });
 
   if (resp.data?.isSuccess) {
     MpMessage.dialogSuccess({
       title: '导入成功',
       onOk: () => {
-        const newConditionList = localConditionDataList.value.filter(it => it.LineEquipmentID === oldLineEquipmentID);
+        // const newConditionList = localConditionDataList.value.filter(it => it.PositionID === oldLineEquipmentID);
 
-        emit('success', newConditionList);
+        emit('success', resp.data?.Data);
 
-        localVisible.value = false;
+        visible.value = false;
       },
     });
   }
@@ -98,7 +118,7 @@ const fetch = async (oldLineEquipmentID: string, newLineEquipmentID: string) => 
 
 const submit = () => {
   const newLineEquipmentID = props.EquipmentData.curEquipID;
-  const oldLineEquipmentID = localId.value;
+  const oldLineEquipmentID = activeId.value;
   const t = localEquipmentList.value.find(it => it.LineEquipmentID === oldLineEquipmentID);
   if (!t || !newLineEquipmentID) return;
 
@@ -172,9 +192,11 @@ const submit = () => {
     max-height: 100%;
     overflow-y: auto;
     > li {
+      font-size: 12px;
       &.item.header {
         position: sticky;
         top: 0;
+        font-size: 14px;
       }
     }
   }

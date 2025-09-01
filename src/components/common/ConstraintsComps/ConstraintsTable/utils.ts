@@ -50,6 +50,7 @@ export const transformConstraintTableList = <T extends ConditionItemClass = Cond
       _Content,
       Constraint,
     };
+
     return temp;
   });
   return list;

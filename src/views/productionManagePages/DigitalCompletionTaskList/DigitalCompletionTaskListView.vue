@@ -1,5 +1,5 @@
 <template>
-  <section class="wrap"> <!-- no-gap -->
+  <section class="mp-prod-condition-prop-select-dialogwrap"> <!-- no-gap -->
     <header  v-if="localManageData">
       <!-- 标签切换 -->
       <MpPageTabList :list="localManageData.TabList" v-model="localManageData.currentTab" @change="onTabChange" />
@@ -67,7 +67,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.wrap {
+.mp-prod-condition-prop-select-dialogwrap {
   width: 100%;
   height: 100%;
   display: grid;

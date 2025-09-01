@@ -1,5 +1,5 @@
 <template>
-  <section class="wrap">
+  <section class="mp-prod-condition-prop-select-dialogwrap">
     <Header :classList="EquipmentStatusManagePageData.EquipmentClassList" v-model="EquipmentStatusManagePageData.curClassID" />
     <main ref="oWrap">
       <ul class="left-list" v-show="leftInfoList.length" :style="`padding-top: ${TOPWHITESPACE}px;width:${TITLEWIDTH}px`" @mouseleave="curTitleItem = null">
@@ -121,7 +121,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.wrap {
+.mp-prod-condition-prop-select-dialogwrap {
   background-color: #fff;
   height: 100%;
   color: #444;

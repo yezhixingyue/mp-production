@@ -1,40 +1,41 @@
 <template>
-  <EquipmentPutOutSetupPageContent
+  <!-- <EquipmentPutOutSetupPageContent
     :BreadcrumbList="BreadcrumbList"
     :curConditionRow="PlateMakingGroupPutOutPageData?.curConditionRow || null"
     :PropertyList="PlateMakingGroupPutOutPageData?.PropertyList || []"
     :curLineEquipment="PlateMakingGroupPutOutPageData?.curLineEquipment || null"
     @save="onSave"
-  />
+  /> -->
+  <div>拼版申放功能取消</div>
 </template>
 
 <script setup lang='ts'>
-import { storeToRefs } from 'pinia';
-import { useProductionSettingStore } from '@/store/modules/productionSetting';
-import EquipmentPutOutSetupPageContent from '@/views/productionSetting/putOutAndCapacity/putOut/EquipmentPutOutSetupPageContent.vue';
-import { PutOutConditionItemClass } from '@/views/productionSetting/putOutAndCapacity/js/PutOutConditionItemClass';
+// import { storeToRefs } from 'pinia';
+// import { useProductionSettingStore } from '@/store/modules/productionSetting';
+// import EquipmentPutOutSetupPageContent from '@/views/productionSetting/putOutAndCapacity/putOut/EquipmentPutOutSetupPageContent.vue';
+// import { PutOutConditionItemType } from '@/views/productionSetting/putOutAndCapacity/js/PutOutConditionItemClass';
 
-const productionSettingStore = useProductionSettingStore();
-const { PlateMakingGroupPutOutPageData, PlateMakingGroupManageData } = storeToRefs(productionSettingStore);
+// const productionSettingStore = useProductionSettingStore();
+// const { PlateMakingGroupPutOutPageData, PlateMakingGroupManageData } = storeToRefs(productionSettingStore);
 
-const BreadcrumbList = [
-  {
-    to: { path: '/PlateMakingGroupList' },
-    name: PlateMakingGroupManageData.value.WorkingList.find(it => it.ID === PlateMakingGroupManageData.value.WorkID)?.Name || '制版组',
-  },
-  {
-    to: { path: '/PlateMakingGroupEquipmentList' },
-    name: `选择设备/工厂：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,
-  },
-  { to: { path: '/plateMakingGroupEquipmentPutOut' }, name: `设置申放：${PlateMakingGroupPutOutPageData.value?.curLineEquipment?.Name}` },
-  {
-    name: `${PlateMakingGroupPutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}申放`,
-  },
-];
+// const BreadcrumbList = [
+//   {
+//     to: { path: '/PlateMakingGroupList' },
+//     name: PlateMakingGroupManageData.value.WorkingList.find(it => it.ID === PlateMakingGroupManageData.value.WorkID)?.Name || '制版组',
+//   },
+//   {
+//     to: { path: '/PlateMakingGroupEquipmentList' },
+//     name: `选择设备/工厂：${PlateMakingGroupManageData.value.ManageListData.curEditItemHandler?.itemData.Name || ''}`,
+//   },
+//   { to: { path: '/plateMakingGroupEquipmentPutOut' }, name: `设置申放：${PlateMakingGroupPutOutPageData.value?.curLineEquipment?.Name}` },
+//   {
+//     name: `${PlateMakingGroupPutOutPageData?.value?.curConditionRow ? '编辑' : '添加'}申放`,
+//   },
+// ];
 
-const onSave = (e: PutOutConditionItemClass) => {
-  if (PlateMakingGroupPutOutPageData.value) PlateMakingGroupPutOutPageData.value.handleItemSave(e);
-};
+// const onSave = (e: PutOutConditionItemType) => {
+//   if (PlateMakingGroupPutOutPageData.value) PlateMakingGroupPutOutPageData.value.handleItemSave(e);
+// };
 
 </script>
 

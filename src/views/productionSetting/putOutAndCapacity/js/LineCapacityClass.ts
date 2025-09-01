@@ -12,10 +12,7 @@ export class LineCapacityClass extends PutOutCapacityCommonListClass<CapacityCon
 
   saveFunc = api.getProductionLineCapacitySave
 
-  getPropertyListParams = {
-    UseModule: UseModuleEnum.CapacityLimit,
-    EquipmentGroupID: this.curLineEquipment?.GroupID || '',
-  }
+  UseModule = UseModuleEnum.CapacityLimit
 
   curCapacityType = CapacityTypeEnum.preparation
 

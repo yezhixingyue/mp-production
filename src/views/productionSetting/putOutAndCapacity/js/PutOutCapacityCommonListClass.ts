@@ -6,13 +6,9 @@ import { TransformConstraintTableItemType } from '@/components/common/Constraint
 import { UseModuleEnum } from '@/components/common/ConstraintsComps/TypeClass/enum';
 import { PropertyListItemType } from '@/components/common/ConstraintsComps/TypeClass/Property';
 import { getGoBackFun } from '@/router';
+import { IFormulaParams } from '@/components/Formula/types/types';
 import { IResponseType, IMpzjResponse } from '@/basic/request/request-lib/core/types';
 import { EquipmentListType } from './types';
-
-interface IGetPropertyListParams {
-  UseModule: UseModuleEnum,
-  EquipmentGroupID: string
-}
 
 export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass> {
   list: T[] = []
@@ -25,16 +21,21 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   PropertyList: PropertyListItemType[] = []
 
-  abstract getListFunc:(LineEquipmentIDS: string[]) => Promise<IResponseType<IMpzjResponse<any>> | null>
+  FormulaPropertyList: PropertyListItemType[] = []
 
-  abstract removeFunc:(id: number) => Promise<IResponseType<IMpzjResponse<any>> | null>
+  abstract getListFunc:(data: IFormulaParams | string[]) => Promise<IResponseType<IMpzjResponse<any>> | null>
+
+  abstract removeFunc:(id: number | string) => Promise<IResponseType<IMpzjResponse<any>> | null>
 
   abstract saveFunc:(data: T) => Promise<IResponseType<IMpzjResponse<string>> | null>
 
-  abstract getPropertyListParams: IGetPropertyListParams
+  abstract UseModule: UseModuleEnum
 
-  constructor(LineEquipment: EquipmentListType) { // 后续可提出内容： 获取列表函数，usemodule, 删除方法  提取到抽象函数中？ 后面考虑该方式
+  FormulaUseModule?: UseModuleEnum
+
+  constructor(LineEquipment: EquipmentListType, FormulaUseModule?: UseModuleEnum) { // 后续可提出内容： 获取列表函数，usemodule, 删除方法  提取到抽象函数中？ 后面考虑该方式
     this.curLineEquipment = LineEquipment;
+    this.FormulaUseModule = FormulaUseModule;
   }
 
   /** 当前工序，仅生产线和组合生产线使用 */
@@ -50,8 +51,11 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
     this.curLineName = lineName;
     this.EquipmentData = data;
 
+    console.log('getInitData:', data);
+
     this.getList();
     this.getPropertyList();
+    // this.getFormulePropertyList();
   }
 
   /** 为null时为新增 */
@@ -99,15 +103,22 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
     }
   }
 
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   handleImported(newConditionList: T[]) {
-    // this.list = [...newConditionList];
-    this.getList();
+    this.list = [...newConditionList];
+    // this.getList();
   }
 
   private async getList() {
     if (!this.curLineEquipment) return;
-    const resp = await this.getListFunc([this.curLineEquipment.LineEquipmentID || '']);
+
+    const params = typeof this.FormulaUseModule === 'number' ? {
+      UseModule: this.FormulaUseModule,
+      PositionID: this.curLineEquipment.LineEquipmentID || '',
+      WorkingID: this.curWork?.ID || '',
+    } : [this.curLineEquipment.LineEquipmentID || ''];
+
+    const resp = await this.getListFunc(params);
+
     if (resp?.data?.isSuccess) {
       this.list = resp.data.Data as T[];
     }
@@ -115,11 +126,15 @@ export abstract class PutOutCapacityCommonListClass<T extends ConditionItemClass
 
   private async getPropertyList() {
     if (!this.curLineEquipment) return;
+
     const temp = {
-      ...this.getPropertyListParams,
+      UseModule: this.UseModule,
       WorkingID: this.curWork?.ID || '',
+      EquipmentGroupID: this.curLineEquipment.GroupID,
     };
+
     const resp = await api.propertyApis.getPropertyList(temp);
+
     if (resp.data?.isSuccess) {
       this.PropertyList = resp.data.Data || [];
     }

@@ -4,6 +4,8 @@
     :curConditionRow="LinePutOutPageData?.curConditionRow || null"
     :PropertyList="LinePutOutPageData?.PropertyList || []"
     :curLineEquipment="LinePutOutPageData?.curLineEquipment || null"
+    :FormulaUseModule="LinePutOutPageData?.FormulaUseModule"
+    :Working="LinePutOutPageData?.curWork || null"
     @save="onSave"
   />
 </template>
@@ -12,7 +14,7 @@
 import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import EquipmentPutOutSetupPageContent from '../../putOutAndCapacity/putOut/EquipmentPutOutSetupPageContent.vue';
-import { PutOutConditionItemClass } from '../../putOutAndCapacity/js/PutOutConditionItemClass';
+import { PutOutConditionItemType } from '../../putOutAndCapacity/js/PutOutConditionItemClass';
 
 const productionSettingStore = useProductionSettingStore();
 const { LinePutOutPageData } = storeToRefs(productionSettingStore);
@@ -29,7 +31,7 @@ const BreadcrumbList = [
   },
 ];
 
-const onSave = (e: PutOutConditionItemClass) => {
+const onSave = (e: PutOutConditionItemType) => {
   if (LinePutOutPageData.value) LinePutOutPageData.value.handleItemSave(e);
 };
 

@@ -59,6 +59,7 @@ import { IExportExcelProps } from '@/components/common/General/DownLoadExcelComp
 import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
+import { TaskListUseModuleEnum } from '@/types/enum';
 import { EquipmentTaskDetailClass } from './js/EquipmentStatusDetailClass';
 import SwitchEquipmentDialog from './Comp/SwitchEquipmentDialog.vue';
 import PartialDeliveryListDialog from './Comp/PartialDeliveryListDialog/PartialDeliveryListDialog.vue';
@@ -112,7 +113,7 @@ const localPermission = computed(() => userStore.user?.PermissionList.Permission
 const downloadExcelObj: undefined | IExportExcelProps = localPermission.value?.Excel ? {
   apiPath: 'getTaskExcel',
   fileName: `${EquCombineTitle.value}任务列表`,
-  getCondition: () => ({ ...EquTaskDetailData.value.condition.filter(), UseModule: 1 }),
+  getCondition: () => ({ ...EquTaskDetailData.value.condition.filter(), UseModule: TaskListUseModuleEnum.EquipmentStatus }),
   maxCountLimit: 15000,
   getTotal: () => EquTaskDetailData.value.TaskListNumber,
   // getFileNameDate: () => ({

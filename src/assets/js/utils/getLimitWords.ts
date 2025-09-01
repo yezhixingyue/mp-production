@@ -1,7 +1,7 @@
 let canvasInstance: null | HTMLCanvasElement = null;
 
 /** 获取文字宽度 */
-export const getWordsWidth = (words: string, fontSize: number, canvas?: HTMLCanvasElement, font = 'YaHei') => {
+export const getWordsWidth = (words: string, fontSize: number, canvas?: HTMLCanvasElement, fontFamily = 'Microsoft YaHei') => {
   let context: null | CanvasRenderingContext2D = null;
 
   if (canvasInstance) {
@@ -15,7 +15,7 @@ export const getWordsWidth = (words: string, fontSize: number, canvas?: HTMLCanv
 
   if (!context) return words.length * fontSize;
 
-  context.font = `${fontSize}px ${font}`;
+  context.font = `${fontSize}px ${fontFamily}`;
   const metrics = context.measureText(words);
 
   return metrics.width;

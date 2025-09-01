@@ -1,5 +1,5 @@
 <template>
-  <section class="wrap">
+  <section class="mp-prod-condition-prop-select-dialogwrap">
     <main>
       <LRWidthDragAutoChangeComp v-if="staffForm" leftWidth='450px'>
         <template v-slot:left>
@@ -115,7 +115,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.wrap {
+.mp-prod-condition-prop-select-dialogwrap {
   background-color: #fff;
   height: 100%;
   display: flex;

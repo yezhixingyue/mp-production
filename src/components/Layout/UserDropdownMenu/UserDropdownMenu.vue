@@ -21,7 +21,7 @@
 
                 <div class="version">
                   <p class="mb-2">当前版本：</p>
-                  <p style='letter-spacing: 1px;'>{{ VERSION }}</p>
+                  <p style='letter-spacing: 1px;'>{{ VERSION.replace('-build', '') }}</p>
                 </div>
               </div>
             </div>

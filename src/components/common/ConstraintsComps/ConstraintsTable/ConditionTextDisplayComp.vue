@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<{
 
 </script>
 <style lang='scss'>
-  .common-property-condition-text-tips-box {
+.common-property-condition-text-tips-box {
   line-height: 24px;
   color: #585858;
   min-width: 180px;

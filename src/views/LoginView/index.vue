@@ -22,12 +22,13 @@
               ref="ruleForm"
               label-width="0px"
               :disabled="logining || loadingUserInfo"
+              autocomplete="off"
               class="demo-ruleForm">
               <el-form-item prop="Mobile" :rules="[
                 { required: true, message: '请输入账号(手机号码)', trigger: 'blur' },
                 { pattern: /1[3456789]\d{9}/, message: '手机号码格式不正确', trigger: 'blur' },
               ]">
-                  <el-input v-model.trim="loginForm.Mobile" placeholder="请输入账号" maxlength="11">
+                  <el-input v-model.trim="loginForm.Mobile" placeholder="请输入账号" maxlength="11" autocomplete="username">
                     <template #prefix>
                     <i>
                       <img src="../../assets/images/login1.png" alt="">

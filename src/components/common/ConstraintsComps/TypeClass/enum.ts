@@ -40,6 +40,10 @@ export enum UseModuleEnum {
   CapacityLimit = 2,
   /** 设置产能计算数量 */
   CapacityNumber = 21,
+  /** 普通生产线伸放公式 */
+  WastageFormula = 22,
+  /** 组合生产线伸放公式 */
+  UnionLineWastageFormula = 23,
   /** 全部 */
   all = 255
 }
@@ -59,6 +63,7 @@ export enum FixedTypeEnum {
   LongestSide = 5, // 最长边
   ShortestSide = 6, // 最短边
   Material = 7, // 物料
+  FormulaConst = 254, // 公式自定义常数参数
   Const = 255, // 常数
 }
 

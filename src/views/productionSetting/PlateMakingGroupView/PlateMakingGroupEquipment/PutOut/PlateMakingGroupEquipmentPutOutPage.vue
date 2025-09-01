@@ -15,7 +15,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import { TransformConstraintTableItemType } from '@/components/common/ConstraintsComps/ConstraintsTable/utils';
-import { PutOutConditionItemClass } from '@/views/productionSetting/putOutAndCapacity/js/PutOutConditionItemClass';
+import { PutOutConditionItemType } from '@/views/productionSetting/putOutAndCapacity/js/PutOutConditionItemClass';
 import EquipmentPutOutListPageContent from '@/views/productionSetting/putOutAndCapacity/putOut/EquipmentPutOutListPageContent.vue';
 
 const productionSettingStore = useProductionSettingStore();
@@ -39,12 +39,12 @@ const BreadcrumbList = [
   { name: `设置申放：${PlateMakingGroupPutOutPageData.value?.curLineEquipment?.Name}` },
 ];
 
-const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
+const ToSetup = (item: TransformConstraintTableItemType<PutOutConditionItemType>) => {
   PlateMakingGroupPutOutPageData.value?.setCurConditionRow(item);
   router.push({ name: 'plateMakingGroupEquipmentPutOutSetup' });
 };
 
-const remove = (item: TransformConstraintTableItemType<PutOutConditionItemClass>) => {
+const remove = (item: TransformConstraintTableItemType<PutOutConditionItemType>) => {
   PlateMakingGroupPutOutPageData.value?.handleItemRemove(item);
 };
 

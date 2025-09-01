@@ -37,7 +37,8 @@ const submit = async (e: ConditionItemClass) => {
     const isEdit = !!temp.ID;
     const cb = () => {
       MaterialTypeLimitData.value.handlerConditionItemChange({
-        conditonItem: { ...temp, ID: +resp.data.Data },
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        conditonItem: { ...temp, ID: +resp.data!.Data },
         isEdit,
         isRemove: false,
       });

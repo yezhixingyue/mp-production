@@ -74,7 +74,7 @@ const submit = () => {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 0 20px;
+  padding: 0 10px 0 20px;
   > header {
     padding: 13px 0;
     padding-bottom: 8px;
@@ -83,9 +83,13 @@ const submit = () => {
     flex: 1;
     overflow: auto;
     @include scroll;
-    padding-right: 20px;
+    padding-right: 10px;
     padding-left: 1px;
     padding-top: 15px;
+
+    :deep(> section > .left) {
+      min-width: 365px;
+    }
   }
   > footer {
     margin-top: 20px;

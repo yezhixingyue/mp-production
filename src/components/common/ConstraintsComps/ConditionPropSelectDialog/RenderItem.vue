@@ -5,9 +5,9 @@
     </header>
     <main>
       <div v-for="p in props.item.PropertyList" :key="p.StoredContent">
-        <span :class="getClass(p)" @click="onClick(p)">{{getName(p)}}</span>
+        <span :class="getClass(p)" @click="onClick(p)" :disabled="selectedIds?.includes(p.StoredContent)">{{getName(p)}}</span>
         <span v-if="p._FixedTypeList && p._FixedTypeList.length > 0" class="fix-list"> (
-          <span v-for="fixedProp in p._FixedTypeList" :key="fixedProp.StoredContent"
+          <span v-for="fixedProp in p._FixedTypeList" :key="fixedProp.StoredContent" :disabled="selectedIds?.includes(fixedProp.StoredContent)"
            :class="getClass(fixedProp)" @click="onClick(fixedProp)">{{getName(fixedProp)}}</span>
          )</span>
       </div>
@@ -20,6 +20,7 @@ import { Property, PropertyListItemType } from '../TypeClass/Property';
 import { IGroupedPropertyListItem } from '../TypeClass/types';
 
 const props = defineProps<{
+  selectedIds?: string[],
   item: IGroupedPropertyListItem
 }>();
 
@@ -36,7 +37,7 @@ const getClass = (it: PropertyListItemType) => {
   return 'is-element';
 };
 
-const getName = (it: PropertyListItemType) => Property.getPropertyName(it);
+const getName = (it: PropertyListItemType) => Property.getPropertyName(it).replace(`${props.item.Name}:`, '');
 
 </script>
 
@@ -47,6 +48,7 @@ const getName = (it: PropertyListItemType) => Property.getPropertyName(it);
     margin-bottom: 10px;
   }
   > main {
+    margin-left: 13px;
     > div {
       display: inline-block;
       margin-right: 25px;
