@@ -1,5 +1,5 @@
 <template>
-  <DialogContainerComp v-model:visible='localVisible' class="mp-prod-condition-prop-select-dialogwrap" autoClose title="属性选择"
+  <DialogContainerComp v-model:visible='localVisible' class="mp-prod-condition-prop-select-dialog-wrap" autoClose title="属性选择"
     :show-primary="false" top="10vh" @open="onOpen" :width="800">
     <!-- 创建手写参数 -->
     <section v-if="writablePropertyRuleForm" class="writable-box">
@@ -76,7 +76,7 @@ const onWritableClick = () => {
 
 <style lang='scss'>
 @import '@/assets/css/mixins.scss';
-.mp-prod-condition-prop-select-dialogwrap {
+.mp-prod-condition-prop-select-dialog-wrap {
   > .el-dialog__body {
     height: 500px;
     padding-top: 20px;

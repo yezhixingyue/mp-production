@@ -1,5 +1,5 @@
 <template>
-  <section class="mp-prod-condition-prop-select-dialogwrap">
+  <section class="wrap">
     <Header :localPermission="localPermission" :StaffManagePageData="StaffManagePageData" @add="onSetupClick" @network="onSetIntranetClick" />
     <Main
       :localPermission="localPermission"
@@ -106,7 +106,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.mp-prod-condition-prop-select-dialogwrap {
+.wrap {
   display: flex;
   flex-direction: column;
   height: 100%;

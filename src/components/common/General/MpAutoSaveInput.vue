@@ -1,6 +1,6 @@
 <template>
-  <el-input class="mp-prod-condition-prop-select-dialogwrap" v-if="!useFloat" v-model.number="inpVal" :placeholder="placeholder||''" @blur="onBlur" :maxlength="maxlength||'9'"></el-input>
-  <el-input class="mp-prod-condition-prop-select-dialogwrap" v-else v-model.trim="inpVal" :placeholder="placeholder||''" @blur="onBlur" :maxlength="maxlength||'9'"></el-input>
+  <el-input class="wrap" v-if="!useFloat" v-model.number="inpVal" :placeholder="placeholder||''" @blur="onBlur" :maxlength="maxlength||'9'"></el-input>
+  <el-input class="wrap" v-else v-model.trim="inpVal" :placeholder="placeholder||''" @blur="onBlur" :maxlength="maxlength||'9'"></el-input>
 </template>
 
 <script setup lang='ts'>
@@ -46,7 +46,7 @@ watch(() => props.modelValue, (newVal) => {
 </script>
 
 <style scoped lang='scss'>
-.mp-prod-condition-prop-select-dialogwrap {
+.wrap {
   --el-component-size: 28px;
   --el-border-radius-base: 2px;
   :deep(.el-input__wrapper) {

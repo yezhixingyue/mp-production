@@ -1,5 +1,5 @@
 <template>
-  <section class="mp-prod-condition-prop-select-dialogwrap">
+  <section class="wrap">
     <Header :ManageTaskListData="ManageTaskListData" :EquipmentFilterData="EquipmentFilterData" :LineList="LineList" />
 
     <main>
@@ -55,7 +55,7 @@ const downloadExcelObj = computed(() => { // Excel导出参数
 </script>
 
 <style scoped lang='scss'>
-.mp-prod-condition-prop-select-dialogwrap {
+.wrap {
   width: 100%;
   height: 100%;
   display: flex;

@@ -1,5 +1,5 @@
 <template>
-  <div class="mp-prod-condition-prop-select-dialogwrap">
+  <div class="wrap">
     <div v-for="(lv1, index1) in optionList" :key="lv1.Name + '' + index1" class="lv1-item">
       <span class="mp-common-title-wrap" :title="lv1.Name">{{ lv1.Name }}</span>
       <ul>
@@ -57,7 +57,7 @@ const getIndeterminate = (lv2: IMaterialOptionItem['List'][number]) => {
 </script>
 
 <style scoped lang='scss'>
-.mp-prod-condition-prop-select-dialogwrap {
+.wrap {
   overflow: auto;
   max-height: 500px;
   div.lv1-item {
