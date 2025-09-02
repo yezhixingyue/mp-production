@@ -23,7 +23,7 @@
                 <span style="margin-right: 1.2em;">创建时间：{{ curRow._CreateTime }}</span>
                 <span>外协单位：{{ curentFactory?.Name }}</span>
                 <span style="margin-right: 1.2em;">({{ curentFactory?.Mobile }})</span>
-                <span style="margin-right: 1.2em;">开单人：{{ onlyPrint ? curRow.Operator : user?.StaffName || '-' }}</span>
+                <span style="margin-right: 1.2em;">开单人：{{ onlyPrint ? curRow.SendOperator : user?.StaffName || '-' }}</span>
                 <span>开单时间：{{ onlyPrint ? curRow._StartTime : curPrintDate.slice(0, -3) }}</span>
               </p>
             </div>
@@ -90,7 +90,8 @@
     </PrintDialog>
 
     <HandleResultDialog v-if="pageType==='await'" v-model:visible="visible" :row="curIssueRow" mode="issue" @setQuestion="e=>onIssueSubmit(e, ManageListData)"/>
-    <ChangeAssistTextDialog v-if="pageType==='await'" v-model:visible="assistTextChangeState.visible" :row="assistTextChangeState.row" />
+    <ChangeAssistTextDialog v-if="['await', 'all'].includes(pageType)"
+      :notEditable="pageType!=='await'" v-model:visible="assistTextChangeState.visible" :row="assistTextChangeState.row" />
   </main>
 </template>
 

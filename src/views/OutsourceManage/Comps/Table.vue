@@ -1,16 +1,16 @@
 <template>
   <el-table :data="TaskList" border stripe class="table-wrap" ref="oTableRef" @selection-change="onSelectionChange">
     <mp-table-column type="selection" width="60" label-class-name="check-title" class-name='check' v-if="pageType==='await' && localPermission?.WaitSetup" />
-    <mp-table-column width="90px" prop="Code" label="任务ID" />
-    <mp-table-column width="170px" prop="_TargetID" label="关联ID" />
+    <mp-table-column width="80px" prop="Code" label="任务ID" />
+    <mp-table-column width="145px" prop="_TargetID" label="关联ID" />
     <mp-table-column v-if="pageType === 'await'" min-width="120px" prop="_LineName" label="生产线" />
-    <mp-table-column v-if="pageType !== 'undelivered'" min-width="140px" prop="_WorkingName" label="工序" />
+    <mp-table-column v-if="pageType !== 'undelivered'" min-width="135px" prop="_WorkingName" label="工序" />
     <mp-table-column v-if="pageType === 'undelivered'" min-width="100px" prop="_Material" label="物料" />
-    <mp-table-column width="100px" prop="_Number" label="数量" />
+    <mp-table-column width="90px" prop="_Number" label="数量" />
     <mp-table-column v-if="pageType !== 'undelivered'" min-width="110px" prop="_AssistText" label="加工信息" class-name="">
       <template #default="scope:{ row: Row }">
         <span :class="scope.row._AssistText?'is-pink':'is-gray'" class="assist-ctrl assist"
-          v-if="pageType==='await'"
+          v-if="pageType==='await' || pageType === 'all'"
           @click="onAssistTextChangeClick(scope.row)"
           >{{ scope.row._AssistText || '无' }}</span>
         <span :class="scope.row._AssistText?'is-pink':'is-gray'" class="assist" v-else>{{ scope.row._AssistText || '无' }}</span>
@@ -90,18 +90,20 @@
         <span v-else>{{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}</span>
       </template>
     </mp-table-column>
-    <mp-table-column width="70px" prop="Operator" label="操作人" v-if="pageType !== 'undelivered'" />
     <mp-table-column width="115px" prop="_CreateTime" label="创建时间" v-if="pageType === 'all'" />
     <mp-table-column width="115px" prop="_StartTime" label="确认外协时间" v-if="pageType !== 'undelivered'" />
+    <mp-table-column width="75px" prop="SendOperator" label="外协操作人" v-if="pageType !== 'undelivered'" />
     <!-- 预计完成时间 全部时显示 -->
-    <mp-table-column width="130px" label="预计完成日期" v-if="pageType === 'all'">
+    <mp-table-column width="110px" label="预计完成日期" v-if="pageType === 'all'">
       <template #default="scope:any">
         {{ formatOnlyDate(scope.row._ExternalSubmitParams.WishFinishTime) }}
       </template>
     </mp-table-column>
     <!-- 完成时间 非待外协时显示 -->
-    <mp-table-column width="120px" prop="_FinishTime" label="完成时间" v-if="pageType !== 'await' && pageType !== 'undelivered'" />
-    <mp-table-column width="70px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
+    <mp-table-column width="115px" prop="_FinishTime" label="完成时间" v-if="pageType !== 'await' && pageType !== 'undelivered'" />
+    <mp-table-column width="60px" prop="_ExternalStatusText" label="状态" v-if="pageType !== 'inTransition' && pageType !== 'undelivered'" />
+    <mp-table-column width="75px" prop="InOperator" label="外协入库人" v-if="pageType === 'all'" />
+    <mp-table-column width="75px" prop="OutOperator" label="外协出库人" v-if="pageType === 'all'" />
     <mp-table-column width="240px" label="操作" v-if="pageType==='await' && localPermission?.WaitSetup">
       <template #default="scope:any">
         <mp-button type="primary" class='f' link @click="onMenuClick(scope.row, 'confirmExternal')"

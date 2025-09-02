@@ -21,16 +21,17 @@
         offFirst
         :typeList="[['Line', '_Type'], ['Line', 'First'], ['Line', 'Second']]"
         :defaultProps="{ ID: 'ID', Name: 'Name', children: 'children' }"
+        style="margin-right: 20px;"
       />
 
-      <div class="item" v-if="options.showStatusFilter" style="margin-left: 20px;">
+      <div class="item" v-if="options.showStatusFilter">
         <span class="title">外协状态：</span>
         <el-select v-model="_ExternalTaskStatus" class="mp-select">
           <el-option v-for="item in localExternalTaskStatusEnumList" :key="item.ID" :label="item.Name" :value="item.ID" />
         </el-select>
       </div>
 
-      <StaffSelector v-model="_Operator" title="操作人" />
+      <StaffSelector v-model="_SendOperator" title="外协操作人" />
     </div>
     <LineDateSelectorComp
       :changePropsFunc='setCondition'
@@ -131,12 +132,12 @@ const _ExternalTaskStatus = computed({
   },
 });
 
-const _Operator = computed({
+const _SendOperator = computed({
   get() {
-    return props.condition.Operator;
+    return props.condition.SendOperator;
   },
   set(val) {
-    props.setCondition([['Operator', ''], val]);
+    props.setCondition([['SendOperator', ''], val]);
     props.getList();
   },
 });

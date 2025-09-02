@@ -283,8 +283,14 @@ export interface ITaskDetail {
   FinishTime: string
   /** 是否已置顶 */
   IsTop: boolean
-  /** 操作人 */
+  /** 操作人 --- 除外协列表外使用 */
   Operator: string
+  /** 确认外协操作人 */
+  SendOperator: string
+  /** 外协入库操作人 */
+  InOperator: string
+  /** 外协出库操作人 */
+  OutOperator: string
   /** 创建时间 */
   CreateTime: string
 }

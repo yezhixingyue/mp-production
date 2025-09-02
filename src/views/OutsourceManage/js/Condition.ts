@@ -43,8 +43,8 @@ export class Condition {
 
   ExternalStatus: ExternalTaskStatusEnum | '' = ''
 
-  /** 操作人 */
-  Operator = ''
+  /** 确认外协操作人 */
+  SendOperator = ''
 
   _options: ISwitchOptions
 

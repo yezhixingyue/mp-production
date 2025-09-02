@@ -16,8 +16,8 @@ if (!isDev) {
 process.env.VUE_APP_VERSION = require('./package.json').version;
 
 // const proxyUrl = 'http://192.168.1.92:8052'; // 测试
-const proxyUrl = 'http://42.233.43.252:7001'; // 正式
-// const proxyUrl = 'http://192.168.2.238:8052'; // 强哥
+// const proxyUrl = 'http://42.233.43.252:7001'; // 正式
+const proxyUrl = 'http://192.168.2.238:8052'; // 强哥
 // const proxyUrl = 'http://192.168.3.253:2022'; // 吕伟
 
 module.exports = defineConfig({

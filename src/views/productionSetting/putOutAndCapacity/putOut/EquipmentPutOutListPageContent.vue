@@ -6,7 +6,6 @@
         <mp-button type="primary" @click="onSaveClick(null)">+ 添加条件</mp-button>
         <mp-button class="blue" v-if="EquipmentData" @click="visible=true" :disabled="EquipmentData.EquipmentList.length <= 1">
           <i class="iconfont icon-daoru"></i> 导入条件</mp-button>
-        <span class="is-blue-span ml-25" @click="oldVisible=true">查看旧版本数据</span>
         <span class="tips-box"><el-icon><WarningFilled /></el-icon> 匹配一条作为申放设置</span>
       </div>
     </header>
@@ -17,9 +16,6 @@
         :EquipmentData="EquipmentData" :FormulaUseModule="FormulaUseModule" :WorkingID="WorkingID"
         :PropertyList="PropertyList"
         @success="handleImportSuccess" />
-
-      <!-- 旧数据 -->
-      <OldDataDisplayDialog v-model:visible="oldVisible" v-if="EquipmentData" :EquipmentData="EquipmentData" :PropertyList="PropertyList" />
     </main>
     <footer>
       <mp-button class="blue" @click="getGoBackFun">返回</mp-button>
@@ -39,7 +35,6 @@ import ListTable from './ListTable.vue';
 import { PutOutConditionItemType } from '../js/PutOutConditionItemClass';
 import ImportDialog from './ImportDialog.vue';
 import { EquipmentListType } from '../js/types';
-import OldDataDisplayDialog from './OldDataDisplayDialog.vue';
 
 const props = defineProps<{
   BreadcrumbList: IMpBreadcrumbItem[],
@@ -66,7 +61,6 @@ const onRemoveClick = (it: TransformConstraintTableItemType<PutOutConditionItemT
 };
 
 const visible = ref(false);
-const oldVisible = ref(false);
 
 const handleImportSuccess = (newConditionList: PutOutConditionItemType[]) => {
   emit('imported', newConditionList);

@@ -46,7 +46,7 @@ export const resourceApis = {
   /** 生产资源 - 外协工厂相关 subcontractor
    -------------------------------------------- */
   getSubcontractorFactorySave(data) { // POST /Api/Factory/Save   外协工厂编辑保存
-    return request<string>({ method: 'POST', url: '/Api/Factory/Save', data });
+    return request<ISubcontractorFactoryListItemType>({ method: 'POST', url: '/Api/Factory/Save', data });
   },
   getSubcontractorFactoryList(conditon) { // POST /Api/Factory/List  外协工厂列表
     return request<ISubcontractorFactoryListItemType[]>({ method: 'POST', url: '/Api/Factory/List', data: conditon });

@@ -16,13 +16,7 @@
         <ConditionTextDisplayComp :conditionObj="it.Constraint" :content="it._Content" />
       </div>
       <div class="pot-out">
-        <!-- <el-tooltip v-if="!showOld && it.Content.length > 20" :content="it.Content"
-           placement="bottom-start" effect="light" popper-class='pot-out-text-tips-box' :show-arrow='false'>
-          <span class="c">{{ it.Content }}</span>
-        </el-tooltip>
-        <span class="c" v-else-if="!showOld">{{ it.Content }}</span> -->
-        <FormulaRowContentDisplayer :Content="it.Content" v-if="!showOld" />
-        <span v-if="showOld">{{ getOldValue(it) }}</span>
+        <FormulaRowContentDisplayer :Content="it.Content" />
       </div>
       <div class="priority">{{ it.Priority }}</div>
       <div class="ctrl" v-if="!hideCtrl">
@@ -49,13 +43,9 @@ const props = defineProps<{
   tableList: TransformConstraintTableItemType<PutOutConditionItemType>[]
   hideCtrl?: boolean
   emptyText?: string
-  showOld?: boolean
 }>();
 
 const emit = defineEmits(['rowRemove', 'rowSave']);
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getOldValue = (r: any) => (`${r.Value}${r.Type === 0 ? '张' : '%'}`);
 
 const onSaveClick = (e) => {
   emit('rowSave', e);

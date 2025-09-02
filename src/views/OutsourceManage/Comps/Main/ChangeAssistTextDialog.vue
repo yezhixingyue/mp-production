@@ -16,7 +16,7 @@
     <header v-if="row">
       <div class="title">
         <h4 class="mp-common-title-wrap">当前加工信息</h4>
-        <mp-button link type="primary" v-if="!isEdit && row?.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
+        <mp-button link type="primary" v-if="!notEditable && !isEdit && row?.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive"
           @click="onEditClick"> <i class="iconfont icon-bianji"></i> 编辑</mp-button>
       </div>
 
@@ -86,6 +86,8 @@ interface IModifyProcessInfo {
 
 const props = defineProps<{
   row: RowType | null
+  /** 是否不可编辑 */
+  notEditable?: boolean
 }>();
 
 const visible = defineModel<boolean>('visible');

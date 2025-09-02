@@ -92,11 +92,12 @@ const handleItemSetupSubmit = async (data: SubcontractorFactory) => {
   if (resp?.data?.isSuccess) {
     const title = isEdit ? '编辑成功' : '添加成功';
     const callback = () => {
-      const temp: ISubcontractorFactoryListItemType = {
-        ...data,
-        ID: resp.data?.Data || '',
-      };
-      handleAfterSubmit(temp, isEdit);
+      // const temp: ISubcontractorFactoryListItemType = {
+      //   ...data,
+      //   ID: resp.data?.Data || '',
+      // };
+      if (!resp.data) return;
+      handleAfterSubmit(resp.data.Data, isEdit);
     };
     MpMessage.dialogSuccess({ title, onOk: callback, onCancel: callback });
   }

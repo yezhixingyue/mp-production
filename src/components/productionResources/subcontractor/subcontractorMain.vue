@@ -2,6 +2,7 @@
   <main>
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12" empty-text="暂无数据">
       <mp-table-column prop="Name" min-width="200px" label="工厂名称" />
+      <mp-table-column prop="Code" width="100px" label="工厂ID" />
       <mp-table-column label="地址" min-width="260px">
         <template #default="scope:any">{{formatAddress(scope.row)}}</template>
       </mp-table-column>

@@ -59,7 +59,7 @@ const handleExternalConfirmSuccess = (rows: Row[], isConfirm: boolean, list?: { 
     const _Equipment = _row.Working.UseableEquipmentList?.find(it => it.ID === _row._ExternalSubmitParams.FactoryID) || null;
 
     // 对列表数据的修改
-    _row.Operator = isConfirm ? userStore.user?.StaffName || '' : '';
+    _row.SendOperator = isConfirm ? userStore.user?.StaffName || '' : '';
     _row.Working.ExternalAttribute.Status = _getStatus(_row.ID);
     _row.StartTime = isConfirm ? getTimeConvertFormat({ withHMS: true }) : '';
     _row._ExternalStatusText = getEnumNameByID(_row.Working.ExternalAttribute.Status, ExternalTaskStatusEnumList); // 更新展示项目 - 状态
@@ -310,8 +310,8 @@ export class ManageListClass {
 
       const t = this.list.find(it => it.ID === row.ID);
       if (t) {
-        const userStore = useUserStore();
-        t.Operator = userStore.user?.StaffName || '';
+        // const userStore = useUserStore();
+        // t.Operator = userStore.user?.StaffName || '';
         t.Working.ExternalAttribute.Status = ExternalTaskStatusEnum.Error;
         t._ExternalStatusText = getEnumNameByID(t.Working.ExternalAttribute.Status, ExternalTaskStatusEnumList); // 更新展示项目 - 状态
       }

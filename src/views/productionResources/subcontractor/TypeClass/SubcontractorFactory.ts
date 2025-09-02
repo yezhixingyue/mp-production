@@ -30,4 +30,4 @@ export class SubcontractorFactory {
   }
 }
 
-export type ISubcontractorFactoryListItemType = Required<SubcontractorFactory>;
+export type ISubcontractorFactoryListItemType = Required<SubcontractorFactory> & { Code: number };
