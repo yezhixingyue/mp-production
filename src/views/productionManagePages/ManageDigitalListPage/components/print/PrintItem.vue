@@ -11,8 +11,8 @@
         <p>生 产 线：{{ item.ProductionLine.Name }}</p>
       </div>
       <div class="code">
-        <img :src="item._PlateQcCode" alt="">
-        <span class="c">{{ item.Code }}</span>
+        <img :src="item._ChunkQcCode" alt="">
+        <span class="c">{{ ChunkInfo?.Code }}</span>
       </div>
     </div>
 
@@ -158,8 +158,8 @@
         <span>打印时间：{{ format2LangTypeDate(getTimeConvertFormat({ withHMS: true })) }}</span>
       </div>
       <div class="code">
-        <img :src="item._ChunkQcCode" alt="">
-        <span class="c">{{ ChunkInfo?.Code }}</span>
+        <img :src="item._PlateQcCode" alt="">
+        <span class="c">{{ item.Code }}</span>
       </div>
     </div>
   </div>
