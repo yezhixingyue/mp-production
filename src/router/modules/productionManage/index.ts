@@ -212,6 +212,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManageTaskListPage/ManageTaskListPage.vue'),
     },
+    /* 组合工单打印
+    -------------------------------------- */
+    {
+      path: '/CombineTaskPrintList',
+      name: 'CombineTaskPrintList',
+      meta: {
+        title: '组合工单打印',
+        requiresAuth: true,
+        icon: 'icon-shumagongdandayin1 iconfont scale-11',
+        pageName: 'CombineTaskPrintListPage',
+        PermissionInfo: ['PermissionManageUnionTask', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/CombineTaskPrintList/CombineTaskPrintListView.vue'),
+    },
     /* 数码工单打印
     -------------------------------------- */
     {
@@ -327,6 +341,12 @@ const routeTree:RouteTreeType = {
     -------------------------------------- */
     {
       name: 'ManageTaskList',
+      children: [],
+    },
+    /* 组合工单打印
+    -------------------------------------- */
+    {
+      name: 'CombineTaskPrintList',
       children: [],
     },
     /* 数码工单打印

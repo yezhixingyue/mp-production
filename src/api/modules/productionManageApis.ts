@@ -167,4 +167,12 @@ export const productionManageApis = {
   getChunkDetail(code: string) {
     return instance.get<IChunkDetail>('/Api/Chunk/Detail', { params: { code } });
   },
+  /** post /Api/Task/UnionWorkingList 获取组合任务列表 */
+  getTaskUnionWorkingList(condition) {
+    return instance.post('/Api/Task/UnionWorkingList', condition, { encrypt: true });
+  },
+  /** get /Api/Task/UnionWorkingDetail 获取组合工序工单 */
+  getTaskUnionWorkingDetail(taskID: string, msgCallback: () => void) {
+    return instance.get('/Api/Task/UnionWorkingDetail', { params: { taskID }, msgCallback });
+  },
 };

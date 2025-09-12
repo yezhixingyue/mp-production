@@ -23,14 +23,17 @@
           <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''">{{ scope.row._LatestFinishTime.Time }}</span>
         </template>
       </mp-table-column>
-      <mp-table-column v-if="showRowOptions.showStatus" width="100px" prop="_StatusText" label="当前状态" >
+      <mp-table-column v-if="showRowOptions.showStatus" :width="isClient ? '180px' : '100px'" prop="_StatusText" label="当前状态" >
         <template #default="scope: { row: RowType }">
           <mp-button type="primary" link v-if="showRowOptions.showPartialDelivery
            && scope.row.Status === ProductiveTaskStatusEnum.Initial && scope.row.Working.HaveAnyReceived && scope.row.Index === 1"
              @click='onPartialDeliveryClick(scope.row)'>
             部分送达
           </mp-button>
-          <span v-else :class="isError ? 'is-pink' : ''">{{ scope.row._StatusText }}</span>
+          <span v-else :class="isError ? 'is-pink' : ''">
+            {{ scope.row._StatusText }}
+            <template v-if="isClient && scope.row.ReadyOperator">（<i style="color: #28D200;">已齐整：{{ scope.row.ReadyOperator }}</i>）</template>
+          </span>
         </template>
       </mp-table-column>
       <mp-table-column v-if="showRowOptions.showExternalStatus" width="100px" prop="_ExternalStatusText" label="状态" />
@@ -96,9 +99,11 @@ const props = withDefaults(defineProps<{
   rowDisplayOptions?: Partial<rowDisplayOptions>
   useMultipleSelection?: boolean
   useLittleHeight?: boolean
+  isClient?: boolean // 是否报工界面使用
 }>(), {
   loading: false,
   isError: false,
+  isClient: false,
   showHeader: false, // 是否为设备状态详情页面所用 - 是的话 需要添加内容列、预计加工时长列和操作列列表
 });
 

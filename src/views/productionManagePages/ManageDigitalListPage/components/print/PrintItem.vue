@@ -171,6 +171,7 @@ import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { useUserStore } from '@/store/modules/user';
 import { PrintSideEnumList } from '@/views/productionManagePages/ManualOrderHandlerPage/js/enums';
 import { ReportModeEnumList } from '@/views/productionSetting/process/enums';
+import { getDateYmdmsFormat } from '@/assets/js/utils/ConvertTimeFormat';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
@@ -186,18 +187,7 @@ const { user } = storeToRefs(userStore);
 const _ProduceEndTime = computed(() => {
   const ProduceEndTime = props.item.ChunkList[0]?.OrderInfo.ProduceEndTime;
 
-  if (ProduceEndTime) {
-    const date = new Date(ProduceEndTime.replace('Z', ''));
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const day = `${date.getDate()}`.padStart(2, '0');
-    const hour = `${date.getHours()}`.padStart(2, '0');
-    const minutes = `${date.getMinutes()}`.padStart(2, '0');
-
-    return `${year}年${month}月${day}日 ${hour}点${minutes}分前`;
-  }
-
-  return '';
+  return getDateYmdmsFormat(ProduceEndTime || '');
 });
 
 const ChunkInfo = computed(() => props.item.ChunkList[0]);

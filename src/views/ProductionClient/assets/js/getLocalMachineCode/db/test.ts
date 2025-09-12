@@ -7,5 +7,5 @@ result.onsuccess = () => {
   // 大版类 02630a10-3adc-41fa-83ee-2facb85af032
   db.transaction(['local-machine-code-store'], 'readwrite')
     .objectStore('local-machine-code-store')
-    .put({ key: 'local-machine-code', value: '1f7318c4-a4db-4a5e-9d81-7cc45ac1dce5', id: 1 });
+    .put({ key: 'local-machine-code', value: 'dbc29ed6-589b-46a5-9bd8-277e508f987f', id: 1 });
 };

@@ -6,6 +6,69 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "45466810",
+      "name": "未跟进",
+      "font_class": "weigenjin",
+      "unicode": "e6b7",
+      "unicode_decimal": 59063
+    },
+    {
+      "icon_id": "45466809",
+      "name": "跟进对钩",
+      "font_class": "genjinduigou",
+      "unicode": "e6b8",
+      "unicode_decimal": 59064
+    },
+    {
+      "icon_id": "45466785",
+      "name": "中止",
+      "font_class": "zhongzhi",
+      "unicode": "e6b4",
+      "unicode_decimal": 59060
+    },
+    {
+      "icon_id": "45466783",
+      "name": "警示",
+      "font_class": "jingshi",
+      "unicode": "e6b5",
+      "unicode_decimal": 59061
+    },
+    {
+      "icon_id": "45466782",
+      "name": "跟进错误",
+      "font_class": "genjincuowu",
+      "unicode": "e6b6",
+      "unicode_decimal": 59062
+    },
+    {
+      "icon_id": "45465142",
+      "name": "成功",
+      "font_class": "a-jianqu196",
+      "unicode": "e6b3",
+      "unicode_decimal": 59059
+    },
+    {
+      "icon_id": "45464553",
+      "name": "查看缩略图",
+      "font_class": "chakan1-copy",
+      "unicode": "ee34",
+      "unicode_decimal": 60980
+    },
+    {
+      "icon_id": "45463802",
+      "name": "组合工单打印",
+      "font_class": "zuhegongdandayin",
+      "unicode": "e6b1",
+      "unicode_decimal": 59057
+    },
+    {
+      "icon_id": "1305463",
+      "name": "查看工单",
+      "font_class": "chakan",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
       "icon_id": "45191176",
       "name": "保存",
       "font_class": "baocun",

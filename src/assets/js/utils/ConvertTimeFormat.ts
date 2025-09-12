@@ -34,3 +34,19 @@ export const transformMinute = (Duration: number) => {
 
   return `${day ? `${day}天` : ''}${hour ? `${hour}小时` : ''}${minute}分钟`;
 };
+
+/** 把一个时间字符串（2025-09-07T17:34:10.79）转换为如下显示格式：2025年09月07日 17点34分 */
+export const getDateYmdmsFormat = (date: string, suffix = '前') => {
+  if (date && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(date)) {
+    const _date = new Date(date.replace('Z', ''));
+    const year = _date.getFullYear();
+    const month = `${_date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${_date.getDate()}`.padStart(2, '0');
+    const hour = `${_date.getHours()}`.padStart(2, '0');
+    const minutes = `${_date.getMinutes()}`.padStart(2, '0');
+
+    return `${year}年${month}月${day}日 ${hour}点${minutes}分${suffix}`;
+  }
+
+  return date || '';
+};

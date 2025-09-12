@@ -6,12 +6,12 @@ const store = useTimeSelectModuleStore();
 export type ISetConditionParams = [[string, string | undefined], any];
 
 export default class CommonClassType {
-  static setDate(obj, key = 'Date', defalutProps = { First: 'First', Second: 'Second' }) {
+  static setDate(obj, key = 'Date', defalutProps = { First: 'First', Second: 'Second' }, DateTypeField = 'DateType') {
     const _obj = obj;
 
     store.updateNewDate();
 
-    switch (obj.DateType) {
+    switch (obj[DateTypeField]) {
       case 'all':
         _obj[key][defalutProps.First] = store.AlltimeDate.First;
         _obj[key][defalutProps.Second] = store.AlltimeDate.Second;
@@ -57,20 +57,20 @@ export default class CommonClassType {
         _obj[key][defalutProps.Second] = store.beforeyesterYearDate.Second;
         break;
       default:
-        if (store[obj.DateType]) {
-          _obj[key][defalutProps.First] = store[obj.DateType].First;
-          _obj[key][defalutProps.Second] = store[obj.DateType].Second;
+        if (store[obj[DateTypeField]]) {
+          _obj[key][defalutProps.First] = store[obj[DateTypeField]].First;
+          _obj[key][defalutProps.Second] = store[obj[DateTypeField]].Second;
         }
         break;
     }
   }
 
-  static filter(obj, bool = true) { // 布尔值用于判断是否保留value为0的键值对，为true时保留，为false不保留
+  static filter(obj, bool = true, DateTypeFields = ['DateType']) { // 布尔值用于判断是否保留value为0的键值对，为true时保留，为false不保留
     const _tempObj = {};
     if (!obj) return {};
     Object.keys(obj).forEach(key => {
       if (Object.prototype.toString.call(obj[key]) !== '[object Object]') {
-        if ((obj[key] && key !== 'DateType') || (bool && obj[key] === 0) || obj[key] === false) _tempObj[key] = obj[key];
+        if ((obj[key] && !DateTypeFields.includes(key)) || (bool && obj[key] === 0) || obj[key] === false) _tempObj[key] = obj[key];
       } else {
         const _t = obj[key];
         Object.keys(_t).forEach(subKey => {

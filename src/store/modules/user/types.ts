@@ -419,6 +419,18 @@ export interface IUser {
         Setup: boolean
       };
     };
+    /** 组合工单打印 */
+    PermissionManageUnionTask: {
+      HavePomission: boolean
+      Obj: {
+        /** 是否能打印 */
+        Print: boolean
+        /** 查询列表 */
+        QueryList: boolean
+        /** 查看工单 */
+        QueryWorkOrder: boolean
+      };
+    };
   };
   Mobile: string;
   HeadPic: string;

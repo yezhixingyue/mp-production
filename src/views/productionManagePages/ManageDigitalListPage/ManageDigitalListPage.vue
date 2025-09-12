@@ -39,7 +39,6 @@ import PrintListArea from './components/print/PrintListArea.vue';
 import { ILocalDigitalOrderPlatePrintInfoWithQrCode } from './js/types';
 
 const userStore = useUserStore();
-
 const { user } = storeToRefs(userStore);
 
 const localManageData = ref(new ManageDigitalListClass()) as Ref<ManageDigitalListClass>;

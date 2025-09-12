@@ -53,6 +53,8 @@ export interface ITaskOrderInfo {
   Number: number
   /** 产品单位 -- 大版报工方式时固定为张 */
   Unit: string
+  /** 款数 */
+  KindCount: number
   /** 尺寸 */
   Size: string
   /** 预计生产完成时间 */
@@ -293,6 +295,8 @@ export interface ITaskDetail {
   OutOperator: string
   /** 创建时间 */
   CreateTime: string
+  /** 齐整人 -- 组合生产线组合工序可设置有 */
+  ReadyOperator: string
 }
 
 /**

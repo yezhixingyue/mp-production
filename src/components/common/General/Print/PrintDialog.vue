@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<{
   /** 为true时 在submit事件中将不会自动进行打印 */
   noAutoPrint?: boolean
   width?: number
+  printStyle?: string
 }>(), {
   width: 500,
 });
@@ -63,6 +64,9 @@ const print = async (title?: string) => { // 直接调用打印时 应传递only
   if (!doc) return;
   doc.write('<!DOCTYPE html>');
   doc.write('<style media="print">body {display:flex;justify-content:center;align-items: center;}</style>');
+  if (props.printStyle) {
+    doc.write(`<style media="print">${props.printStyle}</style>`);
+  }
   doc.write('<link href="./css/print.css" media="print" rel="stylesheet" />');
   doc.write(`<div>${oArea.value.innerHTML}</div>`);
 

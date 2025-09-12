@@ -1,4 +1,4 @@
-import { defineStore, DefineStoreOptions } from 'pinia';
+import { defineStore, DefineStoreOptions, storeToRefs } from 'pinia';
 import api from '@/api';
 import { ILoginSubmitForm, IUserStoreActions, IUserStoreGetters, IUserStoreState } from './types';
 import { getUserStoreInitialState, isExpired } from './utils';
@@ -90,3 +90,10 @@ const options: DefineStoreOptions<string, IUserStoreState, IUserStoreGetters, IU
 };
 
 export const useUserStore = defineStore(options);
+
+export const useUserHook = () => {
+  const userStore = useUserStore();
+  const { user } = storeToRefs(userStore);
+
+  return { user };
+};

@@ -15,7 +15,7 @@
 
     <!-- 2. 普通列表展示 -->
     <TaskListTable :TaskList="curInstance.TaskListData.TaskList" :loading="curInstance.TaskListData.loading" useLittleHeight
-      v-if="!curInstance.Equipment.AllowBatchReport"
+      v-if="!curInstance.Equipment.AllowBatchReport" isClient
       v-show="curInstance.TaskListData.TaskList.length > 0" />
     <!-- 3. 批量上传列表展示与操作 -->
     <BatchReportComp
@@ -28,6 +28,10 @@
     <!-- 送达结果弹窗处理 -->
     <ResultHandleDialog :isBatchReport="!!curInstance.Equipment.AllowBatchReport"
      v-model:visible="resultVisible" :result="receiveResult" @close="onClose" @submit="onDialogSubmit" @confirm="onconfirm" />
+
+    <!-- 组合工序资源列表查询弹窗 -->
+    <DetailDialog v-model:visible="combineInfoVisible" :detail="combineInfoResult" @close="onClose" @completed="onReadyCompleted"
+     isClientUse :EquipmentID="curInstance.Equipment.ID" />
   </section>
 </template>
 
@@ -38,6 +42,8 @@ import { EquipmentReceiveCodeEnum } from '@/views/ProductionClient/assets/js/enu
 import { TerminalEquipmentInstance } from '@/views/ProductionClient/assets/js/Instance';
 import { ITaskDetail, IReceiveResult } from '@/views/ProductionClient/assets/js/types';
 import { EquipmentStatusEnum } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/enum';
+import DetailDialog from '@/views/productionManagePages/CombineTaskPrintList/components/DetailDialog/DetailDialog.vue';
+import { IUnionTaskDetail } from '@/views/productionManagePages/CombineTaskPrintList/types/type';
 import {
   onMounted, ref, computed, onUnmounted, watch,
 } from 'vue';
@@ -63,11 +69,21 @@ const setInputFocus = () => { // 聚焦
 
 const resultVisible = ref(false);
 const receiveResult = ref<IReceiveResult | null>(null);
+const combineInfoVisible = ref(false);
+const combineInfoResult = ref<IUnionTaskDetail | null>(null);
 
 const onClose = () => {
   receiveResult.value = null;
+  combineInfoResult.value = null;
   code.value = '';
   setInputFocus();
+};
+
+const onReadyCompleted = (e:{ ID: string; ReadyOperator: string }) => { // 齐整完成
+  const t = props.curInstance.TaskListData.TaskList.find(it => it.ID === e.ID);
+  if (t) {
+    t.ReadyOperator = e.ReadyOperator;
+  }
 };
 
 const submit = async (e?: { OnlyCurrent: boolean }) => {
@@ -89,11 +105,19 @@ const submit = async (e?: { OnlyCurrent: boolean }) => {
     temp.OnlyCurrent = e.OnlyCurrent;
   }
 
+  combineInfoResult.value = null;
+
   const result = await props.curInstance.getEquipmentReceive(temp, setInputFocus);
   if (result) {
     // 1. 处理结果 多种可能
-    receiveResult.value = result;
-    resultVisible.value = true;
+    if (result.QueryWorkCode === false) {
+      receiveResult.value = result.Data;
+      resultVisible.value = true;
+    } else {
+      // ============================================ 区分已终止和有结果 -- 根据状态码自动提示
+      combineInfoResult.value = result.Data;
+      combineInfoVisible.value = true;
+    }
     // 2. 根据结果 在弹窗回调中执行 this.TaskListData.getEquipmentTaskList(); --- 在弹窗中回调处理
   } else {
     oInput.value.focus();

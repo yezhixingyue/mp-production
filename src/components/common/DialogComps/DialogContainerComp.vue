@@ -35,7 +35,7 @@
       </div>
       <slot name="default"></slot>
     </template>
-    <template #footer>
+    <template #footer v-if="showFooter">
       <slot name="footer">
         <mp-button :type="danger ? 'danger' : 'primary'" class="gradient" v-if="showPrimary" :disabled="disabled || loading" ref="oSubmitBtn"
         @click="Primary">{{primaryText}}</mp-button>
@@ -154,6 +154,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    showFooter: {
+      type: Boolean,
+      default: true,
+    },
     danger: {
       type: Boolean,
       default: false,
@@ -193,6 +197,9 @@ export default {
 
     const handleBeforeClose = (done) => {
       if (props.loading || props.cancelDisabled) return;
+
+      const el = document.body.querySelector('.el-image-viewer__wrapper') as HTMLDivElement | null;
+      if (el && el.style.display !== 'none') return;
 
       done();
     };

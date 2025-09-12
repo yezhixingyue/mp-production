@@ -70,6 +70,10 @@ const clientApi = {
   getLogout(equipmentID: string) {
     return instance.put('/Api/Logout', null, { params: { equipmentID } });
   },
+  /** put /Api/Task/HaveReady  设置齐整 */
+  getTaskHaveReady(taskID: string, staffID: string, msgCallback: () => void) {
+    return instance.put('/Api/Task/HaveReady', null, { params: { taskID, staffID }, msgCallback });
+  },
 };
 
 export default clientApi;
