@@ -12,9 +12,9 @@
     <mp-table-column width="130px" prop="_WishFinishTime" label="任务工期时间" />
     <mp-table-column width="85px" label="跟进">
       <template #default="scope:{ row: IUnionTaskTrackInfo }">
-        <i v-if="scope.row.HaveTracked" class="iconfont icon-genjinduigou ft-12" style="color: #36ff36;"></i>
-        <i v-else-if="!scope.row.ImpositionRemark" class="iconfont icon-genjincuowu ft-13" style="color: #ff0000;"></i>
-        <i v-else class="iconfont icon-weigenjin ft-2" style="font-size: 1.5px;color: #cbcbcb;margin-right: 3px;"></i>
+        <i v-if="scope.row.HaveTracked" class="iconfont icon-genjinduigou ft-11 ml-2" ></i>
+        <i v-else-if="!scope.row.ImpositionRemark" class="iconfont icon-genjincuowu ft-14" style="color: #ff0000;"></i>
+        <i v-else class="iconfont icon-weigenjin ft-2" style="font-size: 1.5px;color: #cbcbcb;margin-right: 4px;"></i>
       </template>
     </mp-table-column>
     <mp-table-column width="165px" label="操作" class-name="ctrl" v-if="Permission?.Obj.QueryWorkOrder">
