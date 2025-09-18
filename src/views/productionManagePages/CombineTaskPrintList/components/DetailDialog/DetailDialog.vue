@@ -225,5 +225,7 @@ const onOpen = async () => { // 弹窗打开 -- 初始化数据 | 详情数据�
       }
     }
   }
+
+  --table-border-color: #EBEEF5;
 }
 </style>

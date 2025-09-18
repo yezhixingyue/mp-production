@@ -4,17 +4,17 @@
     <div class="table-box" v-if="taskDetail.List.length > 0">
       <table style="border-collapse: collapse;width: 100%;">
         <thead style="font-size: 1.0769em;height: 2.64em;background-color: #f5f5f5">
-          <tr style="border: 1px solid #EBEEF5;">
-            <th style="border: 1px solid #EBEEF5;">生产资源信息</th>
-            <th style="border: 1px solid #EBEEF5;" v-if="!isPrint">交接状态</th>
-            <th style="border: 1px solid #EBEEF5;" v-if="!isPrint">操作</th>
-            <th style="border: 1px solid #EBEEF5;" v-if="isPrint">备注</th>
+          <tr style="border: 1px solid var(--table-border-color);">
+            <th style="border: 1px solid var(--table-border-color);">生产资源信息</th>
+            <th style="border: 1px solid var(--table-border-color);" v-if="!isPrint">交接状态</th>
+            <th style="border: 1px solid var(--table-border-color);" v-if="!isPrint">操作</th>
+            <th style="border: 1px solid var(--table-border-color);" v-if="isPrint">备注</th>
           </tr>
         </thead>
 
         <tbody style="font-size: 0.923em;text-align: center;line-height: 2em;">
           <tr v-for="it in taskDetail.List" :key="it.ID">
-            <td style="border: 1px solid #EBEEF5;">
+            <td style="border: 1px solid var(--table-border-color);">
               <div style="display: grid;padding: 0.8em 0.2em 0.8em 0.8em;
               grid-template-rows: auto;grid-template-columns: 9em 8em auto;text-align: left;align-items: center;">
                 <span style="font-size: 1.167em;">{{ it.Name }}</span>
@@ -29,18 +29,18 @@
               </div>
             </td>
 
-            <td style="border: 1px solid #EBEEF5;width: 16.6em;" v-if="!isPrint">
+            <td style="border: 1px solid var(--table-border-color);width: 16.6em;" v-if="!isPrint">
               <span v-if="it.Status===UnionTaskResourceStatusEnum.UnReport" style="color: #888;">未报工：{{ it.Equipment.Name }}</span>
               <span v-if="it.Status===UnionTaskResourceStatusEnum.HaveReport" style="color: #F6B437;">已报工：{{ it.Equipment.Name }}</span>
               <span v-if="it.Status===UnionTaskResourceStatusEnum.HaveReceived" style="color: #26BCF9;"><i class="iconfont icon-a-jianqu196"></i> 已送达</span>
             </td>
 
-            <td style="border: 1px solid #EBEEF5;width: 9em;position: relative;" v-if="!isPrint">
+            <td style="border: 1px solid var(--table-border-color);width: 9em;position: relative;" v-if="!isPrint">
               <Menu title="查看缩略图" icon="icon-chakan1-copy iconfont" />
               <el-image src="/favicon.ico" preview-teleported :preview-src-list="[it.FrontUri, it.VersoUri]" fit="cover" />
             </td>
 
-            <td v-if="isPrint" style="border: 1px solid #EBEEF5;width: 24em;text-align: left;padding-left: 0.8em;">
+            <td v-if="isPrint" style="border: 1px solid var(--table-border-color);width: 24em;text-align: left;padding-left: 0.8em;">
               <span>上道设备：{{ it.Equipment.Name }}</span>
             </td>
           </tr>

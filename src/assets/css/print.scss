@@ -775,6 +775,16 @@
   flex-direction: column;
   position: relative;
 
+  --table-border-color: #EBEEF5;
+
+  .border {
+    border: 1px solid var(--table-border-color);
+  }
+
+  @media  print {
+    --table-border-color: #000;
+  }
+
   > h2 {
     text-align: center;
     font-size: 2.4em;
