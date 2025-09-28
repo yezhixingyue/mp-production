@@ -9,27 +9,28 @@
         :changePropsFunc='setCondition'
         :requestFunc='getList'
         :isFull="true"
-        :typeList="[['CreateTimeDateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
-        :dateList="dateList"
-        :dateValue='localManageData.condition.CreateTimeDateType'
-        :UserDefinedTimeIsActive='CreateTimeUserDefinedTimeIsActive'
-        label="创建时间"
-        class="mr-20 mt-20"
-        key="CreateTime"
-      />
-    </div>
-    <div class="list">
-      <LineDateSelectorComp
-        :changePropsFunc='setCondition'
-        :requestFunc='getList'
-        :isFull="true"
-        :typeList="[['WishFinishTimeDateType', ''], ['WishFinishTime', 'First'], ['WishFinishTime', 'Second']]"
-        :dateList="dateList"
-        :dateValue='localManageData.condition.WishFinishTimeDateType'
-        :UserDefinedTimeIsActive='WishFinishTimeUserDefinedTimeIsActive'
-        label="工期时间"
+        :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
+        label="时间筛选"
+        :menu="{
+          radio: localManageData.condition.DateTypeRadio,
+          list: [
+            {
+              label: '创建时间',
+              value: 'CreateTimeDateType',
+              dateList: dateList,
+              dateMenuEnum: localManageData.condition.CreateTimeDateType,
+              typeList: [['CreateTimeDateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']],
+            },
+            {
+              label: '工期时间',
+              value: 'WishFinishTimeDateType',
+              dateList: dateList2,
+              dateMenuEnum: localManageData.condition.WishFinishTimeDateType,
+              typeList: [['WishFinishTimeDateType', ''], ['WishFinishTime', 'First'], ['WishFinishTime', 'Second']],
+            },
+          ]
+        }"
         class="mr-20 mt-15"
-        key="WishFinishTime"
       />
       <div class="select-box">
         <span class="title">跟进状态：</span>
@@ -93,14 +94,24 @@ const dateList = [
   { name: '昨天', ID: 'yesterday' },
   { name: '前天', ID: 'beforeyesterday' },
 ];
+const dateList2 = [
+  { name: '未来7天', ID: 'next7Date' },
+  { name: '今天', ID: 'today' },
+  { name: '明天', ID: 'tomorrow' },
+  { name: '后天', ID: 'theDayAfterTomorrow' },
+];
 
-const CreateTimeUserDefinedTimeIsActive = computed(() => props.localManageData.condition.CreateTimeDateType === ''
-  && !!props.localManageData.condition.CreateTime.First
-  && !!props.localManageData.condition.CreateTime.Second);
+const UserDefinedTimeIsActive = computed(() => {
+  if (props.localManageData.condition.DateTypeRadio === 'CreateTimeDateType') {
+    return props.localManageData.condition.CreateTimeDateType === ''
+      && !!props.localManageData.condition.CreateTime.First
+      && !!props.localManageData.condition.CreateTime.Second;
+  }
 
-const WishFinishTimeUserDefinedTimeIsActive = computed(() => props.localManageData.condition.WishFinishTimeDateType === ''
-  && !!props.localManageData.condition.WishFinishTime.First
-  && !!props.localManageData.condition.WishFinishTime.Second);
+  return props.localManageData.condition.WishFinishTimeDateType === ''
+    && !!props.localManageData.condition.WishFinishTime.First
+    && !!props.localManageData.condition.WishFinishTime.Second;
+});
 
 const HaveReady = computed({
   get() {

@@ -9,7 +9,7 @@ import { IExceptionPlate4Form } from './ruleFormType';
  */
 export const loadBarcode = (data: { MapFilePath: string }) => {
   if (data.MapFilePath) {
-    const url = process.env.NODE_ENV === 'development' ? 'http://192.168.3.68:8052/' : '';
+    const url = process.env.NODE_ENV === 'development' ? 'http://192.168.1.92:8052/' : '';
 
     window.open(`${url}${data.MapFilePath}`);
   }

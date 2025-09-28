@@ -20,6 +20,21 @@ export default class CommonClassType {
         _obj[key][defalutProps.First] = store.TodayDate.First;
         _obj[key][defalutProps.Second] = store.TodayDate.Second;
         break;
+      // 明天
+      case 'tomorrow':
+        _obj[key][defalutProps.First] = store.TomorrowDate.First;
+        _obj[key][defalutProps.Second] = store.TomorrowDate.Second;
+        break;
+      // 后天
+      case 'theDayAfterTomorrow':
+        _obj[key][defalutProps.First] = store.TheDayAfterTomorrow.First;
+        _obj[key][defalutProps.Second] = store.TheDayAfterTomorrow.Second;
+        break;
+      // 未来七天
+      case 'next7Date':
+        _obj[key][defalutProps.First] = store.Next7Date.First;
+        _obj[key][defalutProps.Second] = store.Next7Date.Second;
+        break;
       case 'yesterday':
         _obj[key][defalutProps.First] = store.YesterdayDate.First;
         _obj[key][defalutProps.Second] = store.YesterdayDate.Second;

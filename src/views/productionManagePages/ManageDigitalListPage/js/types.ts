@@ -29,7 +29,7 @@ export interface IDigitalOrderPlateInfo {
   /** 印刷机 */
   Equipment: string
   /** 印刷份数 - 带单位 */
-  Number: string
+  Number?: number
   /** 单位 */
   Unit: string
   /** 状态 */
@@ -44,9 +44,12 @@ export interface IDigitalOrderPlateInfo {
   CreateTime: string
   /** 下载地址 为空则置灰按钮 */
   FilePath?: string
+  AppendFilePath?: string
   /** 单双面 */
   PrintSide: PrintSideEnum
   Error: string
+  /** 数码工单最后打印时间 */
+  LastPrintTime: string
 }
 
 interface ITaskWorkingDetail {
@@ -117,6 +120,7 @@ export interface IDigitalOrderPlatePrintInfo {
       /** 任务列表 工序列表 */
       WorkingList: ITaskWorkingDetail[]
     }
+    IndexInOrder: number
     /** 订单信息 */
     OrderInfo: {
       /** 下单时间 */
@@ -141,6 +145,7 @@ export interface IDigitalOrderPlatePrintInfo {
       Describe: string
       /** 站点名称 */
       StationName: string
+      InstanceNumber
     }
   }] | []
   /** 大版单位 */
@@ -156,11 +161,15 @@ export interface IDigitalOrderPlatePrintInfo {
     /** 单双面 */
     PrintSide: PrintSideEnum
     /** 打印份数 印刷数量 */
-    Number: number
+    Number?: number
     /** 上传人 */
     Operator: string
     /** 文件备注 */
     Remark: string
+    Unit: string
+    /** 最后打印时间 */
+    LastPrintTime?: string
+    AppendFilePath?: string
   }
   /** 打印物料 */
   Material: {

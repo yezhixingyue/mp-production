@@ -1,10 +1,10 @@
 {
   "name": "mpzj",
-  "version": "1.1.3-build.008",
+  "version": "1.1.4-build.009",
   "private": true,
   "scripts": {
     "compile-print-scss": "sass ./src/assets/css/print.scss ./public/css/print.css",
-    "serve": "npm run compile-print-scss && vue-cli-service serve --mode dev.test --port 8060",
+    "serve": "npm run compile-print-scss && vue-cli-service serve --mode dev.test --port 8065",
     "build.test": "npm run compile-print-scss && vue-cli-service build --mode prod.test",
     "build.prod": "node update_version.js && npm run compile-print-scss && vue-cli-service build --mode prod",
     "test:unit": "vue-cli-service test:unit",
@@ -71,5 +71,5 @@
     "ts-jest": "^27.0.4",
     "typescript": "~4.5.5"
   },
-  "commitId": "a72aa82752bb693af9e44ebe923d2d5dbe28f5e0\n"
+  "commitId": "98087a9565653d65452a015706d4ac89185e8ec3\n"
 }

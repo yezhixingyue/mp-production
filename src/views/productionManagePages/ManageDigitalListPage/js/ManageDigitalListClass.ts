@@ -102,9 +102,13 @@ export class ManageDigitalListClass {
 
     if (resp?.data?.isSuccess) {
       if (IsPrint) {
+        const _LastPrintTime = resp.data.Data?.[0]?.UploadFile.LastPrintTime || '';
         this.Selection.forEach(it => {
           const t = this.list.find(_it => _it.Code === it.Code);
-          if (t) t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态
+          if (t) {
+            t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态
+            t.LastPrintTime = _LastPrintTime;
+          }
         });
       }
 

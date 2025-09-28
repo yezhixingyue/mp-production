@@ -7,7 +7,7 @@
       </el-radio-button>
     </el-radio-group>
     <el-radio-group v-model="dateRadio">
-      <el-radio-button v-for="item in dateList" :key="item" :label="item.ID">
+      <el-radio-button v-for="item in localDateList" :key="item" :label="item.ID">
         {{ item.name }}
       </el-radio-button>
     </el-radio-group>
@@ -37,8 +37,8 @@ import {
 
 interface IProps {
   dateList?: { ID: string, name: string }[],
-  dateValue: string,
-  typeList: [string, string][],
+  dateValue?: string,
+  typeList?: [string, string][],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   changePropsFunc: ([string, any]) => any,
   UserDefinedTimeIsActive: boolean,
@@ -48,7 +48,8 @@ interface IProps {
   dateType?: string,
   menu?: {
     radio: string
-    list: { label: string, value: string }[]
+    // 约定: dateList、dateTypeEnum、typeList 应同时存在或同时不存在
+    list: { label: string; value: string; dateList?: { ID: string, name: string }[]; dateMenuEnum?: string, typeList?: [string, string][] }[]
   }
 }
 
@@ -86,29 +87,72 @@ function formatDateContent(str, dateType) {
   }
   return '';
 }
+
+const currentMenuItem = computed(() => {
+  if (props.menu) {
+    // eslint-disable-next-line no-use-before-define
+    return props.menu.list.find(_it => _it.value === dateTypeRadio.value);
+  }
+  return null;
+});
+
+const currentTypeList = computed(() => {
+  if (currentMenuItem.value && currentMenuItem.value.typeList) {
+    return currentMenuItem.value.typeList;
+  }
+
+  return props.typeList;
+});
+
 const dateRadio = computed({
   get() {
+    if (currentMenuItem.value && currentMenuItem.value.dateList) {
+      return currentMenuItem.value.dateMenuEnum;
+    }
     return props.dateValue;
   },
   set(newVal) {
-    props.changePropsFunc([props.typeList[0], newVal]);
+    if (currentTypeList.value) {
+      props.changePropsFunc([currentTypeList.value[0], newVal]);
+    }
+
     if (newVal) props.requestFunc();
   },
 });
 
+const _defaultMenuListRadio = props.menu?.list.map(it => ({ key: it.value, defaultRadio: it.dateMenuEnum })) || [];
 const dateTypeRadio = computed({
   get() {
     return props.menu?.radio;
   },
   set(newVal) {
     props.changePropsFunc([['DateTypeRadio', ''], newVal]);
-    if (newVal) props.requestFunc();
+
+    if (newVal) {
+      const t = _defaultMenuListRadio.find(it => it.key === newVal);
+      if (t && t.defaultRadio) {
+        setTimeout(() => {
+          dateRadio.value = t.defaultRadio;
+        }, 0);
+        return;
+      }
+      props.requestFunc();
+    }
   },
+});
+
+const localDateList = computed(() => {
+  if (currentMenuItem.value && currentMenuItem.value.dateList) {
+    return currentMenuItem.value.dateList;
+  }
+
+  return props.dateList;
 });
 
 function onPickerBlur() {
   setTimeout(() => {
-    props.changePropsFunc([props.typeList[0], '']);
+    if (!currentTypeList.value) return;
+    props.changePropsFunc([currentTypeList.value[0], '']);
     let start = Data.beginTime;
     let end = Data.endTime;
 
@@ -116,8 +160,8 @@ function onPickerBlur() {
     if (reg.test(start)) start += '.000Z'; // 时间补充完整后缀
     if (reg.test(end)) end += '.997Z'; // 时间补充完整后缀
 
-    props.changePropsFunc([props.typeList[1], start]);
-    props.changePropsFunc([props.typeList[2], end]);
+    props.changePropsFunc([currentTypeList.value[1], start]);
+    props.changePropsFunc([currentTypeList.value[2], end]);
     props.requestFunc();
     Data.key = true;
   }, 0);

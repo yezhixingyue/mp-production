@@ -4,6 +4,8 @@ export class Condition {
   /** 生产线ID */
   Line = ''
 
+  DateTypeRadio: 'CreateTimeDateType' | 'WishFinishTimeDateType' = 'CreateTimeDateType'
+
   /** 创建时间 */
   CreateTime = {
     First: '',
@@ -18,7 +20,7 @@ export class Condition {
     Second: '',
   }
 
-  WishFinishTimeDateType = 'last7Date'
+  WishFinishTimeDateType = 'next7Date'
 
   /** 是否已跟进 */
   HaveTracked: '' | boolean = ''
@@ -38,8 +40,17 @@ export class Condition {
 
     CommonClassType.setDate(this, 'WishFinishTime', undefined, 'WishFinishTimeDateType');
 
+    const temp: Partial<Condition> = CommonClassType.filter(this, true, ['CreateTimeDateType', 'WishFinishTimeDateType']);
+
+    delete temp.DateTypeRadio;
+    if (this.DateTypeRadio === 'CreateTimeDateType') {
+      delete temp.WishFinishTime;
+    } else {
+      delete temp.CreateTime;
+    }
+
     /** 筛选结果 */
-    return CommonClassType.filter(this, true, ['CreateTimeDateType', 'WishFinishTimeDateType']);
+    return temp;
   }
 
   setConditon(e: ISetConditionParams) {

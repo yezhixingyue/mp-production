@@ -59,7 +59,7 @@
                     <el-dropdown-item link type="primary"
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.ToCustomizPlate"
                       :disabled="!row.ToCustomPlate"
-                      @click="onToCustomizPlateClick(row)">转自定义版</el-dropdown-item>
+                      @click="onToCustomizPlateClick(row)">转禁止合拼</el-dropdown-item>
                     <!-- 查看详情序列化字段 -->
                     <el-dropdown-item link type="primary" @click="onDetailDisplayClick(row)">加工信息</el-dropdown-item>
                     <!-- 取消 -->

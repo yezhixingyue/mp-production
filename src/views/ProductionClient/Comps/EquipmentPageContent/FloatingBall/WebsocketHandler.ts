@@ -64,7 +64,7 @@ export class WebsocketHandler {
         });
       };
 
-      const basicUrl = process.env.NODE_ENV === 'production' ? '' : 'http://192.168.3.68:8052';
+      const basicUrl = process.env.NODE_ENV === 'production' ? '' : 'http://192.168.1.92:8052';
 
       await createLinks(`${basicUrl}/Scripts/jquery-3.6.0.min.js`);
       await createLinks(`${basicUrl}/Scripts/jquery.signalR-2.4.3.min.js`);

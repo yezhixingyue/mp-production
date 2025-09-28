@@ -3,7 +3,11 @@
     <!-- 页头 -->
     <div class="header">
       <div class="left">
-        <p class="SemiFinished b">{{ item.UploadFile.SemiFinished }}</p>
+        <p class="SemiFinished b">
+          {{ item.UploadFile.SemiFinished }}
+          <i v-if="item.UploadFile.SemiFinished && ChunkInfo && OrderInfo" style="font-size: 0.7em"
+            > - {{ ChunkInfo.IndexInOrder }} / {{ OrderInfo.InstanceNumber }}</i>
+        </p>
         <p class="title b">
           <span class="station">{{ OrderInfo?.StationName || '' }}</span>
           <span>凌顶揽众数码流转工单</span>
@@ -19,7 +23,7 @@
     <!-- 生产工期与下单时间 -->
     <p class="time">
       <span>生产工期：{{ _ProduceEndTime }}</span>
-      <span>下单时间：{{ format2LangTypeDate(getTimeConvertFormat({ withHMS: true, date: item.ChunkList[0]?.OrderInfo.CreateTime })) }}</span>
+      <span>下单时间：{{ format2LangTypeDate(getTimeConvertFormat({ withHMS: true, date: OrderInfo?.CreateTime })) }}</span>
     </p>
 
     <!-- 订单信息 -->
@@ -57,7 +61,7 @@
 
     <!-- 文件信息 -->
     <div class="file-info">
-      <div class="top row">
+      <div class="top row" :style="`height: ${item.UploadFile.AppendFilePath ? 7 : 5}em;`">
         <div class="title">文件信息</div>
         <div class="main">
           <table>
@@ -77,7 +81,19 @@
                 <td>{{ item.UploadFile.FileSize }}</td>
                 <td>{{ item.UploadFile.PageNumber }}</td>
                 <td>{{ getEnumNameByID(item.UploadFile.PrintSide, PrintSideEnumList) }}</td>
-                <td>{{ item.UploadFile.Number }}</td>
+                <td>
+                  <template v-if="typeof item.UploadFile.Number === 'number'">
+                    {{ item.UploadFile.AppendFilePath ? item.UploadFile.Number - 1 : item.UploadFile.Number }}{{ item.UploadFile.Unit }}
+                  </template>
+                </td>
+                <td>{{ item.UploadFile.Operator }}</td>
+              </tr>
+              <tr v-if="item.UploadFile.AppendFilePath">
+                <td>{{ item.UploadFile.SemiFinished }}</td>
+                <td>{{ item.UploadFile.FileSize }}</td>
+                <td>{{ item.UploadFile.PageNumber / 2 }}</td>
+                <td>{{ getEnumNameByID(item.UploadFile.PrintSide, PrintSideEnumList) }}</td>
+                <td>1份</td>
                 <td>{{ item.UploadFile.Operator }}</td>
               </tr>
             </tbody>
@@ -155,7 +171,9 @@
           <span>{{ item.StartCode }}</span>
         </div>
         <span>打单人：{{ user?.StaffName || '' }}</span>
-        <span>打印时间：{{ format2LangTypeDate(getTimeConvertFormat({ withHMS: true })) }}</span>
+        <span>打印时间： {{ item.UploadFile.LastPrintTime
+         ? format2LangTypeDate(getTimeConvertFormat({ withHMS: true, date: item.UploadFile.LastPrintTime }))
+         : '-' }}</span>
       </div>
       <div class="code">
         <img :src="item._PlateQcCode" alt="">
@@ -184,15 +202,15 @@ const props = defineProps<{
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-const _ProduceEndTime = computed(() => {
-  const ProduceEndTime = props.item.ChunkList[0]?.OrderInfo.ProduceEndTime;
-
-  return getDateYmdmsFormat(ProduceEndTime || '');
-});
-
 const ChunkInfo = computed(() => props.item.ChunkList[0]);
 
 const OrderInfo = computed(() => ChunkInfo.value?.OrderInfo);
+
+const _ProduceEndTime = computed(() => {
+  const ProduceEndTime = OrderInfo.value?.ProduceEndTime;
+
+  return getDateYmdmsFormat(ProduceEndTime || '');
+});
 
 const WorkingList = computed(() => {
   const list: (ILocalDigitalOrderPlatePrintInfoWithQrCode['WorkingList'][number] & { _IsCombine: boolean })[] = [];

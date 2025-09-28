@@ -15,6 +15,9 @@ interface IActions {
 type IGetters = {
   AlltimeDate: ()=> DateType
   TodayDate: ()=> DateType
+  TomorrowDate: ()=> DateType
+  TheDayAfterTomorrow: ()=> DateType
+  Next7Date: ()=> DateType
   YesterdayDate: ()=> DateType
   BeforeYesterdayTimeDate: ()=> DateType
   curWeekDate: ()=> DateType
@@ -51,6 +54,32 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
       return {
         First: `${stringDate}T00:00:00.000Z`,
         Second: `${stringDate}T23:59:59.997Z`,
+      };
+    },
+    TomorrowDate() {
+      const stringDate = ConvertTimeFormat(
+        new Date(new Date(this.newDate).getTime() + 1000 * 60 * 60 * 24),
+      );
+      return {
+        First: `${stringDate}T00:00:00.000Z`,
+        Second: `${stringDate}T23:59:59.997Z`,
+      };
+    },
+    TheDayAfterTomorrow() {
+      const stringDate = ConvertTimeFormat(
+        new Date(new Date(this.newDate).getTime() + 1000 * 60 * 60 * 24 * 2),
+      );
+      return {
+        First: `${stringDate}T00:00:00.000Z`,
+        Second: `${stringDate}T23:59:59.997Z`,
+      };
+    },
+    Next7Date() {
+      const BeginDate = ConvertTimeFormat(new Date());
+      const TodayDate = ConvertTimeFormat(new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 6));
+      return {
+        First: `${BeginDate}T00:00:00.000Z`,
+        Second: `${TodayDate}T23:59:59.997Z`,
       };
     },
     YesterdayDate() {
