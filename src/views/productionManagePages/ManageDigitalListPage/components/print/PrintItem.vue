@@ -91,7 +91,7 @@
               <tr v-if="item.UploadFile.AppendFilePath">
                 <td>{{ item.UploadFile.SemiFinished }}</td>
                 <td>{{ item.UploadFile.FileSize }}</td>
-                <td>{{ item.UploadFile.PageNumber / 2 }}</td>
+                <td>{{ item.UploadFile.AppendPageNumber }}</td>
                 <td>{{ getEnumNameByID(item.UploadFile.PrintSide, PrintSideEnumList) }}</td>
                 <td>1份</td>
                 <td>{{ item.UploadFile.Operator }}</td>

@@ -158,6 +158,7 @@ export interface IDigitalOrderPlatePrintInfo {
     FileSize: string
     /** 文件页数 */
     PageNumber: number
+    AppendPageNumber: number
     /** 单双面 */
     PrintSide: PrintSideEnum
     /** 打印份数 印刷数量 */
