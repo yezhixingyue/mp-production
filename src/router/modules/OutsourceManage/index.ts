@@ -56,6 +56,18 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/OutsourceManage/WarehousedNoReceive/WarehousedNoReceiveListPage.vue'),
     },
+    {
+      path: '/ExternalAmountChange',
+      name: 'ExternalAmountChange',
+      meta: {
+        title: '外协金额修改',
+        requiresAuth: true,
+        icon: 'icon-waixiejinexiugai iconfont scale-12',
+        pageName: 'ExternalAmountChangeView',
+        PermissionInfo: ['PermissionTaskChangePrice', 'HavePomission'],
+      },
+      component: () => import('@/views/OutsourceManage/ExternalAmountChange/ExternalAmountChangeView.vue'),
+    },
     /* 全部外协
     -------------------------------------- */
     {

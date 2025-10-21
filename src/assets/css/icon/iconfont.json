@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "30381665",
+      "name": "外协金额修改",
+      "font_class": "waixiejinexiugai",
+      "unicode": "e851",
+      "unicode_decimal": 59473
+    },
+    {
       "icon_id": "45466810",
       "name": "未跟进",
       "font_class": "weigenjin",

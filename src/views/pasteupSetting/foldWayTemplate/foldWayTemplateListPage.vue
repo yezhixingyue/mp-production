@@ -37,14 +37,21 @@
           </template>
         </el-table-column>
 
-         <el-table-column show-overflow-tooltip label="P1装订边位于" width="160">
+        <el-table-column show-overflow-tooltip label="P1装订边位于" width="160">
           <template #default="scope:{ row: FoldWayTemplateType }">
-            {{ getEnumNameByID(scope.row.BindingEdge, BindingEdgeEnumList) }}
+            {{ getEnumNameByID(scope.row.BindingEdge, SignaturePositionEnumList) }}
+          </template>
+        </el-table-column>
+
+        <el-table-column show-overflow-tooltip label="掀口位置" width="160">
+          <template #default="scope:{ row: FoldWayTemplateType }">
+            {{ getEnumNameByID(scope.row.GripperEdge, SignaturePositionEnumList) }}<template
+             v-if="scope.row.GripperEdge !== SignaturePositionEnum.None && scope.row.GripperEdgeValue">侧:{{scope.row.GripperEdgeValue}}mm</template>
           </template>
         </el-table-column>
 
         <el-table-column
-        show-overflow-tooltip prop="Linkman" label="适用设备" min-width="726">
+        show-overflow-tooltip prop="Linkman" label="适用设备" min-width="526">
           <template #default="scope:any">
             <span class="useable-equipment" v-for="(item) in getUseableEquipmentText(scope.row.UseableEquipmentGroupList)" :key="item.ClassID">
               <!-- {{index===0?'':';'}} -->
@@ -105,7 +112,7 @@ import { useRouter } from 'vue-router';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
 import { useUserStore } from '@/store/modules/user';
-import { BindingEdgeEnumList } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
+import { SignaturePositionEnumList, SignaturePositionEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { FoldWayTemplateType } from './type';
 

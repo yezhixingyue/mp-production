@@ -21,8 +21,8 @@ export const PDOStatusEnumList = [
   { ID: PDOStatusEnum.cancelled, Name: '已取消', className: 'is-gray' },
 ];
 
-/** 装订边枚举 */
-export enum BindingEdgeEnum {
+/** 折手位置枚举  用于装订边、掀口 */
+export enum SignaturePositionEnum {
   /** 无 */
   None = 0,
   /** 左 */
@@ -35,13 +35,13 @@ export enum BindingEdgeEnum {
   Bottom = 4,
 }
 
-/** 装订边枚举列表 */
-export const BindingEdgeEnumList = [
-  { ID: BindingEdgeEnum.None, Name: '无' },
-  { ID: BindingEdgeEnum.Left, Name: '左' },
-  { ID: BindingEdgeEnum.Right, Name: '右' },
-  { ID: BindingEdgeEnum.Top, Name: '上' },
-  { ID: BindingEdgeEnum.Bottom, Name: '下' },
+/** 折手位置枚举列表  用于装订边、掀口 */
+export const SignaturePositionEnumList = [
+  { ID: SignaturePositionEnum.None, Name: '无' },
+  { ID: SignaturePositionEnum.Left, Name: '左' },
+  { ID: SignaturePositionEnum.Right, Name: '右' },
+  { ID: SignaturePositionEnum.Top, Name: '上' },
+  { ID: SignaturePositionEnum.Bottom, Name: '下' },
 ];
 
 export enum CraftSolveStepEnum {

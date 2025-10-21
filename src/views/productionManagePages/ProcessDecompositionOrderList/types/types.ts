@@ -3,7 +3,7 @@ import { IOrderItemBase } from '../../ManageOrderListPage/js/type';
 import { IImpositionTemplate, ILineWorkingNoteInfo } from '../../ManualOrderHandlerPage/js/ProductionLineDetailTypes';
 import { IBaseProperty, IPrintColor } from '../../ManualOrderHandlerPage/js/types';
 import { PDOLineInstance } from '../childrenPages/PDOSetupView/model/Instance';
-import { BindingEdgeEnum, CraftSolveStepEnum, PDOStatusEnum } from './enum';
+import { SignaturePositionEnum, CraftSolveStepEnum, PDOStatusEnum } from './enum';
 
 export interface IPDOrderItem extends IOrderItemBase {
   /** 生产线 */
@@ -74,7 +74,7 @@ export interface IOrderFileInfo {
   BleedLeft?: '' | number
   BleedRight?: '' | number
   /** 装订边 */
-  BindingEdge: BindingEdgeEnum
+  BindingEdge: SignaturePositionEnum
 }
 
 /** 生产线实例属性接口类型 */

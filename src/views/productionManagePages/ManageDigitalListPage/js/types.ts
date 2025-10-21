@@ -120,7 +120,7 @@ export interface IDigitalOrderPlatePrintInfo {
       /** 任务列表 工序列表 */
       WorkingList: ITaskWorkingDetail[]
     }
-    IndexInOrder: number
+    InstanceIndex: number
     /** 订单信息 */
     OrderInfo: {
       /** 下单时间 */

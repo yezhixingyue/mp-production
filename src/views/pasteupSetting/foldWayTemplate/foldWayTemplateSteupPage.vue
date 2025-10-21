@@ -32,10 +32,22 @@
           </el-form-item>
           <el-form-item :label="`P1装订边位于：`" class="form-item-required input-num">
             <el-radio-group v-model="Data.foldWayTemplateFrom.BindingEdge" size="small">
-              <el-radio class="ft-12" v-for="it in BindingEdgeEnumList.filter(_it => _it.ID !== BindingEdgeEnum.None)"
+              <el-radio class="ft-12" v-for="it in SignaturePositionEnumList.filter(_it => _it.ID !== SignaturePositionEnum.None)"
                  :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item :label="`掀口位置：`" class="form-item-required input-num">
+            <el-radio-group v-model="Data.foldWayTemplateFrom.GripperEdge" size="small">
+              <el-radio class="ft-12" v-for="it in SignaturePositionEnumList"
+                 :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <el-form-item :label="`掀口尺寸：`" class="input-num">
+            <el-input v-model.number="Data.foldWayTemplateFrom.GripperEdgeValue"
+             :disabled="[SignaturePositionEnum.None, ''].includes(Data.foldWayTemplateFrom.GripperEdge)"></el-input> mm
+          </el-form-item>
+
           <div><mp-button type="primary" link @click="createMap">生成模板图</mp-button></div>
         </el-form>
       </div>
@@ -108,7 +120,7 @@ import api from '@/api';
 import messageBox from '@/assets/js/utils/message';
 import { useRouterStore } from '@/store/modules/routerStore';
 import OneLevelSelect from '@/components/common/SelectComps/OneLevelSelect.vue';
-import { BindingEdgeEnum, BindingEdgeEnumList } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
+import { SignaturePositionEnum, SignaturePositionEnumList } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 import { PositionListType, FoldWayTemplateType } from './type';
 
@@ -117,8 +129,10 @@ interface setPageObjType{
   ColIndex:number|string
 }
 interface DataType {
-  foldWayTemplateFrom: Omit<FoldWayTemplateType, 'BindingEdge'> & {
-    BindingEdge: '' | BindingEdgeEnum
+  foldWayTemplateFrom: Omit<FoldWayTemplateType, 'BindingEdge' | 'GripperEdge' | 'GripperEdgeValue'> & {
+    BindingEdge: '' | SignaturePositionEnum
+    GripperEdge: '' | SignaturePositionEnum
+    GripperEdgeValue: '' | number
   }
   FoldWayPositionList:PositionListType[][]
   setPageObj:setPageObjType
@@ -137,6 +151,8 @@ const Data:DataType = reactive({
     RowNumber: '',
     ColumnNumber: '',
     BindingEdge: '',
+    GripperEdge: '',
+    GripperEdgeValue: '',
     PositionList: [
       // {
       //   RowValue: 0,
@@ -258,8 +274,16 @@ function foldWayTemplateSave() {
     messageBox.failSingleError('保存失败', `请输入${Number(Data.foldWayTemplateFrom.RowNumber) > 8 ? '小于8的' : ''}行数`, () => null, () => null);
   } else if (!Data.foldWayTemplateFrom.ColumnNumber || Number(Data.foldWayTemplateFrom.ColumnNumber) > 8) {
     messageBox.failSingleError('保存失败', `请输入${Number(Data.foldWayTemplateFrom.ColumnNumber) > 8 ? '小于8的' : ''}列数`, () => null, () => null);
-  } else if (Data.foldWayTemplateFrom.BindingEdge === BindingEdgeEnum.None || Data.foldWayTemplateFrom.BindingEdge === '') {
+  } else if (Data.foldWayTemplateFrom.BindingEdge === SignaturePositionEnum.None || Data.foldWayTemplateFrom.BindingEdge === '') {
     messageBox.failSingleError('保存失败', '请选择装订边位置', () => null, () => null);
+  } else if (Data.foldWayTemplateFrom.GripperEdge === '') {
+    messageBox.failSingleError('保存失败', '请选择掀口位置', () => null, () => null);
+  } else if (Data.foldWayTemplateFrom.GripperEdge !== SignaturePositionEnum.None && Data.foldWayTemplateFrom.GripperEdgeValue === '') {
+    messageBox.failSingleError('保存失败', '请设置掀口尺寸', () => null, () => null);
+  } else if (Data.foldWayTemplateFrom.GripperEdge !== SignaturePositionEnum.None && !/^\d+$/.test(String(Data.foldWayTemplateFrom.GripperEdgeValue))) {
+    messageBox.failSingleError('保存失败', '掀口尺寸不正确', () => null, () => null);
+  } else if (Data.foldWayTemplateFrom.GripperEdge !== SignaturePositionEnum.None && !(Number(Data.foldWayTemplateFrom.GripperEdgeValue) > 0)) {
+    messageBox.failSingleError('保存失败', '掀口尺寸应大于0', () => null, () => null);
   } else if (!Data.FoldWayPositionList.length) {
     messageBox.failSingleError('保存失败', '请生成模板图', () => null, () => null);
   } else if (Data.FoldWayPositionList.length !== Data.foldWayTemplateFrom.RowNumber
@@ -282,6 +306,8 @@ function foldWayTemplateSave() {
             ID: '',
             Name: '',
             BindingEdge: '',
+            GripperEdge: '',
+            GripperEdgeValue: '',
           };
           Data.FoldWayPositionList = [];
           setStorage();
@@ -350,6 +376,9 @@ onMounted(() => {
   const temp = JSON.parse(route.params.Template as string) as FoldWayTemplateType;
   if (temp.ID) {
     Data.foldWayTemplateFrom = temp;
+    if ([SignaturePositionEnum.None, ''].includes(Data.foldWayTemplateFrom.GripperEdge)) {
+      Data.foldWayTemplateFrom.GripperEdgeValue = '';
+    }
     Data.FoldWayPositionList = [];
     toFoldWayPositionList(temp.PositionList);
   }

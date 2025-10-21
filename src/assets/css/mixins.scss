@@ -18,3 +18,17 @@
     }
   }
 }
+
+// 定义多行打点混合宏，参数为显示的最大行数（默认3行）
+@mixin multiline-ellipsis($lines: 3) {
+  // 基础样式：确保换行和溢出控制
+  overflow: hidden;
+  text-overflow: ellipsis;
+  // WebKit内核多行截断核心属性
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines; // 使用参数控制行数
+  // 可选：强制英文单词换行（避免长单词不换行导致的截断异常）
+  word-wrap: break-word;
+  word-break: break-all;
+}

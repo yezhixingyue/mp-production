@@ -166,6 +166,12 @@ export interface IWorkingExternalAttribute {
   HaveFile: boolean
   /** 外协修改的文字内容 */
   ProcessContent: string
+  /** 开单金额 原始金额 */
+  PrintAmount: number | null
+  /** 审核主管 */
+  ManagerNamge?: string
+  /** 价格更改说明 */
+  ChangePriceRemark?: string
 }
 
 /** 加工任务中 - 当前任务工序信息 */
@@ -273,6 +279,7 @@ export interface ITaskDetail {
   NextWorkingList: INextWorkingProduction[]
   /** 开始时间 */
   StartTime: string
+  SendTime?: string
   /** 预计加工时长（分钟） */
   WishDuration: number
   /** 最晚送达时间 */
@@ -289,6 +296,7 @@ export interface ITaskDetail {
   Operator: string
   /** 确认外协操作人 */
   SendOperator: string
+  SendOperatorID: string
   /** 外协入库操作人 */
   InOperator: string
   /** 外协出库操作人 */

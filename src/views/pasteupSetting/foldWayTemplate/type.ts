@@ -1,4 +1,4 @@
-import { BindingEdgeEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
+import { SignaturePositionEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 
 export interface PositionListType{
   RowValue: number,
@@ -17,5 +17,7 @@ export interface FoldWayTemplateType {
   ID: string,
   Name: string,
   /** 装订边所在位置 */
-  BindingEdge: BindingEdgeEnum
+  BindingEdge: SignaturePositionEnum
+  GripperEdge: SignaturePositionEnum
+  GripperEdgeValue: number
 }

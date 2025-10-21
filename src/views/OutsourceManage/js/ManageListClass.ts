@@ -245,14 +245,20 @@ export class ManageListClass {
   /** 生产线筛选数据 */
   LineList: IListItemType[] = []
 
+  CombineLineList: IListItemType[] = []
+
   private async _getLineList() { // 获取生产线列表数据
-    const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal, IsShowWorkingProcedure: true }).catch(() => null);
+    const resp = await api.getProductionLineList({ IsShowWorkingProcedure: true }).catch(() => null);
     if (resp?.data?.isSuccess) {
-      this.LineList = (resp.data.Data as IProductionLineSet[]).filter(it => it.Status === LineStatusEnum.usable).map(it => ({
+      const _list = (resp.data.Data as IProductionLineSet[]).filter(it => it.Status === LineStatusEnum.usable).map(it => ({
         ID: it.ID,
         Name: it.Name,
         children: it.WorkingProcedures,
+        Type: it.Type,
       }));
+
+      this.LineList = _list.filter(it => it.Type === LineTypeEnum.normal);
+      this.CombineLineList = _list.filter(it => it.Type === LineTypeEnum.combine);
     }
   }
 
@@ -276,6 +282,11 @@ export class ManageListClass {
         ID: _OutsourceConditionLineTypeEnum.Line,
         Name: '生产线',
         children: this.LineList,
+      },
+      {
+        ID: _OutsourceConditionLineTypeEnum.CombineLine,
+        Name: '组合生产线',
+        children: this.CombineLineList,
       },
       {
         ID: _OutsourceConditionLineTypeEnum.MakingGroup,

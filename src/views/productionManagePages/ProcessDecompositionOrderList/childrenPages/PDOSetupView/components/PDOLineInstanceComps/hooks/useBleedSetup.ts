@@ -1,6 +1,6 @@
 import { ComputedRef, ref } from 'vue';
 import { IOrderFileInfo } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/types';
-import { BindingEdgeEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
+import { SignaturePositionEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 import { IImpositionTemplate } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
 
 export const useBleedSetup = (MakeupFileList: ComputedRef<IOrderFileInfo[]>) => {
@@ -30,22 +30,22 @@ export const useBleedSetup = (MakeupFileList: ComputedRef<IOrderFileInfo[]>) => 
       _file.BleedBottom = '';
       _file.BleedLeft = '';
       _file.BleedRight = '';
-      _file.BindingEdge = BindingEdgeEnum.None;
+      _file.BindingEdge = SignaturePositionEnum.None;
     });
   };
 
   return { bleedState, onBleedSetupSubmit, clearBleedSetup };
 };
 
-export const getBleedLabels = (BindingEdge: BindingEdgeEnum | '', NeedFolding?: boolean | '') => {
+export const getBleedLabels = (BindingEdge: SignaturePositionEnum | '', NeedFolding?: boolean | '') => {
   const _BindingEdge = BindingEdge;
 
-  const _text = _BindingEdge !== BindingEdgeEnum.None || NeedFolding ? '书口' : '';
+  const _text = _BindingEdge !== SignaturePositionEnum.None || NeedFolding ? '书口' : '';
 
-  const left = _BindingEdge === BindingEdgeEnum.Left ? '装订边' : `左${_text}`;
-  const top = _BindingEdge === BindingEdgeEnum.Top ? '装订边' : `上${_text}`;
-  const right = _BindingEdge === BindingEdgeEnum.Right ? '装订边' : `右${_text}`;
-  const bottom = _BindingEdge === BindingEdgeEnum.Bottom ? '装订边' : `下${_text}`;
+  const left = _BindingEdge === SignaturePositionEnum.Left ? '装订边' : `左${_text}`;
+  const top = _BindingEdge === SignaturePositionEnum.Top ? '装订边' : `上${_text}`;
+  const right = _BindingEdge === SignaturePositionEnum.Right ? '装订边' : `右${_text}`;
+  const bottom = _BindingEdge === SignaturePositionEnum.Bottom ? '装订边' : `下${_text}`;
 
   return { left, top, right, bottom };
 };

@@ -33,58 +33,33 @@
             </div>
           </header>
 
-          <main>
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 25%;">物料信息</th>
-                  <th style="width: 18%;">{{ curRow._PrintMaterialSizeTitle }}</th>
-                  <th style="width: 18%;">返货数量</th>
-                  <th style="width: 11%;">申放</th>
-                  <th >外协价格</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div style="font-size: 0.85em;">{{ curRow._Material || '-' }}</div>
-                  </td>
-                  <td>
-                    <div>{{ curRow._Size || '-' }}</div>
-                  </td>
-                  <td>{{ curRow._Number || '-' }}</td>
-                  <td>{{ curRow._Wastage || '-' }}</td>
-                  <td>{{ `${curRow._ExternalSubmitParams.Amount}`.replace(/(?=(\B)(\d{3})+$)/g, ',') }}元</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 18%;">工序名称</th>
-                  <th style="width: 54%;">加工要求</th>
-                  <th >返货时间</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><div>{{ curRow._WorkingName }}</div></td>
-                  <!-- <td><div style="font-size: 0.85em;">{{ [curRow._AssistText, curRow._SpecialColorText].filter(it => it).join('；') || '-' }}</div></td> -->
-                  <td><div style="font-size: 0.85em;">{{ curRow._AssistText || '-' }}</div></td>
-                  <td>{{ curRow._ExternalSubmitParams.WishFinishTime?.split('T')[0] }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </main>
+          <OutsourcePrintAreaTable :curRow="curRow" />
 
           <!-- 时间 -->
           <footer>
-            <span>打单人：{{ user?.StaffName || '-' }}</span>
+            <span>{{ isReprint ? '补单人' : '打单人' }}：{{ user?.StaffName || '-' }}</span>
             <span>联系电话：{{ user?.Mobile || '-' }}</span>
-            <span>打印时间：{{ curPrintDate }}</span>
+            <span>{{ isReprint ? '补印时间' : '打印时间' }}：{{ curPrintDate }}</span>
             <div>验收人：</div>
           </footer>
+
+          <!-- 补打时的开单金额等信息 -->
+          <div style="margin-left: 1.5em;"
+           v-if="isReprint && curRow._ExternalSubmitParams.PrintAmount && curRow._ExternalSubmitParams.PrintAmount !== curRow._ExternalSubmitParams.Amount">
+            <hr style="width: 30%;margin-top: 1.5em;margin-bottom: 0.5em;">
+            <p>
+              <span style="font-weight: 700;">开单金额：</span>
+              <span>{{ curRow._ExternalSubmitParams.PrintAmount }}元</span>
+            </p>
+            <p v-if="curRow._ExternalSubmitParams.ChangePriceRemark">
+              <span style="font-weight: 700;">金额说明：</span>
+              <span>{{ curRow._ExternalSubmitParams.ChangePriceRemark }}</span>
+            </p>
+            <p v-if="curRow._ExternalSubmitParams.ManagerNamge">
+              <span style="font-weight: 700;">审核主管：</span>
+              <span>{{ curRow._ExternalSubmitParams.ManagerNamge }}</span>
+            </p>
+          </div>
         </section>
       </div>
     </PrintDialog>
@@ -116,6 +91,7 @@ import HandleResultDialog from '../../ExternalReceiveManage/Comps/HandleResultDi
 import { useAssistTextChange } from './useAssistTextChange';
 import ChangeAssistTextDialog from './ChangeAssistTextDialog.vue';
 import { ExternalTaskStatusEnum } from '../../js/enum';
+import OutsourcePrintAreaTable from './OutsourcePrintAreaTable.vue';
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -147,12 +123,14 @@ const curPrintDate = ref('');
 const oPrintDialog = ref<InstanceType<typeof PrintDialog>>();
 const onlyPrint = ref(false);
 const curentFactory = ref<null | ManageListClass['FactoryList'][number]>(null);
-const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], isConfirm: boolean, isPrint = true) => { // 下载文件 -- 此处按钮禁用判断暂时取反  待功能完成后改回 3.16
+const isReprint = ref(false); // 是否为补打标签
+const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], isConfirm: boolean, isPrint = true, _isReprint = false) => {
   if (!row || !oPrintDialog.value) return;
   curRow.value = row;
   imgSrc.value = '';
   curPrintDate.value = '';
   onlyPrint.value = isPrint;
+  isReprint.value = _isReprint;
 
   const fId = row.Working.ExternalAttribute.Status === ExternalTaskStatusEnum.WaitFactoryReceive
     ? curRow.value?._ExternalSubmitParams.FactoryID || ''
@@ -173,6 +151,10 @@ const onPrintClick = async (row: ReturnType<typeof getLocalTaskList>[number], is
     }
   }
 };
+
+defineExpose({
+  onPrintClick,
+});
 
 const submitExternal = async () => {
   if (!curRow.value) return;

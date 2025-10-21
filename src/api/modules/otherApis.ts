@@ -27,6 +27,7 @@ export const otherSettingApis = {
       url: '/Api/Upload/File',
       data: formData,
       params: { uniqueName },
+      // oxlint-disable-next-line const-comparisons
       onUploadProgress: onUploadProgressFunc && onUploadProgressFunc,
       headers,
       loading: false,

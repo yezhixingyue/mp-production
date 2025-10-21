@@ -6,7 +6,8 @@
         <div style="padding-left: 8px;">
           <span style="vertical-align: 2px;">装订边位置：</span>
           <el-radio-group v-model="ruleForm.BindingEdge">
-            <el-radio v-for="it in BindingEdgeEnumList.filter(it => it.ID !== BindingEdgeEnum.None)" :key="it.ID" :label="it.ID">{{ it.Name }}</el-radio>
+            <el-radio v-for="it in SignaturePositionEnumList.filter(it => it.ID !== SignaturePositionEnum.None)" :key="it.ID"
+               :label="it.ID">{{ it.Name }}</el-radio>
           </el-radio-group>
         </div>
 
@@ -43,7 +44,7 @@ import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { BindingEdgeEnum, BindingEdgeEnumList } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
+import { SignaturePositionEnum, SignaturePositionEnumList } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 import { IOrderFileInfo } from '../../../../types/types';
 import { getBleedLabels } from './hooks/useBleedSetup';
 
@@ -64,12 +65,12 @@ const localVisible = computed({
   },
 });
 
-const ruleForm = ref<Required<Pick<IOrderFileInfo, 'BleedBottom' | 'BleedLeft' | 'BleedRight' | 'BleedTop'>> & { BindingEdge: BindingEdgeEnum | '' }>({
+const ruleForm = ref<Required<Pick<IOrderFileInfo, 'BleedBottom' | 'BleedLeft' | 'BleedRight' | 'BleedTop'>> & { BindingEdge: SignaturePositionEnum | '' }>({
   BleedTop: '',
   BleedRight: '',
   BleedBottom: '',
   BleedLeft: '',
-  BindingEdge: BindingEdgeEnum.None,
+  BindingEdge: SignaturePositionEnum.None,
 });
 
 const displayLabels = computed(() => getBleedLabels(ruleForm.value.BindingEdge, props.NeedFolding));
@@ -80,7 +81,7 @@ const onOpen = () => {
     BleedRight: '',
     BleedBottom: '',
     BleedLeft: '',
-    BindingEdge: BindingEdgeEnum.None,
+    BindingEdge: SignaturePositionEnum.None,
   };
 
   const t = props.fileList.find(it => it._PlateTemplate?.IsPrintingPlate || it._PlateTemplate?.IsSameSizeWithPrintingPlate);
@@ -88,8 +89,8 @@ const onOpen = () => {
 
   // 装订边校正：
   if (!props.NeedFolding) {
-    ruleForm.value.BindingEdge = BindingEdgeEnum.None;
-  } else if (ruleForm.value.BindingEdge === BindingEdgeEnum.None) {
+    ruleForm.value.BindingEdge = SignaturePositionEnum.None;
+  } else if (ruleForm.value.BindingEdge === SignaturePositionEnum.None) {
     ruleForm.value.BindingEdge = '';
   }
 };
@@ -98,7 +99,7 @@ const submit = () => {
   // 校验
   const values = Object.values(ruleForm.value);
   // 1. 装订边校验
-  if (props.NeedFolding && (ruleForm.value.BindingEdge === BindingEdgeEnum.None || ruleForm.value.BindingEdge === '')) {
+  if (props.NeedFolding && (ruleForm.value.BindingEdge === SignaturePositionEnum.None || ruleForm.value.BindingEdge === '')) {
     MpMessage.error('设置失败', '请选择装订边');
     return;
   }

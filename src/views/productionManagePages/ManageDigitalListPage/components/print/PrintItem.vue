@@ -6,7 +6,7 @@
         <p class="SemiFinished b">
           {{ item.UploadFile.SemiFinished }}
           <i v-if="item.UploadFile.SemiFinished && ChunkInfo && OrderInfo" style="font-size: 0.7em"
-            > - {{ ChunkInfo.IndexInOrder }} / {{ OrderInfo.InstanceNumber }}</i>
+            > - {{ ChunkInfo.InstanceIndex }} / {{ OrderInfo.InstanceNumber }}</i>
         </p>
         <p class="title b">
           <span class="station">{{ OrderInfo?.StationName || '' }}</span>

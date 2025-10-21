@@ -20,7 +20,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '生产线',
         requiresAuth: true,
-        icon: 'iconfont icon-shengchanxian',
+        icon: 'iconfont icon-shengchanxian scale-11',
         pageName: 'productionLinePage',
         PermissionInfo: ['PermissionManageNormalLine', 'HavePomission'],
       },

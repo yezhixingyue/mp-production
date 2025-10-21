@@ -10,13 +10,14 @@
       :FactoryList="ManageListData.FactoryList"
       :options="ManageListData.options"
     />
-    <Main :ManageListData="ManageListData" :pageType="pageType" />
-    <Footer :ManageListData="ManageListData" :pageType="pageType" />
+    <Main :ManageListData="ManageListData" :pageType="pageType" ref="oMain" />
+    <Footer :ManageListData="ManageListData" :pageType="pageType" @reprint="handleReprint" />
   </section>
 </template>
 
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue';
+import { getLocalTaskList } from '@/views/ProductionClient/Comps/EquipmentPageContent/TaskActivateAndList/BatchReport/getLocalTaskList';
 import Header from '../Comps/Header.vue';
 import Main from '../Comps/Main/Main.vue';
 import Footer from '../Comps/Footer.vue';
@@ -31,6 +32,11 @@ onMounted(() => {
   ManageListData.value.getList();
 });
 
+const oMain = ref<InstanceType<typeof Main>>();
+
+const handleReprint = (e) => {
+  oMain.value?.onPrintClick(getLocalTaskList([e], false, true)[0], true, true, true);
+};
 </script>
 
 <script lang="ts">

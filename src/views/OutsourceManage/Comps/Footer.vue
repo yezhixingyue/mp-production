@@ -12,26 +12,41 @@
         <span>共检索出</span><i class="is-blue is-bold ml-2 mr-2"> {{ManageListData.listNumber}} </i><span>条记录</span>
       </div>
     </div>
-    <MpPagination center :nowPage="ManageListData.condition.Page" :pageSize="ManageListData.condition.PageSize"
-     :total="ManageListData.listNumber" :handlePageChange="getList" :ExportExcelProps="downloadExcelObj" />
+
+    <div class="row">
+      <div class="l">
+        <template v-if="pageType==='all'&&localPermission?.Reprint">
+          <mp-button type="primary" style="width: 120px;"  @click="visible=true">补打外协单</mp-button>
+          <ReprintDialog v-model:visible="visible" @reprint="handleReprint" />
+        </template>
+      </div>
+
+      <div class="r">
+        <MpPagination center :nowPage="ManageListData.condition.Page" :pageSize="ManageListData.condition.PageSize"
+          :total="ManageListData.listNumber" :handlePageChange="getList" :ExportExcelProps="downloadExcelObj" />
+      </div>
+    </div>
   </footer>
 </template>
 
 <script setup lang='ts'>
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import MpPagination from '@/components/common/MpPagination.vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useUserStore } from '@/store/modules/user';
 import { IExportExcelProps } from '@/components/common/General/DownLoadExcelComp/types';
 import { ExternalTaskStatusEnum } from '../js/enum';
 import { ManageListClass } from '../js/ManageListClass';
 import { OutsourceManagePageType } from '../js/type';
 import { checkExTaskIsComplete, getCanNotDownload } from '../js/utils';
+import ReprintDialog from './ReprintDialog/ReprintDialog.vue';
 
 const props = defineProps<{
   ManageListData: Required<ManageListClass>
   pageType: OutsourceManagePageType
 }>();
+
+const emit = defineEmits(['reprint']);
 
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageExternalTask.Obj);
@@ -113,7 +128,6 @@ const onBatchConfirmClick = () => { // 批量确认
   });
 };
 
-// eslint-disable-next-line max-len
 const downloadExcelObj: undefined | IExportExcelProps = props.pageType === 'all' && localPermission.value?.Excel
   ? {
     apiPath: 'getExternalTaskExcel',
@@ -125,6 +139,10 @@ const downloadExcelObj: undefined | IExportExcelProps = props.pageType === 'all'
     }),
   } : undefined;
 
+const visible = ref(false);
+const handleReprint = (e) => {
+  emit('reprint', e);
+};
 </script>
 
 <style scoped lang='scss'>
@@ -149,6 +167,20 @@ const downloadExcelObj: undefined | IExportExcelProps = props.pageType === 'all'
       .count {
         visibility: hidden;
       }
+    }
+  }
+
+  .row {
+    display: flex;
+
+    > .l {
+      flex: none;
+      padding-left: 20px;
+    }
+
+    > .r {
+      flex: 1;
+      overflow: hidden;
     }
   }
 }

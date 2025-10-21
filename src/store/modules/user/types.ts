@@ -166,8 +166,29 @@ export interface IUser {
         InstoredSetup: boolean
         Query: boolean
         Excel: boolean
+        Reprint: boolean
       };
     };
+    /** 外协金额修改 */
+    PermissionTaskChangePrice: {
+      HavePomission: boolean
+      Obj: {
+        /** 修改价格 */
+        ChangePrice: boolean,
+        /** 审核价格 -- 如果是外协主管就有 此处不控制 */
+        // CheckPrice: boolean,
+        /** 确认价格 */
+        ConfirmPrice: boolean,
+        /** 导出导入Excel数据 */
+        Import: boolean,
+        /** 外协主管设置 */
+        ManagerSetup: boolean,
+        /** 查询 */
+        Query: boolean,
+        /** 删除 */
+        Remove: boolean,
+      };
+    },
     /** 生产线管理 */
     PermissionManageNormalLine: {
       HavePomission: boolean

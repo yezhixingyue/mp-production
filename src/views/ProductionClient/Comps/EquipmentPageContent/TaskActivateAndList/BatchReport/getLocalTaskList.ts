@@ -120,14 +120,20 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       TaskID: it.ID,
       FactoryID: it.Working.UseableEquipmentList?.find(f => f.ID === it.Equipment.ID)?.ID || '',
       Amount: typeof it.Working.ExternalAttribute?.FinalAmount === 'number' ? it.Working.ExternalAttribute.FinalAmount : '',
+      PrintAmount: typeof it.Working.ExternalAttribute?.PrintAmount === 'number' ? it.Working.ExternalAttribute.PrintAmount : '',
+      ManagerNamge: it.Working.ExternalAttribute?.ManagerNamge || '',
+      ChangePriceRemark: it.Working.ExternalAttribute?.ChangePriceRemark || '',
       WishFinishTime: it.LatestFinishTime ? getTimeConvertFormat({ date: it.LatestFinishTime.replace('Z', ''), withHMS: true }) : '',
       _FactoryName: it.Working.UseableEquipmentList?.find(f => f.ID === it.Equipment.ID)?.Name || '',
       _IsFixedAmount: !!it.Working.ExternalAttribute.HaveFixedAmount,
       _IsFixedFactory: !!it.Working.ExternalAttribute.HaveFixedFactory,
     };
 
-    /** 开始时间（外协时间） */
+    /** 开始时间（确认外协时间） */
     const _StartTime = it.StartTime ? format2MiddleLangTypeDateFunc2(it.StartTime) : '';
+
+    /** 外协时间 （材料出库） */
+    const _SendTime = it.SendTime ? format2MiddleLangTypeDateFunc2(it.SendTime) : '';
 
     /** 最晚送达时间 */
     const _LastestSendedTime = it.LatestSendTime ? format2MiddleLangTypeDateFunc2(it.LatestSendTime) : '';
@@ -161,6 +167,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _WorkingName,
       _ExternalSubmitParams,
       _StartTime,
+      _SendTime,
       _LastestSendedTime,
       _IsTimeout,
       _PrintMaterialSizeTitle,

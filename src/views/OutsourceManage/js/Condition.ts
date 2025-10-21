@@ -6,6 +6,8 @@ import { ISwitchOptions } from './type';
 export enum _OutsourceConditionLineTypeEnum {
   /** 生产线 */
   Line = 1,
+  /** 组合生产线 */
+  CombineLine = 3,
   /** 制版组 */
   MakingGroup = 2,
 }

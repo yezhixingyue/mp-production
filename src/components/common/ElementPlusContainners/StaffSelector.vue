@@ -7,10 +7,11 @@
       reserve-keyword
       placeholder="请输入姓名"
       remote-show-suffix
-      class="mp-select local"
+      class="local"
+      :class="`${boxStyle ? '' : 'mp-select'}`"
     >
       <el-option
-        v-for="item in options"
+        v-for="item in myStaffList"
         :key="item.StaffID"
         :label="item.StaffName"
         :value="item.StaffID"
@@ -28,6 +29,10 @@ import { computed, onMounted, ref } from 'vue';
 const props = defineProps<{
   modelValue: string
   title?: string
+  staffList?: Pick<IStaff, 'StaffID' | 'StaffName'>[]
+  boxStyle?: boolean
+  /** 隐藏掉不限选项 */
+  hideUnlimitedOption?: boolean
 }>();
 
 const emit = defineEmits(['update:modelValue', 'getList']);
@@ -45,7 +50,12 @@ const value = computed({
 
 const loading = ref(false);
 
-const options = ref<Pick<IStaff, 'StaffID' | 'StaffName'>[]>([{ StaffID: '', StaffName: '不限' }]);
+const localStaffList = ref<Pick<IStaff, 'StaffID' | 'StaffName'>[]>([]);
+
+const myStaffList = computed(() => {
+  const _initialOptions = props.hideUnlimitedOption ? [] : [{ StaffID: '', StaffName: '不限' }];
+  return [..._initialOptions, ...(props.staffList || []), ...localStaffList.value];
+});
 
 const remoteMethod = async () => {
   loading.value = true;
@@ -55,13 +65,14 @@ const remoteMethod = async () => {
   loading.value = false;
 
   if (resp?.data?.isSuccess) {
-    options.value = [{ StaffID: '', StaffName: '不限' }, ...resp.data.Data];
-  } else {
-    options.value = [{ StaffID: '', StaffName: '不限' }];
+    localStaffList.value = resp.data.Data;
   }
 };
 
 onMounted(() => {
+  if (props.staffList) {
+    return;
+  }
   remoteMethod();
 });
 </script>

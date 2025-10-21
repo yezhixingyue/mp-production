@@ -1,5 +1,5 @@
 import { IOrderFileInfo, IPDOrderItem, TCraftResolveDetail, TDetailInstance } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/types';
-import { BindingEdgeEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
+import { SignaturePositionEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { ILineWorkingNoteInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
@@ -108,7 +108,7 @@ export const handleAssistUploadFileChange = (
       ID: instanceItem._lineData?.ID || '',
       Name: instanceItem._lineData?.Name || '',
     },
-    BindingEdge: BindingEdgeEnum.None,
+    BindingEdge: SignaturePositionEnum.None,
   }));
 
   const _instanceItem = instanceItem;
@@ -135,7 +135,7 @@ export const handleAssistReviewFileChange = (
       ID: instanceItem._lineData?.ID || '',
       Name: instanceItem._lineData?.Name || '',
     },
-    BindingEdge: BindingEdgeEnum.None,
+    BindingEdge: SignaturePositionEnum.None,
   }));
 
   if (FileList.length === 0) { // 至少应有一个
@@ -153,7 +153,7 @@ export const handleAssistReviewFileChange = (
           ID: instanceItem._lineData?.ID || '',
           Name: instanceItem._lineData?.Name || '',
         },
-        BindingEdge: BindingEdgeEnum.None,
+        BindingEdge: SignaturePositionEnum.None,
       });
     }
   }

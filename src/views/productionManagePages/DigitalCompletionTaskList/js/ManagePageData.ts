@@ -66,7 +66,7 @@ export class ManagePageData {
       Type: LineTypeEnum.normal, Category: NormalLineCategoryTypeEnum.digital, IsShowWorkingProcedure: true,
     }).catch(() => null);
     if (resp?.data?.isSuccess) {
-      this.LineList = [...(resp.data.Data as IProductionLineSet[]).filter(it => it.Category === NormalLineCategoryTypeEnum.digital)];
+      this.LineList = (resp.data.Data as IProductionLineSet[]).filter(it => it.Category === NormalLineCategoryTypeEnum.digital);
     }
   }
 }

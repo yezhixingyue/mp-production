@@ -13,7 +13,7 @@ import { getDigitalImpositionTemplate, checkIsPositiveInteger } from '@/views/pr
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { InstanceSettingInfo } from './InstanceSettingInfo';
 import { IInstanceAttribute, IOrderFileInfo, TCraftResolveDetail, TDetailInstance } from '../../../types/types';
-import { BindingEdgeEnum } from '../../../types/enum';
+import { SignaturePositionEnum } from '../../../types/enum';
 
 /**
  * 手动下单生产线实例，组合生产线由多个该实例组成
@@ -199,7 +199,7 @@ export class PDOLineInstance extends InstanceSettingInfo {
           BleedLeft: temp ? temp.BleedLeft : '',
           BleedRight: temp ? temp.BleedRight : '',
           BleedTop: temp ? temp.BleedTop : '',
-          BindingEdge: temp && typeof temp.BindingEdge === 'number' && temp.BindingEdge >= 0 ? temp.BindingEdge : BindingEdgeEnum.None,
+          BindingEdge: temp && typeof temp.BindingEdge === 'number' && temp.BindingEdge >= 0 ? temp.BindingEdge : SignaturePositionEnum.None,
         });
       }
 
@@ -221,7 +221,7 @@ export class PDOLineInstance extends InstanceSettingInfo {
                   ID: this._lineData?.ID || '',
                   Name: this._lineData?.Name || '',
                 },
-                BindingEdge: BindingEdgeEnum.None,
+                BindingEdge: SignaturePositionEnum.None,
               });
             });
           } else {
@@ -236,7 +236,7 @@ export class PDOLineInstance extends InstanceSettingInfo {
                 ID: this._lineData?.ID || '',
                 Name: this._lineData?.Name || '',
               },
-              BindingEdge: BindingEdgeEnum.None,
+              BindingEdge: SignaturePositionEnum.None,
             });
           }
         }
@@ -286,7 +286,7 @@ export class PDOLineInstance extends InstanceSettingInfo {
         ID: this._lineData?.ID || '',
         Name: this._lineData?.Name || '',
       },
-      BindingEdge: BindingEdgeEnum.None,
+      BindingEdge: SignaturePositionEnum.None,
     }));
 
     this.FileList.push(...newColorFiles);
