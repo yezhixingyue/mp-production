@@ -24,4 +24,6 @@ export enum ExternalTaskStatusEnum {
 export enum ExternalTaskDateTypeRadioEnum {
   Create = 'Create',
   ExpectedFinish = 'ExpectedFinish',
+  /** 外协入库时间 */
+  FinishTime = 'FinishTime',
 }

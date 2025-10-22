@@ -24,6 +24,7 @@ type IGetters = {
   lastWeekDate: ()=> DateType
   curMonthDate: ()=> DateType
   lastMonthDate: ()=> DateType
+  nextMonthDate: ()=> DateType
   toYearDate: ()=> DateType
   lastYearDate: ()=> DateType
   beforeyesterYearDate: ()=> DateType
@@ -146,6 +147,22 @@ const options: DefineStoreOptions<string, IState, IGetters, IActions> = {
         ).setMonth(new Date(this.newDate).getMonth() - 1),
       ));
       const stringDate2 = ConvertTimeFormat(new Date(new Date(this.newDate).setDate(0)));
+      return {
+        First: `${stringDate1}T00:00:00.000Z`,
+        Second: `${stringDate2}T23:59:59.997Z`,
+      };
+    },
+    nextMonthDate() {
+      const stringDate1 = ConvertTimeFormat(new Date(
+        new Date(
+          new Date(this.newDate).setDate(1),
+        ).setMonth(new Date(this.newDate).getMonth() + 1),
+      ));
+      const stringDate2 = ConvertTimeFormat(new Date(new Date(
+        new Date(
+          new Date(this.newDate).setDate(1),
+        ).setMonth(new Date(this.newDate).getMonth() + 2),
+      ).setDate(0)));
       return {
         First: `${stringDate1}T00:00:00.000Z`,
         Second: `${stringDate2}T23:59:59.997Z`,

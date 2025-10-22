@@ -25,10 +25,10 @@ export class Condition {
   }
 
   /** 创建时间 */
-  CreateTime = {
-    First: '',
-    Second: '',
-  }
+  // CreateTime = {
+  //   First: '',
+  //   Second: '',
+  // }
 
   /** 状态 */
   Status: ExternalTaskStatusEnum | '' = ''
@@ -36,6 +36,30 @@ export class Condition {
   DateType: string
 
   DateTypeRadio = ExternalTaskDateTypeRadioEnum.Create
+
+  /** 创建时间 */
+  CreateTime = {
+    First: '',
+    Second: '',
+  }
+
+  CreateTimeDateType = 'last7Date'
+
+  /** 工期时间 | 预计完工时间 */
+  WishFinishTime = {
+    First: '',
+    Second: '',
+  }
+
+  WishFinishTimeDateType = 'next7Date'
+
+  /** 外协入库时间 */
+  FinishTime = {
+    First: '',
+    Second: '',
+  }
+
+  FinishTimeDateType = 'last7Date'
 
   KeyWords = ''
 
@@ -59,18 +83,33 @@ export class Condition {
   filter() {
     // 处理时间
     if (this._options.showDate) {
-      CommonClassType.setDate(this, 'CreateTime');
+      CommonClassType.setDate(this, 'CreateTime', undefined, 'CreateTimeDateType');
+      CommonClassType.setDate(this, 'WishFinishTime', undefined, 'WishFinishTimeDateType');
+      CommonClassType.setDate(this, 'FinishTime', undefined, 'FinishTimeDateType');
     }
 
     // 筛选结果
-    const temp: Partial<Condition> & { WishFinishTime?: Condition['CreateTime'] } = CommonClassType.filter(this);
+    const temp: Partial<Condition> = CommonClassType.filter(this);
 
-    if (this._options.showDate && this.DateTypeRadio === ExternalTaskDateTypeRadioEnum.ExpectedFinish) {
-      temp.WishFinishTime = temp.CreateTime;
-      delete temp.CreateTime;
+    if (this._options.showDate) {
+      if (this.DateTypeRadio === ExternalTaskDateTypeRadioEnum.Create) {
+        delete temp.WishFinishTime;
+        delete temp.FinishTime;
+      }
+      if (this.DateTypeRadio === ExternalTaskDateTypeRadioEnum.ExpectedFinish) {
+        delete temp.CreateTime;
+        delete temp.FinishTime;
+      }
+      if (this.DateTypeRadio === ExternalTaskDateTypeRadioEnum.FinishTime) {
+        delete temp.CreateTime;
+        delete temp.WishFinishTime;
+      }
     }
 
     delete temp.DateTypeRadio;
+    delete temp.CreateTimeDateType;
+    delete temp.FinishTimeDateType;
+    delete temp.WishFinishTimeDateType;
     delete temp._options;
 
     // 如果是制版组筛选  对First和Second进行一下值的调换（因为一般生产线是生产线在前工序在其内部，但制版组却是工序在前制版组（约可认为是生产线）在其内部）

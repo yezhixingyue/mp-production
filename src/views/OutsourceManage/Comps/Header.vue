@@ -37,16 +37,32 @@
       :changePropsFunc='setCondition'
       :requestFunc='getList'
       :isFull="true"
-      :typeList="[['DateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']]"
-      :dateList="dateList"
-      :dateValue='condition.DateType'
       :UserDefinedTimeIsActive='UserDefinedTimeIsActive'
       :label="options.DateTitle"
       :menu="{
         radio: condition.DateTypeRadio,
         list: [
-          { label: '创建时间', value: ExternalTaskDateTypeRadioEnum.Create },
-          { label: '预计完成时间', value: ExternalTaskDateTypeRadioEnum.ExpectedFinish },
+          {
+            label: '创建时间',
+            value: ExternalTaskDateTypeRadioEnum.Create,
+            dateList: dateList,
+            dateMenuEnum: condition.CreateTimeDateType,
+            typeList: [['CreateTimeDateType', ''], ['CreateTime', 'First'], ['CreateTime', 'Second']],
+          },
+          {
+            label: '预计完成时间',
+            value: ExternalTaskDateTypeRadioEnum.ExpectedFinish,
+            dateList: dateList2,
+            dateMenuEnum: condition.WishFinishTimeDateType,
+            typeList: [['WishFinishTimeDateType', ''], ['WishFinishTime', 'First'], ['WishFinishTime', 'Second']],
+          },
+          {
+            label: '外协入库时间',
+            value: ExternalTaskDateTypeRadioEnum.FinishTime,
+            dateList: dateList,
+            dateMenuEnum: condition.FinishTimeDateType,
+            typeList: [['FinishTimeDateType', ''], ['FinishTime', 'First'], ['FinishTime', 'Second']],
+          },
         ]
       }"
       v-show="options.showDate"
@@ -92,12 +108,20 @@ const props = defineProps<{
 }>();
 
 const dateList = [
-  { name: '近7天下单', ID: 'last7Date' },
-  { name: '今天下单', ID: 'today' },
-  { name: '昨天下单', ID: 'yesterday' },
-  { name: '前天下单', ID: 'beforeyesterday' },
-  { name: '本月下单', ID: 'curMonth' },
-  { name: '上月下单', ID: 'lastMonth' },
+  { name: '近7天', ID: 'last7Date' },
+  { name: '今天', ID: 'today' },
+  { name: '昨天', ID: 'yesterday' },
+  { name: '前天', ID: 'beforeyesterday' },
+  { name: '本月', ID: 'curMonth' },
+  { name: '上月', ID: 'lastMonth' },
+];
+const dateList2 = [
+  { name: '未来7天', ID: 'next7Date' },
+  { name: '今天', ID: 'today' },
+  { name: '明天', ID: 'tomorrow' },
+  { name: '后天', ID: 'theDayAfterTomorrow' },
+  { name: '本月', ID: 'curMonth' },
+  { name: '下月', ID: 'nextMonth' },
 ];
 
 const localExternalTaskStatusEnumList = computed(() => {
@@ -107,8 +131,23 @@ const localExternalTaskStatusEnumList = computed(() => {
   return [{ ID: '', Name: '不限' }, ..._list];
 });
 
-const UserDefinedTimeIsActive = computed(() => props.condition.DateType === ''
-&& !!props.condition.CreateTime.First && !!props.condition.CreateTime.Second);
+const UserDefinedTimeIsActive = computed(() => {
+  if (props.condition.DateTypeRadio === ExternalTaskDateTypeRadioEnum.Create) {
+    return props.condition.CreateTimeDateType === ''
+      && !!props.condition.CreateTime.First
+      && !!props.condition.CreateTime.Second;
+  }
+
+  if (props.condition.DateTypeRadio === ExternalTaskDateTypeRadioEnum.FinishTime) {
+    return props.condition.FinishTimeDateType === ''
+      && !!props.condition.FinishTime.First
+      && !!props.condition.FinishTime.Second;
+  }
+
+  return props.condition.WishFinishTimeDateType === ''
+    && !!props.condition.WishFinishTime.First
+    && !!props.condition.WishFinishTime.Second;
+});
 
 const _Factory = computed({
   get() {
@@ -175,7 +214,7 @@ onMounted(() => {
     margin-right: 20px;
     margin-top: 15px;
     line-height: 30px;
-    min-width: 1050px;
+    min-width: 1100px;
     .title {
       min-width: 6em;
     }

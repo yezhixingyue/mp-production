@@ -272,6 +272,8 @@ onDeactivated(() => {
   }
 
   .el-radio-group {
+    white-space: nowrap;
+    flex-wrap: nowrap;
     .el-radio-button {
       border: none;
       position: relative;

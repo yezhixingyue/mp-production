@@ -59,6 +59,10 @@ export default class CommonClassType {
         _obj[key][defalutProps.First] = store.lastMonthDate.First;
         _obj[key][defalutProps.Second] = store.lastMonthDate.Second;
         break;
+      case 'nextMonth':
+        _obj[key][defalutProps.First] = store.nextMonthDate.First;
+        _obj[key][defalutProps.Second] = store.nextMonthDate.Second;
+        break;
       case 'toYear': // 今年
         _obj[key][defalutProps.First] = store.toYearDate.First;
         _obj[key][defalutProps.Second] = store.toYearDate.Second;
