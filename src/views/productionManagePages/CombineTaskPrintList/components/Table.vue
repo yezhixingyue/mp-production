@@ -23,6 +23,15 @@
           <i class="icon-chakan iconfont" style="font-size: 16px;" :class="{'is-blue': !scope.row.ImpositionRemark}"></i>
           <span>查看工单</span>
         </mp-button>
+
+        <el-dropdown trigger="click">
+          <mp-button link class="el-dropdown-link more"><el-icon><MoreFilled /></el-icon>更多</mp-button>
+          <template #dropdown>
+            <el-dropdown-menu class="mp-production-manage-combine-task-print-table-menu--drop-down-wrap">
+              <el-dropdown-item link type="primary" class="ft-12" @click="onDownloadClick(scope.row)">下载块缩略图包</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </template>
     </mp-table-column>
     <template #empty>
@@ -34,6 +43,7 @@
 <script setup lang='ts'>
 import { computed } from 'vue';
 import { ElTable } from 'element-plus';
+import api from '@/api';
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { IUser } from '@/store/modules/user/types';
 import { IUnionTaskTrackInfo } from '../types/type';
@@ -58,6 +68,23 @@ const localList = computed(() => props.list.map((it) => ({
 const onViewClick = (row: IUnionTaskTrackInfo) => { // 查看工单
   emit('view', row);
 };
+
+const onDownloadClick = async (row: IUnionTaskTrackInfo) => {
+  const resp = await api.productionManageApis.getOrderThumbnailDownload(row.OrderInfo.ID);
+  if (resp.data?.isSuccess) {
+    const link = document.createElement('a');
+
+    link.target = '_blank';
+    link.style.display = 'none';
+    link.href = resp.data.Data;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+  }
+};
 </script>
 
 <style scoped lang='scss'>
@@ -77,7 +104,15 @@ const onViewClick = (row: IUnionTaskTrackInfo) => { // 查看工单
       font-size: 12px;
 
       &.el-button+.el-button {
-        margin-left: 6px;
+        margin-left: 8px;
+      }
+
+      &.more {
+        margin-top: 4px;
+        margin-left: 8px;
+        i {
+          transform: rotate(90deg);
+        }
       }
     }
 

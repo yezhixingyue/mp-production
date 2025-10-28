@@ -24,16 +24,8 @@ export class Condition {
     Second: '',
   }
 
-  /** 创建时间 */
-  // CreateTime = {
-  //   First: '',
-  //   Second: '',
-  // }
-
   /** 状态 */
   Status: ExternalTaskStatusEnum | '' = ''
-
-  DateType: string
 
   DateTypeRadio = ExternalTaskDateTypeRadioEnum.Create
 
@@ -75,7 +67,6 @@ export class Condition {
   _options: ISwitchOptions
 
   constructor(options: ISwitchOptions) {
-    this.DateType = options.showDate ? 'today' : '';
     this.Status = options.Status;
     this._options = options;
   }

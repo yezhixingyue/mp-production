@@ -175,4 +175,8 @@ export const productionManageApis = {
   getTaskUnionWorkingDetail(taskID: string, msgCallback: () => void) {
     return instance.get('/Api/Task/UnionWorkingDetail', { params: { taskID }, msgCallback });
   },
+  /** /Api/Order/Thumbnail/Download  GET  传参orderID  组合工单打印列表下载块缩略图包 */
+  getOrderThumbnailDownload(orderID: string) {
+    return instance.get<string>('/Api/Order/Thumbnail/Download', { params: { orderID } });
+  },
 };
