@@ -42,12 +42,13 @@ interface _IManagePlateCommonInfo {
   ReproductionType: string
   /** 大版类型 */
   Type: PlateTypeEnum
+  /** 文件下载地址 */
+  FileDic?: { [key: string] : string }
 }
 
 export type IPlateListChild = _IManagePlateCommonInfo
 
 export interface IManagePlateInfo extends _IManagePlateCommonInfo {
-  FileDic?: { [key: string] : string }
   /** 生成大版出错信息 */
   FileError?: string
   /** 子板列表 */

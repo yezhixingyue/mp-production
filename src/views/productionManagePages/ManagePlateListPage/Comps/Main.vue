@@ -98,6 +98,20 @@
               <td class="menus">
                 <mp-button link type="primary" v-if="user?.PermissionList.PermissionManagePlate.Obj.Query" @click="onProcessClick(row, child)">生产流程</mp-button>
                 <!-- <mp-button link type="primary" @click="onBarCodePrintClick(row, child)" :disabled="!child.MapFilePath">打印条码稿</mp-button> -->
+                <el-dropdown trigger="click" :disabled="child._moreIsDisabled">
+                  <span class="el-dropdown-link">
+                    <mp-button link type="primary" :disabled="child._moreIsDisabled" style="vertical-align: 2px;">更多</mp-button>
+                  </span>
+                  <template #dropdown>
+                    <el-dropdown-menu >
+                      <el-dropdown-item v-for="it in child._downloadList" :key="it.key">
+                        <a :href="it.href" target="_blank" >
+                          <span class="ft-12">下载{{ it.key }}</span>
+                        </a>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </td>
             </tr>
           </template>
@@ -177,11 +191,11 @@ const totalWidth = computed(() => {
 
 const spreadList = ref<string[]>([]);
 
-const getDownloadList = (it: IManagePlateInfo) => {
+const getDownloadList = (FileDic: IManagePlateInfo['FileDic']) => {
   const arr: { key: string; href: string }[] = [];
 
-  if (it.FileDic && typeof it.FileDic === 'object') {
-    Object.entries(it.FileDic).forEach(([key, href]) => {
+  if (FileDic && typeof FileDic === 'object') {
+    Object.entries(FileDic).forEach(([key, href]) => {
       if (key && href) {
         arr.push({ key, href });
       }
@@ -193,7 +207,7 @@ const getDownloadList = (it: IManagePlateInfo) => {
 
 const localList = computed(() => props.list.map(it => {
   const _isCancelled = it.Status === PlateStatusEnum.HaveCancled;
-  const _downloadList = _isCancelled ? [] : getDownloadList(it);
+  const _downloadList = _isCancelled ? [] : getDownloadList(it.FileDic);
   // eslint-disable-next-line max-len
   const _showGenerateFile = user.value?.PermissionList.PermissionManagePlate.Obj.GenerateFile && [PlateTypeEnum.Plate, PlateTypeEnum.LaterCraft].includes(it.Type);
 
@@ -214,14 +228,20 @@ const localList = computed(() => props.list.map(it => {
     _isCancelled,
     _showGenerateFile,
     _moreIsDisabled,
-    ChildList: it.ChildList.map(child => ({
-      ...child,
-      _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
-      _Position: it.Status === PlateStatusEnum.Finished && child.Position ? `当前位置：${child.Position}` : '',
-      _StatusText: it.Status === PlateStatusEnum.Finished && getEnumNameByID(child.Status, PlateStatusEnumList)
-        ? `状态：${getEnumNameByID(child.Status, PlateStatusEnumList)}` : '',
-      _Percent: typeof child.Percent === 'number' ? `${child.Percent}%` : '',
-    })),
+    ChildList: it.ChildList.map(child => {
+      const _childDownloadList = _isCancelled ? [] : getDownloadList(child.FileDic);
+      const _childMoreIsDisabled = _childDownloadList.length === 0;
+      return {
+        ...child,
+        _Size: child.Template || child.TemplateSize ? `尺寸规格：${[child.Template, child.TemplateSize].filter(it => it).join(' ')}` : '',
+        _Position: it.Status === PlateStatusEnum.Finished && child.Position ? `当前位置：${child.Position}` : '',
+        _StatusText: it.Status === PlateStatusEnum.Finished && getEnumNameByID(child.Status, PlateStatusEnumList)
+          ? `状态：${getEnumNameByID(child.Status, PlateStatusEnumList)}` : '',
+        _Percent: typeof child.Percent === 'number' ? `${child.Percent}%` : '',
+        _downloadList: _childDownloadList,
+        _moreIsDisabled: _childMoreIsDisabled,
+      };
+    }),
   };
 }));
 
