@@ -14,6 +14,7 @@ export interface IChunkDetail {
     /** 网点名称 StationName + DistrictSN 横杠链接 */
     StationName: string
     DistrictSN: string
+    DistrictName: string
     Size: string
   }
   /** 当前款数 */

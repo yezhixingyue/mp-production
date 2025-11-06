@@ -14,8 +14,11 @@
 
           <main>
             <div class="left">
-              <h2>{{ result.data.OrderInfo.StationSN }}</h2>
-              <p style="font-size: 1.4em;padding-bottom: 0.2em;">{{ [result.data.OrderInfo.StationName,result.data.OrderInfo.DistrictSN].join('-') }}</p>
+              <h2>{{ result.data.OrderInfo.StationSN || result.data.OrderInfo.StationName }}</h2>
+              <p style="font-size: 1.4em;padding-bottom: 0.2em;">
+                <template v-if="result.data.OrderInfo.StationSN">{{ [result.data.OrderInfo.StationName,result.data.OrderInfo.DistrictSN].join('-') }}</template>
+                <template v-else>{{ result.data.OrderInfo.DistrictName }}</template>
+              </p>
               <p>{{ result.data.OrderInfo.CustomerSN }}</p>
               <p>{{ result.data.OrderInfo.CustomerName }}</p>
               <p class="r2 s">
