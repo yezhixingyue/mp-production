@@ -18,7 +18,6 @@ const logout = () => { // 清除状态并跳转登录页面
 
 const _getToken = () => { // 获取到token
   const _token = ManageClientPageData.value.curActiveInstance?.loginData.token || '';
-
   if (!_token) {
     logout();
   }

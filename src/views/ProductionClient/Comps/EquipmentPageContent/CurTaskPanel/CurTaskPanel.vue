@@ -1,6 +1,15 @@
 <template>
   <div v-if="curInstance" class="mp-client-cur-task-panel-comp-wrap" :class="{op:curInstance.scrollInfo.willScroll}">
-    <EquipmentError v-if="curInstance.Equipment.Status === EquipmentStatusEnum.failure && curInstance.loginData.token" :curInstance="curInstance" />
+    <div v-if="localAssistantList && localAssistantList.length > 0" class="assistant-list">
+      <div v-for="it in localAssistantList" :key="it.TypeID + '-' + it.index">
+        <span class="is-bold ml-20" :class="{star: it.Required}">{{ it.TypeName }}：</span>
+        <span class="is-gray">{{ it.MemberName || '无' }}</span>
+      </div>
+      <span class="is-blue-span ml-20" @click="emit('setAssistant')">设置</span>
+    </div>
+
+    <EquipmentError v-if="curInstance.Equipment.Status === EquipmentStatusEnum.failure && curInstance.loginData.token && curInstance.loginData.AssistantList"
+     :curInstance="curInstance" />
     <el-empty description="暂无任务" v-else-if="_IsEmpty" :class="{'v-hide': props.curInstance.TaskListData.loading}" />
     <div class="task-box" v-else-if="curInstance.curTaskData || (curInstance.Equipment.AllowBatchReport && curInstance.TaskListData.TaskList.length > 0)">
       <template v-if="curInstance.curTaskData">
@@ -41,16 +50,37 @@ import PanelRight from './PanelRight.vue';
 import SetTaskCompleteDialog from './SetTaskCompleteDialog.vue';
 import TaskActivateAndList from '../TaskActivateAndList/TaskActivateAndList.vue';
 import EquipmentError from './EquipmentError/EquipmentErrorPanel.vue';
+import { getAssistantParamsList, getAssistantRuleFormObj } from '../Assistant/utils';
 
 const props = defineProps<{
   curInstance: Required<TerminalEquipmentInstance>
 }>();
-const emit = defineEmits(['sendError']);
+const emit = defineEmits(['sendError', 'setAssistant']);
+
+// 助手列表
+const localAssistantList = computed(() => {
+  if (!props.curInstance.loginData.AssistantList) return null;
+
+  if (!props.curInstance.NeedBindAssistantList) {
+    return props.curInstance.loginData.AssistantList;
+  }
+
+  return getAssistantParamsList(
+    getAssistantRuleFormObj(props.curInstance.NeedBindAssistantList, props.curInstance.loginData.AssistantList),
+    props.curInstance.NeedBindAssistantList,
+  );
+});
+
+// watch(() => localAssistantList.value, () => {
+//   if (handled) return;
+//   console.log(localAssistantList.value, props.curInstance.loginData.AssistantList);
+// });
 
 /* 展示相关
 ------------------------------------------------ */
 const _IsEmpty = computed(() => {
   if (!props.curInstance.loginData.token) return false;
+  if (!props.curInstance.loginData.AssistantList) return false;
   if (!props.curInstance.Equipment.AllowBatchReport) { // 单个报工
     return !props.curInstance.curTaskData && !props.curInstance.isCurTaskLoading;
   }
@@ -118,6 +148,19 @@ const handleBatchReport = (list, callback) => {
 
   &.op {
     opacity: 0;
+  }
+
+  position: relative;
+  .assistant-list {
+    position: absolute;
+    right: 85px;
+    top: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
   }
 }
 </style>

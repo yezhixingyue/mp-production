@@ -5,9 +5,10 @@ import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipm
 import { ManageClientPageData } from '@/api/client/clientStore';
 import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
-import { IEquipmentErrorInfo, ITaskDetail } from '../types';
+import { IEquipmentBindAssistantInfo, IEquipmentErrorInfo, ITaskDetail } from '../types';
 import { InstanceLoginClass } from './InstanceLoginClass';
 import { InstanceTaskListClass } from './InstanceTaskListClass/InstanceTaskListClass';
+import { getNeedBindAssistantTypeList, IAssistantBindItem } from '../AssistantBindHelper';
 
 /**
  * 单个终端设备实例
@@ -36,10 +37,14 @@ export class TerminalEquipmentInstance {
 
   /** 记录滚动信息 切换后还原 */
   public scrollInfo = {
-    // left: 0,
     top: 0,
     willScroll: false,
   }
+
+  /** 当前设备需要绑定的助手列表数据 */
+  NeedBindAssistantList: IAssistantBindItem[] | null = null
+
+  isAssistantDataLoading = false
 
   constructor(Equipment: IManageEquipmentInfo) {
     this.Equipment = Equipment;
@@ -55,8 +60,12 @@ export class TerminalEquipmentInstance {
   /** 替代调用loginData上的login方法 并 进行额外的任务数据获取处理 */
   public async login() {
     const result = await this.loginData.login();
-    if (result) {
-      this.getTaskInfo();
+    if (result && await this.getNeedBindAssistantTypeList(true)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if (this.NeedBindAssistantList!.length === 0) {
+        this.loginData.setAssistantList([]);
+        this.getTaskInfo();
+      }
     }
   }
 
@@ -65,15 +74,46 @@ export class TerminalEquipmentInstance {
     if (bool) this.curTaskData = null;
   }
 
+  handleAssistantBind(data: IEquipmentBindAssistantInfo[], isEdit = false) {
+    this.loginData.setAssistantList(data);
+
+    if (!isEdit) {
+      this.getTaskInfo();
+    }
+  }
+
   /** 当该实例切换至激活状态时所要处理的一些内容 */
-  switchToActive() {
+  async switchToActive() {
     if (!this.curTaskData
        && this.loginData.token
        && this.Equipment.ID
        && !(this.Equipment.AllowBatchReport && this.TaskListData.TaskList.length > 0)
     ) { // 如果已登录但未获取任务信息则执行
-      this.getTaskInfo();
+      if (this.loginData.AssistantList) { // 已绑定助手
+        this.getTaskInfo();
+      }
+
+      if (!this.NeedBindAssistantList && await this.getNeedBindAssistantTypeList()) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        if (this.NeedBindAssistantList!.length === 0 && !this.loginData.AssistantList) {
+          this.loginData.setAssistantList([]);
+          this.getTaskInfo();
+        }
+      }
     }
+  }
+
+  async getNeedBindAssistantTypeList(force = false) {
+    this.isAssistantDataLoading = true;
+    const result = await getNeedBindAssistantTypeList(this.Equipment, force);
+    this.isAssistantDataLoading = false;
+    if (result) {
+      this.NeedBindAssistantList = result;
+
+      return true;
+    }
+
+    return false;
   }
 
   /** 扫码枪扫描条码 进行送达操作 */

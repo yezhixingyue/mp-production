@@ -234,7 +234,7 @@ const onFileReplaceClick = (row: typeof localList.value[number]) => {
 
 /** 转自定义版 */
 const onToCustomizPlateClick = (row: typeof localList.value[number]) => {
-  MpMessage.warn('确定该订单转自定义版吗 ?', `订单ID: [ ${row.OrderCode} ]`, () => {
+  MpMessage.warn('确定该订单转禁止合拼吗 ?', `订单ID: [ ${row.OrderCode} ]`, () => {
     emit('toCustomizPlate', row.ID);
   });
 };

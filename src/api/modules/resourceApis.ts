@@ -5,7 +5,7 @@ import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupT
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { MaterialTypeLimitItemType } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
-import { request } from '@/basic/request';
+import { instance, request } from '@/basic/request';
 
 export const resourceApis = {
   /** 生产资源 - 辅助信息相关
@@ -132,5 +132,43 @@ export const resourceApis = {
   },
   getEquipmentGroupMaterialTypeLimitRemove(id) { // DELETE /Api/EquipmentGroupMaterialTypeLimit/Remove   设备组物料类型删除
     return request({ method: 'DELETE', url: '/Api/EquipmentGroupMaterialTypeLimit/Remove', params: { id } });
+  },
+  /** 生产资源 - 设备操作助手
+  --------------------------------------------- */
+  /** get /Api/Assistant/Type/List 获取助手类型列表 ---- 同时存在于clientApi */
+  getAssistantTypeList() {
+    return instance.get('/Api/Assistant/Type/List');
+  },
+  /** post /Api/Assistant/Type/Save 助手类型保存 */
+  getAssistantTypeSave(data) {
+    return instance.post('/Api/Assistant/Type/Save', data);
+  },
+  /** delete /Api/Assistant/Type/Remove 助手类型删除 */
+  getAssistantTypeRemove(id: number) {
+    return instance.delete('/Api/Assistant/Type/Remove', { params: { id } });
+  },
+  /** delete /Api/Assistant/Remove 人员删除 */
+  getAssistantRemove(id: string) {
+    return instance.delete('/Api/Assistant/Remove', { params: { id } });
+  },
+  /** post /Api/Assistant/List 筛选人员列表 ---- 同时存在于clientApi */
+  getAssistantList(condition) {
+    return instance.post('/Api/Assistant/List', condition);
+  },
+  /** post /Api/Assistant/Save 人员保存 */
+  getAssistantSave(data) {
+    return instance.post('/Api/Assistant/Save', data);
+  },
+  /** post /Api/Assistant/RelationGroup/Save 关联设备组保存 */
+  getAssistantRelationGroupSave(data) {
+    return instance.post('/Api/Assistant/RelationGroup/Save', data);
+  },
+  /** delete /Api/Assistant/RelationGroup/Remove 关联设备组删除 typeID（助手类型ID）、groupID（设备组ID） */
+  getAssistantRelationGroupRemove(typeID: number, groupID: string) {
+    return instance.delete('/Api/Assistant/RelationGroup/Remove', { params: { typeID, groupID } });
+  },
+  /** post /Api/Assistant/RelationGroup/MemberSetup  关联设备组设置最大最小数量 */
+  getAssistantRelationGroupMemberSetup(data) {
+    return instance.post('/Api/Assistant/RelationGroup/MemberSetup', data);
   },
 };

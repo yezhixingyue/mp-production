@@ -288,6 +288,8 @@ export interface ITaskDetail {
   LatestFinishTime: string
   /** 实际加工时长（分钟） */
   ActualDuration: number
+  /** 助手 - 已拼接好 */
+  Assistant: string
   /** 完工时间 */
   FinishTime: string
   /** 是否已置顶 */
@@ -365,4 +367,16 @@ export interface IEquipmentErrorInfo {
   Equipment: IEquipmentBaseInfo
   /** 待转移任务列表 */
   TaskList: ITaskDetail[]
+}
+
+/** 设备绑定的助手条目数据接口 */
+export interface IEquipmentBindAssistantInfo {
+  TypeID: number;
+  /** 拼接过次序的类型名称（组合后） */
+  TypeName: string;
+  MemberID: string;
+  MemberName: string;
+  Required: boolean
+  /** 次序：该类型的第几个助手 */
+  index: number
 }

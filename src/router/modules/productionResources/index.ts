@@ -101,6 +101,31 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionResources/equipmentGroup/equipmentGroupMaterialLimitSetupPage.vue'),
     },
+    /* 设备操作助手
+    -------------------------------------- */
+    {
+      path: '/EquipmentAssistant',
+      name: 'EquipmentAssistant',
+      meta: {
+        title: '设备操作助手',
+        requiresAuth: true,
+        icon: 'icon-yuangongliebiao iconfont',
+        pageName: 'EquipmentAssistantManagePage',
+        PermissionInfo: ['PermissionAssistant', 'HavePomission'],
+      },
+      component: () => import('@/views/productionResources/EquipmentAssistant/EquipmentAssistantManagePage.vue'),
+    },
+    {
+      path: '/EquipmentAssistantTypeManage',
+      name: 'EquipmentAssistantTypeManage',
+      meta: {
+        title: '设备助手类型管理',
+        requiresAuth: true,
+        pageName: 'EquipmentAssistantTypeManageView',
+        PermissionInfo: ['PermissionAssistant', 'Obj', 'TypeSetup'],
+      },
+      component: () => import('@/views/productionResources/EquipmentAssistant/views/AssistantTypeView/EquipmentAssistantTypeManageView.vue'),
+    },
     /* 外协工厂
     -------------------------------------- */
     {
@@ -165,6 +190,17 @@ const routeTree:RouteTreeType = {
           children: [
             { name: 'equipmentGroupMaterialLimitSetup', children: [] },
           ],
+        },
+      ],
+    },
+    /* 设备助手
+    -------------------------------------- */
+    {
+      name: 'EquipmentAssistant',
+      children: [
+        {
+          name: 'EquipmentAssistantTypeManage',
+          children: [],
         },
       ],
     },

@@ -68,7 +68,7 @@ const onLogoutClick = () => {
     msg: `
       <p class='logout-msg-box'>
         <span>机 器： <em class='ml-5'>${curActiveInstance.value.Equipment.Name}</em></span>
-        <span style='margin-bottom: 12px'>登录人：${curActiveInstance.value.loginData.user?.StaffName}</span>  
+        <span style='margin-bottom: 12px'>登录人：${curActiveInstance.value.loginData.user?.StaffName}</span>
       </p>
     `,
     dangerouslyUseHTMLString: true,
@@ -115,7 +115,9 @@ const onMenuClick = (it: Required<TerminalEquipmentInstance>) => {
   ManageClientPageData.value.curActiveInstance = it;
 
   /** 3. 当前设备转换至激活状态时的相关处理，如获取当前任务等 */
-  if (ManageClientPageData.value.curActiveInstance) ManageClientPageData.value.curActiveInstance.switchToActive();
+  if (ManageClientPageData.value.curActiveInstance) {
+    ManageClientPageData.value.curActiveInstance.switchToActive();
+  }
 
   /** 4.  此处还原即将来临的实例的滚动信息 */
   if (ManageClientPageData.value.curActiveInstance && oWrap) {

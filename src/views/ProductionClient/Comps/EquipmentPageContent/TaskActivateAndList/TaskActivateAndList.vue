@@ -1,7 +1,7 @@
 <template>
   <section
     class="mp-client-task-activate-and-list-comp-wrap"
-    v-if="curInstance && curInstance.loginData.token && curInstance.Equipment.Status === EquipmentStatusEnum.normal"
+    v-if="curInstance && curInstance.loginData.token && curInstance.loginData.AssistantList && curInstance.Equipment.Status === EquipmentStatusEnum.normal"
     v-show="!curActiveInstance?.isCurTaskLoading">
     <!-- 1. 设置送达 -->
     <header>

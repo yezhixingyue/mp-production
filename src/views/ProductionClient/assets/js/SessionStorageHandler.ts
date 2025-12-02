@@ -1,10 +1,13 @@
 import { IUser } from '@/store/modules/user/types';
+import { IEquipmentBindAssistantInfo } from './types';
 
 interface IClientSessionStorageType {
   token: string
   user: IUser | null
   EquipmentID: string
   mobileOnSuccess?: string // 登录成功后使用的手机号
+  /** 该设备绑定的助手列表 */
+  AssistantList: null | IEquipmentBindAssistantInfo[]
 }
 
 const SessionStorageKEY = 'production-client-storage-data';

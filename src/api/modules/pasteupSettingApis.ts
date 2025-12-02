@@ -1,5 +1,6 @@
 import { IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { request } from '@/basic/request';
+import { IEquipmentGroupLevelItem } from '@/views/productionResources/EquipmentAssistant/types/types';
 
 const api = {
   // 拼版设置 ------------------------ ManageImposition
@@ -70,7 +71,7 @@ const api = {
     return request({ method: 'DELETE', url: `/Api/ImpositionTemplate/Remove?id=${id}` });
   },
   getEquipmentGroup() { // GET /Api/EquipmentGroup/Group 适用设备
-    return request({ method: 'GET', url: '/Api/EquipmentGroup/Group' });
+    return request<IEquipmentGroupLevelItem[]>({ method: 'GET', url: '/Api/EquipmentGroup/Group' });
   },
 
 };

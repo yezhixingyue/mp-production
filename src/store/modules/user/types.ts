@@ -452,6 +452,15 @@ export interface IUser {
         QueryWorkOrder: boolean
       };
     };
+    /** 设备操作助手 */
+    PermissionAssistant: {
+      HavePomission: boolean
+      Obj: {
+        MemberSetup: boolean
+        Query: boolean
+        TypeSetup: boolean
+      };
+    },
   };
   Mobile: string;
   HeadPic: string;

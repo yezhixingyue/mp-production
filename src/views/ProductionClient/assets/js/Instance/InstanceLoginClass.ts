@@ -3,6 +3,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ILoginSubmitForm, IUser } from '@/store/modules/user/types';
 import { Base64 } from 'js-base64';
 import { SessionStorageClientHandler } from '../SessionStorageHandler';
+import { IEquipmentBindAssistantInfo } from '../types';
 /**
  * 单个设备实例中用户信息管理类
  *
@@ -22,6 +23,9 @@ export class InstanceLoginClass {
   /** 用户信息 */
   public user: null | IUser = null
 
+  /** 绑定的助手信息列表 */
+  public AssistantList: null | IEquipmentBindAssistantInfo[] = null
+
   /** 登录手机号 */
   public mobile = ''
 
@@ -37,6 +41,8 @@ export class InstanceLoginClass {
     if (data) {
       this.token = data.token;
       this.mobileOnSuccess = data.mobileOnSuccess || '';
+      this.AssistantList = data.AssistantList || null;
+
       if (this.token) {
         this._getUser(); // 获取用户信息
       }
@@ -73,9 +79,9 @@ export class InstanceLoginClass {
     // 如果有用户信息 且 用户信息中的token和当前token一致 则不再重新请求
     if (this.user && this.user.Token === this.token) return;
 
-    const data = SessionStorageClientHandler.getUser(this.EquipmentID);
-    if (data && data.Token === this.token) {
-      this.user = data;
+    const data = SessionStorageClientHandler.getData(this.EquipmentID);
+    if (data && data.user?.Token === this.token) {
+      this.user = data.user;
       return;
     }
 
@@ -83,7 +89,13 @@ export class InstanceLoginClass {
 
     if (resp?.data?.isSuccess) {
       this.user = resp.data.Data;
-      SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: this.user, token: this.token, mobileOnSuccess: this.mobileOnSuccess });
+      SessionStorageClientHandler.setData({
+        EquipmentID: this.EquipmentID,
+        user: this.user,
+        token: this.token,
+        mobileOnSuccess: this.mobileOnSuccess,
+        AssistantList: null,
+      });
     }
   }
 
@@ -107,8 +119,9 @@ export class InstanceLoginClass {
       this.password = '';
       this.token = resp.data.Data || '';
       this.mobileOnSuccess = temp.Mobile;
+      this.AssistantList = null;
       // 缓存
-      SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: null, token: this.token });
+      SessionStorageClientHandler.setData({ EquipmentID: this.EquipmentID, user: null, token: this.token, AssistantList: null });
       // 获取用户信息
       await this._getUser();
       if (this.user?.PermissionList.PermissionTaskReport.Obj.Report === false) {
@@ -129,10 +142,23 @@ export class InstanceLoginClass {
       this.user = null;
       this.token = '';
       this.mobileOnSuccess = '';
+      this.AssistantList = null;
       // 清理缓存
       SessionStorageClientHandler.clearItem(this.EquipmentID);
       return true;
     }
     return false;
+  }
+
+  setAssistantList(data: IEquipmentBindAssistantInfo[]) {
+    this.AssistantList = data;
+
+    SessionStorageClientHandler.setData({
+      EquipmentID: this.EquipmentID,
+      user: this.user,
+      token: this.token,
+      mobileOnSuccess: this.mobileOnSuccess,
+      AssistantList: this.AssistantList,
+    });
   }
 }

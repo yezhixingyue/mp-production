@@ -2,6 +2,7 @@ import { IEquipmentErrorInfo, ITaskDetail } from '@/views/ProductionClient/asset
 import { IUndeliveredListItem } from '@/views/ProductionClient/Comps/EquipmentPageContent/FloatingBall/WebsocketHandler';
 import { ILoginSubmitForm } from '@/store/modules/user/types';
 import { clientInstance as instance } from '@/basic/request/client';
+import { IAssistantInfo, IAssistantType } from '@/views/productionResources/EquipmentAssistant/types/types';
 // import { clientInstance as instance } from '../request/client';
 
 const clientApi = {
@@ -73,6 +74,22 @@ const clientApi = {
   /** put /Api/Task/HaveReady  设置齐整 */
   getTaskHaveReady(taskID: string, staffID: string, msgCallback: () => void) {
     return instance.put('/Api/Task/HaveReady', null, { params: { taskID, staffID }, msgCallback });
+  },
+  /** post /Api/Assistant/List 筛选人员列表 ---- 同时存在于clientApi */
+  getAssistantList() {
+    return instance.post<IAssistantInfo[]>('/Api/Assistant/List', { Page: 1, PageSize: 9999 });
+  },
+  /** get /Api/Assistant/Type/List 获取助手类型列表 ---- 同时存在于clientApi */
+  getAssistantTypeList() {
+    return instance.get<IAssistantType[]>('/Api/Assistant/Type/List');
+  },
+  /** post /Api/Assistant/BindEquipment 设备绑定助手 */
+  getAssistantBindEquipment(data) {
+    return instance.post('/Api/Assistant/BindEquipment', data);
+  },
+  /** /Api/Account/VerifyPassword 验证密码 */
+  getAccountVerifyPassword(data) {
+    return instance.post('/Api/Account/VerifyPassword', data);
   },
 };
 

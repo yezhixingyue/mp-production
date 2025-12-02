@@ -8,13 +8,14 @@
       <mp-table-column width="160px" prop="_TargetID" label="关联ID" />
       <mp-table-column v-if="showRowOptions.showReproductionType" width="80px" prop="_ReproductionType" label="翻版方式" />
       <mp-table-column v-if="showRowOptions.showWorkingName" width="170px" prop="_WorkingName" label="工序" />
-      <mp-table-column v-if="showRowOptions.showProcessTimes" width="100px" prop="_ProcessTimes" label="操作次序" />
+      <mp-table-column v-if="showRowOptions.showProcessTimes" width="85px" prop="_ProcessTimes" label="操作次序" />
       <mp-table-column v-if="showRowOptions.showContent" prop="_DetailText" min-width="120px" label="内容" />
       <mp-table-column v-if="showRowOptions.showMaterial" min-width="120px" prop="_Material" label="物料" />
       <mp-table-column width="110px" prop="_Number" label="数量" />
       <mp-table-column min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink t-l" />
       <slot name="ExternalHandle"></slot>
-      <mp-table-column v-if="showRowOptions.showEquAndOperator" prop="_EquAndOperator" min-width="100px" label="设备 (操作人)" />
+      <mp-table-column v-if="showRowOptions.showEquAndOperator" prop="_EquAndOperator" min-width="100px" label="设备" />
+      <mp-table-column v-if="showRowOptions.showEquAndOperator" prop="_OperatorAndAssistant" min-width="100px" label="操作人" />
       <mp-table-column v-if="showRowOptions.showWishDuration" prop="_WishDuration" width="120px" label="预计加工时长" />
       <mp-table-column v-if="showRowOptions.showActualDuration" prop="_ActualDuration" width="120px" label="实际加工时长" />
       <mp-table-column v-if="showRowOptions.showFinishTime" prop="_FinishTime" width="130px" label="完成时间" />

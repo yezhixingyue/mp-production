@@ -105,7 +105,9 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
     const _LatestFinishTime = it.LatestFinishTime
       ? { Time: format2MiddleLangTypeDateFunc2(it.LatestFinishTime), isTimedout: getIsTimedout(it.LatestFinishTime) } : null;
 
-    const _EquAndOperator = [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') + (it.Operator ? ` (${it.Operator})` : '');
+    // const _EquAndOperator = [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-') + (it.Operator ? ` (${it.Operator})` : '');
+    const _EquAndOperator = [it.Equipment.GroupName, it.Equipment.Name].filter(it => it).join('-');
+    const _OperatorAndAssistant = [it.Operator ? `机长：${it.Operator}` : '', it.Assistant].filter(Boolean).join('；');
 
     // 外协状态
     const _ExternalStatusText = it.Working.ExternalAttribute ? getEnumNameByID(it.Working.ExternalAttribute.Status, ExternalTaskStatusEnumList) : '';
@@ -162,6 +164,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _FinishTime, // 完工时间
       _LatestFinishTime, // 最迟完工时间
       _EquAndOperator, // 设备和操作人信息
+      _OperatorAndAssistant, // 操作人和助手信息
       _ExternalStatusText, // 外协任务状态 - 仅外协任务有值
       _ExternalStatusCtrlText,
       _WorkingName,

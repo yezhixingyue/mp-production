@@ -5,7 +5,8 @@
 
     <!-- 当前任务组件 -->
     <template v-for="it in ManageClientPageData.InstanceList" :key="it.Equipment.ID">
-      <CurTaskPanel v-show="curActiveInstance && curActiveInstance.Equipment.ID === it.Equipment.ID" :curInstance="it" @send-error="onErrClick" />
+      <CurTaskPanel v-show="curActiveInstance && curActiveInstance.Equipment.ID === it.Equipment.ID" :curInstance="it"
+       @send-error="onErrClick" @setAssistant="assistantBindVisible = true" />
     </template>
 
     <!-- 报错弹窗 -->
@@ -13,6 +14,11 @@
 
     <!-- 登录组件 -->
     <LoginComp v-if="curActiveInstance && !curActiveInstance.loginData.token" />
+
+    <!-- 设置助手 -->
+    <AssistantBindPanel v-if="curActiveInstance?.loginData.token && !curActiveInstance.loginData.AssistantList" :curInstance="curActiveInstance" />
+    <AssistantBindDialog v-model:visible="assistantBindVisible"
+     v-if="curActiveInstance?.loginData.token && curActiveInstance.loginData.AssistantList" :curInstance="curActiveInstance" />
 
     <!-- 设置机器报停弹窗 -->
     <SetEquipmentStopDialog v-model:visible="stopVisible" />
@@ -36,6 +42,8 @@ import FloatingBall from './FloatingBall/FloatingBall.vue';
 import UndeliveredListDIsplayDialog from './UndeliveredListDIsplayDialog.vue';
 import SetTaskErrorDialog from './CurTaskPanel/SetTaskErrorDialog.vue';
 import { ITaskDetail } from '../../assets/js/types';
+import AssistantBindPanel from './Assistant/AssistantBindPanel.vue';
+import AssistantBindDialog from './Assistant/AssistantBindDialog.vue';
 
 const emit = defineEmits(['setEquipment']);
 
@@ -111,6 +119,8 @@ watch(() => curActiveInstance.value?.Equipment.ID, () => {
   }, 100);
 });
 
+// 助手绑定
+const assistantBindVisible = ref(false);
 </script>
 
 <style scoped lang='scss'>

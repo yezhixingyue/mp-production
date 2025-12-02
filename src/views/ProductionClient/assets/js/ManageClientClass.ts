@@ -44,6 +44,7 @@ export class ManageClientClass {
       if (resp?.data?.isSuccess) {
         this.setTerminalEquipmentList(resp.data.Data);
       }
+    // oxlint-disable-next-line no-unused-vars
     } catch (error) {
       this.loading = false;
       MpMessage.error({ title: '错误', msg: '获取绑定设备失败' });
