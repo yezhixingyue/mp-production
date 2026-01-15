@@ -7,6 +7,7 @@ import otherSettingRouteRoot from './other';
 import companyManageRouteRoot from './companyManage';
 import productionManageRouteRoot from './productionManage';
 import productionRouteRoot from './productionSetting';
+import packRouteRoot from './pack';
 import homeRouter from './homeRouter';
 import ExceptionManageRouteRoot from './ExceptionManage';
 import OutsourceManageRouteRoot from './OutsourceManage';
@@ -30,6 +31,7 @@ export const moduleRoutes: RouteRecordRaw[] = isOrderApp ? [orderAppRouteRoot.ro
   productionManageRouteRoot.routes,
   OutsourceManageRouteRoot.routes,
   productionRouteRoot.routes,
+  packRouteRoot.routes,
   productionResources.routes,
   pasteupSettingRouteRoot.routes,
   materialWarehouseRouteRoot.routes,
@@ -45,6 +47,7 @@ const routeTree:RouteTreeType[] = isOrderApp ? [orderAppRouteRoot.routeTree] : [
   companyManageRouteRoot.routeTree,
   productionManageRouteRoot.routeTree,
   productionRouteRoot.routeTree,
+  packRouteRoot.routeTree,
   ExceptionManageRouteRoot.routeTree,
   OutsourceManageRouteRoot.routeTree,
 ];
