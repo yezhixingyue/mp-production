@@ -26,8 +26,14 @@
           </div>
         </template>
       </mp-table-column>
-      <mp-table-column width="80px" prop="_StatusText" label="状态" />
-      <mp-table-column width="300px" label="操作">
+      <mp-table-column prop="LatestFinishTime" width="145px" label="最迟完工时间">
+        <template #default="scope:{ row: RowType }">
+          <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''" class="ft-15"
+            >{{ scope.row._LatestFinishTime.Time }}</span>
+        </template>
+      </mp-table-column>
+      <mp-table-column width="70px" prop="_StatusText" label="状态" />
+      <mp-table-column width="280px" label="操作">
         <template #default="scope:any">
           <div>
             <mp-button type="primary" link @click="onSingleCompleteClick(scope.row)">加工完成</mp-button>
@@ -85,13 +91,15 @@ const emit = defineEmits(['report', 'singleReport', 'error']);
 -------------------------------------------------- */
 const localTaskList = computed(() => getLocalTaskList(props.curInstance.TaskListData.TaskList, props.isError));
 
+type RowType = typeof localTaskList.value[number];
+
 /* 表格选中相关
 -------------------------------------------------- */
-const multipleSelection = ref<(ReturnType<typeof getLocalTaskList>[number])[]>([]);
+const multipleSelection = ref<(RowType)[]>([]);
 
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 
-const handleSelectionChange = (val: (ReturnType<typeof getLocalTaskList>[number])[]) => {
+const handleSelectionChange = (val: (RowType)[]) => {
   multipleSelection.value = val;
 };
 
@@ -109,7 +117,7 @@ const isIndeterminate = computed(() => (multipleSelection.value.length < localTa
 
 /* 完成选中任务相关
 -------------------------------------------------- */
-const onSingleCompleteClick = (row: ReturnType<typeof getLocalTaskList>[number]) => { // 单个报工
+const onSingleCompleteClick = (row: RowType) => { // 单个报工
   emit('singleReport', row);
 };
 
@@ -140,21 +148,21 @@ const submitReport = () => {
   })), cb);
 };
 
-const onErrorClick = (row: ReturnType<typeof getLocalTaskList>[number]) => { // 报错
+const onErrorClick = (row: RowType) => { // 报错
   emit('error', row);
 };
 
-const curRowData = ref<ReturnType<typeof getLocalTaskList>[number] | null>(null);
+const curRowData = ref<RowType | null>(null);
 
 const picVisible = ref(false);
-const onPicDisplayClick = (row: ReturnType<typeof getLocalTaskList>[number]) => { // 查看示意图
+const onPicDisplayClick = (row: RowType) => { // 查看示意图
   if (!row) return;
   curRowData.value = row;
   picVisible.value = true;
 };
 
 const downloadVisible = ref(false);
-const onDownloadClick = (row: ReturnType<typeof getLocalTaskList>[number]) => { // 下载文件
+const onDownloadClick = (row: RowType) => { // 下载文件
   if (!row) return;
   curRowData.value = row;
   downloadVisible.value = true;
@@ -194,7 +202,7 @@ const onDownloadClick = (row: ReturnType<typeof getLocalTaskList>[number]) => { 
           }
           &.info {
             text-align: left;
-            padding-left: 20px;
+            padding-left: 10px;
           }
         }
 

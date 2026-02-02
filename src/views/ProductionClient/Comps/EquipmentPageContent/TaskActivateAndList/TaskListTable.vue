@@ -24,7 +24,7 @@
           <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''">{{ scope.row._LatestFinishTime.Time }}</span>
         </template>
       </mp-table-column>
-      <mp-table-column v-if="showRowOptions.showStatus" :width="isClient ? '180px' : '100px'" prop="_StatusText" label="当前状态" >
+      <mp-table-column v-if="showRowOptions.showStatus" :width="isClient ? '160px' : '100px'" prop="_StatusText" label="当前状态" >
         <template #default="scope: { row: RowType }">
           <mp-button type="primary" link v-if="showRowOptions.showPartialDelivery
            && scope.row.Status === ProductiveTaskStatusEnum.Initial && scope.row.Working.HaveAnyReceived && scope.row.Index === 1"

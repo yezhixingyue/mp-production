@@ -131,6 +131,10 @@ export const productionManageApis = {
   getOrderToCustomPlate(orderID: string) {
     return instance.put('/Api/Order/ToCustomPlate', null, { params: { orderID } });
   },
+  /** 撤回折手 /Api/Order/Unfolding */
+  getOrderUnfolding(orderID: string) {
+    return instance.put('/Api/Order/Unfolding', null, { params: { orderID } });
+  },
   /** GET /Api/Task/UseableEquipmentList  获取任务可用设备列表 taskWorkingID */
   getTaskUseableEquipmentList(taskWorkingID: string) {
     return instance.get('/Api/Task/UseableEquipmentList', { params: { taskWorkingID }, loading: false });

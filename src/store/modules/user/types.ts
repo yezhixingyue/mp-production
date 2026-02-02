@@ -127,6 +127,8 @@ export interface IUser {
         Replace: boolean
         /** 转自定义版 */
         ToCustomizPlate: boolean
+        /** 撤回折手 */
+        Unfolding?: boolean
       };
     };
     /** 外来物料管理 */

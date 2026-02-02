@@ -15,7 +15,7 @@
 
     <!-- 2. 普通列表展示 -->
     <TaskListTable :TaskList="curInstance.TaskListData.TaskList" :loading="curInstance.TaskListData.loading" useLittleHeight
-      v-if="!curInstance.Equipment.AllowBatchReport" isClient
+      v-if="!curInstance.Equipment.AllowBatchReport" isClient :rowDisplayOptions="{showLatestFinishTime:true}"
       v-show="curInstance.TaskListData.TaskList.length > 0" />
     <!-- 3. 批量上传列表展示与操作 -->
     <BatchReportComp
@@ -215,6 +215,10 @@ onUnmounted(() => {
       display: block;
       text-align: center;
     }
+  }
+
+  :deep(.is-pink) {
+    color: #f00;
   }
 }
 </style>

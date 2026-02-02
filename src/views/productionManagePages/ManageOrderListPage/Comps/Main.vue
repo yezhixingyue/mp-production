@@ -55,7 +55,12 @@
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.Replace"
                       :disabled="!row.CheckedFileList || row.CheckedFileList.length === 0 || !row.IsReplaceable"
                       @click="onFileReplaceClick(row)">文件替换</el-dropdown-item>
-                    <!-- 转自定义版 -->
+                    <!-- 撤回折手 -->
+                    <el-dropdown-item link type="primary"
+                      v-if="user?.PermissionList.PermissionManageOrder.Obj.Unfolding && row.NeedFolding"
+                      :disabled="!row.AllowUnfolding"
+                      @click="onUnfoldingClick(row)">撤回折手</el-dropdown-item>
+                    <!-- 转禁止合拼 -->
                     <el-dropdown-item link type="primary"
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.ToCustomizPlate"
                       :disabled="!row.ToCustomPlate"
@@ -136,7 +141,7 @@ const props = defineProps<{
   loading: boolean
 }>();
 
-const emit = defineEmits(['top', 'cancel', 'toCustomizPlate']);
+const emit = defineEmits(['top', 'cancel', 'toCustomizPlate', 'unfolding']);
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -230,6 +235,13 @@ const replaceFileVisible = ref(false);
 const onFileReplaceClick = (row: typeof localList.value[number]) => {
   curRow.value = row;
   replaceFileVisible.value = true;
+};
+
+/** 撤回折手 */
+const onUnfoldingClick = (row: typeof localList.value[number]) => {
+  MpMessage.warn('确定撤回折手吗 ?', `订单ID: [ ${row.OrderCode} ]`, () => {
+    emit('unfolding', row.ID);
+  });
 };
 
 /** 转自定义版 */

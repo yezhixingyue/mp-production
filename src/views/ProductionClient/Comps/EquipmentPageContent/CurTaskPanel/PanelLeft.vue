@@ -48,6 +48,10 @@
     </ul>
 
     <ul>
+      <li class="is-bold ft-15 mb-3">
+        <span>最迟完工时间：</span>
+        <span class="ft-17" :class="{'is-red': getIsTimedout(TaskData.LatestFinishTime)}">{{ format2MiddleLangTypeDateFunc2(TaskData.LatestFinishTime) }}</span>
+      </li>
       <!-- 报工数量 -->
       <li class="number">
         <h1>剩余{{ TaskData.UnFinishNumber }}{{ localInfo.Unit }} /</h1>
@@ -85,6 +89,7 @@ import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { getNextWorkContentOnlySingle } from '@/views/ProductionClient/assets/js/utils';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
+import { format2MiddleLangTypeDateFunc2, getIsTimedout } from '@/assets/js/filters/dateFilters';
 import { computed } from 'vue';
 import { getTaskDisplayInfo } from '.';
 

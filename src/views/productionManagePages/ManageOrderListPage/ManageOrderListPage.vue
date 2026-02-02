@@ -7,6 +7,7 @@
      :loading="ManageOrderListPageData.loading"
      @top="handleOrderToTop"
      @toCustomizPlate="handleToCustomizPlate"
+     @unfolding="handleUnfolding"
      @cancel="(e, cb) => ManageOrderListPageData.handleOrderCancel(e, cb)" />
     <Footer :condition="ManageOrderListPageData.condition" :getList="getList" :total="ManageOrderListPageData.listNumber" />
   </section>
@@ -29,6 +30,7 @@ const getList = (e) => { ManageOrderListPageData.value.getList(e); };
 
 const handleOrderToTop = (id: string) => { ManageOrderListPageData.value.handleOrderToTop(id); }; // 订单置顶
 const handleToCustomizPlate = (id: string) => { ManageOrderListPageData.value.handleToCustomizPlate(id); }; // 转自定义版
+const handleUnfolding = (id: string) => { ManageOrderListPageData.value.handleUnfolding(id); }; // 撤回折手
 
 onMounted(() => { ManageOrderListPageData.value.getInitData(); });
 </script>

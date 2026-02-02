@@ -89,6 +89,10 @@ export interface IManageOrderListItem extends IOrderItemBase {
   IsTop: boolean
   /** 是否可转自定义版 */
   ToCustomPlate: boolean
+  /** 是否需要折手 */
+  NeedFolding: boolean
+  /** 是否可撤回折手 */
+  AllowUnfolding: boolean
   /** 生产线 */
   Line: string
   /** 实例列表 */
