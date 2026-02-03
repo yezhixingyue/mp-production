@@ -1,4 +1,5 @@
 import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
+import { TaskOrderType } from '@/types/enum';
 import { ProductiveTaskStatusEnum } from '@/views/ProductionClient/assets/js/enum';
 import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 
@@ -23,6 +24,8 @@ export class Condition {
   PageSize = 20
 
   IncludeTotalDuration = true
+
+  OrderType = TaskOrderType.Process
 
   constructor(Equipment?: IEquipmentBaseInfo) {
     this.Catalog = {
