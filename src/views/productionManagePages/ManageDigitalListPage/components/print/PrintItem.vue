@@ -8,11 +8,12 @@
           <i v-if="item.UploadFile.SemiFinished && ChunkInfo && OrderInfo" style="font-size: 0.7em"
             > - {{ ChunkInfo.InstanceIndex }} / {{ OrderInfo.InstanceNumber }}</i>
         </p>
-        <p class="title b">
+        <p class="title b" style="margin-bottom: -0.2em;">
           <span class="station">{{ OrderInfo?.StationName || '' }}</span>
           <span>凌顶揽众数码流转工单</span>
         </p>
-        <p>生 产 线：{{ item.ProductionLine.Name }}</p>
+        <p style="margin-bottom: -0.1em;font-size: 0.95em;">{{ OrderInfo?.DistrictName || '' }}</p>
+        <p style="margin-bottom: -0.2em;">生 产 线：{{ item.ProductionLine.Name }}</p>
       </div>
       <div class="code">
         <img :src="item._ChunkQcCode" alt="">

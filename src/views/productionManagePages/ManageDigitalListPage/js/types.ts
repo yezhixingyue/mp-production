@@ -145,6 +145,8 @@ export interface IDigitalOrderPlatePrintInfo {
       Describe: string
       /** 站点名称 */
       StationName: string
+      /** 二级网点名称 */
+      DistrictName: string
       InstanceNumber
     }
   }] | []

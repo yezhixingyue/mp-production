@@ -268,7 +268,7 @@
         }
 
         &.left {
-          padding-bottom: 0.5em;
+          padding-bottom: 0.1em;
           font-size: 1.3em;
           > * {
             flex: none;
@@ -276,6 +276,10 @@
             &.title {
               flex: 1;
             }
+          }
+
+          .district {
+            margin-bottom: -0.2em;
           }
         }
 
