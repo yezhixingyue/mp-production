@@ -63,6 +63,8 @@ export interface ImpositionTemmplate{
   Name: string,
   IsPrintingPlate:boolean,
   IsSameSizeWithPrintingPlate:boolean,
-  IsDigital:boolean,
+  IsDigital:boolean
+  /** 是否生成拼板块裁切角线 */
+  ShowAngularLine: boolean
   List:SizeListType[],
 }

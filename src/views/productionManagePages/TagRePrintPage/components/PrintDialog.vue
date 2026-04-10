@@ -14,7 +14,13 @@
 
           <main>
             <div class="left">
-              <h2>{{ result.data.OrderInfo.StationSN || result.data.OrderInfo.StationName }}</h2>
+              <h2 style="position: relative;">
+                <span>{{ result.data.OrderInfo.StationSN || result.data.OrderInfo.StationName }}</span>
+                <i v-if="result.data.OrderInfo.UsualAddress === false"
+                 style="position: absolute;right: 0;bottom: 0.1em;width: 1.2em;height: 1.1em;background-color: #000;color: #fff;
+                 font-size: 0.8em;padding: 0.02em 0.08em 0.08em 0.02em;margin:0;font-weight: 700;line-height: 1em;text-align: center;"
+                 >代</i>
+              </h2>
               <p style="font-size: 1.4em;padding-bottom: 0.2em;">
                 <template v-if="result.data.OrderInfo.StationSN">{{ [result.data.OrderInfo.StationName,result.data.OrderInfo.DistrictSN].join('-') }}</template>
                 <template v-else>{{ result.data.OrderInfo.DistrictName }}</template>
