@@ -217,6 +217,52 @@ onUnmounted(() => {
     }
   }
 
+  :deep(.el-table__inner-wrapper) {
+    &::after {
+      display: none;
+    }
+  }
+
+  :deep(.el-table__header-wrapper) {
+    display: block !important;
+    position: relative;
+
+    &::before, &::after {
+      content: '';
+      position: absolute;
+      width: 1px;
+      top: 0;
+      bottom: 1px;
+      z-index: 99;
+      background-color: #fff;
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+
+    thead > tr > th{
+      background-color: #fff;
+      color: #fff;
+      padding: 1px 0 3px 0;
+
+      &::after {
+        display: none;
+      }
+
+      &.latest-finish-time {
+        // opacity: 1;
+        background-color: #fff;
+        color: #444;
+        font-size: 14px;
+      }
+    }
+  }
+
   :deep(.is-pink) {
     color: #f00;
   }

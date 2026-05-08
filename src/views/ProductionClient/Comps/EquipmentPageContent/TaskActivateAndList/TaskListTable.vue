@@ -19,7 +19,7 @@
       <mp-table-column v-if="showRowOptions.showWishDuration" prop="_WishDuration" width="120px" label="预计加工时长" />
       <mp-table-column v-if="showRowOptions.showActualDuration" prop="_ActualDuration" width="120px" label="实际加工时长" />
       <mp-table-column v-if="showRowOptions.showFinishTime" prop="_FinishTime" width="130px" label="完成时间" />
-      <mp-table-column v-if="showRowOptions.showLatestFinishTime" prop="LatestFinishTime" width="130px" label="最迟完工时间">
+      <mp-table-column v-if="showRowOptions.showLatestFinishTime" prop="LatestFinishTime" label-class-name="latest-finish-time" width="130px" label="最迟完工时间">
         <template #default="scope:{ row: RowType }">
           <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''">{{ scope.row._LatestFinishTime.Time }}</span>
         </template>
