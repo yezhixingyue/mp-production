@@ -1,6 +1,6 @@
 {
   "name": "mpzj",
-  "version": "1.1.8-build.026",
+  "version": "1.1.8-build.028",
   "private": true,
   "scripts": {
     "compile-print-scss": "sass ./src/assets/css/print.scss ./public/css/print.css",
@@ -71,5 +71,5 @@
     "ts-jest": "^27.0.4",
     "typescript": "~4.5.5"
   },
-  "commitId": "e93bc31a4e511be4e7cfeec260c07fbd67c5d005\n"
+  "commitId": "22b61df55e0cbbcb22670e161a02c8eb0857223c\n"
 }

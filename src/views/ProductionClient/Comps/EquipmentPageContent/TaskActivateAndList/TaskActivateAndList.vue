@@ -64,7 +64,10 @@ const code = ref('');
 const oInput = ref<InstanceType<typeof HTMLInputElement>>();
 
 const setInputFocus = () => { // 聚焦
-  if (oInput.value) oInput.value?.focus();
+  if (oInput.value) {
+    code.value = '';
+    oInput.value?.focus();
+  }
 };
 
 const resultVisible = ref(false);

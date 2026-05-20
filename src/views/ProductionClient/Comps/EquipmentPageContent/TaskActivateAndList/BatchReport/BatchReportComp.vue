@@ -267,6 +267,10 @@ const onDownloadClick = (row: RowType) => { // 下载文件
           display: none;
         }
 
+        &.el-table-column--selection {
+          visibility: hidden;
+        }
+
         &.latest-finish-time {
           // opacity: 1;
           background-color: #fff;
