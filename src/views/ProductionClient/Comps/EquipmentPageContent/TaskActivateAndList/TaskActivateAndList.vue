@@ -258,7 +258,7 @@ onUnmounted(() => {
         // opacity: 1;
         background-color: #fff;
         color: #444;
-        font-size: 14px;
+        font-size: 13px;
       }
     }
   }

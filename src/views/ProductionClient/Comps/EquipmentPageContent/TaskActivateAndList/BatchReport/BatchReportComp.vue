@@ -26,7 +26,7 @@
           </div>
         </template>
       </mp-table-column>
-      <mp-table-column prop="LatestFinishTime" width="145px" label="最迟完工时间">
+      <mp-table-column prop="LatestFinishTime" width="145px" label="最迟完工时间" label-class-name="latest-finish-time">
         <template #default="scope:{ row: RowType }">
           <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''" class="ft-15"
             >{{ scope.row._LatestFinishTime.Time }}</span>
@@ -225,6 +225,55 @@ const onDownloadClick = (row: RowType) => { // 下载文件
             width: 100%;
             height: 100%;
             justify-content: center;
+          }
+        }
+      }
+    }
+
+    :deep(.el-table__inner-wrapper) {
+      &::after {
+        display: none;
+      }
+    }
+
+    :deep(.el-table__header-wrapper) {
+      display: block !important;
+      position: relative;
+
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        width: 1px;
+        top: 0;
+        bottom: 1px;
+        z-index: 99;
+        background-color: #fff;
+      }
+
+      &::before {
+        left: 0;
+      }
+
+      &::after {
+        right: 0;
+      }
+
+      thead > tr > th{
+        background-color: #fff;
+        color: #fff;
+        padding: 1px 0 3px 0;
+
+        &::after {
+          display: none;
+        }
+
+        &.latest-finish-time {
+          // opacity: 1;
+          background-color: #fff;
+          color: #444;
+
+          .cell {
+            font-size: 13px;
           }
         }
       }
