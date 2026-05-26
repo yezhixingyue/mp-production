@@ -8,15 +8,16 @@
 
       <li>
         <span class="label star">类型：</span>
-        <el-radio-group v-model="ruleForm.Type" size="small">
+        <el-radio-group v-model="ruleForm._LocalType" size="small">
           <el-radio class="ft-12" v-for="it in radioMenus" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
         </el-radio-group>
       </li>
 
-      <li style="margin-top: -10px;" v-if="ruleForm.Type === AssistInfoTypeEnum.text && NoteDisplayPositionList.length > 0" class="poi">
+      <li style="margin-top: -10px;" v-if="ruleForm._UsableNoteDisplayPositionList.length > 0" class="poi">
         <span class="label star">展示位置：</span>
         <div>
-          <el-checkbox class="ft-12" v-model="ruleForm.Position[it.Key]" v-for="it in NoteDisplayPositionList" :key="it.Key" >{{ it.Name }}</el-checkbox>
+          <el-checkbox class="ft-12" v-model="ruleForm.Position[it.Key]"
+            v-for="it in ruleForm._UsableNoteDisplayPositionList" :key="it.Key">{{ it.Name }}</el-checkbox>
         </div>
       </li>
     </ul>
@@ -28,7 +29,7 @@ import { getEnumList } from '@/assets/js/utils/getListByEnums';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { INoteDisplayPosition } from '@/views/productionResources/assistInfo/hooks/useNoteDisplayPositionList';
 import { AssistInfoItem } from '@/views/productionResources/assistInfo/TypeClass/assistInfoItem';
-import { AssistInfoTypeEnums, AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { computed, ref } from 'vue';
 
@@ -111,6 +112,10 @@ const submit = () => {
       >.label {
         line-height: 32px;
       }
+    }
+
+    :deep(.el-checkbox__inner) {
+      transition: none;
     }
   }
 }

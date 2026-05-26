@@ -1,28 +1,61 @@
 import api from '@/api';
-import { localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import CommonClassType from '@/store/modules/formattingTime/CommonClassType';
-import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
 import { IAssistListItem } from '../types';
 import { INoteDisplayPosition } from '../hooks/useNoteDisplayPositionList';
 import { AssistInfoTypeEnum } from './assistListConditionClass';
 
-export class AssistInfoItem implements IAssistListItem {
+export class AssistInfoItem {
   ID = '';
 
   Name = '';
 
-  Type: localEnumValueIDType = '';
+  private Type: AssistInfoTypeEnum | '' = '';
 
   Position: { [key: string]: boolean; } = {};
 
-  constructor(data: IAssistListItem | null, NoteDisplayPositionList: INoteDisplayPosition[]) {
-    NoteDisplayPositionList.forEach(it => {
-      this.Position[it.Key] = false;
+  _UsableNoteDisplayPositionList: INoteDisplayPosition[] = [];
+
+  private _EditPositionDataCache = new Map<AssistInfoTypeEnum, { [key: string]: boolean; }>();
+
+  get _LocalType() {
+    return this.Type;
+  }
+
+  set _LocalType(val: AssistInfoTypeEnum | '') {
+    // 1. 存缓存
+    if (this.Type !== '') {
+      this._EditPositionDataCache.set(this.Type, { ...this.Position });
+    }
+
+    // 2. 改变数据
+    this.Type = val;
+    this._UsableNoteDisplayPositionList = this.NoteDisplayPositionList.filter(it => it.Types.includes(this.Type as AssistInfoTypeEnum));
+
+    // 3. 取缓存
+    this._updatePosition(val !== '' ? this._EditPositionDataCache.get(val) : undefined);
+  }
+
+  private _updatePosition(cache?: AssistInfoItem['Position']) {
+    this.NoteDisplayPositionList.forEach(it => {
+      if (this._UsableNoteDisplayPositionList.find(pos => pos.Key === it.Key)) {
+        this.Position[it.Key] = cache?.[it.Key] ?? false;
+      } else {
+        this.Position[it.Key] = false;
+      }
     });
+  }
+
+  private NoteDisplayPositionList: INoteDisplayPosition[]
+
+  constructor(data: IAssistListItem | null, NoteDisplayPositionList: INoteDisplayPosition[]) {
+    this.NoteDisplayPositionList = NoteDisplayPositionList;
 
     if (data) {
-      restoreInitDataByOrigin(this, data);
+      this.ID = data.ID;
+      this.Name = data.Name;
+      this._LocalType = data.Type;
+
+      this._updatePosition(data.Position);
     }
   }
 
@@ -43,7 +76,7 @@ export class AssistInfoItem implements IAssistListItem {
       return false;
     }
 
-    if (this.Type === AssistInfoTypeEnum.text) {
+    if (this._UsableNoteDisplayPositionList.length > 0) {
       const hasPosition = Object.values(this.Position).some(it => it);
       if (!hasPosition) {
         MpMessage.error({ title: '保存失败', msg: '请选择展示位置' });
@@ -55,19 +88,28 @@ export class AssistInfoItem implements IAssistListItem {
   }
 
   async submit(cb: (temp: IAssistListItem) => void) {
-    const temp = CommonClassType.filter({ ...this });
-    const resp = await api.getResourceNoteSave(temp).catch(() => null);
+    const reqData = {
+      ID: this.ID,
+      Name: this.Name,
+      Type: this.Type,
+      Position: this.Position,
+    };
+
+    const resp = await api.getResourceNoteSave(reqData).catch(() => null);
+
     if (resp?.data?.isSuccess) {
       const title = this.ID ? '编辑成功' : '添加成功';
       const callback = () => {
         if (resp.data) {
           const temp: IAssistListItem = {
-            ...this,
+            ...reqData,
             ID: resp.data.Data,
+            Type: Number(this.Type),
           };
           cb(temp);
         }
       };
+
       MpMessage.dialogSuccess({ title, onOk: callback, onCancel: callback });
     }
   }

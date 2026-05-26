@@ -105,7 +105,7 @@ export interface IDigitalOrderPlatePrintInfo {
   MaterialSource: PlaceOrderMaterialSourceEnum
   /** 子版列表 */
   ChildList?: (Omit<IDigitalOrderPlatePrintInfo, 'ChildList'>)[]
-  /** 最早发货时间 */
+  /** 最晚发货时间 */
   FastDepartureTime?: string
   /** 块列表 默认此处有且仅有一个块信息 */
   ChunkList: [{

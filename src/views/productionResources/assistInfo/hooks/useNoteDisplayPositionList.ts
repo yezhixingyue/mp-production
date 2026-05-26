@@ -1,9 +1,11 @@
 import api from '@/api';
 import { onMounted, ref } from 'vue';
+import { AssistInfoTypeEnum } from '../TypeClass/assistListConditionClass';
 
 export interface INoteDisplayPosition {
   Key: string;
   Name: string;
+  Types: AssistInfoTypeEnum[]
 }
 
 export const useNoteDisplayPositionList = () => {

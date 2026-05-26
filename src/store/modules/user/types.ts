@@ -1,4 +1,5 @@
 import { IStaffPosition } from '@/views/companyManage/StaffManage/js/types';
+import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 
 export interface ILoginSubmitForm {
   Password: string;
@@ -463,11 +464,29 @@ export interface IUser {
         TypeSetup: boolean
       };
     },
+    /** 印前调整 */
+    PermissionPrePrintAdjust: {
+      HavePomission: boolean
+      Obj: {
+        /** 权限分配 */
+        Permission: boolean
+        /** 追加印数查询 */
+        AddNumberQuery: boolean
+        /** 追加印数设置 */
+        AddNumberSetup: boolean
+        /** 提前入尾版查询 */
+        UnionPlateQuery: boolean
+        /** 提前入尾版设置 */
+        UnionPlateSetup: boolean
+      };
+    }
   };
   Mobile: string;
   HeadPic: string;
   /** 部门岗位 */
   PositionList: IStaffPosition[]
+  /** 印前调整可控制生产线列表 */
+  AdjustPermissions: IBaseProperty<string>[] | null
 }
 
 export interface IUserStoreState {

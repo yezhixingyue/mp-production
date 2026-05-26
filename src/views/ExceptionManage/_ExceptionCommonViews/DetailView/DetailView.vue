@@ -15,7 +15,8 @@
   </section>
 </template>
 
-<script setup lang='ts'>import { getGoBackFun } from '@/router';
+<script setup lang='ts'>
+import { getGoBackFun } from '@/router';
 import { computed, onMounted, ref } from 'vue';
 import MpBreadcrumb from '@/components/common/ElementPlusContainners/MpBreadcrumb.vue';
 import { handleExceptionRowDataStore } from '../js/store';

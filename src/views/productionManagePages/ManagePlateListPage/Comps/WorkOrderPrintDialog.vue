@@ -14,7 +14,7 @@
       <main>
         <p class="line">
           <span class="n"> 生 产 线：{{ localInfo.data.ProductionLine.Name }}</span>
-          <span style="margin-left: 20px;" v-if="localInfo.data.FastDepartureTime">最早发货时间：{{getFastDepartureTime(localInfo.data.FastDepartureTime)}}</span>
+          <span style="margin-left: 20px;" v-if="localInfo.data.FastDepartureTime">最晚发货时间：{{getFastDepartureTime(localInfo.data.FastDepartureTime)}}</span>
         </p>
 
         <!-- 版头字 -->

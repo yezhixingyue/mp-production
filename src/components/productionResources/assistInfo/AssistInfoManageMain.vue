@@ -9,7 +9,7 @@
       </mp-table-column>
       <mp-table-column align="center" width="400px" prop="Type" label="展示位置">
         <template #default="scope:{ row: IAssistListItem }">
-          <span v-if="scope.row.Type===AssistInfoTypeEnum.text">
+          <span>
             {{ NoteDisplayPositionList.filter(n => scope.row.Position[n.Key] === true).map(n => n.Name).join('、') || '' }}
           </span>
         </template>
@@ -31,7 +31,7 @@
 <script setup lang='ts'>
 import type { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
-import { AssistInfoTypeEnums, AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { IUser } from '@/store/modules/user/types';
 import { INoteDisplayPosition } from '@/views/productionResources/assistInfo/hooks/useNoteDisplayPositionList';
 
