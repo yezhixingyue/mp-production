@@ -53,7 +53,7 @@
               <el-radio :label="index" v-model="ruleForm.reason.radio">{{ reason }}</el-radio>
             </li>
             <li>
-              <el-radio :label="255" v-model="ruleForm.reason.radio">其它</el-radio>
+              <el-radio :label="255" v-model="ruleForm.reason.radio">其他</el-radio>
 
               <el-input v-if="ruleForm.reason.radio===255" v-model="ruleForm.reason.remark" maxlength="60" show-word-limit type="textarea"
                :autosize="{minRows: 3, maxRows: 3}" :rows="3" />
@@ -82,10 +82,10 @@ const ruleForm = ref(new AddNumberRuleForm());
 const currentChunk = computed(() => ruleForm.value.currentChunk);
 
 const reasons = [
-  '凑整拼板（提升版面利用率）',
-  '减少版数',
-  '减少申放',
-  '实现订单合拼',
+  '与其他订单凑数合拼',
+  '此单工期紧张凑版合拼',
+  '无法被拼版位数整除',
+  '提升印量，确保成品数量',
 ];
 
 const onOpen = () => {
