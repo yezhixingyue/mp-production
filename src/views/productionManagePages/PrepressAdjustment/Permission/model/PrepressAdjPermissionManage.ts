@@ -31,8 +31,7 @@ export class PrepressAdjPermissionManage {
         if (data.ID === localPrepressAdjModel.value.user?.StaffID) {
           localPrepressAdjModel.value.user.AdjustPermissions = data.LineList;
 
-          localPrepressAdjModel.value.unionPlateModuleData?.updateLineList(data.LineList);
-          localPrepressAdjModel.value.addNumberModuleData?.updateLineList(data.LineList);
+          localPrepressAdjModel.value.updateMyAuthorizedLineIDs(data.LineList.map(it => it.ID));
         }
 
         callback();
@@ -55,8 +54,7 @@ export class PrepressAdjPermissionManage {
       if (id === localPrepressAdjModel.value.user?.StaffID) {
         localPrepressAdjModel.value.user.AdjustPermissions = null;
 
-        localPrepressAdjModel.value.unionPlateModuleData?.updateLineList([]);
-        localPrepressAdjModel.value.addNumberModuleData?.updateLineList([]);
+        localPrepressAdjModel.value.updateMyAuthorizedLineIDs([]);
       }
     }
   }

@@ -3,7 +3,7 @@
     <header>
       <!-- 无生产线占位提示 -->
       <p class="is-gray ft-12 ml-25 mt-98" v-if="!haveLinePremission">
-        <el-empty :description="localPrepressAdjModel.TabList.length === 0 ? '当前岗位无调整权限' : '无可用生产线权限'"  style="text-align: left;" />
+        <el-empty description="当前岗位无调整权限"  style="text-align: left;" />
       </p>
 
       <MpPageTabList v-else :list="localPrepressAdjModel.TabList" v-model="localPrepressAdjModel.currentTab"
@@ -52,7 +52,7 @@ const haveLinePremission = computed(() => {
   if (user.value) {
     if (localPrepressAdjModel.value.TabList.length === 0) return false;
 
-    return !!user.value.AdjustPermissions && user.value.AdjustPermissions.length > 0;
+    return true;
   }
   return false;
 });

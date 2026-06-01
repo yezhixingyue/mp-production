@@ -25,12 +25,18 @@ export class PrepressAdjustmentManageModel {
   init(user: IUser) {
     this.user = user;
 
+    this.updateMyAuthorizedLineIDs(user.AdjustPermissions ? user.AdjustPermissions.map(it => it.ID) : []);
+
     if (this.Permission) {
       if (this.Permission.Obj.UnionPlateQuery) this.TabList.push({ ID: AdjustTabTypeEnum.UnionPlate, Name: '提前入尾版' });
       if (this.Permission.Obj.AddNumberQuery) this.TabList.push({ ID: AdjustTabTypeEnum.AddNumber, Name: '追加印数' });
     }
 
-    // this._getProductionLineList();
+    this.getProductionLineList();
+
+    if (this.TabList.length > 0) {
+      this._getAuthorizedLineIDUnionSet();
+    }
 
     if (this.TabList.length > 0) {
       this.onTabChange(this.TabList[0].ID);
@@ -76,10 +82,34 @@ export class PrepressAdjustmentManageModel {
   /** 生产线筛选数据 */
   ProductionLineList: IProductionLineSet[] = []
 
+  /** 所有操作人可用生产线并集id列表 -- 用于顶部筛选 */
+  allAuthorizedLineIDs: string[] = []
+
+  /** 当前登录账户可用生产线 */
+  myAuthorizedLineIDs: string[] = []
+
   async getProductionLineList() { // 获取生产线列表数据
     const resp = await api.getProductionLineList({ Type: LineTypeEnum.normal });
     if (resp?.data?.isSuccess) {
       this.ProductionLineList = (resp.data.Data as IProductionLineSet[]).filter(it => it.Category !== NormalLineCategoryTypeEnum.digital);
     }
+  }
+
+  private async _getAuthorizedLineIDUnionSet() {
+    this.allAuthorizedLineIDs = [];
+    const resp = await api.productionManageApis.getOrderUnionPlateLineList();
+    if (resp?.data?.isSuccess) {
+      this.allAuthorizedLineIDs = resp.data.Data as string[];
+    }
+  }
+
+  updateMyAuthorizedLineIDs(ids: string[]) {
+    this.myAuthorizedLineIDs = [...ids];
+
+    ids.forEach(id => {
+      if (!this.allAuthorizedLineIDs.includes(id)) {
+        this.allAuthorizedLineIDs.push(id);
+      }
+    });
   }
 }

@@ -1,12 +1,10 @@
 import api from '@/api';
 import { IUser } from '@/store/modules/user/types';
-import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { ElMessage } from 'element-plus';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { IAdjustInfo } from '../../types';
 import { AdjustTabTypeEnum } from '../../types/enum';
 import { AdjustCondition } from './AdjustCondition';
-import { localPrepressAdjModel } from '../../store';
 
 /** 提前入尾版管理类 - 和追加印数共用 */
 export class AdjustListManageModel {
@@ -20,27 +18,18 @@ export class AdjustListManageModel {
 
   loading = false
 
-  LineList: IBaseProperty<string>[] = []
+  /** 当前登录账户可用生产线 */
+  // myLineList: IBaseProperty<string>[] = []
+
+  /** 所有操作人可用生产线并集id列表 -- 用于顶部筛选 */
+  // lineIdUnionSet: string[] = []
+
+  user: IUser
 
   constructor(Type: AdjustTabTypeEnum, user: IUser) {
     this._Type = Type;
 
-    this.updateLineList(user.AdjustPermissions);
-  }
-
-  updateLineList(AdjustPermissions: IBaseProperty<string>[] | null) {
-    this.LineList = [
-      { ID: '', Name: '所有生产线' },
-    ];
-
-    if (AdjustPermissions) {
-      this.LineList.push(...AdjustPermissions);
-    }
-
-    const ids = this.LineList.map(it => it.ID);
-    if (!ids.includes(this.condition.LineID)) {
-      this.condition.LineID = '';
-    }
+    this.user = user;
   }
 
   clearCondition() {
@@ -51,11 +40,6 @@ export class AdjustListManageModel {
     this.condition.Page = Page;
 
     this.list = [];
-
-    if (this.LineList.filter(it => it.ID !== '').length <= 0) { // 无可用生产线权限
-      this.listNumber = 0;
-      return;
-    }
 
     this.loading = true;
 
@@ -89,8 +73,8 @@ export class AdjustListManageModel {
       if (t) {
         t.Remark = Remark;
         t.CreateTime = getTimeConvertFormat({ withHMS: true });
-        t.OperatorID = localPrepressAdjModel.value.user?.StaffID || '';
-        t.OperatorName = localPrepressAdjModel.value.user?.StaffName || '';
+        t.OperatorID = this.user.StaffID;
+        t.OperatorName = this.user.StaffName;
         t.PlateID = resp.data.Data;
         t.CurrentNumber = t.RemainNumber;
       }

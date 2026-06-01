@@ -41,6 +41,8 @@ export interface IAdjustInfo {
   OperatorName: string
   /** 登记时间 */
   CreateTime: string
+  /** 生产线ID */
+  LineID: string
 }
 
 export interface IPlateChunk {

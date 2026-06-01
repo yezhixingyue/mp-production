@@ -5,7 +5,7 @@
     </div>
 
     <div class="menu">
-      <span v-for="it in moduleData.LineList" :key="it.ID" :class="{ active: it.ID === moduleData.condition.LineID }"
+      <span v-for="it in curFilterLineList" :key="it.ID" :class="{ active: it.ID === moduleData.condition.LineID }"
         @click="onClick(it.ID)">{{ it.Name }}</span>
     </div>
 
@@ -28,6 +28,7 @@
 import { computed } from 'vue';
 import LineDateSelectorComp from '@/components/common/LineDateSelectorComp.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
+import { localPrepressAdjModel } from '@/views/productionManagePages/PrepressAdjustment/store';
 import { PrepressAdjustmentManageModel } from '@/views/productionManagePages/PrepressAdjustment/model/PrepressAdjustmentManageModel';
 import { AdjustTabTypeEnum } from '@/views/productionManagePages/PrepressAdjustment/types/enum';
 import { AdjustListManageModel } from '../../../model/AdjustListManageModel';
@@ -39,6 +40,14 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['addNumber']);
+
+const curFilterLineList = computed(() => {
+  const { ProductionLineList, allAuthorizedLineIDs } = localPrepressAdjModel.value;
+  const list = ProductionLineList.map(it => ({ ID: it.ID, Name: it.Name })).filter(it => allAuthorizedLineIDs.includes(it.ID));
+  list.unshift({ ID: '', Name: '所有生产线' });
+
+  return list;
+});
 
 const onClick = (e: string) => {
   props.moduleData.condition.setCondition([['LineID', ''], e]);

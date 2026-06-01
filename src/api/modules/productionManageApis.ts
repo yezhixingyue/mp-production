@@ -197,6 +197,10 @@ export const productionManageApis = {
   getOrderAdjustPermissionRemove(staffID: string) {
     return instance.delete('/Api/Order/Adjust/Permission/Remove', { params: { staffID } });
   },
+  /** 已设置生产线列表获取接口/Api/Order/UnionPlate/LineList  GET */
+  getOrderUnionPlateLineList() {
+    return instance.get('/Api/Order/UnionPlate/LineList');
+  },
   /** post /Api/Order/Chunk/UnionPlate/List  提前转尾版列表 */
   getOrderChunkUnionPlateList(condition: object) {
     return instance.post('/Api/Order/Chunk/UnionPlate/List', condition);

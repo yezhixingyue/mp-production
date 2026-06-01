@@ -36,17 +36,21 @@
      || (type === AdjustTabTypeEnum.UnionPlate && Permission?.Obj.UnionPlateSetup)">
       <template #default="scope:{ row: IAdjustInfo }">
         <template v-if="type === AdjustTabTypeEnum.UnionPlate">
-          <mp-button type="primary" class="ft-12" link v-if="!scope.row.CreateTime" @click="emit('advEnter', scope.row)">提前转入</mp-button>
+          <mp-button type="primary" class="ft-12" link v-if="!scope.row.CreateTime"
+           :disabled="getDisabled(scope.row)"
+           :title="getDisabledWords(scope.row)"
+           @click="emit('advEnter', scope.row)">提前转入</mp-button>
+
           <mp-button type="danger" class="ft-12" link v-else
-           :disabled="scope.row.OperatorID!==localPrepressAdjModel.user?.StaffID"
-           :title="scope.row.OperatorID!==localPrepressAdjModel.user?.StaffID ? '非本人转入订单不可撤回' : ''"
+           :disabled="getDisabled(scope.row)"
+           :title="getDisabledWords(scope.row)"
            @click="onCancelAdvClick(scope.row)">撤回</mp-button>
         </template>
 
         <template v-if="type === AdjustTabTypeEnum.AddNumber && Permission?.Obj.AddNumberSetup">
           <mp-button type="danger" class="ft-12" link
-           :disabled="scope.row.OperatorID!==localPrepressAdjModel.user?.StaffID"
-           :title="scope.row.OperatorID!==localPrepressAdjModel.user?.StaffID ? '非本人追加数据不可删除' : ''"
+           :disabled="getDisabled(scope.row)"
+           :title="getDisabledWords(scope.row)"
            @click="onRemoveAddClick(scope.row)">删除</mp-button>
         </template>
       </template>
@@ -73,6 +77,30 @@ defineProps<{
 }>();
 
 const emit = defineEmits(['advEnter', 'cancelAdv', 'removeAdd']);
+
+const getDisabled = (row: IAdjustInfo) => {
+  if (row.LineID && !localPrepressAdjModel.value.myAuthorizedLineIDs.includes(row.LineID)) {
+    return true;
+  }
+
+  if (row.OperatorID && row.OperatorID !== localPrepressAdjModel.value.user?.StaffID) {
+    return true;
+  }
+
+  return false;
+};
+
+const getDisabledWords = (row: IAdjustInfo) => {
+  if (row.LineID && !localPrepressAdjModel.value.myAuthorizedLineIDs.includes(row.LineID)) {
+    return '无该生产线操作权限';
+  }
+
+  if (row.OperatorID && row.OperatorID !== localPrepressAdjModel.value.user?.StaffID) {
+    return '非本人数据不可操作';
+  }
+
+  return '';
+};
 
 // 非自己订单不可撤回和删除
 const onCancelAdvClick = (row: IAdjustInfo) => {

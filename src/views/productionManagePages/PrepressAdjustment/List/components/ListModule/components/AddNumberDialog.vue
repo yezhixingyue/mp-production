@@ -41,7 +41,7 @@
           <label class="star">追加数量：</label>
           <div class="right">
             <el-input v-model.number="ruleForm.Number" maxlength="9" style="width: 80px;"></el-input>
-            <span>总印数{{currentChunk.TotalNumber}}，最大追加数{{ruleForm.maxAddNumber}}（不得超过20%）</span>
+            <span>总印数{{currentChunk.TotalNumber}}，最大追加数{{ruleForm.maxAddNumber}}（不得超过50%）</span>
           </div>
         </li>
 
@@ -93,7 +93,7 @@ const onOpen = () => {
 };
 
 const getChunkName = (chunk: IPlateChunk) => {
-  const n1 = [chunk.SemiFinished, chunk.SemiFinished ? chunk.PageRemark : '', chunk.KindRemark].join(' ');
+  const n1 = [chunk.SemiFinished, chunk.PageRemark, chunk.KindRemark].filter(Boolean).join(' ');
   const n2 = `（剩余 ${chunk.RemainNumber}）`;
 
   return n1 + n2;

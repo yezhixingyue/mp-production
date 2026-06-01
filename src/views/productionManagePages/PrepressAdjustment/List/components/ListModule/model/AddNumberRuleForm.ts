@@ -37,7 +37,7 @@ export class AddNumberRuleForm {
   get maxAddNumber() {
     if (!this.currentChunk) return null;
 
-    return Math.floor(this.currentChunk.TotalNumber * 0.2);
+    return Math.floor(this.currentChunk.TotalNumber * 0.5);
   }
 
   /** 获取提交数据 */
