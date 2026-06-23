@@ -63,6 +63,7 @@
 <script lang='ts'>
 import { computed, reactive, ref } from 'vue';
 import { Base64 } from 'js-base64';
+import { useRouter, useRoute } from 'vue-router';
 import { ILoginSubmitForm } from '@/store/modules/user/types';
 import { useUserStore } from '@/store/modules/user';
 // import { useLayoutStore } from '@/store/modules/layout';
@@ -75,7 +76,8 @@ export default {
   setup() {
     // const isOrderApp = process.env.VUE_APP_TARGET === 'My Order App';
     const isOrderApp = false;
-    // const router = useRouter();
+    const route = useRoute();
+    const router = useRouter();
     const loginForm: ILoginSubmitForm = reactive({
       Mobile: '', Password: '', Terminal: 1, Site: isOrderApp ? 3 : 1,
     });
@@ -108,7 +110,11 @@ export default {
             if (isOrderApp || !res) logining.value = false;
 
             if (res) {
-              if (isOrderApp) {
+              if (route.query.backUrl) {
+                router.replace(route.query.backUrl as string).then(() => {
+                  window.location.reload();
+                });
+              } else if (isOrderApp) {
                 loadingUserInfo.value = true;
                 await userStore.getUser();
 

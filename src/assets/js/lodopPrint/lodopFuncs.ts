@@ -1,6 +1,8 @@
 /**
  * Created by mamimi on 2018/11/14.
  */
+import messageBox from '@/assets/js/utils/message';
+
 let CreatedOKLodop7766: HTMLObjectElement | null = null; let
   CLodopIsLocal: boolean;
 //= ===判断是否需要 Web打印服务CLodop:===
@@ -48,7 +50,6 @@ if (needCLodop()) {
   oscript.src = src2;
   head.insertBefore(oscript, head.firstChild);
   CLodopIsLocal = !!((src1 + src2).match(/\/\/localho|\/\/127.0.0./i));
-  console.log('needCLodop()');
 }
 //= ===获取LODOP对象的主过程：====
 // eslint-disable-next-line consistent-return
@@ -78,8 +79,8 @@ export default function getLodop(oOBJECT?: {
         // @ts-ignore: Unreachable code error
         LODOP = getCLodop();
       } catch (err) {
-        console.log(err);
-        alert('打印控件连接失败');
+        // alert('打印控件连接失败');
+        messageBox.failSingle('打印控件连接失败', () => null, () => null);
       }
       // if (!LODOP && document.readyState !== "complete") {
       //     alert("网页还没下载完毕，请稍等一下再操作.");
@@ -124,10 +125,11 @@ export default function getLodop(oOBJECT?: {
       if (!needCLodop()) document.body.innerHTML = (is64IE ? strHtm64Update : strHtmUpdate) + document.body.innerHTML;
     }
     //= ==如下空白位置适合调用统一功能(如注册语句、语言选择等):==
-    LODOP.SET_LICENSES('', '13528A153BAEE3A0254B9507DCDE2839', '', '');
+    LODOP.SET_LICENSES('', '449D95E367D143182C5F83A42187AA2F3CF', '', '');
     //= ======================================================
     return LODOP;
   } catch (err) {
-    alert(`getLodop出错:${err}`);
+    messageBox.failSingle(`getLodop出错:${err}`, () => null, () => null);
+    // alert(`getLodop出错:${err}`);
   }
 }

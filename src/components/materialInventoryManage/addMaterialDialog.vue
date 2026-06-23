@@ -402,7 +402,4 @@ export default {
       }
     }
   }
-  .make-an-inventory-error-dialog .el-input-number .el-input__inner {
-    text-align: left;
-  }
 </style>

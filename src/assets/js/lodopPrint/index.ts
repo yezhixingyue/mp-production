@@ -1,26 +1,29 @@
 import jrQrcode from 'jr-qrcode';
 import getLodop from './lodopFuncs';
 
-let LODOP:any;
+let LODOP;
 
 let oInp: HTMLElement | null = document.querySelector('li.mp-print-label-header-inp-wrap > input');
 
-function CreateOnePage({
-  StationSN, StationName, DistrictSN, DistrictName,
-  CustomerSN, ExpressText, CustomerName, userInfo,
-  ProductClass, ProductName, KindCount, ProductAmount, Unit, SizeString, Content, LastPrintTime, PackageID }) {
+function CreateOnePage(
+  { ID },
+  { Address, Customer, SecondLevel, ProductName, KindCount, Number, Unit, Size, Content },
+) {
   LODOP = getLodop();
   LODOP.PRINT_INIT('名片之家打印控件测试');
-  LODOP.SET_PRINT_MODE('PRINT_PAGE_PERCENT', '33%');
-  const _src = jrQrcode.getQrBase64(`${PackageID}`);
+  LODOP.SET_PRINT_MODE('PRINT_PAGE_PERCENT', '100%');
+  const _src = jrQrcode.getQrBase64(`${ID}`);
 
-  const FirstName = StationSN || StationName;
-  const SecondName = StationSN ? `${StationName} - ${DistrictSN}` : DistrictName;
-
+  const BranchAllName = `${Address.Delivery.DistrictName || ''}${Address.Delivery.StationName || ''}`;
+  const temp = new Date();
+  const Hours = temp.getHours();
+  const Minutes = temp.getMinutes();
+  const dataStr = `${temp.getFullYear()}年${temp.getMonth() + 1}月${temp.getDate()}日
+  ${Hours <= 9 ? `0${Hours}` : Hours}:${Minutes <= 9 ? `0${Minutes}` : Minutes}`;
   const _PrintInner = `<style>
   .printWrap {
-    width: 210mm;
-    height: 150mm;
+    width: 70mm;
+    height: 50mm;
     padding: 0;
     margin: 0;
     padding-top: 4mm;
@@ -31,256 +34,61 @@ function CreateOnePage({
 li {
     list-style: none;
 }
-ul {
+ul, html, body {
     padding: 0;
     margin: 0;
 }
 p {
     margin: 0;
 }
-.content {
-    width: 192mm;
-    margin: 0;
-    margin-left: 7mm;
-    border: 1.5pt solid #000;
-}
-
-.header {
-    text-align: center;
-    box-sizing: border-box;
-    position: relative;
-    height: 72mm;
-    border-bottom: 1.5pt solid #000;
-    overflow: hidden;
-}
-
-.header ul {
-    width: 66%;
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    border-right: 1.5pt solid #000;
-    overflow: hidden;
-}
-.header ul li {
-    width: 100%;
-    overflow: hidden;
-}
-.header ul .header-item-1 {
-    font-size: 85pt;
-    border-bottom: 1.5pt solid #000;
-    height: 30mm;
-    line-height: 29mm;
-}
-
-.header-item-2 {
-    font-size: 38pt;
-    padding-left: 3mm;
-    border-bottom: 1.5pt solid #000;
-    height: 21mm;
-    line-height: 21mm;
-    overflow: hidden;
-    text-align: left;
-    font-weight: 700;
-}
-
-.header-item-3 {
-    padding-left: 3mm;
-    font-size: 26pt;
-    height: 21mm;
-    line-height: 17mm;
-    text-align: left;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow:ellipsis;
-}
-
-
-.header div {
-    width: 65mm;
-    border-bottom: 1.5pt solid #000;
-    position: absolute;
-    right: 0;
-    height: 100%;
-}
-
-.header div div {
-    padding-top: 2pt;
-    position:absolute;
-    top: 0;
-    width: 100%;
-    overflow: hidden;
-}
-
-.package-id-box {
-    font-size: 20pt;
-    height: 10mm;
-    line-height: 10mm;
-}
-img.img-code {
-    width: 74%;
-}
-
-.express {
-    background-color: #000;
-    font-size: 26pt;
-    color: #fff;
-    height: 12mm;
-    font-weight: 700;
-    line-height: 12mm;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    overflow: hidden;
-}
-
-.content-bottom .bt-item-1 {
-    padding-left: 3mm;
-    font-size: 30pt;
-    border-bottom: 1.5pt solid #000;
-    height: 20mm;
-    line-height: 20mm;
-}
-
-.content-bottom .bt-item-1 .mobile-wrap {
-    padding-left: 1mm;
-    margin-left: 4px;
-}
-
-.bt-item-2 {
-    height: 45mm;
-    padding-top: 1mm;
-    padding-left: 1mm;
-    line-height: 14mm;
-    font-size: 27pt;
-    font-weight: lighter;
-    overflow: hidden;
-}
-
-.bt-item-3 {
-    height: 28mm;
-    border-bottom: 1.5pt solid #000;
-    border-top: 1.5pt solid #000;
-    line-height: 13mm;
-    text-align: center;
-    padding-top: 0.5mm;
-    position: relative;
-}
-
-.bt-item-3-div-1 {
-    width: 28mm;
-    font-size: 26pt;
-    position: absolute;
-    left: 0;
-}
-
-.bt-item-3-div-1-p-1 {
-    text-align: center;
-}
-
-.bt-item-3-div-2 {
-    background-color: #000;
-    color: #fff;
-    font-size: 28pt;
-    line-height:12mm;
-    width: 20mm;
-    font-weight: 700;
-    padding-top: 0mm;
-    position: absolute;
-    left: 30mm;
-    top: -0.5mm;
-    bottom: -0.5mm;
-}
-
-.bt-item-3-div-3 {
-    width: 138mm;
-    text-align: left;
-    padding-left: 5mm;
-    position: absolute;
-    right: 0;
-}
-
-.bt-item-3-div-3 p {
-    white-space: nowrap;
-    overflow: hidden;
-    line-height: 14mm;
-    font-size: 24pt;
-}
-
-.bt-item-3-div-3 p.second {
-    line-height: 13mm;
-    font-size: 24pt;
-}
-
-.bt-item-4 {
-    height: 33mm;
-    padding-top: 2mm;
-    padding-left: 3mm;
-    text-align: left;
-}
-
-.bt-item-4 div {
-    overflow: hidden;
-}
-
-.bt-item-4-div-1 {
-    height: 20mm;
-    line-height: 10mm;
-    font-size: 24pt;
-}
-
-.bt-item-4-div-2 {
-    height: 12mm;
-    line-height: 12mm;
-    font-size: 18pt;
-}
 </style>
 <section class="printWrap">
 
-    <div class="content">
-        <div class="header">
-          <ul>
-              <li class="header-item-1">${FirstName}</li>
-              <li class="header-item-2">
-                  ${SecondName}
-              </li>
-              <li class="header-item-3">
-                  ${CustomerSN}  ${CustomerName}
-              </li>
-          </ul>
-          <div>
-              <div>
-                  <img class="img-code" src="${_src}">
-                  <p class="package-id-box">${PackageID}</p>
-              </div>
-              <p class='express'>${ExpressText}</p>
+    <div style="width:238.58px;height:170px;display: block; box-sizing: border-box;
+    border: 1px solid #000;color: #000; margin: 0 auto;">
+      <div style="display: flex;" >
+        <div style="width: 156.96px;height: 88.43px;border-bottom: 1px solid #000;color: #000;border-right: 1px solid #000;color: #000;">
+          <div style="font-size: 17px;overflow: hidden;height: 66px; display: flex; flex-wrap: wrap;
+          align-items: center;justify-content: center;position: relative;">
+            <div style="${BranchAllName.length > 18 ? '' : 'font-size: 14px;'}">
+              ${Address.Delivery.DistrictName}
+              ${Address && Address.Delivery && Address.Delivery.StationName ? `-${Address.Delivery.StationName}` : ''}
+            </div>
+            ${!Address.Address.UsualAddress ? `<div style="width:1.2em;height:1.2em;line-height:1.2em;font-size:20px;
+            text-align:center;background-color:#000; color: #fff; position: absolute;right: 0;bottom: 0;">代</div>` : ''}
+            
+          </div>
+          <div style="font-size: 11px;line-height: 23.95px;height: 23.95px;border-top: 1px solid #000;color: #000;text-indent: 5px;overflow: hidden;">
+            ${Customer.CustomerSN} ${Customer.CustomerName}
           </div>
         </div>
-        <ul class="content-bottom">
-            <li class="bt-item-3">
-                <div class="bt-item-3-div-1">
-                    <p class="bt-item-3-div-1-p-1">检</p>
-                    <p>${userInfo}</p>
-                </div>
-                <div class="bt-item-3-div-2">
-                    <p>产</p>
-                    <p>品</p>
-                </div>
-                <div class="bt-item-3-div-3">
-                    <p>${ProductClass} - ${ProductName}</p>
-                    <p class="second">${KindCount}款 - ${ProductAmount}${Unit} - ${SizeString}</p>
-                </div>
-            </li>
-            <li class="bt-item-4">
-                <div class="bt-item-4-div-1">
-                    备注：${Content}
-                </div>
-                <div class="bt-item-4-div-2">
-                    <p>打印时间${LastPrintTime}</p>
-                </div>
-            </li>
-        </ul>
+        <div style="width: 81.89px;height: 88.43px; display: flex;flex-direction: column;justify-content: center;align-items: center;">
+          <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;border-bottom: 1px solid #000;color: #000;
+          width: 100%; flex: 1; padding-top: 2px;">
+            <img style="width: 70px;height: 70px;" src="${_src}" alt="">
+          </div>
+          <div style="font-size: 11px;border-bottom: 1px solid #000;color: #000;width:100%;text-align: center;line-height: 16.43px;height: 16.43px;">
+            ${ID}
+          </div>
+        </div>
+      </div>
+      <div style="display: flex;line-height: 18px; font-size: 11px;border-bottom: 1px solid #000;color: #000;">
+        <div style="min-width: 23px;width: 23px; font-size: 12px;border-right: 1px solid #000;color: #000;text-align: center;">产品</div>
+        <div style="text-indent: 5px;">
+          <p style="width: 100%; height: 18px; overflow: hidden;">
+            ${SecondLevel}-${ProductName}
+          </p>
+          <p style="width: 100%; height: 18px; overflow: hidden;">
+            ${KindCount}款-${Number}${Unit}${Size ? `-${Size}` : ''}
+          </p>
+        </div>
+      </div>
+      <div style="display: flex;flex-direction: column; padding-left: 5px;">
+        <p style="font-size: 11px;height: 30px;line-height: 15px; overflow: hidden;">
+          备注：${Content}
+        </p>
+        <div style="font-size: 8px;">打印时间：${dataStr}</div>
+      </div>
     </div>
 
 </section>`;
@@ -288,9 +96,8 @@ img.img-code {
   LODOP.SET_PREVIEW_WINDOW(0, 0, 0, 0, 0, '');
 }
 
-export default function lodopPrint(obj) {
-  console.log('lodopPrint');
-  CreateOnePage(obj);
+export default function lodopPrint(obj, orderInfo) {
+  CreateOnePage(obj, orderInfo);
   // LODOP.SET_PREVIEW_WINDOW(1, 0, 0, 0, 0, "");
   // LODOP.PREVIEW();
   //        LODOP.PREVIEW();

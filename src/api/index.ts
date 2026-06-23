@@ -14,6 +14,7 @@ import { ManualOrderHandlerApis } from './modules/ManualOrderHandlerApis';
 import { clientApis } from './modules/clientApis';
 import { ExceptionHandlerApis } from './modules/ExceptionHandlerApis';
 import { outsourceApis } from './modules/outsourceApis';
+import { changeLabelPageApis } from './modules/changeLabelPageApis';
 import productionSetting from './modules/productionSettingApis';
 
 const api = {
@@ -78,6 +79,8 @@ const api = {
   outsourceApis,
   /** 公式相关接口 */
   formulaApis,
+  /** 打包相关接口 */
+  changeLabelPageApis,
 };
 
 export default api;
