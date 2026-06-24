@@ -32,12 +32,17 @@
           show-overflow-tooltip label="属性" min-width="150" />
           <el-table-column prop="BrandDescribe" label="品牌属性" show-overflow-tooltip min-width="83">
             <template #default="scope:any">
-              {{scope.row.BrandDescribe || (scope.row.BrandIsSet ? "无" : '')}}
+              {{ scope.row.BrandIsSet ? scope.row.BrandDescribe || "无" : '' }}
             </template>
           </el-table-column>
           <el-table-column prop="ThicknessDescribe" label="厚度属性" show-overflow-tooltip min-width="83">
             <template #default="scope:any">
-              {{scope.row.ThicknessDescribe}}
+              {{ scope.row.ThicknessSet ? scope.row.ThicknessDescribe : '' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="WeightDescribe" label="重量属性" show-overflow-tooltip min-width="83">
+            <template #default="scope:any">
+              {{ scope.row.WeightSet ? scope.row.WeightDescribe : '' }}
             </template>
           </el-table-column>
           <el-table-column prop="SizeDescribe" label="尺寸规格"
@@ -50,8 +55,8 @@
               @click="ToSetAttributesPage(scope.row)">设置属性</mp-button>
               <mp-button type="primary" link :disabled="Boolean(scope.row.BrandIsSet)"
               @click="setBrandClick(scope.row.TypeID)">品牌属性</mp-button>
-              <mp-button type="primary" link :disabled="Boolean(scope.row.ThicknessSet)"
-              @click="setThicknessClick(scope.row.TypeID)">厚度属性</mp-button>
+              <mp-button type="primary" link :disabled="scope.row.ThicknessSet && scope.row.WeightSet"
+              @click="setAttributeSetupClick(scope.row)">属性定义</mp-button>
               <mp-button type="primary" link
               @click="ToSetDimensionsPage(scope.row)">尺寸规格</mp-button>
               <mp-button type="primary" link
@@ -140,32 +145,53 @@
       </div>
     </template>
     </DialogContainerComp>
-    <!-- 设置厚度属性 -->
+    <!-- 设置属性定义 -->
     <DialogContainerComp
-    title="厚度属性"
-    :visible='Data.thicknessShow'
-    :width="440"
-    :primaryClick="thicknessPrimaryClick"
-    :closeClick="thicknessCloseClick">
+    title="属性定义"
+    :visible='Data.AttributeSetupShow'
+    :width="550"
+    :primaryClick="AttributeSetupPrimaryClick"
+    :closeClick="AttributeSetupCloseClick">
     <template #default>
       <div class="set-brand-dialog">
-        <el-radio-group v-model="Data.setThicknessForm.AttributeID">
-          <!-- <el-radio :label="0" size="large">无</el-radio> -->
-          <el-radio :label="item.AttributeID" size="large"
-            v-for="item in MaterialWarehouseStore.selectNumberMaterialTypeAttribute"
-            :key="item.AttributeID">
-            <el-tooltip
-              class="box-item"
-              effect="dark"
-              :content="item.AttributeName"
-              placement="top"
-              :disabled="item.AttributeName.length<7">
-              {{item.AttributeName}}
-            </el-tooltip>
-          </el-radio>
-        </el-radio-group>
+        <ul style="display: flex; justify-content: space-between; flex-wrap: wrap;padding: 0 20px;">
+          <li style="margin-bottom: 20px;">
+            <span>重量：</span>
+            <el-select v-model="Data.setAttributeSetupForm.Weight" :disabled="Data.setAttributeSetupForm.WeightDisabled">
+              <!-- <el-option label="无" size="large" value="00000000-0000-0000-0000-000000000000">无</el-option> -->
+              <el-option :label="item.AttributeName" size="large" :value="item.AttributeID"
+                v-for="item in MaterialWarehouseStore.selectNumberMaterialTypeAttribute"
+                :key="item.AttributeID">
+                <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  :content="item.AttributeName"
+                  placement="top">
+                  {{item.AttributeName}}
+                </el-tooltip>
+              </el-option>
+            </el-select>
+          </li>
+          <li style="margin-bottom: 20px;">
+            <span>厚度：</span>
+            <el-select v-model="Data.setAttributeSetupForm.Thichness" :disabled="Data.setAttributeSetupForm.ThichnessDisabled">
+              <!-- <el-option label="无" size="large" value="00000000-0000-0000-0000-000000000000">无</el-option> -->
+              <el-option :label="item.AttributeName" size="large" :value="item.AttributeID"
+                v-for="item in MaterialWarehouseStore.selectNumberMaterialTypeAttribute"
+                :key="item.AttributeID">
+                <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  :content="item.AttributeName"
+                  placement="top">
+                  {{item.AttributeName}}
+                </el-tooltip>
+              </el-option>
+            </el-select>
+          </li>
+        </ul>
         <div class="Prompt">
-          <p>厚度属性仅允许设置一次，请谨慎操作</p>
+          <p>每个属性仅允许设置一次，请谨慎操作</p>
         </div>
       </div>
     </template>
@@ -222,15 +248,18 @@ interface dataType {
     TypeID: string
     AttributeID: string
   }
-  setThicknessForm: {
+  setAttributeSetupForm: {
     TypeID: string
-    AttributeID: string
+    Weight?: string
+    WeightDisabled: boolean
+    Thichness?: string
+    ThichnessDisabled: boolean
   }
   DataTotal: number
   getMaterialTypeData: getMaterialTypeDataType,
   brandTitle:string,
   brandShow:boolean,
-  thicknessShow:boolean,
+  AttributeSetupShow:boolean,
 }
 
 export default {
@@ -265,13 +294,16 @@ export default {
         AttributeID: '',
       },
       // 厚度属性
-      setThicknessForm: {
+      setAttributeSetupForm: {
         TypeID: '',
-        AttributeID: '',
+        Weight: '',
+        WeightDisabled: false,
+        Thichness: '',
+        ThichnessDisabled: false,
       },
       brandTitle: '品牌属性',
       brandShow: false,
-      thicknessShow: false,
+      AttributeSetupShow: false,
       DataTotal: 0,
       getMaterialTypeData: {
         CategoryID: '',
@@ -387,10 +419,18 @@ export default {
       Data.setBrandForm.TypeID = typeID;
       MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(typeID);
     }
-    function setThicknessClick(typeID) {
-      Data.thicknessShow = true;
-      Data.setThicknessForm.TypeID = typeID;
-      MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(typeID);
+    function setAttributeSetupClick(Attribute) {
+      Data.AttributeSetupShow = true;
+      Data.setAttributeSetupForm.TypeID = Attribute.TypeID;
+      const cb = () => {
+        const Thickness = MaterialWarehouseStore.selectNumberMaterialTypeAttribute.find(it => it.AttributeName === Attribute.ThicknessDescribe);
+        if (Thickness) Data.setAttributeSetupForm.Thichness = Thickness.AttributeID;
+        if (Thickness) Data.setAttributeSetupForm.ThichnessDisabled = true;
+        const Weight = MaterialWarehouseStore.selectNumberMaterialTypeAttribute.find(it => it.AttributeName === Attribute.WeightDescribe);
+        if (Weight) Data.setAttributeSetupForm.Weight = Weight.AttributeID;
+        if (Weight) Data.setAttributeSetupForm.WeightDisabled = true;
+      };
+      MaterialWarehouseStore.getMaterialTypeAttributeAllByTypeID(Attribute.TypeID, cb);
     }
 
     function brandPrimaryClick() {
@@ -408,17 +448,27 @@ export default {
         });
       }, () => null);
     }
-    function thicknessCloseClick() {
-      Data.thicknessShow = false;
-      Data.setThicknessForm.AttributeID = '';
+    function AttributeSetupCloseClick() {
+      Data.AttributeSetupShow = false;
+      Data.setAttributeSetupForm.Weight = '';
+      Data.setAttributeSetupForm.WeightDisabled = false;
+      Data.setAttributeSetupForm.Thichness = '';
+      Data.setAttributeSetupForm.ThichnessDisabled = false;
     }
-    function thicknessPrimaryClick() {
-      messageBox.warnCancelBox('您确定要保存吗?', '保存后将不能更改厚度属性，请谨慎操作', () => {
-        api.getMaterialTypeAttributeSetThickness(Data.setThicknessForm.AttributeID).then(res => {
+    function AttributeSetupPrimaryClick() {
+      const temp = { ...Data.setAttributeSetupForm };
+      if (Data.setAttributeSetupForm.WeightDisabled || Data.setAttributeSetupForm.Weight === '') delete temp.Weight;
+      if (Data.setAttributeSetupForm.ThichnessDisabled || Data.setAttributeSetupForm.Thichness === '') delete temp.Thichness;
+      if (!temp.Weight && !temp.Thichness) {
+        messageBox.failSingleError('保存失败', '请设置属性定义', () => null, () => null);
+        return;
+      }
+      messageBox.warnCancelBox('您确定要保存吗?', '保存后将不能更改设置的属性，请谨慎操作', () => {
+        api.getMaterialTypeAttributeSetup(temp).then(res => {
           if (res?.data?.Status === 1000) {
             // 设置成功
             const cback = () => {
-              thicknessCloseClick();
+              AttributeSetupCloseClick();
               getMaterialClassifyManage();
             };
             // 成功
@@ -458,11 +508,11 @@ export default {
       materialClassifyCloseClick,
       materialClassifyCloseedClick,
       setBrandClick,
-      setThicknessClick,
+      setAttributeSetupClick,
       brandPrimaryClick,
       brandCloseClick,
-      thicknessPrimaryClick,
-      thicknessCloseClick,
+      AttributeSetupPrimaryClick,
+      AttributeSetupCloseClick,
     };
   },
 
@@ -548,6 +598,7 @@ export default {
     .Prompt{
       color: #FF3769;
       margin-top: 10px;
+      text-align: center;
     }
   }
 }
