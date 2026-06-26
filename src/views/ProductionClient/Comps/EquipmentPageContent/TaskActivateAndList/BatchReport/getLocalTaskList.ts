@@ -1,4 +1,4 @@
-import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
+import { format2MiddleLangTypeDateFunc2, getIsTimedout } from '@/assets/js/filters/dateFilters';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { ExternalTaskStatusEnum } from '@/views/OutsourceManage/js/enum';
 import { ExternalTaskStatusEnumList } from '@/views/OutsourceManage/js/EnumList';
@@ -9,17 +9,6 @@ import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/proce
 import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { getTaskDisplayInfo } from '../../CurTaskPanel';
-
-const getIsTimedout = (time?: string) => {
-  if (time && typeof time === 'string') {
-    const _date = new Date(time.replace('Z', ''));
-
-    if (_date) {
-      return _date.getTime() < Date.now();
-    }
-  }
-  return false;
-};
 
 export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useContent = false) => {
   const list = TaskList.map(it => {

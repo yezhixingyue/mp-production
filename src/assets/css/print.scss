@@ -268,7 +268,7 @@
         }
 
         &.left {
-          padding-bottom: 0.5em;
+          padding-bottom: 0.1em;
           font-size: 1.3em;
           > * {
             flex: none;
@@ -276,6 +276,10 @@
             &.title {
               flex: 1;
             }
+          }
+
+          .district {
+            margin-bottom: -0.2em;
           }
         }
 
@@ -682,7 +686,7 @@
           * {
             overflow: hidden;
             white-space: nowrap;
-            text-overflow: ellipsis;
+            // text-overflow: ellipsis;
             font-size: 1em;
             line-height: 1.1em;
             height: 1em;
@@ -692,7 +696,26 @@
           h2 {
             font-weight: 400;
             font-size: 2em;
-            margin-bottom: 0.2em;
+            padding-bottom: 0.2em;
+            margin-bottom: 0;
+            position: relative;
+            letter-spacing: -0.02em;
+
+            > i {
+              position: absolute;
+              right: 0;
+              bottom: 0;
+              width: 1.2em;
+              height: 1.1em;
+              background: #000;
+              color: #fff;
+              font-size: 0.8em;
+              padding: 0.02em 0.08em 0.08em 0.02em;
+              margin:0;
+              font-weight: 700;
+              line-height: 1em;
+              text-align: center;
+            }
           }
 
           .s {

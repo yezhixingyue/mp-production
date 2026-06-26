@@ -124,4 +124,21 @@ export class ManageOrderListClass {
       MpMessage.success('转版成功', cb, cb);
     }
   }
+
+  /** 撤回折手 --- 成功后修改状态为待折手 允许撤回改为false */
+  async handleUnfolding(id: string) {
+    const t = this.list.find(it => it.ID === id);
+    if (!t) return;
+
+    const resp = await api.productionManageApis.getOrderUnfolding(id);
+
+    if (resp?.data?.isSuccess) {
+      const cb = () => {
+        t.AllowUnfolding = false;
+        t.ToCustomPlate = false;
+        t.Status = OrderStatus.WaitFolding;
+      };
+      MpMessage.success('撤回成功', cb, cb);
+    }
+  }
 }

@@ -131,6 +131,10 @@ export const productionManageApis = {
   getOrderToCustomPlate(orderID: string) {
     return instance.put('/Api/Order/ToCustomPlate', null, { params: { orderID } });
   },
+  /** 撤回折手 /Api/Order/Unfolding */
+  getOrderUnfolding(orderID: string) {
+    return instance.put('/Api/Order/Unfolding', null, { params: { orderID } });
+  },
   /** GET /Api/Task/UseableEquipmentList  获取任务可用设备列表 taskWorkingID */
   getTaskUseableEquipmentList(taskWorkingID: string) {
     return instance.get('/Api/Task/UseableEquipmentList', { params: { taskWorkingID }, loading: false });
@@ -178,5 +182,51 @@ export const productionManageApis = {
   /** /Api/Order/Thumbnail/Download  GET  传参orderID  组合工单打印列表下载块缩略图包 */
   getOrderThumbnailDownload(orderID: string) {
     return instance.get<string>('/Api/Order/Thumbnail/Download', { params: { orderID } });
+  },
+  /* 印前调整
+  --------------------------------------------- */
+  /** get /Api/Order/Adjust/Permission/List  印前调整权限列表 */
+  getOrderAdjustPermissionList() {
+    return instance.get('/Api/Order/Adjust/Permission/List');
+  },
+  /** post /Api/Order/Adjust/Permission/Save  印前调整权限保存 */
+  getOrderAdjustPermissionSave(data: object) {
+    return instance.post('/Api/Order/Adjust/Permission/Save', data);
+  },
+  /** delete /Api/Order/Adjust/Permission/Remove  印前调整权限删除 */
+  getOrderAdjustPermissionRemove(staffID: string) {
+    return instance.delete('/Api/Order/Adjust/Permission/Remove', { params: { staffID } });
+  },
+  /** 已设置生产线列表获取接口/Api/Order/UnionPlate/LineList  GET */
+  getOrderUnionPlateLineList() {
+    return instance.get('/Api/Order/UnionPlate/LineList');
+  },
+  /** post /Api/Order/Chunk/UnionPlate/List  提前转尾版列表 */
+  getOrderChunkUnionPlateList(condition: object) {
+    return instance.post('/Api/Order/Chunk/UnionPlate/List', condition);
+  },
+  /** post /Api/Order/Chunk/UnionPlate/Add  提前转尾版 */
+  getOrderChunkUnionPlateAdd(data: object) {
+    return instance.post('/Api/Order/Chunk/UnionPlate/Add', data);
+  },
+  /** delete /Api/Order/Chunk/UnionPlate/Remove 提前转尾版撤销 */
+  getOrderChunkUnionPlateRemove(chunkID: string) {
+    return instance.delete('/Api/Order/Chunk/UnionPlate/Remove', { params: { chunkID } });
+  },
+  /** post /Api/Order/Chunk/Number/List 追加数量列表 */
+  getOrderChunkNumberList(condition: object) {
+    return instance.post('/Api/Order/Chunk/Number/List', condition);
+  },
+  /** get /Api/Order/Chunk/List 搜索订单块 */
+  getOrderChunkList(code: string, closeTip = false) {
+    return instance.get('/Api/Order/Chunk/List', { params: { code }, closeTip });
+  },
+  /** post /Api/Order/Chunk/Number/Add 追加数量 */
+  getOrderChunkNumberAdd(data: object) {
+    return instance.post('/Api/Order/Chunk/Number/Add', data);
+  },
+  /** delete /Api/Order/Chunk/Number/Remove 追加数量删除 */
+  getOrderChunkNumberRemove(id: string) {
+    return instance.delete('/Api/Order/Chunk/Number/Remove', { params: { id } });
   },
 };

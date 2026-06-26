@@ -16,6 +16,8 @@ export interface IChunkDetail {
     DistrictSN: string
     DistrictName: string
     Size: string
+    /** 是否常规地址 否则为代收地址 */
+    UsualAddress: boolean
   }
   /** 当前款数 */
   KindIndex: number

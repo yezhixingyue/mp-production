@@ -14,7 +14,7 @@
           <th data-index="8" :style="`width:${widthList[8].width}px`">内容占比</th>
           <th data-index="9" :style="`width:${widthList[9].width}px`">拼版时间</th>
           <th data-index="10" :style="`width:${widthList[10].width}px`">拼版人员</th>
-          <th data-index="11" :style="`width:${widthList[11].width}px`">最早发货时间</th>
+          <th data-index="11" :style="`width:${widthList[11].width}px`">最晚发货时间</th>
           <th data-index="12" :style="`width:${widthList[12].width}px`">{{ Type === PlateTypeEnum.Plate ? '生产线' : '制版组' }}</th>
           <th data-index="13" :style="`width:${widthList[13].width}px`">当前位置</th>
           <th data-index="14" :style="`width:${widthList[14].width}px`">状态</th>

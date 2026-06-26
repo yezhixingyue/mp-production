@@ -19,12 +19,12 @@
       <mp-table-column v-if="showRowOptions.showWishDuration" prop="_WishDuration" width="120px" label="预计加工时长" />
       <mp-table-column v-if="showRowOptions.showActualDuration" prop="_ActualDuration" width="120px" label="实际加工时长" />
       <mp-table-column v-if="showRowOptions.showFinishTime" prop="_FinishTime" width="130px" label="完成时间" />
-      <mp-table-column v-if="showRowOptions.showLatestFinishTime" prop="LatestFinishTime" width="130px" label="最迟完工时间">
+      <mp-table-column v-if="showRowOptions.showLatestFinishTime" prop="LatestFinishTime" label-class-name="latest-finish-time" width="130px" label="最迟完工时间">
         <template #default="scope:{ row: RowType }">
           <span v-if="scope.row._LatestFinishTime" :class="scope.row._LatestFinishTime.isTimedout ?'is-pink' : ''">{{ scope.row._LatestFinishTime.Time }}</span>
         </template>
       </mp-table-column>
-      <mp-table-column v-if="showRowOptions.showStatus" :width="isClient ? '180px' : '100px'" prop="_StatusText" label="当前状态" >
+      <mp-table-column v-if="showRowOptions.showStatus" :width="isClient ? '160px' : '100px'" prop="_StatusText" label="当前状态" >
         <template #default="scope: { row: RowType }">
           <mp-button type="primary" link v-if="showRowOptions.showPartialDelivery
            && scope.row.Status === ProductiveTaskStatusEnum.Initial && scope.row.Working.HaveAnyReceived && scope.row.Index === 1"

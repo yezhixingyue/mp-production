@@ -15,7 +15,7 @@
 
     <!-- 2. 普通列表展示 -->
     <TaskListTable :TaskList="curInstance.TaskListData.TaskList" :loading="curInstance.TaskListData.loading" useLittleHeight
-      v-if="!curInstance.Equipment.AllowBatchReport" isClient
+      v-if="!curInstance.Equipment.AllowBatchReport" isClient :rowDisplayOptions="{showLatestFinishTime:true}"
       v-show="curInstance.TaskListData.TaskList.length > 0" />
     <!-- 3. 批量上传列表展示与操作 -->
     <BatchReportComp
@@ -64,7 +64,10 @@ const code = ref('');
 const oInput = ref<InstanceType<typeof HTMLInputElement>>();
 
 const setInputFocus = () => { // 聚焦
-  if (oInput.value) oInput.value?.focus();
+  if (oInput.value) {
+    code.value = '';
+    oInput.value?.focus();
+  }
 };
 
 const resultVisible = ref(false);
@@ -215,6 +218,56 @@ onUnmounted(() => {
       display: block;
       text-align: center;
     }
+  }
+
+  :deep(.el-table__inner-wrapper) {
+    &::after {
+      display: none;
+    }
+  }
+
+  :deep(.el-table__header-wrapper) {
+    display: block !important;
+    position: relative;
+
+    &::before, &::after {
+      content: '';
+      position: absolute;
+      width: 1px;
+      top: 0;
+      bottom: 1px;
+      z-index: 99;
+      background-color: #fff;
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+
+    thead > tr > th{
+      background-color: #fff;
+      color: #fff;
+      padding: 1px 0 3px 0;
+
+      &::after {
+        display: none;
+      }
+
+      &.latest-finish-time {
+        // opacity: 1;
+        background-color: #fff;
+        color: #444;
+        font-size: 13px;
+      }
+    }
+  }
+
+  :deep(.is-pink) {
+    color: #f00;
   }
 }
 </style>

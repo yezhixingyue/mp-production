@@ -32,6 +32,15 @@
               </template>
             </template>
           </el-table-column>
+
+          <el-table-column show-overflow-tooltip label="拼版块裁切角线" width="160">
+            <template #default="scope:any">
+              <template v-if="scope.row.IsPrintingPlate && typeof scope.row.ShowAngularLine === 'boolean'">
+                {{scope.row.ShowAngularLine ? '生成' : '不生成'}}
+              </template>
+            </template>
+          </el-table-column>
+
           <el-table-column prop="name" label="操作" min-width="241">
             <template #default="scope:any">
               <mp-button type="info" v-if="localPermission?.SpecQuery" link
@@ -50,17 +59,21 @@
     <DialogContainerComp
     :title="`${Data.addTemplateFrom.ID ? '修改' : '添加'}拼版模板`"
     :visible='Data.addTemplateFromShow'
-    :width="530"
+    :width="595"
     :primaryClick="addTemplatePrimaryClick"
     :closeClick="() => Data.addTemplateFromShow = false"
     :closed="addTemplateCloseedClick"
+    :open="() => formRef?.clearValidate()"
     >
       <template #default>
-        <div class="add-printing-color-dialog">
-          <el-form :model="Data.addTemplateFrom" label-width="82px">
-            <el-form-item label="名称：" class="form-item-required">
+        <div class="add-printing-color-dialog" style="min-height: 190px;">
+          <el-form :model="Data.addTemplateFrom" label-width="145px" ref="formRef">
+            <el-form-item label="名称：" class="form-item-required" prop="Name" :rules="[
+              { required: true, message: '请输入拼版模板名称' },
+            ]">
               <el-input :maxlength="100" style="width: 360px;" v-model="Data.addTemplateFrom.Name" />
             </el-form-item>
+
             <el-form-item label="" >
               <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length || Data.addTemplateFrom.IsDigital"
                 v-model="Data.addTemplateFrom.IsPrintingPlate" label="印刷版" size="large" />
@@ -69,6 +82,16 @@
               <el-checkbox :disabled="!!Data.addTemplateFrom.List?.length"
                 v-model="Data.addTemplateFrom.IsDigital" label="数码版" size="large" />
               <p>注意：每个生产线仅允许有一个印刷版，请不要把非印刷版设置为印刷版。</p>
+            </el-form-item>
+
+            <el-form-item label="拼版块裁切角线：" v-if="Data.addTemplateFrom.IsPrintingPlate" class="form-item-required" style="margin-top: -6px;"
+             prop="ShowAngularLine" :rules="[
+              { required: true, message: '请选择是否生成拼版块裁切角线' },
+            ]">
+              <el-radio-group style="margin-top: -4px;" v-model="Data.addTemplateFrom.ShowAngularLine">
+                <el-radio size="large" :label="true" style="width: 62px;">生成</el-radio>
+                <el-radio size="large" :label="false">不生成</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-form>
         </div>
@@ -90,9 +113,11 @@
 import MpPagination from '@/components/common/MpPagination.vue';
 import {
   reactive, onMounted, onActivated, watch, computed,
+  ref,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
+import type { FormInstance } from 'element-plus';
 import messageBox from '@/assets/js/utils/message';
 import { usePasteupSettingStore } from '@/store/modules/pasteupSetting';
 // import RadioGroupComp from '@/components/common/RadioGroupComp.vue';
@@ -100,6 +125,8 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { useUserStore } from '@/store/modules/user';
 import { ImpositionTemmplate } from './types';
+
+const formRef = ref<FormInstance>();
 
 interface DataType {
   DataTotal: number,
@@ -125,6 +152,8 @@ const Data:DataType = reactive({
     IsSameSizeWithPrintingPlate: false,
     // 数码版
     IsDigital: false,
+    /** 是否生成拼版块裁切角线 */
+    ShowAngularLine: true,
     List: [],
   },
 });
@@ -172,21 +201,22 @@ function delImpositionTemmplate(item) {
 }
 
 function addTemplatePrimaryClick() {
-  if (Data.addTemplateFrom.Name) {
-    api.getImpositionTemmplateSave(Data.addTemplateFrom).then(res => {
-      if (res.data?.Status === 1000) {
-        const cb = () => {
-          getImpositionTemmplateList();
-          Data.addTemplateFromShow = false;
-        };
-        // 保存成功
-        MpMessage.dialogSuccess('保存成功', cb, cb);
-      }
-    });
-  } else {
-    messageBox.failSingleError('保存失败', '请输入名称', () => null, () => null);
-  }
-  //
+  if (!formRef.value) return;
+
+  formRef.value.validate((valid) => {
+    if (valid) {
+      api.getImpositionTemmplateSave(Data.addTemplateFrom).then(res => {
+        if (res.data?.Status === 1000) {
+          const cb = () => {
+            getImpositionTemmplateList();
+            Data.addTemplateFromShow = false;
+          };
+          // 保存成功
+          MpMessage.dialogSuccess('保存成功', cb, cb);
+        }
+      });
+    }
+  });
 }
 function addTemplateCloseedClick() {
   Data.addTemplateFrom = {
@@ -197,6 +227,7 @@ function addTemplateCloseedClick() {
     // 和印刷版保持一致
     IsSameSizeWithPrintingPlate: false,
     IsDigital: false,
+    ShowAngularLine: true,
     List: [],
   };
 }

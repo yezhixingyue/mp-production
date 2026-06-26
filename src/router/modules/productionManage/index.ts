@@ -27,6 +27,19 @@ const routes: RouteRecordRaw = {
       component: () => import('@/views/productionManagePages/EquipmentStatus/List/EquipmentStatusListPage.vue'),
     },
     {
+      path: '/EquipmentStatusDetail',
+      name: 'EquipmentStatusDetail',
+      meta: {
+        title: '设备状态',
+        requiresAuth: true,
+        pageName: 'EquipmentStatusDetailPage',
+        PermissionInfo: ['PermissionEquipmentStatus', 'Obj', 'QueryTask'],
+      },
+      component: () => import('@/views/productionManagePages/EquipmentStatus/Detail/EquipmentStatusDetailPage.vue'),
+    },
+    /* 订单审核
+    -------------------------------------- */
+    {
       path: '/ProcessDecompositionOrderList',
       name: 'ProcessDecompositionOrderList',
       meta: {
@@ -75,16 +88,30 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ProcessDecompositionOrderList/childrenPages/PDOSubmitView/PDOSubmitView.vue'),
     },
+    /* 印前调整
+    -------------------------------------- */
     {
-      path: '/EquipmentStatusDetail',
-      name: 'EquipmentStatusDetail',
+      path: '/PrepressAdjustment/List',
+      name: 'PrepressAdjustment',
       meta: {
-        title: '设备状态',
+        title: '印前调整',
         requiresAuth: true,
-        pageName: 'EquipmentStatusDetailPage',
-        PermissionInfo: ['PermissionEquipmentStatus', 'Obj', 'QueryTask'],
+        icon: 'icon-zuhegongdandayin iconfont ft-f-14',
+        pageName: 'PrepressAdjustmentListPage',
+        PermissionInfo: ['PermissionPrePrintAdjust', 'HavePomission'],
       },
-      component: () => import('@/views/productionManagePages/EquipmentStatus/Detail/EquipmentStatusDetailPage.vue'),
+      component: () => import('@/views/productionManagePages/PrepressAdjustment/List/PrepressAdjustmentListPage.vue'),
+    },
+    {
+      path: '/PrepressAdjustment/Permission',
+      name: 'PrepressAdjustmentPermission',
+      meta: {
+        title: '印前调整权限管理',
+        requiresAuth: true,
+        pageName: 'PrepressAdjustmentPermissionPage',
+        PermissionInfo: ['PermissionPrePrintAdjust', 'Obj', 'Permission'],
+      },
+      component: () => import('@/views/productionManagePages/PrepressAdjustment/Permission/PrepressAdjustmentPermissionPage.vue'),
     },
     /* 手动下单
     -------------------------------------- */
@@ -220,7 +247,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '组合工单打印',
         requiresAuth: true,
-        icon: 'icon-shumagongdandayin1 iconfont scale-11',
+        icon: 'icon-zuhegongdandayin iconfont ft-f-14',
         pageName: 'CombineTaskPrintListPage',
         PermissionInfo: ['PermissionManageUnionTask', 'HavePomission'],
       },
@@ -294,6 +321,14 @@ const routeTree:RouteTreeType = {
           children: [{ name: 'ProcessDecompositionOrderSubmit', children: [] }],
         },
         { name: 'ProcessDecompositionOrderDetail', children: [] },
+      ],
+    },
+    /* 印前调整
+    -------------------------------------- */
+    {
+      name: 'PrepressAdjustment',
+      children: [
+        { name: 'PrepressAdjustmentPermission', children: [] },
       ],
     },
     /* 手动下单

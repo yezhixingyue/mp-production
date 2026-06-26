@@ -28,6 +28,18 @@ export const formatOnlyDate = (date: string) => {
   return result?.[0] ? result?.[0] : '';
 };
 
+/** 判定一个时间是否超过当前时间 */
+export const getIsTimedout = (time?: string) => {
+  if (time && typeof time === 'string') {
+    const _date = new Date(time.replace('Z', ''));
+
+    if (_date) {
+      return _date.getTime() < Date.now();
+    }
+  }
+  return false;
+};
+
 export default {
   format2LangTypeDate,
   format2MiddleLangTypeDateFunc2,
