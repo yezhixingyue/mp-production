@@ -1,5 +1,5 @@
 import { IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { request } from '@/basic/request';
+import { instance, request } from '@/basic/request';
 import { IEquipmentGroupLevelItem } from '@/views/productionResources/EquipmentAssistant/types/types';
 
 const api = {
@@ -73,6 +73,19 @@ const api = {
   getEquipmentGroup() { // GET /Api/EquipmentGroup/Group 适用设备
     return request<IEquipmentGroupLevelItem[]>({ method: 'GET', url: '/Api/EquipmentGroup/Group' });
   },
-
+  /* 数码折手设置
+  ---------------------------------------------------------------------- */
+  /** get /Api/FoldingTemplate/Digital/List  数码拼版设置列表 */
+  getFoldingTemplateDigitalList() {
+    return instance.get('/Api/FoldingTemplate/Digital/List');
+  },
+  /** post /Api/FoldingTemplate/Digital/Save  数码拼版设置保存 */
+  getFoldingTemplateDigitalSave(data) {
+    return instance.post('/Api/FoldingTemplate/Digital/Save', data);
+  },
+  /** delete /Api/FoldingTemplate/Digital/Remove  数码拼版设置删除 */
+  getFoldingTemplateDigitalRemove(id: number) {
+    return instance.delete('/Api/FoldingTemplate/Digital/Remove', { params: { id } });
+  },
 };
 export default api;

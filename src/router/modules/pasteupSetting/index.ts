@@ -119,6 +119,19 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/materialWarehouse/materialInventoryManage/stockWarnPage.vue'),
     },
+    // 数码折手设置
+    {
+      path: '/DigitalFolding',
+      name: 'DigitalFolding',
+      meta: {
+        title: '数码折手设置',
+        requiresAuth: true,
+        icon: 'iconfont icon-shoufengqinzhedie',
+        pageName: 'DigitalFoldingManagementView',
+        PermissionInfo: ['PermissionDigitalFolding', 'HavePomission'],
+      },
+      component: () => import('@/views/pasteupSetting/DigitalFolding/DigitalFoldingManagementView.vue'),
+    },
   ],
 };
 const routeTree:RouteTreeType = {
@@ -143,6 +156,11 @@ const routeTree:RouteTreeType = {
       children: [
         { name: 'foldWayTemplateClass', children: [] },
         { name: 'foldWayTemplateSteup', children: [] },
+      ],
+    },
+    {
+      name: 'DigitalFolding',
+      children: [
       ],
     },
   ],

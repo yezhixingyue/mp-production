@@ -31,6 +31,8 @@ export interface IProductionLineSet {
   ReproductionTypes: ReproductionTypeEnum[]
   /** 生产线特殊类型 */
   Category: NormalLineCategoryTypeEnum
+  /** 数码生产线是否勾选自动折手 */
+  AutoFolding: boolean
   /** 该生产线包含的工序列表 */
   WorkingProcedures?: { ID: string; Name: string }[]
 }
