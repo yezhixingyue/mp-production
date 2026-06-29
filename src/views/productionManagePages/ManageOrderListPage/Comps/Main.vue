@@ -67,6 +67,8 @@
                       @click="onToCustomizPlateClick(row)">转禁止合拼</el-dropdown-item>
                     <!-- 查看详情序列化字段 -->
                     <el-dropdown-item link type="primary" @click="onDetailDisplayClick(row)">加工信息</el-dropdown-item>
+                    <!-- 包裹列表 -->
+                    <el-dropdown-item link type="primary" @click="onPackListClick(row)">包裹列表</el-dropdown-item>
                     <!-- 取消 -->
                     <el-dropdown-item link type="primary"
                       v-if="user?.PermissionList.PermissionManageOrder.Obj.Cancle"
@@ -113,6 +115,8 @@
     <FileReplaceDialog v-model:visible="replaceFileVisible" :row="curRow" />
     <!-- 加工信息 -->
     <OrderDetailInfoDialog v-model:visible="describeVisible" :Describe="currentDescribe" />
+    <!-- 包裹列表 -->
+    <OrderPackListDialog v-model:visible="packListVisible" :orderID="orderID" />
   </main>
 </template>
 
@@ -135,6 +139,7 @@ import { IManageOrderListItem, IOrderCancelRelation } from '../js/type';
 import { OrderCancelStatus } from '../js/enum';
 import { getOrderTableListItem, _getNormalOrderLineContent } from '../js/getOrderTableList';
 import OrderDetailInfoDialog from './OrderDetailInfoDialog.vue';
+import OrderPackListDialog from './OrderPackListDialog.vue';
 
 const props = defineProps<{
   list: IManageOrderListItem[]
@@ -256,6 +261,14 @@ const describeVisible = ref(false);
 const onDetailDisplayClick = (row: typeof localList.value[number]) => {
   currentDescribe.value = row.Describe;
   describeVisible.value = true;
+};
+
+const packListVisible = ref(false);
+const orderID = ref('');
+
+const onPackListClick = (item) => {
+  orderID.value = item.OrderCode;
+  packListVisible.value = true;
 };
 
 /** 订单取消 */
