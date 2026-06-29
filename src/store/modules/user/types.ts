@@ -479,6 +479,14 @@ export interface IUser {
         /** 提前入尾版设置 */
         UnionPlateSetup: boolean
       };
+    },
+    /** 数码折手设置 */
+    PermissionDigitalFolding: {
+      HavePomission: boolean
+      Obj: {
+        Query: boolean
+        Setup: boolean
+      }
     }
   };
   Mobile: string;

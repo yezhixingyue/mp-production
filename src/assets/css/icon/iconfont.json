@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "47920917",
+      "name": "手风琴折叠",
+      "font_class": "shoufengqinzhedie",
+      "unicode": "ee35",
+      "unicode_decimal": 60981
+    },
+    {
       "icon_id": "30381665",
       "name": "外协金额修改",
       "font_class": "waixiejinexiugai",

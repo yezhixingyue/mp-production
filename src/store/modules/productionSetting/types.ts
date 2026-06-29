@@ -162,4 +162,5 @@ export interface IWorkingProcedureList {
   /** 允许翻版方式， 仅生产线 */
   ReproductionTypes: ReproductionTypeEnum[]
   Category: NormalLineCategoryTypeEnum
+  AutoFolding: boolean
 }

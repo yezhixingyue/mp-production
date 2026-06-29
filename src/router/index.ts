@@ -25,18 +25,6 @@ const routes: Array<RouteRecordRaw> = [
     },
     component: LoginView,
   },
-  // {
-  //   path: '/about',
-  //   name: 'about',
-  //   meta: {
-  //     title: '关于',
-  //     requiresAuth: true,
-  //   },
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
-  // },
   ...moduleRoutes,
   { // 无权限页
     path: '/notauth',
