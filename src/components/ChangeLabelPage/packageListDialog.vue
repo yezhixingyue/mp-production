@@ -76,9 +76,43 @@ const reLabel = (item) => {
       }
     }
     .el-table{
+      .el-table__header{
+        .el-table__cell{
+          padding-top: 15px;
+          padding-bottom: 15px;
+          background-color: #EEF5FC;
+          .cell{
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 30px;
+          }
+          &::after{
+            height: 24px;
+            top: 18px;
+          }
+        }
+      }
+      .el-table__body{
+        .el-table__row{
+          &.el-table__row--striped{
+            >td{
+              background-color: #EEF5FC;
+            }
+          }
+          .el-table__cell{
+            height: 60px;
+            .cell{
+              font-size: 22px;
+              line-height: 28px;
+            }
+          }
+        }
+      }
       .el-button{
         color: #444;
+        font-size: 22px !important;
         i{
+          font-size: 22px !important;
           color: #3988FF;
         }
       }

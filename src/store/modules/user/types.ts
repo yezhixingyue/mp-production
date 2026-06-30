@@ -132,6 +132,15 @@ export interface IUser {
         Unfolding?: boolean
       };
     };
+    /** 生产打印 */
+    PermissionPrintExpress: {
+      HavePomission: boolean
+      Obj: {
+        Print: boolean
+        QueryAll: boolean
+        QueryOwn: boolean
+      };
+    };
     /** 外来物料管理 */
     PermissionExternalMaterial: {
       HavePomission: boolean

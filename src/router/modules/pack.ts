@@ -7,7 +7,7 @@ const routes: RouteRecordRaw = {
   name: 'pack',
   component: packView,
   meta: {
-    title: '打包换标',
+    title: '打包机台',
     requiresAuth: true,
     icon: 'iconfont icon-shengchanxian',
   },

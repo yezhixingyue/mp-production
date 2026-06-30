@@ -21,9 +21,14 @@ import OrderListComp from '@/components/ChangeLabelPage/orderListComp.vue';
 import PrintDialog from '@/components/ChangeLabelPage/printDialog/index.vue';
 import PackageListDialog from '@/components/ChangeLabelPage/packageListDialog.vue';
 import { IGetOrderInfo } from '@/views/ChangeLabelPage/types';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useUserStore } from '@/store/modules/user';
+import { storeToRefs } from 'pinia';
 
 let oInp: HTMLElement | null = document.querySelector('.scan-input-comp > .el-input input');
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 const ChangeLabelStore = useChangeLabelStore();
 const tabValue = ref(1);
 const visible = ref(false);
@@ -38,7 +43,9 @@ const changeTabValue = (val) => {
     ChangeLabelStore.getPrintExpressList();
   }
 };
+const PermissionPrintExpress = computed(() => user.value?.PermissionList.PermissionPrintExpress);
 const submit = () => {
+  if (!PermissionPrintExpress.value?.Obj.Print) return; // 没有打印权限则不查询
   // const FormatValue = getFormatValue();
   // if (FormatValue.length !== 13) {
   //   MpMessage.error('扫描失败', '包裹号错误');

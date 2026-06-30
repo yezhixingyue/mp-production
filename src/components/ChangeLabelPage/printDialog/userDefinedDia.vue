@@ -192,6 +192,50 @@ onMounted(() => {
         left: 0;
         top: 0;
       }
+      .el-table{
+        .el-table__header{
+          .el-table__cell{
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background-color: #EEF5FC;
+            .cell{
+              font-size: 20px;
+              font-weight: 400;
+              line-height: 25px;
+            }
+            &::after{
+              height: 30px;
+              top: 10px;
+              background-color: #C9D4FB;
+            }
+          }
+        }
+        .el-table__body{
+          .el-table__row{
+            &.el-table__row--striped{
+              >td{
+                background-color: #EEF5FC;
+              }
+            }
+            .el-table__cell{
+              height: 50px;
+              .cell{
+                font-size: 20px;
+                line-height: 25px;
+              }
+            }
+          }
+        }
+        .el-button{
+          color: #444;
+          font-size: 20px !important;
+          i{
+            font-size: 20px !important;
+            color: #9BC3FF;
+          }
+        }
+      }
+
     }
   }
   .btns{
