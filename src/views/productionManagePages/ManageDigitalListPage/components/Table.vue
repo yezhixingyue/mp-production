@@ -46,7 +46,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IUser } from '@/store/modules/user/types';
 import { ManageDigitalListClass } from '../js/ManageDigitalListClass';
 import { IDigitalOrderPlateInfo } from '../js/types';
-import { DigitalImpositionStatusEnumList, DigitalImpositionTypeEnumList } from '../js/enum';
+import { DigitalImpositionStatusEnumList, DigitalImpositionTypeEnum, DigitalImpositionTypeEnumList } from '../js/enum';
 import { PrintSideEnumList } from '../../ManualOrderHandlerPage/js/enums';
 
 const props = defineProps<{
@@ -72,7 +72,7 @@ const localList = computed(() => props.localManageData.list.map(it => {
     _PrintSideText: getEnumNameByID(it.PrintSide, PrintSideEnumList),
     _Downloadable: downloadableStatuses.includes(it.Status),
     _Exportable: exportableStatuses.includes(it.Status),
-    _Revocable: revocableStatuses.includes(it.Status),
+    _Revocable: revocableStatuses.includes(it.Status) && it.ImpositionType === DigitalImpositionTypeEnum.Manual,
     _LastPrintTime: format2MiddleLangTypeDateFunc2(it.LastPrintTime),
     _Number: typeof it.Number === 'number' ? (it.AppendFilePath ? `${it.Number - 1}${it.Unit} + 1${it.Unit}` : `${it.Number}${it.Unit}`) : '',
   };
