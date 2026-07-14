@@ -9,8 +9,10 @@
       <mp-table-column v-if="showRowOptions.showReproductionType" width="80px" prop="_ReproductionType" label="翻版方式" />
       <mp-table-column v-if="showRowOptions.showWorkingName" width="170px" prop="_WorkingName" label="工序" />
       <mp-table-column v-if="showRowOptions.showProcessTimes" width="85px" prop="_ProcessTimes" label="操作次序" />
+      <mp-table-column v-if="showRowOptions.showBelongProductionLine" width="105px" prop="_BelongProductionLineText" label="所属生产线" />
       <mp-table-column v-if="showRowOptions.showContent" prop="_DetailText" min-width="120px" label="内容" />
       <mp-table-column v-if="showRowOptions.showMaterial" min-width="120px" prop="_Material" label="物料" />
+      <mp-table-column v-if="showRowOptions.showSize" width="110px" prop="_SizeText" label="尺寸" />
       <mp-table-column width="110px" prop="_Number" label="数量" />
       <mp-table-column min-width="120px" prop="_AssistText" label="加工信息" class-name="is-pink t-l" />
       <slot name="ExternalHandle"></slot>
@@ -87,6 +89,10 @@ interface rowDisplayOptions {
   showWorkingName: boolean
   showReproductionType: boolean
   showProcessTimes: boolean
+  /** 显示所属生产线 */
+  showBelongProductionLine: boolean
+  /** 是否显示尺寸 */
+  showSize: boolean
   showMaterial: boolean,
   /** 是否显示部分送达 */
   showPartialDelivery: boolean
@@ -133,6 +139,8 @@ const _defaultshowRowOptions: rowDisplayOptions = {
   showProcessTimes: true,
   showMaterial: true,
   showPartialDelivery: false,
+  showBelongProductionLine: false,
+  showSize: false,
 };
 
 const showRowOptions = computed(() => ({

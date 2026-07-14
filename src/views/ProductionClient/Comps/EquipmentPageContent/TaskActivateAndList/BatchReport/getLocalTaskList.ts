@@ -74,6 +74,10 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
 
     const _WorkingName = it.Working.WorkingName;
 
+    const _BelongProductionLineText = it.Working.LineName || ''; // 所属生产线
+
+    const _SizeText = it.Working.Size || '';
+
     /** 申放 */
     const _Wastage = it.Working.Wastage ? `${it.Working.Wastage}${info.Unit}` : '';
 
@@ -163,6 +167,8 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _LastestSendedTime,
       _IsTimeout,
       _PrintMaterialSizeTitle,
+      _BelongProductionLineText,
+      _SizeText,
     };
   });
 

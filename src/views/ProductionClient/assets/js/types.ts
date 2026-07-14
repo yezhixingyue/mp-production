@@ -230,6 +230,9 @@ export interface ITaskWorkingInfo {
   ExternalAttribute: IWorkingExternalAttribute
   /** 工序所需物料列表是否有送达 */
   HaveAnyReceived?: boolean
+  /** 所属生产线 */
+  LineName?: string
+  Size?: string
 }
 
 /** 当前任务的下一个工序信息列表类型 */
