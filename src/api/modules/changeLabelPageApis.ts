@@ -1,8 +1,8 @@
-import { IGetOrderInfo, IPrintResponse } from '@/views/ChangeLabelPage/types';
+import { IGetOrderInfo, IPrintResponse, IPackageList } from '@/views/ChangeLabelPage/types';
 import { request } from '@/basic/request';
 
 export const changeLabelPageApis = {
-  /* 公司管理相关接口
+  /* 打包换标相关接口
   --------------------------------- */
   getPrintExpressGetOrderInfo(code) { // /Api/PrintExpress/GetOrderInfo 获取订单信息
     return request<IGetOrderInfo>({ method: 'GET', url: '/Api/PrintExpress/GetOrderInfo', params: { code } });
@@ -18,5 +18,8 @@ export const changeLabelPageApis = {
   },
   getPackageRevocation(id, serverID) { // delete /Api/PrintExpress/Package/Revocation 撤销包裹
     return request({ method: 'delete', url: '/Api/PrintExpress/Package/Revocation', params: { id, serverID } });
+  },
+  getPrintExpressPackageList(data) { // delete/Api/PrintExpress/Package/List 包裹列表
+    return request<IPackageList[]>({ method: 'POST', url: '/Api/PrintExpress/Package/List', data });
   },
 };

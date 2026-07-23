@@ -171,6 +171,20 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionManagePages/ManageOrderListPage/ManageOrderListPage.vue'),
     },
+    /* 订单 包裹列表
+    -------------------------------------- */
+    {
+      path: '/OrderPackageList',
+      name: 'OrderPackageList',
+      meta: {
+        title: '包裹列表',
+        requiresAuth: true,
+        icon: 'icon-chakanbaoguoliebiao iconfont',
+        pageName: 'OrderPackageListPage',
+        PermissionInfo: ['PermissionManagePackage', 'HavePomission'],
+      },
+      component: () => import('@/views/productionManagePages/OrderPackageListPage/OrderPackageList.vue'),
+    },
     /* 后工版
     -------------------------------------- */
     {
