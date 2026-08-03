@@ -64,6 +64,7 @@
                 <div style="display: flex;">
                   <el-form-item :label="`出库数量：`" class="out-number" prop="Number">
                     <el-input size="large" placeholder="请输入出库数量"
+                    @input="value => Data.outDeliveryForm.Number = value.replace(/[^\d.]/g, '')"
                      v-model="Data.outDeliveryForm.Number" :disabled="!!StoresRequisitionInfo"/>
                   </el-form-item>
                   <p style="margin-bottom: 18px;display: flex; align-items: center;">
@@ -75,11 +76,10 @@
                         label:'Unit',
                       }"
                       :value='Data.outDeliveryForm.UnitID'
-                      @change="(ID) => Data.outDeliveryForm.UnitID = ID"
+                      @change="(ID) => UnitChange(ID) "
                       :width="100"
                       :filterable='true'
                       :placeholder="'请选择单位'"
-                      :disabled="!!StoresRequisitionInfo"
                       style="margin: 0 10px;"
                       ></OneLevelSelect>
                       <template v-if="Data.checkedMaterial">
@@ -160,7 +160,8 @@
                           <div v-if="GoodsPosition.checked">
                             <el-form :rules="formRules" :model="GoodsPosition">
                               <el-form-item prop="inputValue" style="margin: 0 10px;">
-                                <el-input v-model="GoodsPosition.inputValue"></el-input>
+                                <el-input v-model="GoodsPosition.inputValue"
+                                @input="value => GoodsPosition.inputValue = value.replace(/[^\d]/g, '')"></el-input>
                               </el-form-item>
                             </el-form>
                             <span class="unit">
@@ -209,90 +210,6 @@
       :operatorName="operatorName"
       :operatorTime="operatorTime"
     ></MaterialRequisitionDialog>
-    <!-- <DialogContainerComp
-    title="出库确认"
-    :visible='Data.outVerify'
-    :primaryClick="outVerifyPrimaryClick"
-    :closeClick="() => Data.outVerify = false"
-    :primaryText="'打印并出库'"
-    :closeBtnText="'取消出库'"
-    :width="600"
-    class="out-verify-dialog"
-    >
-    <template #default>
-      <div id="print">
-        <div style="padding:20px;padding-top: 40px;">
-          <div class="material-info" style="padding:0 20px;display: flex;color:#566176;display: flex;">
-            <div style="width:170px;">
-              <div style="display: flex;width:120px;height:120px">
-                <img style="width:120px;height:120px" :src="OutCodeSrc" alt="">
-              </div>
-              <span>出库编号:{{ Data.outDeliveryForm.OutCode }}</span>
-            </div>
-            <div class="material"
-            style="line-height: 32px;font-size:16px;font-weight: 600;">
-              <p style="display: flex;"><span style="min-width:70px;color:#7A8B9C; text-align: right;">SKU：</span>
-                <span style="">{{Data.checkedMaterial?.Code}}</span></p>
-              <p style="display: flex;line-height: 1.3em;"><span style="min-width:70px;color:#7A8B9C; text-align: right;">物料：</span>
-                <span style="">
-                  {{Data.checkedMaterial?.AttributeDescribe}}
-                </span>
-              </p>
-              <p style="display: flex;"><span style="width:70px;color:#7A8B9C; text-align: right;"></span>
-                <span style="">{{Data.checkedMaterial?.SizeDescribe}}</span></p>
-              <p style="color:#7a8b9c;margin-top:10px; line-height: 1.3em;">
-                出库数量：{{getStorehouseAllOutNumber()}}
-                  {{Data.checkedMaterial?.StockUnit}}
-                  （{{getOutUnitNum}} {{outUnitName}}）
-              </p>
-            </div>
-          </div>
-          <div style="border-top: 1px dashed #A6B6C6;height:1px;margin:40px 0"></div>
-          <div class="storehouse-stock" style="display: flex;padding:0 20px">
-            <div v-if="StoresRequisitionInfo" style="width:156px; margin-right: 30px;">
-              <div>
-                <img style="width:156px;height:156px" :src="MaterialRequisitionCodeSrc" alt="">
-              </div>
-              <span>领料编号:{{ StoresRequisitionInfo.Code }}</span>
-            </div>
-            <div style="display: flex;flex-direction: column;flex:1">
-
-              <div style="line-height: 32px;font-size:16px;font-weight: 600;">
-                <p style="display: flex;"><span style="color:#7A8B9C;text-align: right;">领料人：</span>
-                  <span style="">{{getReceiptorName}}</span></p>
-                <p style="display: flex;" v-if="StoresRequisitionInfo">
-                  <span style="">
-                    {{StoresRequisitionInfo?.ProductionLine}}
-                    {{StoresRequisitionInfo?.Equipment.ClassName}}
-                    {{StoresRequisitionInfo?.Equipment.GroupName}}
-                    {{StoresRequisitionInfo?.Equipment.Name}}
-                  </span>
-                </p>
-              </div>
-              <div style="margin:5px 0">
-                <p style="color:#7A8B9C;">出库位置：</p>
-                <ul :style="`border: 1px solid #A6B6C6;border-radius: 8px;padding:0 3%;color:#566176`">
-                  <template v-for="Storehouse in Data.StorehouseStockInfo" :key="Storehouse.StorehouseID">
-                    <template v-for="GoodsPosition in Storehouse.GoodsPositionStockInfos" :key="GoodsPosition.PositionID">
-
-                      <li v-if="GoodsPosition.checked && GoodsPosition.inputValue"
-                        style="line-height: 20px;border-bottom:1px solid #F2F6FC;display: flex;justify-content: space-between;align-items: center;
-                        min-height: 45px;">
-                        <span style="width:30%;text-align:center;">{{Storehouse.StorehouseName}}</span>
-                        <span style="width:33.33%;text-align:center;margin: 0 3.33%;">{{GoodsPosition.UpperDimension}} {{GoodsPosition.PositionName}}</span>
-                        <span style="width:30%;text-align:center;">{{GoodsPosition.inputValue}}{{Data.checkedMaterial?.StockUnit}}</span>
-                      </li>
-                    </template>
-                  </template>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <el-button v-print="print" v-show="false" ref="printBtn">打印</el-button>
-    </template>
-    </DialogContainerComp> -->
     <SeeImageDialogComp
     title="仓库货位平面图"
     :visible='Data.SeeImageShow'
@@ -546,8 +463,14 @@ export default {
       });
       return MaterialTypes.find(it => it.TypeID === Data.checkedMaterial?.TypeID)?.TypeName || '';
     });
+    const ThreeDecimalPlaces = (num) => {
+      const temp = Math.floor(num * 10000);
+      return Math.ceil(temp / 10) / 1000;
+    };
     const numberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
-      if (!value) {
+      if (StoresRequisitionInfo.value) { // 如果这个有数据则不验证
+        callback();
+      } else if (!value) {
         callback(new Error('请输入出库数量'));
       } else if (value && Number(value) > 999999.99) {
         callback(new Error('请输入小于1000000的出库数量'));
@@ -660,11 +583,11 @@ export default {
       const temp = Data.checkedMaterial?.UnitSelects
         .find(res => res.UnitID === Data.outDeliveryForm.UnitID);
       if (temp) {
-        ratio = temp.ProportionDown / temp.ProportionUp;
+        ratio = ThreeDecimalPlaces(temp.ProportionDown / temp.ProportionUp);
       } else {
         return 0;
       }
-      return ratio * Number(Data.outDeliveryForm.Number);
+      return ThreeDecimalPlaces(ratio * Number(Data.outDeliveryForm.Number));
     });
 
     const outNumberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
@@ -693,7 +616,7 @@ export default {
           num += Number(it.inputValue) || 0;
         }
       });
-      return Math.floor(num * 100) / 100;
+      return ThreeDecimalPlaces(num);
     }
     // 获取仓库的出库总数量
     function getStorehouseAllNumber(list) {
@@ -701,7 +624,7 @@ export default {
       list.GoodsPositionStockInfos.forEach(it => {
         num += Number(it.Number) || 0;
       });
-      return Math.floor(num * 100) / 100;
+      return ThreeDecimalPlaces(num);
     }
     // 获取全部仓库的出库总数量
     function getStorehouseAllOutNumber() {
@@ -713,7 +636,7 @@ export default {
           }
         });
       });
-      return Math.floor(num * 100) / 100;
+      return ThreeDecimalPlaces(num);
     }
     // 获取转换为出入库单位的数量;
     const getOutUnitNum = computed(() => {
@@ -722,11 +645,12 @@ export default {
       const temp = Data.checkedMaterial?.UnitSelects
         .find(res => res.UnitID === Data.outDeliveryForm.UnitID);
       if (temp) {
-        ratio = temp.ProportionDown / temp.ProportionUp;
+        ratio = ThreeDecimalPlaces(temp.ProportionDown / temp.ProportionUp);
       } else {
         return 0;
       }
-      return Math.floor((num / ratio) * 100) / 100;
+      // return Math.floor((num / ratio) * 10000) / 10000;
+      return ThreeDecimalPlaces(num / ratio);
     });
     // 出入库单位名;
     const outUnitName = computed(() => {
@@ -757,6 +681,16 @@ export default {
       Data.getMaterialData.SizeID = level2Val;
     }
 
+    function UnitChange(ID) {
+      Data.outDeliveryForm.UnitID = ID;
+      if (StoresRequisitionInfo.value) {
+        const temp = Data.checkedMaterial?.UnitSelects
+          .find(res => res.UnitID === Data.outDeliveryForm.UnitID);
+        if (temp) {
+          Data.outDeliveryForm.Number = ThreeDecimalPlaces((temp.ProportionUp / temp.ProportionDown) * StoresRequisitionInfo.value.Number);
+        }
+      }
+    }
     // 根据选项或sku编码查物料
     function getMaterial() {
       if (!Data.getMaterialData.SKUCode) {
@@ -771,7 +705,8 @@ export default {
           Data.checkedMaterial.UnitSelects = Data.checkedMaterial.UnitSelects
             .filter(it => it.UnitPurpose === 2);
           if (Data.checkedMaterial.UnitSelects.length) {
-            Data.outDeliveryForm.UnitID = Data.checkedMaterial.UnitSelects[0].UnitID;
+            UnitChange(Data.checkedMaterial.UnitSelects[0].UnitID);
+            // Data.outDeliveryForm.UnitID = Data.checkedMaterial.UnitSelects[0].UnitID;
           }
           GetGoodsAllocation(Data.checkedMaterial.MaterialID);
           ThreeCascaderComp.value.reset();
@@ -838,7 +773,7 @@ export default {
         messageBox.failSingleError('出库失败', '出库数量请输入正数', () => null, () => null);
       } else if (Data.outDeliveryForm.Number > 999999.99) {
         messageBox.failSingleError('出库失败', '请输入小于1000000的出库数量', () => null, () => null);
-      } else if (!reg.test(String(Data.outDeliveryForm.Number))) {
+      } else if (!StoresRequisitionInfo.value && !reg.test(String(Data.outDeliveryForm.Number))) {
         messageBox.failSingleError('出库失败', '出库数量不能超过两位小数', () => null, () => null);
       } else if (!Data.outDeliveryForm.UnitID) {
         messageBox.failSingleError('出库失败', '请选择出库单位', () => null, () => null);
@@ -919,7 +854,7 @@ export default {
         Data.getMaterialData.SKUCode = MaterialCode;
         getMaterial();
       }
-      if (StoresRequisitionInfo.value) {
+      if (StoresRequisitionInfo.value) { // 订单领料数据
         Data.getMaterialData.SKUCode = StoresRequisitionInfo.value.SKU;
         Data.outDeliveryForm.Number = StoresRequisitionInfo.value.Number;
         // Data.outDeliveryForm.Number = 1;
@@ -958,6 +893,7 @@ export default {
       getTransitionNum,
       getOutUnitNum,
       outUnitName,
+      UnitChange,
       seePosition,
       getMaterial,
       ToOutDelivery,

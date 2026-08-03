@@ -59,6 +59,7 @@
                 <div style="display: flex;">
                   <el-form-item :label="`入库数量：`" class="in-number" prop="Number">
                     <el-input placeholder="请输入入库数量"
+                    @input="value => Data.inDeliveryForm.Number = value.replace(/[^\d.]/g, '')"
                     class="number" v-model="Data.inDeliveryForm.Number" />
                     </el-form-item>
                     <p style="margin-bottom: 18px;display: flex; align-items: center;">
@@ -114,6 +115,7 @@
                       class="price-number"
                       :max="999999.99"
                       placeholder="请输入单价"
+                      @input="value => Data.inDeliveryForm.Price = value.replace(/[^\d.]/g, '')"
                       :controls="false" :min="0" v-model="Data.inDeliveryForm.Price"
                       size="large"/>
                       <template v-if="inUnitName">
@@ -122,7 +124,7 @@
                     </el-form-item>
                     <el-form-item :label="`共计：`" v-if="Data.inDeliveryForm.InStockType === 1">
                       <p style="font-size: 16px;">
-                        ￥  <span style="color:red">{{Math.floor(Number(Data.inDeliveryForm.Price) * Number(Data.inDeliveryForm.Number) * 1000) / 1000}}</span>元
+                        ￥  <span style="color:red">{{Math.round(Number(Data.inDeliveryForm.Price) * Number(Data.inDeliveryForm.Number) * 1000) / 1000}}</span>元
                       </p>
                     </el-form-item>
                 </el-form-item>
@@ -185,7 +187,7 @@
                               <el-form :rules="formRules" :model="GoodsPosition">
                                 <el-form-item prop="Number" style="margin: 0 10px;">
                                   <el-input :disabled="!Data.checkedMaterial || !getTransitionNum"
-                                  v-model="GoodsPosition.Number"
+                                  v-model="GoodsPosition.Number"  @input="value => GoodsPosition.Number = value.replace(/[^\d]/g, '')"
                                   ></el-input>
                                 </el-form-item>
                               </el-form>
@@ -468,6 +470,10 @@ export default {
       Data.inStorehouseGoodsPosition = [];
       selectStorehouseGoodsPosition.value = {};
     }
+    const ThreeDecimalPlaces = (num) => {
+      const temp = Math.floor(num * 10000);
+      return Math.ceil(temp / 10) / 1000;
+    };
     // 格式化数据
     function SizeSelectChange(ID) {
       clearFrom();
@@ -514,11 +520,11 @@ export default {
       const temp = Data.checkedMaterial?.UnitSelects
         .find(res => res.UnitID === Data.inDeliveryForm.UnitID);
       if (temp) {
-        ratio = temp.ProportionDown / temp.ProportionUp;
+        ratio = ThreeDecimalPlaces(temp.ProportionDown / temp.ProportionUp);
       } else {
         return 0;
       }
-      return ratio * Number(Data.inDeliveryForm.Number);
+      return ThreeDecimalPlaces(ratio * Number(Data.inDeliveryForm.Number));
     });
     // 获取仓库的入库总数量
     function getStorehouseInNumber(list) {
@@ -526,7 +532,7 @@ export default {
       list.forEach(it => {
         num += Number(it.Number);
       });
-      return Math.floor(num * 100) / 100;
+      return ThreeDecimalPlaces(num);
     }
     // 获取全部仓库的入库总数量
     function getStorehouseAllInNumber() {
@@ -536,7 +542,7 @@ export default {
           num += Number(it.Number);
         });
       });
-      return Math.floor(num * 100) / 100;
+      return ThreeDecimalPlaces(num);
     }
     // 获取转换为出入库单位的数量;
     const getInUnitNum = computed(() => {
@@ -545,12 +551,13 @@ export default {
       const temp = Data.checkedMaterial?.UnitSelects
         .find(res => res.UnitID === Data.inDeliveryForm.UnitID);
       if (temp) {
-        ratio = temp.ProportionDown / temp.ProportionUp;
+        ratio = ThreeDecimalPlaces(temp.ProportionDown / temp.ProportionUp);
       } else {
         return 0;
       }
       // return num / ratio;
-      return Math.floor((num / ratio) * 100) / 100;
+      // return Math.floor((num / ratio) * 100) / 100;
+      return ThreeDecimalPlaces(num / ratio);
     });
     const inNumberRules = (rule, value: number, callback: (ErrorConstructor?) => void) => {
       if (!value) {
@@ -573,11 +580,6 @@ export default {
       const routeData = router.resolve({
         name: 'outDelivery',
       });
-      // let routeData = this.$router.resolve({
-      //   name: "searchGoods",
-      //   query: params,
-      //   params:{ catId:params.catId }
-      // });
       window.open(routeData.href, '_blank');
     }
 
