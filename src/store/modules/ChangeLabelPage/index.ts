@@ -1,6 +1,8 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
 import lodopPrint from '@/assets/js/lodopPrint/index';
 import messageBox from '@/assets/js/utils/message';
+import { h } from 'vue';
+import { ElMessageBox } from 'element-plus';
 import { IPrintResponse, IGetOrderInfo } from '@/views/ChangeLabelPage/types';
 import api from '@/api';
 
@@ -17,7 +19,7 @@ type IPrintPrintData = {
   OrderID: string,
   Type: number,
   PrintCount: number,
-  Number: number,
+  Number: string,
   OperatorID: string,
 };
 type IChangeLabelGetters = {
@@ -68,7 +70,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
       OrderID: '00000000-0000-0000-0000-000000000000',
       Type: 0, // 0,全部打成一包；1,按款数打包；2,均打包；3,自定义；255，追加打印
       PrintCount: 0,
-      Number: 0,
+      Number: '',
       OperatorID: '00000000-0000-0000-0000-000000000000',
     },
   }),
@@ -95,7 +97,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
       }
       if (this.PrintPrintData.Type === 2) { // 均打包;
         //  总包裹数量 保存的包裹总数量或者输入
-        const allPackageNum = this.GetOrderInfo.PrintInfo?.PackageNumber || this.PrintPrintData.Number || 0;
+        const allPackageNum = this.GetOrderInfo.PrintInfo?.PackageNumber || Number(this.PrintPrintData.Number) || 0;
         // 剩余未打印的包裹数量 总包裹数量减去已打印包裹数量
         const noPrintPackage = allPackageNum - (this.GetOrderInfo.PrintInfo?.Packages.length || 0);
         // 如果打印设置的标签数量小于等于未打印数量则打印设置标签数量 否则打印剩余款数
@@ -133,8 +135,36 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
     setScanInputValue(str) {
       this.scanInputValue = str;
     },
-    async RevocationOrder(item: IGetOrderInfo, page:number|null = null) {
-      messageBox.warnCancelBox('确定要撤销此打包吗？', `${item.OrderCode}`, async () => {
+    RevocationOrder(item: IGetOrderInfo, page:number|null = null) {
+      ElMessageBox({
+        title: '',
+        autofocus: false,
+        showClose: true,
+        customClass: 'RevocationOrderMessageBox',
+        showCancelButton: true,
+        confirmButtonText: '撤销',
+        cancelButtonText: '取消',
+        message: () => h('div', null, [
+          h('div', { class: 'title' }, [
+            h('i', { class: 'iconfont icon-chexiaodanchuang' }),
+            h('div', null, [
+              h('p', null, '确定要撤销订单打包吗？'),
+              h('p', { class: 'order' }, `订单号：${item.OrderCode}`),
+            ]),
+          ]),
+          h('div', { class: 'content' }, [
+            h('span', null, '注意：'),
+            h('div', null, [
+              h('div', null, [
+                h('span', null, '撤销后，所有已打印标签全部失效，无法进行物流配送，不能签收，不能收回尾款。请'),
+                h('span', { class: 'is-bold' }, '务必'), h('span', null, '在撤销后执行以下动作：'),
+              ]),
+              h('p', { class: 'is-bold' }, '将此订单的已打包标签全部销毁！！！'),
+              h('p', null, '重新生成打包标签。'),
+            ]),
+          ]),
+        ]),
+      }).then(async () => {
         const resp = await api.changeLabelPageApis.getOrderRevocation(item.ID).catch(() => null);
         if (resp?.data?.isSuccess) {
           // 如果撤销的是最后一次打印标签的订单 则置空上次打印标签的列表
@@ -147,7 +177,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
             this.getPrintExpressList();
           }
         }
-      }, () => undefined);
+      }).catch(() => null);
     },
     async getPrintExpressGetOrderInfo() {
       const resp = await api.changeLabelPageApis.getPrintExpressGetOrderInfo(this.scanInputValue).catch(() => null);
@@ -188,7 +218,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
         } else {
           this.PrintExpressList.unshift(this.GetOrderInfo);
           if (this.PrintExpressList.length > 3) {
-            this.PrintExpressList.splice(0, 3);
+            this.PrintExpressList = this.PrintExpressList.filter((e, i) => i < 3);
           }
         }
         // 打印
@@ -206,7 +236,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
               break;
             case 2: // 均打包
               if ((this.GetOrderInfo.PrintInfo?.Packages.length || 0) + this.PrintCount
-              >= (this.GetOrderInfo.PrintInfo?.PackageNumber || this.PrintPrintData.Number)) {
+              >= (this.GetOrderInfo.PrintInfo?.PackageNumber || Number(this.PrintPrintData.Number))) {
                 this.printDialogVisible = false;
               }
               break;
@@ -226,7 +256,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
           num += it.Number || 0;
         });
         this.GetOrderInfo.PrintInfo = {
-          PackageNumber: this.PrintPrintData.Number,
+          PackageNumber: this.GetOrderInfo.PrintInfo?.PackageNumber || Number(this.PrintPrintData.Number),
           Packages: [...this.GetOrderInfo.PrintInfo?.Packages || [], ...resp.data.Data],
           PrintNumber: (this.GetOrderInfo.PrintInfo?.PrintNumber || 0) + num,
           Type: this.PrintPrintData.Type || 0,

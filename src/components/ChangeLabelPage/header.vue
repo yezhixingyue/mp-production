@@ -23,14 +23,14 @@
       <div class="pack-print-setting-content">
         <p class="title">一次最多打印标签数量:</p>
         <p class="input">
-          <el-input v-model="_printSettingNumber"></el-input>张
+          <el-input v-model="inputValue"></el-input>张
         </p>
         <div>
           说明：
           <ul>
             <li>此数量控制“按款数打包”、“均打包”方式打包时，每次点击“打印标签”按钮， 最多可同时打印标签的数量。</li>
-            <li>当剩余未打印数量小于此数量时，一次全部打印完毕；</li>
-            <li>当剩余未打印数量大于此数量时，一次打印标签的数量按此处设置的数量。</li>
+            <li><i></i>当剩余未打印数量小于此数量时，一次全部打印完毕；</li>
+            <li><i></i>当剩余未打印数量大于此数量时，一次打印标签的数量按此处设置的数量。</li>
           </ul>
         </div>
       </div>
@@ -44,6 +44,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import {
+  computed,
   ref,
 } from 'vue';
 /*
@@ -61,7 +62,7 @@ const router = useRouter();
 const userStore = useUserStore();
 const ChangeLabelStore = useChangeLabelStore();
 const printSettingVisible = ref(false);
-const _printSettingNumber = ref(0);
+const _printSettingNumber = ref('');
 const changeTab = (val) => {
   if (props.tabValue === val) return;
   emit('changeTabValue', val);
@@ -69,15 +70,23 @@ const changeTab = (val) => {
 const printSettingClick = () => {
   printSettingVisible.value = true;
 };
+const inputValue = computed({
+  get() {
+    return _printSettingNumber.value;
+  },
+  set(val) {
+    _printSettingNumber.value = Number(val.replace(/[^0-9]+/g, '')) > 20 ? '20' : val.replace(/[^0-9]+/g, '');
+  },
+});
 const onOpen = () => {
-  _printSettingNumber.value = ChangeLabelStore.printSettingNumber;
+  _printSettingNumber.value = String(ChangeLabelStore.printSettingNumber);
 };
 const onCancel = () => {
   printSettingVisible.value = false;
 };
 const submit = () => {
   printSettingVisible.value = false;
-  ChangeLabelStore.setPrintSettingNumber(_printSettingNumber.value);
+  ChangeLabelStore.setPrintSettingNumber(Number(_printSettingNumber.value));
 };
 const logout = () => {
   MpMessage.warn('确定退出登录吗 ?', '', () => {
@@ -183,6 +192,19 @@ const logout = () => {
             margin-top: 27px;
             >ul{
               flex: 1;
+              >li{
+                >i{
+                  left: 5px;
+                  top: 7px;
+                  width: 5px;
+                  height: 5px;
+                  display: inline-block;
+                  background-color: #687D9A;
+                  border-radius: 50%;
+                  margin: 5px;
+                  margin-bottom: 3px;
+                }
+              }
             }
           }
         }

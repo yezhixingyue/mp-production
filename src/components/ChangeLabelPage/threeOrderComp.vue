@@ -3,7 +3,7 @@
     <p class="first-few-title">
       <i></i>
       <span>
-        <i></i>
+        <img src="@/assets/images/three-order.png" alt="" srcset="">
         上3个订单
       </span>
       <i></i>
@@ -17,25 +17,25 @@
         <ul class="order-info">
           <li>
             <div class="label">产品:</div>
-            <div class="content">{{item.FirstLevel}}-{{item.SecondLevel}}</div>
+            <div class="content" :title="`${item.FirstLevel}-${item.SecondLevel}`">{{item.FirstLevel}}-{{item.SecondLevel}}</div>
           </li>
           <li>
             <div class="label">物料:</div>
-            <div class="content">{{item.Materials.join('、')}}</div>
+            <div class="content" :title="item.Materials.join('、')">{{item.Materials.join('、')}}</div>
           </li>
           <li>
             <div class="label">尺寸:</div>
-            <div class="content">{{item.Size}}</div>
+            <div class="content" :title="item.Size">{{item.Size}}</div>
           </li>
           <li>
             <div class="label">数量:</div>
-            <div class="content">{{item.Number}}{{item.Unit}}/款 {{item.KindCount}}款
+            <div class="content">{{item.Number}}{{item.Unit}} {{item.KindCount}}款
               <span class="is-gray">（共{{item.KindCount * item.Number}}{{item.Unit}}）</span>
             </div>
           </li>
           <li>
             <div class="label">客户需求:</div>
-            <div class="content">{{item.Requests.join('、')}}</div>
+            <div class="content" :title="item.Requests.join('、')">{{item.Requests.join('、')}}</div>
           </li>
           <li>
             <div class="label">实际打包:</div>
@@ -49,7 +49,7 @@
           </li>
           <li>
             <div class="label">内容:</div>
-            <div class="content">{{item.Content}}</div>
+            <div class="content lines" :title="item.Content">{{item.Content}}</div>
           </li>
         </ul>
         <p class="revocation">
@@ -108,6 +108,10 @@ const seePackages = (item) => {
         font-size: 30px;
         font-weight: 700;
         margin: 0 15px;
+        img{
+          width: 42px;
+          height: 36px;
+        }
       }
     }
     .order-list{
@@ -158,6 +162,16 @@ const seePackages = (item) => {
               color: #687D9A;
             }
             >.content{
+              white-space: nowrap; /* 防止文本换行 */
+              overflow: hidden;    /* 隐藏溢出的内容 */
+              text-overflow: ellipsis; /* 显示省略符号来代表被修剪的文本 */
+              &.lines{
+                white-space: wrap;
+                display: -webkit-box;
+                -webkit-line-clamp: 2; /* 显示 2 行后省略 */
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+              }
               .el-button{
                 margin-left: 5px;
                 color: #3988FF;

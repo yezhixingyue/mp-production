@@ -6,8 +6,12 @@
         <template v-if="GetOrderInfo?.PrintInfo?.Type === 1 || GetOrderInfo?.PrintInfo?.Type === 2">
           <div>已打印{{GetOrderInfo?.PrintInfo?.Packages.length}}个标签</div>
           <p>剩余
-            <span v-if="GetOrderInfo?.PrintInfo?.Type === 1">{{ GetOrderInfo?.KindCount - GetOrderInfo?.PrintInfo?.Packages.length }}</span>
-            <span v-if="GetOrderInfo?.PrintInfo?.Type === 2">{{  GetOrderInfo?.PrintInfo?.PackageNumber -  GetOrderInfo?.PrintInfo?.Packages.length }}</span>
+            <span v-if="GetOrderInfo?.PrintInfo?.Type === 1" style="color: #3988FF;">
+              {{ GetOrderInfo?.KindCount - GetOrderInfo?.PrintInfo?.Packages.length }}
+            </span>
+            <span v-if="GetOrderInfo?.PrintInfo?.Type === 2" style="color: #3988FF;">
+              {{  GetOrderInfo?.PrintInfo?.PackageNumber -  GetOrderInfo?.PrintInfo?.Packages.length }}
+            </span>
             个标签未打印</p>
         </template>
       </div>

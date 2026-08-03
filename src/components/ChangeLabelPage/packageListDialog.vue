@@ -16,20 +16,25 @@
           <span>订单号：</span><span class="id">{{GetOrderInfo.OrderCode}}</span>
         </p>
         <el-table fit :data="GetOrderInfo?.PrintInfo?.Packages||[]" stripe border style="width: 100%; height: 550px;">
-          <el-table-column min-width="166px" prop="ID" show-overflow-tooltip label="标签号"></el-table-column>
-          <el-table-column min-width="117px" prop="Number" show-overflow-tooltip label="数量">
+          <el-table-column min-width="254px" prop="ID" show-overflow-tooltip label="标签号"></el-table-column>
+          <el-table-column min-width="147px" prop="Number" show-overflow-tooltip label="产品数量">
             <template #default="scope:any">
               {{scope.row.Number}}{{GetOrderInfo.Unit}}
             </template>
           </el-table-column>
-          <el-table-column min-width="127px" prop="PublicKey" show-overflow-tooltip label="操作">
+          <el-table-column min-width="374px" prop="PublicKey" show-overflow-tooltip label="操作">
             <template #default="scope:any">
-              <mp-button type="info" link @click="reLabel(scope.row)">
-                <i class="iconfont icon-zhongda"></i>重打标签
-              </mp-button>
+              <div class="re-label-box">
+                <mp-button type="info" link @click="reLabel(scope.row)">
+                  <i class="iconfont icon-zhongda"></i>重打标签
+                </mp-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
+        <p style="font-size: 20px;line-height: 25px;text-align: center;margin-top: 21px;">
+          共 <span style="color: #3988FF; font-weight: 700;">{{ (GetOrderInfo?.PrintInfo?.Packages||[]).length }}</span> 个包裹
+        </p>
       </div>
     </template>
   </DialogContainerComp>
@@ -93,6 +98,15 @@ const reLabel = (item) => {
         }
       }
       .el-table__body{
+        .re-label-box{
+          text-align: left;
+          padding: 0 30px;
+        }
+        .el-table__row--striped{
+          .re-label-box{
+            text-align: right;
+          }
+        }
         .el-table__row{
           &.el-table__row--striped{
             >td{

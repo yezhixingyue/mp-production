@@ -2,7 +2,7 @@
   <div class="change-label-page">
     <div style="min-width: 1900px;">
       <Header :tabValue="tabValue" @changeTabValue="changeTabValue"/>
-      <ScanInputComp @submit="submit"/>
+      <ScanInputComp @submit="submit" :submitText="tabValue === 1 ? '确定' : '搜索'"/>
       <main>
         <ThreeOrderComp @seePackageList="seePackageList" v-if="tabValue === 1"/>
         <OrderListComp @seePackageList="seePackageList" v-else/>
@@ -73,6 +73,93 @@ onMounted(() => {
 });
 </script>
 <style lang="scss">
+.RevocationOrderMessageBox{
+  width: 900px;
+  max-width: 900px;
+  padding: 0;
+  margin-top: calc(50vh - 245px);
+  .el-message-box__header{
+    padding: 0;
+  }
+  .el-message-box__content{
+    padding: 77px 50px 0 50px;
+    .title{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      >i{
+        font-size: 98px;
+        line-height: 98px;
+        color: #F9344F;
+        margin-right: 15px;
+      }
+      p{
+        font-size: 38px;
+        font-weight: 700;
+        line-height: 49px;
+        &.order{
+          font-size: 35px;
+          font-weight: 400;
+          line-height: 45px;
+          margin-top: 4px;
+        }
+      }
+    }
+    .content{
+      margin-top: 59px;
+      background-color: #FFF1F3;
+      border-radius: 4px;
+      padding: 10px 30px;
+      color: #FF0000;
+      display: flex;
+      font-size: 20px;
+      >span{
+        white-space: nowrap;
+      }
+      >div{
+        >p{
+          &::before{
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #FF0000;
+            border-radius: 100%;
+            margin: 0 8px;
+            margin-bottom: 5px;
+          }
+        }
+      }
+    }
+  }
+  .el-message-box__btns{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    padding: 30px;
+    margin-top: 6px;
+    .el-button{
+      width: 220px;
+      height: 60px;
+      margin-left: 70px;
+      font-size: 30px;
+      border-color: #3988FF;
+      color: #3988FF;
+      &.el-button--primary{
+        background-color: #3988FF;
+        border-color: #3988FF;
+        color: #fff;
+        &:hover{
+          background-color: #5c9cfc !important;
+          border-color: #5c9cfc !important;
+        }
+      }
+      &+.el-button{
+        margin: 0;
+      }
+    }
+  }
+}
   .change-label-common-dialog{
     .el-dialog__header{
       height: 50px;

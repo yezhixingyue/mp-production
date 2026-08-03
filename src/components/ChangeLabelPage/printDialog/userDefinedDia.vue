@@ -2,7 +2,7 @@
   <div class="user-defined-box">
     <div class="print-info">
       <div class="order-info"  v-if="GetOrderInfo">
-        <p>订单数量： <span>{{GetOrderInfo.Number}}{{GetOrderInfo.Unit}}/款 {{GetOrderInfo.KindCount}}款</span>
+        <p>订单数量： <span>{{GetOrderInfo.Number}}{{GetOrderInfo.Unit}} {{GetOrderInfo.KindCount}}款</span>
           （共{{GetOrderInfo.Number*GetOrderInfo.KindCount}}{{GetOrderInfo.Unit}}）</p>
         <p>客户需求： <span v-if="GetOrderInfo.Requests && GetOrderInfo.Requests.length">{{GetOrderInfo.Requests.join('、')}}</span>
           <span class="button" @click="ChangeLabelStore.downloadFiles(GetOrderInfo.Files)" v-if="GetOrderInfo.Files && GetOrderInfo.Files.length" >
@@ -19,17 +19,17 @@
             </template>
           </div>
         </div>
-        <p class="over" v-if="printIsOver">已全部打印完毕！</p>
+        <p class="over" v-if="printIsOver"><i class="iconfont icon-chenggong"></i> 已全部打印完毕！</p>
         <div class="print-input" v-else>
           <span>当前包内产品<br/>数量：</span>
           <div class="right">
-            <el-input v-model="PrintPrintData.Number"></el-input>
+            <el-input v-model="inputValue"></el-input>
             {{GetOrderInfo.Unit}}
           </div>
         </div>
       </div>
       <div class="print-list">
-        <p>已打印{{GetOrderInfo?.PrintInfo?.Packages.length}}个标签</p>
+        <p> <img src="@/assets/images/printer.png" alt=""> 已打印{{GetOrderInfo?.PrintInfo?.Packages.length}}个标签</p>
         <el-table fit :data="GetOrderInfo?.PrintInfo?.Packages||[]" stripe border style="width: 100%; height: 350px;">
           <el-table-column min-width="166px" prop="ID" show-overflow-tooltip label="包裹号"></el-table-column>
           <el-table-column min-width="117px" prop="Number" show-overflow-tooltip label="内含数量"></el-table-column>
@@ -49,21 +49,38 @@
       </div>
     </div>
     <div class="btns">
-      <span class="submit" @click="ChangeLabelStore.getPrintExpressPrint()" v-if="!printIsOver">打印标签</span>
-      <span class="close-button" @click="closeDialog()">关闭</span>
+      <span class="submit" @click="Print" v-if="!printIsOver">打印标签</span>
+      <span :class="{closebutton: printIsOver}" @click="closeDialog()">关闭</span>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
+import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import api from '@/api';
 
 const emit = defineEmits(['closeDialog']);
 const ChangeLabelStore = useChangeLabelStore();
 const { PrintExpressList, PrintPrintData, GetOrderInfo, printIsOver } = storeToRefs(ChangeLabelStore);
 
+const inputValue = computed({
+  get() {
+    return PrintPrintData.value.Number;
+  },
+  set(val) {
+    PrintPrintData.value.Number = val.replace(/[^0-9]+/g, '');
+  },
+});
+
+const Print = () => {
+  if ((PrintPrintData.value.Type === 2 || PrintPrintData.value.Type === 3) && !PrintPrintData.value.Number) {
+    MpMessage.error('操作失败', '请输入包内产品数量');
+    return;
+  }
+  ChangeLabelStore.getPrintExpressPrint();
+};
 const closeDialog = () => {
   emit('closeDialog');
 };
@@ -112,6 +129,7 @@ onMounted(() => {
             cursor: pointer;
             font-size: 20px;
             margin-left: 20px;
+            text-decoration: underline;
             >i{
               margin-right: 10px;
             }
@@ -124,6 +142,7 @@ onMounted(() => {
           font-size: 700;
           >i{
             margin-right: 10px;
+            font-size: 41px;
           }
         }
       }
@@ -245,6 +264,7 @@ onMounted(() => {
     justify-content: center;
     >span{
       display: inline-block;
+      cursor: pointer;
       height: 60px;
       line-height: 60px;
       font-size: 30px;
@@ -256,13 +276,18 @@ onMounted(() => {
     }
     .submit{
       width: 240px;
-      cursor: pointer;
       color: #fff;
       border-radius: 5px;
       background-color: #3988FF;
       &:hover{
         background-color: #79bbff;
       }
+    }
+    .closebutton{
+      border: 2px solid #3988FF;
+      color: #3988FF;
+      border-radius: 5px;
+      width: 220px;
     }
   }
 }

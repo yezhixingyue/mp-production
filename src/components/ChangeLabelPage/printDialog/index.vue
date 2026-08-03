@@ -1,6 +1,6 @@
 <template>
   <DialogContainerComp
-    title="打包设定"
+    :title="`${GetOrderInfo && !!GetOrderInfo.PrintInfo ? '打包信息' : '打包设定'}`"
     :visible='visible'
     :width="1050"
     top="10vh"
@@ -14,13 +14,14 @@
         <div class="order-info-box"  v-if="GetOrderInfo">
           <ul>
             <li class="orderid"><span>订单号：</span><span class="id">{{GetOrderInfo.OrderCode}}</span><span class="product">（名片之家销售ERP）</span></li>
-            <li class="right">销售端产品名称：{{GetOrderInfo.FirstLevel}}-{{GetOrderInfo.SecondLevel}}</li>
-            <li>物料：{{GetOrderInfo.Materials.join('、')}}</li>
-            <li class="right">尺寸：{{GetOrderInfo.Size}}</li>
-            <li>内容：{{GetOrderInfo.Content}}</li>
+            <li class="right">销售端产品名称：<span :title="`${GetOrderInfo.FirstLevel}-${GetOrderInfo.SecondLevel}`">
+              {{GetOrderInfo.FirstLevel}}-{{GetOrderInfo.SecondLevel}}</span></li>
+            <li>物料：<span :title="GetOrderInfo.Materials.join('、')">{{GetOrderInfo.Materials.join('、')}}</span></li>
+            <li class="right">尺寸：<span :title="GetOrderInfo.Size">{{GetOrderInfo.Size}}</span></li>
+            <li>内容：<span :title="GetOrderInfo.Content">{{GetOrderInfo.Content}}</span></li>
           </ul>
           <template v-if="GetOrderInfo && GetOrderInfo.PrintInfo && GetOrderInfo.PrintInfo.Type !== 3 || !GetOrderInfo.PrintInfo">
-            <p :class="{bigleft: !!GetOrderInfo?.PrintInfo}">订单数量：<span>{{GetOrderInfo.Number}}{{GetOrderInfo.Unit}}/款 {{GetOrderInfo.KindCount}}款</span>
+            <p :class="{bigleft: !!GetOrderInfo?.PrintInfo}">订单数量：<span>{{GetOrderInfo.Number}}{{GetOrderInfo.Unit}} {{GetOrderInfo.KindCount}}款</span>
               （共{{GetOrderInfo.Number*GetOrderInfo.KindCount}}{{GetOrderInfo.Unit}}）</p>
             <p :class="{bigleft: !!GetOrderInfo?.PrintInfo}">
               客户需求：<span v-if="GetOrderInfo.Requests && GetOrderInfo.Requests.length">{{GetOrderInfo.Requests.join('、')}}</span>
@@ -85,7 +86,7 @@ const Closed = () => {
     OrderID: '',
     Type: 0,
     PrintCount: 0,
-    Number: 0,
+    Number: '',
     OperatorID: '',
   };
   GetOrderInfo.value = null;
@@ -154,6 +155,7 @@ const changeType = (type) => {
         cursor: pointer;
         font-size: 20px;
         margin-left: 20px;
+        text-decoration: underline;
         >i{
           margin-right: 10px;
         }

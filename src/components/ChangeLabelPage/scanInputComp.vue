@@ -2,7 +2,7 @@
   <div class="scan-input-comp">
     <el-input
       v-model="scanValue"
-      placeholder="请扫描或输入包裹号"
+      placeholder=""
       @keyup.enter="submit"
     >
       <template #prepend>

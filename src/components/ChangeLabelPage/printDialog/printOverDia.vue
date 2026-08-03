@@ -2,11 +2,11 @@
   <div class="print-over-box">
     <p>实际打包：<span>{{GetType(GetOrderInfo?.PrintInfo?.Type)}}</span></p>
     <div class="print-over-tip">
-      <i class=""></i> 已全部打印完毕！
+      <i class="iconfont icon-chenggong"></i> 已全部打印完毕！
     </div>
     <div class="add-package">
-      <div class="add-package-num">已追加<span>{{ GetAddPackageNum() }}</span>个包裹</div>
-      <div class="add-package-btn"><span @click="addPackage()" type="primary" color="#3988FF">追加一个包裹</span></div>
+      <div class="add-package-num" v-if="GetAddPackageNum()">已追加<span>{{ GetAddPackageNum() }}</span>个包裹</div>
+      <div class="add-package-btn"><span @click="addPackage()" type="primary" color="#3988FF">追加1个包裹</span></div>
       <div class="add-package-tip">注意：追加包裹时，包裹内的产品数量为0，代收金额也为0。</div>
     </div>
   </div>
@@ -75,6 +75,7 @@ const GetType = (type) => {
     justify-content: center;
     i{
       margin-right: 16px;
+      font-size: 40px;
     }
   }
   .add-package{

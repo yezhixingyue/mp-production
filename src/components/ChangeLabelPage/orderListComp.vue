@@ -16,14 +16,14 @@
             <div class="content" :title="item.Materials.join('、')">{{item.Materials.join('、')}}</div>
           </li>
           <li>
-            <div class="label">尺寸:</div>
-            <div class="content">{{item.Size}}</div>
-          </li>
-          <li>
             <div class="label">数量:</div>
-            <div class="content">{{item.Number}}{{item.Unit}}/款 {{item.KindCount}}款
+            <div class="content">{{item.Number}}{{item.Unit}} {{item.KindCount}}款
               <span class="is-gray">（共{{item.KindCount * item.Number}}{{item.Unit}}）</span>
             </div>
+          </li>
+          <li>
+            <div class="label">尺寸:</div>
+            <div class="content" :title="item.Size">{{item.Size}}</div>
           </li>
           <li>
             <div class="label">客户需求:</div>
@@ -138,6 +138,7 @@ const seePackages = (item) => {
         background-color: #fff;
         display: flex;
         border-radius: 4px;
+        width: 100%;
         &+li{
           margin-top: 20px;
         }
@@ -155,14 +156,13 @@ const seePackages = (item) => {
           }
         }
         .packageid{
-          line-height: 60px;
           display: flex;
           flex-direction: column-reverse;
           justify-content: center;
           align-items: center;
           padding: 0 30px;
           width: 255px;
-          font-size: 1;
+          box-sizing: border-box;
           font-size: 16px;
           line-height: 20px;
           &::after{
@@ -183,6 +183,7 @@ const seePackages = (item) => {
           flex: 1;
           display: flex;
           flex-wrap: wrap;
+          width: calc(100% - 255px - 196px);
           >li{
             display: flex;
             justify-content: flex-start;

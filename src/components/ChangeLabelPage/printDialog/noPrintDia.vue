@@ -5,7 +5,7 @@
       <p style="display: flex;">
         <el-radio v-model="PrintPrintData.Type" :label="2" @click="changeType(2)">均打包</el-radio>
         <template v-if="PrintPrintData.Type === 2">
-          <el-input v-model="PrintPrintData.Number"></el-input>
+          <el-input v-model="inputValue"></el-input>
           <span>包</span>
           <el-button @click="getPrintExpressPrint()"> <i class="iconfont icon-dayinji"></i> 打印标签</el-button>
         </template>
@@ -13,8 +13,9 @@
       <p style="display: flex;">
         <el-radio v-model="PrintPrintData.Type" :label="3" @click="changeType(3)">自定义打包</el-radio>
         <template v-if="PrintPrintData.Type === 3">
-          <el-input v-model="PrintPrintData.Number"></el-input>
-          <span>{{GetOrderInfo?.Unit}}</span>
+          <el-input v-model="inputValue"></el-input>
+          <i class="iconfont icon-jurassic_warn warn-tip">注意后面单位</i>
+          <span style="color: #3988FF;white-space: nowrap;">{{GetOrderInfo?.Unit}}</span>
           <el-button @click="getPrintExpressPrint()"> <i class="iconfont icon-dayinji"></i> 打印标签</el-button>
         </template>
       </p>
@@ -28,14 +29,25 @@
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 const emit = defineEmits(['closeDialog']);
 const ChangeLabelStore = useChangeLabelStore();
 const { PrintPrintData, GetOrderInfo } = storeToRefs(ChangeLabelStore);
 
+const inputValue = computed({
+  get() {
+    return PrintPrintData.value.Number;
+  },
+  set(val) {
+    PrintPrintData.value.Number = val.replace(/[^0-9]+/g, '');
+  },
+});
+
 const changeType = (Type) => {
   PrintPrintData.value.Type = Type;
-  switch (Type) {
+  inputValue.value = '';
+  switch (Type) { // 用于父组件调取
     case 0:
       ChangeLabelStore.getPrintExpressPrint();
       break;
@@ -48,11 +60,11 @@ const changeType = (Type) => {
   }
 };
 const getPrintExpressPrint = () => {
-  if (!PrintPrintData.value.Number && PrintPrintData.value.Type === 2) {
+  if (!Number(PrintPrintData.value.Number) && PrintPrintData.value.Type === 2) {
     MpMessage.error('操作失败', '请输入均打包包数');
     return;
   }
-  if (!PrintPrintData.value.Number && PrintPrintData.value.Type === 3) {
+  if (!Number(PrintPrintData.value.Number) && PrintPrintData.value.Type === 3) {
     MpMessage.error('操作失败', `请输入自定义打包${GetOrderInfo.value?.Unit}数`);
     return;
   }
@@ -78,6 +90,15 @@ defineExpose({ changeType });
       margin-top: 28px;
       font-size: 24px;
       line-height: 50px;
+      position: relative;
+      .warn-tip{
+        position: absolute;
+        bottom: -23px;
+        left: 242px;
+        line-height: 18px;
+        font-size: 14px;
+        color: #FF0000;
+      }
       .el-radio{
         height: 50px;
         line-height: 50px;

@@ -51,8 +51,8 @@ p {
           <div style="font-size: 17px;overflow: hidden;height: 66px; display: flex; flex-wrap: wrap;
           align-items: center;justify-content: center;position: relative;">
             <div style="${BranchAllName.length > 18 ? '' : 'font-size: 14px;'}">
-              ${Address.Delivery.DistrictName}
-              ${Address && Address.Delivery && Address.Delivery.StationName ? `-${Address.Delivery.StationName}` : ''}
+              ${Address.Delivery.StationName}
+              ${Address && Address.Delivery && Address.Delivery.DistrictName ? `-${Address.Delivery.DistrictName}` : ''}
             </div>
             ${!Address.Address.UsualAddress ? `<div style="width:1.2em;height:1.2em;line-height:1.2em;font-size:20px;
             text-align:center;background-color:#000; color: #fff; position: absolute;right: 0;bottom: 0;">代</div>` : ''}
