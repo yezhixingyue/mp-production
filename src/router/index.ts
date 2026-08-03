@@ -25,6 +25,17 @@ const routes: Array<RouteRecordRaw> = [
     },
     component: LoginView,
   },
+  {
+    path: '/digital-print',
+    name: 'digital-print',
+    meta: {
+      title: '数码工单打印',
+      requiresAuth: false,
+      hideMenu: true,
+      fullAcreen: true,
+    },
+    component: () => import('@/views/productionManagePages/ManageDigitalListPage/DigitalPrintView.vue'),
+  },
   ...moduleRoutes,
   { // 无权限页
     path: '/notauth',
