@@ -4,7 +4,7 @@
   <div class="mp-erp-layout-content-right-wrap">
     <LayoutHeader v-if="displaySider && !fullAcreen" />
     <div class="mp-erp-layout-page-content-comp-wrap"
-    :class="{'no-padding height100 no-margin': isLogin, 'bg-white': isHome}">
+    :class="{'no-padding height100 no-margin': isLogin, 'bg-white': isHome, 'print-view': isPrintView}">
       <div>
         <router-view/>
       </div>
@@ -32,9 +32,11 @@ export default {
     const fullAcreen = computed(() => route.meta.fullAcreen);
 
     const isLogin = computed(() => route.name === 'login' || route.name === 'client');
+    const isPrintView = computed(() => route.name === 'digital-print');
     const isHome = computed(() => route.path === '/');
     return {
       isLogin,
+      isPrintView,
       isHome,
       fullAcreen,
       displaySider,
@@ -72,6 +74,26 @@ export default {
   }
   &.bg-white{
     background-color: white;
+  }
+  &.print-view {
+    background-color: transparent;
+    height: auto;
+    max-height: unset;
+    // overflow: hidden;
+
+    > div {
+      margin: 0;
+      min-width: auto;
+      // overflow-y: auto;
+    }
+  }
+}
+
+#app, .mp-erp-layout-content-right-wrap {
+  &:has(.print-view) {
+    min-height: 100vh;
+    overflow: auto !important;
+    height: unset !important;
   }
 }
 </style>
