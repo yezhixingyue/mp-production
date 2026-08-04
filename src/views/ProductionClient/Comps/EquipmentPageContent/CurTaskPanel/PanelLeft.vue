@@ -87,7 +87,7 @@
 <script setup lang='ts'>
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { getNextWorkContentOnlySingle } from '@/views/ProductionClient/assets/js/utils';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { format2MiddleLangTypeDateFunc2, getIsTimedout } from '@/assets/js/filters/dateFilters';
 import { computed } from 'vue';

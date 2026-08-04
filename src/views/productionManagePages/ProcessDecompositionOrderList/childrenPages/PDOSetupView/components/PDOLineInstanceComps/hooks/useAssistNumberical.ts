@@ -2,7 +2,7 @@ import { ComputedRef, ref } from 'vue';
 import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { getAssistNumbericalList } from '../js/requestTempDataAndCatch';
 import { PDOLineInstanceType } from '../../../model/Instance';
 

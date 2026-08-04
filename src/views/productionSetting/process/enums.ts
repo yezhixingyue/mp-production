@@ -102,10 +102,12 @@ export const WorkingTypeEnumList = getEnumList(WorkingTypeEnumObj);
 /* 工序中资源类型 Relations 中的 Type
 -------------------------------------- */
 export enum WorkingProcedureRelationEnum {
-  /** 辅助信息 */
-  assets = 0,
+  /** 报工机台辅助信息 */
+  ReportNote = 0,
   /** 可选物料资源包 */
-  material = 1,
+  MaterialGroup = 1,
   /** 其他大版文件(大版类型为其他情况) */
-  otherBoard = 2,
+  // otherBoard = 2,
+  /** 条码稿辅助信息 */
+  MapNote = 2,
 }

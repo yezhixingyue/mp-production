@@ -128,7 +128,7 @@
 <script setup lang='ts'>
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { computed } from 'vue';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { MoveTypeEnumList, PlaceOrderMaterialSourceEnumList } from '../../../js/EnumList';
 import {
   FeedEdgePositionEnum, MoveTypeEnum, PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum,

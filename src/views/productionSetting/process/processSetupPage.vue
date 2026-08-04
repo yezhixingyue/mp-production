@@ -97,28 +97,23 @@
                   </div>
                 </div>
               </el-form-item>
-              <p class="title b" style="margin-top: 28px;"
-              >需要辅助信息：<mp-button type="primary" link @click="SelectAssistInfoShow = true">选择辅助信息</mp-button><span>（选填）</span></p>
-              <ul class="info">
-                <li>
-                  <template v-if="showInfoActive.file.length">
-                    <span>文件：</span>
-                    <span>{{showInfoActive.file.map(res => res.Name).join('、')}}</span>
-                  </template>
-                </li>
-                <li>
-                  <template v-if="showInfoActive.text.length">
-                    <span>文字信息：</span>
-                    <span>{{showInfoActive.text.map(res => res.Name).join('、')}}</span>
-                  </template>
-                </li>
-                <li>
-                  <template v-if="showInfoActive.number.length">
-                    <span>数字：</span>
-                    <span>{{showInfoActive.number.map(res => res.Name).join('、')}}</span>
-                  </template>
-                </li>
-              </ul>
+
+              <AssistDisplayItem
+                title="报工机台显示的辅助信息"
+                :Type="WorkingProcedureRelationEnum.ReportNote"
+                :Relations="Data.processDataFrom.Relations"
+                :ResourceNoteGroup="productionSettingStore.ResourceNoteGroup"
+                @select="setSelectAssistInfoShow(WorkingProcedureRelationEnum.ReportNote)"
+              />
+
+              <AssistDisplayItem
+                title="条码稿要显示的辅助信息"
+                :Type="WorkingProcedureRelationEnum.MapNote"
+                :Relations="Data.processDataFrom.Relations"
+                :ResourceNoteGroup="productionSettingStore.ResourceNoteGroup"
+                @select="setSelectAssistInfoShow(WorkingProcedureRelationEnum.MapNote)"
+              />
+
               <p class="title b">可选物料资源包：<mp-button type="primary" link @click="materialResourceShow = true">选择物料资源包</mp-button></p>
               <div class="info">{{showInfoMaterial.join('、')}}</div>
 
@@ -180,9 +175,9 @@
     />
     <!-- 辅助信息 -->
     <SelectAssistInfo
-    :visible='SelectAssistInfoShow'
-    :changeVisible='(visble) => SelectAssistInfoShow = visble'
+    v-model:visible='SelectAssistInfoShow.visible'
     :activeInfoList="saveInfoActive"
+    :type="SelectAssistInfoShow.type"
     :ListGroup="productionSettingStore.ResourceNoteGroup"
     :saveInfo="saveInfo"
     />
@@ -229,13 +224,13 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { useRouterStore } from '@/store/modules/routerStore';
 import { useProductionSettingStore } from '@/store/modules/productionSetting';
 import messageBox from '@/assets/js/utils/message';
-import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import {
   ReportModeEnumList, ReportModeEnum, WorkingTypeEnumList, WorkingTypeEnum, WorkingProcedureRelationEnum,
 } from './enums';
 import { getIsOrNotShowAllowUnionImposition } from './getIsOrNotShowAllowUnionImposition';
+import AssistDisplayItem from './components/AssistDisplayItem.vue';
 
 const RouterStore = useRouterStore();
 const productionSettingStore = useProductionSettingStore();
@@ -280,7 +275,10 @@ interface DataType {
 const { $goback } = getCurrentInstance()?.appContext.config.globalProperties || { $goback: () => null };
 const selectDeviceGroupShow = ref(false);
 const selectTemplateGroupShow = ref(false);
-const SelectAssistInfoShow = ref(false);
+const SelectAssistInfoShow = ref({
+  visible: false,
+  type: WorkingProcedureRelationEnum.ReportNote as WorkingProcedureRelationEnum.MapNote | WorkingProcedureRelationEnum.ReportNote,
+});
 const materialResourceShow = ref(false);
 const Data:DataType = reactive({
   processDataFrom: {
@@ -304,6 +302,11 @@ const Data:DataType = reactive({
   },
 });
 
+const setSelectAssistInfoShow = (type: WorkingProcedureRelationEnum.MapNote | WorkingProcedureRelationEnum.ReportNote) => {
+  SelectAssistInfoShow.value.type = type;
+  SelectAssistInfoShow.value.visible = true;
+};
+
 /** 初始选中设备组ID和物料资源包ID */
 let initEquipmentGroupIDs: IEquipmentGroupsType['GroupID'][] = [];
 const initRelations = ref<IRelationsType[]>([]);
@@ -317,53 +320,15 @@ const BreadcrumbList = computed(() => [
 
 // 辅助信息的默认选中
 const saveInfoActive = computed(() => Data.processDataFrom.Relations
-  .filter(item => item.Type === WorkingProcedureRelationEnum.assets).map(res => res.RelationID));
+  .filter(item => item.Type === SelectAssistInfoShow.value.type).map(res => res.RelationID));
 // 物料资源的默认选中
 const saveMaterialActive = computed(() => Data.processDataFrom.Relations
-  .filter(item => item.Type === WorkingProcedureRelationEnum.material).map(res => res.RelationID));
-// 显示的辅助信息
-const showInfoActive = computed(() => {
-  const Infos = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.assets);
-  interface returnType {
-    file:IRelationsType[]
-    text:IRelationsType[]
-    number:IRelationsType[]
-  }
-  const returnData:returnType = {
-    // 文件
-    file: [],
-    // 文字信息
-    text: [],
-    // 数字
-    number: [],
-  };
-  const getType = (Type) => {
-    let list:IRelationsType[] = [];
-    productionSettingStore.ResourceNoteGroup.forEach(item => {
-      if (item.Type === Type) {
-        const temp = item.Notes.filter(res => Infos.find(el => el.RelationID === res.ID));
-        if (temp.length) {
-          list = temp.map(it => ({
-            RelationID: it.ID,
-            Name: it.Name,
-            PID: Type,
-            PName: '',
-            Type,
-          }));
-        }
-      }
-    });
-    return list;
-  };
-  returnData.file = getType(AssistInfoTypeEnums.file.ID);
-  returnData.text = getType(AssistInfoTypeEnums.text.ID);
-  returnData.number = getType(AssistInfoTypeEnums.numerical.ID);
-  return returnData;
-});
+  .filter(item => item.Type === WorkingProcedureRelationEnum.MaterialGroup).map(res => res.RelationID));
+
 // 显示的物料资源
 const showInfoMaterial = computed(() => {
   const returnData: string[] = [];
-  const temp = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.material);
+  const temp = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.MaterialGroup);
   temp.forEach(item => {
     const t = productionSettingStore.MaterialTypeGroup.find(it => it.ID === item.RelationID);
     if (t) {
@@ -399,17 +364,17 @@ const saveEquipment = (Equipments) => {
 };
 const saveInfo = (infoList) => {
   // 去除掉已经选中的数据
-  const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== WorkingProcedureRelationEnum.assets);
+  const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== SelectAssistInfoShow.value.type);
   Data.processDataFrom.Relations = [...elseData, ...infoList.map(res => ({
-    RelationID: res.ID, Name: res.Name, Type: WorkingProcedureRelationEnum.assets, PID: res.Type,
+    RelationID: res.ID, Name: res.Name, Type: SelectAssistInfoShow.value.type, PID: res.Type,
   }))];
-  SelectAssistInfoShow.value = false;
+  SelectAssistInfoShow.value.visible = false;
 };
 const saveMaterial = (infoList) => {
   // 去除掉已经选中的数据
-  const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== WorkingProcedureRelationEnum.material);
+  const elseData = Data.processDataFrom.Relations.filter(res => res.Type !== WorkingProcedureRelationEnum.MaterialGroup);
   Data.processDataFrom.Relations = [...elseData, ...infoList.map(res => ({
-    RelationID: res.ID, Name: res.Name, Type: WorkingProcedureRelationEnum.material, PID: res.MatchType,
+    RelationID: res.ID, Name: res.Name, Type: WorkingProcedureRelationEnum.MaterialGroup, PID: res.MatchType,
   }))];
 
   materialResourceShow.value = false;
@@ -445,7 +410,7 @@ const getEquipmentNameByID = (ID) => {
 const saveProcess = () => {
   // 检查可选物料资源包是否符合标准
   const checkMaterialSource = () => {
-    const list = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.material)
+    const list = Data.processDataFrom.Relations.filter(item => item.Type === WorkingProcedureRelationEnum.MaterialGroup)
       .map(it => productionSettingStore.MaterialTypeGroup.find(_it => _it.ID === it.RelationID))
       .filter(it => it);
     if (list.length === 0) {
@@ -613,7 +578,7 @@ export default {
         font-weight: 400;
       }
       &.b {
-        margin-bottom: 15px;
+        margin-bottom: 5px;
         margin-top: 18px;
       }
     }
@@ -745,8 +710,8 @@ export default {
       }
     }
     .info{
-      margin: 0px 0 36px 16px;
-      line-height: 30px;
+      margin: 0px 0 20px 16px;
+      line-height: 24px;
     }
     .v-hide {
       visibility: hidden;

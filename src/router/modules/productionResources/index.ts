@@ -26,6 +26,17 @@ const routes: RouteRecordRaw = {
       },
       component: () => import('@/views/productionResources/assistInfo/assistInfoManagePage.vue'),
     },
+    {
+      path: '/assistPosition',
+      name: 'assistPosition',
+      meta: {
+        title: '设置辅助信息显示位置',
+        requiresAuth: true,
+        pageName: 'AssistPositionSetupView',
+        PermissionInfo: ['PermissionManageAssist', 'Obj', 'Setup'],
+      },
+      component: () => import('@/views/productionResources/assistInfo/AssistPositionSetupView/AssistPositionSetupView.vue'),
+    },
     /* 物料资源包模块
     -------------------------------------- */
     {
@@ -164,7 +175,9 @@ const routeTree:RouteTreeType = {
     -------------------------------------- */
     {
       name: 'assistInfo',
-      children: [],
+      children: [
+        { name: 'assistPosition', children: [] },
+      ],
     },
     /* 物料资源包
     -------------------------------------- */

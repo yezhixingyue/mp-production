@@ -4,7 +4,7 @@ import { ExternalTaskStatusEnum } from '@/views/OutsourceManage/js/enum';
 import { ExternalTaskStatusEnumList } from '@/views/OutsourceManage/js/EnumList';
 import { ProductiveTaskStatusEnumList } from '@/views/ProductionClient/assets/js/enum';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';

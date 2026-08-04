@@ -4,8 +4,8 @@ import { ISubcontractorFactoryListItemType } from '@/views/productionResources/s
 import { EquipmentGroupItemType } from '@/store/modules/resource/EquipmentGroupTypeClass/EquipmentGroupItemClass';
 import { IManageEquipmentInfo } from '@/views/productionManagePages/ManageEquipment/ManageEquipmentListPage/js/types';
 import { MaterialTypeLimitItemType } from '@/store/modules/resource/EquipmentGroupMaterialTypeLimitClass/MaterialTypeLimitItemClass';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { instance, request } from '@/basic/request';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 
 export const resourceApis = {
   /** 生产资源 - 辅助信息相关
@@ -13,9 +13,13 @@ export const resourceApis = {
   getResourceNoteSave(data) { // POST /Api/Note/Save  辅助信息编辑
     return request<string>({ method: 'POST', url: '/Api/Note/Save', data });
   },
-  /** /Api/Note/DisplayPositionList */
+  /** /Api/Note/DisplayPositionList 获取辅助信息显示位置列表 */
   getNoteDisplayPositionList() {
     return request({ method: 'GET', url: '/Api/Note/DisplayPositionList' });
+  },
+  /** post /Api/Note/SetPosition 辅助信息显示位置设置 */
+  getNoteSetPosition(data) {
+    return instance.post('/Api/Note/SetPosition', data);
   },
   getResourceNoteList(condition) { // POST /Api/Note/List  辅助信息查询
     return request<IAssistListItem[]>({ method: 'POST', url: '/Api/Note/List', data: condition });

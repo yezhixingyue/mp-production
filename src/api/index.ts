@@ -24,9 +24,8 @@ const api = {
   getLogin(data: ILoginSubmitForm) { // POST /Api/Staff/Login
     return request<null|string>({ method: 'POST', url: '/Api/Staff/Login', data, withoutToken: true, encrypt: true });
   },
-  getUser(token?: string) {
-    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
-    return request<IUser>({ method: 'post', url: '/Api/Staff/Detail', headers });
+  getUser() {
+    return request<IUser>({ method: 'post', url: '/Api/Staff/Detail' });
   },
   getDistrictList(ID?:number) {
     return request<IDistrictItem[]>({ method: 'get', url: '/Api/District/List', params: { parentID: ID } });

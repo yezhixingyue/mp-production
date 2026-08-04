@@ -152,8 +152,8 @@ export const productionManageApis = {
     return instance.post('/Api/OfflinePlate/List', condition);
   },
   /** POST /Api/OfflinePlate/Print  线下大版打印工单 */
-  getOfflinePlatePrint(data: { List: number[]; IsPrint: boolean }) {
-    return instance.post<IDigitalOrderPlatePrintInfo[]>('/Api/OfflinePlate/Print', data, { encrypt: true });
+  getOfflinePlatePrint(data: { List: number[]; IsPrint: boolean }, token?: string) {
+    return instance.post<IDigitalOrderPlatePrintInfo[]>('/Api/OfflinePlate/Print', data, { token, closeTip: !!token });
   },
   /** 导出大版 PUT /Api/PlateFile/Retransfer  orderID */
   getPlateFileRetransfer(orderID: string) {

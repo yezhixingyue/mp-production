@@ -2,7 +2,7 @@ import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { validateDateValue } from '@/components/common/ElementPlusContainners/MpDateTimePicker/utils';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { MakingGroupTypeFeatureEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
 import { MaterialSourceTypeEnum } from '@/views/productionSetting/js/enums';
 import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';

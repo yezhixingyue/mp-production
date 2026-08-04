@@ -1,6 +1,6 @@
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 
 export type leftEventType = 'BarCodePrint';

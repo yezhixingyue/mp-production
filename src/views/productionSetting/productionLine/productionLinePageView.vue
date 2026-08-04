@@ -19,7 +19,7 @@
       <mp-button type="primary" v-if="localPermission?.Setup" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
       <!-- 生产线： -->
       <p class="set-slit" v-if="!isCombine && localPermission?.Setup">
-        <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-14"></i>设置分切工序</mp-button>
+        <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-11"></i>设置分切工序</mp-button>
       </p>
       <p class="templates" v-if="!isCombine && ProductionLineData && ProductionLineData.Category!==NormalLineCategoryTypeEnum.digital">
         <span class="label">允许翻版方式：</span>

@@ -26,7 +26,7 @@ export const DigitalImpositionStatusEnumList = [
 
 /** 数码拼版方式枚举 */
 export enum DigitalImpositionTypeEnum {
-  /** 系统拼版(含自动和拼版软件) */
+  /** 系统拼版 */
   Auto = 0,
   /** 人工线下 */
   Manual = 1,

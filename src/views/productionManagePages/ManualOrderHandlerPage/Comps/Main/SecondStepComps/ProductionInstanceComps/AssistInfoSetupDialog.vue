@@ -23,7 +23,7 @@
 import { computed, ref } from 'vue';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 
 const props = defineProps<{
   visible: boolean

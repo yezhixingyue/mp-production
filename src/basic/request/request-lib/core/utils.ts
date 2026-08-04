@@ -60,8 +60,8 @@ export const setToken = (config: IRequestConfig, _options?: ICoreOptions) => {
   if (_options && config.withoutToken !== true) {
     if (_options.setToken) return _options.setToken(config);
 
-    if (_options.getToken) { // 需要设置token
-      const token = _options.getToken();
+    if (_options.getToken || config.token) { // 需要设置token
+      const token = config.token || _options.getToken!();
       if (!token) {
         return false; // 但未获取到token
       }

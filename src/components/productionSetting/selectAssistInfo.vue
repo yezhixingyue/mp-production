@@ -2,10 +2,10 @@
   <div>
     <DialogContainerComp
     title="需要辅助信息"
-    :visible='Dialog'
+    :visible='visible'
     :width="660"
     :primaryClick="PrimaryClick"
-    :closeClick="CloseClick"
+    @cancel='visible = false'
     :closed="Closed"
     :appendToBody="true"
     primary-text="确定"
@@ -41,11 +41,14 @@
 <script setup lang="ts">
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import {
-  reactive, computed, watch,
+  reactive, watch,
 } from 'vue';
 import type { NotesType, SelectAssistInfoGroup } from '@/store/modules/productionSetting/types';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
-import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum, AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/types/enum';
+import { WorkingProcedureRelationEnum } from '@/views/productionSetting/process/enums';
+
+const visible = defineModel<boolean>('visible');
 
 interface ListFrom extends SelectAssistInfoGroup{
   checkAll:boolean
@@ -57,15 +60,14 @@ interface DataType {
   ListFrom:ListFrom[]
 }
 interface Props {
-  visible: boolean
   changeVisible?: (bol:boolean) => void
   saveInfo?: (list:NotesType[]) => void
   activeInfoList?: string[]
   ListGroup?: SelectAssistInfoGroup[]
+  type: WorkingProcedureRelationEnum.ReportNote | WorkingProcedureRelationEnum.MapNote
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  visible: false,
   changeVisible: () => null,
   saveInfo: () => null,
   activeInfoList: () => [],
@@ -75,17 +77,6 @@ const props = withDefaults(defineProps<Props>(), {
 const Data:DataType = reactive({
   ListFrom: [],
 });
-const Dialog = computed({
-  get() {
-    return props.visible;
-  },
-  set(newVal) {
-    props.changeVisible(newVal);
-  },
-});
-function CloseClick() {
-  props.changeVisible(false);
-}
 function Closed() {
   // 清空表单
   Data.ListFrom.map(res => {
@@ -129,15 +120,17 @@ function handleCheckedCitiesChange(value:string[], index) {
   Data.ListFrom[index].isIndeterminate = checkedCount > 0
        && checkedCount < Data.ListFrom[index].Notes.length;
 }
-watch(() => Dialog.value, (newVal) => {
+watch(() => visible.value, (newVal) => {
   Data.ListFrom = [];
   props.ListGroup.forEach((element) => {
-    Data.ListFrom.push({
-      ...element as SelectAssistInfoGroup,
-      checkAll: false,
-      isIndeterminate: false,
-      checks: [],
-    });
+    if (element.Type === AssistInfoTypeEnum.text || props.type === WorkingProcedureRelationEnum.ReportNote) {
+      Data.ListFrom.push({
+        ...element as SelectAssistInfoGroup,
+        checkAll: false,
+        isIndeterminate: false,
+        checks: [],
+      });
+    }
   });
   if (newVal && props.activeInfoList) {
     const activeInfoList = props.activeInfoList as string[];

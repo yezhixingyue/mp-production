@@ -1,7 +1,7 @@
 import { IOrderFileInfo, IPDOrderItem, TCraftResolveDetail, TDetailInstance } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/types';
 import { SignaturePositionEnum } from '@/views/productionManagePages/ProcessDecompositionOrderList/types/enum';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ILineWorkingNoteInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
 import { PDOLineInstanceType } from '../../../model/Instance';
 

@@ -1,20 +1,28 @@
 <template>
   <main>
     <el-table :data="props.list" stripe border :row-key="getRowKey" class="row-ft-12">
-      <mp-table-column align="center" width="280px" prop="Name" label="名称" />
-      <mp-table-column align="center" width="185px" prop="Type" label="类型">
+      <mp-table-column align="center" min-width="400px" prop="Name" label="名称" />
+      <mp-table-column align="center" width="160px" prop="Type" label="类型">
         <template #default="scope:any">
           {{formatType(scope.row.Type)}}
         </template>
       </mp-table-column>
-      <mp-table-column align="center" width="400px" prop="Type" label="展示位置">
+      <mp-table-column align="center" width="220px" prop="Type" label="位置">
         <template #default="scope:{ row: IAssistListItem }">
-          <span>
-            {{ NoteDisplayPositionList.filter(n => scope.row.Position[n.Key] === true).map(n => n.Name).join('、') || '' }}
-          </span>
+          {{scope.row.Positions.map(it => it.Name).join('、')}}
         </template>
       </mp-table-column>
-      <mp-table-column align="center" width="185px" label="操作" v-if="localPermission?.Setup">
+      <mp-table-column align="center" width="320px" prop="Type" label="报工机台">
+        <template #default="scope:{ row: IAssistListItem }">
+          {{scope.row.ReportWorkings.map(it => it.Name).join('、')}}
+        </template>
+      </mp-table-column>
+      <mp-table-column align="center" width="320px" prop="Type" label="条码稿">
+        <template #default="scope:{ row: IAssistListItem }">
+          {{scope.row.MapWorkings.map(it => it.Name).join('、')}}
+        </template>
+      </mp-table-column>
+      <mp-table-column align="center" width="260px" label="操作" v-if="localPermission?.Setup">
         <template #default="scope:any">
           <mp-button type="info" link @click="onEditClick(scope.row)">
             <i class="iconfont icon-bianji"></i>编辑
@@ -24,6 +32,11 @@
           </mp-button>
         </template>
       </mp-table-column>
+      <template #empty>
+        <div>
+          <span v-show="!loading">暂无数据</span>
+        </div>
+      </template>
     </el-table>
   </main>
 </template>
@@ -31,14 +44,13 @@
 <script setup lang='ts'>
 import type { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { getEnumNameByID, localEnumValueIDType } from '@/assets/js/utils/getListByEnums';
-import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { IUser } from '@/store/modules/user/types';
-import { INoteDisplayPosition } from '@/views/productionResources/assistInfo/hooks/useNoteDisplayPositionList';
+import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/types/enum';
 
 const props = defineProps<{
   list: IAssistListItem[],
-  localPermission?: IUser['PermissionList']['PermissionManageAssist']['Obj']
-  NoteDisplayPositionList: INoteDisplayPosition[]
+  localPermission?: IUser['PermissionList']['PermissionManageAssist']['Obj'],
+  loading: boolean
 }>();
 
 const emit = defineEmits(['edit', 'remove']);
