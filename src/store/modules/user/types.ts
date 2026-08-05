@@ -399,6 +399,7 @@ export interface IUser {
       Obj: {
         Print: boolean
         Query: boolean
+        /** 导出大版 */
         FileRetransfer: boolean
         Preview: boolean
         /** 下载文件 */
@@ -407,6 +408,8 @@ export interface IUser {
         Excel: boolean
         /** 撤销至大版前 */
         Revocation: boolean
+        /** 重新拼版 */
+        ReAutoImposition: boolean
       };
     };
     /** 数码完工任务 */

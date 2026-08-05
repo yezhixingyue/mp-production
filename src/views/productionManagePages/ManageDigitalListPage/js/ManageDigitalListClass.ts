@@ -51,6 +51,16 @@ export class ManageDigitalListClass {
     }
   }
 
+  /** 重新拼版 */
+  // eslint-disable-next-line class-methods-use-this
+  async getPlateReImposition(OrderID: string) {
+    const resp = await api.productionManageApis.getPlateFileReAutoImposition(OrderID);
+
+    if (resp.data?.isSuccess) {
+      MpMessage.success('操作成功');
+    }
+  }
+
   // eslint-disable-next-line class-methods-use-this
   async download(FilePath: string) {
     if (!FilePath) return;

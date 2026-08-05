@@ -5,13 +5,13 @@
     <mp-table-column width="65px" prop="Code" label="大版ID" />
     <mp-table-column width="85px" prop="OrderCode" label="订单号" />
     <mp-table-column min-width="75px" prop="SemiFinished" label="半成品" />
-    <mp-table-column width="90px" prop="_Template" label="模板规格" />
-    <mp-table-column min-width="100px" prop="Material" label="物料" />
+    <mp-table-column width="75px" prop="_Template" label="模板规格" />
+    <mp-table-column min-width="95px" prop="Material" label="物料" />
     <mp-table-column min-width="100px" prop="Equipment" label="印刷机" />
     <mp-table-column width="80px" prop="_Number" label="份数" />
     <mp-table-column width="48px" prop="_PrintSideText" label="单双面" />
-    <mp-table-column width="80px" prop="FileSize" label="拼版尺寸" />
-    <mp-table-column width="80px" prop="MaterialSize" label="用料尺寸" />
+    <mp-table-column width="75px" prop="FileSize" label="拼版尺寸" />
+    <mp-table-column width="75px" prop="MaterialSize" label="用料尺寸" />
     <mp-table-column width="75px" prop="MaterialNumber" label="用料数量" />
     <mp-table-column width="108px" prop="_CreateTime" label="同步时间" />
     <mp-table-column width="108px" prop="_ImpositionTime" label="拼版时间" />
@@ -20,9 +20,12 @@
     <mp-table-column width="60px" prop="_ImpositionType" label="拼版方式" />
     <mp-table-column width="60px" prop="Operator" label="拼版人员" />
     <mp-table-column min-width="90px" prop="Line" label="生产线" />
-    <mp-table-column min-width="65px" prop="Error" label="错误" />
-    <mp-table-column width="105px" label="操作" class-name="ctrl" v-if="Permission?.Obj.FileRetransfer || Permission?.Obj.DownloadFile">
+    <mp-table-column min-width="55px" prop="Error" label="错误" />
+    <mp-table-column width="165px" label="操作" class-name="ctrl"
+     v-if="Permission?.Obj.FileRetransfer || Permission?.Obj.DownloadFile || Permission?.Obj.Revocation || Permission?.Obj.ReAutoImposition">
       <template #default="scope:any">
+        <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.ReAutoImposition"
+         :disabled="!scope.row._Reimposable" link @click="onReImpositionClick(scope.row)">重新拼版</mp-button>
         <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.FileRetransfer"
          :disabled="!scope.row._Exportable" link @click="onExportClick(scope.row)">导出</mp-button>
         <mp-button type="primary" class="ft-12" v-if="Permission?.Obj.DownloadFile"
@@ -61,6 +64,7 @@ const localList = computed(() => props.localManageData.list.map(it => {
   const downloadableStatuses = DigitalImpositionStatusEnumList.filter(it => it.downloadable).map(it => it.ID); // 可下载状态
   const exportableStatuses = DigitalImpositionStatusEnumList.filter(it => it.exportable).map(it => it.ID); // 可导出状态
   const revocableStatuses = DigitalImpositionStatusEnumList.filter(it => it.revocable).map(it => it.ID); // 可撤销
+  const reimposableStatuses = DigitalImpositionStatusEnumList.filter(it => it.reimposable !== false).map(it => it.ID); // 可重新拼版
   return {
     ...it,
     _Template: [it.TemplateSize].filter(it => it).join(' '),
@@ -73,6 +77,9 @@ const localList = computed(() => props.localManageData.list.map(it => {
     _Downloadable: downloadableStatuses.includes(it.Status),
     _Exportable: exportableStatuses.includes(it.Status),
     _Revocable: revocableStatuses.includes(it.Status) && it.ImpositionType === DigitalImpositionTypeEnum.Manual,
+    // 是否可重新拼版  1. 未取消状态    2. 系统自动拼版的 - 枚举值为0时    3. 30天内的 - 根据创建时间来判断
+    _Reimposable: reimposableStatuses.includes(it.Status) && it.ImpositionType === DigitalImpositionTypeEnum.Auto
+     && it.CreateTime && Date.now() - new Date(it.CreateTime.slice(0, 19)).getTime() <= 30 * 24 * 60 * 60 * 1000,
     _LastPrintTime: format2MiddleLangTypeDateFunc2(it.LastPrintTime),
     _Number: typeof it.Number === 'number' ? (it.AppendFilePath ? `${it.Number - 1}${it.Unit} + 1${it.Unit}` : `${it.Number}${it.Unit}`) : '',
   };
@@ -86,6 +93,15 @@ const onExportClick = (item: IDigitalOrderPlateInfo) => {
   MpMessage.warn('确定导出该大版吗 ?', `大版ID：[${item.Code}]`, () => {
     props.localManageData.getPlateFileRetransfer(item.OrderID);
   });
+};
+
+const onReImpositionClick = (item: IDigitalOrderPlateInfo) => {
+  MpMessage.warn('是否要执行重新拼版 ?', `<div style='margin-bottom: 13px;margin-left:13px;margin-top:-5px'>
+    <div style='margin-bottom:5px;margin-right:22px'>大版ID：[ ${item.Code} ]</div>
+    <div>订单号：[ ${item.OrderCode} ]</div>
+  </div>`, () => {
+    props.localManageData.getPlateReImposition(item.OrderID);
+  }, undefined, true);
 };
 
 const onDownloadClick = (item: IDigitalOrderPlateInfo) => {
@@ -118,7 +134,7 @@ const onRevocationClick = (item: IDigitalOrderPlateInfo) => { // 撤销
       font-size: 12px;
 
       &.el-button+.el-button {
-        margin-left: 4px;
+        margin-left: 3px;
       }
     }
 

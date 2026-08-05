@@ -159,6 +159,10 @@ export const productionManageApis = {
   getPlateFileRetransfer(orderID: string) {
     return instance.put('/Api/PlateFile/Retransfer', null, { params: { orderID } });
   },
+  /** 重新拼版 PUT /Api/PlateFile/ReAutoImposition  orderID */
+  getPlateFileReAutoImposition(orderID: string) {
+    return instance.put('/Api/PlateFile/ReAutoImposition', null, { params: { orderID } });
+  },
   /** 撤回数码大版 /Api/OfflinePlate/Revocation */
   getOfflinePlateRevocation(data) {
     return instance.post('/Api/OfflinePlate/Revocation', data);
