@@ -27,7 +27,6 @@ const beforeRequest = async (config: IRequestConfig) => {
   if (config.encrypt) { // 接口加密
     const _config = config;
     if (!_config.headers) _config.headers = {};
-
     const info = useUserStore().getTokenInfo();
     const { authStr } = await e(info.token, info.mobile);
 
@@ -49,7 +48,6 @@ const useResponse: ICoreOptions['useResponse'] = (resp, { clear, closeTip, msgCa
 
     return;
   }
-
   if (!closeTip && resp.data) { // 请求失败 -- closeTip 是否进行错误提示
     if ([8037, 7025].includes(resp.data.Status)) {
       clear();

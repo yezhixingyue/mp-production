@@ -38,7 +38,7 @@
 <script setup lang='ts'>
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { computed, onMounted, ref } from 'vue';
 import FileDownloadDialog from './FileDownloadDialog.vue';
 

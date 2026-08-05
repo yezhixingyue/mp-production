@@ -1,7 +1,6 @@
 import api from '@/api';
 import { LineTypeEnum, NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
-import { getBarcodeSrc, getQRCodeSrc } from '@/components/common/General/Print/utils';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/store/modules/user';
@@ -9,6 +8,7 @@ import { Condition } from './Condition';
 import { IDigitalOrderPlateInfo, ILocalDigitalOrderPlatePrintInfoWithQrCode } from './types';
 import { DigitalImpositionStatusEnum, DigitalImpositionStatusEnumList } from './enum';
 import { RevocationData } from './RevocationData';
+import { generateDigitalOrderPlatePrintInfoQrcode } from './utils';
 
 /** 数码工单打印管理类 */
 export class ManageDigitalListClass {
@@ -48,6 +48,16 @@ export class ManageDigitalListClass {
 
     if (resp.data?.isSuccess) {
       MpMessage.success('导出成功');
+    }
+  }
+
+  /** 重新拼版 */
+  // eslint-disable-next-line class-methods-use-this
+  async getPlateReImposition(OrderID: string) {
+    const resp = await api.productionManageApis.getPlateFileReAutoImposition(OrderID);
+
+    if (resp.data?.isSuccess) {
+      MpMessage.success('操作成功');
     }
   }
 
@@ -120,20 +130,7 @@ export class ManageDigitalListClass {
         _StartBarCode: '',
       }));
 
-      const _generateQrcode = async (it: ILocalDigitalOrderPlatePrintInfoWithQrCode) => {
-        const [url1, url2, url3] = await Promise.all([getQRCodeSrc(it.Code), getQRCodeSrc(it.ChunkList[0]?.Code || ''), getBarcodeSrc(it.StartCode)]);
-
-        if (url1 && url2 && url3) {
-          const _it = it;
-          _it._PlateQcCode = url1;
-          _it._ChunkQcCode = url2;
-          _it._StartBarCode = url3;
-        } else {
-          throw new Error('二维码转换失败');
-        }
-      };
-
-      await Promise.all(list.map(it => _generateQrcode(it)));
+      await Promise.all(list.map(it => generateDigitalOrderPlatePrintInfoQrcode(it)));
 
       // if (IsPrint && this.condition.Status === DigitalImpositionStatusEnum.HaveScheduling) {
       //   this.getList(this.condition.Page);

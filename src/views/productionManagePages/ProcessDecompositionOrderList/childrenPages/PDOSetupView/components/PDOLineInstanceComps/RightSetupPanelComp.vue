@@ -178,11 +178,11 @@
 <script setup lang='ts'>
 import { computed, ref, watch } from 'vue';
 import { ILineDetailWorkingProcedure } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import RemoveMenu from '@/components/common/menus/RemoveMenu.vue';
 import MpFileSelectButton from '@/components/common/General/MpFileSelectButton.vue';
 import { NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import WorkingSelectDialog from './WorkingSelectDialog.vue';
 import AssistInfoSetupDialog from './AssistInfoSetupDialog.vue';
 import SpecialColorSelectDialog from './SpecialColorSelectDialog.vue';

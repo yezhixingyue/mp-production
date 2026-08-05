@@ -45,6 +45,7 @@ export interface IRequestConfig<D = any> {
   closeTip?: boolean; // 是否展示错误提示： 默认展示，传递true时不展示
   withoutToken?: boolean; // 不需要token即可进行数据请求
   encrypt?: boolean; // 是否对请求数据进行加密
+  token?: string // 是否在该次请求中使用此token
   cache?: {
     duration: number // 缓存时间
     isCacheable?: (resp: IResponseType<IMpzjResponse>) => boolean // 判断响应结果是否可以被缓存

@@ -1,11 +1,12 @@
 <script setup lang='ts'>
 import { computed } from 'vue';
-import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { localEnumValueIDType, getEnumList } from '@/assets/js/utils/getListByEnums';
 import MpButton from '@/components/common/MpButton.vue';
 import SearchInputComp from '@/components/common/SelectComps/SearchInputComp.vue';
 import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { IUser } from '@/store/modules/user/types';
+import { useRouter } from 'vue-router';
+import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/types/enum';
 
 const props = defineProps<{
   modelValue: localEnumValueIDType
@@ -42,20 +43,28 @@ const onClick = () => {
   emit('add', null);
 };
 
+const router = useRouter();
+
 const clearCondition = () => {
   emit('clear');
   emit('change');
 };
 
+const jump2Position = () => {
+  router.push('/assistPosition');
+};
 </script>
 
 <template>
-  <header>
-    <mp-button type="primary" @click="onClick" v-if="localPermission?.Setup">+添加辅助信息</mp-button>
-    <span class="bold ft-14 mr-13">筛选：</span>
-    <el-radio-group v-model="radioValue" class="mr-20">
-      <el-radio class="ft-12" v-for="it in radioMenus" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
-    </el-radio-group>
+  <header style="white-space: nowrap;" class="header">
+    <div>
+      <mp-button type="primary" @click="onClick" v-if="localPermission?.Setup" style="margin: 0 10px 0 0">+添加辅助信息</mp-button>
+      <mp-button type="primary" @click="jump2Position" link v-if="localPermission?.Setup" style="margin: 0 35px 0 12px">设置显示位置</mp-button>
+      <span class="bold ft-14 mr-13">筛选：</span>
+      <el-radio-group v-model="radioValue" class="mr-20" style="white-space: nowrap;flex-wrap: nowrap;">
+        <el-radio class="ft-12" v-for="it in radioMenus" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
+      </el-radio-group>
+    </div>
     <SearchInputComp
       :word='KeyWordsValue'
       title="关键词搜索"
@@ -70,4 +79,10 @@ const clearCondition = () => {
 
 <style scoped lang='scss'>
 // deep
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 72px;
+}
 </style>

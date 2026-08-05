@@ -2,15 +2,14 @@
   <section class="assist-page-containner">
     <Header :localPermission="localPermission" v-model="condition.Type" v-model:keywords="condition.KeyWords" :list="DataList"
      @change="getList" @add="onItemSetupClick" @clear="clearCondition" />
-    <Main :localPermission="localPermission" :list="DataList" @edit="onItemSetupClick" @remove="onRemoveClick"
-     :NoteDisplayPositionList='NoteDisplayPositionList' />
+    <Main :localPermission="localPermission" :list="DataList" :loading="loading" @edit="onItemSetupClick" @remove="onRemoveClick" />
     <Footer :condition="condition" :total="DataNumber" :getList="getList" />
-    <Dialog v-model:visible="visible" :item="curEditItem" :list="DataList" :NoteDisplayPositionList="NoteDisplayPositionList" @submit="handleItemSubmit"  />
+    <Dialog v-model:visible="visible" :item="curEditItem" :list="DataList" @submit="handleItemSubmit"  />
   </section>
 </template>
 
 <script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onActivated, onMounted, ref } from 'vue';
 import Header from '@/components/productionResources/assistInfo/AssistInfoManageHeader.vue';
 import Main from '@/components/productionResources/assistInfo/AssistInfoManageMain.vue';
 import Footer from '@/components/productionResources/assistInfo/AssistInfoManageFooter.vue';
@@ -22,7 +21,7 @@ import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { AssistListConditionClass as Condition } from './TypeClass/assistListConditionClass';
 import type { AssistInfoItem } from './TypeClass/assistInfoItem';
 import type { IAssistListItem } from './types';
-import { useNoteDisplayPositionList } from './hooks/useNoteDisplayPositionList';
+import { isLeaveFromAssistPosSetupView } from './store';
 
 const userStore = useUserStore();
 const localPermission = computed(() => userStore.user?.PermissionList.PermissionManageAssist.Obj);
@@ -30,12 +29,17 @@ const localPermission = computed(() => userStore.user?.PermissionList.Permission
 const condition = ref(new Condition());
 const DataList = ref<IAssistListItem[]>([]);
 const DataNumber = ref(0);
+const loading = ref(false);
 
 const getList = async (Page = 1) => { // 获取列表数据
   condition.value.Page = Page;
   DataList.value = [];
   const temp = CommonClassType.filter(condition.value);
+
+  loading.value = true;
   const resp = await api.getResourceNoteList(temp).catch(() => null);
+  loading.value = false;
+
   if (resp?.data?.isSuccess) {
     DataList.value = resp.data.Data;
     DataNumber.value = resp.data.DataNumber;
@@ -49,8 +53,6 @@ const clearCondition = () => {
 onMounted(() => {
   getList();
 });
-
-const { NoteDisplayPositionList } = useNoteDisplayPositionList();
 
 /** 下面为新增|编辑相关
  ------------------------------------------- */
@@ -109,6 +111,14 @@ const handleRemove = async (ID: string) => {
   }
 };
 
+onActivated(() => {
+  if (isLeaveFromAssistPosSetupView.value) {
+    clearCondition();
+    getList();
+  }
+
+  isLeaveFromAssistPosSetupView.value = false;
+});
 </script>
 
 <script lang='ts'>

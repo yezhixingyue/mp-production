@@ -4,7 +4,7 @@ import { ExternalTaskStatusEnum } from '@/views/OutsourceManage/js/enum';
 import { ExternalTaskStatusEnumList } from '@/views/OutsourceManage/js/EnumList';
 import { ProductiveTaskStatusEnumList } from '@/views/ProductionClient/assets/js/enum';
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
@@ -73,6 +73,10 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
     const _StatusText = isError ? '待转移' : getEnumNameByID(it.Status, ProductiveTaskStatusEnumList);
 
     const _WorkingName = it.Working.WorkingName;
+
+    const _BelongProductionLineText = it.Working.LineName || ''; // 所属生产线
+
+    const _SizeText = it.Working.Size || '';
 
     /** 申放 */
     const _Wastage = it.Working.Wastage ? `${it.Working.Wastage}${info.Unit}` : '';
@@ -163,6 +167,8 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _LastestSendedTime,
       _IsTimeout,
       _PrintMaterialSizeTitle,
+      _BelongProductionLineText,
+      _SizeText,
     };
   });
 

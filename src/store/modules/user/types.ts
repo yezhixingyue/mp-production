@@ -408,6 +408,7 @@ export interface IUser {
       Obj: {
         Print: boolean
         Query: boolean
+        /** 导出大版 */
         FileRetransfer: boolean
         Preview: boolean
         /** 下载文件 */
@@ -416,6 +417,8 @@ export interface IUser {
         Excel: boolean
         /** 撤销至大版前 */
         Revocation: boolean
+        /** 重新拼版 */
+        ReAutoImposition: boolean
       };
     };
     /** 数码完工任务 */
@@ -488,6 +491,14 @@ export interface IUser {
         /** 提前入尾版设置 */
         UnionPlateSetup: boolean
       };
+    },
+    /** 数码折手设置 */
+    PermissionDigitalFolding: {
+      HavePomission: boolean
+      Obj: {
+        Query: boolean
+        Setup: boolean
+      }
     }
   };
   Mobile: string;

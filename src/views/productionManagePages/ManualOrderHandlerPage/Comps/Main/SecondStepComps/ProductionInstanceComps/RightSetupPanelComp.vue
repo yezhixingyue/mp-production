@@ -165,7 +165,7 @@ import { computed, ref, watch } from 'vue';
 import { PlaceOrderProductionInstance } from '@/views/productionManagePages/ManualOrderHandlerPage/js/PlaceOrderProductionInstance';
 import { ManualOrderHandlerPageData } from '@/views/productionManagePages/ManualOrderHandlerPage/js';
 import { ILineDetailWorkingProcedure } from '@/views/productionManagePages/ManualOrderHandlerPage/js/ProductionLineDetailTypes';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IConvertAssistInfo, IConvertOrderFile, IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { handleFileChange, getBleedContent } from '@/views/productionManagePages/ManualOrderHandlerPage/js/utils';

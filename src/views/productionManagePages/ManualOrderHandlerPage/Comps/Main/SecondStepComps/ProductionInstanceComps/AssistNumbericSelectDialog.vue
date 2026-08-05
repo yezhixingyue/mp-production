@@ -25,7 +25,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IConvertAssistInfo } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
 import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 
 const props = defineProps<{
   visible: boolean

@@ -2,7 +2,7 @@ import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { ElMessage } from 'element-plus';
 import { getMaterialTypeGroup, IMaterialTypeGroupItemType } from '@/views/productionResources/resourceBundle/utils';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
 import { PlaceStepEnum } from './enums';
 import { PlaceOrderClass } from './PlaceOrderClass';

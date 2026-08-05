@@ -1,7 +1,7 @@
 import api from '@/api';
 import { IPrintColor } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 
 class TempData {
   /** 辅助文件可上传格式 */

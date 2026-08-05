@@ -130,7 +130,7 @@
 import { computed } from 'vue';
 import { MoveTypeEnum, FeedEdgePositionEnum } from '@/views/productionManagePages/ManualOrderHandlerPage/js/enums';
 import { IBaseProperty } from '@/views/productionManagePages/ManualOrderHandlerPage/js/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { TCraftResolveDetail, TDetailInstance } from '../../../types/types';
 import { getBleedContent } from '../../PDOSetupView/components/PDOLineInstanceComps/hooks/useBleedSetup';
 import { getDetailAssistFileList, getFileNameContentHtml } from '../../PDOSetupView/components/PDOLineInstanceComps/js/tools';

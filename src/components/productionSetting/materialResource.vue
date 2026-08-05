@@ -109,7 +109,7 @@ function PrimaryClick() {
   }
 
   const ids = returnData.map(it => it.ID);
-  const list = props.initRelations.filter(it => it.Type === WorkingProcedureRelationEnum.material && !ids.includes(it.RelationID));
+  const list = props.initRelations.filter(it => it.Type === WorkingProcedureRelationEnum.MaterialGroup && !ids.includes(it.RelationID));
 
   if (list.length > 0) {
     let names = list.map(it => localMaterialListGroupList.value.find(_it => _it.ID === it.RelationID)).filter(it => it).map(it => it?._FullName).join('、');

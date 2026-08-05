@@ -25,18 +25,17 @@ const routes: Array<RouteRecordRaw> = [
     },
     component: LoginView,
   },
-  // {
-  //   path: '/about',
-  //   name: 'about',
-  //   meta: {
-  //     title: '关于',
-  //     requiresAuth: true,
-  //   },
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
-  // },
+  {
+    path: '/digital-print',
+    name: 'digital-print',
+    meta: {
+      title: '数码工单打印',
+      requiresAuth: false,
+      hideMenu: true,
+      fullAcreen: true,
+    },
+    component: () => import('@/views/productionManagePages/ManageDigitalListPage/DigitalPrintView.vue'),
+  },
   ...moduleRoutes,
   { // 无权限页
     path: '/notauth',

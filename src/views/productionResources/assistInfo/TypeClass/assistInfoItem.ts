@@ -1,61 +1,35 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { IAssistListItem } from '../types';
-import { INoteDisplayPosition } from '../hooks/useNoteDisplayPositionList';
-import { AssistInfoTypeEnum } from './assistListConditionClass';
+import { AssistInfoTypeEnum } from '../types/enum';
 
 export class AssistInfoItem {
   ID = '';
 
   Name = '';
 
-  private Type: AssistInfoTypeEnum | '' = '';
+  Type: AssistInfoTypeEnum | '' = '';
 
-  Position: { [key: string]: boolean; } = {};
+  Positions: IAssistListItem['Positions'] = []
 
-  _UsableNoteDisplayPositionList: INoteDisplayPosition[] = [];
+  ReportWorkings: IAssistListItem['ReportWorkings'] = []
 
-  private _EditPositionDataCache = new Map<AssistInfoTypeEnum, { [key: string]: boolean; }>();
+  MapWorkings: IAssistListItem['MapWorkings'] = []
 
-  get _LocalType() {
-    return this.Type;
-  }
+  changeTypeDisabled = false
 
-  set _LocalType(val: AssistInfoTypeEnum | '') {
-    // 1. 存缓存
-    if (this.Type !== '') {
-      this._EditPositionDataCache.set(this.Type, { ...this.Position });
-    }
-
-    // 2. 改变数据
-    this.Type = val;
-    this._UsableNoteDisplayPositionList = this.NoteDisplayPositionList.filter(it => it.Types.includes(this.Type as AssistInfoTypeEnum));
-
-    // 3. 取缓存
-    this._updatePosition(val !== '' ? this._EditPositionDataCache.get(val) : undefined);
-  }
-
-  private _updatePosition(cache?: AssistInfoItem['Position']) {
-    this.NoteDisplayPositionList.forEach(it => {
-      if (this._UsableNoteDisplayPositionList.find(pos => pos.Key === it.Key)) {
-        this.Position[it.Key] = cache?.[it.Key] ?? false;
-      } else {
-        this.Position[it.Key] = false;
-      }
-    });
-  }
-
-  private NoteDisplayPositionList: INoteDisplayPosition[]
-
-  constructor(data: IAssistListItem | null, NoteDisplayPositionList: INoteDisplayPosition[]) {
-    this.NoteDisplayPositionList = NoteDisplayPositionList;
-
+  constructor(data: IAssistListItem | null) {
     if (data) {
       this.ID = data.ID;
       this.Name = data.Name;
-      this._LocalType = data.Type;
+      this.Type = data.Type;
+      this.Positions = data.Positions;
+      this.ReportWorkings = data.ReportWorkings;
+      this.MapWorkings = data.MapWorkings;
 
-      this._updatePosition(data.Position);
+      if (this.Positions.length > 0 || this.ReportWorkings.length > 0 || this.MapWorkings.length > 0) {
+        this.changeTypeDisabled = true;
+      }
     }
   }
 
@@ -76,14 +50,6 @@ export class AssistInfoItem {
       return false;
     }
 
-    if (this._UsableNoteDisplayPositionList.length > 0) {
-      const hasPosition = Object.values(this.Position).some(it => it);
-      if (!hasPosition) {
-        MpMessage.error({ title: '保存失败', msg: '请选择展示位置' });
-        return false;
-      }
-    }
-
     return true;
   }
 
@@ -92,7 +58,6 @@ export class AssistInfoItem {
       ID: this.ID,
       Name: this.Name,
       Type: this.Type,
-      Position: this.Position,
     };
 
     const resp = await api.getResourceNoteSave(reqData).catch(() => null);
@@ -102,9 +67,12 @@ export class AssistInfoItem {
       const callback = () => {
         if (resp.data) {
           const temp: IAssistListItem = {
-            ...reqData,
             ID: resp.data.Data,
+            Name: this.Name,
             Type: Number(this.Type),
+            Positions: this.Positions,
+            ReportWorkings: this.ReportWorkings,
+            MapWorkings: this.MapWorkings,
           };
           cb(temp);
         }

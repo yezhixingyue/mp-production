@@ -2,7 +2,6 @@
 /* eslint-disable max-len */
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { RemovePrivateProperties } from '@/types/types';
@@ -11,6 +10,7 @@ import { IConvertAssistInfo, IProductionInstanceOriginData, IPrintColor, IFactor
 import { PrintColorEnum, PrintSideEnum } from '@/views/productionManagePages/ManualOrderHandlerPage/js/enums';
 import { getDigitalImpositionTemplate, checkIsPositiveInteger } from '@/views/productionManagePages/ManualOrderHandlerPage/js/utils';
 import { restoreInitDataByOrigin } from 'yezhixingyue-js-utils-4-mpzj';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { InstanceSettingInfo } from './InstanceSettingInfo';
 import { IInstanceAttribute, IOrderFileInfo, TCraftResolveDetail, TDetailInstance } from '../../../types/types';
 import { SignaturePositionEnum } from '../../../types/enum';

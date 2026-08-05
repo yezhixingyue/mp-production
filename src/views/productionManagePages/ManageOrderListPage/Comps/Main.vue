@@ -232,7 +232,7 @@ const onDownloadClick = (row: typeof localList.value[number]) => {
     link.click();
   };
 
-  row.CheckedFileList.forEach(it => _download(it.FilePath));
+  row.CheckedFileList.forEach(it => _download(it.FilePath ? `${it.FilePath}?t=${Date.now()}` : it.FilePath));
 };
 
 /** 订单文件替换 */

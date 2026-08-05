@@ -21,12 +21,12 @@ export const DigitalImpositionStatusEnumList = [
   { ID: DigitalImpositionStatusEnum.HaveScheduling, Name: '已排程', printable: true, revocable: true }, // revocable 是否可撤销
   { ID: DigitalImpositionStatusEnum.HavePrint, Name: '已打印', printable: true, exportable: true, downloadable: true, revocable: true },
   { ID: DigitalImpositionStatusEnum.HaveStarted, Name: '已启动', printable: true, exportable: true, downloadable: true, revocable: true },
-  { ID: DigitalImpositionStatusEnum.Canceled, Name: '已取消' },
+  { ID: DigitalImpositionStatusEnum.Canceled, Name: '已取消', reimposable: false },
 ];
 
 /** 数码拼版方式枚举 */
 export enum DigitalImpositionTypeEnum {
-  /** 系统拼版(含自动和拼版软件) */
+  /** 系统拼版 */
   Auto = 0,
   /** 人工线下 */
   Manual = 1,

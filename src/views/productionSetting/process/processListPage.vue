@@ -83,14 +83,14 @@
             {{ scope.row.AllowBatchReport ? '允许' : '不允许' }}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文件" min-width="150">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="报工机台辅助信息" min-width="150">
           <template #default="scope: any">
-            {{getInfoName(scope.row.Relations, 0)}}
+            {{getInfoName(scope.row.Relations, WorkingProcedureRelationEnum.ReportNote)}}
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="ShowColor" label="文字信息" min-width="150">
+        <el-table-column show-overflow-tooltip prop="ShowColor" label="条码稿辅助信息" min-width="150">
           <template #default="scope: any">
-            {{getInfoName(scope.row.Relations,1)}}
+            {{getInfoName(scope.row.Relations, WorkingProcedureRelationEnum.MapNote)}}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="ShowColor" label="物料资源包" min-width="150">
@@ -151,8 +151,9 @@ import EpCascaderByLevel2 from '@/components/common/EpCascader/EpCascaderWrap/Ep
 import type { IRelationsType } from '@/store/modules/productionSetting/types';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
+import { AssistInfoTypeEnum, AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/types/enum';
 import { useUserStore } from '@/store/modules/user';
-import { ReportModeEnumList, WorkingTypeEnumList } from './enums';
+import { ReportModeEnumList, WorkingProcedureRelationEnum, WorkingTypeEnumList } from './enums';
 
 const productionSettingStore = useProductionSettingStore();
 
@@ -226,22 +227,37 @@ const getEquipmentGroupsNames = (EquipmentGroups) => {
   return allEquipment.map(item => `${item?.ClassName}：${item?.EquipmentGroups.map(it => it.Name).join('、')}`).join('；');
 };
 // 格式化辅助信息
-const getInfoName = (Relations:IRelationsType[], Type) => {
-  const returnStr:string[] = [];
+const getInfoName = (Relations:IRelationsType[], Type: WorkingProcedureRelationEnum) => {
+  const m = new Map<AssistInfoTypeEnum, string[]>();
   Relations.forEach(item => {
-    if (item.Type === 0) {
+    if (item.Type === Type) {
       productionSettingStore.ResourceNoteGroup.forEach(it => {
-        if (it.Type === Type) {
-          const temp = it.Notes.find(res => res.ID === item.RelationID);
-          if (temp) {
-            returnStr.push(temp.Name);
+        const temp = it.Notes.find(res => res.ID === item.RelationID);
+        if (temp) {
+          const t = m.get(it.Type);
+          if (t) {
+            t.push(temp.Name);
+          } else {
+            m.set(it.Type, [temp.Name]);
           }
         }
       });
     }
   });
 
-  return returnStr.join('、');
+  const list = Array.from(m.entries()).flatMap(([type, list]) => {
+    const typeName = getEnumNameByID(type, AssistInfoTypeEnums);
+    return {
+      typeName,
+      list,
+    };
+  });
+
+  if (list.length === 1) {
+    return list[0].list.join('、');
+  }
+
+  return list.map(it => `${it.typeName}：${it.list.join('、')}`).join('；');
 };
 // 格式化物料资源
 const getMaterialName = (Relations:IRelationsType[]) => {

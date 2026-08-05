@@ -1,4 +1,4 @@
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ILineDetailWorkingProcedure } from '../../../js/ProductionLineDetailTypes';
 import { IConvertAssistInfo } from '../../../js/types';
 

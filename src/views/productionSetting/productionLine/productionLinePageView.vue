@@ -5,7 +5,8 @@
       <p class="line-info" v-if="!isCombine">
         <span class="title" :title="actionLine?.Name || ''">
           {{actionLine?.Name || ''}}
-          <i v-if="!isCombine && ProductionLineData && ProductionLineData.Category===NormalLineCategoryTypeEnum.digital">(数码生产线)</i>
+          <i v-if="!isCombine && ProductionLineData && ProductionLineData.Category===NormalLineCategoryTypeEnum.digital"
+            >(数码生产线)</i>
           <i v-if="!isCombine && ProductionLineData && ProductionLineData.Category===NormalLineCategoryTypeEnum.special">(专版生产线)</i>
         </span>
         <!-- <span class="fold-the-hand" v-show="actionLine && actionLine.NeedFoldWay">需要折手</span> -->
@@ -18,7 +19,7 @@
       <mp-button type="primary" v-if="localPermission?.Setup" @click="addPrcess" :disabled="!ProductionLineList.length">+ 添加工序</mp-button>
       <!-- 生产线： -->
       <p class="set-slit" v-if="!isCombine && localPermission?.Setup">
-        <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-14"></i>设置分切工序</mp-button>
+        <mp-button type="primary" link @click="setSplit"><i class="icon-shezhi1 iconfont ft-f-14 scale-11"></i>设置分切工序</mp-button>
       </p>
       <p class="templates" v-if="!isCombine && ProductionLineData && ProductionLineData.Category!==NormalLineCategoryTypeEnum.digital">
         <span class="label">允许翻版方式：</span>
@@ -161,6 +162,11 @@
                 </el-radio-group>
               </el-form-item>
             </template>
+
+            <div v-else style="margin-left: 130px;">
+              <!-- 数码生产线设置项 -->
+              <el-checkbox :disabled="!!Data.addLineFrom.ID" v-model="Data.addLineFrom.AutoFolding">自动折手</el-checkbox>
+            </div>
           </template>
           <template v-else>
             <div class="text bold">
@@ -205,7 +211,7 @@
                v-for="item in PrcessList
                .filter(it => ProductionLineData?.Category!==NormalLineCategoryTypeEnum.digital || it.ReportMode !== ReportModeEnum.block)
                .filter(it => [it.Type, ''].includes(Data.addPrcessFrom._filterType))"
-               :key="item.ClassID"
+               :key="item.ID"
                >
                 <el-checkbox :label="item.ID" :title="item.Name" :disabled="originWordIDS.includes(item.ID)">{{item.Name}}</el-checkbox>
               </template>
@@ -228,7 +234,7 @@
     <template #default>
       <div class="add-line-dialog mp-pd-line-setup-dialog-content-wrap formatRadioCheckBox">
           <el-radio-group v-model="Data.setSplitFrom.SplitWordID">
-            <template v-for="item in splitPrcessList" :key="item.ClassID" >
+            <template v-for="item in splitPrcessList" :key="item.ID" >
               <el-radio :label="item.ID" :title="item.Name">{{item.Name}}</el-radio>
             </template>
           </el-radio-group>
@@ -303,6 +309,7 @@ interface addLineFromType {
     CombinationWordIDS: string[],
     /** 生产线类型 */
     Category: NormalLineCategoryTypeEnum
+    AutoFolding: boolean
 }
 interface addPrcessFromType {
   ID: string,
@@ -352,6 +359,7 @@ const Data:DataType = reactive({
     UseModeType: '',
     ReproductionTypes: [],
     Category: NormalLineCategoryTypeEnum.normal,
+    AutoFolding: false,
   },
   addPrcessFrom: {
     ID: '',
@@ -655,6 +663,7 @@ const editLine = () => {
       UseModeType: ProductionLineData.value.UseModeType,
       CombinationWordIDS,
       Category: actionLine.value.Category,
+      AutoFolding: actionLine.value.AutoFolding,
     };
     Data.addLineFrom = temp;
     initSelectedCombinationWordIDS.value = CombinationWordIDS;
@@ -684,6 +693,7 @@ const addLineCloseedClick = () => {
     UseModeType: '',
     ReproductionTypes: [],
     Category: NormalLineCategoryTypeEnum.normal,
+    AutoFolding: false,
   };
 };
 const addLineCloseClick = () => {

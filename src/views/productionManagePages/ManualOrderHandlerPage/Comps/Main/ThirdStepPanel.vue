@@ -88,7 +88,7 @@
 <script setup lang='ts'>
 import { LineTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { computed } from 'vue';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ManualOrderHandlerPageData } from '../../js';
 import SingleInstanceComp from './ThirdStepComps/SingleInstanceComp.vue';
 import { getWorkProcessContent } from './ThirdStepComps/utils';

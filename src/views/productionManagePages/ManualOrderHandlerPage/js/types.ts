@@ -1,5 +1,5 @@
 import { IProductionLineSet } from '@/assets/Types/ProductionLineSet/types';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { PlaceOrderClass } from './PlaceOrderClass';
 import { PlaceOrderProductionInstance } from './PlaceOrderProductionInstance';
 import { IImpositionTemplate, ILineWorkingNoteInfo, IProductionLineDetail } from './ProductionLineDetailTypes';

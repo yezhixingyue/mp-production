@@ -9,6 +9,7 @@ import { LineStatusEnum, NormalLineCategoryTypeEnum } from '@/assets/Types/Produ
 import { WorkingProcedureRelationEnum } from '@/views/productionSetting/process/enums';
 import { LineIsUseModeEnum, ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
 import { MakingGroupTypeFeatureEnum, resourceBundleMatchEnum } from '@/views/productionResources/resourceBundle/TypeClass/ResourceBundle';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 
 // 辅助信息
 export interface NotesType{
@@ -17,7 +18,7 @@ export interface NotesType{
   Type?: number,
 }
 export interface SelectAssistInfoGroup{
-  Type: number,
+  Type: AssistInfoTypeEnum,
   Notes: NotesType[]
 }
 interface _EquipmentGroups{
@@ -68,7 +69,7 @@ export interface IEquipmentGroupsType{
  */
 export interface IRelationsType{
   RelationID: string,
-  /** 资源类型,0.辅助信息 1.可选物料资源包 2.其他大版文件(大版类型为其他情况) = ['0', '1', '2']  */
+  /** 资源类型,0.报工机台辅助信息 1.可选物料资源包 2.条码稿辅助信息 = ['0', '1', '2']  */
   Type: WorkingProcedureRelationEnum
 }
 
@@ -162,4 +163,5 @@ export interface IWorkingProcedureList {
   /** 允许翻版方式， 仅生产线 */
   ReproductionTypes: ReproductionTypeEnum[]
   Category: NormalLineCategoryTypeEnum
+  AutoFolding: boolean
 }

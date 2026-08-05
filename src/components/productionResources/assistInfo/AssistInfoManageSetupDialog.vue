@@ -8,18 +8,19 @@
 
       <li>
         <span class="label star">类型：</span>
-        <el-radio-group v-model="ruleForm._LocalType" size="small">
+        <el-radio-group v-model="ruleForm.Type" size="small" :disabled="ruleForm.changeTypeDisabled"
+         :title="ruleForm.changeTypeDisabled?'已设置位置或工序不可更改类型':undefined">
           <el-radio class="ft-12" v-for="it in radioMenus" :key="it.ID" :label="it.ID">{{it.Name}}</el-radio>
         </el-radio-group>
       </li>
 
-      <li style="margin-top: -10px;" v-if="ruleForm._UsableNoteDisplayPositionList.length > 0" class="poi">
+      <!-- <li style="margin-top: -10px;" v-if="ruleForm._UsableNoteDisplayPositionList.length > 0" class="poi">
         <span class="label star">展示位置：</span>
         <div>
           <el-checkbox class="ft-12" v-model="ruleForm.Position[it.Key]"
             v-for="it in ruleForm._UsableNoteDisplayPositionList" :key="it.Key">{{ it.Name }}</el-checkbox>
         </div>
-      </li>
+      </li> -->
     </ul>
   </DialogContainerComp>
 </template>
@@ -27,17 +28,15 @@
 <script setup lang='ts'>
 import { getEnumList } from '@/assets/js/utils/getListByEnums';
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
-import { INoteDisplayPosition } from '@/views/productionResources/assistInfo/hooks/useNoteDisplayPositionList';
 import { AssistInfoItem } from '@/views/productionResources/assistInfo/TypeClass/assistInfoItem';
-import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
 import { IAssistListItem } from '@/views/productionResources/assistInfo/types';
+import { AssistInfoTypeEnums } from '@/views/productionResources/assistInfo/types/enum';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
   visible: boolean,
   item: null | IAssistListItem
   list: IAssistListItem[]
-  NoteDisplayPositionList: INoteDisplayPosition[]
 }>();
 
 const emit = defineEmits(['update:visible', 'submit']);
@@ -58,7 +57,7 @@ const radioMenus = getEnumList(AssistInfoTypeEnums);
 const ruleForm = ref<null | AssistInfoItem>(null);
 
 const onOpen = () => {
-  ruleForm.value = new AssistInfoItem(props.item, props.NoteDisplayPositionList);
+  ruleForm.value = new AssistInfoItem(props.item);
 };
 
 const submit = () => {

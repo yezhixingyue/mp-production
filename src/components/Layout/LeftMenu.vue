@@ -308,6 +308,10 @@ export default {
             font-size: 15px;
             margin-left: 4px;
             margin-right: 10px;
+            &.icon-shoufengqinzhedie {
+              margin-right: 7px;
+              margin-left: 2px;
+            }
           }
         > i, > span {
           color: #fff;

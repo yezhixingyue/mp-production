@@ -1,6 +1,6 @@
 import api from '@/api';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
-import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/TypeClass/assistListConditionClass';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { WorkingTypeEnum } from '@/views/productionSetting/process/enums';
 import { NormalLineCategoryTypeEnum } from '@/assets/Types/ProductionLineSet/enum';
 import { PlaceOrderMaterialSourceEnum, PrintColorEnum, PrintSideEnum } from './enums';

@@ -19,6 +19,8 @@
         showWishDuration: true,
         showLatestFinishTime: true,
         showPartialDelivery: true,
+        showBelongProductionLine: true,
+        showSize: true,
         showCtrlMenus: ['switchEqu'],
       }"
       @switchEqu="onSwitchEquClick"
