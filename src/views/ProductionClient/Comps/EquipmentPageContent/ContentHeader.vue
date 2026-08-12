@@ -8,7 +8,7 @@
           :key="it.Equipment.ID"
           :class="{active:curActiveInstance && curActiveInstance.Equipment.ID===it.Equipment.ID}"
           :title="it.EquipmentDisplayName"
-          :style="`z-index:${10 - i}`"
+          :style="`z-index:${ManageClientPageData.InstanceList.length - i}`"
           @click="onMenuClick(it)">
           {{ it.EquipmentDisplayName }}
         </span>
