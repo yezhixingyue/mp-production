@@ -33,7 +33,7 @@ const scanValue = computed({
     return ChangeLabelStore.scanInputValue;
   },
   set(val) {
-    ChangeLabelStore.setScanInputValue(val);
+    ChangeLabelStore.setScanInputValue(val.replace(/[^0-9-]+/g, ''));
   },
 });
 

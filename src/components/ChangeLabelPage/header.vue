@@ -1,8 +1,8 @@
 <template>
   <header class="change-label-header">
     <div class="tabs">
-      <div class="tab" :class="{action: tabValue === 1}" @click="changeTab(1)">生产打包</div>
-      <div class="tab" :class="{action: tabValue === 2}" @click="changeTab(2)">已打印订单</div>
+      <div class="tab" :class="{action: tabValue === 1}" @click="changeTab(1)" v-if="PermissionPrintExpress?.Obj.Print">生产打包</div>
+      <div class="tab" :class="{action: tabValue === 2}" @click="changeTab(2)" v-if="PermissionPrintExpress?.Obj.Query">已打印订单</div>
     </div>
     <div class="user-info-box">
       <el-button link v-if="tabValue === 1" @click="printSettingClick"><i class="iconfont icon-dayinshezhi"></i> 打印设置</el-button>
@@ -42,6 +42,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/store/modules/user';
 import {
   computed,
@@ -60,9 +61,14 @@ const emit = defineEmits(['changeTabValue']);
 
 const router = useRouter();
 const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+
 const ChangeLabelStore = useChangeLabelStore();
 const printSettingVisible = ref(false);
 const _printSettingNumber = ref('');
+
+const PermissionPrintExpress = computed(() => user.value?.PermissionList.PermissionPrintExpress);
+
 const changeTab = (val) => {
   if (props.tabValue === val) return;
   emit('changeTabValue', val);
@@ -75,7 +81,7 @@ const inputValue = computed({
     return _printSettingNumber.value;
   },
   set(val) {
-    _printSettingNumber.value = Number(val.replace(/[^0-9]+/g, '')) > 20 ? '20' : val.replace(/[^0-9]+/g, '');
+    _printSettingNumber.value = val.replace(/[^0-9]+/g, '');
   },
 });
 const onOpen = () => {
@@ -85,6 +91,14 @@ const onCancel = () => {
   printSettingVisible.value = false;
 };
 const submit = () => {
+  if (Number(inputValue.value) < 1) {
+    MpMessage.error('操作失败', '请输入大于0的数字');
+    return;
+  }
+  if (Number(inputValue.value) > 20) {
+    MpMessage.error('操作失败', '请输入正整数，最大不能超过20');
+    return;
+  }
   printSettingVisible.value = false;
   ChangeLabelStore.setPrintSettingNumber(Number(_printSettingNumber.value));
 };

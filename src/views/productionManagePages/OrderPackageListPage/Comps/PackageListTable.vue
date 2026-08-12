@@ -10,11 +10,31 @@
           {{[scope.row.Order.FirstLevel, scope.row.Order.SecondLevel, scope.row.Order.ProductName].filter(it => it).join(' - ')}}
         </template>
       </mp-table-column>
-      <mp-table-column min-width="80px" prop="Order.Number" label="数量"></mp-table-column>
-      <mp-table-column min-width="80px" prop='Weight' label="重量（kg）"></mp-table-column>
-      <mp-table-column min-width="80px" prop="TotalAmount" label="金额"></mp-table-column>
-      <mp-table-column min-width="80px" prop="PaidCashAmount" label="已付金额"></mp-table-column>
-      <mp-table-column min-width="80px" prop="UnpaidAmount" label="未付金额"></mp-table-column>
+      <mp-table-column min-width="80px" prop="Order.Number" label="数量">
+        <template #default="scope:any">
+          {{scope.row.Order.Number}}{{scope.row.Order.Unit}}
+        </template>
+      </mp-table-column>
+      <mp-table-column min-width="80px" prop='Weight' label="重量">
+        <template #default="scope:any">
+          {{scope.row.Weight}}kg
+        </template>
+      </mp-table-column>
+      <mp-table-column min-width="80px" prop="TotalAmount" label="金额">
+        <template #default="scope:any">
+          {{scope.row.TotalAmount}}元
+        </template>
+      </mp-table-column>
+      <mp-table-column min-width="80px" prop="PaidCashAmount" label="已付金额">
+        <template #default="scope:any">
+          {{scope.row.PaidCashAmount}}元
+        </template>
+      </mp-table-column>
+      <mp-table-column min-width="80px" prop="UnpaidAmount" label="未付金额">
+        <template #default="scope:any">
+          {{scope.row.UnpaidAmount}}元
+        </template>
+      </mp-table-column>
       <mp-table-column min-width="100px" prop="Order.Address.ExpressText" label="配送方式"></mp-table-column>
       <mp-table-column min-width="180px" prop="Order.OrderCode" label="收件地址">
         <template #default="scope:any">

@@ -30,27 +30,36 @@ let oInp: HTMLElement | null = document.querySelector('.scan-input-comp > .el-in
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 const ChangeLabelStore = useChangeLabelStore();
-const tabValue = ref(1);
+const { PrintExpressList, scanInputValue } = storeToRefs(ChangeLabelStore);
+const tabValue = ref(0);
 const visible = ref(false);
 const GetOrderInfo = ref<IGetOrderInfo|null>(null);
 const changeTabValue = (val) => {
-  tabValue.value = val;
+  if (val === tabValue.value) return;
+  PrintExpressList.value = [];
+  scanInputValue.value = '';
+  ChangeLabelStore.getPrintListOptions.KeyWords = '';
+  ChangeLabelStore.getPrintListOptions.Page = 1;
   if (val === 1) { // 打包扫描（获取最近三个订单）
     ChangeLabelStore.getPrintListOptions.PageSize = 3;
+    ChangeLabelStore.getPrintListOptions.Printer = user.value?.StaffID || '';
     ChangeLabelStore.getPrintExpressList();
   } else { // 包裹列表 获取列表
     ChangeLabelStore.getPrintListOptions.PageSize = 20;
+    ChangeLabelStore.getPrintListOptions.Printer = '';
     ChangeLabelStore.getPrintExpressList();
   }
+  tabValue.value = val;
 };
 const PermissionPrintExpress = computed(() => user.value?.PermissionList.PermissionPrintExpress);
 const submit = () => {
-  if (!PermissionPrintExpress.value?.Obj.Print) return; // 没有打印权限则不查询
   // const FormatValue = getFormatValue();
   // if (FormatValue.length !== 13) {
   //   MpMessage.error('扫描失败', '包裹号错误');
   // } else
   if (tabValue.value === 1) { // 扫描
+    if (!scanInputValue.value) return;
+    if (!PermissionPrintExpress.value?.Obj.Print) return; // 没有打印权限则不查询
     ChangeLabelStore.getPrintExpressGetOrderInfo();
   } else { // 查询
     ChangeLabelStore.getPrintListOptions.KeyWords = ChangeLabelStore.scanInputValue.trim();
@@ -69,7 +78,11 @@ const closeDialog = () => {
   }
 };
 onMounted(() => {
-  changeTabValue(1);
+  if (PermissionPrintExpress.value?.Obj.Print) {
+    changeTabValue(1);
+  } else {
+    changeTabValue(2);
+  }
 });
 </script>
 <style lang="scss">
@@ -184,6 +197,19 @@ onMounted(() => {
         width: 220px;
         height: 60px;
         font-size: 30px;
+        color: #3988FF;
+        border-color: #3988FF;
+        &:hover{
+          color: #3988FF;
+          border-color: #3988FF;
+        }
+        &.el-button--primary{
+          color: #fff;
+          background: #3988FF;
+          &:hover{
+            background: #6da4f6 !important;
+          }
+        }
       }
     }
   }

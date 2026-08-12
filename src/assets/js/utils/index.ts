@@ -58,3 +58,19 @@ export const extname = (filename: string) => {
 
   return `.${b.toLowerCase()}`;
 };
+/**
+ * 获取产品单位（如果有“/款”则去掉）
+ *
+ * @param {string} unit
+ * @returns
+ */
+export const useUnitGetUnit = (unit: string) => {
+  let _unit = [...unit];
+  if (_unit[_unit.length - 1] === '款') { // 如果最后一个字符是 ‘款’
+    _unit = _unit.filter((it, i) => i !== _unit.length - 1);
+  }
+  if (_unit[_unit.length - 1] === '/') { // 如果最后一个字符是 ‘/’
+    _unit = _unit.filter((it, i) => i !== _unit.length - 1);
+  }
+  return _unit.join('');
+};

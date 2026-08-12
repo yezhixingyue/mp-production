@@ -1,4 +1,5 @@
 import jrQrcode from 'jr-qrcode';
+import { useUnitGetUnit } from '@/assets/js/utils';
 import getLodop from './lodopFuncs';
 
 let LODOP;
@@ -79,7 +80,7 @@ p {
             ${SecondLevel}-${ProductName}
           </p>
           <p style="width: 100%; height: 18px; overflow: hidden;">
-            ${KindCount}款-${Number}${Unit}${Size ? `-${Size}` : ''}
+            ${KindCount}款-${Number}${useUnitGetUnit(Unit)}/款${Size ? `-${Size}` : ''}
           </p>
         </div>
       </div>

@@ -13,9 +13,12 @@
       <p style="display: flex;">
         <el-radio v-model="PrintPrintData.Type" :label="3" @click="changeType(3)">自定义打包</el-radio>
         <template v-if="PrintPrintData.Type === 3">
-          <el-input v-model="inputValue"></el-input>
+          <el-input v-model="inputValue" style="width: 100px;"></el-input>
           <i class="iconfont icon-jurassic_warn warn-tip">注意后面单位</i>
-          <span style="color: #3988FF;white-space: nowrap;">{{GetOrderInfo?.Unit}}</span>
+          <span style="color: #3988FF;white-space: nowrap;">{{useUnitGetUnit(GetOrderInfo?.Unit||'')}}</span>
+          打<span v-if="!isSetPrintCount" @dblclick="dblclick"
+          style="width: 50px;text-align: center;display: inline-block;user-select: none;">{{ PrintCount }}</span>
+          <el-input v-else v-model="PrintCount" style="width: 50px; margin: 0 10px;" @blur="isSetPrintCount = false" ref="PrintCountInput"></el-input>个标签
           <el-button @click="getPrintExpressPrint()"> <i class="iconfont icon-dayinji"></i> 打印标签</el-button>
         </template>
       </p>
@@ -29,11 +32,15 @@
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { ElInput } from 'element-plus';
+import { useUnitGetUnit } from '@/assets/js/utils';
+import { computed, ref } from 'vue';
 
 const emit = defineEmits(['closeDialog']);
 const ChangeLabelStore = useChangeLabelStore();
-const { PrintPrintData, GetOrderInfo } = storeToRefs(ChangeLabelStore);
+const { PrintPrintData, GetOrderInfo, printSettingNumber } = storeToRefs(ChangeLabelStore);
+const PrintCountInput = ref<InstanceType<typeof ElInput>>();
+const isSetPrintCount = ref(false);
 
 const inputValue = computed({
   get() {
@@ -44,6 +51,14 @@ const inputValue = computed({
   },
 });
 
+const PrintCount = computed({
+  get() {
+    return String(PrintPrintData.value.PrintCount);
+  },
+  set(val) {
+    PrintPrintData.value.PrintCount = Number(val.replace(/[^0-9]+/g, ''));
+  },
+});
 const changeType = (Type) => {
   PrintPrintData.value.Type = Type;
   inputValue.value = '';
@@ -55,6 +70,9 @@ const changeType = (Type) => {
       PrintPrintData.value.PrintCount = GetOrderInfo.value?.KindCount || 0;
       ChangeLabelStore.getPrintExpressPrint();
       break;
+    case 3:
+      PrintPrintData.value.PrintCount = 1;
+      break;
     default:
       break;
   }
@@ -65,7 +83,21 @@ const getPrintExpressPrint = () => {
     return;
   }
   if (!Number(PrintPrintData.value.Number) && PrintPrintData.value.Type === 3) {
-    MpMessage.error('操作失败', `请输入自定义打包${GetOrderInfo.value?.Unit}数`);
+    MpMessage.error('操作失败', `请输入自定义打包${useUnitGetUnit(GetOrderInfo.value?.Unit || '')}数`);
+    return;
+  }
+  if (((PrintPrintData.value.PrintCount > printSettingNumber.value)) && PrintPrintData.value.Type === 3) {
+    MpMessage.error('操作失败', `请输入小于${printSettingNumber.value + 1}的标签数量`);
+    return;
+  }
+  if (!PrintPrintData.value.PrintCount && PrintPrintData.value.Type === 3) {
+    MpMessage.error('操作失败', '请输入标签数量');
+    return;
+  }
+  if ((Number(PrintPrintData.value.Number) * PrintPrintData.value.PrintCount
+  > ((GetOrderInfo.value?.Number || 1) * (GetOrderInfo.value?.KindCount || 1)))
+  && PrintPrintData.value.Type === 3) {
+    MpMessage.error('操作失败', '请输入小于未打包数量的包内产品数量');
     return;
   }
   ChangeLabelStore.getPrintExpressPrint();
@@ -73,11 +105,18 @@ const getPrintExpressPrint = () => {
 const close = () => {
   emit('closeDialog');
 };
+const dblclick = () => {
+  isSetPrintCount.value = true;
+  setTimeout(() => {
+    PrintCountInput.value?.focus();
+  }, 10);
+};
 defineExpose({ changeType });
 </script>
 <style lang="scss">
 .orther-pack{
   padding: 0 140px;
+  padding-right: 40px;
   >p{
     font-size: 22px;
     color: #888;

@@ -137,8 +137,7 @@ export interface IUser {
       HavePomission: boolean
       Obj: {
         Print: boolean
-        QueryAll: boolean
-        QueryOwn: boolean
+        Query: boolean
       };
     };
     /** 外来物料管理 */

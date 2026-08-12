@@ -1,7 +1,6 @@
 import { defineStore, DefineStoreOptions } from 'pinia';
 import lodopPrint from '@/assets/js/lodopPrint/index';
-import messageBox from '@/assets/js/utils/message';
-import { h } from 'vue';
+import { h, nextTick } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { IPrintResponse, IGetOrderInfo } from '@/views/ChangeLabelPage/types';
 import api from '@/api';
@@ -14,6 +13,7 @@ type IgetPrintListOptions = {
   Page: number,
   KeyWords: string,
   PageSize: number,
+  Printer: string,
 };
 type IPrintPrintData = {
   OrderID: string,
@@ -62,6 +62,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
       Page: 1,
       KeyWords: '',
       PageSize: 2,
+      Printer: '',
     },
     PrintList: [], // 最近一次打印的返回值
     _GetOrderInfo: null, // 最近一次打印的查询值
@@ -86,7 +87,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
       // 0: // 全部打成一包
       // 3: // 自定义打包
       // 255: // 追加打包
-      if ([0, 3, 255].some((it:number) => (it === this.PrintPrintData.Type))) {
+      if ([0, 255].some((it:number) => (it === this.PrintPrintData.Type))) {
         return 1;
       }
       if (this.PrintPrintData.Type === 1) { // 按款打包
@@ -102,6 +103,9 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
         const noPrintPackage = allPackageNum - (this.GetOrderInfo.PrintInfo?.Packages.length || 0);
         // 如果打印设置的标签数量小于等于未打印数量则打印设置标签数量 否则打印剩余款数
         return (this.printSettingNumber <= noPrintPackage) ? Number(this.printSettingNumber) : noPrintPackage;
+      }
+      if (this.PrintPrintData.Type === 3) { // 自定义打包;
+        return this.PrintPrintData.PrintCount || 1;
       }
       return 1;
     },
@@ -210,6 +214,9 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
         this.PrintList = resp.data.Data;
         this._GetOrderInfo = JSON.parse(JSON.stringify(this.GetOrderInfo));
         const temp = this.PrintExpressList.find(it => it.OrderCode === this.GetOrderInfo?.OrderCode);
+        // if (this.GetOrderInfo.PrintInfo?.Packages.some(it => it.Status === 1)) { // 如果有揽收包裹 则重新获取包裹列表
+        //   this.getPrintExpressList();
+        // } else
         if (temp) {
           const _temp = JSON.parse(JSON.stringify(temp));
           this.PrintExpressList = this.PrintExpressList.filter(it => it.OrderCode !== this.GetOrderInfo?.OrderCode);
@@ -241,7 +248,8 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
               }
               break;
             case 3: // 自定义打包
-              if (this.orderAllNumber <= Number(this.PrintPrintData.Number) + Number(orderPrintNumber)) { // 如果订单总数量小于等于设置的打印设置能打印出的最大数量
+              if (this.orderAllNumber
+                <= (Number(this.PrintPrintData.Number) * Number(this.PrintPrintData.PrintCount)) + Number(orderPrintNumber)) { // 如果订单总数量小于等于设置的打印设置能打印出的最大数量
                 this.printDialogVisible = false;
                 // 如果有打印过 并且已打印数量加要打印数量大于等于订单的总数量
               }
@@ -255,12 +263,16 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
         resp.data.Data.forEach(it => {
           num += it.Number || 0;
         });
-        this.GetOrderInfo.PrintInfo = {
-          PackageNumber: this.GetOrderInfo.PrintInfo?.PackageNumber || Number(this.PrintPrintData.Number),
-          Packages: [...this.GetOrderInfo.PrintInfo?.Packages || [], ...resp.data.Data],
-          PrintNumber: (this.GetOrderInfo.PrintInfo?.PrintNumber || 0) + num,
-          Type: this.PrintPrintData.Type || 0,
-        };
+        await nextTick();
+        setTimeout(() => {
+          if (!this.GetOrderInfo) return;
+          this.GetOrderInfo.PrintInfo = {
+            PackageNumber: this.GetOrderInfo.PrintInfo?.PackageNumber || Number(this.PrintPrintData.Number),
+            Packages: [...this.GetOrderInfo.PrintInfo?.Packages || [], ...resp.data?.Data || []],
+            PrintNumber: (this.GetOrderInfo.PrintInfo?.PrintNumber || 0) + num,
+            Type: this.PrintPrintData.Type || 0,
+          };
+        }, this.printDialogVisible ? 0 : 200);
       }
     },
   },

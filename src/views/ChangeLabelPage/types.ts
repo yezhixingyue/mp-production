@@ -40,6 +40,7 @@ export interface IPrintResponse {
   ID: number,
   ServerID: number,
   OrderID: string,
+  Printer: string,
   Status: number,
   Number: number,
   TotalAmount: number,

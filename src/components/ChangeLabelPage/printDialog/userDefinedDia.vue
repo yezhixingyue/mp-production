@@ -2,8 +2,8 @@
   <div class="user-defined-box">
     <div class="print-info">
       <div class="order-info"  v-if="GetOrderInfo">
-        <p>订单数量： <span>{{GetOrderInfo.Number}}{{GetOrderInfo.Unit}} {{GetOrderInfo.KindCount}}款</span>
-          （共{{GetOrderInfo.Number*GetOrderInfo.KindCount}}{{GetOrderInfo.Unit}}）</p>
+        <p>订单数量： <span>{{GetOrderInfo.Number}}{{useUnitGetUnit(GetOrderInfo.Unit)}}/款 {{GetOrderInfo.KindCount}}款</span>
+          （共{{GetOrderInfo.Number*GetOrderInfo.KindCount}}{{useUnitGetUnit(GetOrderInfo.Unit)}}）</p>
         <p>客户需求： <span v-if="GetOrderInfo.Requests && GetOrderInfo.Requests.length">{{GetOrderInfo.Requests.join('、')}}</span>
           <span class="button" @click="ChangeLabelStore.downloadFiles(GetOrderInfo.Files)" v-if="GetOrderInfo.Files && GetOrderInfo.Files.length" >
             <i class="iconfont icon-xiazaidabaoxiangqing"></i>打包明细
@@ -15,7 +15,7 @@
             <template v-if="!printIsOver">
               <p>剩余
                 <span>{{ getNoPrintNum() }}</span>
-                {{GetOrderInfo.Unit}}未打包</p>
+                {{useUnitGetUnit(GetOrderInfo.Unit)}}未打包</p>
             </template>
           </div>
         </div>
@@ -24,7 +24,10 @@
           <span>当前包内产品<br/>数量：</span>
           <div class="right">
             <el-input v-model="inputValue"></el-input>
-            {{GetOrderInfo.Unit}}
+            {{useUnitGetUnit(GetOrderInfo.Unit)}}
+            打<span v-if="!isSetPrintCount" @dblclick="dblclick"
+            style="width: 50px;text-align: center;display: inline-block;user-select: none;">{{ PrintCount }}</span>
+            <el-input v-else v-model="PrintCount" style="width: 50px;" @blur="isSetPrintCount = false" ref="PrintCountInput"></el-input>个标签
           </div>
         </div>
       </div>
@@ -35,7 +38,7 @@
           <el-table-column min-width="117px" prop="Number" show-overflow-tooltip label="内含数量"></el-table-column>
           <el-table-column min-width="127px" prop="PublicKey" show-overflow-tooltip label="操作">
             <template #default="scope:any">
-              <mp-button type="info" link @click="RevocationPackage(scope.row.ID, scope.row.ServerID, scope.row.Number)">
+              <mp-button type="info" link @click="RevocationPackage(scope.row.ID, scope.row.ServerID, scope.row.Number)" :disabled="scope.row.Status === 1">
                 <i class="iconfont icon-chexiao"></i>撤销
               </mp-button>
             </template>
@@ -58,12 +61,17 @@
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { MpMessage } from '@/assets/js/utils/MpMessage';
 import { storeToRefs } from 'pinia';
-import { onMounted, computed } from 'vue';
+import { ElInput } from 'element-plus';
+import { useUnitGetUnit } from '@/assets/js/utils';
+import { onMounted, computed, ref } from 'vue';
 import api from '@/api';
 
 const emit = defineEmits(['closeDialog']);
 const ChangeLabelStore = useChangeLabelStore();
-const { PrintExpressList, PrintPrintData, GetOrderInfo, printIsOver } = storeToRefs(ChangeLabelStore);
+const { PrintExpressList, PrintPrintData, GetOrderInfo, printIsOver, printSettingNumber, PrintList } = storeToRefs(ChangeLabelStore);
+
+const PrintCountInput = ref<InstanceType<typeof ElInput>>();
+const isSetPrintCount = ref(false);
 
 const inputValue = computed({
   get() {
@@ -73,10 +81,32 @@ const inputValue = computed({
     PrintPrintData.value.Number = val.replace(/[^0-9]+/g, '');
   },
 });
+const PrintCount = computed({
+  get() {
+    return String(PrintPrintData.value.PrintCount);
+  },
+  set(val) {
+    PrintPrintData.value.PrintCount = Number(val.replace(/[^0-9]+/g, ''));
+  },
+});
+
+const getNoPrintNum = () => (GetOrderInfo.value?.KindCount || 1) * (GetOrderInfo.value?.Number || 1) - (GetOrderInfo.value?.PrintInfo?.PrintNumber || 0);
 
 const Print = () => {
   if ((PrintPrintData.value.Type === 2 || PrintPrintData.value.Type === 3) && !PrintPrintData.value.Number) {
     MpMessage.error('操作失败', '请输入包内产品数量');
+    return;
+  }
+  if ((PrintPrintData.value.PrintCount > printSettingNumber.value)) {
+    MpMessage.error('操作失败', `请输入小于${printSettingNumber.value + 1}的标签数量`);
+    return;
+  }
+  if (!PrintPrintData.value.PrintCount) {
+    MpMessage.error('操作失败', '请输入标签数量');
+    return;
+  }
+  if (Number(PrintPrintData.value.Number) * PrintPrintData.value.PrintCount > getNoPrintNum()) {
+    MpMessage.error('操作失败', '请输入小于未打包数量的包内产品数量');
     return;
   }
   ChangeLabelStore.getPrintExpressPrint();
@@ -97,11 +127,18 @@ const RevocationPackage = async (packageID, ServerID, Number) => {
         }
       });
     }
+    PrintList.value = PrintList.value.filter(it => it.ID === packageID);
   }
 };
-const getNoPrintNum = () => (GetOrderInfo.value?.KindCount || 1) * (GetOrderInfo.value?.Number || 1) - (GetOrderInfo.value?.PrintInfo?.PrintNumber || 0);
+const dblclick = () => {
+  isSetPrintCount.value = true;
+  setTimeout(() => {
+    PrintCountInput.value?.focus();
+  }, 10);
+};
 onMounted(() => {
   PrintPrintData.value.Type = 3;
+  PrintPrintData.value.PrintCount = 1;
 });
 </script>
 <style lang="scss">
@@ -173,7 +210,7 @@ onMounted(() => {
           .right{
             line-height: 60px;
             .el-input{
-              width: 200px;
+              width: 100px;
               height: 60px;
               margin: 0 10px;
               font-size: 24px;
@@ -248,6 +285,11 @@ onMounted(() => {
         .el-button{
           color: #444;
           font-size: 20px !important;
+          &.is-disabled{
+            i{
+              color: #cbcbcb;
+            }
+          }
           i{
             font-size: 20px !important;
             color: #9BC3FF;

@@ -17,8 +17,8 @@
           </li>
           <li>
             <div class="label">数量:</div>
-            <div class="content">{{item.Number}}{{item.Unit}} {{item.KindCount}}款
-              <span class="is-gray">（共{{item.KindCount * item.Number}}{{item.Unit}}）</span>
+            <div class="content">{{item.Number}}{{useUnitGetUnit(item.Unit)}}/款 {{item.KindCount}}款
+              <span class="is-gray">（共{{item.KindCount * item.Number}}{{useUnitGetUnit(item.Unit)}}）</span>
             </div>
           </li>
           <li>
@@ -27,7 +27,12 @@
           </li>
           <li>
             <div class="label">客户需求:</div>
-            <div class="content" :title="item.Requests.join('、')">{{item.Requests.join('、')}}</div>
+            <div class="content Requests">
+              <div :title="item.Requests.join('、')">{{item.Requests.join('、')}}</div>
+              <span class="button" @click="ChangeLabelStore.downloadFiles(item.Files)" v-if="item.Files && item.Files.length">
+                <i class="iconfont icon-xiazaidabaoxiangqing"></i> 打包明细
+              </span>
+            </div>
           </li>
           <li>
             <div class="label">实际打包:</div>
@@ -44,8 +49,9 @@
             <div class="content" :title="item.Content">{{item.Content}}</div>
           </li>
         </ul>
-        <p class="revocation">
-          <el-button type="danger" link @click="RevocationOrder(item)">
+        <p class="revocation" v-if="PermissionPrintExpress?.Obj.Print">
+          <el-button type="danger" link @click="RevocationOrder(item)"
+          :disabled="item.PrintInfo?.Packages.some(it => it.Status === 1)">
             <i class="iconfont icon-chexiaodabao"></i>
             <p>撤销打包</p>
           </el-button>
@@ -75,10 +81,19 @@ import { IGetOrderInfo } from '@/views/ChangeLabelPage/types';
 import MpPagination from '@/components/common/MpPagination.vue';
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { storeToRefs } from 'pinia';
+import { useUnitGetUnit } from '@/assets/js/utils';
+import { useUserStore } from '@/store/modules/user';
+import {
+  computed,
+} from 'vue';
 
 const emit = defineEmits(['seePackageList']);
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 const ChangeLabelStore = useChangeLabelStore();
 const { PrintExpressList } = storeToRefs(ChangeLabelStore);
+const PermissionPrintExpress = computed(() => user.value?.PermissionList.PermissionPrintExpress);
+
 const RevocationOrder = (item: IGetOrderInfo) => {
   ChangeLabelStore.RevocationOrder(item, ChangeLabelStore.getPrintListOptions.Page);
 };
@@ -208,6 +223,21 @@ const seePackages = (item) => {
               white-space: nowrap; /* 禁止换行 */
               overflow: hidden; /* 隐藏溢出 */
               text-overflow: ellipsis; /* 显示省略号 */
+              &.Requests{
+                display: flex;
+                .button{
+                  color: #3988FF;
+                  cursor: pointer;
+                }
+                >div{
+                  white-space: nowrap; /* 禁止换行 */
+                  overflow: hidden; /* 隐藏溢出 */
+                  text-overflow: ellipsis; /* 显示省略号 */
+                }
+                .button{
+                  flex: 1;
+                }
+              }
             }
           }
         }
@@ -221,6 +251,9 @@ const seePackages = (item) => {
             font-size: 24px;
             font-weight: 700;
             color: #FF0023;
+            &.is-disabled{
+              color: #CBCBCB;
+            }
             i{
               font-size: 40px;
             }

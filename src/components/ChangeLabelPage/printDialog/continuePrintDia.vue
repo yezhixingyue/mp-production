@@ -27,6 +27,11 @@ import { computed } from 'vue';
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { storeToRefs } from 'pinia';
 
+const props = withDefaults(defineProps<{
+  GetType:(type: number) => string,
+}>(), {
+  GetType: () => '',
+});
 const emit = defineEmits(['closeDialog']);
 const ChangeLabelStore = useChangeLabelStore();
 const { PrintPrintData, GetOrderInfo, printSettingNumber } = storeToRefs(ChangeLabelStore);
@@ -47,27 +52,7 @@ const printPackage = () => {
   PrintPrintData.value.Type = GetOrderInfo.value?.PrintInfo?.Type || 0;
   ChangeLabelStore.getPrintExpressPrint();
 };
-const GetType = (type) => {
-  let msg = '';
-  switch (type) {
-    case 0:
-      msg = '全部打成一包';
-      break;
-    case 1:
-      msg = `按款数打包（共${GetOrderInfo.value?.KindCount}包）`;
-      break;
-    case 2:
-      msg = `均打包（${GetOrderInfo.value?.PrintInfo?.PackageNumber}包，${GetOrderInfo.value?.PrintInfo?.PrintNumber}${GetOrderInfo.value?.Unit}/包）`;
-      break;
-    case 3:
-      msg = '自定义打包';
-      break;
-
-    default:
-      break;
-  }
-  return msg;
-};
+const GetType = (type) => props.GetType(type);
 </script>
 <style lang="scss">
 .continue-print-box{

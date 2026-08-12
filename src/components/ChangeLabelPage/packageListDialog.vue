@@ -19,13 +19,13 @@
           <el-table-column min-width="254px" prop="ID" show-overflow-tooltip label="标签号"></el-table-column>
           <el-table-column min-width="147px" prop="Number" show-overflow-tooltip label="产品数量">
             <template #default="scope:any">
-              {{scope.row.Number}}{{GetOrderInfo.Unit}}
+              {{scope.row.Number}}{{useUnitGetUnit(GetOrderInfo.Unit)}}
             </template>
           </el-table-column>
-          <el-table-column min-width="374px" prop="PublicKey" show-overflow-tooltip label="操作">
+          <el-table-column min-width="374px" prop="PublicKey" show-overflow-tooltip label="操作" v-if="PermissionPrintExpress?.Obj.Print">
             <template #default="scope:any">
               <div class="re-label-box">
-                <mp-button type="info" link @click="reLabel(scope.row)">
+                <mp-button type="info" link @click="reLabel(scope.row)" :disabled="scope.row.Status === 1">
                   <i class="iconfont icon-zhongda"></i>重打标签
                 </mp-button>
               </div>
@@ -43,6 +43,12 @@
 import DialogContainerComp from '@/components/common/DialogComps/DialogContainerComp.vue';
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { IGetOrderInfo } from '@/views/ChangeLabelPage/types';
+import { useUnitGetUnit } from '@/assets/js/utils';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/store/modules/user';
+import {
+  computed,
+} from 'vue';
 
 const props = withDefaults(defineProps<{
   visible: boolean,
@@ -51,8 +57,11 @@ const props = withDefaults(defineProps<{
   visible: false,
 });
 const emit = defineEmits(['update:visible']);
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const ChangeLabelStore = useChangeLabelStore();
+const PermissionPrintExpress = computed(() => user.value?.PermissionList.PermissionPrintExpress);
 
 const CloseClick = () => {
   emit('update:visible', false);
@@ -125,6 +134,11 @@ const reLabel = (item) => {
       .el-button{
         color: #444;
         font-size: 22px !important;
+        &.is-disabled{
+          i{
+            color: #cbcbcb;
+          }
+        }
         i{
           font-size: 22px !important;
           color: #3988FF;

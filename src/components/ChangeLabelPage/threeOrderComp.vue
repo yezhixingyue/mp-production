@@ -29,13 +29,18 @@
           </li>
           <li>
             <div class="label">数量:</div>
-            <div class="content">{{item.Number}}{{item.Unit}} {{item.KindCount}}款
-              <span class="is-gray">（共{{item.KindCount * item.Number}}{{item.Unit}}）</span>
+            <div class="content">{{item.Number}}{{useUnitGetUnit(item.Unit)}}/款 {{item.KindCount}}款
+              <span class="is-gray">（共{{item.KindCount * item.Number}}{{useUnitGetUnit(item.Unit)}}）</span>
             </div>
           </li>
           <li>
             <div class="label">客户需求:</div>
-            <div class="content" :title="item.Requests.join('、')">{{item.Requests.join('、')}}</div>
+            <div class="content Requests">
+              <div :title="item.Requests.join('、')">{{item.Requests.join('、')}}</div>
+              <span class="button" @click="ChangeLabelStore.downloadFiles(item.Files)" v-if="item.Files && item.Files.length">
+                <i class="iconfont icon-xiazaidabaoxiangqing"></i> 打包明细
+              </span>
+            </div>
           </li>
           <li>
             <div class="label">实际打包:</div>
@@ -53,14 +58,17 @@
           </li>
         </ul>
         <p class="revocation">
-          <el-button type="danger" link @click="RevocationOrder(item)">
+          <el-button type="danger" link @click="RevocationOrder(item)" :disabled="item.PrintInfo?.Packages.some(it => it.Status === 1)">
             <i class="iconfont icon-chexiao"></i>
             撤销打包
           </el-button>
         </p>
       </li>
     </ul>
-    <div class="print-again" v-if="PrintList.length">
+    <div v-if="!PrintExpressList.length" style="background-color: unset; margin-top: 150px;">
+      <el-empty description="无数据"  style="margin: 0 auto;"/>
+    </div>
+    <div class="print-again" v-if="PrintList.length && PrintList[0].Printer === user?.StaffName">
       <el-button type="primary" color="#3988FF" @click="reprint">
         <i class="iconfont icon-zhongda"></i>
         重打最后一批标签（{{PrintList.length}}个）
@@ -72,8 +80,12 @@
 import { IGetOrderInfo } from '@/views/ChangeLabelPage/types';
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/store/modules/user';
+import { useUnitGetUnit } from '@/assets/js/utils';
 
 const emit = defineEmits(['seePackageList']);
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 const ChangeLabelStore = useChangeLabelStore();
 const { PrintExpressList, PrintList, _GetOrderInfo } = storeToRefs(ChangeLabelStore);
 const RevocationOrder = (item: IGetOrderInfo) => {
@@ -177,6 +189,21 @@ const seePackages = (item) => {
                 color: #3988FF;
                 font-size: 18px;
               }
+              &.Requests{
+                display: flex;
+                .button{
+                  color: #3988FF;
+                  cursor: pointer;
+                }
+                >div{
+                  white-space: nowrap; /* 禁止换行 */
+                  overflow: hidden; /* 隐藏溢出 */
+                  text-overflow: ellipsis; /* 显示省略号 */
+                }
+                .button{
+                  flex: 1;
+                }
+              }
             }
           }
         }
@@ -192,6 +219,9 @@ const seePackages = (item) => {
         font-size: 24px;
         font-weight: 700;
         color: #FF0023;
+        &.is-disabled{
+          color: #CBCBCB;
+        }
         i{
           font-size: 24px;
         }

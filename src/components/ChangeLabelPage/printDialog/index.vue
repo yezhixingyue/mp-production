@@ -21,8 +21,9 @@
             <li>内容：<span :title="GetOrderInfo.Content">{{GetOrderInfo.Content}}</span></li>
           </ul>
           <template v-if="GetOrderInfo && GetOrderInfo.PrintInfo && GetOrderInfo.PrintInfo.Type !== 3 || !GetOrderInfo.PrintInfo">
-            <p :class="{bigleft: !!GetOrderInfo?.PrintInfo}">订单数量：<span>{{GetOrderInfo.Number}}{{GetOrderInfo.Unit}} {{GetOrderInfo.KindCount}}款</span>
-              （共{{GetOrderInfo.Number*GetOrderInfo.KindCount}}{{GetOrderInfo.Unit}}）</p>
+            <p :class="{bigleft: !!GetOrderInfo?.PrintInfo}">订单数量：
+              <span>{{GetOrderInfo.Number}}{{useUnitGetUnit(GetOrderInfo.Unit)}}/款 {{GetOrderInfo.KindCount}}款</span>
+              （共{{GetOrderInfo.Number*GetOrderInfo.KindCount}}{{useUnitGetUnit(GetOrderInfo.Unit)}}）</p>
             <p :class="{bigleft: !!GetOrderInfo?.PrintInfo}">
               客户需求：<span v-if="GetOrderInfo.Requests && GetOrderInfo.Requests.length">{{GetOrderInfo.Requests.join('、')}}</span>
               <span class="button" @click="ChangeLabelStore.downloadFiles(GetOrderInfo.Files)" v-if="GetOrderInfo.Files && GetOrderInfo.Files.length">
@@ -46,9 +47,11 @@
         <!-- 自定义打印的订单 -->
         <UserDefinedDia v-else-if="GetOrderInfo && GetOrderInfo.PrintInfo && GetOrderInfo.PrintInfo.Type === 3" @closeDialog="CloseClick"></UserDefinedDia>
         <!-- 订单总数量 小于等于已打印数量 非自定义打包（全部打印） -->
-        <PrintOverDia v-else-if="GetOrderInfo && GetOrderInfo.PrintInfo && orderAllNumber <= GetOrderInfo.PrintInfo.PrintNumber"></PrintOverDia>
+        <PrintOverDia v-else-if="GetOrderInfo && GetOrderInfo.PrintInfo && orderAllNumber <= GetOrderInfo.PrintInfo.PrintNumber" :GetType="GetType">
+
+        </PrintOverDia>
         <!-- 打印未完成 非自定义打包 -->
-        <ContinuePrintDia v-else @closeDialog="CloseClick"></ContinuePrintDia>
+        <ContinuePrintDia v-else @closeDialog="CloseClick" :GetType="GetType"></ContinuePrintDia>
       </div>
     </template>
   </DialogContainerComp>
@@ -58,6 +61,7 @@ import DialogContainerComp from '@/components/common/DialogComps/DialogContainer
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
+import { useUnitGetUnit } from '@/assets/js/utils';
 import NoPrintDia from './noPrintDia.vue';
 import PrintOverDia from './printOverDia.vue';
 import UserDefinedDia from './userDefinedDia.vue';
@@ -92,7 +96,29 @@ const Closed = () => {
   GetOrderInfo.value = null;
   emit('closeDialog');
 };
+const GetTypeFun = (type) => {
+  let msg = '';
+  switch (type) {
+    case 0:
+      msg = '全部打成一包';
+      break;
+    case 1:
+      msg = `按款数打包（共${GetOrderInfo.value?.KindCount}包）`;
+      break;
+    case 2:
+      msg = `均打包（${GetOrderInfo.value?.PrintInfo?.PackageNumber}包，
+      ${GetOrderInfo.value?.PrintInfo?.Packages[0].Number}${useUnitGetUnit(GetOrderInfo.value?.Unit || '')}/包）`;
+      break;
+    case 3:
+      msg = '自定义打包';
+      break;
 
+    default:
+      break;
+  }
+  return msg;
+};
+const GetType = GetTypeFun;
 const changeType = (type) => {
   NoPrintDiaRef.value?.changeType(type);
 };

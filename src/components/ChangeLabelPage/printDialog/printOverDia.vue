@@ -15,6 +15,11 @@
 import { useChangeLabelStore } from '@/store/modules/ChangeLabelPage/index';
 import { storeToRefs } from 'pinia';
 
+const props = withDefaults(defineProps<{
+  GetType:(type: number) => string,
+}>(), {
+  GetType: () => '',
+});
 const ChangeLabelStore = useChangeLabelStore();
 const { PrintPrintData, GetOrderInfo } = storeToRefs(ChangeLabelStore);
 
@@ -28,27 +33,7 @@ const GetAddPackageNum = () => {
   const addPackageList = GetOrderInfo.value?.PrintInfo?.Packages.filter(it => it.Number === 0) || [];
   return addPackageList.length || msg;
 };
-const GetType = (type) => {
-  let msg = '';
-  switch (type) {
-    case 0:
-      msg = '全部打成一包';
-      break;
-    case 1:
-      msg = `按款数打包（共${GetOrderInfo.value?.KindCount}包）`;
-      break;
-    case 2:
-      msg = `均打包（${GetOrderInfo.value?.PrintInfo?.PackageNumber}包，${GetOrderInfo.value?.PrintInfo?.PrintNumber}${GetOrderInfo.value?.Unit}/包）`;
-      break;
-    case 3:
-      msg = '自定义打包';
-      break;
-
-    default:
-      break;
-  }
-  return msg;
-};
+const GetType = (type) => props.GetType(type);
 </script>
 <style lang="scss">
 .print-over-box{
