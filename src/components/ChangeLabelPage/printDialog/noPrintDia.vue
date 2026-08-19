@@ -56,7 +56,7 @@ const PrintCount = computed({
     return String(PrintPrintData.value.PrintCount);
   },
   set(val) {
-    PrintPrintData.value.PrintCount = Number(val.replace(/[^0-9]+/g, ''));
+    PrintPrintData.value.PrintCount = Number(val.replace(/[^0-9]+/g, '').slice(0, 2));
   },
 });
 const changeType = (Type) => {

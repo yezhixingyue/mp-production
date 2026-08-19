@@ -86,7 +86,7 @@ const PrintCount = computed({
     return String(PrintPrintData.value.PrintCount);
   },
   set(val) {
-    PrintPrintData.value.PrintCount = Number(val.replace(/[^0-9]+/g, ''));
+    PrintPrintData.value.PrintCount = Number(val.replace(/[^0-9]+/g, '').slice(0, 2));
   },
 });
 
@@ -127,7 +127,7 @@ const RevocationPackage = async (packageID, ServerID, Number) => {
         }
       });
     }
-    PrintList.value = PrintList.value.filter(it => it.ID === packageID);
+    PrintList.value = PrintList.value.filter(it => it.ID !== packageID);
   }
 };
 const dblclick = () => {

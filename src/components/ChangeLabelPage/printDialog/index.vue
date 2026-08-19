@@ -98,6 +98,7 @@ const Closed = () => {
 };
 const GetTypeFun = (type) => {
   let msg = '';
+  const Number = GetOrderInfo.value?.PrintInfo?.Packages.find(it => it.Number)?.Number;
   switch (type) {
     case 0:
       msg = '全部打成一包';
@@ -107,7 +108,7 @@ const GetTypeFun = (type) => {
       break;
     case 2:
       msg = `均打包（${GetOrderInfo.value?.PrintInfo?.PackageNumber}包，
-      ${GetOrderInfo.value?.PrintInfo?.Packages[0].Number}${useUnitGetUnit(GetOrderInfo.value?.Unit || '')}/包）`;
+      ${Number}${useUnitGetUnit(GetOrderInfo.value?.Unit || '')}/包）`;
       break;
     case 3:
       msg = '自定义打包';

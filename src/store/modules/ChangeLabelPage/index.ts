@@ -212,6 +212,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
       const resp = await api.changeLabelPageApis.getPrintExpressPrint(this.PrintPrintData).catch(() => null);
       if (resp?.data?.isSuccess) {
         this.PrintList = resp.data.Data;
+        const PrintListreverse = [...this.PrintList].reverse();
         this._GetOrderInfo = JSON.parse(JSON.stringify(this.GetOrderInfo));
         const temp = this.PrintExpressList.find(it => it.OrderCode === this.GetOrderInfo?.OrderCode);
         // if (this.GetOrderInfo.PrintInfo?.Packages.some(it => it.Status === 1)) { // 如果有揽收包裹 则重新获取包裹列表
@@ -220,7 +221,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
         if (temp) {
           const _temp = JSON.parse(JSON.stringify(temp));
           this.PrintExpressList = this.PrintExpressList.filter(it => it.OrderCode !== this.GetOrderInfo?.OrderCode);
-          _temp.PrintInfo?.Packages.push(...resp.data.Data);
+          _temp.PrintInfo.Packages = [...PrintListreverse, ...this.GetOrderInfo.PrintInfo?.Packages || []];
           this.PrintExpressList.unshift(_temp);
         } else {
           this.PrintExpressList.unshift(this.GetOrderInfo);
@@ -268,7 +269,7 @@ const options: DefineStoreOptions<string, IChangeLabelState, IChangeLabelGetters
           if (!this.GetOrderInfo) return;
           this.GetOrderInfo.PrintInfo = {
             PackageNumber: this.GetOrderInfo.PrintInfo?.PackageNumber || Number(this.PrintPrintData.Number),
-            Packages: [...this.GetOrderInfo.PrintInfo?.Packages || [], ...resp.data?.Data || []],
+            Packages: [...PrintListreverse, ...this.GetOrderInfo.PrintInfo?.Packages || []],
             PrintNumber: (this.GetOrderInfo.PrintInfo?.PrintNumber || 0) + num,
             Type: this.PrintPrintData.Type || 0,
           };

@@ -12,7 +12,7 @@
       </mp-table-column>
       <mp-table-column min-width="80px" prop="Order.Number" label="数量">
         <template #default="scope:any">
-          {{scope.row.Order.Number}}{{scope.row.Order.Unit}}
+          {{scope.row.Number}}{{useUnitGetUnit(scope.row.Order.Unit)}}
         </template>
       </mp-table-column>
       <mp-table-column min-width="80px" prop='Weight' label="重量">
@@ -78,6 +78,7 @@
 <script setup lang='ts'>
 import { format2MiddleLangTypeDateFunc2 } from '@/assets/js/filters/dateFilters';
 import { IPackageList } from '@/views/ChangeLabelPage/types';
+import { useUnitGetUnit } from '@/assets/js/utils';
 
 const props = withDefaults(defineProps<{
   packageList: IPackageList[]

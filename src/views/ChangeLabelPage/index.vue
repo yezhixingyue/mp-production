@@ -30,7 +30,7 @@ let oInp: HTMLElement | null = document.querySelector('.scan-input-comp > .el-in
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 const ChangeLabelStore = useChangeLabelStore();
-const { PrintExpressList, scanInputValue } = storeToRefs(ChangeLabelStore);
+const { PrintExpressList, scanInputValue, PrintExpressListTotal } = storeToRefs(ChangeLabelStore);
 const tabValue = ref(0);
 const visible = ref(false);
 const GetOrderInfo = ref<IGetOrderInfo|null>(null);
@@ -40,6 +40,7 @@ const changeTabValue = (val) => {
   scanInputValue.value = '';
   ChangeLabelStore.getPrintListOptions.KeyWords = '';
   ChangeLabelStore.getPrintListOptions.Page = 1;
+  PrintExpressListTotal.value = 0;
   if (val === 1) { // 打包扫描（获取最近三个订单）
     ChangeLabelStore.getPrintListOptions.PageSize = 3;
     ChangeLabelStore.getPrintListOptions.Printer = user.value?.StaffID || '';

@@ -62,7 +62,7 @@ const localVisible = computed({
 });
 
 const onOpen = async () => {
-  const resp = await api.changeLabelPageApis.getPrintExpressList({ Page: 1, KeyWords: `${props.orderID}-0001`, PageSize: 2 }).catch(() => null);
+  const resp = await api.changeLabelPageApis.getPrintExpressList({ Page: 1, KeyWords: `${props.orderID}`, PageSize: 2 }).catch(() => null);
   if (resp?.data?.isSuccess) {
     GetOrderInfo.value = resp.data.Data || resp.data.Data[0] ? resp.data.Data[0] as IGetOrderInfo : null;
   }

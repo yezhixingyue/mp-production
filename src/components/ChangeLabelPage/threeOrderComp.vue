@@ -68,7 +68,7 @@
     <div v-if="!PrintExpressList.length" style="background-color: unset; margin-top: 150px;">
       <el-empty description="无数据"  style="margin: 0 auto;"/>
     </div>
-    <div class="print-again" v-if="PrintList.length && PrintList[0].Printer === user?.StaffName">
+    <div class="print-again" v-if="PrintList.length && PrintList[0].Printer === user?.StaffName && PrintExpressList.length">
       <el-button type="primary" color="#3988FF" @click="reprint">
         <i class="iconfont icon-zhongda"></i>
         重打最后一批标签（{{PrintList.length}}个）
