@@ -90,25 +90,35 @@
           </thead>
           <tbody>
             <!-- 大版工序列表 -->
-            <tr v-for="(work, index) in getHandleWorkList(localInfo.data.WorkingList)" :key="work.WorkingID">
-              <td>{{ index + 1 }}</td>
-              <td>{{ work.WorkingName }}</td>
-              <td>{{ work.WorkTimes }}</td>
-              <td>{{ work.Number }}</td>
-              <td>{{ work.Wastage }}</td>
-              <td>{{ work.Equipment.Name }}</td>
-            </tr>
+            <template v-for="(work, index) in getHandleWorkList(localInfo.data.WorkingList)" :key="work.WorkingID">
+              <tr >
+                <td :rowspan="`${work._AssistInfo ? '2' : ''}`">{{ index + 1 }}</td>
+                <td>{{ work.WorkingName }}</td>
+                <td>{{ work.WorkTimes }}</td>
+                <td>{{ work.Number }}</td>
+                <td>{{ work.Wastage }}</td>
+                <td>{{ work.Equipment.Name }}</td>
+              </tr>
+              <tr v-if="work._AssistInfo">
+                <td colspan="5">{{ work._AssistInfo }}</td>
+              </tr>
+            </template>
             <!-- 循环子版 -->
             <template v-for="(child, index) in (localInfo.data.ChildList || [])" :key="child.Code">
               <!-- 子版工序列表 -->
-              <tr v-for="(cwork, cIndex) in getHandleWorkList(child.WorkingList)" :key="cwork.WorkingID">
-                <td>{{ index + 1 }}-{{ cIndex + 1 }}</td>
-                <td>{{ cwork.WorkingName }}</td>
-                <td>{{ cwork.WorkTimes }}</td>
-                <td>{{ cwork.Number }}</td>
-                <td>{{ cwork.Wastage }}</td>
-                <td>{{ cwork.Equipment.Name }}</td>
-              </tr>
+              <template v-for="(cwork, cIndex) in getHandleWorkList(child.WorkingList)" :key="cwork.WorkingID">
+                <tr>
+                  <td :rowspan="`${cwork._AssistInfo ? '2' : ''}`">{{ index + 1 }}-{{ cIndex + 1 }}</td>
+                  <td>{{ cwork.WorkingName }}</td>
+                  <td>{{ cwork.WorkTimes }}</td>
+                  <td>{{ cwork.Number }}</td>
+                  <td>{{ cwork.Wastage }}</td>
+                  <td>{{ cwork.Equipment.Name }}</td>
+                </tr>
+                <tr v-if="cwork._AssistInfo">
+                  <td colspan="5">{{ cwork._AssistInfo }}</td>
+                </tr>
+              </template>
             </template>
           </tbody>
         </table>
@@ -139,6 +149,7 @@ import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 // import { ReproductionTypeEnumList } from '@/views/productionSetting/productionLine/js/enum';
 import { useUserStore } from '@/store/modules/user';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { storeToRefs } from 'pinia';
 import { IManagePlateInfo } from '../js/type';
 import { IDigitalOrderPlatePrintInfo } from '../../ManageDigitalListPage/js/types';
@@ -191,7 +202,10 @@ const getHandleWorkList = (WorkingList?: IDigitalOrderPlatePrintInfo['WorkingLis
     list.push(working);
   });
 
-  return list;
+  return list.map(w => ({
+    ...w,
+    _AssistInfo: w.AssistList?.filter(it => it.Type === AssistInfoTypeEnum.text).map(it => it.Content).filter(Boolean).join('；') || '',
+  }));
 };
 
 const getFastDepartureTime = (time: string) => {

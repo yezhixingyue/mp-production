@@ -1,5 +1,6 @@
 import { IEquipmentBaseInfo } from '@/views/ProductionClient/assets/js/types';
 import { ReportModeEnum } from '@/views/productionSetting/process/enums';
+import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ReproductionTypeEnum } from '@/views/productionSetting/productionLine/js/enum';
 import { PlaceOrderMaterialSourceEnum, PrintSideEnum } from '../../ManualOrderHandlerPage/js/enums';
 import { IBaseProperty } from '../../ManualOrderHandlerPage/js/types';
@@ -61,10 +62,11 @@ interface ITaskWorkingDetail {
   ReportMode: ReportModeEnum
   /** 加工信息 */
   AssistList: {
-  /** 名称 */
-  Name: string
-  /** 文字信息 --- 筛选掉为空的条目，然后把剩下的以 名称:文字信息 的形式join(;)起来显示 */
-  Content?: string
+    /** 名称 */
+    Name: string
+    /** 文字信息 --- 筛选掉为空的条目，然后把剩下的以 名称:文字信息 的形式join(;)起来显示 */
+    Content?: string
+    Type: AssistInfoTypeEnum
   }[]
   /** 加工设备 */
   Equipment: IEquipmentBaseInfo
