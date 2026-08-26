@@ -3,8 +3,8 @@ import {
 } from '@/views/ProductionClient/assets/js/types';
 import { ChunkStatusEnum } from '@/views/productionManagePages/ManageChunkListPage/js/enum';
 import { PlateTypeEnum } from '@/views/productionManagePages/ManagePlateListPage/js/enum';
-import { ReportModeEnum } from '@/views/productionSetting/process/enums';
 import { ExceptionHandlerStatusEnum } from './enum';
+import { TargetTypeEnum } from '../SetupView/js/enum';
 
 /**
  * 异常列表条目信息
@@ -22,7 +22,7 @@ export interface ITaskExceptionInfo {
   /** 异常处理状态 */
   Status: ExceptionHandlerStatusEnum
   /** 对象类型 （报工类型?） */
-  TargetType: ReportModeEnum
+  TargetType: TargetTypeEnum
   /** 目标编号 */
   TargetCode: string
   /** 任务详情 */

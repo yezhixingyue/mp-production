@@ -6,6 +6,7 @@ import { ProductiveTaskStatusEnumList } from '@/views/ProductionClient/assets/js
 import { ITaskDetail } from '@/views/ProductionClient/assets/js/types';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
 import { ReportModeEnum, WorkingTypeEnum } from '@/views/productionSetting/process/enums';
+import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/SetupView/js/enum';
 import { transformMinute } from '@/assets/js/utils/ConvertTimeFormat';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
 import { getTaskDisplayInfo } from '../../CurTaskPanel';
@@ -50,7 +51,9 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
         _LineName = it.Working.OrderInfo?.Line || '';
         _Size = it.Working.OrderInfo?.Size || '';
 
-        if (it.Working.OrderInfo?.MaterialList?.length) {
+        if (it.Working.TargetType === TargetTypeEnum.UnionChunk) {
+          if (it.Working.PlateInfo?.Material) _OrderMaterialList = [{ partName: '', content: it.Working.PlateInfo.Material }];
+        } else if (it.Working.OrderInfo?.MaterialList?.length) {
           _OrderMaterialList = it.Working.OrderInfo.MaterialList.map(_it => ({ partName: _it.Key, content: _it.Value }));
         }
 
