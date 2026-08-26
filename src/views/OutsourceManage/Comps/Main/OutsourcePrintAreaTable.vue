@@ -13,7 +13,16 @@
       <tbody>
         <tr>
           <td>
-            <div style="font-size: 0.85em;">{{ curRow._Material || '-' }}</div>
+            <div style="font-size: 0.85em; line-clamp: unset; -webkit-line-clamp:unset">
+              <span v-if="curRow._Material || curRow._OrderMaterialList.length === 1">{{ curRow._Material || curRow._OrderMaterialList[0].content }}</span>
+              <ul v-else-if="curRow._OrderMaterialList.length > 1" style="display: flex;flex-direction: column;align-items: center;">
+                <li v-for="(it, index) in curRow._OrderMaterialList" :key="index" style="display: block;text-align: left;">
+                  <h4 style="flex: none;margin-right: 0.5em;display: inline;">{{ it.partName }}</h4>
+                  <span style="text-align: left;">{{ it.content }}</span>
+                </li>
+              </ul>
+              <span v-else>-</span>
+            </div>
           </td>
           <td>
             <div>{{ curRow._Size || '-' }}</div>

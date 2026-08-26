@@ -25,6 +25,8 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
 
     let _ReproductionType = '';
 
+    let _OrderMaterialList: { partName: string, content: string }[] = [];
+
     switch (it.Working.ReportMode) {
       case ReportModeEnum.board:
         _TargetID = `${it.Working.PlateInfo?.Code || ''}（大版）`;
@@ -47,6 +49,11 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
         if (it.Working.OrderInfo?.Content && useContent) _DetailText = it.Working.OrderInfo.Content;
         _LineName = it.Working.OrderInfo?.Line || '';
         _Size = it.Working.OrderInfo?.Size || '';
+
+        if (it.Working.OrderInfo?.MaterialList?.length) {
+          _OrderMaterialList = it.Working.OrderInfo.MaterialList.map(_it => ({ partName: _it.Key, content: _it.Value }));
+        }
+
         break;
 
       case ReportModeEnum.block:
@@ -142,6 +149,7 @@ export const getLocalTaskList = (TaskList: ITaskDetail[], isError: boolean, useC
       _AssistText, // 辅助文字信息
       _SpecialColorText, // 专色信息 --- 2024-12-17后 暂无使用 - 后续可废弃
       _Material,
+      _OrderMaterialList, // 订单物料列表
       _Size,
       _UnFinishNumber,
       _Number,

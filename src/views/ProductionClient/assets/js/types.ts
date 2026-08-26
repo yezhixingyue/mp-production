@@ -61,6 +61,8 @@ export interface ITaskOrderInfo {
   ProduceEndTime: string
   /** 工序列表 */
   WorkingList:IBaseProperty<string>[]
+  /** 订单所用物料列表 */
+  MaterialList?: {Key: string, Value: string}[]
 }
 
 /** 任务中工序上的大版信息类型 */
