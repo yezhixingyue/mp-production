@@ -12,13 +12,21 @@
       </header>
 
       <main>
-        <p class="line">
+        <p class="line" :style="`${localInfo.data.IsOutOfScope ? 'margin-bottom: 0.8em;' : ''}`">
           <span class="n"> 生 产 线：{{ localInfo.data.ProductionLine.Name }}</span>
           <span style="margin-left: 20px;" v-if="localInfo.data.FastDepartureTime">最晚发货时间：{{getFastDepartureTime(localInfo.data.FastDepartureTime)}}</span>
         </p>
 
         <!-- 版头字 -->
-        <div class="title"  style="margin-top: 8px;">{{ localInfo.data.Title }}</div>
+        <div class="title"  style="margin-top: 8px; position: relative;">
+          <span>{{ localInfo.data.Title }}</span>
+          <div v-if="localInfo.data.IsOutOfScope"
+              style="position: absolute;top: -1.35em;right: -0.15em;width: 9em;font-size: 1.2em;
+              box-sizing: border-box;z-index: 2;overflow: hidden;
+              height: 1.5em;color: #fff;border-radius: 3px;text-align: center;">
+            <img :src="`${IMGSRC}`" style="width: 100;height: 100%;left: 0;top: 0;position: absolute;" alt="">
+          </div>
+        </div>
 
         <!-- 印刷拼版表 -->
         <div class="item">
@@ -139,7 +147,7 @@
 </template>
 
 <script setup lang='ts'>
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import api from '@/api';
 import PrintDialog from '@/components/common/General/Print/PrintDialog.vue';
 import { getQRCodeSrc } from '@/components/common/General/Print/utils';
@@ -150,11 +158,14 @@ import { TargetTypeEnum } from '@/views/ExceptionManage/_ExceptionCommonViews/Se
 // import { ReproductionTypeEnumList } from '@/views/productionSetting/productionLine/js/enum';
 import { useUserStore } from '@/store/modules/user';
 import { AssistInfoTypeEnum } from '@/views/productionResources/assistInfo/types/enum';
+import { loadImg } from '@/assets/js/utils/loadImg';
 import { storeToRefs } from 'pinia';
 import { IManagePlateInfo } from '../js/type';
 import { IDigitalOrderPlatePrintInfo } from '../../ManageDigitalListPage/js/types';
 import { PlaceOrderMaterialSourceEnumList } from '../../ManualOrderHandlerPage/js/EnumList';
 import OutsideMaterialPrintArea from '../../ManageOutsideMaterialListPage/Comps/OutsideMaterialPrintArea/OutsideMaterialPrintArea.vue';
+
+const IMGSRC = process.env.NODE_ENV === 'development' ? '/images/IsOutOfScope.png' : '/web/images/IsOutOfScope.png';
 
 const props = defineProps<{
   row: IManagePlateInfo | null
@@ -243,6 +254,16 @@ const display = async () => {
     localInfo.value.QRCodeSrc4Material = codeUrl2 || '';
     localInfo.value.data = { ...resp.data.Data, _ReproductionTypeContent: props.row.ReproductionType };
     localInfo.value.key = true;
+
+    if (localInfo.value.data.IsOutOfScope) {
+      try {
+        await loadImg(IMGSRC);
+        await nextTick();
+      } catch (error) {
+        // eslint-disable-next-line no-alert
+        alert('超版芯范围拼版图片加载失败，可能影响打印效果');
+      }
+    }
 
     oPrintDialog.value.print(`大版工单打印-${props.row.Code}`);
   }

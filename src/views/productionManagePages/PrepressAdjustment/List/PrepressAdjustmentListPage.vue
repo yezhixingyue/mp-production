@@ -29,6 +29,12 @@
         :type="AdjustTabTypeEnum.AddNumber"
         :Permission="localPrepressAdjModel.Permission"
       />
+
+      <!-- 拼版分工 -->
+      <ImpositionAllocationPanel
+        v-if="localPrepressAdjModel.currentTab === AdjustTabTypeEnum.PlateDivision"
+        :Permission="localPrepressAdjModel.Permission"
+      />
     </main>
   </section>
 </template>
@@ -42,6 +48,7 @@ import { nextTick, watch, computed } from 'vue';
 import { localPrepressAdjModel } from '../store';
 import ListModuleIndex from './components/ListModule/ListModuleIndex.vue';
 import { AdjustTabTypeEnum } from '../types/enum';
+import ImpositionAllocationPanel from './components/ImpositionAllocation/ImpositionAllocationPanel.vue';
 
 const router = useRouter();
 

@@ -30,6 +30,7 @@ export class PrepressAdjustmentManageModel {
     if (this.Permission) {
       if (this.Permission.Obj.UnionPlateQuery) this.TabList.push({ ID: AdjustTabTypeEnum.UnionPlate, Name: '提前入尾版' });
       if (this.Permission.Obj.AddNumberQuery) this.TabList.push({ ID: AdjustTabTypeEnum.AddNumber, Name: '追加印数' });
+      if (this.Permission.Obj.ImpositionQuery) this.TabList.push({ ID: AdjustTabTypeEnum.PlateDivision, Name: '拼版分工' });
     }
 
     this.getProductionLineList();

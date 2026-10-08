@@ -198,6 +198,8 @@ export interface IDigitalOrderPlatePrintInfo {
   }
   /** 任务列表 工序列表 */
   WorkingList: ITaskWorkingDetail[]
+  /** 是否超范围拼版 */
+  IsOutOfScope: boolean
 }
 
 /** 数码工单打印数据接口类型 --- 处理过的带有二维码地址的接口类型 */

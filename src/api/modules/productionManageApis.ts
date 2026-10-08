@@ -233,4 +233,12 @@ export const productionManageApis = {
   getOrderChunkNumberRemove(id: string) {
     return instance.delete('/Api/Order/Chunk/Number/Remove', { params: { id } });
   },
+  /** get /Api/Imposition/Permission/List  拼版分工列表 */
+  getImpositionPermissionList(lineID: string) {
+    return instance.get('/Api/Imposition/Permission/List', { params: { lineID } });
+  },
+  /** post /Api/Imposition/Permission/Setup  设置拼板人 */
+  getImpositionPermissionSetup(data: object) {
+    return instance.post('/Api/Imposition/Permission/Setup', data);
+  },
 };

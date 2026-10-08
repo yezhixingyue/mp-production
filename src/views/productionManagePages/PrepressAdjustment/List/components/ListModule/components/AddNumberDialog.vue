@@ -41,7 +41,7 @@
           <label class="star">追加数量：</label>
           <div class="right">
             <el-input v-model.number="ruleForm.Number" maxlength="9" style="width: 80px;"></el-input>
-            <span>总印数{{currentChunk.TotalNumber}}，最大追加数{{ruleForm.maxAddNumber}}（不得超过50%）</span>
+            <span>总印数{{currentChunk.TotalNumber}}，最大追加数{{ruleForm.maxAddNumber}}（不得超过100%）</span>
           </div>
         </li>
 

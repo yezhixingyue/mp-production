@@ -34,8 +34,10 @@
       <MpPagination center :nowPage="EquTaskDetailData.condition.Page" :pageSize="EquTaskDetailData.condition.PageSize" :ExportExcelProps="downloadExcelObj"
        :total="EquTaskDetailData.TaskListNumber" :handlePageChange="EquTaskDetailData.getTaskList.bind(EquTaskDetailData)">
        <template #text>
-          <span v-show="EquTaskDetailData.TotalMessage" class="mr-25"
-            >预计加工总时长：<i class="is-pink bold">{{ transformMinute(EquTaskDetailData.TotalMessage) }}</i></span>
+          <span v-show="EquTaskDetailData.TotalProcessingNumber" class="mr-25"
+            >总加工数量：<i class="is-pink bold">{{ EquTaskDetailData.TotalProcessingNumber.replace(/(?=(\B)(\d{3})+$)/g, ',') }}</i></span>
+          <span v-show="EquTaskDetailData.TotalDuration" class="mr-25"
+            >预计加工总时长：<i class="is-pink bold">{{ transformMinute(EquTaskDetailData.TotalDuration) }}</i></span>
           <span>共检索出</span>
           <i class="num"> {{EquTaskDetailData.TaskListNumber}} </i>
           <span>条记录</span>

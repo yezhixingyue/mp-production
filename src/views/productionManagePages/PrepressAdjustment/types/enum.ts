@@ -3,4 +3,6 @@ export enum AdjustTabTypeEnum {
   UnionPlate = 0,
   /** 追加印数 */
   AddNumber = 1,
+  /** 拼版分工 */
+  PlateDivision = 2
 }

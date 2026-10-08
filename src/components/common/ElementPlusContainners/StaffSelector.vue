@@ -5,7 +5,7 @@
       v-model="value"
       filterable
       reserve-keyword
-      placeholder="请输入姓名"
+      placeholder="请选择"
       remote-show-suffix
       class="local"
       :class="`${boxStyle ? '' : 'mp-select'}`"
@@ -15,6 +15,7 @@
         :key="item.StaffID"
         :label="item.StaffName"
         :value="item.StaffID"
+        :disabled="disabledIDs && disabledIDs.includes(item.StaffID)"
       />
     </el-select>
   </div>
@@ -33,9 +34,18 @@ const props = defineProps<{
   boxStyle?: boolean
   /** 隐藏掉不限选项 */
   hideUnlimitedOption?: boolean
+  disabledIDs?: string[]
+  placeholder?: string
 }>();
 
-const emit = defineEmits(['update:modelValue', 'getList']);
+const emit = defineEmits(['update:modelValue', 'getList', 'change']);
+
+const localStaffList = ref<Pick<IStaff, 'StaffID' | 'StaffName'>[]>([]);
+
+const myStaffList = computed(() => {
+  const _initialOptions = props.hideUnlimitedOption ? [] : [{ StaffID: '', StaffName: '不限' }];
+  return [..._initialOptions, ...(props.staffList || []), ...localStaffList.value];
+});
 
 const value = computed({
   get() {
@@ -45,17 +55,12 @@ const value = computed({
     if (val === props.modelValue) return;
     emit('update:modelValue', val);
     emit('getList');
+    const t = myStaffList.value.find(it => it.StaffID === val);
+    if (t) emit('change', t);
   },
 });
 
 const loading = ref(false);
-
-const localStaffList = ref<Pick<IStaff, 'StaffID' | 'StaffName'>[]>([]);
-
-const myStaffList = computed(() => {
-  const _initialOptions = props.hideUnlimitedOption ? [] : [{ StaffID: '', StaffName: '不限' }];
-  return [..._initialOptions, ...(props.staffList || []), ...localStaffList.value];
-});
 
 const remoteMethod = async () => {
   loading.value = true;

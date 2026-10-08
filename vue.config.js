@@ -82,6 +82,11 @@ module.exports = defineConfig({
         changeOrigin: true,
       },
     },
+    host: '0.0.0.0',
+    allowedHosts: 'all',
+    client: {
+      overlay: false,
+    },
   },
 
   configureWebpack: config => {

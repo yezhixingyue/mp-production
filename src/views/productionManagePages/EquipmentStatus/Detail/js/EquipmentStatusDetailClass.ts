@@ -18,7 +18,11 @@ export class EquipmentTaskDetailClass {
 
   TaskListNumber = 0
 
-  TotalMessage = 0
+  /** 总时长 */
+  TotalDuration = 0
+
+  /** 总加工数量 */
+  TotalProcessingNumber = ''
 
   loading = false
 
@@ -37,7 +41,8 @@ export class EquipmentTaskDetailClass {
     this.condition.Page = Page;
 
     if (Page === 1) {
-      this.TotalMessage = 0;
+      this.TotalDuration = 0;
+      this.TotalProcessingNumber = '';
     }
 
     this.TaskList = [];
@@ -50,8 +55,10 @@ export class EquipmentTaskDetailClass {
       this.TaskList = resp.data.Data || [];
       this.TaskListNumber = resp.data.DataNumber;
 
-      if (Page === 1) {
-        this.TotalMessage = +Number(resp.data.Message).toFixed(2);
+      if (Page === 1 && resp.data.Message && /^\d+;\d+$/.test(resp.data.Message)) {
+        const [duration, processingNumber] = resp.data.Message.split(';');
+        this.TotalDuration = +Number(duration).toFixed(2);
+        this.TotalProcessingNumber = processingNumber;
       }
     }
   }

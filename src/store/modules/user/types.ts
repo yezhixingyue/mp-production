@@ -489,6 +489,10 @@ export interface IUser {
         UnionPlateQuery: boolean
         /** 提前入尾版设置 */
         UnionPlateSetup: boolean
+        /** 拼版分工查询 */
+        ImpositionQuery: boolean
+        /** 拼版分工设置 */
+        ImpositionSetup: boolean
       };
     },
     /** 数码折手设置 */
