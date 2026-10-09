@@ -22,7 +22,7 @@
         <mp-table-column min-width="305px" prop="MemberNames" label="拼版人">
           <template #default="scope:{ row: ImpositionAllocationModel['list'][0] }">
             <template v-if="scope.row.MemberNames">{{ scope.row.MemberNames }}</template>
-            <span v-else style="color: #7f7f7f;">所有人</span>
+            <span v-else style="color: #7f7f7f;">- 所有人 -</span>
           </template>
         </mp-table-column>
         <mp-table-column min-width="160px" label="操作" class-name="ctrl" v-if="Permission?.Obj.ImpositionSetup">
