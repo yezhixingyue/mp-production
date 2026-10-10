@@ -27,7 +27,8 @@
         </mp-table-column>
         <mp-table-column min-width="160px" label="操作" class-name="ctrl" v-if="Permission?.Obj.ImpositionSetup">
           <template #default="scope:{ row: ImpositionAllocationModel['list'][0] }">
-            <mp-button type="primary" class="ft-12" link :disabled="getDisabled(scope.row)" @click="showDialog(scope.row)">设置拼版人</mp-button>
+            <mp-button type="primary" class="ft-12" link @click="showDialog(scope.row)">设置拼版人</mp-button>
+            <!-- <mp-button type="primary" class="ft-12" link :disabled="getDisabled(scope.row)" @click="showDialog(scope.row)">设置拼版人</mp-button> -->
           </template>
         </mp-table-column>
         <template #empty>
@@ -62,10 +63,11 @@ defineProps<{
 }>();
 
 const curFilterLineList = computed(() => {
-  const { ProductionLineList, allAuthorizedLineIDs } = localPrepressAdjModel.value;
-  const list = ProductionLineList.map(it => ({ ID: it.ID, Name: it.Name })).filter(it => allAuthorizedLineIDs.includes(it.ID));
-  // list.unshift({ ID: '', Name: '所有生产线' });
+  const { ProductionLineList } = localPrepressAdjModel.value;
+  // const list = ProductionLineList.map(it => ({ ID: it.ID, Name: it.Name })).filter(it => allAuthorizedLineIDs.includes(it.ID));
 
+  // return list;
+  const list = ProductionLineList.map(it => ({ ID: it.ID, Name: it.Name }));
   return list;
 });
 
@@ -73,6 +75,7 @@ const localModel = ref<null | ImpositionAllocationModel>(null);
 
 const { visible, currentRow, showDialog } = useDialogVisible();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getDisabled = (row: ImpositionAllocationModel['list'][0]) => {
   if (row.LineID && !localPrepressAdjModel.value.myAuthorizedLineIDs.includes(row.LineID)) {
     return true;
@@ -157,6 +160,7 @@ onMounted(() => {
 
   > main {
     margin-top: 20px;
+    overflow: hidden;
   }
 
   > footer {
