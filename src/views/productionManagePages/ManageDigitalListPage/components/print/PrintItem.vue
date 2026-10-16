@@ -23,7 +23,7 @@
 
     <!-- 生产工期与下单时间 -->
     <p class="time">
-      <span>生产工期：{{ _ProduceEndTime }}</span>
+      <span>发货班次：{{ _ShiftTime }}</span>
       <span>下单时间：{{ format2LangTypeDate(getTimeConvertFormat({ withHMS: true, date: OrderInfo?.CreateTime })) }}</span>
     </p>
 
@@ -190,7 +190,6 @@ import { getEnumNameByID } from '@/assets/js/utils/getListByEnums';
 import { useUserStore } from '@/store/modules/user';
 import { PrintSideEnumList } from '@/views/productionManagePages/ManualOrderHandlerPage/js/enums';
 import { ReportModeEnumList } from '@/views/productionSetting/process/enums';
-import { getDateYmdmsFormat } from '@/assets/js/utils/ConvertTimeFormat';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { getTimeConvertFormat } from 'yezhixingyue-js-utils-4-mpzj';
@@ -207,10 +206,24 @@ const ChunkInfo = computed(() => props.item.ChunkList[0]);
 
 const OrderInfo = computed(() => ChunkInfo.value?.OrderInfo);
 
-const _ProduceEndTime = computed(() => {
-  const ProduceEndTime = OrderInfo.value?.ProduceEndTime;
+// const _ProduceEndTime = computed(() => {
+//   const ProduceEndTime = OrderInfo.value?.ProduceEndTime;
 
-  return getDateYmdmsFormat(ProduceEndTime || '');
+//   return getDateYmdmsFormat(ProduceEndTime || '');
+// });
+
+const _ShiftTime = computed(() => {
+  const ShiftTime = OrderInfo.value?.ShiftTime;
+  if (!ShiftTime) return '异常';
+
+  const result = ShiftTime.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2})/);
+  if (result?.length === 5) {
+    const [, y, m, d, t] = result;
+
+    return `${y}年${m}月${d}日 ${t}`;
+  }
+
+  return '异常';
 });
 
 const WorkingList = computed(() => {

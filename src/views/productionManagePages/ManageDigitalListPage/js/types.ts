@@ -129,6 +129,8 @@ export interface IDigitalOrderPlatePrintInfo {
       CreateTime: string
       /** 预计生产完成时间 */
       ProduceEndTime: string
+      /** 发货班次 */
+      ShiftTime: string
       /** 客户编号  */
       CustomerSN: string
       /** 客户名称 */

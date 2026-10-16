@@ -116,7 +116,9 @@ export class ManageDigitalListClass {
         this.Selection.forEach(it => {
           const t = this.list.find(_it => _it.Code === it.Code);
           if (t) {
-            t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态
+            if (t.Status === DigitalImpositionStatusEnum.HaveScheduling) {
+              t.Status = DigitalImpositionStatusEnum.HavePrint; // 修改为已打印状态
+            }
             t.LastPrintTime = _LastPrintTime;
           }
         });
