@@ -15,7 +15,7 @@ export interface IDigitalTask {
   Equipment: string
   /** 印面 */
   PrintSide: PrintSideEnum
-  /** 印面数/订单总量 */
+  /** 印面数/任务总量 */
   SideNumber: number
   /** 印张数/任务数量 */
   MaterialNumber: number
